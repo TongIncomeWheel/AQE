@@ -31,8 +31,15 @@ PM 2026-10-26 20:46: NO pre-open check; reviews run from the open to 02:31 only;
    Never show the PM the first pass when bars were needed.
    **Also fetch SPY's FMP `intraday-1-hour` bars (today) every review** and pass the close of the latest COMPLETED candle as `--spy-close X`: a completed hourly close under the floor keeps the stand-down on until a later candle closes back above it (a spot print above the floor is not enough).
 3b. **Arm-ready brackets (PM 2026-10-27 19:35: tighter flags on ESTC and VSXY).** Read `/home/claude/pma/live/arm_brackets.json`; ignore it if its `session` is not today's US date. Per name, show a row only when it changes what the PM does: price inside the entry window with the flag met = "Bracket window live: queue Tiger preview on your word (limit L, stop S, ~N sh)" (N = floor(620 / (L - S)) at the live price); price above the window top = "Window shut: above the 2.0 reward-to-risk ceiling X"; price at or under the bracket stop = "Stop level hit". Otherwise print nothing. This tighter flag is in addition to the committee trigger (ESTC still reports at 107.09). Nothing is placed without the Tiger preview and the PM's explicit "confirm".
-4. **AQE alerts (names outside the committee's ADVANCE list).** Gmail `[AQE]` newer than the last review; open the newest digest in full.
-   Add at most 5 plain lines for HOLD / watch / dip-buy names whose state changed. Skip anything already in the script output.
+4. **AQE alerts (names outside the committee's ADVANCE list).** Run
+   `python3 ${CLAUDE_PLUGIN_ROOT}/tools/aqe_notice.py render --repo <AQE checkout> --fetch --state $AEGIS_LIVE_DIR/aqe_notice_state.json`
+   (reads the engine's per-cycle notice `aegis/output/alerts/live/latest.json` from `origin/main`; contract
+   `aegis-core/contracts/aqe_alert_notice.schema.json` -- the same cards the `[AQE]` email renders, so the two never disagree).
+   Exit 0: paste its output verbatim (it is already in house style: one table, ACT rows first, `~N sh` at 1R = $620 from `aegis_fund.md`).
+   Exit 3: nothing new this cycle, print nothing. **Exit 4: say this FIRST in the review -- "AQE alert engine silent: ..." -- this is the
+   engine-alive check now; Gmail is no longer read for it.** Exit 5 (no notice published yet, e.g. the engine code is not deployed):
+   ONLY then fall back to Gmail `[AQE]` newer than the last review, newest digest in full, at most 5 plain lines for HOLD / watch /
+   dip-buy names whose state changed. Skip anything already in the script output.
 5. **Tiger (read-only).** Positions, open orders, fills since the last review. Flag any fill with no stop, and any stop that differs from the committee's. One line per exception, nothing if clean.
 
 ## Output (PM 2026-10-26: executive, TRIGGERS AND ACTIONS ONLY, to save tokens and PM reading time)

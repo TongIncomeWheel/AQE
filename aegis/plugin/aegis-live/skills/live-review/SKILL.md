@@ -1,6 +1,6 @@
 ---
 name: live-review
-description: "Aegis LIVE REVIEW — the 30-minute executive review during the US session (11 slots 21:31–02:31 SGT on US daylight time, +1h on standard time) plus the 04:05 relay. Reads the day's pma_levels.json, live IBKR prices, AQE [AQE] alert digests and the Tiger book, runs tools/exec_review.py, and prints triggers and actions only. READ-ONLY: places nothing, sizes nothing. Triggers: live review, executive review, 30-min review, /review, relay."
+description: "Aegis LIVE REVIEW — the 30-minute executive review during the US session (11 slots 21:31–02:31 SGT on US daylight time, +1h on standard time) plus the 04:05 relay. Reads the day's pma_levels.json, live IBKR prices, the AQE alert notice (tools/aqe_notice.py; Gmail [AQE] only as fallback) and the Tiger book, runs tools/exec_review.py, and prints triggers and actions only. READ-ONLY: places nothing, sizes nothing. Triggers: live review, executive review, 30-min review, /review, relay."
 ---
 
 # LIVE REVIEW (aegis-live)
@@ -20,7 +20,8 @@ Always pass `--watch`, `--state` and `--export` explicitly. The script's default
 ## Inputs this skill depends on (produced elsewhere)
 - `pma_levels.json`: written by `/pma` LEVELS and published at PUBLISH (aegis-core).
 - Market gates `--floor` / `--flip`: from that run's card report, Part 1 Daily Weather (GEX block).
-- Connectors: IBKR `get_price_snapshot` (live price, never FMP delayed), FMP `intraday-1-hour`, Gmail search, Tiger read-only.
+- `aegis/output/alerts/live/latest.json` on `main`: the AQE alert engine's per-cycle notice (contract `aegis-core/contracts/aqe_alert_notice.schema.json`), read by `tools/aqe_notice.py`.
+- Connectors: IBKR `get_price_snapshot` (live price, never FMP delayed), FMP `intraday-1-hour`, Tiger read-only; Gmail search only as the fallback when no notice is published.
 
 ## Hard rules
 - Read-only. Any order goes only through the Tiger preview and the PM's explicit "confirm" (aegis-core staging-gatekeeper law).

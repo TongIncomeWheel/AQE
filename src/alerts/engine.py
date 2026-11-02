@@ -338,6 +338,14 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 summary["heartbeat_error"] = hb["write_error"]
         except Exception as exc:  # noqa: BLE001
             summary["heartbeat_error"] = f"{type(exc).__name__}: {exc}"
+        # The cockpit notice (PM 2026-11-02): one JSON record per cycle, from the
+        # same cards the email rendered. Quiet cycles publish too.
+        try:
+            from src.alerts import notice
+            notice.publish_from_summary(summary)
+        except Exception as exc:  # noqa: BLE001
+            summary["notice_error"] = f"{type(exc).__name__}: {exc}"
+    summary.pop("_notice", None)
     return summary
 
 
@@ -576,6 +584,7 @@ def _run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
             export=export, held_events=_held_events(fresh, fresh_pma),
             meta={**CC.data_meta(pma_doc, pma_stale_doc, export, _now_et),
                   "market_kill": mk_ctx})
+        summary["_notice"] = cc_summary.pop("_notice", None)
         summary["pma_conditions"] = cc_summary
         if cc_summary.get("enabled"):
             _phase(f"conditions evaluated ({cc_summary['rows']} rows, "

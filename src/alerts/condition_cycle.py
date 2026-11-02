@@ -99,9 +99,11 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     if not rows:
         # No condition rows, but held-position events still go out -- in the
         # same single mail (PM 2026-10-06).
+        email = None
         if held_events or just_broke:
             summary["held_events"] = [e.get("ticker") for e in held_events]
-            _maybe_email_digest([], now_et, held_events, meta)
+            email = _maybe_email_digest([], now_et, held_events, meta)
+        summary["_notice"] = _notice_inputs([], held_events, meta, email)
         return summary
     summary["enabled"] = True
     summary["rows"] = len(rows)
@@ -117,6 +119,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         client = FMPClient()
     except Exception:  # noqa: BLE001
         summary["errors"] += 1
+        summary["_notice"] = _notice_inputs([], held_events, meta, None)
         return summary
 
     profiles = CD.ensure_volume_profiles(client, tickers, today)
@@ -274,10 +277,25 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         summary["cards"] = [c[0] for c in cards]
     if held_events:
         summary["held_events"] = [e.get("ticker") for e in held_events]
+    email = None
     if cards or held_events or just_broke:
-        _maybe_email_digest(cards, now_et, held_events, meta)
+        email = _maybe_email_digest(cards, now_et, held_events, meta)
+    summary["_notice"] = _notice_inputs(cards, held_events, meta, email)
 
     return summary
+
+
+def _notice_inputs(cards: list[tuple], held_events: list[dict] | None, meta: dict | None,
+                   email: dict | None) -> dict:
+    """What src/alerts/notice.py needs to write the cockpit notice from the SAME
+    cards the email rendered. Split full cards / one-line U&R rows exactly as
+    build_condition_digest does."""
+    from . import config as C
+    compact = (C.CONDITION_CARD_STYLE or "compact") != "full"
+    setup_rows = [c for c in cards if compact and c[3] == ["UNR_ARMED"]]
+    full = [c for c in cards if c not in setup_rows]
+    return {"cards": full, "setup_rows": setup_rows, "held_events": list(held_events or []),
+            "meta": meta, "email": email}
 
 
 def _num(v) -> float | None:
@@ -297,9 +315,15 @@ def _maybe_email_digest(cards: list[tuple], now_et: datetime,
     fired_states, live), ...] for this cycle; one send for all of them."""
     from . import config as C
     if not C.PMA_CONDITIONS_LIVE:
-        return
+        return {"ok": None, "reason": "shadow mode"}
     try:
-        from .emailer import send_condition_digest
-        send_condition_digest(cards, now_et, held_events, meta)
-    except Exception:  # noqa: BLE001
-        pass
+        from .emailer import send_condition_digest, build_condition_digest
+        res = dict(send_condition_digest(cards, now_et, held_events, meta) or {})
+        if "subject" not in res:
+            try:
+                res["subject"] = build_condition_digest(cards, now_et, held_events, meta)[0]
+            except Exception:  # noqa: BLE001
+                pass
+        return res
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}

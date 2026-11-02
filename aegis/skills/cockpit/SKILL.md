@@ -51,6 +51,18 @@ session."
    - market-hours: the 21:25 liveness + its 30-min self-rearm already speak in
      their own fresh sessions; the cockpit delivers a **single 04:10 SGT** wrap of
      the night's alert activity rather than 30-min chatter here.
+   - **AQE notice (market-hours, 30-min):** the AQE alert engine publishes ONE
+     machine-readable notice per cycle to `aegis/output/alerts/live/latest.json`
+     on `main` (contract `aegis-core/contracts/aqe_alert_notice.schema.json`, the
+     same cards as the `[AQE]` email). A cockpit may arm a 30-min market-hours
+     delivery (22:46 SGT, then every 30 min to 05:16 SGT on US standard time;
+     one hour earlier on daylight time) whose fired turn runs
+     `python3 aegis/plugin/aegis-live/tools/aqe_notice.py render --repo <AQE checkout> --fetch --state $AEGIS_LIVE_DIR/aqe_notice_state.json`
+     and posts the output HERE only when it exits 0 (actionable) or 4 (engine
+     silent — say so first); exit 3 is a quiet cycle, post nothing; exit 5 means
+     no notice is published yet. Read-only render of what the engine already
+     computed; it never recomputes, sizes or places anything (share counts are
+     floor(1R / risk-per-share) arithmetic on `aegis_fund.md one_r_usd`).
    The `send_later` message body must instruct the fired turn to: pull git →
    check the loop's artifact is dated today → render the matching card HERE as the
    reply → **re-arm tomorrow's same delivery** (the loop self-perpetuates, like the
