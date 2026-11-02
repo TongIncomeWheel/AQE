@@ -32,7 +32,8 @@ MODE_LIVE = "live"
 
 # §6: the final-cycle time. close_above/close_below, clv_ge/le and red_bar
 # are only evaluated at or after this ET time (the provisional close).
-FINAL_CYCLE_HOUR_MIN = 15 * 60 + 45  # 15:45 ET
+from . import config as _config  # noqa: E402
+FINAL_CYCLE_HOUR_MIN = _config.FINAL_CYCLE_FROM_MIN  # 15:45 ET -- single source: config
 
 # §4.4: session VWAP is not a gate before this many completed hourly candles.
 VWAP_MIN_CANDLES = 2

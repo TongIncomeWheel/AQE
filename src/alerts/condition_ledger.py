@@ -73,6 +73,59 @@ def append_line(date_str: str, line: dict) -> None:
         pass
 
 
+def _drive_name(date_str: str) -> str:
+    return f"aqe_condition_ledger_{date_str}.jsonl"
+
+
+def _merge_lines(*texts: str | None) -> list[str]:
+    """Union of JSONL lines, exact-duplicate free, ordered by their own `ts`
+    (ISO, same offset) with arrival order as the tie-break. Two pollers (HF +
+    GitHub backstop) and a restarted container all append to the same day."""
+    seen: dict[str, tuple[str, int]] = {}
+    n = 0
+    for t in texts:
+        for raw in (t or "").splitlines():
+            raw = raw.strip()
+            if not raw or raw in seen:
+                continue
+            try:
+                ts = str(json.loads(raw).get("ts") or "")
+            except Exception:  # noqa: BLE001
+                ts = ""
+            seen[raw] = (ts, n)
+            n += 1
+    return sorted(seen, key=lambda k: seen[k])
+
+
+def sync_with_drive(date_str: str) -> dict:
+    """Make the day's ledger survive a container restart (HF disk is ephemeral;
+    the JSONL used to be local-only, so a mid-session rebuild lost the day).
+
+    download Drive copy -> union with the local file -> write local -> upload.
+    Called at the start of a cycle (restores a wiped local file BEFORE the new
+    lines are appended, so the next upload cannot overwrite the Drive copy with
+    a shorter one) and at the end (publishes the cycle's lines). Never raises;
+    a failure is returned for the cycle summary, not swallowed."""
+    try:
+        from src.data import gdrive_uploader
+        if not gdrive_uploader.is_configured():
+            return {"ok": None, "skipped": "drive not configured"}
+        name = _drive_name(date_str)
+        remote = gdrive_uploader.download_text(name)
+        path = _jsonl_path(date_str)
+        local = path.read_text(encoding="utf-8") if path.exists() else ""
+        merged = _merge_lines(remote, local)
+        text = "\n".join(merged) + ("\n" if merged else "")
+        if text != local:
+            LEDGER_DIR.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8")
+        if merged and text != (remote or ""):
+            gdrive_uploader.upload_or_replace(name, text, mime="text/plain")
+        return {"ok": True, "lines": len(merged), "restored": max(0, len(merged) - len(_merge_lines(local)))}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
 def load_lines(date_str: str) -> list[dict]:
     path = _jsonl_path(date_str)
     if not path.exists():
@@ -118,6 +171,14 @@ def write_summary(date_str: str, lines: list[dict] | None = None) -> dict:
         LEDGER_DIR.mkdir(parents=True, exist_ok=True)
         _summary_path(date_str).write_text(json.dumps(summary, indent=2, default=str),
                                            encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+    try:  # the PMA scorecard reads this; keep a copy off the container disk
+        from src.data import gdrive_uploader
+        if gdrive_uploader.is_configured():
+            gdrive_uploader.upload_or_replace(
+                f"aqe_condition_ledger_{date_str}.summary.json",
+                json.dumps(summary, indent=2, default=str), mime="application/json")
     except Exception:  # noqa: BLE001
         pass
     return summary

@@ -284,6 +284,18 @@ def in_market_window() -> bool:
             <= mins <= C.MARKET_CLOSE[0] * 60 + C.MARKET_CLOSE[1])
 
 
+def in_alert_window(now: datetime | None = None) -> bool:
+    """The poller's own gate: MARKET_OPEN to ALERT_WINDOW_END (17:00 ET), Mon-Fri.
+    Runs past the 16:15 `in_market_window` so a final cycle (>= FINAL_CYCLE_FROM_MIN)
+    always happens and close_* triggers confirm every session."""
+    now = now or datetime.now(ZoneInfo("America/New_York"))
+    if now.weekday() >= 5:
+        return False
+    mins = now.hour * 60 + now.minute
+    return (C.MARKET_OPEN[0] * 60 + C.MARKET_OPEN[1]
+            <= mins < C.ALERT_WINDOW_END[0] * 60 + C.ALERT_WINDOW_END[1])
+
+
 def _export_age_days(export: dict):
     """Calendar days between the export's scan date and today (None if unknown)."""
     try:
@@ -312,6 +324,24 @@ def _held_events(fresh: list[dict], fresh_pma: list[dict]) -> list[dict]:
 
 
 def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
+    """One poll cycle plus its heartbeat (see `_run_alert_cycle`). Never raises."""
+    try:
+        summary = _run_alert_cycle(send_email=send_email, force=force)
+    except Exception as exc:  # noqa: BLE001
+        summary = {"ok": False, "in_window": True, "crashed": True,
+                   "reason": f"cycle crashed: {type(exc).__name__}: {exc}"}
+    if summary.get("in_window"):
+        try:
+            from src.alerts import heartbeat
+            hb = heartbeat.beat(summary)
+            if hb.get("write_error"):
+                summary["heartbeat_error"] = hb["write_error"]
+        except Exception as exc:  # noqa: BLE001
+            summary["heartbeat_error"] = f"{type(exc).__name__}: {exc}"
+    return summary
+
+
+def _run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     """One poll cycle. Returns a summary dict; never raises.
 
     force=True bypasses the market-hours gate (used by the UI "Refresh now").
@@ -319,9 +349,10 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     summary = {"ok": False, "checked": 0, "new_triggers": 0,
                "emailed": False, "reason": None, "triggers": [], "export_date": None}
 
-    if not force and not in_market_window():
+    if not force and not (in_market_window() or in_alert_window()):
         summary["reason"] = "outside US market hours"
         return summary
+    summary["in_window"] = True
 
     _t = __import__("time").time
     _t0 = _t()
@@ -379,6 +410,11 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     if pma_doc is not None:
         from src.alerts import pma_levels as PMA
         tickers |= PMA.pma_tickers(pma_doc)
+    # R40 market_kill: the symbol it watches needs a quote this cycle.
+    from src.alerts import pma_levels as PMA_MK
+    mk_read = PMA_MK.read_market_kill(pma_doc)
+    if mk_read["status"] == "ACTIVE":
+        tickers.add(mk_read["kill"]["symbol"])
     # AQE-default condition names (Longlist/Elder outside the committee
     # book) -- single-lens names fail monitored()'s strength gate and
     # would otherwise have no quote for the condition cycle to read.
@@ -403,6 +439,31 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     summary["checked"] = len(quotes)
 
     state = S.load_alert_state()
+
+    # --- market_kill: evaluate, make a confirmed break STICKY for the session ---
+    mk_ctx = {"status": mk_read["status"], "note": mk_read["note"], "plain": mk_read["plain"],
+              "kill": mk_read["kill"], "state": None, "detail": "", "broken": False,
+              "just_broke": False}
+    try:
+        _now = datetime.now(ZoneInfo("America/New_York"))
+        _run = (pma_doc or {}).get("run_date") or _now.date().isoformat()
+        _key = f"BROKEN|{_run}"
+        if mk_read["status"] == "ACTIVE":
+            ev = PMA_MK.evaluate_market_kill(
+                mk_read["kill"], quotes.get(mk_read["kill"]["symbol"]),
+                PMA_MK.is_final_cycle_of_session(_now))
+            mk_ctx.update(state=ev["state"], detail=ev.get("detail", ""))
+            if ev["state"] == "BROKEN" and not S.is_fired(state, "MKTKILL", _key):
+                S.mark_fired(state, "MKTKILL", _key)
+                mk_ctx["just_broke"] = True
+        # once broken it stays broken for the session (an intraday recovery does
+        # not un-void the committee's condition)
+        if S.is_fired(state, "MKTKILL", _key):
+            mk_ctx["broken"] = True
+            mk_ctx["state"] = "BROKEN"
+    except Exception as exc:  # noqa: BLE001 -- loud, never fatal
+        mk_ctx.update(status="MALFORMED", note=f"market_kill evaluation failed: {exc}")
+    summary["market_kill"] = {k: mk_ctx[k] for k in ("status", "state", "broken", "just_broke")}
 
     if C.PMA_LEVELS_ENABLED and pma_doc is None and pma_reason and not S.is_fired(state, "PMA", "STALE"):
         S.mark_fired(state, "PMA", "STALE")
@@ -450,6 +511,19 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
                 continue
             for t in PMA.evaluate_pma(row, q, now_et, is_final, is_first):
                 if not S.is_pma_fired(pma_state, t["level"]):
+                    if mk_ctx["broken"] and PMA.is_entry_trigger(t):
+                        # R40: market condition broken -- no new entry triggers.
+                        # Ledgered (not dropped), marked fired so it logs once.
+                        S.mark_pma_fired(pma_state, t["level"])
+                        try:
+                            from src.alerts.ledger import build_entry
+                            e = build_entry(t, row, q, {})
+                            e["suppressed_by"] = "market_kill"
+                            ledger_rows.append(e)
+                        except Exception:  # noqa: BLE001
+                            pass
+                        summary["market_kill"]["suppressed"] = summary["market_kill"].get("suppressed", 0) + 1
+                        continue
                     fresh_pma.append(t)
                     S.mark_pma_fired(pma_state, t["level"])
                     try:
@@ -500,7 +574,8 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
             pma_doc, quotes, _now_et,
             run_date=((pma_doc or {}).get("run_date") or _now_et.date().isoformat()),
             export=export, held_events=_held_events(fresh, fresh_pma),
-            meta=CC.data_meta(pma_doc, pma_stale_doc, export, _now_et))
+            meta={**CC.data_meta(pma_doc, pma_stale_doc, export, _now_et),
+                  "market_kill": mk_ctx})
         summary["pma_conditions"] = cc_summary
         if cc_summary.get("enabled"):
             _phase(f"conditions evaluated ({cc_summary['rows']} rows, "

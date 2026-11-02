@@ -50,6 +50,29 @@ def _loop() -> None:
         time.sleep(interval)
 
 
+def _watchdog() -> None:
+    """Dead-man alarm for a HUNG cycle: the loop thread can block inside a cycle
+    (the 2026-08-06 failure) without dying. This thread checks the Drive
+    heartbeat every 5 min and emails once a day if the primary has not completed
+    a cycle for AQE_DEADMAN_MINUTES inside the window. A dead PROCESS is covered
+    by scripts/alert_deadman.py and the backstop's pre-check, which run elsewhere."""
+    global _last_deadman
+    while True:
+        time.sleep(300)
+        try:
+            from src.alerts import heartbeat
+            _last_deadman = heartbeat.check_and_alarm()
+        except Exception as exc:  # noqa: BLE001
+            _last_deadman = {"stale": None, "reason": f"watchdog error: {exc}"}
+
+
+_last_deadman: dict | None = None
+
+
+def last_deadman() -> dict | None:
+    return _last_deadman
+
+
 def start_alert_job() -> bool:
     """Start the alert poller once per process. Returns True if it started.
 
@@ -69,5 +92,6 @@ def start_alert_job() -> bool:
         if _started:
             return False
         threading.Thread(target=_loop, daemon=True, name="aqe-alert-job").start()
+        threading.Thread(target=_watchdog, daemon=True, name="aqe-alert-watchdog").start()
         _started = True
         return True

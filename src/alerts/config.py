@@ -73,6 +73,21 @@ MIN_DIGEST_GAP_MINUTES = int(_f("AQE_MIN_DIGEST_GAP_MINUTES", 12))
 MARKET_OPEN = (9, 45)    # 09:45 ET
 MARKET_CLOSE = (16, 15)  # 16:15 ET
 
+# Close-based words/triggers (close_above / close_below) and the after-close
+# digest confirm only in a "final" cycle (>= FINAL_CYCLE_FROM_MIN, 15:45 ET).
+# ONE definition: the condition evaluator already used 15:45 while the legacy PMA
+# path used 16:00, so the two disagreed. The poller used to stop at 16:15; with
+# 30-min cycles a cycle drifted out of the final slot on some sessions, and the
+# legacy path (16:00) missed ~50% -- 106 of 201 triggers in the 2026-11-02 file
+# are close_*. ALERT_WINDOW_END keeps the poller alive to 16:45 ET so the final
+# span [15:45, 16:45) is 60 min: always at least one cycle at 30 min cadence plus
+# drift (tests/test_alert_final_cycle.py enforces the invariant). Only the
+# poller's own gate uses it; `in_market_window()` (UI badge, VALEN) is unchanged.
+# FMP quotes are 15 min delayed: a 15:45 cycle confirms on the ~15:30 print, a
+# 16:15+ cycle on the true close -- AQE_FINAL_CYCLE_FROM_MIN=975 selects that (PM call).
+FINAL_CYCLE_FROM_MIN = int(_f("AQE_FINAL_CYCLE_FROM_MIN", 15 * 60 + 45))
+ALERT_WINDOW_END = (16, 45)   # 16:45 ET
+
 
 # --- PMA committee levels (AQE Handoff: PMA Live Alerts, 2026-09-30) -------
 def _b(env: str, default: bool) -> bool:
@@ -150,3 +165,12 @@ CONDITION_DEFAULT_MAX_LEVEL_PCT = _f("CONDITION_DEFAULT_MAX_LEVEL_PCT", 2.0)
 # Hard ceiling on default-watched names per cycle (FMP: one 15-min bar
 # pull per name per cycle, 80 calls/min on cloud IPs).
 CONDITION_MAX_WATCHED = int(_f("CONDITION_MAX_WATCHED", 120))
+
+
+# --- poller heartbeat + dead-man alarm ---
+# A cycle that hangs or a thread that dies used to be silent (the HTTP keepalive
+# proves the web server, not the poller). Each in-window cycle writes
+# `aqe_alert_heartbeat.json`; if none is seen for DEADMAN_MINUTES during the
+# window, one alarm goes out per day. Cadence is 30 min + cycle time (~1-6 min),
+# so 45 leaves one missed cycle of margin before alarming.
+DEADMAN_MINUTES = int(_f("AQE_DEADMAN_MINUTES", 45))

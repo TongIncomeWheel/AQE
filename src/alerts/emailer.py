@@ -1875,6 +1875,29 @@ def _data_line(meta: dict | None) -> str | None:
     return ("Data: " + " · ".join(parts)) if parts else None
 
 
+def _market_line(meta: dict | None) -> str | None:
+    """R40: the market condition in the digest header. Broken is the loudest
+    thing in the mail; 'not watched' is always said (never a silent absence)."""
+    mk = (meta or {}).get("market_kill")
+    if not mk or (meta or {}).get("pma_missing"):
+        return None
+    st, plain, kill = mk.get("status"), mk.get("plain"), mk.get("kill") or {}
+    if st == "ACTIVE":
+        if mk.get("broken"):
+            why = f" ({mk['detail']})" if mk.get("detail") else ""
+            return (f"⛔ MARKET CONDITION BROKEN — take no new triggers: {plain}{why}. "
+                    "New entry alerts are suppressed for the rest of this session; "
+                    "stops, exits and failed-setup alerts on names you hold continue.")
+        if mk.get("state") == "WARN":
+            return (f"⚠ Market watch: {plain} — {mk.get('detail')}; confirms only on the close. "
+                    "Treat new triggers with care.")
+        if mk.get("state") == "NO_QUOTE":
+            return (f"⚠ Market condition NOT checked this cycle ({mk.get('detail')}): {plain}")
+        return f"Market condition (holding): {plain}"
+    why = mk.get("note") or "no reason given"
+    return f"⚠ No market condition is being watched: {why}"
+
+
 def build_condition_digest(cards: list[tuple], now_et,
                            held_events: list[dict] | None = None,
                            meta: dict | None = None) -> tuple[str, str, str]:
@@ -1906,6 +1929,14 @@ def build_condition_digest(cards: list[tuple], now_et,
     subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
     header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
     data_line = _data_line(meta)
+    mk_line = _market_line(meta)
+    mk_broken = bool(((meta or {}).get("market_kill") or {}).get("broken"))
+    if data_line and mk_line:
+        data_line = data_line + "\n" + mk_line
+    elif mk_line:
+        data_line = mk_line
+    if mk_broken:
+        subject = subject.replace("[AQE] ", "[AQE] ⛔ MARKET BROKEN · ", 1)
     if meta and meta.get("pma_run") and meta.get("aqe_date"):
         subject += f" · PMA {meta['pma_run'][5:]} · AQE {meta['aqe_date'][5:]}"
 
@@ -1918,7 +1949,7 @@ def build_condition_digest(cards: list[tuple], now_et,
                 if rows else "")
              + f"\n\n{_DISCLAIMER}")
     html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}"
-            + (f"<br>{data_line}" if data_line else "") + "</div>"
+            + (f"<br>{data_line}".replace("\n", "<br>") if data_line else "") + "</div>"
             + "".join(_card_html(c) for c in built)
             + ((f"<div style='border-left:4px solid #b8860b;padding:8px 12px;background:#fafafa;"
                 f"border-radius:6px;color:#1a1a1a;margin-bottom:10px'><b style='font-size:14px'>"
@@ -1955,7 +1986,7 @@ def send_condition_digest(cards: list[tuple], now_et,
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend configured"}
-    if not cards and not held_events:
+    if not cards and not held_events and not ((meta or {}).get("market_kill") or {}).get("just_broke"):
         return {"ok": False, "reason": "no cards this cycle"}
     subject, plain, html = build_condition_digest(cards, now_et, held_events, meta)
     if cfg["resend_key"]:
@@ -1988,6 +2019,29 @@ def send_stale_pma_notice(reason: str) -> dict:
            "<p style='color:#666'>The heartbeat alerts (MOVE/BOS/NEAR_*) are unaffected.</p>"
            "<p style='color:#999;font-size:11px'>DRAFT — PM approval required. "
            "Nothing is staged, nothing is armed.</p>")
+    if cfg["resend_key"]:
+        return _send_resend(cfg, subject, plain, html)
+    return _send_smtp(cfg, subject, plain, html)
+
+
+def send_deadman_alarm(reason: str) -> dict:
+    """Failure-only mail: the alert poller has stopped cycling inside the US
+    window. One per day (heartbeat.check_and_alarm owns the dedup). Not part of
+    the normal digest -- it only exists when something is broken."""
+    cfg = _cfg()
+    if not (cfg["resend_key"] or cfg["smtp_pw"]):
+        return {"ok": False, "reason": "no email backend configured"}
+    subject = "[AQE] ALERT POLLER STOPPED — levels are NOT being watched"
+    plain = (f"{subject}\n\n{reason}\n\n"
+             "No new alerts will arrive until the poller is back. Check the HF Space "
+             "(Logs / restart), or run the 'AQE live alerts' workflow manually "
+             "(workflow_dispatch, force).\n\n"
+             "Alerts only — nothing is staged, nothing is armed.")
+    html = (f"<h3 style='color:#b00020'>{subject}</h3><p>{reason}</p>"
+            "<p>No new alerts will arrive until the poller is back. Check the HF Space "
+            "(Logs / restart), or run the <b>AQE live alerts</b> workflow manually "
+            "(workflow_dispatch, force).</p>"
+            "<p style='color:#999;font-size:11px'>Alerts only — nothing is staged, nothing is armed.</p>")
     if cfg["resend_key"]:
         return _send_resend(cfg, subject, plain, html)
     return _send_smtp(cfg, subject, plain, html)

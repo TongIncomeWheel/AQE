@@ -213,7 +213,8 @@ def evaluate_conditions(row: dict, live: dict, now_et) -> dict | None:
     if not conditions:
         return None
 
-    is_final = (now_et.hour * 60 + now_et.minute) >= S.FINAL_CYCLE_HOUR_MIN
+    from src.alerts import config as _C
+    is_final = (now_et.hour * 60 + now_et.minute) >= _C.FINAL_CYCLE_FROM_MIN
     ctx = dict(live)
     ctx["is_final_cycle"] = is_final
 
