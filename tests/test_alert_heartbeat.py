@@ -62,8 +62,8 @@ def test_alarm_sent_once_per_day(monkeypatch, tmp_path):
     monkeypatch.setattr(H, "load", lambda: (dict(store), None))
     monkeypatch.setattr(H, "_save", lambda hb: store.update(hb))
     sent = []
-    import src.alerts.emailer as EM
-    monkeypatch.setattr(EM, "send_deadman_alarm", lambda r: sent.append(r) or {"ok": True})
+    import src.alerts.notice as N
+    monkeypatch.setattr(N, "publish_alarm", lambda r, **k: sent.append(r) or {"publish": {"drive": "ok"}})
     a = H.check_and_alarm(now_utc=_utc(16, 0))
     b = H.check_and_alarm(now_utc=_utc(16, 10))
     assert a["alarm_sent"] and not b["alarm_sent"] and len(sent) == 1 and b["stale"]
@@ -73,10 +73,15 @@ def test_failed_send_does_not_mark_the_day_so_it_retries(monkeypatch):
     store = {"last_primary_utc": _utc(14, 50).isoformat()}
     monkeypatch.setattr(H, "load", lambda: (dict(store), None))
     monkeypatch.setattr(H, "_save", lambda hb: store.update(hb))
-    import src.alerts.emailer as EM
-    monkeypatch.setattr(EM, "send_deadman_alarm", lambda r: {"ok": False, "reason": "no backend"})
+    import src.alerts.notice as N
+    monkeypatch.setattr(N, "publish_alarm", lambda r, **k: {"publish": {"drive": "failed: x", "github_latest": "failed: y"}})
     st = H.check_and_alarm(now_utc=_utc(16, 0))
-    assert not st["alarm_sent"] and "alarm_day" not in store and st["alarm_detail"] == "no backend"
+    assert not st["alarm_sent"] and "alarm_day" not in store and "not published" in st["alarm_detail"]
+
+
+def test_no_email_backend_is_ever_used_for_the_alarm():
+    import src.alerts.emailer as EM
+    assert not hasattr(EM, "send_deadman_alarm")
 
 
 def test_engine_wrapper_beats_only_when_gate_passed(monkeypatch):

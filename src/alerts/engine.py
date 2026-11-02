@@ -385,8 +385,11 @@ def _run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
 
     mon = monitored(export)
     if not mon:
-        summary["reason"] = "no monitored tickers"
-        return summary
+        # PM/conductor 2026-11-02: an export with no Longlist/Elder/held names
+        # used to END the cycle here -- before the committee's levels file was
+        # even loaded, so held-name stops and committee rows went unwatched.
+        # AQE's own monitored set being empty is a note, never a reason to stop.
+        summary["note"] = "no AQE-monitored names in the export; committee + held rows still watched"
 
     # ---- PMA committee levels (AQE Handoff: PMA Live Alerts, 2026-09-30) --
     # Loaded here, BEFORE the quote fetch, so every non-WATCH PMA ticker

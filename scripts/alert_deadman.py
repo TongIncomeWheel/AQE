@@ -1,8 +1,8 @@
 """Dead-man check for the alert poller, runnable from anywhere that has the Drive
 credentials (a scheduled routine, the GitHub workflow_dispatch, a laptop).
 
-    python -m scripts.alert_deadman          # check; email once/day if stale
-    python -m scripts.alert_deadman --dry    # check only, never email
+    python -m scripts.alert_deadman          # check; publish ONE alarm notice/day if stale (no email)
+    python -m scripts.alert_deadman --dry    # check only, publish nothing
 
 Exit 1 when the primary poller is stale inside the US window (so a CI step can
 fail loudly), 0 otherwise. Reads `aqe_alert_heartbeat.json`; a missing/unreadable

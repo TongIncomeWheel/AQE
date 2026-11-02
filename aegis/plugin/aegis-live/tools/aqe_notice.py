@@ -293,15 +293,24 @@ def cmd_render(a) -> int:
         print(f"No AQE notice published yet ({problem}).")
         return 5
     now = _parse_utc(a.now) if a.now else datetime.now(timezone.utc)
+    sp = state_path(a.state)
+    st = load_state(sp)
+    sess, seq = doc.get("session_date"), doc.get("seq")
+    key = f"{sess}|{seq}"
+    alarm = doc.get("alarm") if isinstance(doc.get("alarm"), dict) else None
+    if alarm:
+        # The dead-man ALARM record (never an email): print once, exit 4.
+        if st.get("last_key") == key:
+            return 3
+        st.update({"last_key": key, "session": sess, "seq": seq})
+        save_state(sp, st)
+        print(_clean(str(alarm.get("text") or f"AQE ALERT ENGINE SILENT: {alarm.get('reason') or 'no reason given'}")))
+        return 4
     stale, age = staleness(doc, now, a.max_age_min)
     if stale:
         ago = f"{age:.0f} min ago" if age is not None else "time unreadable"
         print(f"AQE alert engine silent: last cycle {_sgt_hhmm(doc)} SGT ({ago}).")
         return 4
-    sp = state_path(a.state)
-    st = load_state(sp)
-    sess, seq = doc.get("session_date"), doc.get("seq")
-    key = f"{sess}|{seq}"
     if st.get("last_key") == key:
         return 3
     first = st.get("session") != sess

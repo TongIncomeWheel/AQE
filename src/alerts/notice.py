@@ -208,6 +208,35 @@ def build(*, cards: list[tuple] | None, setup_rows: list[tuple] | None,
     }
 
 
+def build_alarm(reason: str, now_et: datetime, seq: int, source: str, last_primary_utc=None) -> dict:
+    """A distinct ALARM record in the notice feed (PM 2026-11-02: the dead-man
+    alarm is NOT an email). Same schema, `alarm` block set, actionable, no items.
+    The reader prints it as the engine-silent headline (exit 4)."""
+    sgt = now_et.astimezone(_SGT)
+    return {
+        "schema": SCHEMA, "seq": seq, "session_date": now_et.date().isoformat(),
+        "cycle_at_utc": now_et.astimezone(timezone.utc).isoformat(timespec="seconds"),
+        "cycle_at_sgt": sgt.strftime("%Y-%m-%d %H:%M SGT"), "cycle_at_et": now_et.strftime("%H:%M ET"),
+        "source": source, "data": {}, "market": {"status": None, "state": None, "broken": False, "just_broke": False},
+        "actionable": True, "items": [], "setups_forming": [], "suppressed": 0, "quiet_line": None,
+        "email": {"sent": None, "subject": None}, "engine": {"reason": reason},
+        "alarm": {"kind": "engine_silent", "reason": reason, "last_primary_utc": last_primary_utc,
+                  "text": f"AQE ALERT ENGINE SILENT: {reason}. Levels are NOT being watched. "
+                          "Check the HF Space (Logs / restart) or run the 'AQE live alerts' workflow by hand (force)."},
+    }
+
+
+def publish_alarm(reason: str, last_primary_utc=None, now_et: datetime | None = None,
+                  source: str | None = None) -> dict:
+    """Dead-man alarm into the notice feed. Never raises; returns publish status."""
+    now_et = now_et or datetime.now(_ET)
+    if source is None:
+        from src.alerts.heartbeat import source_label
+        source = source_label()
+    doc = build_alarm(reason, now_et, _next_seq(now_et.date().isoformat()), source, last_primary_utc)
+    return {"notice": doc, "publish": publish(doc)}
+
+
 # ---------------------------------------------------------------------------
 # Publish
 # ---------------------------------------------------------------------------

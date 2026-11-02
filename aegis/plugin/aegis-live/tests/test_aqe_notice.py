@@ -147,3 +147,12 @@ def test_one_r_read_from_fund_file(tmp_path):
     (tmp_path / N.FUND_PATH).write_text("x: 1\none_r_usd: 700\n", encoding="utf-8")
     assert N.one_r_from_fund(str(tmp_path)) == 700.0
     assert N.one_r_from_fund(str(tmp_path / "missing")) == 620.0
+
+
+def test_alarm_record_prints_once_and_exits_4(tmp_path, capsys):
+    doc = base(actionable=True, seq=9, alarm={"kind": "engine_silent", "reason": "no completed cycle for 52 min",
+                                             "text": "AQE ALERT ENGINE SILENT: no completed cycle for 52 min. Levels are NOT being watched."})
+    rc, out = run(tmp_path, doc, capsys)
+    assert rc == 4 and out.startswith("AQE ALERT ENGINE SILENT")
+    rc, out = run(tmp_path, doc, capsys)        # same record again: already shown
+    assert rc == 3 and out == ""

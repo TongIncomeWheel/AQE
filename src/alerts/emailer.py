@@ -2024,29 +2024,6 @@ def send_stale_pma_notice(reason: str) -> dict:
     return _send_smtp(cfg, subject, plain, html)
 
 
-def send_deadman_alarm(reason: str) -> dict:
-    """Failure-only mail: the alert poller has stopped cycling inside the US
-    window. One per day (heartbeat.check_and_alarm owns the dedup). Not part of
-    the normal digest -- it only exists when something is broken."""
-    cfg = _cfg()
-    if not (cfg["resend_key"] or cfg["smtp_pw"]):
-        return {"ok": False, "reason": "no email backend configured"}
-    subject = "[AQE] ALERT POLLER STOPPED — levels are NOT being watched"
-    plain = (f"{subject}\n\n{reason}\n\n"
-             "No new alerts will arrive until the poller is back. Check the HF Space "
-             "(Logs / restart), or run the 'AQE live alerts' workflow manually "
-             "(workflow_dispatch, force).\n\n"
-             "Alerts only — nothing is staged, nothing is armed.")
-    html = (f"<h3 style='color:#b00020'>{subject}</h3><p>{reason}</p>"
-            "<p>No new alerts will arrive until the poller is back. Check the HF Space "
-            "(Logs / restart), or run the <b>AQE live alerts</b> workflow manually "
-            "(workflow_dispatch, force).</p>"
-            "<p style='color:#999;font-size:11px'>Alerts only — nothing is staged, nothing is armed.</p>")
-    if cfg["resend_key"]:
-        return _send_resend(cfg, subject, plain, html)
-    return _send_smtp(cfg, subject, plain, html)
-
-
 # ---------------------------------------------------------------------------
 # Backends
 # ---------------------------------------------------------------------------

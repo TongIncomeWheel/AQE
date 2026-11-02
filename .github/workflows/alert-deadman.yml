@@ -4,7 +4,8 @@ name: AQE alert dead-man check
 # sit in the same GitHub cron queue that drops most of alerts.yml's runs, so it
 # is deliberately NOT scheduled; dispatch it from a Claude-scheduled routine or by
 # hand. Reads the Drive heartbeat; emails once a day if the in-app poller has not
-# completed a cycle for 45 min inside the US window. Alerts only.
+# completed a cycle for 45 min inside the US window -- as an ALARM record in the
+# cockpit notice feed (aegis/output/alerts/live/latest.json), never an email.
 on:
   workflow_dispatch: {}
 
@@ -24,7 +25,5 @@ jobs:
           GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
           GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          AQE_ALERT_FROM: ${{ secrets.AQE_ALERT_FROM }}
-          AQE_ALERT_TO: ${{ secrets.AQE_ALERT_TO }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -m scripts.alert_deadman

@@ -5,7 +5,8 @@ the web server answers, not that the alert loop is cycling (2026-08-06: cycles
 hung with no trail). Every in-window cycle writes `aqe_alert_heartbeat.json`
 (Drive + local mirror). `deadman_status` is pure; `check_and_alarm` sends ONE
 alarm per day when the PRIMARY poller has not completed a cycle for
-`C.DEADMAN_MINUTES` while the alert window is open.
+`C.DEADMAN_MINUTES` while the alert window is open -- as an ALARM record in
+the cockpit notice feed (src/alerts/notice.py), never an email (PM 2026-11-02).
 
 The GitHub backstop's own beats are recorded separately (`source == "gha"`) and
 never count as the primary being alive -- a backstop that fires once a day must
@@ -147,7 +148,9 @@ def deadman_status(hb: dict | None, now_utc: datetime, now_et: datetime | None =
 
 
 def check_and_alarm(send: bool = True, now_utc: datetime | None = None) -> dict:
-    """Read the heartbeat, decide, and (once per ET day) email the alarm."""
+    """Read the heartbeat, decide, and (once per ET day) publish the ALARM
+    record into the notice feed (PM 2026-11-02: never an email). The cockpit
+    reader prints it as the engine-silent headline."""
     now_utc = now_utc or datetime.now(timezone.utc)
     hb, problem = load()
     st = deadman_status(hb, now_utc, load_problem=problem)
@@ -156,12 +159,14 @@ def check_and_alarm(send: bool = True, now_utc: datetime | None = None) -> dict:
     if st["stale"] and (hb or {}).get("alarm_day") != today:
         if send:
             try:
-                from src.alerts.emailer import send_deadman_alarm
-                res = send_deadman_alarm(st["reason"])
-                st["alarm_sent"] = bool(res.get("ok"))
-                st["alarm_detail"] = None if res.get("ok") else res.get("reason")
+                from src.alerts import notice
+                res = notice.publish_alarm(st["reason"], last_primary_utc=st.get("last_primary_utc"))
+                pub = res.get("publish") or {}
+                ok = any(v == "ok" for k, v in pub.items() if k in ("drive", "github_latest"))
+                st["alarm_sent"] = ok
+                st["alarm_detail"] = None if ok else f"alarm notice not published: {pub}"
             except Exception as exc:  # noqa: BLE001
-                st["alarm_detail"] = f"alarm send failed: {exc}"
+                st["alarm_detail"] = f"alarm publish failed: {exc}"
         if st["alarm_sent"]:
             hb = dict(hb or {})
             hb["alarm_day"] = today

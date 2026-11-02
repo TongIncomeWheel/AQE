@@ -159,10 +159,28 @@ def test_end_to_end_writer_to_cockpit_reader(tmp_path):
     f.write_text(json.dumps(n, default=str))
     tool = "aegis/plugin/aegis-live/tools/aqe_notice.py"
     r = subprocess.run([sys.executable, tool, "render", "--file", str(f),
-                        "--state", str(tmp_path / "st.json"), "--one-r", "620"],
+                        "--state", str(tmp_path / "st.json"), "--one-r", "620",
+                        "--now", "2026-11-02T15:20:00+00:00"],      # 4 min after the cycle
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     out = r.stdout
     assert "HPE" in out and "MP" in out and "DELL" in out
     assert "~302 sh" in out            # floor(620 / 2.05)
     assert "AQE default" not in out and "hourly close" not in out
+
+
+def test_alarm_record_is_a_distinct_actionable_notice_with_no_items(monkeypatch, tmp_path):
+    monkeypatch.setattr(N, "LOCAL_DIR", tmp_path)
+    monkeypatch.setattr(N, "_drive", lambda: None)
+    monkeypatch.setattr(N, "publish", lambda d: {"local": "ok", "drive": "ok"})
+    res = N.publish_alarm("no completed cycle for 52 min", last_primary_utc="2026-11-02T14:10:00+00:00",
+                          now_et=NOW, source="gha")
+    d = res["notice"]
+    assert d["schema"] == N.SCHEMA and d["actionable"] and d["items"] == [] and d["alarm"]["kind"] == "engine_silent"
+    assert "NOT being watched" in d["alarm"]["text"] and d["seq"] == 1
+    # and the reader shows it as the silent headline, exit 4
+    f = tmp_path / "alarm.json"
+    f.write_text(json.dumps(d, default=str))
+    r = subprocess.run([sys.executable, "aegis/plugin/aegis-live/tools/aqe_notice.py", "render", "--file", str(f),
+                        "--state", str(tmp_path / "st.json")], capture_output=True, text=True)
+    assert r.returncode == 4 and r.stdout.startswith("AQE ALERT ENGINE SILENT")

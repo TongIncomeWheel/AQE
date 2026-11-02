@@ -31,7 +31,7 @@ from __future__ import annotations
 
 from . import config as C
 
-DEFAULT_CLASS = {"longlist": "AQE_LONGLIST", "elder": "AQE_ELDER"}
+DEFAULT_CLASS = {"longlist": "AQE_LONGLIST", "elder": "AQE_ELDER", "daily_list": "AQE_DAILY_LIST"}
 _SUFFIX = " (AQE default)"
 
 
@@ -164,7 +164,8 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
         if tk in covered or tk in pma_tickers or tk in held or rec.get("held"):
             continue
         src = ("longlist" if rec.get("on_longlist") and "longlist" in want
-               else "elder" if rec.get("on_elder") and "elder" in want else None)
+               else "elder" if rec.get("on_elder") and "elder" in want
+               else "daily_list" if "daily_list" in want else None)
         if not src:
             continue
         cond = build_default_conditions(rec)

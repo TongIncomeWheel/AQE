@@ -53,7 +53,7 @@ def _loop() -> None:
 def _watchdog() -> None:
     """Dead-man alarm for a HUNG cycle: the loop thread can block inside a cycle
     (the 2026-08-06 failure) without dying. This thread checks the Drive
-    heartbeat every 5 min and emails once a day if the primary has not completed
+    heartbeat every 5 min and publishes ONE alarm record a day into the cockpit notice feed (never an email) if the primary has not completed
     a cycle for AQE_DEADMAN_MINUTES inside the window. A dead PROCESS is covered
     by scripts/alert_deadman.py and the backstop's pre-check, which run elsewhere."""
     global _last_deadman

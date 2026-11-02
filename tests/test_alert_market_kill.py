@@ -198,3 +198,16 @@ def test_missing_symbol_quote_is_no_quote_not_intact(monkeypatch):
     _wire(monkeypatch, doc(rows=ROWS, market_kill=MK), q, meta)
     E.run_alert_cycle(send_email=False)
     assert meta[0]["market_kill"]["state"] == "NO_QUOTE" and not meta[0]["market_kill"]["broken"]
+
+
+def test_empty_export_still_watches_committee_and_held_rows(monkeypatch):
+    """PM/conductor 2026-11-02 (7): an export with no Longlist/Elder/held names
+    used to end the cycle at 'no monitored tickers' BEFORE the levels file was
+    loaded, so held-name stops went unwatched."""
+    meta = []
+    st, ledgered = _wire(monkeypatch, doc(rows=ROWS), QUOTES, meta)
+    monkeypatch.setattr(E, "load_export", lambda: {"date": "2026-11-02", "held_positions": [], "daily_list": []})
+    s = E.run_alert_cycle(send_email=False)
+    kinds = {(t["ticker"], t["kind"]) for t in s["triggers"]}
+    assert s["ok"] and ("OWN", "trade_below") in kinds and ("BUY", "trade_above") in kinds
+    assert "no AQE-monitored names" in s["note"] and meta  # condition cycle still ran

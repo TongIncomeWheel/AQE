@@ -141,3 +141,38 @@ def test_disabled_flag_or_no_export_yields_nothing(monkeypatch):
 def test_default_tickers_feeds_the_quote_fetch():
     ex = _export(_rec("LL1", 100.0, lph=103.0, longlist=True))
     assert D.default_tickers(ex, None) == {"LL1"}
+
+
+# ------------------------------------------------ daily_list source (PM/conductor 2026-11-02)
+
+def test_daily_list_source_is_off_by_default_and_on_by_env(monkeypatch):
+    from src.alerts import config as C
+    off_list = _rec("ZZZ", 100.0, lph=103.0)                 # on neither list
+    ex = _export(off_list)
+    assert D.synthesize_rows(ex, None) == []
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "longlist,elder,daily_list")
+    rows = D.synthesize_rows(ex, None)
+    assert [r["ticker"] for r in rows] == ["ZZZ"] and rows[0]["class"] == "AQE_DAILY_LIST" and rows[0]["aqe_default"]
+
+
+def test_daily_list_source_cost_count(monkeypatch):
+    """The cost of widening, COUNTED on the 2026-11-02 export (not guessed).
+    Widening the source to the full daily_list adds only the names that are
+    on neither Longlist nor Elder (2 today); the binding gate is
+    build_default_conditions (a usable line above the close), not list
+    membership: 257 names -> 76 usable -> 66 outside the committee/held set."""
+    import json
+    from pathlib import Path
+    from src.alerts import config as C
+    p = Path("aegis/output/aqe_daily_export.json")
+    if not p.exists():
+        pytest.skip("export not in this checkout")
+    ex = json.loads(p.read_text(encoding="utf-8"))
+    if ex.get("date") != "2026-11-02":
+        pytest.skip("count was taken on the 2026-11-02 export")
+    monkeypatch.setattr(C, "CONDITION_MAX_WATCHED", 10000)
+    narrow = len(D.default_tickers(ex, None))
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "longlist,elder,daily_list")
+    wide = len(D.default_tickers(ex, None))
+    assert wide - narrow <= 2 and wide == len([r for r in ex["daily_list"]
+                                               if D.build_default_conditions(r) and not r.get("held")])
