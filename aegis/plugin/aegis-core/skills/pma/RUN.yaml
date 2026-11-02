@@ -24,6 +24,7 @@ updated: 2026-11-01   # contract fixes from the independent review of 2026-11-01
 # (ratify-count: 0 objections AGREED / 1-3 CONTESTED / >= 4 of 7 DROPPED). Code counts; voices judge.
 parameters:
   deliberation_cap: 20
+  desk_session: session_012zhnXnQA5r7e7u5j5RDBqe     # the PMA desk: where the PM reads the daily output (PM 2026-11-02)
   deciders: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
   qa_seat: steenbarger
   shortlist_cap: 6
@@ -54,7 +55,7 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json publish_receipt.json"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -583,6 +584,19 @@ steps:
       The objection is a FILE -- aegis/output/pma/run/<date>/PM_OBJECTION.md on main, any content -- or a message in
       the project. `check.py chain` FAILs when that file exists, so the 18:00 gate refuses the default load; the REPORT
       line tells the PM the path. Nothing in the run writes or deletes that file.
+    desk_done_message: >
+      PM 2026-11-02 ("the report appears on the desk automatically each day; the conductor needs a done message to
+      the desk"). AFTER the FINAL checkpoint has reached origin/main and `check.py chain` has run, send ONE short
+      message with `send_message` to parameters.desk_session (the PMA desk). Content, plain text, no attachment:
+      "PMA DONE <date>. Chain: <the check.py chain verdict line, Healthy or the FAIL lines>. Slate <n>; AGREED <a>,
+      CONTESTED <c>, PASS <p>. Files on main under aegis/output/pma/run/<date>/: pma_cards_<date>.html,
+      pma_brief_<date>.md, run_notes.md. Est tokens <n>, wall clock <hh:mm>." The desk does NOT trust the message:
+      it re-reads main, re-runs the chain check and then shows the Cards and brief to the PM. Therefore the
+      Cards HTML, the brief and run_notes.md MUST be in the final checkpoint's --paths (add pma_cards_<date>.html
+      pma_brief_<date>.md run_notes.md to the final `git_sync.py` call) -- the desk renders from main, not from your
+      disk. If the send fails, say so in your DONE push to the PM; never retry in a loop. When the run STOPS stuck,
+      send the same one-liner starting "PMA STUCK <date>: <step>, <reason>" so the desk can tell the PM which
+      step is waiting.
     must_also: >
       Write publish_receipt.json in the run dir: {pushed: [paths], read_back: {path: sha_match}, at} -- the tick
       checks THAT file; the remote paths are declared and proven by the read-back, not by a local existence test.
