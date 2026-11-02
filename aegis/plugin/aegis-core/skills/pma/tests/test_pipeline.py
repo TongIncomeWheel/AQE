@@ -677,6 +677,28 @@ def test_the_expensive_steps_are_checkpointed(td):
         check("THE LOOP on the card carries --packet validation", "--packet" in card)
 
 
+def test_the_conductor_tells_the_desk_when_done_and_ships_what_the_desk_shows(td):
+    """PM 2026-11-02: "the report appears on the desk automatically each day; the conductor needs a done message
+    to the desk." The desk renders FROM MAIN (it never trusts the relay and never reads the conductor's disk), so
+    the Cards HTML, the brief and the run notes must be in the checkpoint's paths, the desk session must be a
+    declared parameter, and PUBLISH must carry the instruction to send DONE (and STUCK) after the final push."""
+    sys.path.insert(0, TOOLS)
+    import importlib, preflight_run
+    importlib.reload(preflight_run)
+    M = preflight_run.load_yaml("RUN.yaml")
+    ds = str((M.get("parameters") or {}).get("desk_session") or "")
+    check("RUN.yaml declares the desk session", ds.startswith("session_"), ds)
+    tool = (M.get("checkpoint") or {}).get("tool") or ""
+    for name in ("pma_cards_<date>.html", "pma_brief_<date>.md", "run_notes.md"):
+        check(f"the checkpoint ships {name} so the desk can render from main", name in tool, tool[-160:])
+    pub = [s for s in M["steps"] if s["name"] == "PUBLISH"][0]
+    msg = str(pub.get("desk_done_message") or "")
+    check("PUBLISH tells the conductor to message the desk after the final checkpoint",
+          "send_message" in msg and "PMA DONE" in msg and "AFTER the FINAL checkpoint" in msg, msg[:120])
+    check("a STUCK run tells the desk too", "PMA STUCK" in msg)
+    check("the desk re-reads main instead of trusting the relay", "does NOT trust the message" in msg)
+
+
 def test_fading_is_not_a_gate(td):
     """R13. mp_state FADING = 'momentum score not higher than 3 bars ago' (src/engines/mp.py).
     MSTR sat at mp 89 and read FADING on 2026-09-19; the AQE_LEADER door required STRONG."""
@@ -2669,6 +2691,7 @@ def main():
                    test_a_seat_that_invents_its_numbers_is_refused,
                    test_the_expensive_steps_are_checkpointed,
                    test_a_position_the_pm_owns_reaches_every_seat,
+                   test_the_conductor_tells_the_desk_when_done_and_ships_what_the_desk_shows,
                    test_fading_is_not_a_gate,
                    test_a_momentum_lane_name_is_judged_by_the_strength_seats,
                    test_every_nominator_is_served_the_momentum_floor,
