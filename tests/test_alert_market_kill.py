@@ -46,7 +46,7 @@ def test_stale_origin_run_is_not_trusted():
     assert P.read_market_kill(doc(market_kill=dict(MK, origin_run="2026-10-29")))["status"] == "STALE"
 
 
-@pytest.mark.parametrize("patch", [{"word": "h1_close_below"}, {"word": None}, {"symbol": None}, {"level": None}])
+@pytest.mark.parametrize("patch", [{"word": "vol_x_ge"}, {"word": None}, {"symbol": None}, {"level": None}])
 def test_unwatchable_says_so_and_keeps_the_committees_words(patch):
     r = P.read_market_kill(doc(market_kill=dict(MK, **patch)))
     assert r["status"] == "UNWATCHABLE" and MK["plain"] in r["note"]
@@ -85,28 +85,31 @@ def test_missing_quote_is_loud_not_a_pass():
     assert P.evaluate_market_kill(K, {"price": None}, True)["state"] == "NO_QUOTE"
 
 
-# ---------------------------------------------------------------- header
-def _hdr(mk, **meta):
-    return EM._market_line({"market_kill": mk, **meta})
+# ---------------------------------------------------------------- h1 words
+def test_h1_close_below_reads_the_last_completed_hourly_candle():
+    k = dict(K, word="h1_close_below")
+    assert P.read_market_kill(doc(market_kill=dict(MK, word="h1_close_below")))["status"] == "ACTIVE"
+    assert P.evaluate_market_kill(k, {"price": 760}, False, h1_close=749.5)["state"] == "BROKEN"
+    assert P.evaluate_market_kill(k, {"price": 740}, False, h1_close=751.0)["state"] == "INTACT"   # spot alone never breaks it
+    assert P.evaluate_market_kill(k, {"price": 740}, False, h1_close=None)["state"] == "NO_BARS"
+    k2 = dict(K, word="h1_close_above", level=780)
+    assert P.evaluate_market_kill(k2, {"price": 781}, False, h1_close=781.0)["state"] == "BROKEN"
 
 
-def test_header_lines():
-    base = {"status": "ACTIVE", "plain": MK["plain"], "kill": K}
-    assert _hdr(dict(base, broken=True, detail="SPY at 749, under the 750 line at the close")).startswith("⛔ MARKET CONDITION BROKEN — take no new triggers")
-    assert "confirms only on the close" in _hdr(dict(base, state="WARN", detail="x"))
-    assert "NOT checked" in _hdr(dict(base, state="NO_QUOTE", detail="no SPY quote"))
-    assert _hdr(dict(base, state="INTACT")).startswith("Market condition (holding)")
-    assert "No market condition is being watched: pre-R40" in _hdr({"status": "ABSENT", "note": "pre-R40"})
-    assert _hdr({"status": "ABSENT", "note": "x"}, pma_missing="2026-10-29") is None
-
-
-def test_broken_digest_subject_and_body_even_with_no_cards():
+# ---------------------------------------------------------------- digest: a break is a normal card, no header line
+def test_broken_market_is_a_card_not_a_header_or_subject_prefix():
     meta = {"pma_run": "2026-11-02", "pma_session": "2026-11-02", "aqe_date": "2026-10-30",
             "market_kill": {"status": "ACTIVE", "plain": MK["plain"], "kill": K, "broken": True,
                             "just_broke": True, "detail": "SPY at 749"}}
     now = datetime(2026, 11, 2, 16, 20, tzinfo=ET)
     subject, plain, html = EM.build_condition_digest([], now, [], meta)
-    assert "MARKET BROKEN" in subject and "take no new triggers" in plain and "take no new triggers" in html
+    assert "MARKET BROKEN" not in subject and "MARKET 1" in subject and "1 card" in subject
+    assert "MARKET CONDITION BROKEN" in plain and "take no new triggers" in plain and "take no new triggers" in html
+    assert not hasattr(EM, "_market_line")
+    # the next cycle (still broken, not just_broke) carries no market text at all
+    meta2 = dict(meta, market_kill=dict(meta["market_kill"], just_broke=False))
+    subject2, plain2, _ = EM.build_condition_digest([], now, [{"ticker": "MP", "kind": "near_stops", "live_px": 37.0}], meta2)
+    assert "MARKET" not in subject2 and "MARKET CONDITION" not in plain2
 
 
 # ---------------------------------------------------------------- engine: sticky + suppression
@@ -211,3 +214,17 @@ def test_empty_export_still_watches_committee_and_held_rows(monkeypatch):
     kinds = {(t["ticker"], t["kind"]) for t in s["triggers"]}
     assert s["ok"] and ("OWN", "trade_below") in kinds and ("BUY", "trade_above") in kinds
     assert "no AQE-monitored names" in s["note"] and meta  # condition cycle still ran
+
+
+def test_h1_market_kill_pulls_bars_and_breaks_on_the_hourly_close(monkeypatch):
+    meta = []
+    pma = doc(rows=ROWS, market_kill=dict(MK, word="h1_close_below"))
+    q = dict(QUOTES, SPY={"price": 752, "day_high": 760, "day_low": 748, "prev_close": 760})   # spot ABOVE the line
+    _wire(monkeypatch, pma, q, meta)
+    import src.alerts.condition_data as CD
+    bars = [{"date": f"2026-11-02 {h:02d}:{m:02d}:00", "open": 751, "high": 752, "low": 748, "close": 749.0, "volume": 1}
+            for h, m in ((9, 30), (9, 45), (10, 0), (10, 15))]
+    monkeypatch.setattr(CD, "fetch_today_bars", lambda c, t, d: bars if t == "SPY" else [])
+    s = E.run_alert_cycle(send_email=False)
+    assert s["market_kill"]["broken"] and s["market_kill"]["just_broke"]
+    assert ("BUY", "trade_above") not in {(t["ticker"], t["kind"]) for t in s["triggers"]}

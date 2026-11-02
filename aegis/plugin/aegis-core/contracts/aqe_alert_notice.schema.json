@@ -26,15 +26,13 @@
     },
     "market": {
       "type": "object",
-      "description": "R40 market_kill as evaluated this cycle. `line` is the exact header sentence the email shows.",
+      "description": "R40 market_kill as evaluated this cycle. State only -- the reader prints NO market sentence (PM 2026-11-02); a confirmed break appears once as a normal item (class MARKET, severity RISK).",
       "required": ["status", "broken", "just_broke"],
       "properties": {
-        "status": {"enum": ["ACTIVE", "NULL", "ABSENT", "STALE", "MALFORMED", "UNWATCHABLE"]},
         "state": {"enum": ["INTACT", "WARN", "BROKEN", "NO_QUOTE", null]},
         "broken": {"type": "boolean", "description": "Sticky for the session once a break confirms."},
         "just_broke": {"type": "boolean", "description": "True on the one cycle the break confirmed."},
-        "plain": {"type": ["string", "null"], "description": "The committee's own words for the condition."},
-        "line": {"type": ["string", "null"]}
+        "status": {"enum": ["ACTIVE", "NULL", "ABSENT", "STALE", "MALFORMED", "UNWATCHABLE", null]}
       }
     },
     "actionable": {"type": "boolean", "description": "True iff items is non-empty or market.just_broke. A quiet cycle is a real answer: actionable=false with quiet_line set."},
@@ -46,7 +44,7 @@
         "required": ["ticker", "class", "held", "states", "severity", "headline", "action", "price"],
         "properties": {
           "ticker": {"type": "string"},
-          "class": {"enum": ["ADVANCE", "HOLD_FOR_CONDITIONS", "HELD", "AQE_DEFAULT", "WATCH", "UNKNOWN"]},
+          "class": {"enum": ["ADVANCE", "HOLD_FOR_CONDITIONS", "HELD", "AQE_DEFAULT", "WATCH", "MARKET", "UNKNOWN"]},
           "held": {"type": "boolean"},
           "states": {"type": "array", "items": {"type": "string"}, "description": "Condition-state names that fired (CONDITION_MET, FAILED_PUSH, CHASED, UNR_TRIGGER, UNR_FAILED, EXIT_LINE_HELD) or, for a held-position event, the engine kind (near_stops, approaching_target, close_below, trade_below, no_stop_order, order_config, VETO_HELD)."},
           "severity": {"enum": ["ACT", "RISK", "INFO"], "description": "ACT = an entry condition the plan says to act on; RISK = a held name's stop/exit/veto/order check; INFO = everything else (back under, chased, failed)."},

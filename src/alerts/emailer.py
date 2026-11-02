@@ -1875,27 +1875,18 @@ def _data_line(meta: dict | None) -> str | None:
     return ("Data: " + " · ".join(parts)) if parts else None
 
 
-def _market_line(meta: dict | None) -> str | None:
-    """R40: the market condition in the digest header. Broken is the loudest
-    thing in the mail; 'not watched' is always said (never a silent absence)."""
-    mk = (meta or {}).get("market_kill")
-    if not mk or (meta or {}).get("pma_missing"):
-        return None
-    st, plain, kill = mk.get("status"), mk.get("plain"), mk.get("kill") or {}
-    if st == "ACTIVE":
-        if mk.get("broken"):
-            why = f" ({mk['detail']})" if mk.get("detail") else ""
-            return (f"⛔ MARKET CONDITION BROKEN — take no new triggers: {plain}{why}. "
-                    "New entry alerts are suppressed for the rest of this session; "
-                    "stops, exits and failed-setup alerts on names you hold continue.")
-        if mk.get("state") == "WARN":
-            return (f"⚠ Market watch: {plain} — {mk.get('detail')}; confirms only on the close. "
-                    "Treat new triggers with care.")
-        if mk.get("state") == "NO_QUOTE":
-            return (f"⚠ Market condition NOT checked this cycle ({mk.get('detail')}): {plain}")
-        return f"Market condition (holding): {plain}"
-    why = mk.get("note") or "no reason given"
-    return f"⚠ No market condition is being watched: {why}"
+def build_market_card(mk: dict) -> dict:
+    """The one cycle the committee's market condition confirms broken (R40):
+    a normal card in the digest, same shape as every other card. PM 2026-11-02:
+    no header line, no subject prefix -- a card, like any other state change."""
+    plain = mk.get("plain") or "the committee's market condition"
+    detail = mk.get("detail") or ""
+    sym = ((mk.get("kill") or {}).get("symbol")) or "Market"
+    lines = [f"Condition: {plain}" + (f" — {detail}" if detail else ""),
+             "No new buy alerts for the rest of this session. Stops, exits and failed-setup "
+             "alerts on names you hold continue."]
+    return {"headline": f"{sym} · 🔴 MARKET CONDITION BROKEN — take no new triggers",
+            "color": "#d00", "summary": None, "lines": lines}
 
 
 def build_condition_digest(cards: list[tuple], now_et,
@@ -1923,20 +1914,16 @@ def build_condition_digest(cards: list[tuple], now_et,
     built += [build_held_card(ev) for ev in held_events]
     if held_events:
         counts["HELD"] = len(held_events)
+    mk = (meta or {}).get("market_kill") or {}
+    if mk.get("just_broke"):
+        built.insert(0, build_market_card(mk))
+        counts["MARKET"] = 1
     tally = " · ".join(f"{k} {v}" for k, v in counts.items())
     stamp = now_et.strftime("%H:%M ET")
-    n = len(cards) + len(held_events)
+    n = len(cards) + len(held_events) + (1 if mk.get("just_broke") else 0)
     subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
     header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
     data_line = _data_line(meta)
-    mk_line = _market_line(meta)
-    mk_broken = bool(((meta or {}).get("market_kill") or {}).get("broken"))
-    if data_line and mk_line:
-        data_line = data_line + "\n" + mk_line
-    elif mk_line:
-        data_line = mk_line
-    if mk_broken:
-        subject = subject.replace("[AQE] ", "[AQE] ⛔ MARKET BROKEN · ", 1)
     if meta and meta.get("pma_run") and meta.get("aqe_date"):
         subject += f" · PMA {meta['pma_run'][5:]} · AQE {meta['aqe_date'][5:]}"
 

@@ -63,7 +63,7 @@ def test_actionable_renders_table_act_first_with_shares(tmp_path, capsys):
     assert rc == 0
     lines = out.splitlines()
     assert lines[0] == "23:16 SGT · AQE cycle 3 · PMA run 2026-11-02 · AQE export 2026-10-30"
-    assert "Market condition (holding)" in out            # first render of the session shows the market sentence
+    assert "Market condition" not in out                   # PM 2026-11-02: no market sentence in the cockpit
     rows = [l for l in lines if l.startswith("| ") and "Name" not in l]
     assert rows[0].startswith("| IOT") and "| MP (you hold)" in rows[1] and rows[2].startswith("| DBX")
     assert "~400 sh at stop 39.45" in rows[0]              # floor(620/1.55)
@@ -94,14 +94,14 @@ def test_dedup_same_seq_prints_nothing_new_seq_marks_new_rows(tmp_path, capsys):
     assert "Market condition" not in out                     # not first of session, market intact -> silent
 
 
-def test_broken_market_shows_line_and_suppressed_footer(tmp_path, capsys):
-    mk = {"status": "ACTIVE", "state": "BROKEN", "broken": True, "just_broke": True,
-          "plain": "void if SPY closes under the 750 put wall",
-          "line": "⛔ MARKET CONDITION BROKEN — take no new triggers: void if SPY closes under the 750 put wall."}
-    rc, out = run(tmp_path, base(actionable=True, market=mk, items=[ITEMS[1]], suppressed=2), capsys)
-    assert rc == 0
-    assert "take no new triggers" in out and "2 entry alerts suppressed by the broken market condition" in out
-    assert "MP (you hold)" in out
+def test_broken_market_is_a_row_not_a_sentence(tmp_path, capsys):
+    mk = {"status": "ACTIVE", "state": "BROKEN", "broken": True, "just_broke": True}
+    row = {"ticker": "SPY", "class": "MARKET", "held": False, "states": ["MARKET_KILL"], "severity": "RISK",
+           "headline": "SPY · MARKET CONDITION BROKEN — take no new triggers",
+           "action": "Market condition broken: no new buys this session", "price": None, "lines": []}
+    rc, out = run(tmp_path, base(actionable=True, market=mk, items=[row, ITEMS[1]], suppressed=2), capsys)
+    assert rc == 0 and "MARKET CONDITION BROKEN" in out and "2 entry alerts suppressed by the broken market condition" in out
+    assert "⛔" not in out
 
 
 def test_stale_inside_window_exit_4_outside_window_not_stale(tmp_path, capsys):

@@ -182,10 +182,18 @@ def build(*, cards: list[tuple] | None, setup_rows: list[tuple] | None,
                            "text": EM._candidate_row(c)})
         except Exception:  # noqa: BLE001
             setups.append({"ticker": c[0] if c else "?", "price": None, "text": "setup forming"})
-    try:
-        market_line = EM._market_line(meta) if mk else None
-    except Exception:  # noqa: BLE001
-        market_line = None
+    if mk.get("just_broke"):
+        try:
+            card = EM.build_market_card(mk)
+            sym = ((mk.get("kill") or {}).get("symbol")) or "MARKET"
+            items.insert(0, {"ticker": sym, "class": "MARKET", "held": False, "states": ["MARKET_KILL"],
+                             "severity": "RISK", "headline": card["headline"],
+                             "action": "Market condition broken: no new buys this session",
+                             "price": None, "day_pct": None, "entry": None, "stop": None, "stop_type": None,
+                             "target": None, "risk_per_share": None, "conditions": None, "unr": None,
+                             "lines": card["lines"], "suppressed_by_market_kill": False})
+        except Exception:  # noqa: BLE001
+            pass
     actionable = bool(items) or bool(mk.get("just_broke"))
     sgt = now_et.astimezone(_SGT)
     return {
@@ -196,8 +204,7 @@ def build(*, cards: list[tuple] | None, setup_rows: list[tuple] | None,
         "data": {k: meta.get(k) for k in ("pma_run", "pma_session", "pma_missing",
                                          "aqe_date", "aqe_covers", "aqe_current")},
         "market": {"status": mk.get("status"), "state": mk.get("state"), "broken": broken,
-                   "just_broke": bool(mk.get("just_broke")), "plain": mk.get("plain"),
-                   "line": market_line},
+                   "just_broke": bool(mk.get("just_broke"))},
         "actionable": actionable,
         "items": items, "setups_forming": setups,
         "suppressed": int((engine or {}).get("suppressed") or 0),

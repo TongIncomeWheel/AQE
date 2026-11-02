@@ -154,14 +154,6 @@ CONDITION_CARD_MAX_SEATS = int(_f("CONDITION_CARD_MAX_SEATS", 3))
 CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", True)
 # Which AQE lists feed default-watched names: "longlist", "elder", or both.
 CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "longlist,elder")
-# "daily_list" may be added to the list above to watch EVERY export name with a
-# usable default condition (PM/conductor 2026-11-02: env switch only, default
-# unchanged). Cost, counted on the 2026-11-02 export (see notice in the branch
-# hand-back): quote tickers 187 -> 282 per cycle (FMP /quote is ONE call per
-# ticker), condition rows 86 -> see tests/test_alert_condition_defaults.py
-# `test_daily_list_source_cost_count`, each row = one 15-min bars call per cycle
-# plus two one-off calls per name on the first cycle (volume profile, daily
-# history). CONDITION_MAX_WATCHED still caps the rows.
 # WATCH is the committee's "not yet" bucket -- off unless the PM flips it.
 CONDITION_DEFAULTS_INCLUDE_WATCH = _b("CONDITION_DEFAULTS_INCLUDE_WATCH", False)
 CONDITION_DEFAULT_VOL_X = _f("CONDITION_DEFAULT_VOL_X", 1.0)

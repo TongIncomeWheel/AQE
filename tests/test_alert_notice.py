@@ -76,7 +76,9 @@ def test_market_just_broke_is_actionable_without_cards():
     meta = dict(META, market_kill=dict(META["market_kill"], state="BROKEN", broken=True, just_broke=True,
                                        detail="SPY at 749"))
     n = _build(cards=[], setup_rows=[], held_events=[], meta=meta)
-    assert n["actionable"] and n["market"]["broken"] and "take no new triggers" in n["market"]["line"]
+    assert n["actionable"] and n["market"]["broken"] and "line" not in n["market"]
+    row = n["items"][0]
+    assert row["class"] == "MARKET" and row["severity"] == "RISK" and "take no new triggers" in row["headline"]
 
 
 def test_unr_trigger_uses_low_of_day_stop_and_spot_entry():

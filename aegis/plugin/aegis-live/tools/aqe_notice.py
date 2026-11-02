@@ -222,18 +222,7 @@ def render(doc: dict, prev_items: list[str] | None, one_r: float, first_of_sessi
               f" · AQE export {_s(data.get('aqe_date'), 'unknown')}")
     out.append(header)
 
-    mk = doc.get("market") or {}
-    show_mk = bool(mk.get("broken") or mk.get("just_broke")) or mk.get("state") in ("WARN", "NO_QUOTE") or first_of_session
-    if show_mk:
-        if mk.get("line"):
-            out.append(_clean(str(mk["line"])))
-        elif mk.get("broken"):
-            out.append(f"⛔ Market condition broken — take no new triggers: {_s(mk.get('plain'), '')}".rstrip(": "))
-        elif mk.get("status") == "ACTIVE":
-            out.append(f"Market condition ({_s(mk.get('state'), 'unchecked').lower()}): {_s(mk.get('plain'), '')}")
-        else:
-            out.append(f"No market condition is being watched ({_s(mk.get('status'), 'unknown').lower()}).")
-
+    # PM 2026-11-02: no market sentence in the cockpit; a confirmed break arrives as a normal MARKET row.
     items = [i for i in (doc.get("items") or []) if isinstance(i, dict)]
     items.sort(key=lambda i: SEV_ORDER.get(i.get("severity"), 9))
     prev = set(prev_items or [])
@@ -248,6 +237,8 @@ def render(doc: dict, prev_items: list[str] | None, one_r: float, first_of_sessi
                 skipped += 1
                 continue
             name = str(tk) + (" (you hold)" if it.get("held") else "")
+            if it.get("class") == "MARKET":
+                name = f"{tk} · MARKET CONDITION BROKEN"
             if prev_items is not None and _item_key(it) not in prev:
                 name += " ▲NEW"
             px = fmt(it.get("price"))

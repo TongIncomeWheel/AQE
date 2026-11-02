@@ -51,7 +51,7 @@ session."
    - market-hours: the 21:25 liveness + its 30-min self-rearm already speak in
      their own fresh sessions; the cockpit delivers a **single 04:10 SGT** wrap of
      the night's alert activity rather than 30-min chatter here.
-   - **AQE notice (market-hours, 30-min):** the AQE alert engine publishes ONE
+   - **AQE notice (market-hours, 30-min; model `claude-sonnet-5-5`, never opus -- PM 2026-11-02; spec `aegis-live/skills/live-review/NOTICE_TASK.md`):** the AQE alert engine publishes ONE
      machine-readable notice per cycle to `aegis/output/alerts/live/latest.json`
      on `main` (contract `aegis-core/contracts/aqe_alert_notice.schema.json`, the
      same cards as the `[AQE]` email). A cockpit may arm a 30-min market-hours

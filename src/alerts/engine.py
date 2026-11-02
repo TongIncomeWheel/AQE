@@ -460,9 +460,17 @@ def _run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         _run = (pma_doc or {}).get("run_date") or _now.date().isoformat()
         _key = f"BROKEN|{_run}"
         if mk_read["status"] == "ACTIVE":
+            h1_close = None
+            if mk_read["kill"]["word"] in PMA_MK.MK_H1_WORDS:
+                # one 15-min bars pull for the kill symbol, rolled to completed
+                # hourly candles exactly as the condition evaluator does
+                from src.alerts import condition_data as _CD, live_measures as _LM
+                from src.data.fmp_client import FMPClient as _FC
+                _c = _LM.hourly(_CD.fetch_today_bars(_FC(), mk_read["kill"]["symbol"], _now.date()))
+                h1_close = _c[-1]["close"] if _c else None
             ev = PMA_MK.evaluate_market_kill(
                 mk_read["kill"], quotes.get(mk_read["kill"]["symbol"]),
-                PMA_MK.is_final_cycle_of_session(_now))
+                PMA_MK.is_final_cycle_of_session(_now), h1_close=h1_close)
             mk_ctx.update(state=ev["state"], detail=ev.get("detail", ""))
             if ev["state"] == "BROKEN" and not S.is_fired(state, "MKTKILL", _key):
                 S.mark_fired(state, "MKTKILL", _key)

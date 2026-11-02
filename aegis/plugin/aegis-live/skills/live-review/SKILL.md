@@ -5,6 +5,8 @@ description: "Aegis LIVE REVIEW — the 30-minute executive review during the US
 
 # LIVE REVIEW (aegis-live)
 
+**Model tier (PM 2026-11-02): any session or scheduled task that only reads/renders the AQE notice (`tools/aqe_notice.py`) runs on `claude-sonnet-5-5`, never opus -- see `NOTICE_TASK.md`.**
+
 **The procedure is `REVIEW_SPEC.md` in this folder. Read it first and follow it exactly.** This card only maps it to the plugin.
 
 | Spec says | In this plugin |

@@ -266,7 +266,8 @@ def live_base_ids(doc: dict) -> set[str]:
 # {symbol, word, level, plain, seats, origin_run} or null (+ `market_kill_note`).
 # ---------------------------------------------------------------------------
 
-MK_WORDS = {"close_below", "close_above", "trade_below", "trade_above"}
+MK_WORDS = {"close_below", "close_above", "trade_below", "trade_above", "h1_close_below", "h1_close_above"}
+MK_H1_WORDS = {"h1_close_below", "h1_close_above"}
 # Triggers/states that OPEN a position. Held-name stops/exits, failed-setup and
 # invalidation cards are never suppressed -- the PM still needs those.
 MK_ENTRY_KINDS = {"trade_above", "close_above", "approaching_entry"}
@@ -324,13 +325,24 @@ def read_market_kill(doc: dict | None) -> dict:
     return out
 
 
-def evaluate_market_kill(kill: dict, quote: dict | None, is_final: bool) -> dict:
+def evaluate_market_kill(kill: dict, quote: dict | None, is_final: bool,
+                         h1_close: float | None = None) -> dict:
     """Pure. state: BROKEN (confirmed) | WARN (a close_* line crossed intraday,
-    confirms only on the final cycle) | INTACT | NO_QUOTE (loud, not a pass)."""
+    confirms only on the final cycle) | INTACT | NO_QUOTE (loud, not a pass) |
+    NO_BARS (an h1 word with no completed hourly candle yet -- not a pass).
+    `h1_close` = the last COMPLETED hourly candle's close (live_measures.hourly
+    on today's 15-min bars), the same read the condition evaluator uses."""
+    word, lvl = kill["word"], kill["level"]
+    if word in MK_H1_WORDS:
+        if h1_close is None:
+            return {"state": "NO_BARS", "detail": f"no completed hourly candle for {kill['symbol']} yet"}
+        hit = h1_close < lvl if word == "h1_close_below" else h1_close > lvl
+        side = "under" if word == "h1_close_below" else "over"
+        return {"state": "BROKEN" if hit else "INTACT", "price": _n((quote or {}).get("price")),
+                "detail": f"{kill['symbol']} hourly candle closed at {h1_close:g}, {side} the {lvl:g} line" if hit else ""}
     price = _n((quote or {}).get("price"))
     if price is None or price <= 0:
         return {"state": "NO_QUOTE", "detail": f"no {kill['symbol']} quote this cycle"}
-    word, lvl = kill["word"], kill["level"]
     if word == "trade_below":
         lo = _n(quote.get("day_low"))
         hit = lo is not None and lo <= lvl
