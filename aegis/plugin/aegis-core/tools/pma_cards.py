@@ -133,6 +133,12 @@ def build_triggers(conditions, export, broker_stops):
                 cards["advance"][t] = {"triggers": [x for x in tr if x["kind"] != "close_below"],
                                        "confirms": "ADD question: " + conf,
                                        "kills": f"The broker stop {stop} is the exit."}
+            elif v == "HOLD-FOR-CONDITIONS":
+                # 2026-11-02 (29 Oct and 2 Nov, V): a HELD name on HOLD-FOR-CONDITIONS got no hold card, so
+                # LEVELS refused the file until the conductor patched one in by hand. The hold is the ADD
+                # question: the same trigger construction as any hold, worded as an add, never an exit line
+                # (the PM's broker stop is the exit; the committee's tighter line rides on the held row).
+                cards["hold"][t] = _held_hold_card(t, r, tr, conf, stop)
             continue
         if not live:
             continue
@@ -141,6 +147,28 @@ def build_triggers(conditions, export, broker_stops):
             card["not_structured_yet"] = "no analyst buy level resolved"
         cards["advance" if v == "ADVANCE" else "hold"][t] = card
     return cards
+
+
+def _held_hold_card(t, r, tr, conf, stop):
+    """The hold card for a HELD name on HOLD-FOR-CONDITIONS: the ADD question on the shared buy line."""
+    kills = f"The broker stop {stop} is the exit."
+    if not ((r.get("shared") or {}).get("buy")):
+        return {"triggers": [], "confirms": "ADD question: no shared add line", "kills": kills,
+                "not_structured_yet": "held name: no shared add line (no buy level shared by a majority of "
+                                      "supporters) -- the ADD question is not structured; the broker stop is the exit"}
+    add = []
+    for x in tr:
+        if x["kind"] == "close_below":
+            continue
+        x = dict(x)
+        if x["priority"] == "ACTION":
+            x["action"] = x["action"].replace(f"{t}: ", f"{t} (held): ", 1).replace(
+                "Your decision.", "ADD question only; your decision.").replace("buy line)", "add line)")
+        add.append(x)
+    card = {"triggers": add, "confirms": "ADD question: " + conf, "kills": kills}
+    if not any(x["priority"] == "ACTION" or x["kind"] == "trade_below" for x in add):
+        card["not_structured_yet"] = "held name: the shared add line did not resolve to a live level"
+    return card
 
 
 def cmd_triggers(a):
@@ -282,6 +310,30 @@ def _unr_words(r):
     if st == "SETUP":
         return "Valen undercut-and-rally forming: undercut, not yet reclaimed" + (f' ({r.get("unr_note")})' if r.get("unr_note") else "")
     return ""
+
+def _is_valen_warning(x):
+    """R41 (PM 2026-11-02): Valen's long-only risk warnings (parabolic, failed leader) are not printed on the
+    cards -- selection is the seats' judgment on their own methods. The house setups themselves are facts and stay."""
+    nm = str((x or {}).get("setup", "")).lower()
+    return "parabolic" in nm or "failed leader" in nm
+
+
+def _house_setups(r):
+    gr = r.get("setups")
+    if isinstance(gr, dict):
+        gr = gr.get("grades")
+    return [x for x in (gr or []) if isinstance(x, dict) and not _is_valen_warning(x)]
+
+
+def _market_kill_text(mk):
+    """R40: the slate's ONE market kill line, in plain words (copied from the slate, never composed here)."""
+    if not isinstance(mk, dict) or not mk.get("plain"):
+        return ""
+    import re
+    who = ", ".join(mk.get("seats") or [])
+    plain = re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", str(mk["plain"]), flags=re.I)
+    return plain + (f" ({who})" if who else "")
+
 
 def _wind_gauges(v):
     """PM 2026-10-23 (Valen's 'Market as of now' panel): simple bars for the direction of the wind. Built ONLY
@@ -594,7 +646,7 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
     o.append(_group_turns(D_, verdicts or {}, say))
     hs = collections.Counter()
     for r in rows.values():
-        for x in (r.get("setups") or []) if isinstance(r.get("setups"), list) else []:
+        for x in _house_setups(r):
             hs[(x.get("setup"), x.get("status"))] += 1
     ready = [k for k in hs if k[1] in ("TRIGGERED", "READY")]
     o.append('<section class="card"><div class="eyebrow">Valen house setups across the list</div><p>'
@@ -641,7 +693,7 @@ def _valen_card(v, rows, room):
         o.append('<p class="eyebrow">What would change the stance</p><ul>' + "".join(f"<li>{E(x)}</li>" for x in wf) + "</ul>")
     hs = collections.Counter()
     for r in rows.values():
-        for x in (r.get("setups") or []) if isinstance(r.get("setups"), list) else []:
+        for x in _house_setups(r):
             hs[(x.get("setup"), x.get("status"))] += 1
     ready = [k for k in hs if k[1] in ("TRIGGERED", "READY")]
     o.append(f'<p><b>House setups across the list:</b> ' + (", ".join(f"{E(a)} {E(b)} ×{n}" for (a, b), n in sorted(hs.items())) or "none graded")
@@ -756,7 +808,15 @@ def cmd_render(a):
     V = load(a.valen, {}) if a.valen else {}
     CR = load(a.crown, {}) if getattr(a, "crown", None) else {}
     SC = open(a.scorecard).read() if a.scorecard and os.path.exists(a.scorecard) else ""
-    nb = {r["ticker"]: [f["label"] for f in r.get("flags") or []] for r in ((V.get("selection") or {}).get("no_buy_list") or [])}
+    # R41 (PM 2026-11-02): Valen's no-buy list is NOT read here -- no card, hold row or pass row carries it.
+    SL = load(a.slate, {}) if getattr(a, "slate", None) else {}
+    MK = _market_kill_text(SL.get("market_kill")) if isinstance(SL, dict) else ""
+    if MK:
+        mk_line = f'<p class="flag"><b>Market kill (R40):</b> void every new trigger if {E(MK)}.</p>'
+    elif isinstance(SL, dict) and "market_kill" in SL:
+        mk_line = '<p class="cond">Market kill (R40): none -- no seat named a market condition.</p>'
+    else:
+        mk_line = ""
     by = collections.defaultdict(list)
     for c in cons:
         by[c["verdict"]].append(c)
@@ -772,7 +832,7 @@ def cmd_render(a):
     bl = T["bottom_line"]
     o.append(f'<section class="card bottom"><div class="eyebrow">Bottom line</div><h2>{E(bl["headline"])}</h2><p>{E(bl.get("paragraph", ""))}</p><div class="grid4">'
              + "".join(f'<div class="stat"><div class="v {TONE.get(s.get("tone"), "")}">{E(str(s["value"]))}</div><div class="l">{E(s["label"])}</div></div>' for s in bl["stats"])
-             + "</div></section>")
+             + "</div>" + mk_line + "</section>")
     m = T["market"]
     o.append(_weather_part1(V, CR, T.get("weather"), rows, D.get("daily_list"), D, {c["ticker"]: c["verdict"] for c in cons}))
     o.append('<div class="section-title"><h2>Cross-asset · what happened</h2></div><div class="grid2">')
@@ -800,16 +860,16 @@ def cmd_render(a):
         stop = (f'{br.get("price")} ({str(br.get("type", "")).replace("_", " ")}, {br.get("stop_pct")}%)' if br.get("price") else
                 (f'{BS[t]["stop"]} broker stop' if t in BS else "—"))
         tp = ((BR.get(t) or {}).get("tp_ladder") or [{}])[0].get("price")
-        setups = [f'{x.get("setup")} {x.get("status")}' for x in (r.get("setups") or [])] if isinstance(r.get("setups"), list) else []
+        setups = [f'{x.get("setup")} {x.get("status")}' for x in _house_setups(r)]
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
-        noby = f'<p class="flag">Valen no-buy: {E(", ".join(nb[t]))}</p>' if t in nb else ""
+        void = f'<div class="full"><dt>Void if</dt><dd>{E(MK)}</dd></div>' if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
                  f'<span class="pill {TONE.get(w["readiness_tone"], "p-n")}">{E(w["readiness"])}</span></header>'
-                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{noby}{_contest_html(c)}'
+                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Stop (render-only)</dt><dd>{E(stop)}</dd></div>'
-                 f'<div><dt>First target</dt><dd>{E(str(tp)) if tp else "—"}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
+                 f'{void}<div><dt>First target</dt><dd>{E(str(tp)) if tp else "—"}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
                  f'<div class="full"><dt>Valen</dt><dd>{valen}</dd></div>'
                  f'<div class="full"><dt>Sector</dt><dd>{E(w.get("sector_note") or str(r.get("gics_sector_name") or ""))}</dd></div></dl></article>')
     o.append("</div>")
@@ -879,6 +939,7 @@ def main():
     s.add_argument("--export", default="aqe_daily_export.json"); s.add_argument("--cards", default="cards.json"); s.add_argument("--brackets", default="brackets.json")
     s.add_argument("--broker-stops", default="broker_stops.json"); s.add_argument("--phase4", default="phase4.json")
     s.add_argument("--valen", default="aqe_valen_dashboard.json"); s.add_argument("--crown", default="aqe_crown_macro.json"); s.add_argument("--scorecard", default="scorecard.md")
+    s.add_argument("--slate", default="slate.json", help="R40: the slate's market_kill line prints on the bottom line and on every ADVANCE card")
     s.add_argument("--out", required=True); s.set_defaults(fn=cmd_render)
     a = ap.parse_args(); a.fn(a)
 

@@ -11,7 +11,7 @@ run actually produced. If a change moves a verdict, this fails and tells you whi
 
 Zero external dependencies. Exits 0 on pass, 1 on any failure.
 """
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, shutil, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIX = os.path.join(HERE, "fixtures")
@@ -2143,7 +2143,8 @@ def test_r2digest_reads_the_crown_file_and_marks_retired_seats(td):
 
 
 def test_run_map_carries_the_seven_deciders_and_the_new_rounds(td):
-    """R31/R34/R36 in RUN.yaml: rosters, the FLOOR/SLATE/RATIFY/QA steps, DECIDE on ratify-count, no MACRO."""
+    """R31/R34/R36/R38 in RUN.yaml: rosters, the two-tier funnel (CLAIMS/CROSS/FUNNEL/PAIR/TIER2/TIMING) in place of the
+    retired FLOOR, SLATE/RATIFY/QA, DECIDE on ratify-count, no MACRO."""
     import yaml
     M = yaml.safe_load(open(os.path.join(HERE, "..", "RUN.yaml")))
     S = {s["name"]: s for s in M["steps"]}
@@ -2151,13 +2152,24 @@ def test_run_map_carries_the_seven_deciders_and_the_new_rounds(td):
     check("NOMINATE, VOTE and RATIFY seat exactly the seven deciders",
           all(sorted(S[n]["seats"]) == sorted(DEC) for n in ("NOMINATE", "VOTE", "RATIFY")), str({n: S[n]["seats"] for n in ("NOMINATE", "VOTE", "RATIFY")}))
     check("CHALLENGE and QA seat steenbarger alone", S["CHALLENGE"]["seats"] == ["steenbarger"] and S["QA"]["seats"] == ["steenbarger"])
-    check("the rounds run in order", [n for n in S if n in ("NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA", "DECIDE")]
-          == ["NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA", "DECIDE"])
+    order = ["NOMINATE", "RANK", "MTF", "CHALLENGE", "VOTE", "CLAIMS", "CROSS", "FUNNEL", "PAIR", "TIER2", "TIMING", "SLATE", "RATIFY", "QA", "DECIDE"]
+    check("the rounds run in order (R38: the two-tier funnel sits between VOTE and SLATE)", [n for n in S if n in order] == order, str([n for n in S if n in order]))
+    check("R38: the open FLOOR is retired from the run map", "FLOOR" not in S)
     check("DECIDE counts with ratify-count, not consensus", "ratify-count" in S["DECIDE"]["command"] and not any(
           str(s.get("command", "")).startswith("pma_pipeline.py consensus") for s in M["steps"]))
-    check("FLOOR builds the board and counts the caps", "board" in S["FLOOR"]["command"] and "floor-check" in S["FLOOR"]["then"])
+    check("CLAIMS builds the board then the claims board", "board" in S["CLAIMS"]["first"] and "pma_pipeline.py claims " in S["CLAIMS"]["command"])
+    check("CROSS and TIER2 seat the seven deciders and validate on arrival", all(sorted(S[n]["seats"]) == sorted(DEC) for n in ("CROSS", "TIER2"))
+          and "--kind cross --claims claims_board.json" in S["CROSS"]["validate_with"] and "--kind tier2 --pairs pairs.json --funnel funnel.json" in S["TIER2"]["validate_with"])
+    check("FUNNEL / PAIR / TIMING are tool steps counted by code", (S["FUNNEL"]["kind"], S["PAIR"]["kind"], S["TIMING"]["kind"]) == ("tool", "tool", "tool")
+          and "claims-score" in S["FUNNEL"]["command"] and "pma_pipeline.py pair " in S["PAIR"]["command"] and "decide-timing" in S["TIMING"]["command"])
+    check("the slate validates against decision.json (R40)", "--decision decision.json" in S["SLATE"]["barrier"])
+    check("DECIDE puts the cross and tier-2 forms on the record", "--cross forms/cross" in S["DECIDE"]["command"] and "--tier2 forms/tier2" in S["DECIDE"]["command"])
+    check("the funnel parameters are stated", (M["parameters"]["claims_per_camp"], M["parameters"]["claim_reviewers"], M["parameters"]["slate_min_support"], M["parameters"]["tie_rule"]) == (2, 2, 4, "WATCH"))
+    src = _pipeline_source()
+    check("the code's funnel constants agree with RUN.yaml", "CLAIMS_PER_CAMP = 2" in src and "CLAIM_REVIEWERS = 2" in src
+          and "SLATE_MIN_SUPPORT = 4" in src and 'TIMING_TIE = "WATCH"' in src)
     check("the vote packet reads the Crown file and only Steenbarger's challenge", "--crown" in S["VOTE"]["packet"] and "--rogers" not in S["VOTE"]["packet"] and "--lynch" not in S["VOTE"]["packet"])
-    check("every model round is checkpointed", all(S[n].get("checkpoint_after") for n in ("NOMINATE", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY", "QA")))
+    check("every model round is checkpointed", all(S[n].get("checkpoint_after") for n in ("NOMINATE", "CHALLENGE", "VOTE", "CROSS", "TIER2", "SLATE", "RATIFY", "QA")))
     check("parameters carry the caps", M["parameters"]["shortlist_cap"] == 6 and M["parameters"]["slate_cap"] == 15 and M["parameters"]["floor_messages_per_seat_per_name"] == 2)
     reg = open(REG).read()
     check("registrar and pipeline agree on the deciders", all(v in reg for v in DEC) and 'QA_SEAT = "steenbarger"' in reg)
@@ -2251,15 +2263,21 @@ def test_the_checker_catches_a_seeded_failure(td):
     check("daily-check/check.py ships", os.path.exists(CHK), CHK)
     if not os.path.exists(CHK): return
     d = os.path.join(td, "chk"); os.makedirs(d, exist_ok=True)
-    steps = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "RANK", "PM-LENS", "CHALLENGE", "VOTE", "FLOOR", "SLATE", "RATIFY",
-             "QA", "DECIDE", "CONDITIONS", "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE", "CHECK", "LEVELS", "REPORT", "PUBLISH"]
+    sys.path.insert(0, TOOLS)
+    import importlib, preflight_run
+    importlib.reload(preflight_run)
+    steps = [x["name"] for x in preflight_run.load_yaml("RUN.yaml")["steps"]]       # the checker reads RUN.yaml's list
+    check("the checker's fallback step list is RUN.yaml's", "KNOWN_STEPS = " in open(CHK).read()
+          and all(f'"{x}"' in open(CHK).read().split("KNOWN_STEPS = ")[1].split("]")[0] for x in steps))
+    check("the checker's spend ceiling is 2,500,000 (DECISIONS_2026-11-02)", "DEFAULT_CEILING = 2_500_000" in open(CHK).read())
     def write(name, obj): json.dump(obj, open(os.path.join(d, name), "w"))
     healthy_manifest = {"date": "2026-11-03", "steps": {s: {"status": "done", "cost": {"est_tokens": 20000}} for s in steps}}
     write("run_manifest.json", healthy_manifest)
     write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE", "status": "AGREED"}, {"ticker": "BBY", "verdict": "PASS", "status": "DROPPED"}])
     write("committee_record.json", {"deciders_present": DEC, "rows": [{"voice": v, "ticker": t} for v in DEC for t in ("GNW", "BBY")]})
-    write("slate.json", {"tickets": [{"ticker": "GNW"}]})
-    write("floor_check.json", {"ok": True, "errors": []})
+    write("slate.json", {"tickets": [{"ticker": "GNW", "verdict": "ADVANCE"}]})
+    write("funnel.json", {"survivors": ["GNW"], "dropped": ["BBY"], "out": [], "names": {"GNW": {}, "BBY": {}}, "measurement": {"claims_issued": 4, "stances_changed_n": 1}})
+    write("decision.json", {"names": {"GNW": {"proposal": "ADVANCE"}}})
     write("pma_levels.json", {"run_date": "2026-11-03"})
     write("aqe_last_run.json", {"date_sgt": "2026-11-03", "status": "success", "packets_status": "Voice packets published: 8/8"})
     base = [CHK, "all", "--last-run", os.path.join(d, "aqe_last_run.json"), "--today", "2026-11-03",
@@ -2274,18 +2292,25 @@ def test_the_checker_catches_a_seeded_failure(td):
     write("aqe_last_run.json", {"date_sgt": "2026-11-03", "status": "success"})
     m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["status"] = "pending"; write("run_manifest.json", m)
     rc, log = run(base); check("a step still pending is named", rc != 0 and "step VOTE: pending" in log, log[-300:])
-    m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["cost"]["est_tokens"] = 2_000_000; write("run_manifest.json", m)
+    m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["cost"]["est_tokens"] = 2_600_000; write("run_manifest.json", m)
     rc, log = run(base); check("spend over the ceiling is named for the PM", rc != 0 and "SPEND OVER CEILING" in log, log[-300:])
     write("run_manifest.json", healthy_manifest)
     write("slate.json", {"tickets": [{"ticker": f"T{i}"} for i in range(16)]})
     rc, log = run(base); check("a 16-ticket slate is named (R34)", rc != 0 and "16 tickets > 15" in log, log[-300:])
-    write("slate.json", {"tickets": [{"ticker": "GNW"}]})
+    write("slate.json", {"tickets": [{"ticker": "GNW", "verdict": "ADVANCE"}]})
     write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE"}])
     rc, log = run(base); check("a consensus without `status` (the retired rule) is named", rc != 0 and "retired rule" in log, log[-300:])
     write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE", "status": "AGREED"}])
+    os.remove(os.path.join(d, "funnel.json"))
+    rc, log = run(base); check("a missing file is a FAIL, never 'probably fine'", rc != 0 and "funnel.json: MISSING" in log, log[-300:])
+    write("funnel.json", {"survivors": ["GNW"], "dropped": [], "out": [], "names": {"GNW": {}}, "measurement": {}})
+    write("decision.json", {"names": {"GNW": {"proposal": "WATCH"}}})
+    rc, log = run(base); check("a slate verdict that differs from decision.json is named (R40)", rc != 0 and "!= decision.json" in log, log[-300:])
+    write("decision.json", {"names": {"GNW": {"proposal": "ADVANCE"}}})
+    write("floor_check.json", {"ok": False, "errors": ["oneil sent 3 messages"]})
+    rc, log = run(base); check("a QA-hold floor_check.json that is not ok is named", rc != 0 and "floor_check.json not ok" in log, log[-300:])
     os.remove(os.path.join(d, "floor_check.json"))
-    rc, log = run(base); check("a missing file is a FAIL, never 'probably fine'", rc != 0 and "floor_check.json: MISSING" in log, log[-300:])
-    write("floor_check.json", {"ok": True, "errors": []})
+    rc, log = run(base); check("without a hold round there is no floor_check.json, and that is healthy (R38: FLOOR retired)", rc == 0, log[-300:])
     write("pma_levels.json", {"run_date": "2026-11-02"})
     rc, log = run(base); check("yesterday's levels file is named -- today's levels are not being watched", rc != 0 and "NOT being watched" in log, log[-300:])
 
@@ -2390,34 +2415,6 @@ def test_the_weather_cards_exist_and_are_wired(td):
     check("brief-writer reads both cards before the weather paragraphs", "weather-crown" in bw and "weather-valen" in bw)
     run_yaml = open(os.path.join(HERE, "..", "RUN.yaml")).read()
     check("the WRITE step lists both cards as inputs", "weather-crown/SKILL.md" in run_yaml and "weather-valen/SKILL.md" in run_yaml)
-
-
-def test_valen_warnings_are_a_risk_block_not_a_vote_row(td):
-    """R37 (PM 2026-11-01). The parabolic warning and the no-buy flags were inside every per-name row of the vote
-    packet and anchored ~26% of oppositions. They now print once, in a RISK block after the rows."""
-    ex = json.load(open(fx("export.json"))); p4 = json.load(open(fx("phase4.json")))
-    t0 = p4["deliberation_set"][0]
-    for row in ex["daily_list"]:
-        if row["ticker"] == t0:
-            row["setups"] = [{"setup": "Parabolic", "status": "WATCH", "checks": [{"result": "PASS"}]},
-                             {"setup": "VCP", "status": "READY", "checks": [{"result": "PASS"}, {"result": "FAIL"}]}]
-    exp = os.path.join(td, "r37_export.json"); json.dump(ex, open(exp, "w"))
-    val = os.path.join(td, "r37_valen.json")
-    json.dump({"read_me_first": {"as_of": "2026-11-01", "so_what": "half size"}, "stance": {"word": "NEUTRAL"}, "regime": "CHOP",
-               "selection": {"no_buy_list": [{"ticker": t0, "flags": [{"label": "4.2 ATR extended"}]}]}}, open(val, "w"))
-    out = os.path.join(td, "r37_packet.txt")
-    rc, log = run([PIPE, "r2digest", "--export", exp, "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
-                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--valen", val, "--run-id", "t", "--out", out])
-    check("r2digest runs with a Valen file", rc == 0, log[-300:])
-    if rc != 0: return
-    txt = open(out).read()
-    row = next(l for l in txt.splitlines() if l.strip().startswith(f"{t0}: setups"))
-    check("the per-name row carries the real setup and U&R only", "VCP READY (1/2)" in row and "U&R" in row)
-    check("no warning text in the per-name row", "NO-BUY" not in row and "no-buy" not in row and "arabolic" not in row, row)
-    i = txt.find("==== RISK (Valen")
-    check("a single RISK block follows the rows", i > 0 and txt.count("==== RISK (Valen") == 1)
-    check("the no-buy flag and the parabolic warning are in the RISK block", "4.2 ATR extended" in txt[i:] and "Parabolic WATCH" in txt[i:])
-    check("R37 is on the record", "id: R37" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read())
 
 
 def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
@@ -2581,6 +2578,506 @@ def test_rebuilt_seow_and_wyckoff_canons_are_sound(td):
     check("wyckoff is anchored on Wyckoff 2.0", w["sources"][0]["code"] == "WYK2" and w["sources"][0]["weight"] == "foundational")
 
 
+# ============================ R38-R41 -- THE TWO-TIER FUNNEL (PM 2026-11-02) ============================
+FAMILY = {"oneil": "breakout", "minervini": "breakout", "livermore": "pivotal", "elder-lens": "impulse",
+          "seow": "position", "raschke": "swing", "wyckoff": "structure"}
+GRID = {"W": "above the rising 21-week EMA", "D": "close above EMA9 > EMA21", "H1": "upper fifth of the day's range"}
+
+
+def _validate(td, obj, tag, *args):
+    p = os.path.join(td, f"{tag}.json"); json.dump(obj, open(p, "w"))
+    return run([REG, "validate", "--file", p, *args])
+
+
+def _cross_plan(t, idx, ridx, kind):
+    """The seeded tier-1 outcome. GNW all CONFIRM -> SURVIVES. BBY support claims all REFUTED -> DROPPED.
+    MFG claim 0: CONFIRM + REFUTE, claim 1: CANNOT_SEE -> 1 >= 1, SURVIVES (and one pair). LNG: 1 CONFIRM vs 3
+    REFUTE on support -> DROPPED. VRNS has no SUPPORT -> OUT, no claims."""
+    if t == "GNW":
+        return "CONFIRM"
+    if t == "BBY":
+        return "REFUTE" if kind == "for" else "CONFIRM"
+    if t == "MFG":
+        return ("CONFIRM", "REFUTE")[ridx] if idx == 0 else "CANNOT_SEE"
+    if t == "LNG":
+        return "CONFIRM" if (idx == 0 and ridx == 0) else "REFUTE"
+    return "CANNOT_SEE"
+
+
+def _blind(B, v, t):
+    n = B["names"][t]
+    return "SUPPORT" if v in n["support"] else "OPPOSE" if v in n["oppose"] else "ABSTAIN" if v in n["abstain"] else None
+
+
+def _cross_form(B, v, mover=None):
+    """mover = (voice, ticker, new_stance): that seat moves on that name and says what moved it."""
+    rows = []
+    claims = {c["claim_id"]: (t, i, c) for t, n in B["names"].items() for i, c in enumerate(n["claims"])}
+    for cid in B["routing"][v]:
+        t, i, c = claims[cid]
+        ridx = c["reviewers"].index(v)
+        st = _blind(B, v, t)
+        moved = mover is not None and mover[:2] == (v, t)
+        if moved:
+            st = mover[2]
+        rows.append({"claim_id": cid, "ticker": t, "ruling": _cross_plan(t, i, ridx, c["kind"]),
+                     "evidence": f"structure 86.3 and elder 7 on {t}, read by my own method", "tf": dict(GRID),
+                     "stance_after": st, "changed_mind": moved, "what_moved_me": "the weekly base holds above EMA21" if moved else None})
+    return {"voice": v, "date": "2026-11-02", "rulings": rows}
+
+
+def _dec(t, stance, timing=None, word=None, tf=None, plain=None, wrong="close back under the 20-day average", void=None):
+    d = {"ticker": t, "stance": stance, "wrong_if": wrong, "market_void": void, "reason": "my method's read on the grid"}
+    if stance == "SUPPORT":
+        d.update({"timing": timing, "trigger": {"word": word, "tf": tf, "plain": plain}})
+    else:
+        d.update({"timing": None, "trigger": None})
+    return d
+
+
+SPY_VOID = "SPY close_below put wall 750"
+# GNW: 7 SUPPORT, ACT_NOW 4 vs WAIT 3 -> ADVANCE. The ACT_NOW camp splits 2-2 between h1_close_above:bar_high/H1
+# (oneil, minervini at conviction 3) and close_above:pivot_high/D (raschke 4, wyckoff 5): the modal tie is broken by
+# the higher blind conviction -> close_above:pivot_high/D. Three SUPPORT decisions name the SPY void, one names QQQ.
+# MFG: 4 SUPPORT, ACT_NOW 2 vs WAIT 2 -> a TIE -> WATCH; the WAIT camp's trigger is in_zone:ma_20/D.
+T2_PLAN = {
+    "oneil": [_dec("GNW", "SUPPORT", "ACT_NOW", "h1_close_above:bar_high", "H1", "an hourly close over yesterday's high", void=SPY_VOID),
+              _dec("MFG", "SUPPORT", "ACT_NOW", "h1_close_above:bar_high", "H1", "hourly close over yesterday's high")],
+    "minervini": [_dec("GNW", "SUPPORT", "ACT_NOW", "h1_close_above:bar_high", "H1", "hourly close over the prior high", void=SPY_VOID),
+                  _dec("MFG", "SUPPORT", "ACT_NOW", "h1_close_above:bar_high", "H1", "hourly close over yesterday's high")],
+    "livermore": [_dec("GNW", "SUPPORT", "WAIT", "close_above:pivot_high", "D", "a daily close through the pivot after a pause", void=SPY_VOID),
+                  _dec("MFG", "OPPOSE")],
+    "elder-lens": [_dec("GNW", "SUPPORT", "WAIT", "in_zone:ma_20", "D", "a pull back to the 20-day"),
+                   _dec("MFG", "SUPPORT", "WAIT", "in_zone:ma_20", "D", "back to the 20-day average", wrong="loses the 20-day on a close")],
+    "seow": [_dec("GNW", "SUPPORT", "WAIT", "in_zone:ma_20", "D", "back to the 20-day", void="QQQ close_below ma_50"),
+             _dec("MFG", "SUPPORT", "WAIT", "in_zone:ma_20", "D", "a test of the 20-day average and a hold of it on the close")],
+    "raschke": [_dec("GNW", "SUPPORT", "ACT_NOW", "close_above:pivot_high", "D", "close over the pivot"),
+                _dec("MFG", "ABSTAIN")],
+    "wyckoff": [_dec("GNW", "SUPPORT", "ACT_NOW", "close_above:pivot_high", "D", "a daily close through the creek on volume"),
+                _dec("MFG", "OPPOSE")],
+}
+
+
+def _funnel_chain(td, tag, mover=("raschke", "MFG", "SUPPORT")):
+    """The tier-1 + tier-2 chain on the committee fixture, every hop through the real tool and the real registrar.
+    Returns (dir, phase4, paths). GNW is given convictions wyckoff 5 / raschke 4 so 'highest conviction' is tested."""
+    d, p4 = _committee_fixture(td, tag)
+    for v in DEC:
+        f = os.path.join(d, "forms", "r2", f"{v}.json"); b = json.load(open(f))
+        for row in b["votes"]:
+            if row["ticker"] == "GNW" and v in ("wyckoff", "raschke"):
+                row["conviction"] = 5 if v == "wyckoff" else 4
+                row["self_counter"] = "a failed retest of the creek would undo it"
+                row["case"]["for"] = f"{v}: the creek was crossed on rising volume"
+        json.dump(b, open(f, "w"))
+    P = {k: os.path.join(d, n) for k, n in (("board", "board.json"), ("claims", "claims_board.json"), ("funnel", "funnel.json"),
+                                             ("pairs", "pairs.json"), ("decision", "decision.json"), ("cp", "claims_packets"),
+                                             ("t2p", "tier2_packets"), ("cross", os.path.join("forms", "cross")),
+                                             ("tier2", os.path.join("forms", "tier2")))}
+    ch = os.path.join(d, "forms", "challenge", "steenbarger.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", ch, "--date", "2026-11-02", "--out", P["board"]])
+    rc, log = run([PIPE, "claims", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", ch, "--mtf", fx("mtf.json"),
+                   "--export", fx("export.json"), "--date", "2026-11-02", "--out", P["claims"], "--packets-dir", P["cp"]])
+    P["claims_log"] = (rc, log)
+    if rc != 0:
+        return d, p4, P
+    B = json.load(open(P["claims"]))
+    os.makedirs(P["cross"], exist_ok=True)
+    P["cross_rc"] = {}
+    for v in DEC:
+        if not B["routing"].get(v):
+            continue
+        f = os.path.join(P["cross"], f"{v}.json"); json.dump(_cross_form(B, v, mover), open(f, "w"))
+        P["cross_rc"][v] = run([REG, "validate", "--file", f, "--kind", "cross", "--claims", P["claims"]])
+    P["score_log"] = run([PIPE, "claims-score", "--claims", P["claims"], "--rulings", P["cross"], "--date", "2026-11-02", "--out", P["funnel"]])
+    P["pair_log"] = run([PIPE, "pair", "--claims", P["claims"], "--rulings", P["cross"], "--funnel", P["funnel"], "--mtf", fx("mtf.json"),
+                         "--date", "2026-11-02", "--out", P["pairs"], "--packets-dir", P["t2p"]])
+    if not os.path.exists(P["pairs"]):
+        return d, p4, P
+    pairs = json.load(open(P["pairs"]))["pairs"]
+    os.makedirs(P["tier2"], exist_ok=True)
+    P["tier2_rc"] = {}
+    for v in DEC:
+        form = {"voice": v, "date": "2026-11-02", "decisions": json.loads(json.dumps(T2_PLAN[v])),
+                "answers": [{"pair_id": p["pair_id"], "ticker": p["ticker"], "to": p["refuter"], "concede": False,
+                             "text": "'no weekly base' -- the weekly holds above EMA21 three bars running; I hold."} for p in pairs if p["author"] == v]}
+        f = os.path.join(P["tier2"], f"{v}.json"); json.dump(form, open(f, "w"))
+        P["tier2_rc"][v] = run([REG, "validate", "--file", f, "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"]])
+    P["timing_log"] = run([PIPE, "decide-timing", "--tier2", P["tier2"], "--funnel", P["funnel"], "--phase4", p4,
+                           "--board", P["board"], "--date", "2026-11-02", "--out", P["decision"]])
+    return d, p4, P
+
+
+def test_two_tier_funnel_is_counted_by_code(td):
+    """R38 (PM 2026-11-02). Tier 1: code builds the claims board (the two highest-conviction SUPPORT cases and OPPOSE
+    cases per name; no SUPPORT = OUT), routes each claim to two reviewers of ANOTHER method family -- never the author,
+    the opposite camp first, load-balanced -- and applies the survival rule. Tier 2: every refute of a surviving claim
+    is paired with its author; decide-timing counts: <4 SUPPORT not slated, ACT_NOW > WAIT ADVANCE, a tie WATCH, ONE
+    modal trigger. Every count is code; decide-timing refuses a form that does not decide every survivor."""
+    d, p4, P = _funnel_chain(td, "funnel")
+    rc, log = P["claims_log"]
+    check("claims exits clean", rc == 0, log[-400:])
+    if rc != 0: return
+    B = json.load(open(P["claims"]))
+    N = B["names"]
+    check("a name with no SUPPORT vote is OUT and carries no claims", B["out"] == ["VRNS"] and N["VRNS"]["claims"] == [], str(B["out"]))
+    check("claims are the two highest-conviction SUPPORT seats' case.for (ties by seat order)",
+          [c["claim_id"] for c in N["GNW"]["claims"]] == ["GNW-wyckoff-for", "GNW-raschke-for"], str([c["claim_id"] for c in N["GNW"]["claims"]]))
+    check("... and the two highest-conviction OPPOSE seats' case.against",
+          [c["claim_id"] for c in N["BBY"]["claims"]] == ["BBY-oneil-for", "BBY-minervini-for", "BBY-seow-against", "BBY-raschke-against"],
+          str([c["claim_id"] for c in N["BBY"]["claims"]]))
+    check("the claim text is the seat's own case, verbatim", N["GNW"]["claims"][0]["text"] == "wyckoff: the creek was crossed on rising volume")
+    allc = [(t, c) for t, n in N.items() for c in n["claims"]]
+    check("every claim is routed to exactly two reviewers", all(len(c["reviewers"]) == 2 for _, c in allc), str([(c["claim_id"], c["reviewers"]) for _, c in allc if len(c["reviewers"]) != 2]))
+    check("a claim is NEVER routed to its author", all(c["author"] not in c["reviewers"] for _, c in allc))
+    check("a claim is NEVER routed to a seat of the author's method family (oneil and minervini are one family)",
+          all(FAMILY[r] != FAMILY[c["author"]] for _, c in allc for r in c["reviewers"]),
+          str([(c["claim_id"], c["reviewers"]) for _, c in allc if any(FAMILY[r] == FAMILY[c["author"]] for r in c["reviewers"])]))
+    bby = {c["claim_id"]: c["reviewers"] for c in N["BBY"]["claims"]}
+    check("a SUPPORT claim goes to the opposite camp first (BBY's opposers)",
+          set(bby["BBY-oneil-for"]) <= {"seow", "raschke", "wyckoff"} and set(bby["BBY-minervini-for"]) <= {"seow", "raschke", "wyckoff"}, str(bby))
+    check("an AGAINST claim goes to the supporters first", set(bby["BBY-seow-against"]) <= {"oneil", "minervini", "livermore", "elder-lens"}, str(bby))
+    check("with no opposite camp, the abstainers come next (MFG's raschke and wyckoff)",
+          set(N["MFG"]["claims"][0]["reviewers"]) == {"raschke", "wyckoff"}, str(N["MFG"]["claims"][0]["reviewers"]))
+    check("load balance: GNW's second claim goes to the two least-loaded eligible seats, not the first claim's reviewers",
+          N["GNW"]["claims"][0]["reviewers"] == ["oneil", "minervini"] and N["GNW"]["claims"][1]["reviewers"] == ["livermore", "elder-lens"],
+          str([c["reviewers"] for c in N["GNW"]["claims"]]))
+    check("routing per seat == the claims that name it", all(sorted(B["routing"][v]) == sorted(c["claim_id"] for _, c in allc if v in c["reviewers"]) for v in DEC))
+    check("the board carries the measurement and NO verdict", B["measurement"]["claims_issued"] == len(allc) and "verdict" not in json.dumps(B))
+    pk = json.load(open(os.path.join(P["cp"], "wyckoff.json")))
+    check("a reviewer's packet holds exactly its routed claims", [c["claim_id"] for c in pk["claims"]] == B["routing"]["wyckoff"])
+    keys = {k for c in pk["claims"] for k in c}
+    check("the packet carries the claim, its author, the grid and the row -- never the stance counts or the other reviewer",
+          keys == {"claim_id", "ticker", "kind", "author", "text", "your_blind_vote", "mtf", "row"} and all("sc_momentum" in c["row"] for c in pk["claims"]), str(keys))
+    check("the packet has no other seat's ruling or vote", not any(w in json.dumps(pk) for w in ('"support"', '"oppose"', '"reviewers"', '"ruling"')))
+    # ---- tier 1 rulings: registrar on arrival ----
+    check("every synthetic cross form validates", all(r[0] == 0 for r in P["cross_rc"].values()), str({v: r[1][-200:] for v, r in P["cross_rc"].items() if r[0]}))
+    own = _cross_form(B, "wyckoff"); own["rulings"][0]["claim_id"] = "GNW-wyckoff-for"; own["rulings"][0]["ticker"] = "GNW"
+    rc, log = _validate(d, own, "cross_own", "--kind", "cross", "--claims", P["claims"])
+    check("a voice ruling on its OWN claim is REJECTED", rc != 0 and "AUTHOR" in log, log[-300:])
+    gap = _cross_form(B, "wyckoff"); gap["rulings"] = gap["rulings"][1:]
+    rc, log = _validate(d, gap, "cross_gap", "--kind", "cross", "--claims", P["claims"])
+    check("a cross form missing a routed claim is REJECTED", rc != 0 and "no ruling on routed claim" in log, log[-300:])
+    lie = _cross_form(B, "seow"); lie["rulings"][0]["changed_mind"] = True; lie["rulings"][0]["what_moved_me"] = "x"
+    rc, log = _validate(d, lie, "cross_lie", "--kind", "cross", "--claims", P["claims"])
+    check("changed_mind must agree with stance_after vs the blind vote", rc != 0 and "changed_mind" in log, log[-300:])
+    # R16.1 for the funnel: a reviewer whose form will not fit one 24 KB file files parts; merge proves coverage
+    full = json.load(open(os.path.join(P["cross"], "seow.json"))); half = len(full["rulings"]) // 2
+    sp = os.path.join(d, "forms", "cross_split"); os.makedirs(sp, exist_ok=True)
+    for k, chunk in ((1, full["rulings"][:half]), (2, full["rulings"][half:])):
+        json.dump(dict(full, rulings=chunk), open(os.path.join(sp, f"seow.part{k}of2.json"), "w"))
+    rc1, l1 = run([REG, "validate", "--file", os.path.join(sp, "seow.part1of2.json"), "--kind", "cross", "--claims", P["claims"], "--part", "1", "--of", "2"])
+    rc0, l0 = run([REG, "validate", "--file", os.path.join(sp, "seow.part1of2.json"), "--kind", "cross", "--claims", P["claims"]])
+    check("a declared cross PART is validated on its own; the same file undeclared is refused for coverage", rc1 == 0 and rc0 != 0, l1[-200:] + l0[-200:])
+    mo = os.path.join(sp, "seow.json")
+    rc, log = run([REG, "merge", "--kind", "cross", "--glob", os.path.join(sp, "seow.part*.json"), "--claims", P["claims"], "--out", mo])
+    check("merge --kind cross stitches the parts and proves the routing is covered", rc == 0 and json.load(open(mo))["rulings"] == full["rulings"], log[-300:])
+    os.remove(os.path.join(sp, "seow.part2of2.json"))
+    rc, log = run([REG, "merge", "--kind", "cross", "--glob", os.path.join(sp, "seow.part*.json"), "--claims", P["claims"], "--out", os.path.join(sp, "x.json")])
+    check("merge refuses parts that do not cover the routing", rc != 0 and "no ruling on routed claim" in log, log[-300:])
+    t2full = json.load(open(os.path.join(P["tier2"], "oneil.json")))
+    sp2 = os.path.join(d, "forms", "tier2_split"); os.makedirs(sp2, exist_ok=True)
+    json.dump(dict(t2full, decisions=t2full["decisions"][:1]), open(os.path.join(sp2, "oneil.part1of2.json"), "w"))
+    json.dump(dict(t2full, decisions=t2full["decisions"][1:], answers=[]), open(os.path.join(sp2, "oneil.part2of2.json"), "w"))
+    rc, log = run([REG, "merge", "--kind", "tier2", "--glob", os.path.join(sp2, "oneil.part*.json"), "--pairs", P["pairs"], "--funnel", P["funnel"],
+                   "--out", os.path.join(sp2, "oneil.json")])
+    check("merge --kind tier2 proves every pair and every survivor is covered", rc == 0, log[-300:])
+    # ---- the first funnel ----
+    rc, log = P["score_log"]
+    check("claims-score exits clean", rc == 0, log[-400:])
+    if rc != 0: return
+    F = json.load(open(P["funnel"]))
+    st = {t: F["names"][t]["status"] for t in ROOM}
+    check("survival rule: GNW all confirmed SURVIVES; MFG 1 confirm vs 1 refute SURVIVES (confirms >= refutes)",
+          st["GNW"] == "SURVIVES" and st["MFG"] == "SURVIVES", str(st))
+    check("survival rule: BBY's support claims all refuted -> DROPPED; LNG 1 confirm vs 3 refutes -> DROPPED; VRNS OUT",
+          (st["BBY"], st["LNG"], st["VRNS"]) == ("DROPPED", "DROPPED", "OUT"), str(st))
+    check("survivors / dropped / out lists in room order", (F["survivors"], F["dropped"], F["out"]) == (["GNW", "MFG"], ["BBY", "LNG"], ["VRNS"]))
+    tl = F["names"]["MFG"]["tallies"]
+    check("tallies are counted per side", (tl["support_confirm"], tl["support_refute"], tl["support_cannot_see"]) == (1, 1, 2), str(tl))
+    check("a DROPPED name carries the refuting evidence on the record",
+          len(F["names"]["BBY"]["refuted_by"]) == 4 and all(x["evidence"] and x["tf"]["H1"] for x in F["names"]["BBY"]["refuted_by"]))
+    M = F["measurement"]
+    check("measurement: claims issued and rulings by kind add up", M["claims_issued"] == len(allc)
+          and M["rulings_total"] == 2 * len(allc) and set(M["rulings"]) == {"CONFIRM", "REFUTE", "CANNOT_SEE"}, str(M))
+    check("measurement: the seat whose stance moved on a peer's evidence is recorded, with what moved it",
+          M["stances_changed"] == [{"voice": "raschke", "ticker": "MFG", "from": "ABSTAIN", "to": "SUPPORT", "what_moved_me": "the weekly base holds above EMA21"}], str(M["stances_changed"]))
+    check("funnel.json carries no verdict", "verdict" not in json.dumps(F))
+    e = os.path.join(d, "forms", "empty_cross"); os.makedirs(e, exist_ok=True)
+    rc, log = run([PIPE, "claims-score", "--claims", P["claims"], "--rulings", e, "--date", "2026-11-02", "--out", os.path.join(d, "x.json")])
+    check("claims-score refuses to count an empty forms dir", rc != 0 and "refusing to count an empty room" in log, log[-200:])
+    bad = os.path.join(d, "forms", "cross_bad"); shutil.copytree(P["cross"], bad)
+    g = json.load(open(os.path.join(bad, "wyckoff.json"))); g["rulings"] = g["rulings"][1:]; json.dump(g, open(os.path.join(bad, "wyckoff.json"), "w"))
+    rc, log = run([PIPE, "claims-score", "--claims", P["claims"], "--rulings", bad, "--date", "2026-11-02", "--out", os.path.join(d, "x.json")])
+    check("claims-score refuses a form that does not cover its routing (defence in depth)", rc != 0 and "must cover exactly" in log, log[-200:])
+    # ---- the pairing ----
+    rc, log = P["pair_log"]
+    check("pair exits clean", rc == 0, log[-300:])
+    PR = json.load(open(P["pairs"]))
+    mfg0 = N["MFG"]["claims"][0]
+    check("every REFUTE on a SURVIVING name is one pair, in front of the claim's author (DROPPED names pair nothing)",
+          [(p["ticker"], p["author"], p["refuter"]) for p in PR["pairs"]] == [("MFG", mfg0["author"], mfg0["reviewers"][1])], str(PR["pairs"]))
+    check("pair_id = <claim_id>~<refuter>", PR["pairs"][0]["pair_id"] == f"{mfg0['claim_id']}~{mfg0['reviewers'][1]}")
+    t2 = {v: json.load(open(os.path.join(P["t2p"], f"{v}.json"))) for v in DEC if os.path.exists(os.path.join(P["t2p"], f"{v}.json"))}
+    check("every decider present gets a tier-2 packet, even with nothing to answer", sorted(t2) == sorted(DEC))
+    check("the author's packet carries its pair; nobody else's does",
+          [p["pair_id"] for p in t2[mfg0["author"]]["answer_pairs"]] == [PR["pairs"][0]["pair_id"]]
+          and all(not t2[v]["answer_pairs"] for v in DEC if v != mfg0["author"]))
+    sv = t2["wyckoff"]["survivors"]
+    check("survivors carry tallies as COUNTS only, never who ruled", [s["ticker"] for s in sv] == ["GNW", "MFG"]
+          and set(sv[1]["tallies"]) == {"support_confirm", "support_refute", "against_confirm", "against_refute"}
+          and not any(v in json.dumps(sv) for v in DEC if v != "wyckoff"), json.dumps(sv)[:300])
+    check("the condition vocabulary rides in every tier-2 packet", "h1_close_above" in t2["oneil"]["vocab"]["words"])
+    # ---- the second funnel ----
+    check("every synthetic tier-2 form validates", all(r[0] == 0 for r in P["tier2_rc"].values()), str({v: r[1][-300:] for v, r in P["tier2_rc"].items() if r[0]}))
+    rc, log = P["timing_log"]
+    check("decide-timing exits clean", rc == 0, log[-400:])
+    if rc != 0: return
+    D = json.load(open(P["decision"]))
+    g, m = D["names"]["GNW"], D["names"]["MFG"]
+    check("7 SUPPORT, ACT_NOW 4 > WAIT 3 -> ADVANCE", g["proposal"] == "ADVANCE" and g["counts"] == {"support": 7, "oppose": 0, "abstain": 0, "act_now": 4, "wait": 3}, str(g["counts"]))
+    check("a 2-2 modal split inside the winning camp is broken by the higher blind conviction (wyckoff 5)",
+          (g["trigger"]["word"], g["trigger"]["tf"]) == ("close_above:pivot_high", "D"), str(g["trigger"]))
+    check("the trigger's plain words are the most complete of its holders", g["trigger"]["plain"] == "a daily close through the creek on volume")
+    check("ACT_NOW 2 == WAIT 2 -> WATCH (a tie is WATCH)", m["proposal"] == "WATCH" and (m["counts"]["act_now"], m["counts"]["wait"]) == (2, 2), str(m))
+    check("WATCH takes the WAIT camp's trigger", (m["trigger"]["word"], m["trigger"]["tf"]) == ("in_zone:ma_20", "D"), str(m["trigger"]))
+    check("the market kill is the modal market_void across all SUPPORT decisions, parsed",
+          D["market_kill"] and D["market_kill"]["plain"] == SPY_VOID and (D["market_kill"]["symbol"], D["market_kill"]["word"], D["market_kill"]["level"]) == ("SPY", "close_below", 750.0)
+          and D["market_kill"]["seats"] == ["oneil", "minervini", "livermore"], str(D["market_kill"]))
+    check("horizon = median of the supporters' stated horizons", isinstance(g["horizon_sessions"], int) and g["horizon_sessions"] == 14, str(g["horizon_sessions"]))
+    check("the measurement carries the ACT_NOW vs WAIT split per name", D["measurement"]["act_now_vs_wait"] == {"GNW": {"act_now": 4, "wait": 3}, "MFG": {"act_now": 2, "wait": 2}})
+    # variant: GNW falls to 3 SUPPORT -> NOT_SLATED; MFG gains raschke's ACT_NOW -> 3 vs 2 ADVANCE, modal by majority
+    v2 = os.path.join(d, "forms", "tier2_v2"); os.makedirs(v2, exist_ok=True)
+    for v in DEC:
+        f = json.load(open(os.path.join(P["tier2"], f"{v}.json")))
+        for x in f["decisions"]:
+            if x["ticker"] == "GNW" and v not in ("oneil", "minervini", "raschke"):
+                x.update({"stance": "OPPOSE", "timing": None, "trigger": None})
+            if x["ticker"] == "MFG" and v == "raschke":
+                x.update({"stance": "SUPPORT", "timing": "ACT_NOW", "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "hourly close over the high"}})
+        json.dump(f, open(os.path.join(v2, f"{v}.json"), "w"))
+    exp = json.load(open(fx("export.json")))
+    for r in exp["daily_list"]:
+        if r["ticker"] == "MFG": r["held"] = True
+    ex2 = os.path.join(d, "export_mfg_held.json"); json.dump(exp, open(ex2, "w"))
+    out2 = os.path.join(d, "decision_v2.json")
+    rc, log = run([PIPE, "decide-timing", "--tier2", v2, "--funnel", P["funnel"], "--phase4", p4, "--export", ex2, "--date", "2026-11-02", "--out", out2])
+    check("decide-timing (variant) exits clean", rc == 0, log[-300:])
+    if rc == 0:
+        D2 = json.load(open(out2))
+        check("fewer than 4 SUPPORT -> NOT_SLATED, no trigger", D2["names"]["GNW"]["proposal"] == "NOT_SLATED" and D2["names"]["GNW"]["trigger"] is None, str(D2["names"]["GNW"]))
+        check("ACT_NOW 3 > WAIT 2 -> ADVANCE on the majority trigger", D2["names"]["MFG"]["proposal"] == "ADVANCE"
+              and (D2["names"]["MFG"]["trigger"]["word"], D2["names"]["MFG"]["trigger"]["seats"]) == ("h1_close_above:bar_high", ["oneil", "minervini", "raschke"]), str(D2["names"]["MFG"]))
+        check("a held name is counted on the ADD question and carries the hold line (modal wrong_if of its supporters)",
+              D2["names"]["MFG"]["held"] and D2["names"]["MFG"]["question"] == "ADD"
+              and D2["names"]["MFG"]["hold_line"]["plain"] == "close back under the 20-day average", str(D2["names"]["MFG"].get("hold_line")))
+    # a hand-edited funnel.json (BBY slipped into the survivors) is refused: the tier-2 forms never decided it
+    hf = json.load(open(P["funnel"])); hf["survivors"].append("BBY"); hfp = os.path.join(d, "funnel_edited.json"); json.dump(hf, open(hfp, "w"))
+    rc, log = run([PIPE, "decide-timing", "--tier2", P["tier2"], "--funnel", hfp, "--phase4", p4, "--date", "2026-11-02", "--out", os.path.join(d, "x.json")])
+    check("decide-timing refuses a funnel survivor no tier-2 form decided (a hand-edited funnel.json)", rc != 0 and "must decide exactly the survivors" in log, log[-300:])
+    miss = os.path.join(d, "forms", "tier2_miss"); shutil.copytree(P["tier2"], miss)
+    g = json.load(open(os.path.join(miss, "seow.json"))); g["decisions"] = g["decisions"][:1]; json.dump(g, open(os.path.join(miss, "seow.json"), "w"))
+    rc, log = run([PIPE, "decide-timing", "--tier2", miss, "--funnel", P["funnel"], "--phase4", p4, "--date", "2026-11-02", "--out", os.path.join(d, "x.json")])
+    check("decide-timing refuses a tier-2 form that misses a survivor", rc != 0 and "seow" in log and "MFG" in log, log[-300:])
+    # --reroute: an absent reviewer's claims move to the next eligible seats; nobody else's routing changes
+    rr = os.path.join(d, "claims_rr.json"); shutil.copy(P["claims"], rr)
+    rc, log = run([PIPE, "claims", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--date", "2026-11-02", "--out", rr,
+                   "--packets-dir", os.path.join(d, "cp_rr"), "--reroute", "wyckoff"])
+    check("claims --reroute exits clean", rc == 0, log[-300:])
+    if rc == 0:
+        R = json.load(open(rr)); rc_ = [c for n in R["names"].values() for c in n["claims"]]
+        before = {c["claim_id"]: c["reviewers"] for _, c in allc}
+        check("the absent seat is off every claim and still two reviewers each, never the author or its family",
+              all("wyckoff" not in c["reviewers"] and len(c["reviewers"]) == 2 and c["author"] not in c["reviewers"]
+                  and all(FAMILY[r] != FAMILY[c["author"]] for r in c["reviewers"]) for c in rc_ if c["author"] != "wyckoff"), str([(c["claim_id"], c["reviewers"]) for c in rc_]))
+        check("claims the absent seat did not review keep their reviewers", all(c["reviewers"] == before[c["claim_id"]] for c in rc_ if "wyckoff" not in before[c["claim_id"]]))
+        check("the absent seat is declared and has no packet", R["reviewers_absent"] == ["wyckoff"] and not os.path.exists(os.path.join(d, "cp_rr", "wyckoff.json")))
+
+
+def test_multi_timeframe_grid_is_required(td):
+    """R39 (PM 2026-11-02). The weekly / daily / 1-hour grid is required on every tier-1 ruling and every tier-2
+    trigger; the vote packet, the claims board and the tier-2 packets carry it; a name the bars do not serve says
+    MTF NOT SERVED (declared), never a neutral reading."""
+    d, p4, P = _funnel_chain(td, "mtf")
+    if P["claims_log"][0] != 0:
+        check("claims exits clean", False, P["claims_log"][1][-300:]); return
+    B = json.load(open(P["claims"]))
+    check("the claims board carries each name's grid", B["names"]["GNW"]["mtf"]["served"] is True and "W" in B["names"]["GNW"]["mtf"])
+    check("a name the bars do not serve is declared NOT served, with the reason",
+          B["names"]["VRNS"]["mtf"] == {"served": False, "reason": "FMP returned no 1-hour bars"}, str(B["names"]["VRNS"]["mtf"]))
+    t2 = json.load(open(os.path.join(P["t2p"], "seow.json")))
+    check("every tier-2 survivor carries its grid", all(s["mtf"].get("served") for s in t2["survivors"]))
+    f = _cross_form(B, "seow"); del f["rulings"][0]["tf"]["H1"]
+    rc, log = _validate(d, f, "cross_noh1", "--kind", "cross", "--claims", P["claims"])
+    check("a cross ruling missing tf.H1 is REJECTED", rc != 0 and "missing H1" in log, log[-300:])
+    f = _cross_form(B, "seow"); f["rulings"][0]["tf"] = "daily looks fine"
+    rc, log = _validate(d, f, "cross_tfstr", "--kind", "cross", "--claims", P["claims"])
+    check("a cross ruling whose tf is not the grid is REJECTED", rc != 0 and "W / D / H1 grid" in log, log[-300:])
+    t2f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); del t2f["decisions"][0]["trigger"]["tf"]
+    rc, log = _validate(d, t2f, "t2_notf", "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    check("a tier-2 SUPPORT trigger without its timeframe is REJECTED", rc != 0 and "trigger.tf" in log, log[-300:])
+    t2f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); t2f["decisions"][0]["trigger"]["tf"] = "1H"
+    rc, log = _validate(d, t2f, "t2_badtf", "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    check("a timeframe outside W / D / H1 is REJECTED", rc != 0 and "trigger.tf" in log, log[-300:])
+    # the vote packet
+    out = os.path.join(td, "vp_mtf.txt")
+    rc, log = run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--mtf", fx("mtf.json"),
+                   "--run-id", "t", "--out", out])
+    check("r2digest runs with --mtf", rc == 0, log[-300:])
+    if rc != 0: return
+    L = open(out).read().splitlines()
+    def after_elder(t):
+        i = next(i for i, l in enumerate(L) if l.startswith(f"### {t} "))
+        j = next(j for j in range(i, len(L)) if L[j].startswith("  elder "))
+        return L[j + 1]
+    check("a served name prints its W / D / H1 line right after the elder line",
+          after_elder("VLO") == "  MTF: W above rising EMA21 | D inside bar under the pivot | H1 holding the morning low", after_elder("VLO"))
+    check("a name mtf.json declares unserved prints MTF NOT SERVED (declared)", after_elder("MPC") == "  MTF: NOT SERVED (declared)", after_elder("MPC"))
+    check("a name absent from mtf.json prints MTF NOT SERVED too -- never a neutral reading", after_elder("SLDE") == "  MTF: NOT SERVED (declared)", after_elder("SLDE"))
+    check("every room name carries exactly one MTF line", sum(1 for l in L if l.startswith("  MTF: ")) == len(json.load(open(fx("phase4.json")))["deliberation_set"]))
+    out0 = os.path.join(td, "vp_nomtf.txt")
+    run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+         "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--run-id", "t", "--out", out0])
+    check("without --mtf the packet is unchanged (no MTF line)", os.path.exists(out0) and "MTF:" not in open(out0).read())
+    rc, log = run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--mtf", os.path.join(td, "nope.json"),
+                   "--run-id", "t", "--out", os.path.join(td, "vp_gone.txt")])
+    check("a missing mtf.json declares every name NOT SERVED", rc == 0 and open(os.path.join(td, "vp_gone.txt")).read().count("MTF: NOT SERVED (declared)") == 20)
+    run_yaml = open(os.path.join(HERE, "..", "RUN.yaml")).read()
+    check("the VOTE packet in RUN.yaml passes --mtf", "--mtf mtf.json --out VOTE_PACKET.txt" in run_yaml)
+
+
+def _slate_from(decision, tickers=None):
+    D = json.load(open(decision))
+    tk = []
+    for t, n in D["names"].items():
+        if n["proposal"] == "NOT_SLATED" or (tickers and t not in tickers):
+            continue
+        tg = n["trigger"]
+        tk.append({"ticker": t, "verdict": n["proposal"], "entry_trigger": tg["plain"],
+                   "trigger": {"word": tg["word"], "tf": tg["tf"], "plain": tg["plain"]}, "wrong_if": "close back inside the base",
+                   "horizon_sessions": n["horizon_sessions"] or 10, "why_agreed": "oneil, wyckoff: the creek was crossed on volume",
+                   "dissent": [], "timing_count": dict(n["counts"])})
+    return {"date": "2026-11-02", "chair": "chair", "tickets": tk, "market_kill": D["market_kill"]}
+
+
+def test_one_trigger_per_ticket_and_market_kill(td):
+    """R40 (PM 2026-11-02). A ticket carries ONE trigger -- the one decide-timing fixed -- and the slate carries ONE
+    market kill line. The registrar REJECTS a ticket whose verdict or trigger differs from decision.json, a ticket
+    for a name code did not slate, and a market_kill that is not decision.json's. A trigger names a FIELD level."""
+    d, p4, P = _funnel_chain(td, "r40")
+    if not os.path.exists(P.get("decision", "")):
+        check("the funnel chain reaches decision.json", False, str(P.get("timing_log"))[-300:]); return
+    S = _slate_from(P["decision"])
+    sv = lambda s, tag, *x: _validate(d, s, tag, "--kind", "slate", "--phase4", p4, "--decision", P["decision"], *x)
+    rc, log = sv(S, "slate_ok")
+    check("a slate copied from decision.json validates", rc == 0, log[-400:])
+    b = json.loads(json.dumps(S)); b["tickets"][0]["trigger"]["word"] = "h1_close_above:bar_high"; b["tickets"][0]["trigger"]["tf"] = "H1"
+    rc, log = sv(b, "slate_trig")
+    check("a ticket whose trigger differs from decision.json is REJECTED", rc != 0 and "differs from decision.json" in log, log[-300:])
+    b = json.loads(json.dumps(S)); b["tickets"][1]["verdict"] = "ADVANCE"
+    rc, log = sv(b, "slate_verdict")
+    check("a ticket whose verdict differs from decision.json is REJECTED (MFG is a WATCH by the tie rule)", rc != 0 and "verdict ADVANCE differs" in log, log[-300:])
+    b = json.loads(json.dumps(S)); b["market_kill"] = dict(S["market_kill"], plain="QQQ close_below ma_50", symbol="QQQ", level=None)
+    rc, log = sv(b, "slate_mk")
+    check("a market_kill that is not decision.json's is REJECTED", rc != 0 and "market_kill" in log, log[-300:])
+    b = json.loads(json.dumps(S)); b["market_kill"] = None
+    rc, log = sv(b, "slate_mk_null")
+    check("dropping the market_kill decision.json carries is REJECTED", rc != 0 and "market_kill" in log, log[-300:])
+    b = json.loads(json.dumps(S)); b["tickets"].append(dict(b["tickets"][0], ticker="BBY"))
+    rc, log = sv(b, "slate_dropped")
+    check("a ticket for a name tier 1 DROPPED is REJECTED", rc != 0 and "not a tier-1 survivor" in log, log[-300:])
+    b = json.loads(json.dumps(S)); b["tickets"] = b["tickets"][:1]
+    rc, log = sv(b, "slate_missing")
+    check("a slated name left off a slate under the 15 cap is REJECTED", rc != 0 and "missing from the slate" in log, log[-300:])
+    # a NOT_SLATED name (variant decision: GNW at 3 SUPPORT)
+    D = json.load(open(P["decision"])); D["names"]["GNW"].update({"proposal": "NOT_SLATED", "trigger": None, "why": "3 SUPPORT < 4 of 7"})
+    dn = os.path.join(d, "decision_ns.json"); json.dump(D, open(dn, "w"))
+    rc, log = _validate(d, S, "slate_ns", "--kind", "slate", "--phase4", p4, "--decision", dn)
+    check("a ticket for a name decision.json did NOT slate is REJECTED", rc != 0 and "did NOT slate" in log, log[-300:])
+    # no --decision: a slate dated from 2026-11-02 still needs the trigger and the market_kill; history validates as filed
+    b = json.loads(json.dumps(S)); del b["tickets"][0]["trigger"]
+    rc, log = _validate(d, b, "slate_notrig", "--kind", "slate", "--phase4", p4)
+    check("a 2026-11-02 ticket without its trigger is REJECTED even without --decision", rc != 0 and "missing trigger" in log, log[-300:])
+    old = {"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}
+    rc, log = _validate(d, old, "slate_old", "--kind", "slate", "--phase4", p4)
+    check("a slate dated before 2026-11-02 validates as filed (no trigger, no market_kill)", rc == 0, log[-300:])
+    # the trigger word names a FIELD level, never a number (D123 grammar, reused)
+    def t2(word):
+        f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); f["decisions"][0]["trigger"]["word"] = word
+        return _validate(d, f, "t2_" + re.sub(r"\W", "_", word), "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    rc, log = t2("h1_close_above:644.24")
+    check("a trigger with a bare number as its level is REJECTED at tier 2", rc != 0 and "never a number" in log, log[-300:])
+    check("h1_close_above:bar_high is accepted", t2("h1_close_above:bar_high")[0] == 0)
+    check("in_zone:ma_20 is accepted", t2("in_zone:ma_20")[0] == 0)
+    rc, log = t2("rs_today_gt_spy")
+    check("a word with no price level is not a trigger", rc != 0 and "names no price level" in log, log[-300:])
+    rc, log = t2("reclaim:ma_20")
+    check("a seat's own method limits apply to its trigger (oneil may not buy a reclaim)", rc != 0 and "outside this seat's own method" in log, log[-300:])
+    f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); f["decisions"][0]["timing"] = None
+    rc, log = _validate(d, f, "t2_notiming", "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    check("SUPPORT without ACT_NOW / WAIT is REJECTED", rc != 0 and "timing" in log, log[-300:])
+    f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); f["answers"] = []
+    rc, log = _validate(d, f, "t2_noanswer", "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    check("an author who does not answer its refuter is REJECTED", rc != 0 and "no answer to pair" in log, log[-300:])
+    f = json.load(open(os.path.join(P["tier2"], "oneil.json"))); f["decisions"][0]["wrong_if"] = "the bracket is invalid so reject it"
+    rc, log = _validate(d, f, "t2_bracket", "--kind", "tier2", "--pairs", P["pairs"], "--funnel", P["funnel"])
+    check("a bracket used as the disqualifier in wrong_if is REJECTED (R1)", rc != 0 and "R1 VIOLATION" in log, log[-300:])
+    # the record: ratify-count reads the cross and tier-2 forms beside the ratifications
+    sp = os.path.join(d, "slate.json"); json.dump(S, open(sp, "w"))
+    for v in DEC:
+        _ratify(d, "ratify", v, {"GNW": "AGREE", "MFG": "AGREE"})
+    rec = os.path.join(d, "committee_record.json")
+    rc, log = run([PIPE, "ratify-count", "--slate", sp, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", P["board"],
+                   "--cross", P["cross"], "--tier2", P["tier2"], "--phase4", p4, "--date", "2026-11-02", "--out", os.path.join(d, "consensus.json"), "--record", rec])
+    check("ratify-count runs with --cross and --tier2", rc == 0, log[-300:])
+    if rc == 0:
+        R = {(r["voice"], r["ticker"]): r for r in json.load(open(rec))["rows"]}
+        r = R[("raschke", "MFG")]
+        check("the record carries the seat's cross rulings and its changed mind from them",
+              r["cross_rulings"] and all(set(x) == {"claim_id", "ruling"} for x in r["cross_rulings"]) and r["changed_mind"]
+              and "the weekly base holds above EMA21" in r["what_moved_me"] and r["stance_after_cross"] == "SUPPORT", str(r))
+        o = R[("oneil", "GNW")]
+        check("the record carries the tier-2 stance, timing and trigger", (o["tier2_stance"], o["tier2_timing"], o["tier2_trigger"]["word"]) == ("SUPPORT", "ACT_NOW", "h1_close_above:bar_high"), str(o))
+        p0 = json.load(open(P["pairs"]))["pairs"][0]
+        a = R[(p0["author"], "MFG")]
+        check("the record carries the pair answers a seat gave", a["answers_given"] == [p0["pair_id"]], str(a["answers_given"]))
+        C = {c["ticker"]: c for c in json.load(open(os.path.join(d, "consensus.json")))}
+        check("the ONE trigger rides into consensus.json", C["GNW"]["trigger"]["word"] == "close_above:pivot_high")
+
+
+def test_valen_flags_leave_ticket_selection(td):
+    """R41 (PM 2026-11-02): 'Valen risk do not need to appear at ticket selection level.' The vote packet carries no
+    RISK (Valen) block and no no-buy / parabolic text; the cards carry no no-buy flag. Valen stays as the weather."""
+    ex = json.load(open(fx("export.json"))); p4 = json.load(open(fx("phase4.json")))
+    t0 = p4["deliberation_set"][0]
+    for row in ex["daily_list"]:
+        if row["ticker"] == t0:
+            row["setups"] = [{"setup": "Parabolic", "status": "WATCH", "checks": [{"result": "PASS"}]},
+                             {"setup": "VCP", "status": "READY", "checks": [{"result": "PASS"}, {"result": "FAIL"}]}]
+    exp = os.path.join(td, "r41_export.json"); json.dump(ex, open(exp, "w"))
+    val = os.path.join(td, "r41_valen.json")
+    json.dump({"read_me_first": {"as_of": "2026-11-02", "so_what": "half size"}, "stance": {"word": "NEUTRAL"}, "regime": "CHOP",
+               "selection": {"no_buy_list": [{"ticker": t0, "flags": [{"label": "4.2 ATR extended"}]}]}}, open(val, "w"))
+    out = os.path.join(td, "r41_packet.txt")
+    rc, log = run([PIPE, "r2digest", "--export", exp, "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--valen", val, "--run-id", "t", "--out", out])
+    check("r2digest runs with a Valen file carrying a no-buy list", rc == 0, log[-300:])
+    if rc != 0: return
+    txt = open(out).read()
+    check("no RISK (Valen block in the vote packet", "RISK (Valen" not in txt)
+    check("no no-buy / NO-BUY / parabolic text anywhere in the vote packet",
+          not any(w in txt for w in ("no-buy", "NO-BUY", "arabolic", "4.2 ATR extended")), [l for l in txt.splitlines() if "arabolic" in l or "no-buy" in l.lower()][:3])
+    check("Valen stays as the weather", "stance NEUTRAL" in txt and "VCP READY (1/2)" in txt)
+    # the CODE of the cards (comments stripped: a comment saying the list is no longer read is not a flag)
+    code = [l.split("#", 1)[0] for l in open(os.path.join(TOOLS, "pma_cards.py"), encoding="utf-8").read().splitlines()]
+    hits = [l.strip() for l in code if any(w in l for w in ("no-buy", "NO-BUY", "no_buy"))]
+    check("pma_cards.py carries no no-buy card flag (no code reads no_buy_list or prints a no-buy line)", not hits, str(hits[:3]))
+    check("R41 is on the record and R37 is superseded", "id: R41" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read()
+          and "superseded_by_R41" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read())
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -2633,7 +3130,8 @@ def main():
                    test_the_checker_catches_a_seeded_failure,
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_the_weather_cards_exist_and_are_wired,
-                   test_valen_warnings_are_a_risk_block_not_a_vote_row,
+                   test_two_tier_funnel_is_counted_by_code, test_multi_timeframe_grid_is_required,
+                   test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_review_fixes_count_only_validated_forms_and_never_double_count,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,

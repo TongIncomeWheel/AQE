@@ -803,7 +803,8 @@ rulings:
     title: The rounds -- blind shortlist, challenge, blind vote both ways, open floor, slate, ratify, QA and hold, close
     status: active
     date: 2026-10-30
-    binds_at: [NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, DECIDE]
+    binds_at: [NOMINATE, CHALLENGE, VOTE, SLATE, RATIFY, QA, DECIDE]
+    status_note: round 3 (the open floor) is superseded by R38's two-tier funnel on 2026-11-02; the rest stands
     pm_words: >
       "One hearing round is not a committee." (18:59 SGT, 2026-10-30) The 12 Aug deliberation ruling, rebuilt.
     rule: >
@@ -823,7 +824,7 @@ rulings:
 
   - id: R37
     title: Valen's risk warnings sit beside the verdict, not inside every vote row
-    status: active
+    status: superseded_by_R41
     date: 2026-11-01
     binds_at: [VOTE, WRITE, REPORT]
     pm_words: >
@@ -834,4 +835,74 @@ rulings:
       only. The parabolic / failed-leader warnings and the no-buy flags print ONCE in a RISK block after the rows,
       labelled information beside the verdict and never a reason to oppose. The Cards keep the warning beside the
       verdict as today. A voice judges the name on its own method; the warning is a risk the PM reads.
-    check: tests.test_valen_warnings_are_a_risk_block_not_a_vote_row
+    # check retired with the ruling: R41's tests.test_valen_flags_leave_ticket_selection replaces it
+
+  - id: R38
+    title: The two-tier funnel -- cross-examination, then decision -- replaces the open floor
+    status: active
+    date: 2026-11-02
+    binds_at: [CLAIMS, CROSS, FUNNEL, PAIR, TIER2, TIMING, SLATE]
+    pm_words: >
+      "No minds changed sounds like something isn't working and a waste of effort, basically everyone agreeing their own
+      cards." "One forced round doesn't represent a two tier funnel for me. That is essential for proper deliberation."
+      "The new info should be voices looking at what others have tabled, and apply their lenses to it to form a supportive
+      or non supportive view." "The chair needs to be smarter -- to trigger then cross intelligence across the voices and
+      first funnel lost." (2026-11-02)
+    rule: >
+      TIER 1 (CLAIMS -> CROSS -> FUNNEL): code extracts each room name's sharpest claims (the two highest-conviction cases
+      for and against) and routes each to two reviewers from another method family, opposite camp first. A reviewer RULES
+      CONFIRM / REFUTE / CANNOT_SEE with its own method's evidence on the W/D/H1 grid and states its stance after. Code applies
+      the survival rule: >= 1 support claim CONFIRMED cross-lens and CONFIRM >= REFUTE on support claims. TIER 2 (PAIR ->
+      TIER2 -> TIMING): code puts every refute of a surviving claim in front of its author; each seat answers its refuters and
+      DECIDES every survivor (stance; on SUPPORT: ACT_NOW | WAIT, ONE trigger with timeframe, wrong-if, market void). Code
+      counts across all seven: < 4 SUPPORT not slated; ACT_NOW > WAIT ADVANCE else WATCH; tie = WATCH. The Chair runs the
+      tools and writes why_agreed / dissent on tickets whose verdict and trigger code has fixed; it never votes. Every
+      count is by code, never by hand. funnel.json and decision.json carry the measurement: rulings by kind, names dropped,
+      stances changed on a peer's evidence, ACT_NOW vs WAIT splits.
+    check: tests.test_two_tier_funnel_is_counted_by_code
+
+  - id: R39
+    title: Multi-timeframe (weekly / daily / 1-hour) is a required look on every ruling and every trigger
+    status: active
+    date: 2026-11-02
+    binds_at: [MTF, VOTE, CROSS, TIER2, SLATE]
+    pm_words: >
+      "An alternative suggestion maybe is to force a multi timeframe look (weekly, daily, 1hour)." "Premarket and gap info
+      adds nothing based on voices own methodology." (2026-11-02)
+    rule: >
+      MTF runs after RANK for the room: a data-steward courier pulls daily history and 1-hour bars; mtf.py computes the W / D /
+      H1 grid per name and declares NOT SERVED where bars are missing. The grid rides in the vote packet, the claims board and
+      the tier-2 packets. Every tier-1 ruling carries tf {W, D, H1}; every tier-2 trigger names its frame. A missing frame is
+      declared on the form, never silently skipped. This is information each voice uses by its own canon (Triple Screen, the
+      weekly base, structure across frames, lower-frame timing), unlike premarket price, which is not.
+    check: tests.test_multi_timeframe_grid_is_required
+
+  - id: R40
+    title: One trigger per ticket, and one market kill line for the slate
+    status: active
+    date: 2026-11-02
+    binds_at: [TIMING, SLATE, RATIFY, LEVELS, REPORT]
+    pm_words: >
+      "Watch vs advance sounds right if it was on the balance of securing votes." "What is a market line" -> answered: the
+      market condition that voids the trade, written where the alert loop can watch it. (2026-11-02)
+    rule: >
+      A ticket carries ONE trigger (condition-vocab word, timeframe, plain words) = the modal trigger of the winning timing camp
+      in decision.json; the registrar rejects a slate ticket whose verdict or trigger differs from decision.json. A seat that
+      disagrees with the trigger OBJECTS at ratification. The slate carries one MARKET KILL line (the modal market_void);
+      pma_levels.py publishes it as top-level `market_kill` so the alert loop can say "market condition broken -- take no new
+      triggers". The old Chair counting rule for ADVANCE vs WATCH is retired.
+    check: tests.test_one_trigger_per_ticket_and_market_kill
+
+  - id: R41
+    title: Valen's risk flags leave ticket selection
+    status: active
+    date: 2026-11-02
+    binds_at: [VOTE, CLAIMS, SLATE, LEVELS, REPORT]
+    pm_words: >
+      "Valen risk do not need to appear at ticket selection level." (2026-11-02)
+    rule: >
+      Valen's stance, trend and breadth remain the market weather (Cards Part 1; brief s1A). Its no-buy list and parabolic /
+      failed-leader warnings print nowhere a seat or the PM selects a ticket: not in the vote packet (the R37 RISK block is
+      removed), not on a card, hold row or pass row, not on the slate, not in pma_levels.json. Selection is the seats' own
+      judgment on their own methods.
+    check: tests.test_valen_flags_leave_ticket_selection

@@ -15,13 +15,20 @@
 # not ticked done.
 
 schema: aegis_run.v1
-updated: 2026-11-01   # contract fixes from the independent review of 2026-11-01 (findings 3,4,6,7,9,10,11)
+updated: 2026-11-02   # R38-R41 (docs/DECISIONS_2026-11-02.md): the two-tier funnel replaces the open floor; MTF grid; one trigger; Valen off tickets
 # THE 30 OCT 2026 REDESIGN (RULINGS R31-R36; docs/DECISIONS_2026-10-30.md wins). Seven deciders +
 # Steenbarger as QA; Detect-lens an independent list; the weather from AQE's Crown file and the Valen
 # dashboard, never from a seat. Rounds: blind NOMINATE (cap 6) -> CHALLENGE (Steenbarger) -> blind VOTE
 # with the case form -> FLOOR (Chair + deciders, on contested names) -> SLATE (Chair, <= 15) -> RATIFY
 # -> QA (note + at most one hold per ticket, reopening FLOOR/RATIFY for that ticket once) -> DECIDE
 # (ratify-count: 0 objections AGREED / 1-3 CONTESTED / >= 4 of 7 DROPPED). Code counts; voices judge.
+# THE 2 NOV 2026 REDESIGN (R38-R41; docs/DECISIONS_2026-11-02.md). The open FLOOR is RETIRED: 151 messages moved no stance.
+# In its place a TWO-TIER FUNNEL fed by the only new information a method-bound seat can act on -- another seat's testable
+# claim, ruled on through its own lens: CLAIMS (code extracts + routes) -> CROSS (7 seats rule CONFIRM/REFUTE/CANNOT_SEE on
+# the W/D/H1 grid) -> FUNNEL (code: survival rule) -> PAIR (code: every refute in front of its author) -> TIER2 (7 seats:
+# answer your refuter; decide every survivor: stance, ACT_NOW|WAIT, ONE trigger + timeframe, market void) -> TIMING (code
+# counts: <4 SUPPORT not slated; ACT_NOW>WAIT ADVANCE else WATCH, tie = WATCH). The Chair extracts, routes and pairs by
+# running the tools and writes why_agreed/dissent on tickets whose verdict and trigger code has fixed. MTF (R39) after RANK.
 parameters:
   deliberation_cap: 20
   deciders: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
@@ -40,6 +47,12 @@ parameters:
   brief_deadline_hours: 4
   card_report_artifact: "https://claude.ai/artifact/Q6FAPeqn2g8kvQuFja89Z3"   # R23: ONE fixed URL, updated in place every run
   max_quality_loops: 2
+  claims_per_camp: 2            # R38: the two highest-conviction SUPPORT cases and the two highest-conviction OPPOSE cases per name
+  claim_reviewers: 2            # R38: each claim is routed to two reviewers from a different method family / the opposite camp
+  survive_rule: "support claims CONFIRMED >= 1 and CONFIRM >= REFUTE on support claims (claims-score)"
+  slate_min_support: 4          # R38/R40: fewer than 4 of 7 SUPPORT after tier 2 = not slated
+  tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
+  mtf_frames: [W, D, H1]        # R39
 
 # ---------------------------------------------------------------------------- durability
 # RESTORED 2026-09-16. stages/S0_preflight.md has always said it plainly -- "local disk is
@@ -54,7 +67,7 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json slate.json floor_check.json consensus.json committee_record.json publish_receipt.json"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json consensus.json committee_record.json publish_receipt.json"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -67,7 +80,7 @@ checkpoint:
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
     would not resolve during an actual run -- the same duplication the pma tools already carry, for
     the same reason. Keep the two copies identical.
-  after: [GATHER, NOMINATE, CHALLENGE, VOTE, FLOOR, SLATE, RATIFY, QA, WRITE, PUBLISH]
+  after: [GATHER, NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, SLATE, RATIFY, QA, WRITE, PUBLISH]
   first_and_last: >
     GATHER's checkpoint is the RUN LOCK: it pushes run_manifest.json (written by `registrar.py init`) before any
     model spawn, so the READY watcher and the pma-auto backstop see `aegis/output/pma/run/<date>/run_manifest.json`
@@ -236,6 +249,26 @@ steps:
       a cut, never silently dropped.
     meter: "--tool-only"
 
+  - name: MTF
+    kind: tool
+    spawns: 1                      # one data-steward courier (any model), not a voice; R39
+    command: "mtf.py build --bars mtf_bars --phase4 phase4.json --export aqe_daily_export.json --date <date> --out mtf.json"
+    reads: [phase4.json, aqe_daily_export.json, mtf_bars/]
+    produces: [mtf.json]
+    barrier: "mtf.json present; every room name has a row (served or declared NOT SERVED)"
+    on_fail: "declare it; the vote packet, the claims board and the tier-2 packets carry 'MTF NOT SERVED' on the affected names and CONTINUE"
+    rulings: [R39]
+    must_also: >
+      R39 (PM 2026-11-02): "force a multi timeframe look (weekly, daily, 1hour)". For the ROOM only (phase4 deliberation_set),
+      a data-steward courier pulls per name the daily EOD history (>= 300 sessions, for the weekly) and the 1-hour bars
+      (>= 30 sessions) from FMP (historical-price-eod-light + intraday-1-hour) into mtf_bars/<TICKER>.json
+      {daily:[...], h1:[...]} -- transcribed exactly, nothing estimated, a name that returns nothing is written with
+      "unserved": true. mtf.py then computes the W / D / H1 grid per name (close vs EMA9/EMA21, EMA order, last bar colour,
+      higher-high/higher-low over the last 3 bars, distance to the 20-bar high, 1H position vs the day's range) and the
+      weekly bars from the daily. The courier forms no opinion (data-steward rules). The grid rides in the vote packet
+      (r2digest --mtf), the claims board and every tier-2 packet; every tier-1 ruling and tier-2 trigger names its frame.
+    meter: "--spawns 1"
+
   - name: CHALLENGE
     kind: model
     spawns: 1
@@ -258,7 +291,7 @@ steps:
     spawns: 7
     seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
     reads: [VOTE_PACKET.txt]
-    packet: "pma_pipeline.py r2digest --export <export> --fundamentals fundamentals_pack.json --steenbarger forms/challenge/steenbarger.json --crown aqe_crown_macro.json --valen aqe_valen_dashboard.json --out VOTE_PACKET.txt"
+    packet: "pma_pipeline.py r2digest --export <export> --fundamentals fundamentals_pack.json --steenbarger forms/challenge/steenbarger.json --crown aqe_crown_macro.json --valen aqe_valen_dashboard.json --mtf mtf.json --out VOTE_PACKET.txt"
     produces: [forms/r2/*.json]
     barrier: "6 of 7"
     on_fail: "watch-table-only run, declared"
@@ -297,44 +330,136 @@ steps:
       outsider -- before DECIDE runs. Tell each seat its part and the names in it. A FILE SIZE LIMIT
       MUST NEVER AGAIN DECIDE WHICH OF THE PM'S ANALYSTS ARE HEARD.
 
-  - name: FLOOR
-    kind: model
-    spawns: 8
-    seats: [chair, oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
-    command: "pma_pipeline.py board --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --date <date> --out board.json"
-    then: "pma_pipeline.py floor-check --messages forms/floor --board board.json --out floor_check.json"   # reads forms/floor/**/*.json; zero messages on an open floor FAILS unless --allow-silent
-    reads: [board.json, forms/r2/*.json, forms/challenge/steenbarger.json]
-    produces: [board.json, forms/floor/*.json, floor_check.json]
-    barrier: "floor-check exits 0 (caps hold; messages only on contested names)"
-    on_fail: "a cap breach is a REJECT of that message (one re-file). A SILENT floor (zero messages on contested names) fails the check; re-run floor-check with --allow-silent ONLY when every decider explicitly passed in its floor form, and the pass is then recorded -- never tick FLOOR on ok:false"
-    rulings: [R1, R31, R32, R35, R36]
-    validate_with: "registrar.py validate --file <msg> --kind floor --phase4 phase4.json --board board.json"
+  - name: CLAIMS
+    kind: tool
+    command: "pma_pipeline.py claims --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --mtf mtf.json --date <date> --out claims_board.json --packets-dir claims_packets"
+    reads: [forms/r2/*.json, phase4.json, forms/challenge/steenbarger.json, mtf.json]
+    produces: [board.json, claims_board.json, claims_packets/]
+    first: "pma_pipeline.py board --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --date <date> --out board.json   # the blind splits + cases, kept for the record and ratify-count"
+    barrier: "every name with a SUPPORT vote carries >= 1 claim; every claim is routed to exactly claim_reviewers reviewers from another method family"
+    on_fail: "FATAL for the funnel -- halt and declare; the run cannot slate without tier 1"
+    rulings: [R1, R38, R39]
     must_also: >
-      THE OPEN FLOOR (R36, the PM's 12 Aug deliberation ruling rebuilt). `board` marks each CONTESTED name
-      (both SUPPORT and OPPOSE among the deciders, or named in Steenbarger's challenge) and lays out every
-      decider's case -- it computes NO verdict. The Chair (agents/chair.md; skills/pma-deliberate) posts the
-      board per contested name; deciders message each other BY NAME (contracts/floor_message.schema.json):
-      answer the point that was made, concede when the evidence your own method cares about shows up, hold
-      when it does not, say what would clear your objection. Steenbarger may be called on by name
-      (stance NO_VOTE). Cap TWO messages per seat per name, counted by `floor-check`. The Chair never votes,
-      never adds a view, never judges the quality of a reason -- only that every question was answered.
+      THE CLAIMS BOARD (R38). Per room name: the sharpest claims = `case.for` of the two highest-conviction SUPPORT seats and
+      `case.against` of the two highest-conviction OPPOSE seats (ties by seat order). Names with no SUPPORT vote are out and get
+      no claims. Each claim is routed to two reviewers from a DIFFERENT METHOD FAMILY (oneil+minervini = breakout template;
+      livermore = pivotal strength; elder-lens = impulse; seow = position system; raschke = swing pattern; wyckoff = structure/volume),
+      preferring the OPPOSITE CAMP, then abstainers, then the lowest-conviction same-camp seats of another family; load-balanced
+      round-robin. Steenbarger's claims on a name ride on the board as context. claims_packets/<seat>.json holds exactly the
+      claims routed to that seat, with the name's MTF grid and its row -- never the author's stance count or any other ruling.
+      It computes NO verdict (asserted).
+    meter: "--tool-only"
+
+  - name: CROSS
+    kind: model
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+    reads: [claims_packets/<seat>.json]
+    produces: [forms/cross/*.json]
+    barrier: "6 of 7"
+    on_fail: "a missing reviewer's claims are re-routed once (claims --reroute <seat>); then declared absent"
+    rulings: [R1, R31, R38, R39]
+    validate_with: "registrar.py validate --file forms/cross/<seat>.json --kind cross --claims claims_board.json"
+    must_also: >
+      TIER 1 -- CROSS-EXAMINATION (contracts/cross_ruling.schema.json). A reviewer RULES on each claim routed to it --
+      CONFIRM / REFUTE / CANNOT_SEE -- with the evidence its own method reads, on the W / D / H1 grid (R39), and states its
+      own stance on the name after ruling (changed_mind + what_moved_me when it moved). It never restates its own case and
+      never sees another reviewer's ruling. Blind: no seat sees the rulings until funnel.json is posted. R1 as everywhere.
+    split_forms: >
+      R16.1 applies (2026-11-02): a reviewer routed ~40 claims may not fit one 24,576-byte form. It files
+      forms/cross/<seat>.partNofM.json, each validated with `--kind cross --claims claims_board.json --part N --of M`, then
+      `registrar.py merge --kind cross --glob 'forms/cross/<seat>.part*.json' --claims claims_board.json --out forms/cross/<seat>.json`
+      proves the parts cover its routing exactly. The counters skip the parts.
     checkpoint_after: true
-    meter: "--spawns 8"
+    meter: "--spawns 7"
+
+  - name: FUNNEL
+    kind: tool
+    command: "pma_pipeline.py claims-score --claims claims_board.json --rulings forms/cross --date <date> --out funnel.json"
+    reads: [claims_board.json, forms/cross/*.json]
+    produces: [funnel.json]
+    barrier: "claims-score exits 0; every room name is SURVIVES / DROPPED / OUT with its tallies"
+    on_fail: "FATAL -- a funnel that cannot count is not a funnel; halt and declare"
+    rulings: [R38]
+    must_also: >
+      THE FIRST FUNNEL, by code. A name SURVIVES when >= 1 of its support claims is CONFIRMED by a cross-lens reviewer AND its
+      support claims are not net-refuted (CONFIRM >= REFUTE). Names with no SUPPORT vote are OUT. Everything else is DROPPED
+      here with the refuting evidence on the record. funnel.json also carries the measurement the PM asked for: claims issued,
+      rulings by kind, names dropped at tier 1, seats whose stance changed on a peer's evidence, and the post-cross stance
+      of every seat on every name. NEVER hand-tallied.
+    meter: "--tool-only"
+
+  - name: PAIR
+    kind: tool
+    command: "pma_pipeline.py pair --claims claims_board.json --rulings forms/cross --funnel funnel.json --mtf mtf.json --date <date> --out pairs.json --packets-dir tier2_packets"
+    reads: [claims_board.json, forms/cross/*.json, funnel.json, mtf.json]
+    produces: [pairs.json, tier2_packets/]
+    barrier: "every REFUTE on a surviving claim is one pair (author, refuter, claim, evidence); every decider has a tier2 packet listing the survivors it must decide"
+    rulings: [R38]
+    must_also: >
+      THE ADVERSARY PAIRING. Code puts each REFUTE of a surviving claim in front of the claim's AUTHOR, with the refuter's
+      evidence and grid quoted. tier2_packets/<seat>.json = the pairs where the seat is the author (to answer) + the full
+      survivor list with each name's MTF grid and the tier-1 tallies (how many confirmed / refuted, never who) + the
+      condition vocabulary. The Chair runs it; it adds nothing.
+    meter: "--tool-only"
+
+  - name: TIER2
+    kind: model
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+    reads: [tier2_packets/<seat>.json]
+    produces: [forms/tier2/*.json]
+    barrier: "6 of 7"
+    on_fail: "one respawn, then absent; decide-timing counts the deciders present (n) and drops at >= ceil(n/2) as everywhere"
+    rulings: [R1, R31, R38, R39, R40]
+    validate_with: "registrar.py validate --file forms/tier2/<seat>.json --kind tier2 --pairs pairs.json --funnel funnel.json"
+    must_also: >
+      TIER 2 -- DECISION (contracts/tier2.schema.json). Each decider files ONE form: (a) an ANSWER to every refutation of its own
+      claims -- quote the point in ten words or fewer, answer by its own method on the grid, concede when the refuter's evidence
+      is evidence its method cares about; (b) a DECISION on EVERY survivor: stance; on SUPPORT the timing ACT_NOW | WAIT, the
+      ONE trigger the PM should act on (condition-vocab word with a FIELD level, timeframe W/D/H1, plain words), where it is
+      wrong, and the market condition that voids it (optional). One form, no replies to replies: the pairing IS the exchange.
+    split_forms: >
+      R16.1 applies (2026-11-02): a form over 24,576 bytes is filed as forms/tier2/<seat>.partNofM.json, each validated with
+      `--kind tier2 --pairs pairs.json --funnel funnel.json --part N --of M`, then `registrar.py merge --kind tier2 --glob
+      'forms/tier2/<seat>.part*.json' --pairs pairs.json --funnel funnel.json --out forms/tier2/<seat>.json` proves every
+      pair and every survivor is covered. decide-timing skips the parts.
+    checkpoint_after: true
+    meter: "--spawns 7"
+
+  - name: TIMING
+    kind: tool
+    command: "pma_pipeline.py decide-timing --tier2 forms/tier2 --funnel funnel.json --phase4 phase4.json --date <date> --out decision.json"
+    reads: [forms/tier2/*.json, funnel.json, phase4.json]
+    produces: [decision.json]
+    barrier: "decide-timing exits 0; every survivor carries support/act_now/wait counts, a verdict proposal and ONE trigger"
+    on_fail: "FATAL -- halt and declare"
+    rulings: [R38, R40]
+    must_also: >
+      THE SECOND FUNNEL, by code. Per survivor, across ALL deciders present: SUPPORT < slate_min_support (4) -> NOT SLATED (PASS);
+      otherwise ACT_NOW > WAIT -> ADVANCE, else WATCH (tie_rule WATCH). The ticket's trigger = the modal (word, tf) among the
+      winning timing camp, its plain text from the seat that stated it most completely; ties by the higher conviction seat's.
+      The slate-wide MARKET KILL = the modal market_void across all SUPPORT decisions (null when none, declared). Held names: the
+      same count on the ADD question; the hold line (KEEP / TIGHTEN) = the modal stated wrong_if of the supporters. Writes the
+      measurement block (act_now vs wait splits) into decision.json. NEVER hand-tallied.
+    meter: "--tool-only"
 
   - name: SLATE
     kind: model
     spawns: 1
     seats: [chair]
-    reads: [board.json, forms/floor/*.json, floor_check.json, forms/r2/*.json]
-    produces: [slate.json]
-    barrier: "registrar.py validate --file slate.json --kind slate --phase4 phase4.json exits 0"
+    reads: [decision.json, funnel.json, forms/tier2/*.json, forms/cross/*.json, claims_board.json]
+    produces: [slate.json, slate_excluded.json]
+    barrier: "registrar.py validate --file slate.json --kind slate --phase4 phase4.json --decision decision.json exits 0"
     on_fail: "fix the slate (one re-file); a slate that cannot validate halts the run and is declared"
-    rulings: [R1, R34, R36]
+    rulings: [R1, R34, R38, R40]
     must_also: >
-      The Chair drafts the committee's AGREED BEST (contracts/slate.schema.json): at most 15 tickets across
-      ADVANCE and WATCH -- a ceiling, not a target, never padded. Each ticket: entry trigger, where it is
-      wrong, horizon (as the agreeing seats stated it), why the room agrees (in the seats' words, attributed)
-      and who dissents and why. Built ONLY from what the seats said in their case forms and floor messages.
+      The Chair drafts the committee's AGREED BEST (contracts/slate.schema.json v2): at most 15 tickets. The VERDICT and the ONE
+      TRIGGER of every ticket are COPIED from decision.json -- the registrar REJECTS a ticket that differs (R40). The Chair's own
+      work is `why_agreed` (the confirming reviewers' evidence and the deciders' reasons, quoted and attributed), `dissent`
+      (every OPPOSE / WAIT-against-ADVANCE seat in its own words), the horizon (median of the supporters' stated horizons) and
+      `market_kill` copied from decision.json. Over the 15 cap: keep the most SUPPORT, ties by most ACT_NOW, list the rest in
+      slate_excluded.json. Built ONLY from what the seats said; the Chair never votes, ranks by its own view or judges a reason.
     checkpoint_after: true
     meter: "--spawns 1"
 
@@ -358,7 +483,7 @@ steps:
     kind: model
     spawns: 1
     seats: [steenbarger]
-    reads: [board.json, forms/floor/*.json, slate.json, forms/ratify/*.json, floor_check.json]
+    reads: [funnel.json, decision.json, forms/cross/*.json, forms/tier2/*.json, slate.json, forms/ratify/*.json]
     produces: [forms/qa/steenbarger.json]
     barrier: "registrar.py validate --file forms/qa/steenbarger.json --kind qa --slate slate.json exits 0"
     on_fail: "declare it and CONTINUE to DECIDE without a hold -- a missing QA note never blocks the count"
@@ -366,8 +491,9 @@ steps:
     must_also: >
       ONE note (contracts/qa_note.schema.json): did every decider read evidence; are reasons leaning on the
       same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may
-      HOLD a ticket (at most once per ticket). ON A HOLD: the conductor reopens the floor on the held tickets
-      only -- messages to forms/floor2/, `floor-check --messages forms/floor2 --qa forms/qa/steenbarger.json`,
+      HOLD a ticket (at most once per ticket). ON A HOLD: the conductor reopens deliberation on the held tickets
+      only -- one floor message per decider per held ticket to forms/floor2/ (contracts/floor_message.schema.json; validated
+      `registrar.py validate --file <m> --kind floor --phase4 phase4.json`), `floor-check --messages forms/floor2 --qa forms/qa/steenbarger.json`,
       then `pma_pipeline.py slate-cut --slate slate.json --qa forms/qa/steenbarger.json --out slate_held.json` and the
       deciders ratify the held tickets again to forms/ratify2/, each validated with `registrar.py validate --file <f>
       --kind ratify --slate slate_held.json`. One hold, one re-ratification, then the result stands. He cannot vote or veto.
@@ -376,9 +502,9 @@ steps:
 
   - name: DECIDE
     kind: tool
-    command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --messages forms/floor --messages2 forms/floor2 --phase4 phase4.json --date <date> --out consensus.json --record committee_record.json"
+    command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --cross forms/cross --tier2 forms/tier2 --messages2 forms/floor2 --phase4 phase4.json --date <date> --out consensus.json --record committee_record.json"
     then: "pma_pipeline.py record-verdicts --consensus consensus.json --candidates candidate_set.json --phase4 phase4.json --ledger verdict_ledger.json --date <date>"
-    reads: [slate.json, forms/ratify/*.json, forms/ratify2/*.json, forms/qa/steenbarger.json, board.json, forms/floor/*.json]
+    reads: [slate.json, forms/ratify/*.json, forms/ratify2/*.json, forms/qa/steenbarger.json, board.json, forms/cross/*.json, forms/tier2/*.json]
     produces: [consensus.json, committee_record.json, verdict_ledger.json]
     rule: "R34: count OBJECT answers per slate ticket on the FINAL ratification of the deciders present (n). 0 = AGREED; 1..ceil(n/2)-1 = CONTESTED (listed, objections and what-would-clear printed); >= ceil(n/2) (4 of 7) = DROPPED (off the list, still tracked). Slate ADVANCE -> ADVANCE; slate WATCH -> HOLD-FOR-CONDITIONS (shown as WATCH); DROPPED and never-slated room names -> PASS. `conviction` is an ordering figure only, never a gate. All seven count on every name (R32)."
     rulings: [R1, R8, R9, R32, R34, R35]
@@ -508,7 +634,7 @@ steps:
 
   - name: LEVELS
     kind: tool
-    command: "pma_levels.py emit --date <date> --window 3 --conditions conditions.json --history <yesterday's aegis/output/pma/pma_levels.json from AQE main, read BEFORE today's push> --out pma_levels.json"
+    command: "pma_levels.py emit --date <date> --window 3 --conditions conditions.json --slate slate.json --history <yesterday's aegis/output/pma/pma_levels.json from AQE main, read BEFORE today's push> --out pma_levels.json"
     reads: [consensus.json, brackets.json, repeat_marks.json, cards.json, broker_stops.json, candidate_set.json, phase4.json, conditions.json]
     produces: [pma_levels.json]
     barrier: "pma_levels.py exits 0 -- it REFUSES to write on a broken contract"
@@ -521,6 +647,10 @@ steps:
       no stated not_structured_yet reason, if a WATCH row carries a trigger (R17), or if a committee exit
       line sits BELOW the PM's broker stop (a committee line may never loosen a stop he has).
       Render-only: nothing here places, changes, cancels or sizes an order.
+      R40 (PM 2026-11-02): --slate slate.json carries the MARKET KILL line into pma_levels.json as top-level `market_kill`
+      {symbol, word, level, plain, seats} so the alert loop can say 'market condition broken -- take no new triggers'. A held
+      name on HOLD-FOR-CONDITIONS gets its hold card from the shared ADD line (pma_cards.py triggers, fixed 2026-11-02).
+      R41: no Valen flag reaches this file.
       R20.1 ROLLING WINDOW (PM 2026-09-30): the file carries the last THREE runs additively, because a
       committee level often triggers a session or two late. Read yesterday's published pma_levels.json from
       AQE main (git fetch is read-only and works) BEFORE pushing today's, and pass it as --history; it already
@@ -541,7 +671,8 @@ steps:
     must_also: >
       R23 (PM 2026-10-23: "why is the PMA report format always changing, the cards form always works the
       best"). The card report is the PM's primary read and its LAYOUT IS FIXED IN CODE (pma_cards.py render);
-      never hand-write or restyle the HTML. Publish it with the Artifact tool to the ONE fixed URL in
+      never hand-write or restyle the HTML. R41 (PM 2026-11-02): Valen's no-buy / parabolic flags do not print on any card,
+      hold row or pass row -- Valen is Part 1 weather only. Publish it with the Artifact tool to the ONE fixed URL in
       parameters.card_report_artifact (update in place, never a new artifact per day), then print the link.
     meter: "--tool-only"
 

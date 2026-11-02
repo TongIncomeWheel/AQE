@@ -19,6 +19,7 @@ Two subcommands, both deterministic, neither forms an opinion:
            broker_stops.json
            candidate_set.json  atr_14d for the near-stop band
            phase4.json      the R17 WATCH list
+           slate.json       (--slate, R40) the slate-wide MARKET KILL line -> top-level market_kill
          and REFUSE to write it if the contract is broken (see validate()).
 
 Nothing here places, changes or sizes an order. The file is information for the PM's inbox.
@@ -361,9 +362,43 @@ def apply_window(doc, history, window, uni, today_verdicts, closes=None):
     return doc
 
 
+MARKET_KILL_KEYS = ("symbol", "word", "level", "plain", "seats")
+
+
+def market_kill_from_slate(path, run_date):
+    """R40 (PM 2026-11-02): the slate's ONE market condition that voids every new trigger, carried into the
+    levels file as top-level `market_kill` so the alert loop can say "market condition broken -- take no new
+    triggers" instead of firing buys into a broken tape. Returns (market_kill, note). Copied, never composed:
+    the line is decide-timing's modal market_void, which the Chair copies onto the slate. Null is declared
+    with its reason -- never an invented line, never a silent absence."""
+    if not path or not os.path.exists(path):
+        return None, f"slate file not found ({path}) -- no market condition is watched; declared gap"
+    sl = _load(path)
+    if "market_kill" not in sl:
+        return None, "the slate carries no market_kill field (pre-R40 slate) -- no market condition is watched"
+    mk = sl.get("market_kill")
+    if mk is None:
+        return None, "no seat named a market condition"
+    if not isinstance(mk, dict):
+        return {"_bad": mk}, None
+    out = {k: mk.get(k) for k in MARKET_KILL_KEYS}
+    out["seats"] = list(out.get("seats") or [])
+    out["origin_run"] = run_date
+    return out, None
+
+
 def validate(doc):
     """The contract AQE is promised. Any breach and the file is NOT written."""
     errs = list(doc.pop("_guard", None) or [])
+    if "market_kill" in doc and doc["market_kill"] is not None:
+        mk = doc["market_kill"]
+        if "_bad" in mk:
+            errs.append(f"market_kill must be an object or null, got {mk['_bad']!r}")
+        else:
+            if not isinstance(mk.get("plain"), str) or not mk["plain"].strip():
+                errs.append("market_kill has no plain words -- the alert loop could not say what broke")
+            if mk.get("level") is not None and not isinstance(mk["level"], (int, float)):
+                errs.append(f"market_kill level must be a number or null, got {mk['level']!r}")
     if doc.get("schema") != SCHEMA:
         errs.append("schema")
     seen = set()
@@ -410,6 +445,14 @@ def cmd_emit(a):
     uni = {r["ticker"]: r for r in (_load(a.candidates, {}).get("universe") or [])}
     closes = _load(a.closes) if getattr(a, "closes", None) else {}
     doc = apply_window(doc, history, a.window, uni, {c["ticker"]: c["verdict"] for c in cons}, closes)
+    if getattr(a, "slate", None):
+        # R40: TODAY's market kill always wins -- set after the history merge, never carried from an older file.
+        mk, note = market_kill_from_slate(a.slate, a.date)
+        doc["market_kill"] = mk
+        doc.pop("market_kill_note", None)
+        if note:
+            doc["market_kill_note"] = note
+            print(f"market_kill: null -- {note}")
     errs = validate(doc)
     if errs:
         print("REFUSED: pma_levels.json not written\n  - " + "\n  - ".join(errs))
@@ -447,6 +490,9 @@ def main(argv=None):
                         "kill line can still be checked (2026-10-01: BE carried through a broken kill)")
     e.add_argument("--conditions", default=None,
                    help="conditions.json from pma_conditions.py compile (D123): each row gains the analysts' conditions")
+    e.add_argument("--slate", default=None,
+                   help="slate.json (R40): its market_kill line is published as top-level market_kill "
+                        "{symbol, word, level, plain, seats, origin_run}; null is declared with market_kill_note")
     e.add_argument("--out", default="pma_levels.json")
     e.set_defaults(fn=cmd_emit)
     a = ap.parse_args(argv)

@@ -1543,30 +1543,22 @@ def _valen_lines(path, rows, room):
                  f"put_wall {g.get('put_wall')} ({g.get('commentary')})")
     if v.get("neighbourhood"):
         L.append("  leadership: " + " / ".join(v["neighbourhood"]))
-    nb = {r["ticker"]: [f["label"] for f in r.get("flags") or []] for r in (v.get("selection") or {}).get("no_buy_list") or []}
-    # R37 (PM 2026-11-01, weather-spec item 7): the parabolic warning and the no-buy flags used to sit INSIDE every
-    # per-name row and were cited in ~26% of oppositions -- a shared anchor. They now print ONCE, in a RISK block
-    # after the rows, labelled information beside the verdict. A per-name row carries setup status + checks and U&R only.
+    # R41 (PM 2026-11-02: "Valen risk do not need to appear at ticket selection level"): the no-buy flags and the
+    # parabolic / failed-leader warnings are no longer in the vote packet at all -- not in the per-name rows (R37
+    # took them out of those) and no longer in the RISK block R37 put after them. Valen stays as market weather
+    # (stance / trend / extension / breadth / gamma above) and as the per-name setup + U&R FACTS below.
     def _is_warning(x):
         return "parabolic" in str(x.get("setup", "")).lower() or "failed leader" in str(x.get("setup", "")).lower()
-    risk = []
     L.append("Per-name house setups (status + checklist passes) and U&R (undercut-and-rally):")
     for t in room:
         r = rows.get(t) or {}
         gr = r.get("setups") or []
         if isinstance(gr, dict):
             gr = gr.get("grades") or []
-        warn = [x for x in gr if _is_warning(x)]
         gr = [x for x in gr if not _is_warning(x)]
         s = [f"{x.get('setup')} {x.get('status')} ({sum(1 for c in x.get('checks') or [] if c.get('result') == 'PASS')}/{len(x.get('checks') or [])})" for x in gr]
         u = f"U&R {r.get('unr_status')}" + (f": {r.get('unr_note')}" if r.get("unr_note") else "")
         L.append(f"  {t}: setups " + ("; ".join(s) if s else "no house setup present") + f" | {u}")
-        if t in nb:
-            risk.append(f"  {t}: no-buy flags -- {', '.join(nb[t])}")
-        for x in warn:
-            risk.append(f"  {t}: {x.get('setup')} {x.get('status')} (long-only risk warning, never a short call)")
-    L.append("==== RISK (Valen, information beside the verdict -- R37: never a reason to oppose, judge the name on your own method) ====")
-    L.extend(risk or ["  none flagged in the room"])
     return L
 
 
@@ -1628,6 +1620,9 @@ def cmd_r2digest(a):
     FP = (load(a.fundamentals, needs=["tickers"])["tickers"]
           if a.fundamentals and os.path.exists(a.fundamentals) else {})
     ds = P4["deliberation_set"]; doors = {r["ticker"]: r.get("doors", []) for r in P4.get("ranked", [])}
+    # R39 (PM 2026-11-02): the weekly / daily / 1-hour grid per name, from mtf.json (mtf.py). Without --mtf no line
+    # prints (pre-R39 packets are unchanged); with it, a name the file does not serve says MTF NOT SERVED (declared).
+    mtf_names, mtf_why = _mtf_names(a.mtf) if getattr(a, "mtf", None) else ({}, None)
     L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)",
          f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
          "PM RULING R1 (binding): bracket validity, risk% and R:R are INFORMATION, never a reason to reject. Judge on signals.",
@@ -1668,6 +1663,8 @@ def cmd_r2digest(a):
         L.append(f"  structure {r.get('structure')} {r.get('structure_shift')} | sma_dist {r.get('sma_distance_pct')}% | ma20 {r.get('ma_20')} ma50 {r.get('ma_50')} ma100 {r.get('ma_100')} ma200 {r.get('ma_200')}")
         L.append(f"  atr {r.get('atr_14d')} | day_vol {r.get('day_vol')} | flow {r.get('flow')} | energy {r.get('energy')} | mp {r.get('mp_state')}/{r.get('mp_accel_state')} | rs {r.get('rs_leadership')} spy20 {r.get('rs_spy_20d')} downday {r.get('rs_down_day_20d')}")
         L.append(f"  elder {r.get('elder')} {r.get('elder_5d')} {r.get('elder_pattern')} | div {r.get('div_state')}/{r.get('div_bear_count')} | lens {r.get('lens')}")
+        if getattr(a, "mtf", None):
+            L.append("  " + _mtf_line(_mtf_for(mtf_names, mtf_why, t)))
         hb = r.get("held_book") or (r if r.get("held") and "hl_state" in r else None)
         if hb:
             # 2026-09-16: round 2 merged held_positions into `rows` since 2026-09-05 but printed
@@ -2065,6 +2062,7 @@ def cmd_ratify_count(a):
                     "reservations": [{"voice": v, "reservation": rows[v].get("reservation")} for v in reservers],
                     "held": t in held, "n_deciders": n, "drop_threshold": thr,
                     "entry_trigger": x.get("entry_trigger"), "wrong_if": x.get("wrong_if"),
+                    "trigger": x.get("trigger"),
                     "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
                     "dissent": x.get("dissent") or [],
                     "gaps": [f"no ratification from {v}" for v in missing]})
@@ -2092,13 +2090,26 @@ def cmd_ratify_count(a):
         except SystemExit:
             pass
     final = {c["ticker"]: c for c in out}
+    # R38 (2026-11-02): the two-tier funnel's forms go on the record beside the floor messages. Cross rulings carry
+    # changed_mind + what_moved_me exactly like a floor message did; a tier-2 form carries the decision and answers.
+    cross = []
+    if getattr(a, "cross", None):
+        for f in _split_deciders(_load_forms(a.cross, "ratify-count record (cross)"), "ratify-count record (cross)")[0]:
+            cross += [dict(r, voice=f["voice"]) for r in f.get("rulings") or []]
+    t2 = {}
+    if getattr(a, "tier2", None):
+        for f in _split_deciders(_load_forms(a.tier2, "ratify-count record (tier2)"), "ratify-count record (tier2)")[0]:
+            t2[f["voice"]] = f
     took_part = sorted(set(present) | set((board or {}).get("deciders_present") or []))
     for v in took_part:
         for t in ds:
             b = (bnames.get(t) or {}).get("cases", {}).get(v) or {}
             mine = [m for m in msgs if m.get("voice") == v and m.get("ticker") == t]
             r = answers.get(t, {}).get(v)
-            moved = [m for m in mine if m.get("changed_mind")]
+            cr = [x for x in cross if x["voice"] == v and x.get("ticker") == t]
+            dd = next((x for x in (t2.get(v) or {}).get("decisions") or [] if x.get("ticker") == t), None)
+            ag = [x.get("pair_id") for x in (t2.get(v) or {}).get("answers") or [] if x.get("ticker") == t]
+            moved = [m for m in mine if m.get("changed_mind")] + [x for x in cr if x.get("changed_mind")]
             record.append({"date": a.date, "voice": v, "ticker": t,
                            "blind_vote": b.get("vote"), "blind_conviction": b.get("conviction"),
                            "horizon_sessions": b.get("horizon_sessions"), "entry_trigger": b.get("entry_trigger"),
@@ -2106,6 +2117,10 @@ def cmd_ratify_count(a):
                            "floor_messages": [m.get("msg_id") for m in mine],
                            "changed_mind": bool(moved), "what_moved_me": [m.get("what_moved_me") for m in moved],
                            "stance_after_floor": (mine[-1].get("stance_now") if mine else b.get("vote")),
+                           "cross_rulings": [{"claim_id": x.get("claim_id"), "ruling": x.get("ruling")} for x in cr],
+                           "stance_after_cross": (cr[-1].get("stance_after") if cr else b.get("vote")),
+                           "tier2_stance": (dd or {}).get("stance"), "tier2_timing": (dd or {}).get("timing"),
+                           "tier2_trigger": (dd or {}).get("trigger"), "answers_given": ag,
                            "ratification": (r or {}).get("answer"), "ratification_round": (r or {}).get("_round"),
                            "objection": (r or {}).get("objection"), "would_clear": (r or {}).get("would_clear"),
                            "reservation": (r or {}).get("reservation"),
@@ -2132,6 +2147,598 @@ def cmd_slate_cut(a):
         raise SystemExit(f"slate-cut: held ticket(s) {missing} are not on the slate")
     save(a.out, cut)
     print(f"slate-cut: {len(cut['tickets'])} held ticket(s) -> {a.out}: {' '.join(sorted(held)) or 'none'}")
+
+
+# =====================================================================================================
+# THE TWO-TIER FUNNEL (R38-R41, PM 2026-11-02; docs/DECISIONS_2026-11-02.md). The open floor is retired:
+# 151 messages moved no stance. In its place: CLAIMS (code extracts the sharpest claims per name and routes
+# each to two reviewers of another method family) -> CROSS (seats rule CONFIRM / REFUTE / CANNOT_SEE on the
+# W / D / H1 grid) -> FUNNEL (claims-score: the survival rule) -> PAIR (every refute in front of its author)
+# -> TIER2 (seats answer their refuters and decide every survivor) -> TIMING (decide-timing: <4 SUPPORT not
+# slated; ACT_NOW > WAIT ADVANCE, else WATCH; ONE modal trigger; ONE market kill line). Every count is code.
+# Nothing in this block judges a reason; the Chair runs these tools and adds nothing.
+# =====================================================================================================
+METHOD_FAMILY = {"oneil": "breakout", "minervini": "breakout", "livermore": "pivotal", "elder-lens": "impulse",
+                 "seow": "position", "raschke": "swing", "wyckoff": "structure"}
+CLAIMS_PER_CAMP = 2            # R38: the two highest-conviction SUPPORT cases and the two highest-conviction OPPOSE cases
+CLAIM_REVIEWERS = 2            # R38: each claim is ruled on by two reviewers of a different method family
+SLATE_MIN_SUPPORT = 4          # R38/R40: fewer than 4 SUPPORT at tier 2 = not slated
+TIMING_TIE = "WATCH"           # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
+CROSS_RULINGS = ("CONFIRM", "REFUTE", "CANNOT_SEE")
+MTF_FRAMES = ("W", "D", "H1")  # R39
+_CONTRACTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "contracts")
+# the row fields the vote packet prints for a name (r2digest), served to a reviewer beside the claim it rules on.
+# The bracket is deliberately NOT carried: a ruling is a read of a claim through a method, and R1 says a bracket
+# is never a reason -- a reviewer has no use for it here.
+CLAIM_ROW_FIELDS = ["rank", "sc_momentum", "entry", "rs_spy_20d", "rs_rank_pct", "ret_63d", "ret_6m", "ret_12m",
+                    "pct_run_10d", "adx_14", "extension_atr_20", "pct_from_52w_high", "mp", "mp_state", "mp_accel_state",
+                    "runner_setup", "gics_sector_name", "sector_trend_state", "source", "structure", "structure_shift",
+                    "sma_distance_pct", "ma_20", "ma_50", "ma_100", "ma_200", "atr_14d", "day_vol", "flow", "energy",
+                    "rs_leadership", "rs_down_day_20d", "elder", "elder_5d", "elder_pattern", "div_state",
+                    "div_bear_count", "lens", "held"]
+
+
+def _keys_carry(obj, word):
+    """True when any KEY anywhere in obj is `word` -- the 'computes no verdict' assertion on a document whose
+    VALUES are the seats' own free text (a seat may write the word 'verdict' in a case; code never keys one)."""
+    if isinstance(obj, dict):
+        return any(k == word or _keys_carry(v, word) for k, v in obj.items())
+    if isinstance(obj, list):
+        return any(_keys_carry(x, word) for x in obj)
+    return False
+
+
+def _votes_of(f):
+    return f.get("votes") if f.get("votes") is not None else (f.get("stances") or [])
+
+
+def _blind_room(forms, ds):
+    """The blind split per room name, in DECIDERS order, with each seat's conviction, horizon and case."""
+    by_t = {t: {"support": [], "oppose": [], "abstain": [], "convictions": {}, "horizons": {}, "cases": {}} for t in ds}
+    off = []
+    for f in sorted(forms, key=lambda f: DECIDERS.index(f["voice"])):
+        for v in _votes_of(f):
+            t = v.get("ticker")
+            if t not in by_t:
+                off.append(f"{f['voice']}:{t}"); continue
+            st = str(v.get("vote", v.get("stance", "abstain"))).lower()
+            by_t[t][st if st in ("support", "oppose", "abstain") else "abstain"].append(f["voice"])
+            by_t[t]["convictions"][f["voice"]] = v.get("conviction")
+            by_t[t]["horizons"][f["voice"]] = (v.get("case") or {}).get("horizon_sessions")
+            by_t[t]["cases"][f["voice"]] = v.get("case") or {}
+    return by_t, off
+
+
+def _blind_of(name, voice):
+    for k, w in (("support", "SUPPORT"), ("oppose", "OPPOSE"), ("abstain", "ABSTAIN")):
+        if voice in (name.get(k) or []):
+            return w
+    return "NO_VOTE"
+
+
+def _mtf_names(path):
+    """R39: the W / D / H1 grid per name from mtf.json (mtf.py). A missing file or a missing name is DECLARED
+    `served: false` with the reason -- never a neutral reading."""
+    if not path:
+        return {}, "no --mtf given"
+    if not os.path.exists(path):
+        return {}, f"mtf file {path} not found"
+    M = load(path)
+    return (M.get("names") or {}), None
+
+
+def _mtf_for(names, why, t):
+    m = names.get(t)
+    if isinstance(m, dict) and m.get("served") is not False and any(isinstance(m.get(fr), dict) for fr in MTF_FRAMES):
+        return m
+    out = {"served": False, "reason": (m or {}).get("reason") if isinstance(m, dict) else None}
+    out["reason"] = out["reason"] or why or "name absent from mtf.json"
+    return out
+
+
+def _mtf_line(m):
+    """One line of the grid for a packet: 'W <summary> | D <summary> | H1 <summary>', or NOT SERVED (declared)."""
+    if not isinstance(m, dict) or m.get("served") is False or not any(isinstance(m.get(fr), dict) for fr in MTF_FRAMES):
+        return "MTF: NOT SERVED (declared)"
+    parts = []
+    for fr in MTF_FRAMES:
+        x = m.get(fr)
+        s = (x or {}).get("summary") if isinstance(x, dict) else None
+        parts.append(f"{fr} {s if s else 'not served'}")
+    return "MTF: " + " | ".join(parts)
+
+
+def _export_rows(path):
+    if not path:
+        return {}
+    D = load(path, needs=["daily_list"])
+    rows = {r["ticker"]: r for r in D["daily_list"]}
+    for r in D.get("held_positions") or []:
+        rows.setdefault(r["ticker"], dict(r, held=True))
+    return rows
+
+
+def _held_set(path):
+    if not path:
+        return set()
+    D = load(path, needs=["daily_list"])
+    return ({r["ticker"] for r in D.get("held_positions") or []}
+            | {r["ticker"] for r in D["daily_list"] if r.get("held")})
+
+
+def _challenge_claims(path, ds):
+    out = {}
+    if path and os.path.exists(path):
+        C = load(path)
+        for fd in list(C.get("findings") or []) + list(C.get("challenges") or []):
+            tk = fd.get("ticker") or (fd.get("scope") if fd.get("scope") in ds else None)
+            if tk in ds:
+                out.setdefault(tk, []).append(str(fd.get("claim") or fd.get("challenge") or "")[:200])
+    elif path:
+        print(f"claims: challenge document {path} not found -- declared; no challenge context on the board")
+    return out
+
+
+def _route(author, kind, name, present, load_, k, exclude=()):
+    """R38 routing. Eligible = present deciders of a DIFFERENT method family, never the author. Preference:
+    the opposite camp on that name, then abstainers (and seats with no vote on it), then the same camp (lowest
+    conviction first). Within a tier the reviewer with the fewest claims so far (load balance), ties by seat order."""
+    fam = METHOD_FAMILY.get(author)
+    opposite = name["oppose"] if kind == "for" else name["support"]
+    same = name["support"] if kind == "for" else name["oppose"]
+    conv = name.get("convictions") or {}
+
+    def tier(v):
+        return 0 if v in opposite else (2 if v in same else 1)
+    el = [v for v in present if v != author and METHOD_FAMILY.get(v) != fam and v not in exclude]
+    el.sort(key=lambda v: (tier(v), load_.get(v, 0), (conv.get(v) or 0) if tier(v) == 2 else 0, DECIDERS.index(v)))
+    return el[:k], el
+
+
+def _write_claim_packets(board, rows, outdir, rerouted_to=None, absent=()):
+    os.makedirs(outdir, exist_ok=True)
+    claims = {c["claim_id"]: (t, c) for t, n in board["names"].items() for c in n["claims"]}
+    for v in absent:
+        p = os.path.join(outdir, f"{v}.json")
+        if os.path.exists(p):
+            os.remove(p)
+    for v in board["deciders_present"]:
+        if v in absent:
+            continue
+        mine = []
+        for cid in board["routing"].get(v, []):
+            t, c = claims[cid]
+            n = board["names"][t]
+            it = {"claim_id": cid, "ticker": t, "kind": c["kind"], "author": c["author"], "text": c["text"],
+                  "your_blind_vote": _blind_of(n, v), "mtf": n.get("mtf") or {"served": False}}
+            if rows:
+                r = rows.get(t) or {}
+                it["row"] = {k: r.get(k) for k in CLAIM_ROW_FIELDS if k in r}
+            mine.append(it)
+        pk = {"schema": "claims_packet.v1", "voice": v, "date": board["date"], "claims": mine,
+              "rule": "Rule on EVERY claim below through your own method: CONFIRM / REFUTE / CANNOT_SEE, the evidence your "
+                      "method reads, the W / D / H1 grid, and your own stance on the name after ruling "
+                      "(contracts/cross_ruling.schema.json). You never see another reviewer's ruling."}
+        if rerouted_to and rerouted_to.get(v):
+            pk["rerouted_to_you"] = list(rerouted_to[v])
+            pk["refile"] = ("claims were re-routed to you from an absent reviewer: RE-FILE your whole cross form covering "
+                            "every claim above -- your earlier rulings unchanged, plus the re-routed ones")
+        json.dump(pk, open(os.path.join(outdir, f"{v}.json"), "w"), indent=1)
+
+
+def cmd_claims(a):
+    """R38 TIER 1, step 1: THE CLAIMS BOARD. From the blind votes, per room name: the `case.for` of the two
+    highest-conviction SUPPORT seats and the `case.against` of the two highest-conviction OPPOSE seats (conviction
+    ties by seat order). A name with no SUPPORT vote is OUT and gets no claims. Each claim is routed to
+    CLAIM_REVIEWERS reviewers by _route. claims_packets/<seat>.json holds exactly the claims routed to that seat --
+    never another seat's stance count or ruling. NO VERDICT IS COMPUTED HERE (asserted)."""
+    P4 = load(a.phase4, needs=["deliberation_set"])
+    ds = list(P4["deliberation_set"])
+    rows = _export_rows(getattr(a, "export", None))
+    if a.reroute:
+        return _claims_reroute(a, ds, rows)
+    if not a.round2:
+        raise SystemExit("claims: --round2 forms/r2 is required (only --reroute works from the existing board)")
+    forms, ignored = _split_deciders(_load_forms(a.round2, "claims"), "claims")
+    have = {f["voice"] for f in forms}
+    present = [v for v in DECIDERS if v in have]
+    by_t, off = _blind_room(forms, ds)
+    mtf, why = _mtf_names(a.mtf)
+    challenged = _challenge_claims(a.challenge, ds)
+    k = a.reviewers
+    load_ = {v: 0 for v in present}
+    routing = {v: [] for v in present}
+    names, out, under = {}, [], []
+    for t in ds:
+        d = by_t[t]
+        voted = set(d["support"]) | set(d["oppose"]) | set(d["abstain"])
+        n = {"support": list(d["support"]), "oppose": list(d["oppose"]), "abstain": list(d["abstain"]),
+             "no_vote": [v for v in present if v not in voted], "convictions": d["convictions"],
+             "horizons": d["horizons"], "claims": [], "challenge_claims": challenged.get(t, []),
+             "mtf": _mtf_for(mtf, why, t)}
+        names[t] = n
+        if not d["support"]:
+            out.append(t)
+            continue
+        for kind, camp in (("for", d["support"]), ("against", d["oppose"])):
+            top = sorted(camp, key=lambda v: (-(d["convictions"].get(v) or 0), DECIDERS.index(v)))[:a.per_camp]
+            for au in top:
+                text = (d["cases"].get(au) or {}).get(kind)
+                if not isinstance(text, str) or not text.strip():
+                    raise SystemExit(f"claims: {au}'s {('SUPPORT' if kind == 'for' else 'OPPOSE')} vote on {t} carries no "
+                                     f"case.{kind} -- the case form (R36) is the claim; the ballot was not validated. Refusing.")
+                cid = f"{t}-{au}-{kind}"
+                revs, el = _route(au, kind, n, present, load_, k)
+                for r in revs:
+                    load_[r] += 1
+                    routing[r].append(cid)
+                if len(revs) < k:
+                    under.append({"claim_id": cid, "reviewers": revs, "eligible": el,
+                                  "why": f"only {len(el)} eligible reviewer(s) of another method family present"})
+                n["claims"].append({"claim_id": cid, "author": au, "kind": kind, "text": text.strip(),
+                                    "conviction": d["convictions"].get(au), "reviewers": revs})
+    issued = sum(len(n["claims"]) for n in names.values())
+    board = {"schema": "claims_board.v1", "date": a.date, "deliberation_set": ds, "deciders_present": present,
+             "deciders_absent": [v for v in DECIDERS if v not in present], "ignored_ballots": ignored,
+             "ballots_off_room": off, "params": {"claims_per_camp": a.per_camp, "claim_reviewers": k,
+                                                "method_family": METHOD_FAMILY},
+             "out": out, "names": names, "routing": routing, "under_routed": under,
+             "reviewers_absent": [], "rerouted": [],
+             "measurement": {"claims_issued": issued, "names_with_claims": sum(1 for n in names.values() if n["claims"]),
+                             "names_out": len(out), "load": dict(load_)}}
+    assert not _keys_carry(board, "verdict"), "the claims board must never carry a verdict"
+    save(a.out, board, shape="claims_board")
+    _write_claim_packets(board, rows, a.packets_dir)
+    print(f"claims: {len(ds)} names, {issued} claims routed to {len(present)} reviewers "
+          f"(load {' '.join(f'{v}:{load_[v]}' for v in present)}); OUT (no SUPPORT) {len(out)}: {' '.join(out) or 'none'}"
+          + (f"; UNDER-ROUTED {len(under)} (declared)" if under else "") + f" | packets -> {a.packets_dir}/")
+
+
+def _claims_reroute(a, ds, rows):
+    """CROSS on_fail: an absent reviewer's claims are re-routed ONCE to the next eligible reviewers. Only that
+    seat's claims move -- every other routing stands, because those reviewers may already have filed."""
+    B = load(a.out, needs=["names", "routing", "deciders_present"])
+    seat = a.reroute
+    if seat not in B["routing"]:
+        raise SystemExit(f"claims --reroute: {seat} has no routing on {a.out} -- nothing to re-route")
+    absent = set(B.get("reviewers_absent") or []) | {seat}
+    present = [v for v in B["deciders_present"] if v not in absent]
+    load_ = {v: len(B["routing"].get(v) or []) for v in present}
+    moved, to_ = [], {}
+    for t in ds:
+        n = B["names"][t]
+        for c in n["claims"]:
+            if seat not in c["reviewers"]:
+                continue
+            keep = [r for r in c["reviewers"] if r != seat]
+            picks, el = _route(c["author"], c["kind"], n, present, load_, 1, exclude=keep)
+            for r in picks:
+                load_[r] += 1
+                B["routing"][r].append(c["claim_id"])
+                to_.setdefault(r, []).append(c["claim_id"])
+            c["reviewers"] = keep + picks
+            c.setdefault("rerouted_from", []).append(seat)
+            moved.append({"claim_id": c["claim_id"], "from": seat, "to": picks})
+            if not picks:
+                B.setdefault("under_routed", []).append({"claim_id": c["claim_id"], "reviewers": keep, "eligible": el,
+                                                         "why": f"re-route from absent {seat}: no other eligible reviewer"})
+    B["routing"].pop(seat, None)
+    B["reviewers_absent"] = sorted(absent, key=DECIDERS.index)
+    B.setdefault("rerouted", []).extend(moved)
+    B.setdefault("measurement", {})["load"] = dict(load_)
+    B.pop("_schema", None)
+    save(a.out, B, shape="claims_board")
+    _write_claim_packets(B, rows, a.packets_dir, rerouted_to=to_, absent=absent)
+    print(f"claims --reroute {seat}: {len(moved)} claim(s) re-routed -> "
+          + (", ".join(f"{r}:{len(v)}" for r, v in to_.items()) or "nobody (declared under-routed)")
+          + f"; those reviewers RE-FILE their whole cross form | packets -> {a.packets_dir}/")
+
+
+def _cross_rulings(B, spec, label):
+    """Read forms/cross strictly: every ruling is on a claim routed to that voice, never its own, once each, with a
+    valid ruling word, and each form covers its routing exactly. The registrar checks this on arrival; the counter
+    checks it again (review finding 1, 2026-11-01: a counter must never trust the directory)."""
+    forms, ignored = _split_deciders(_load_forms(spec, label), label)
+    claims = {c["claim_id"]: dict(c, ticker=t) for t, n in B["names"].items() for c in n["claims"]}
+    rul = {}
+    for f in forms:
+        v = f["voice"]
+        mine = set(B["routing"].get(v) or [])
+        if not mine:
+            raise SystemExit(f"{label}: {v} filed a cross form but no claim is routed to it on the board")
+        seen = set()
+        for r in f.get("rulings") or []:
+            cid = r.get("claim_id")
+            if cid not in mine:
+                raise SystemExit(f"{label}: {v} ruled on {cid!r}, which is not routed to it")
+            if cid in seen:
+                raise SystemExit(f"{label}: {v} ruled on {cid} twice")
+            if r.get("ruling") not in CROSS_RULINGS:
+                raise SystemExit(f"{label}: {v} ruled {r.get('ruling')!r} on {cid} -- not one of {list(CROSS_RULINGS)}")
+            if claims[cid]["author"] == v:
+                raise SystemExit(f"{label}: {v} ruled on its own claim {cid}")
+            if r.get("ticker") != claims[cid]["ticker"]:
+                raise SystemExit(f"{label}: {v}'s ruling on {cid} names {r.get('ticker')}, not {claims[cid]['ticker']}")
+            seen.add(cid)
+            rul.setdefault(cid, {})[v] = r
+        if seen != mine:
+            raise SystemExit(f"{label}: {v} covers {sorted(seen)} but must cover exactly {sorted(mine)} -- the form was not validated")
+    present = [v for v in DECIDERS if v in {f["voice"] for f in forms}]
+    return rul, present, ignored, claims
+
+
+def cmd_claims_score(a):
+    """R38 THE FIRST FUNNEL, by code. Per name: tallies of CONFIRM / REFUTE / CANNOT_SEE on its support claims and
+    on its against claims. OUT = no SUPPORT vote (no claims). SURVIVES = support CONFIRM >= 1 and support CONFIRM
+    >= support REFUTE. Else DROPPED, the refuting rulings quoted. Also the post-cross stance of every seat on every
+    name and the measurement the PM asked for. NEVER hand-tallied; computes no verdict (asserted)."""
+    B = load(a.claims, needs=["names", "routing", "deliberation_set", "deciders_present"])
+    rul, present, ignored, claims = _cross_rulings(B, a.rulings, "claims-score")
+    ds = list(B["deliberation_set"])
+    routed = [v for v in DECIDERS if B["routing"].get(v)]
+    absent = [v for v in routed if v not in present]
+    names, surv, drop, out, changed = {}, [], [], [], []
+    counts = {k: 0 for k in CROSS_RULINGS}
+    for t in ds:
+        n = B["names"][t]
+        tl = {f"{side}_{w.lower()}": 0 for side in ("support", "against") for w in CROSS_RULINGS}
+        cl, refuted = [], []
+        for c in n["claims"]:
+            side = "support" if c["kind"] == "for" else "against"
+            rs = []
+            for v in DECIDERS:
+                r = rul.get(c["claim_id"], {}).get(v)
+                if not r:
+                    continue
+                tl[f"{side}_{r['ruling'].lower()}"] += 1
+                counts[r["ruling"]] += 1
+                rs.append({"reviewer": v, "ruling": r["ruling"], "evidence": r.get("evidence"), "tf": r.get("tf")})
+                if side == "support" and r["ruling"] == "REFUTE":
+                    refuted.append({"claim_id": c["claim_id"], "author": c["author"], "refuter": v,
+                                    "evidence": r.get("evidence"), "tf": r.get("tf")})
+            cl.append({"claim_id": c["claim_id"], "author": c["author"], "kind": c["kind"], "reviewers": c["reviewers"],
+                       "rulings": rs, "missing": [v for v in c["reviewers"] if v not in {x["reviewer"] for x in rs}]})
+        if not n["claims"]:
+            status = "OUT"; out.append(t)
+        elif tl["support_confirm"] >= 1 and tl["support_confirm"] >= tl["support_refute"]:
+            status = "SURVIVES"; surv.append(t)
+        else:
+            status = "DROPPED"; drop.append(t)
+        st = {}
+        for v in B["deciders_present"]:
+            blind = _blind_of(n, v)
+            mine = [rul[c["claim_id"]][v] for c in n["claims"] if v in rul.get(c["claim_id"], {})]
+            after = mine[-1].get("stance_after") if mine else blind
+            moved = [r.get("what_moved_me") for r in mine if r.get("changed_mind")]
+            st[v] = {"blind": blind, "after": after, "ruled": bool(mine), "changed_mind": after != blind,
+                     "what_moved_me": moved}
+            if after != blind:
+                changed.append({"voice": v, "ticker": t, "from": blind, "to": after,
+                                "what_moved_me": (moved[-1] if moved else None)})
+        names[t] = {"status": status, "tallies": tl, "claims": cl, "refuted_by": refuted if status == "DROPPED" else [],
+                    "refutes_on_support": refuted, "split": {k: list(n.get(k) or []) for k in ("support", "oppose", "abstain")},
+                    "blind_conviction": n.get("convictions") or {}, "horizons": n.get("horizons") or {},
+                    "mtf": n.get("mtf") or {"served": False}, "stances": st}
+    F = {"schema": "funnel.v1", "date": a.date, "claims_board_date": B.get("date"),
+         "rule": {"survives": f"support CONFIRM >= 1 and support CONFIRM >= support REFUTE",
+                  "out": "no SUPPORT vote at the blind vote (no claims)", "dropped": "everything else, refuting evidence quoted"},
+         "survivors": surv, "dropped": drop, "out": out, "names": names, "ignored_forms": ignored,
+         "measurement": {"claims_issued": len(claims), "rulings": counts, "rulings_total": sum(counts.values()),
+                         "survivors": len(surv), "dropped": len(drop), "out": len(out),
+                         "stances_changed": changed, "stances_changed_n": len(changed),
+                         "reviewers_present": present, "reviewers_absent": absent}}
+    assert not _keys_carry(F, "verdict"), "funnel.json must never carry a verdict"
+    save(a.out, F, shape="funnel")
+    print(f"claims-score: {len(claims)} claims, rulings CONFIRM {counts['CONFIRM']} / REFUTE {counts['REFUTE']} / "
+          f"CANNOT_SEE {counts['CANNOT_SEE']}; SURVIVES {len(surv)}: {' '.join(surv) or 'none'} | DROPPED {len(drop)}: "
+          f"{' '.join(drop) or 'none'} | OUT {len(out)} | stances changed {len(changed)}"
+          + (f" | reviewers absent: {', '.join(absent)}" if absent else ""))
+
+
+def cmd_pair(a):
+    """R38 THE ADVERSARY PAIRING, by code. Every REFUTE of a claim on a SURVIVING name is one pair, put in front of
+    the claim's AUTHOR. tier2_packets/<seat>.json = the pairs the seat must answer + every survivor with its MTF
+    grid and its tier-1 tallies (counts, never who) + the condition vocabulary. Every decider present gets a packet."""
+    B = load(a.claims, needs=["names", "routing", "deciders_present"])
+    F = load(a.funnel, needs=["survivors", "names"])
+    rul, _present, _ign, claims = _cross_rulings(B, a.rulings, "pair")
+    mtf, why = _mtf_names(a.mtf)
+    pairs = []
+    for t in F["survivors"]:
+        for c in B["names"][t]["claims"]:
+            for v in DECIDERS:
+                r = rul.get(c["claim_id"], {}).get(v)
+                if r and r["ruling"] == "REFUTE":
+                    pairs.append({"pair_id": f"{c['claim_id']}~{v}", "ticker": t, "claim_id": c["claim_id"], "kind": c["kind"],
+                                  "author": c["author"], "refuter": v, "claim_text": c["text"],
+                                  "refute_evidence": r.get("evidence"), "refute_tf": r.get("tf")})
+    vocab = json.load(open(os.path.join(_CONTRACTS, "condition_vocab.json"), encoding="utf-8"))
+    os.makedirs(a.packets_dir, exist_ok=True)
+    surv_rows = []
+    for t in F["survivors"]:
+        tl = F["names"][t]["tallies"]
+        m = _mtf_for(mtf, why, t) if a.mtf else (F["names"][t].get("mtf") or {"served": False})
+        surv_rows.append({"ticker": t, "mtf": m, "tallies": {k: tl[k] for k in ("support_confirm", "support_refute",
+                                                                                "against_confirm", "against_refute")}})
+    for v in B["deciders_present"]:
+        pk = {"schema": "tier2_packet.v1", "voice": v, "date": a.date,
+              "answer_pairs": [p for p in pairs if p["author"] == v],
+              "survivors": [dict(s, your_stance_after_cross=((F["names"][s["ticker"]].get("stances") or {}).get(v) or {}).get("after"))
+                            for s in surv_rows],
+              "rule": "ONE form (contracts/tier2.schema.json): answer every pair above (quote in ten words or fewer, answer by "
+                      "your own method on the W/D/H1 grid, concede when the evidence is evidence your method cares about); "
+                      "decide EVERY survivor: stance; on SUPPORT the timing ACT_NOW|WAIT, ONE trigger (vocab word with a FIELD "
+                      "level, timeframe W/D/H1, plain words), wrong_if, and the market condition that voids it (or null).",
+              "vocab": vocab}
+        json.dump(pk, open(os.path.join(a.packets_dir, f"{v}.json"), "w"), indent=1)
+    by_a = collections.Counter(p["author"] for p in pairs)
+    P = {"schema": "pairs.v1", "date": a.date, "survivors": list(F["survivors"]), "pairs": pairs,
+         "measurement": {"pairs": len(pairs), "by_author": dict(by_a),
+                         "by_refuter": dict(collections.Counter(p["refuter"] for p in pairs))}}
+    save(a.out, P, shape="pairs")
+    print(f"pair: {len(pairs)} pair(s) on {len(F['survivors'])} survivor(s)"
+          + (" (" + ", ".join(f"{k}:{n}" for k, n in by_a.items()) + ")" if by_a else "")
+          + f"; {len(B['deciders_present'])} tier-2 packets -> {a.packets_dir}/")
+
+
+def _trigger_word_errors(word):
+    """R40 + D123: a trigger is a vocabulary word whose argument is a FIELD level (h1_close_above:bar_high,
+    in_zone:ma_20) -- never a bare number. Reuses conditions.parse, the grammar the registrar and AQE share."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import conditions
+    try:
+        c = conditions.parse(word)
+    except ValueError as e:
+        return [str(e)]
+    if not any(isinstance(x, dict) for x in c["args"]):
+        return [f"{word!r}: a trigger names a price LEVEL by field (e.g. h1_close_above:bar_high) -- {c['w']} takes none"]
+    return []
+
+
+def _modal(groups, conv):
+    """groups: {key: [seats]} -> the modal key. Ties by the seat with the higher blind conviction, then seat order."""
+    def best(seats):
+        return sorted(seats, key=lambda v: (-(conv.get(v) or 0), DECIDERS.index(v)))[0]
+    return max(groups.items(), key=lambda kv: (len(kv[1]), conv.get(best(kv[1])) or 0, -DECIDERS.index(best(kv[1]))))
+
+
+def _parse_void(text):
+    """A market_void is plain words the alert loop can watch ('SPY close_below put wall 750'). Read loosely: the
+    first ticker-shaped token, the first vocabulary word, the first number. Unparsed parts stay null, declared."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import conditions
+    words = set(conditions.vocab()["words"])
+    toks = str(text).replace(",", " ").split()
+    sym = next((x for x in toks if re.fullmatch(r"\^?[A-Z]{1,6}", x)), None)
+    wd = next((x.split(":")[0] for x in toks if x.split(":")[0] in words), None)
+    lv = None
+    for x in toks:
+        if re.fullmatch(r"-?\d+(?:\.\d+)?", x):
+            lv = float(x); break
+    return sym, wd, lv
+
+
+def cmd_decide_timing(a):
+    """R38/R40 THE SECOND FUNNEL, by code. Per tier-1 survivor, across the deciders present: SUPPORT < min-support
+    -> NOT_SLATED; else ACT_NOW > WAIT -> ADVANCE, else WATCH (a tie is WATCH). The ticket's ONE trigger is the
+    modal (word, tf) of the winning timing camp, its plain words the longest of that group; the slate-wide MARKET
+    KILL is the modal market_void across every SUPPORT decision. A held name is counted the same way on the ADD
+    question and carries the hold line (the modal wrong_if of its supporters). Refuses a form that does not decide
+    every survivor -- funnel.json's survivor list is the only list counted."""
+    import statistics as _st
+    F = load(a.funnel, needs=["survivors", "names"])
+    surv = list(F["survivors"])
+    P4 = load(a.phase4, needs=["deliberation_set"])
+    off = [t for t in surv if t not in P4["deliberation_set"]]
+    if off:
+        raise SystemExit(f"decide-timing: survivors {off} are not in the deliberation set -- funnel.json and phase4.json disagree")
+    forms, ignored = _split_deciders(_load_forms(a.tier2, "decide-timing"), "decide-timing")
+    dec = {}
+    for f in forms:
+        v, seen = f["voice"], {}
+        for r in f.get("decisions") or []:
+            t = r.get("ticker")
+            if t in seen:
+                raise SystemExit(f"decide-timing: {v} decided {t} twice")
+            st = r.get("stance")
+            if st not in ("SUPPORT", "OPPOSE", "ABSTAIN"):
+                raise SystemExit(f"decide-timing: {v} filed stance {st!r} on {t} -- the form was not validated")
+            if st == "SUPPORT":
+                tg = r.get("trigger") or {}
+                if r.get("timing") not in ("ACT_NOW", "WAIT") or not isinstance(tg, dict) or tg.get("tf") not in MTF_FRAMES \
+                        or not tg.get("plain") or _trigger_word_errors(tg.get("word")):
+                    raise SystemExit(f"decide-timing: {v}'s SUPPORT on {t} lacks a valid timing + trigger {{word, tf, plain}} -- the form was not validated")
+            seen[t] = r
+        if set(seen) != set(surv):
+            raise SystemExit(f"decide-timing: {v} decides {sorted(seen)} but must decide exactly the survivors {sorted(surv)} "
+                             f"(missing {sorted(set(surv) - set(seen))}, extra {sorted(set(seen) - set(surv))})")
+        dec[v] = seen
+    present = [v for v in DECIDERS if v in dec]
+    if len(present) < 4:
+        raise SystemExit(f"decide-timing: only {len(present)} decider(s) filed tier 2 ({present}) -- fewer than 4 is no committee; halt and declare")
+    # held = the PM's positions: phase4 seats them on the floor (held_seated / door HELD, R12+R16), so the RUN.yaml command
+    # needs no --export; --export adds the export's own held flags.
+    held = (_held_set(getattr(a, "export", None)) | set(P4.get("held_seated") or [])
+            | {r["ticker"] for r in P4.get("ranked") or [] if "HELD" in (r.get("doors") or [])})
+    board_h = {}
+    if getattr(a, "board", None) and os.path.exists(a.board):
+        for x in load(a.board, needs=["names"])["names"]:
+            board_h[x["ticker"]] = {v: (c or {}).get("horizon_sessions") for v, c in (x.get("cases") or {}).items()}
+    names, voids, act = {}, collections.OrderedDict(), {}
+    for t in surv:
+        fn = F["names"].get(t) or {}
+        conv = fn.get("blind_conviction") or {}
+        D = {v: dec[v][t] for v in present}
+        sup = [v for v in present if D[v]["stance"] == "SUPPORT"]
+        opp = [v for v in present if D[v]["stance"] == "OPPOSE"]
+        abst = [v for v in present if D[v]["stance"] == "ABSTAIN"]
+        now = [v for v in sup if D[v]["timing"] == "ACT_NOW"]
+        wait = [v for v in sup if D[v]["timing"] == "WAIT"]
+        counts = {"support": len(sup), "oppose": len(opp), "abstain": len(abst), "act_now": len(now), "wait": len(wait)}
+        act[t] = {"act_now": len(now), "wait": len(wait)}
+        row = {"ticker": t, "counts": counts, "seats": {"support": sup, "oppose": opp, "abstain": abst, "act_now": now, "wait": wait},
+               "held": t in held, "question": "ADD" if t in held else "BUY"}
+        if len(sup) < a.min_support:
+            row.update({"proposal": "NOT_SLATED", "timing_camp": None, "trigger": None,
+                        "why": f"{len(sup)} SUPPORT < {a.min_support} of {len(present)}"})
+        else:
+            prop = "ADVANCE" if len(now) > len(wait) else TIMING_TIE
+            camp = now if prop == "ADVANCE" else wait
+            groups = collections.OrderedDict()
+            for v in camp:
+                tg = D[v]["trigger"]
+                groups.setdefault((tg["word"], tg["tf"]), []).append(v)
+            (word, tf), holders = _modal(groups, conv)
+            holders_o = sorted(holders, key=lambda v: (-(conv.get(v) or 0), DECIDERS.index(v)))
+            plain = max(holders_o, key=lambda v: len(D[v]["trigger"]["plain"]))
+            row.update({"proposal": prop, "timing_camp": "ACT_NOW" if prop == "ADVANCE" else "WAIT",
+                        "trigger": {"word": word, "tf": tf, "plain": D[plain]["trigger"]["plain"], "seats": holders,
+                                    "of_camp": len(camp), "plain_from": plain},
+                        "why": f"{len(sup)} SUPPORT of {len(present)}; ACT_NOW {len(now)} vs WAIT {len(wait)}"
+                               + (" (tie -> WATCH)" if len(now) == len(wait) else "")})
+        hz = [h for h in ((fn.get("horizons") or {}).get(v) for v in sup) if isinstance(h, int)]
+        if not hz and t in board_h:
+            hz = [h for h in (board_h[t].get(v) for v in sup) if isinstance(h, int)]
+        row["horizon_sessions"] = _st.median_low(hz) if hz else None
+        if t in held and sup:
+            wg = collections.OrderedDict()
+            for v in sup:
+                wg.setdefault(" ".join(str(D[v]["wrong_if"]).split()), []).append(v)
+            (line, ws) = _modal(wg, conv)
+            row["hold_line"] = {"plain": line, "seats": ws}
+        for v in sup:
+            mv = D[v].get("market_void")
+            if isinstance(mv, str) and mv.strip():
+                key = " ".join(mv.lower().split())
+                e = voids.setdefault(key, {"plain": " ".join(mv.split()), "seats": [], "n": 0})
+                e["n"] += 1
+                if v not in e["seats"]:
+                    e["seats"].append(v)
+        names[t] = row
+    mk = None
+    if voids:
+        allconv = {}
+        for t in surv:
+            for v, c in ((F["names"].get(t) or {}).get("blind_conviction") or {}).items():
+                allconv[v] = max(allconv.get(v) or 0, c or 0)
+        key, e = max(voids.items(), key=lambda kv: (kv[1]["n"], len(kv[1]["seats"]), -list(voids).index(kv[0])))
+        sym, wd, lv = _parse_void(e["plain"])
+        mk = {"plain": e["plain"], "symbol": sym, "word": wd, "level": lv,
+              "seats": sorted(e["seats"], key=DECIDERS.index), "n_decisions": e["n"]}
+    by = collections.Counter(r["proposal"] for r in names.values())
+    out = {"schema": "decision.v1", "date": a.date, "rules": {"min_support": a.min_support, "tie": TIMING_TIE,
+                                                             "advance": "ACT_NOW > WAIT among SUPPORT", "trigger": "modal (word, tf) of the winning timing camp"},
+           "survivors": surv, "names": names, "market_kill": mk,
+           "market_kill_note": None if mk else "no SUPPORT decision named a market condition -- declared, never invented",
+           "ignored_forms": ignored,
+           "measurement": {"act_now_vs_wait": act, "deciders_present": present,
+                           "deciders_absent": [v for v in DECIDERS if v not in present],
+                           "advance": by.get("ADVANCE", 0), "watch": by.get("WATCH", 0), "not_slated": by.get("NOT_SLATED", 0)}}
+    save(a.out, out, shape="decision")
+    print(f"decide-timing: {len(present)} deciders on {len(surv)} survivor(s); ADVANCE {by.get('ADVANCE', 0)}, WATCH "
+          f"{by.get('WATCH', 0)}, NOT_SLATED {by.get('NOT_SLATED', 0)} | "
+          + ", ".join(f"{t}:{r['proposal']}({r['counts']['act_now']}/{r['counts']['wait']})" for t, r in names.items())
+          + f" | market kill: {mk['plain'] if mk else 'none named (declared)'}")
 
 
 def cmd_ledger(a):
@@ -2593,6 +3200,7 @@ if __name__ == "__main__":
     s.add_argument("--outdir", default="seat_packets")
     s.add_argument("--seats", nargs="*", default=[QA_SEAT], help="R31: Steenbarger is the only challenge seat")
     s = sub.add_parser("r2digest"); s.add_argument("--export", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--tally", default="tally.json"); s.add_argument("--fundamentals", default="fundamentals_pack.json"); s.add_argument("--rogers"); s.add_argument("--steenbarger"); s.add_argument("--lynch"); s.add_argument("--detectlens"); s.add_argument("--macro", nargs="*", default=[]); s.add_argument("--run-id", default="pma"); s.add_argument("--max-bytes", type=int, default=70000); s.add_argument("--claim-chars", type=int, default=400); s.add_argument("--evidence-chars", type=int, default=300); s.add_argument("--out", default="VOTE_PACKET.txt"); s.add_argument("--valen", help="aqe_valen_dashboard.json (PM 2026-10-23); omitted = no Valen block"); s.add_argument("--crown", default=None, help="aqe_crown_macro.json (R31, 2026-10-30): the weather from AQE's Crown file, replacing the macro seats; omitted = declared gap")
+    s.add_argument("--mtf", default=None, help="mtf.json (R39): prints each name's W / D / H1 grid after its elder line; a name it does not serve prints MTF NOT SERVED (declared)")
     s = sub.add_parser("consensus", help="SUPERSEDED (R34): blind tally under the retired rule; not the verdict"); s.add_argument("--round2", required=True); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--out", default="consensus.json")
     s = sub.add_parser("board", help="R36 round 3: the Chair's board -- blind split + every case per room name; marks CONTESTED names; no verdict")
     s.add_argument("--round2", required=True, help="forms/r2 dir, glob, or one file"); s.add_argument("--phase4", default="phase4.json")
@@ -2605,11 +3213,33 @@ if __name__ == "__main__":
     s.add_argument("--out", default="floor_check.json")
     s = sub.add_parser("slate-cut", help="R36 hold round: slate cut to the held tickets, for validating forms/ratify2")
     s.add_argument("--slate", default="slate.json"); s.add_argument("--qa", default="forms/qa/steenbarger.json"); s.add_argument("--out", default="slate_held.json")
+    s = sub.add_parser("claims", help="R38 tier 1: the CLAIMS BOARD -- the sharpest claims per name, routed to reviewers of another method family; no verdict")
+    s.add_argument("--round2", default=None, help="forms/r2 dir, glob, or one file (split-ballot parts are skipped); not needed with --reroute"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--challenge", default=None, help="forms/challenge/steenbarger.json (rides on the board as context)")
+    s.add_argument("--mtf", default=None, help="mtf.json (R39); absent = every name MTF NOT SERVED (declared)")
+    s.add_argument("--export", default=None, help="aqe_daily_export.json: each claim in a packet carries its name's row")
+    s.add_argument("--date", required=True); s.add_argument("--out", default="claims_board.json"); s.add_argument("--packets-dir", dest="packets_dir", default="claims_packets")
+    s.add_argument("--per-camp", dest="per_camp", type=int, default=CLAIMS_PER_CAMP); s.add_argument("--reviewers", type=int, default=CLAIM_REVIEWERS)
+    s.add_argument("--reroute", default=None, help="an absent reviewer: re-route ONLY its claims to the next eligible reviewers, rewrite --out and the packets")
+    s = sub.add_parser("claims-score", help="R38 the FIRST FUNNEL: the survival rule on the cross rulings -> funnel.json (+ the measurement)")
+    s.add_argument("--claims", default="claims_board.json"); s.add_argument("--rulings", default="forms/cross")
+    s.add_argument("--date", required=True); s.add_argument("--out", default="funnel.json")
+    s = sub.add_parser("pair", help="R38 the ADVERSARY PAIRING: every refute of a surviving claim in front of its author -> pairs.json + tier2_packets/")
+    s.add_argument("--claims", default="claims_board.json"); s.add_argument("--rulings", default="forms/cross"); s.add_argument("--funnel", default="funnel.json")
+    s.add_argument("--mtf", default=None); s.add_argument("--date", required=True); s.add_argument("--out", default="pairs.json")
+    s.add_argument("--packets-dir", dest="packets_dir", default="tier2_packets")
+    s = sub.add_parser("decide-timing", help="R38/R40 the SECOND FUNNEL: <4 SUPPORT not slated; ACT_NOW > WAIT ADVANCE else WATCH; ONE trigger; ONE market kill")
+    s.add_argument("--tier2", default="forms/tier2"); s.add_argument("--funnel", default="funnel.json"); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--export", default=None, help="aqe_daily_export.json: held names are counted on the ADD question and carry a hold line")
+    s.add_argument("--board", default=None, help="board.json: horizons when funnel.json carries none")
+    s.add_argument("--min-support", dest="min_support", type=int, default=SLATE_MIN_SUPPORT)
+    s.add_argument("--date", required=True); s.add_argument("--out", default="decision.json")
     s = sub.add_parser("ratify-count", help="R34 CLOSE: count OBJECT answers on the final ratification -> consensus.json (+ committee_record.json, R35)")
     s.add_argument("--slate", default="slate.json"); s.add_argument("--ratifications", default="forms/ratify")
     s.add_argument("--ratifications2", default=None, help="forms/ratify2 -- after a QA hold; held tickets only")
     s.add_argument("--qa", default=None, help="forms/qa/steenbarger.json"); s.add_argument("--board", default="board.json")
     s.add_argument("--messages", default=None, help="forms/floor (for the record)"); s.add_argument("--messages2", default=None, help="forms/floor2 (hold round, for the record)")
+    s.add_argument("--cross", default=None, help="forms/cross (R38 tier 1, for the record)"); s.add_argument("--tier2", default=None, help="forms/tier2 (R38 tier 2, for the record)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
@@ -2623,4 +3253,5 @@ if __name__ == "__main__":
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
+     "claims": cmd_claims, "claims-score": cmd_claims_score, "pair": cmd_pair, "decide-timing": cmd_decide_timing,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

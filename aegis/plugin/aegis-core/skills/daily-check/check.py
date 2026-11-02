@@ -3,13 +3,14 @@
 
   check.py ready --last-run aegis/output/aqe_last_run.json [--today YYYY-MM-DD]
   check.py chain --run-dir aegis/output/pma/run/<date> --date <date> [--levels pma_levels.json]
-                 [--run-yaml <RUN.yaml>] [--ceiling-tokens 1357500]
+                 [--run-yaml <RUN.yaml>] [--ceiling-tokens 2500000]
   check.py data  --output-dir aegis/output [--run-yaml <RUN.yaml>]     (the AQE -> voices HANDOFF gate)
   check.py all   (ready + data + chain)
 
 Exit 0 = Healthy. Exit 1 = at least one FAIL line. Exit 2 = could not even read an input (also a failure --
 a checker that cannot see is not green). Zero dependencies beyond the standard library; RUN.yaml is read with
-the plugin's own mini loader when it is importable, else the step list falls back to the known 22 steps.
+the plugin's own mini loader when it is importable, else the step list falls back to KNOWN_STEPS (RUN.yaml's
+list as of the 2 Nov 2026 redesign).
 """
 from __future__ import annotations
 
@@ -21,11 +22,16 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_RUN_YAML = os.path.abspath(os.path.join(HERE, "..", "pma", "RUN.yaml"))
-DEFAULT_CEILING = int(1.5 * 905_000)          # 1.5x the measured baseline (DECISIONS s4, design default)
+# DECISIONS_2026-11-02 (tool fixes): spend ceiling raised to 2,500,000 on the registrar's byte basis -- the 1,357,500
+# figure (1.5x the 905k baseline) predates the 7-seat, 39-name design and tripped before FLOOR on 2 Nov.
+# Optimisation is a later PM decision.
+DEFAULT_CEILING = 2_500_000
 SLATE_CAP = 15
-KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "PM-LENS", "RANK", "CHALLENGE", "VOTE", "FLOOR",
-               "SLATE", "RATIFY", "QA", "DECIDE", "CONDITIONS", "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE",
-               "CHECK", "LEVELS", "REPORT", "PUBLISH"]
+# The fallback only: the step list is READ FROM RUN.yaml (_steps_from_run_yaml). R38 (2026-11-02): FLOOR is retired;
+# MTF, CLAIMS, CROSS, FUNNEL, PAIR, TIER2 and TIMING replace it.
+KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "PM-LENS", "RANK", "MTF", "CHALLENGE", "VOTE",
+               "CLAIMS", "CROSS", "FUNNEL", "PAIR", "TIER2", "TIMING", "SLATE", "RATIFY", "QA", "DECIDE", "CONDITIONS",
+               "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE", "CHECK", "LEVELS", "REPORT", "PUBLISH"]
 
 
 def _sgt_today():
@@ -147,9 +153,35 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
         if n > SLATE_CAP:
             fails.append(f"slate.json has {n} tickets > {SLATE_CAP} (R34)")
         notes.append(f"slate {n} tickets")
-    F = _load(os.path.join(run_dir, "floor_check.json"), "floor_check.json", fails)
-    if F is not None and F.get("ok") is not True:
-        fails.append("floor_check.json not ok: " + "; ".join(F.get("errors") or ["(no reason)"])[:300])
+    # R38 (2026-11-02): the open floor is retired. floor_check.json is REQUIRED only on a run map that still has a
+    # FLOOR step; on the two-tier funnel it exists only when the QA hold round ran (floor-check --qa), and is then
+    # checked. The funnel's own files are required instead: funnel.json (tier 1) and decision.json (tier 2).
+    fc = os.path.join(run_dir, "floor_check.json")
+    if "FLOOR" in steps or os.path.exists(fc):
+        F = _load(fc, "floor_check.json", fails)
+        if F is not None and F.get("ok") is not True:
+            fails.append("floor_check.json not ok: " + "; ".join(F.get("errors") or ["(no reason)"])[:300])
+    if "FUNNEL" in steps:
+        FN = _load(os.path.join(run_dir, "funnel.json"), "funnel.json", fails)
+        if FN is not None:
+            if not isinstance(FN.get("survivors"), list) or not isinstance(FN.get("names"), dict):
+                fails.append("funnel.json carries no survivors / names -- tier 1 was not counted by claims-score")
+            else:
+                ms = FN.get("measurement") or {}
+                notes.append(f"funnel: {ms.get('claims_issued')} claims, survivors {len(FN['survivors'])}, dropped "
+                             f"{len(FN.get('dropped') or [])}, stances changed {ms.get('stances_changed_n')}")
+    if "TIMING" in steps:
+        DC = _load(os.path.join(run_dir, "decision.json"), "decision.json", fails)
+        if DC is not None:
+            if not isinstance(DC.get("names"), dict):
+                fails.append("decision.json carries no names -- tier 2 was not counted by decide-timing")
+            elif S is not None:
+                dn = DC["names"]
+                for x in S.get("tickets") or []:
+                    n = dn.get(x.get("ticker"))
+                    if n is None or n.get("proposal") != x.get("verdict"):
+                        fails.append(f"slate ticket {x.get('ticker')}: verdict {x.get('verdict')} != decision.json "
+                                     f"{(n or {}).get('proposal')} (R40)")
     if levels_path:
         L = _load(levels_path, "pma_levels.json", fails)
         if L is not None:

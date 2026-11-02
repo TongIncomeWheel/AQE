@@ -67,6 +67,13 @@ CASE_LIMITS = {"for": 400, "against": 400, "entry_trigger": 200, "wrong_if": 200
 CASE_REQUIRED = ("for", "against", "entry_trigger", "wrong_if", "horizon_sessions",
                  "would_change_my_mind", "cannot_see")
 RATIFY_ANSWERS = ("AGREE", "AGREE_WITH_RESERVATION", "OBJECT")
+# R38-R40 (PM 2026-11-02): the two-tier funnel's forms. A slate dated from here carries ONE trigger per ticket and
+# the slate-wide market_kill (R40); earlier slates validate exactly as they were filed.
+R38_EFFECTIVE = "2026-11-02"
+CROSS_RULINGS = ("CONFIRM", "REFUTE", "CANNOT_SEE")
+STANCES = ("SUPPORT", "OPPOSE", "ABSTAIN")
+TIMINGS = ("ACT_NOW", "WAIT")
+MTF_FRAMES = ("W", "D", "H1")
 
 
 def _new_regime(form):
@@ -438,7 +445,7 @@ def validate_floor_message(form, deliberation_set, contested=None):
     return errs, flags
 
 
-def validate_slate(form, deliberation_set):
+def validate_slate(form, deliberation_set, decision=None):
     """The Chair's slate (R34/R36 round 4): at most 15 tickets across ADVANCE and WATCH, each with its
     trigger, wrong-if, horizon, why the room agrees and who dissents. The Chair uses only what the
     seats said; the registrar checks completeness and membership, never the reasoning."""
@@ -486,7 +493,285 @@ def validate_slate(form, deliberation_set):
                     errs.append(f"{w}.dissent[{j}].why: > 300 chars")
         if _bracket_as_reject([x.get("why_agreed", ""), x.get("wrong_if", "")]):
             errs.append(f"{w}: uses a bracket as a disqualifier. {R1_TEXT}")
+    _slate_r40(form, decision, errs)
     return errs, flags
+
+
+# ---------------------------------------------------------------------------
+# THE TWO-TIER FUNNEL FORMS (R38-R40, PM 2026-11-02). contracts/cross_ruling.schema.json and
+# contracts/tier2.schema.json. One file's shape and membership against the code-built board / pairs / funnel;
+# the counting is pma_pipeline.py claims-score / decide-timing.
+# ---------------------------------------------------------------------------
+def _extra_keys(errs, obj, allowed, where):
+    extra = sorted(set(obj) - set(allowed))
+    if extra:
+        errs.append(f"{where}: unknown key(s) {extra} (the contract is closed: additionalProperties false)")
+
+
+def _board_blind(board, voice, ticker):
+    n = (board.get("names") or {}).get(ticker) or {}
+    for k, w in (("support", "SUPPORT"), ("oppose", "OPPOSE"), ("abstain", "ABSTAIN")):
+        if voice in (n.get(k) or []):
+            return w
+    return None
+
+
+def validate_cross(form, board, partial=False):
+    """A decider's tier-1 ruling form: exactly the claims routed to it, each CONFIRM / REFUTE / CANNOT_SEE with the
+    evidence its method reads and the W / D / H1 grid (R39), and its own stance on the name after ruling."""
+    errs, flags = [], []
+    for req in ("voice", "date", "rulings"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    _extra_keys(errs, form, ("voice", "date", "declarations", "rulings"), "form")
+    v = form.get("voice")
+    if v not in DECIDERS:
+        errs.append(f"voice {v!r} is not a decider (R31); only deciders rule on claims")
+    routing = (board or {}).get("routing") or {}
+    mine = routing.get(v)
+    if board is not None and mine is None:
+        errs.append(f"no claims are routed to {v!r} on the claims board -- nothing to rule on")
+    claims = {c["claim_id"]: (t, c) for t, n in ((board or {}).get("names") or {}).items() for c in n.get("claims") or []}
+    rows = form.get("rulings")
+    if not isinstance(rows, list) or (not rows and not partial):
+        errs.append("rulings: a non-empty list"); rows = rows if isinstance(rows, list) else []
+    seen, stance_by_t = set(), {}
+    for i, r in enumerate(rows):
+        w = f"rulings[{i}]"
+        if not isinstance(r, dict):
+            errs.append(f"{w}: must be an object"); continue
+        _extra_keys(errs, r, ("claim_id", "ticker", "ruling", "evidence", "tf", "stance_after", "changed_mind", "what_moved_me"), w)
+        for req in ("claim_id", "ticker", "ruling", "evidence", "tf", "stance_after", "changed_mind"):
+            if req not in r:
+                errs.append(f"{w}: missing {req}")
+        cid = r.get("claim_id")
+        w = f"{w} {cid}"
+        if cid in seen:
+            errs.append(f"{w}: duplicate ruling on the same claim")
+        seen.add(cid)
+        if board is not None and cid not in claims:
+            errs.append(f"{w}: not a claim on the claims board"); continue
+        t, c = claims.get(cid, (None, {}))
+        if c.get("author") == v:
+            errs.append(f"{w}: {v} is the AUTHOR of this claim -- a voice never rules on its own claim (R38)")
+        if t is not None and r.get("ticker") != t:
+            errs.append(f"{w}: ticker {r.get('ticker')!r} does not match the claim's ticker {t}")
+        if r.get("ruling") not in CROSS_RULINGS:
+            errs.append(f"{w}: ruling must be one of {list(CROSS_RULINGS)}")
+        _str(errs, r, "evidence", 250, w)
+        tf = r.get("tf")
+        if not isinstance(tf, dict):
+            errs.append(f"{w}: tf must be the W / D / H1 grid {{W, D, H1}} (R39) -- 'not served' when the bars are missing")
+        else:
+            _extra_keys(errs, tf, MTF_FRAMES, f"{w}.tf")
+            for fr in MTF_FRAMES:
+                if fr not in tf:
+                    errs.append(f"{w}.tf: missing {fr} -- R39: every tier-1 ruling reads the weekly, daily AND 1-hour frame")
+                else:
+                    _str(errs, tf, fr, 90, f"{w}.tf")
+        sa = r.get("stance_after")
+        if sa not in STANCES:
+            errs.append(f"{w}: stance_after must be one of {list(STANCES)}")
+        cm = r.get("changed_mind")
+        if not isinstance(cm, bool):
+            errs.append(f"{w}: changed_mind true/false")
+        if cm is True:
+            _str(errs, r, "what_moved_me", 300, w)
+        blind = _board_blind(board or {}, v, t) if t else None
+        if blind and sa in STANCES and isinstance(cm, bool) and cm != (sa != blind):
+            errs.append(f"{w}: changed_mind is {cm} but stance_after {sa} vs your blind vote {blind} says "
+                        f"{sa != blind} -- changed_mind records whether your stance on the name moved")
+        if t is not None and sa in STANCES:
+            if t in stance_by_t and stance_by_t[t] != sa:
+                errs.append(f"{w}: stance_after {sa} on {t} disagrees with your other ruling on {t} ({stance_by_t[t]}) -- ONE stance per name")
+            stance_by_t.setdefault(t, sa)
+        texts = [r.get("evidence") or "", r.get("what_moved_me") or ""] + ([str(x) for x in tf.values()] if isinstance(tf, dict) else [])
+        hit = _bracket_as_reject(texts)
+        if hit:
+            errs.append(f"{w}: uses a bracket as the disqualifier ({hit[0]!r} + {hit[1]!r}). {R1_TEXT}")
+    if mine is not None:
+        missing, extra = set(mine) - seen, seen - set(mine)
+        if missing and not partial:
+            errs.append(f"no ruling on routed claim(s) {sorted(missing)} -- a reviewer rules on EVERY claim routed to it "
+                        f"(a form too large for one file is split: --part N --of M, then `registrar.py merge --kind cross`)")
+        if extra:
+            errs.append(f"ruling(s) on claim(s) NOT routed to {v}: {sorted(extra)}")
+    return errs, flags
+
+
+def _trigger_errors(trig, where, seat=None):
+    """R40 + D123: the ONE trigger {word, tf, plain}. word = a condition_vocab word whose argument is a FIELD level
+    (h1_close_above:bar_high, in_zone:ma_20) -- a bare number as the level is REJECTED, exactly as in a conditions
+    block; the seat's own method limits (voice_primitives.json) apply as they do to its buy words."""
+    errs = []
+    if not isinstance(trig, dict):
+        return [f"{where}: trigger must be {{word, tf, plain}} (R40: ONE trigger, its timeframe, plain words)"]
+    _extra_keys(errs, trig, ("word", "tf", "plain"), f"{where}.trigger")
+    if trig.get("tf") not in MTF_FRAMES:
+        errs.append(f"{where}.trigger.tf must be one of {list(MTF_FRAMES)} (R39: the frame the trigger is read on)")
+    _str(errs, trig, "plain", 120, f"{where}.trigger")
+    wd = trig.get("word")
+    if not isinstance(wd, str) or not wd or len(wd) > 80:
+        errs.append(f"{where}.trigger.word: a condition_vocab word with a field level, <= 80 chars"); return errs
+    cond = _cond()
+    try:
+        c = cond.parse(wd)
+    except ValueError as e:
+        errs.append(f"{where}.trigger.word: {e}"); return errs
+    lv = [x for x in c["args"] if isinstance(x, dict)]
+    if not lv:
+        errs.append(f"{where}.trigger.word: {wd!r} names no price level -- a trigger is <word>:<field level>, e.g. h1_close_above:bar_high")
+    if seat:
+        rules = cond.seat_rules(seat)
+        if c["w"] in rules["forbid_in_buy"]:
+            errs.append(f"{where}.trigger.word: {seat} may not buy on {c['w']!r} -- outside this seat's own method (voice_primitives.json)")
+        for x in lv:
+            if x["field"] in rules["forbid_levels"]:
+                errs.append(f"{where}.trigger.word: {seat} may not use {x['field']} -- outside this seat's own method (voice_primitives.json)")
+    return errs
+
+
+def validate_tier2(form, pairs, funnel, partial=False):
+    """A decider's ONE tier-2 form: an answer to every refutation of its own claims (pairs.json), and a decision on
+    EVERY tier-1 survivor (funnel.json) -- stance; on SUPPORT the timing, ONE trigger, wrong_if, market_void."""
+    errs, flags = [], []
+    for req in ("voice", "date", "answers", "decisions"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    _extra_keys(errs, form, ("voice", "date", "declarations", "answers", "decisions"), "form")
+    v = form.get("voice")
+    if v not in DECIDERS:
+        errs.append(f"voice {v!r} is not a decider (R31); only deciders decide")
+    mine = {p["pair_id"]: p for p in ((pairs or {}).get("pairs") or []) if p.get("author") == v}
+    ans = form.get("answers")
+    if not isinstance(ans, list):
+        errs.append("answers: a list ([] when none of my claims was refuted)"); ans = []
+    seen = set()
+    for i, x in enumerate(ans):
+        w = f"answers[{i}]"
+        if not isinstance(x, dict):
+            errs.append(f"{w}: must be an object"); continue
+        _extra_keys(errs, x, ("pair_id", "ticker", "to", "text", "concede"), w)
+        pid = x.get("pair_id"); w = f"{w} {pid}"
+        if pid in seen:
+            errs.append(f"{w}: answered twice")
+        seen.add(pid)
+        p = mine.get(pid)
+        if pairs is not None and p is None:
+            errs.append(f"{w}: not a pair in which {v} is the author -- answer only the refutations of your own claims")
+        elif p is not None:
+            if x.get("ticker") != p["ticker"]:
+                errs.append(f"{w}: ticker {x.get('ticker')!r} is not the pair's {p['ticker']}")
+            if x.get("to") != p["refuter"]:
+                errs.append(f"{w}: to must name the refuter, {p['refuter']}")
+        _str(errs, x, "text", 500, w)
+        if not isinstance(x.get("concede"), bool):
+            errs.append(f"{w}: concede true/false")
+        hit = _bracket_as_reject([x.get("text") or ""])
+        if hit:
+            errs.append(f"{w}: uses a bracket as the disqualifier ({hit[0]!r} + {hit[1]!r}). {R1_TEXT}")
+    if pairs is not None:
+        missing, extra = set(mine) - seen, seen - set(mine)
+        if missing and not partial:
+            errs.append(f"no answer to pair(s) {sorted(missing)} -- every refutation of your claims is answered (R38)")
+        if extra:
+            errs.append(f"answers to pairs that are not yours: {sorted(extra)}")
+    surv = list((funnel or {}).get("survivors") or [])
+    dec = form.get("decisions")
+    if not isinstance(dec, list) or (not dec and not partial):
+        errs.append("decisions: a non-empty list, one per tier-1 survivor"); dec = dec if isinstance(dec, list) else []
+    got = set()
+    for i, d in enumerate(dec):
+        w = f"decisions[{i}]"
+        if not isinstance(d, dict):
+            errs.append(f"{w}: must be an object"); continue
+        _extra_keys(errs, d, ("ticker", "stance", "timing", "trigger", "wrong_if", "market_void", "reason"), w)
+        t = d.get("ticker"); w = f"{w} {t}"
+        if t in got:
+            errs.append(f"{w}: decided twice")
+        got.add(t)
+        if funnel is not None and t not in surv:
+            errs.append(f"{w}: not a tier-1 survivor (funnel.json) -- decide the survivors only")
+        st = d.get("stance")
+        if st not in STANCES:
+            errs.append(f"{w}: stance must be one of {list(STANCES)}")
+        _str(errs, d, "wrong_if", 200, w)
+        mv = d.get("market_void")
+        if mv is not None and (not isinstance(mv, str) or not mv.strip() or len(mv) > 120):
+            errs.append(f"{w}.market_void: words the alert loop can watch, <= 120 chars, or null")
+        _str(errs, d, "reason", 300, w, required=False)
+        if st == "SUPPORT":
+            if d.get("timing") not in TIMINGS:
+                errs.append(f"{w}: SUPPORT requires timing ACT_NOW or WAIT (R40)")
+            errs.extend(_trigger_errors(d.get("trigger"), w, seat=v if v in DECIDERS else None))
+        elif st in STANCES:
+            if d.get("timing") is not None or d.get("trigger") is not None:
+                errs.append(f"{w}: only a SUPPORT carries timing and a trigger -- {st} files them null")
+        texts = [d.get("wrong_if") or "", d.get("reason") or ""] + ([str((d.get("trigger") or {}).get("plain") or "")] if isinstance(d.get("trigger"), dict) else [])
+        hit = _bracket_as_reject(texts)
+        if hit:
+            errs.append(f"{w}: uses a bracket as the disqualifier ({hit[0]!r} + {hit[1]!r}). {R1_TEXT}")
+    if funnel is not None:
+        missing = set(surv) - got
+        if missing and not partial:
+            errs.append(f"no decision on survivor(s) {sorted(missing)} -- every decider decides EVERY survivor (R38) "
+                        f"(a form too large for one file is split: --part N --of M, then `registrar.py merge --kind tier2`)")
+    return errs, flags
+
+
+def _slate_r40(form, decision, errs):
+    """R40 on the slate: ONE trigger per ticket and the slate-wide market_kill. With --decision decision.json the
+    verdict and trigger of every ticket must be the ones code fixed; a NOT_SLATED name may not appear; a slated name
+    may be missing only over the 15 cap; market_kill must be decision.json's."""
+    r40 = decision is not None or str(form.get("date", "")) >= R38_EFFECTIVE
+    tk = [x for x in (form.get("tickets") or []) if isinstance(x, dict)]
+    for i, x in enumerate(tk):
+        w = f"tickets[{i}] {x.get('ticker')}"
+        if x.get("trigger") is None:
+            if r40:
+                errs.append(f"{w}: missing trigger {{word, tf, plain}} -- R40: ONE trigger per ticket, copied from decision.json")
+        else:
+            errs.extend(_trigger_errors(x.get("trigger"), w))
+    if r40 and "market_kill" not in form:
+        errs.append("market_kill: required on a slate from 2026-11-02 (R40) -- copied from decision.json; null only when no seat named one")
+    mk = form.get("market_kill")
+    if mk is not None and (not isinstance(mk, dict) or not mk.get("plain")):
+        errs.append("market_kill: {plain, symbol, word, level, seats} or null")
+    if decision is None:
+        return
+    names = decision.get("names") or {}
+    slated = [t for t, n in names.items() if n.get("proposal") in ("ADVANCE", "WATCH")]
+    for i, x in enumerate(tk):
+        t = x.get("ticker"); w = f"tickets[{i}] {t}"
+        n = names.get(t)
+        if n is None:
+            errs.append(f"{w}: not a tier-1 survivor in decision.json -- the slate is built from decision.json only (R38)"); continue
+        if n.get("proposal") == "NOT_SLATED":
+            errs.append(f"{w}: decision.json did NOT slate this name ({n.get('why')}) -- it may not appear on the slate (R40)"); continue
+        if x.get("verdict") != n.get("proposal"):
+            errs.append(f"{w}: verdict {x.get('verdict')} differs from decision.json's {n.get('proposal')} -- the Chair copies "
+                        f"the verdict code fixed, never its own (R40)")
+        dt, st = n.get("trigger") or {}, x.get("trigger") or {}
+        if isinstance(st, dict) and (st.get("word"), st.get("tf")) != (dt.get("word"), dt.get("tf")):
+            errs.append(f"{w}: trigger {st.get('word')}/{st.get('tf')} differs from decision.json's {dt.get('word')}/{dt.get('tf')} "
+                        f"-- ONE trigger, the modal one code fixed (R40)")
+        tc = x.get("timing_count")
+        if isinstance(tc, dict):
+            want = n.get("counts") or {}
+            bad = sorted(k for k in tc if k in want and tc[k] != want[k])
+            if bad:
+                errs.append(f"{w}: timing_count {bad} differ from decision.json's counts")
+    on = {x.get("ticker") for x in tk}
+    missing = [t for t in slated if t not in on]
+    if missing and len(slated) <= SLATE_CAP:
+        errs.append(f"slated name(s) {missing} are missing from the slate -- allowed only over the {SLATE_CAP} cap (R34/R40)")
+    dk = decision.get("market_kill")
+    if (mk is None) != (dk is None):
+        errs.append(f"market_kill {'missing' if mk is None else 'present'} but decision.json's is {'null' if dk is None else repr(dk.get('plain'))} (R40)")
+    elif mk is not None:
+        bad = [k for k in ("plain", "symbol", "word", "level") if mk.get(k) != dk.get(k)]
+        if bad:
+            errs.append(f"market_kill {bad} differ from decision.json's -- the Chair copies the modal market condition, never composes one (R40)")
 
 
 def validate_ratification(form, slate):
@@ -596,6 +881,8 @@ def cmd_merge(a):
     one MAX_FORM_BYTES file. That is a file size limit, and it was silently binning the PM's analysts'
     picks -- 64 of 107 nominations over three runs. The room size is now set by how many names the
     seats nominated. Ballots split; nobody is cut."""
+    if getattr(a, "kind", "vote") in ("cross", "tier2"):
+        return _merge_funnel_form(a)
     parts = sorted(glob.glob(a.glob))
     if not parts:
         print(json.dumps({"result": "REJECT", "errors": [f"no ballot parts matched {a.glob!r}"]})); return 1
@@ -644,6 +931,61 @@ def cmd_merge(a):
     return 0
 
 
+def _merge_funnel_form(a):
+    """R16.1 for the funnel (2026-11-02): a reviewer routed ~40 claims, or a decider with ~40 survivors, may not fit one
+    MAX_FORM_BYTES file. It files parts (each validated with --part N --of M: inside its routing / the survivors, no
+    duplicate, coverage NOT required); this stitches them and runs the FULL validator on the result, which proves the
+    parts cover the routing (cross) or every pair and every survivor (tier2) exactly. A file size limit never decides
+    which seat is heard."""
+    parts = sorted(glob.glob(a.glob))
+    if not parts:
+        print(json.dumps({"result": "REJECT", "errors": [f"no {a.kind} parts matched {a.glob!r}"]})); return 1
+    lists = ("rulings",) if a.kind == "cross" else ("answers", "decisions")
+    merged, errs, meta = None, [], []
+    for f in parts:
+        raw = open(f, "rb").read()
+        if len(raw) > MAX_FORM_BYTES:
+            errs.append(f"{os.path.basename(f)} is {len(raw)}B > {MAX_FORM_BYTES}B -- split it further"); continue
+        try:
+            form = json.loads(raw)
+        except json.JSONDecodeError as e:
+            errs.append(f"{os.path.basename(f)}: not valid JSON: {e}"); continue
+        meta.append({"file": os.path.basename(f), "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()[:12]})
+        if merged is None:
+            merged = {k: v for k, v in form.items() if k not in lists}
+            for k in lists:
+                merged[k] = []
+        else:
+            for k in ("voice", "date"):
+                if form.get(k) != merged.get(k):
+                    errs.append(f"{os.path.basename(f)}: {k}={form.get(k)!r} does not match part 1's {merged.get(k)!r}")
+            if form.get("declarations"):
+                merged.setdefault("declarations", []).extend(x for x in form["declarations"] if x not in merged.get("declarations", []))
+        for k in lists:
+            merged[k].extend(form.get(k) or [])
+    if merged is None or errs:
+        print(json.dumps({"result": "REJECT", "errors": errs or ["no readable part"], "parts": meta})); return 1
+    if a.kind == "cross":
+        board, err = load_json(a.claims, "claims board") if a.claims else (None, "--claims claims_board.json is required to merge cross parts")
+        if err:
+            print(json.dumps({"result": "REJECT", "errors": [err]})); return 1
+        e2, _ = validate_cross(merged, board)
+    else:
+        pairs, err = load_json(a.pairs, "pairs") if a.pairs else (None, "--pairs pairs.json is required to merge tier2 parts")
+        funnel, err2 = load_json(a.funnel, "funnel") if a.funnel else (None, "--funnel funnel.json is required to merge tier2 parts")
+        if err or err2:
+            print(json.dumps({"result": "REJECT", "errors": [x for x in (err, err2) if x]})); return 1
+        e2, _ = validate_tier2(merged, pairs, funnel)
+    if e2:
+        print(json.dumps({"result": "REJECT", "errors": e2, "parts": meta})); return 1
+    merged["merged_from"] = meta
+    with open(a.out, "w") as fh:
+        json.dump(merged, fh, indent=1)
+    print(json.dumps({"result": "OK", "voice": merged.get("voice"), "kind": a.kind, "out": a.out, "parts": meta,
+                      "bytes": os.path.getsize(a.out)}))
+    return 0
+
+
 def cmd_validate(a):
     raw = open(a.file, "rb").read()
     if len(raw) > MAX_FORM_BYTES:
@@ -664,7 +1006,7 @@ def cmd_validate(a):
         universe = {r["ticker"] for r in cs.get("universe", [])}
     kind = getattr(a, "kind", None)
     if (a.round is None) == (kind is None):
-        print(json.dumps({"result": "REJECT", "errors": ["pass exactly one of --round 1|2 or --kind challenge|floor|slate|ratify|qa"]}))
+        print(json.dumps({"result": "REJECT", "errors": ["pass exactly one of --round 1|2 or --kind challenge|floor|slate|ratify|qa|cross|tier2"]}))
         return 1
     dset = None
     if (a.round == 2 or kind in ("floor", "slate")) and a.phase4:
@@ -682,6 +1024,18 @@ def cmd_validate(a):
         if err:
             print(json.dumps({"result": "REJECT", "errors": [err]}))
             return 1
+    side = {}
+    for flag, what, need in (("claims", "claims board", kind == "cross"), ("pairs", "pairs", kind == "tier2"),
+                             ("funnel", "funnel", kind == "tier2"), ("decision", "decision", False)):
+        path = getattr(a, flag, None)
+        if need and not path:
+            print(json.dumps({"result": "REJECT", "errors": [f"--{flag} {flag}.json is required to validate a {kind} form"]}))
+            return 1
+        if path:
+            side[flag], err = load_json(path, what)
+            if err:
+                print(json.dumps({"result": "REJECT", "errors": [err]}))
+                return 1
     contested = None
     if kind == "floor" and getattr(a, "board", None):
         board, err = load_json(a.board, "board")
@@ -698,7 +1052,11 @@ def cmd_validate(a):
     elif kind == "floor":
         errs, flags = validate_floor_message(form, dset, contested)
     elif kind == "slate":
-        errs, flags = validate_slate(form, dset)
+        errs, flags = validate_slate(form, dset, side.get("decision"))
+    elif kind == "cross":
+        errs, flags = validate_cross(form, side["claims"], partial=bool(getattr(a, "of", None) and a.of > 1))
+    elif kind == "tier2":
+        errs, flags = validate_tier2(form, side["pairs"], side["funnel"], partial=bool(getattr(a, "of", None) and a.of > 1))
     elif kind == "ratify":
         errs, flags = validate_ratification(form, slate)
     else:
@@ -979,9 +1337,14 @@ def main():
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")
-    s.add_argument("--kind", choices=("challenge", "floor", "slate", "ratify", "qa"), default=None,
-                   help="R34-R36 deliberation forms: Steenbarger's challenge document, one floor message, "
-                        "the Chair's slate, a decider's ratification, the QA note. Exactly one of --round/--kind.")
+    s.add_argument("--kind", choices=("challenge", "floor", "slate", "ratify", "qa", "cross", "tier2"), default=None,
+                   help="R34-R38 deliberation forms: Steenbarger's challenge document, one floor message (QA hold round), "
+                        "the Chair's slate, a decider's ratification, the QA note, a tier-1 cross ruling form, a tier-2 "
+                        "decision form. Exactly one of --round/--kind.")
+    s.add_argument("--claims", default=None, help="claims_board.json (required for --kind cross)")
+    s.add_argument("--pairs", default=None, help="pairs.json (required for --kind tier2)")
+    s.add_argument("--funnel", default=None, help="funnel.json (required for --kind tier2)")
+    s.add_argument("--decision", default=None, help="decision.json (--kind slate, R40): verdict + trigger + market_kill must match")
     s.add_argument("--slate", default=None, help="slate.json (required for --kind ratify|qa)")
     s.add_argument("--board", default=None, help="board.json (optional for --kind floor: proves the name is contested)")
     s.add_argument("--candidates", default=None); s.add_argument("--phase4", default=None)
@@ -994,6 +1357,10 @@ def main():
     s = sub.add_parser("merge", help="R16: stitch a seat's split round-2 ballot parts and prove they cover the deliberation set exactly.")
     s.add_argument("--glob", required=True, help="e.g. 'forms/r2/livermore.part*.json'")
     s.add_argument("--out", required=True); s.add_argument("--phase4", default="phase4.json")
+    s.add_argument("--kind", choices=("vote", "cross", "tier2"), default="vote",
+                   help="vote (round-2 ballot, the default) | cross | tier2 (R38 funnel forms, proved with the full validator)")
+    s.add_argument("--claims", default=None, help="claims_board.json (--kind cross)")
+    s.add_argument("--pairs", default=None, help="pairs.json (--kind tier2)"); s.add_argument("--funnel", default=None, help="funnel.json (--kind tier2)")
     s = sub.add_parser("commit")
     s.add_argument("--step", required=True); s.add_argument("--file", required=True)
     s.add_argument("--seat", default=None); s.add_argument("--tokens", type=int, default=0)

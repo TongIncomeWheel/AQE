@@ -1,0 +1,60 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Tier-2 DECISION form -- one decider's answers to its refuters and its decision on every survivor (R38, R39, R40; PM 2026-11-02)",
+ "x_version": "1.0.0",
+ "x_purpose": "The second funnel. pairs.json (pma_pipeline.py pair) puts every REFUTE of a surviving claim in front of the claim's author. Each decider files ONE form: an answer to each refutation of its own claims, and a decision on every tier-1 survivor -- stance, and on SUPPORT the timing (ACT_NOW or WAIT), ONE trigger with its timeframe, where it is wrong, and an optional market condition that voids the trade. Code (decide-timing) counts across all seven seats: <4 SUPPORT = not slated; ACT_NOW > WAIT = ADVANCE, else WATCH (a tie is WATCH). registrar.py validate --kind tier2 --pairs pairs.json --funnel funnel.json checks coverage.",
+ "type": "object",
+ "required": ["voice", "date", "answers", "decisions"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"type": "string"},
+  "date": {"type": "string", "format": "date"},
+  "declarations": {"type": "array", "items": {"type": "string", "maxLength": 300}},
+  "answers": {
+   "type": "array",
+   "x_note": "one per pair where this voice is the AUTHOR of the refuted claim; [] when none of my claims was refuted",
+   "items": {
+    "type": "object",
+    "required": ["pair_id", "ticker", "to", "text", "concede"],
+    "additionalProperties": false,
+    "properties": {
+     "pair_id": {"type": "string", "maxLength": 64},
+     "ticker": {"type": "string", "maxLength": 8},
+     "to": {"type": "string", "x_note": "the refuter, by name"},
+     "text": {"type": "string", "minLength": 1, "maxLength": 500, "x_note": "quote the refuter's point in ten words or fewer, then answer with my own method's tests on the W/D/H1 grid"},
+     "concede": {"type": "boolean", "x_note": "true when the refuter's evidence is evidence MY method cares about and it stands"}
+    }
+   }
+  },
+  "decisions": {
+   "type": "array", "minItems": 1,
+   "x_note": "one per tier-1 SURVIVOR (funnel.json survivors), every survivor exactly once",
+   "items": {
+    "type": "object",
+    "required": ["ticker", "stance", "wrong_if"],
+    "additionalProperties": false,
+    "properties": {
+     "ticker": {"type": "string", "maxLength": 8},
+     "stance": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN"]},
+     "timing": {"enum": ["ACT_NOW", "WAIT", null], "x_note": "REQUIRED on SUPPORT. ACT_NOW = act on the trigger from today's session; WAIT = a condition must print first (pull-in, pause, volume) and the trigger follows it"},
+     "trigger": {"type": ["object", "null"], "x_note": "REQUIRED on SUPPORT: the ONE trigger the PM should act on",
+      "required": ["word", "tf", "plain"], "additionalProperties": false,
+      "properties": {
+       "word": {"type": "string", "maxLength": 80, "x_note": "contracts/condition_vocab.json word with a FIELD level, e.g. h1_close_above:bar_high, in_zone:ma_20, close_above:pivot_high -- never a number"},
+       "tf": {"enum": ["W", "D", "H1"], "x_note": "R39: the timeframe the trigger is read on"},
+       "plain": {"type": "string", "maxLength": 120}
+      }},
+     "wrong_if": {"type": "string", "minLength": 1, "maxLength": 200},
+     "market_void": {"type": ["string", "null"], "maxLength": 120, "x_note": "optional: the market condition that voids this trade, in words the alert loop can watch (e.g. 'SPY close_below put wall 750'); null when my method has none"},
+     "reason": {"type": ["string", "null"], "maxLength": 300}
+    }
+   }
+  }
+ },
+ "x_registrar_extra_checks": [
+  "answers cover exactly the pairs where this voice is the author (pairs.json); none missing, none extra",
+  "decisions cover exactly funnel.json survivors; no duplicates",
+  "SUPPORT without timing or trigger => REJECT; trigger.word carrying a bare number as its level => REJECT (D123)",
+  "text / wrong_if using a bracket as a disqualifier => REJECT (R1)"
+ ]
+}

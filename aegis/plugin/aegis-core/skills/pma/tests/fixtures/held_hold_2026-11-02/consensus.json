@@ -1,0 +1,201 @@
+[
+ {
+  "ticker": "FLYW",
+  "verdict": "ADVANCE",
+  "status": "AGREED",
+  "slate_verdict": "ADVANCE",
+  "conviction": 4,
+  "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+  "lane": "PULLBACK",
+  "split": {
+   "support": [
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "raschke",
+    "seow",
+    "wyckoff",
+    "oneil"
+   ],
+   "oppose": [],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [
+   {
+    "voice": "oneil",
+    "reservation": "My wrong-if also voids this if the index is under distribution: market gate is DELEGATED (C1), and the ticket does not print that condition."
+   }
+  ],
+  "held": false,
+  "n_deciders": 7,
+  "drop_threshold": 4,
+  "entry_trigger": "Hourly close above bar_high 19.79 (livermore, minervini, raschke, wyckoff; seow buy stop over it; oneil over pivot_high, within 5%), 1.4x vol (minervini, oneil); elder-lens: pullback to ma_20",
+  "wrong_if": "Daily close back under structure_shift_ref / pivot_high (livermore, minervini, raschke, seow); under bar_low 19.07 (wyckoff); below ma50 18.3 (oneil); elder <=1 or bearish CHoCH (elder-lens)",
+  "horizon_sessions": 20,
+  "why_agreed": "7 SUPPORT, no floor. minervini: \"Stage 2, MA stack in order, at the high, structure 83.2, RS leader\"; oneil: \"Leader at a new high breaking a confirmed pivot on volume above the 1.40 bar\"; wyckoff: \"Fresh Creek break on a wide top-third bar with volume\". Horizon = median of the seven stated (5-40).",
+  "dissent": [],
+  "gaps": []
+ },
+ {
+  "ticker": "HOG",
+  "verdict": "HOLD-FOR-CONDITIONS",
+  "status": "AGREED",
+  "slate_verdict": "WATCH",
+  "conviction": 4,
+  "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "livermore",
+    "minervini",
+    "wyckoff",
+    "elder-lens",
+    "oneil",
+    "raschke",
+    "seow"
+   ],
+   "oppose": [],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [
+   {
+    "voice": "elder-lens",
+    "reservation": "My support is only the unsourced C24 summer plateau (elder_5d 10,10,10,10,10), not an Elder transition; the WATCH-for-pull-in framing is the right one for me."
+   },
+   {
+    "voice": "oneil",
+    "reservation": "pct_from_pivot 8.18 is a C17 late buy with a warning and no add-ons (C21); a pull-in toward the pivot only improves my entry."
+   },
+   {
+    "voice": "raschke",
+    "reservation": "My trigger is a pullback into the 20-day (ma20 27.93) then an hourly reclaim of it, not an hourly close above bar_high 31.23; the WATCH wait is right, the attribution of the bar_high leg to me is not."
+   },
+   {
+    "voice": "seow",
+    "reservation": "WATCH waits on a pull-in, but my position-system signal is the buy stop over bar_high now and the method takes every signal it generates (C19, C27)."
+   }
+  ],
+  "held": false,
+  "n_deciders": 7,
+  "drop_threshold": 4,
+  "entry_trigger": "Pull-in toward ma_20 (27.93) / structure_shift_ref, then hourly close above bar_high 31.23 (elder-lens, minervini 1.4x vol, raschke, wyckoff); livermore, oneil, seow: break over bar_high now",
+  "wrong_if": "Daily close under ma50 27.21 (minervini, oneil); under the 40-day average or BEARISH_CHOCH (raschke, elder-lens); close below 26.48 fib_swing_low (seow); under structure_shift_ref-0.5atr (wyckoff)",
+  "horizon_sessions": 20,
+  "why_agreed": "7 SUPPORT, no floor; WATCH because 4 of 7 triggers wait for a pull-in first. raschke: \"the kind of trend whose first pullback is the Holy Grail buy\"; minervini: \"Rank 1, flow 96.1, elder SUSTAINED, RS leader\"; oneil: \"Leader of the whole list on above-bar volume\". Horizon = median of the seven stated (5-40).",
+  "dissent": [],
+  "gaps": []
+ },
+ {
+  "ticker": "V",
+  "verdict": "HOLD-FOR-CONDITIONS",
+  "status": "CONTESTED",
+  "slate_verdict": "WATCH",
+  "conviction": 3,
+  "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "oneil",
+    "livermore",
+    "minervini",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens",
+    "raschke",
+    "seow"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [
+   {
+    "voice": "elder-lens",
+    "objection": "Held name, but the ticket prints only an ADD line and wrong-if; it omits the hold management trigger my method requires: TIGHTEN on the first single-bar drop in elder_5d (R7, C4). elder_5d [..,9,9] has not fired yet.",
+    "would_clear": "Print beside the ADD-on-pivot_high line: KEEP; TIGHTEN on the first session elder_5d[-1] < elder_5d[-2]."
+   },
+   {
+    "voice": "raschke",
+    "objection": "Held V reads ADD-only with no hold line: RANGE, mp DECELERATING, elder_5d 9,9 flat is a stalled retracement (C18), and my exit on a daily close under Friday's low sits only in wrong_if while ma50 381.31 leads; the hold is KEEP by default.",
+    "would_clear": "Print TIGHTEN: exit the hold on a daily close under Friday's low (bar_low), beside the unchanged ADD-on-pivot_high line."
+   },
+   {
+    "voice": "seow",
+    "objection": "Held name with no hold line: the ticket prints only ADD-on-pivot_high and omits the TIGHTEN the last red bar at the pivot has armed (C14, C29); the bar_low exit sits in wrong_if as an add-invalidator, not as the hold trigger.",
+    "would_clear": "Print beside the ADD line: TIGHTEN, sell next session if V trades under the red bar's low (bar_low) (C14/C29)."
+   }
+  ],
+  "reservations": [
+   {
+    "voice": "livermore",
+    "reservation": "WATCH on the add is right (C6: add only on a daily close above pivot_high). The hold reads KEEP, not TIGHTEN: a red bar and an elder_5d tick are a normal reaction (C8); my exit is the 1x atr 7.22 one-day fade or a BEARISH_CHOCH (C7, C20), already on the wrong_if."
+   },
+   {
+    "voice": "minervini",
+    "reservation": "The hold line should read KEEP explicitly: Template intact (C3), RANGE base at the high; exit fixed on a daily close under ma50 381.31 (C7), not moved on one red bar or one elder_5d tick. TIGHTEN only on a break of the base low on volume."
+   },
+   {
+    "voice": "wyckoff",
+    "reservation": "The ticket should print KEEP explicitly: structure_shift RANGE under the pivot high is intact; a red bar and elder_5d are condition reads (R12), so I tighten only on a daily close under vwap_14d, not on bar_low."
+   }
+  ],
+  "held": true,
+  "n_deciders": 7,
+  "drop_threshold": 4,
+  "entry_trigger": "ADD only on a close above pivot_high: daily (livermore; wyckoff top-third close on volume) or hourly on 1.4x vol (minervini, oneil); raschke: hourly close above bar_high; elder-lens: pullback",
+  "wrong_if": "Close below ma50 381.31 (minervini; oneil on heavy volume); under Friday's low or BEARISH_CHOCH, exit case (raschke, elder-lens); daily close under vwap_14d (wyckoff); 1x atr fade (livermore)",
+  "horizon_sessions": 15,
+  "why_agreed": "Held name; case is ADDING. 6 SUPPORT, seow ABSTAIN. minervini: \"Stage 2 leader basing at the high\"; oneil: \"A leader holding its 10-week line just under its high\"; livermore: \"Trend intact, high structure, mp STRONG; a profitable hold.\" WATCH: adds wait on a pivot_high close. Horizon = median of six supporters (5-40).",
+  "dissent": [],
+  "gaps": []
+ },
+ {
+  "ticker": "MP",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "conviction": 1,
+  "conviction_basis": "ordering only (R34)",
+  "lane": "PULLBACK",
+  "split": {
+   "support": [],
+   "oppose": [
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "oneil",
+    "raschke",
+    "seow",
+    "wyckoff"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 7,
+  "drop_threshold": 4,
+  "gaps": []
+ }
+]

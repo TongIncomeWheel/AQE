@@ -1,32 +1,189 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Slate -- the Chair's draft of the committee's agreed best (R34, R36 round 4)",
- "x_version": "1.0.0",
- "x_purpose": "At most 15 tickets across ADVANCE and WATCH (a ceiling, not a target; never padded). Each ticket carries its entry trigger, where it is wrong, horizon, why the room agrees and who dissents and why. The Chair uses ONLY what the seats said in their case forms and floor messages; it adds no view and never judges the quality of a reason. ADVANCE = the committee wants to act on the trigger. WATCH = it wants the name but is waiting on a condition (rendered WATCH; machine verdict HOLD-FOR-CONDITIONS so every downstream reader is unchanged).",
+ "x_version": "2.0.0",
+ "x_purpose": "At most 15 tickets across ADVANCE and WATCH (a ceiling, not a target; never padded). Each ticket carries its entry trigger, where it is wrong, horizon, why the room agrees and who dissents and why. The Chair uses ONLY what the seats said in their case forms and floor messages; it adds no view and never judges the quality of a reason. ADVANCE = the committee wants to act on the trigger. WATCH = it wants the name but is waiting on a condition (rendered WATCH; machine verdict HOLD-FOR-CONDITIONS so every downstream reader is unchanged). R40 (PM 2026-11-02): the verdict and the ONE trigger on each ticket are FIXED BY CODE in decision.json (pma_pipeline.py decide-timing); the Chair writes why_agreed and dissent in the seats' words and may not change either. One slate-wide market_kill line (the modal market_void from tier 2) rides with the slate.",
  "type": "object",
- "required": ["date", "chair", "tickets"],
+ "required": [
+  "date",
+  "chair",
+  "tickets"
+ ],
  "additionalProperties": false,
  "properties": {
-  "date": {"type": "string", "format": "date"},
-  "chair": {"const": "chair", "x_note": "the Chair is not a voice (R36)"},
-  "board_sha256": {"type": ["string", "null"], "x_note": "sha256 of board.json the slate was drafted from"},
+  "date": {
+   "type": "string",
+   "format": "date"
+  },
+  "chair": {
+   "const": "chair",
+   "x_note": "the Chair is not a voice (R36)"
+  },
+  "board_sha256": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "x_note": "sha256 of board.json the slate was drafted from"
+  },
   "tickets": {
-   "type": "array", "maxItems": 15,
+   "type": "array",
+   "maxItems": 15,
    "items": {
     "type": "object",
-    "required": ["ticker", "verdict", "entry_trigger", "wrong_if", "horizon_sessions", "why_agreed", "dissent"],
+    "required": [
+     "ticker",
+     "verdict",
+     "entry_trigger",
+     "trigger",
+     "wrong_if",
+     "horizon_sessions",
+     "why_agreed",
+     "dissent"
+    ],
     "additionalProperties": false,
     "properties": {
-     "ticker": {"type": "string", "maxLength": 8, "x_note": "must be in the deliberation set; unique"},
-     "verdict": {"enum": ["ADVANCE", "WATCH"]},
-     "entry_trigger": {"type": "string", "minLength": 1, "maxLength": 200, "x_note": "for WATCH: the condition the room is waiting on"},
-     "wrong_if": {"type": "string", "minLength": 1, "maxLength": 200},
-     "horizon_sessions": {"type": "integer", "minimum": 1, "maximum": 120, "x_note": "the horizon the agreeing seats stated (the Chair reports; it does not invent)"},
-     "why_agreed": {"type": "string", "minLength": 1, "maxLength": 400, "x_note": "in the seats' words; attribute by name"},
-     "dissent": {"type": "array", "items": {"type": "object", "required": ["voice", "why"],
-                 "properties": {"voice": {"type": "string"}, "why": {"type": "string", "maxLength": 300}}},
-                 "x_note": "[] when nobody dissents"},
-     "sources": {"type": "array", "items": {"type": "string"}, "x_note": "msg_ids and 'r2:<voice>' the ticket was built from"}
+     "ticker": {
+      "type": "string",
+      "maxLength": 8,
+      "x_note": "must be in the deliberation set; unique"
+     },
+     "verdict": {
+      "enum": [
+       "ADVANCE",
+       "WATCH"
+      ]
+     },
+     "entry_trigger": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "x_note": "= trigger.plain (kept for every downstream reader); for WATCH it is the condition the room waits on followed by the trigger"
+     },
+     "wrong_if": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+     },
+     "horizon_sessions": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120,
+      "x_note": "the horizon the agreeing seats stated (the Chair reports; it does not invent)"
+     },
+     "why_agreed": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400,
+      "x_note": "in the seats' words; attribute by name"
+     },
+     "dissent": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "voice",
+        "why"
+       ],
+       "properties": {
+        "voice": {
+         "type": "string"
+        },
+        "why": {
+         "type": "string",
+         "maxLength": 300
+        }
+       }
+      },
+      "x_note": "[] when nobody dissents"
+     },
+     "sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "x_note": "msg_ids and 'r2:<voice>' the ticket was built from"
+     },
+     "trigger": {
+      "type": "object",
+      "required": [
+       "word",
+       "tf",
+       "plain"
+      ],
+      "additionalProperties": false,
+      "x_note": "R40: the ONE trigger, copied from decision.json for this ticker (word + timeframe + plain); the registrar REJECTS a ticket whose trigger or verdict differs from decision.json",
+      "properties": {
+       "word": {
+        "type": "string",
+        "maxLength": 80
+       },
+       "tf": {
+        "enum": [
+         "W",
+         "D",
+         "H1"
+        ]
+       },
+       "plain": {
+        "type": "string",
+        "maxLength": 120
+       }
+      }
+     },
+     "timing_count": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "x_note": "copied from decision.json: {support, act_now, wait, oppose, abstain}"
+     }
+    }
+   }
+  },
+  "decision_sha256": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "x_note": "sha256 of decision.json the slate was built from"
+  },
+  "market_kill": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "x_note": "R40: ONE slate-wide market condition that voids every new trigger, from decide-timing (the modal market_void); null only when no seat named one -- declared, never invented by the Chair",
+   "properties": {
+    "plain": {
+     "type": "string",
+     "maxLength": 160
+    },
+    "word": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 80
+    },
+    "symbol": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 8
+    },
+    "level": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "seats": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
     }
    }
   }
@@ -35,6 +192,8 @@
   "len(tickets) <= 15 => else REJECT (R34)",
   "every ticker in phase4 deliberation_set; no duplicates",
   "dissent voices are deciders",
-  "why_agreed / wrong_if using a bracket as a disqualifier => REJECT (R1)"
+  "why_agreed / wrong_if using a bracket as a disqualifier => REJECT (R1)",
+  "with --decision decision.json: every ticket's verdict == decision verdict and trigger == decision trigger (word, tf) => else REJECT (R40)",
+  "with --decision: a ticket for a name decision.json did not slate (support < 4) => REJECT; a slated name missing from the slate is allowed only over the 15 cap, listed in slate_excluded.json"
  ]
 }

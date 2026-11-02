@@ -97,7 +97,10 @@ the run files — I never type a level into this file except inside a sentence t
  "caveats": ["one line per declared gap / degradation"]
 }
 ```
-Rules: no seat names, no vote counts, no 'support/oppose/abstain' (same as the body). Plain English: "buy
+Rules: no seat names, no vote counts, no 'support/oppose/abstain' (same as the body). R41 (PM 2026-11-02): Valen's no-buy
+list and its parabolic / failed-leader warnings are NOT ticket-selection facts -- never write 'no-buy', 'no buy list' or 'parabolic'
+on a card, a hold line, a pass line, the bottom line or the plan; Valen's stance, trend and breadth belong in `weather` only.
+A CONTESTED ticket says so in plain words with what would clear it; the ticket's ONE trigger (R40) is the trigger you print. Plain English: "buy
 above 158.85", "exit on a daily close under 155.20" — never "line" for a price. Valen is quoted as the VIV
 System's doctrine, never as an Aegis sizing rule.
 

@@ -61,19 +61,35 @@ preflight_run.py stamp   # records the sha256 of every tool this run will execut
 If preflight fails, **the run does not start.** On 2026-09-06 the committee executed a pipeline one
 commit stale and nothing noticed for a day; `stamp` plus the R7 check is why that cannot recur.
 
-## THE MAP (R31–R36, 2026-10-30; the authoritative sequence is RUN.yaml — this is the picture)
+## THE MAP (R31–R41, rebuilt 2026-11-02; the authoritative sequence is RUN.yaml — this is the picture)
 
 ```
-INBOX-CLEAN → GATHER (registrar init → run lock pushed) → PREPARE → NOMINATE (7 deciders) → PM-LENS → RANK → CHALLENGE (Steenbarger)
-→ VOTE (case form, 7) → FLOOR (board → deciders message by name → floor-check) → SLATE (Chair, ≤15) → RATIFY (7) → QA (Steenbarger, one hold per ticket)
-→ DECIDE (ratify-count) → CONDITIONS → REPEAT-WATCH → BRACKET → SCORECARD → WRITE → CHECK → LEVELS → REPORT → PUBLISH (final checkpoint → manifest on main)
+INBOX-CLEAN → GATHER (registrar init → run lock pushed) → PREPARE → NOMINATE (7 deciders) → PM-LENS → RANK → MTF (W/D/H1 grid, room only)
+→ CHALLENGE (Steenbarger) → VOTE (case form, 7) → CLAIMS (board → claims board) → CROSS (tier 1, 7) → FUNNEL (claims-score)
+→ PAIR → TIER2 (7) → TIMING (decide-timing) → SLATE (Chair, ≤15, verdict + trigger copied) → RATIFY (7) → QA (Steenbarger, one hold per ticket)
+→ DECIDE (ratify-count) → CONDITIONS → REPEAT-WATCH → BRACKET → SCORECARD → WRITE → CHECK → LEVELS (--slate: market kill) → REPORT → PUBLISH
 ```
 
-Model spawn steps: NOMINATE 7 · CHALLENGE 1 · VOTE 7 · FLOOR 8 (Chair + 7) · SLATE 1 · RATIFY 7 · QA 1 · WRITE 1 — **33 spawns**. Everything
-else is a tool step and costs no model tokens. The macro seats are retired (R31): the weather comes from AQE's Crown and Valen files
-through `r2digest --crown --valen` and the weather cards. Measured budget of the LAST design: ~905k model tokens for a clean run; the new
-chain has not been measured yet — `registrar.py status` prints the live number and `check.py chain` compares it to the 1,357,500 ceiling.
+Model spawn steps: NOMINATE 7 · CHALLENGE 1 · VOTE 7 · CROSS 7 · TIER2 7 · SLATE 1 · RATIFY 7 · QA 1 · WRITE 1 = **39 spawns** + MTF courier
+(one data-steward, not a voice). Everything else is a tool step and costs no model tokens. The macro seats are retired (R31): the weather
+comes from AQE's Crown and Valen files through `r2digest --crown --valen` and the weather cards. The 2 Nov open-floor design cost ~2.4M
+actual tokens for its two floor waves; the funnel has not been measured yet — `registrar.py status` prints the live number and
+`check.py chain` compares it to the 2,500,000 ceiling (registrar byte basis).
 
+## THE FUNNEL (R38–R41) — what replaced the open floor
+
+The 2 Nov pilot: 151 floor messages, 0 changed stances; 105 ratification answers, 0 objections. Every seat agreed with its own card.
+
+| Ruling | What it does |
+|---|---|
+| **R38 tier 1** | `claims` takes each name's sharpest claims (the `case.for` of the two highest-conviction SUPPORT seats, the `case.against` of the two highest-conviction OPPOSE) and routes each to two reviewers of another method family. Each rules CONFIRM / REFUTE / CANNOT_SEE through its own lens (`forms/cross/`). `claims-score`: a name survives when ≥ 1 support claim is CONFIRMED cross-lens and confirms ≥ refutes. |
+| **R38 tier 2** | `pair` puts every refutation in front of its author. Each seat files ONE form (`forms/tier2/`): answer the refuter, then decide every survivor — stance, ACT_NOW or WAIT, ONE trigger (`word:field_level` + W/D/H1 + plain), wrong-if, optional market void. `decide-timing`: < 4 SUPPORT not slated; ACT_NOW > WAIT ADVANCE, else WATCH (a tie is WATCH). |
+| **R39 MTF** | `mtf.py build` computes the weekly / daily / 1-hour grid for the room; it rides on the claims board and every tier-2 packet. Missing bars = `MTF NOT SERVED`, never neutral. |
+| **R40 one trigger** | The ticket carries the modal trigger of the winning timing camp; the Chair copies it and may not change it (the registrar rejects a ticket that differs from `decision.json`). A seat that disagrees OBJECTS at ratification. The slate's `market_kill` reaches AQE via `pma_levels.py emit --slate`, and prints on the Cards as "Void if". |
+| **R41 Valen** | Valen's no-buy and parabolic flags are off the vote packet, the cards, the slate and the levels file. Valen stays as Part 1 weather and as setup / U&R facts. |
+
+The Chair never votes and holds no view: it runs the code and writes `why_agreed` / `dissent` / horizon in the seats' words. The QA hold round
+still uses floor messages (`forms/floor2/`). Measurement per run is in `funnel.json`.
 
 ## WHAT CHANGED 2026-10-23 (PM rulings R22–R24)
 
@@ -165,7 +181,9 @@ HF Space. Alerts only; the file places nothing.
 | Seat malformed / off-universe / hangs past 15 min | Reject on arrival, one respawn, then absent. |
 | NOMINATE < 6 of 7 deciders | Halt and report — no committee (RUN.yaml barrier). |
 | VOTE < 6 of 7 deciders | Watch-table-only run, declared. |
-| FLOOR silent on contested names | floor-check FAILS; `--allow-silent` only when every decider explicitly passed. |
+| CROSS reviewer silent | Its claims are re-routed once (`claims --reroute <seat>`), then it is declared absent. |
+| `claims-score` / `decide-timing` cannot count | FATAL: halt and declare — a funnel that cannot count is not a funnel. |
+| QA hold round silent | floor-check FAILS on `forms/floor2/`; `--allow-silent` only when every decider explicitly passed. |
 | `PM_OBJECTION.md` in the run dir on main | `check.py chain` FAILS; the 18:00 gate refuses the default load. |
 | Purity invariance FAIL | Do not publish on that ranking. Fix at RANK, max 2 loops. |
 | Shape mismatch on any read | **Fix the contract. An adapter is not a fix (R6).** |

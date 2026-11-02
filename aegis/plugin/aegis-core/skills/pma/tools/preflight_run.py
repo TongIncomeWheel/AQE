@@ -14,7 +14,7 @@ silently lost.
 No external dependencies -- the YAML here is read by a tiny purpose-built parser, so this runs on
 any box, exactly like registrar.py.
 """
-import hashlib, json, os, subprocess, sys
+import re, hashlib, json, os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL = os.path.abspath(os.path.join(HERE, ".."))
@@ -24,7 +24,22 @@ TOOLS = HERE
 def mini_yaml(text):
     """Enough YAML for RULINGS/RUN: nested maps, '- ' lists, '>' folded scalars, [a, b] inline."""
     def val(v):
+        # FIX 2026-11-02: a trailing YAML comment ('spawns: 1   # one courier') was read INTO the value, so the MTF
+        # step's spawns became the string "1   # ..." and the spawn budget sum raised TypeError. Strip a comment
+        # that follows an unquoted scalar, or that follows the closing quote of a quoted one.
         v = v.strip()
+        if v[:1] in ("\"", "'"):
+            j = v.find(v[0], 1)
+            if j > 0 and v[j + 1:].strip().startswith("#"):
+                v = v[:j + 1]
+        elif v.startswith("["):
+            j = v.find("]")
+            if j > 0 and v[j + 1:].strip().startswith("#"):
+                v = v[:j + 1]
+        else:
+            m = re.search(r"\s#", v)
+            if m:
+                v = v[:m.start()].rstrip()
         if v.startswith("[") and v.endswith("]"):
             return [x.strip().strip('"\'') for x in v[1:-1].split(",") if x.strip()]
         if v in ("null", "~", ""): return None
@@ -173,15 +188,28 @@ def stamp_tool_hashes(manifest="run_manifest.json"):
     for f, v in h.items(): print(f"  {f:22} {v[:16]}")
 
 
+_TESTS_RAN = set()
+
+
 def run_tests():
-    t = os.path.join(SKILL, "tests", "test_pipeline.py")
-    if not os.path.exists(t):
-        assert_("regression suite present", False, "tests/test_pipeline.py missing"); return
-    r = subprocess.run([sys.executable, t], capture_output=True, text=True)
-    tail = (r.stdout or "").strip().split("\n")
-    summary = next((l for l in reversed(tail) if "passed," in l), "no summary")
-    assert_(f"regression suite: {summary.strip()}", r.returncode == 0,
-            "\n".join(tail[-8:]))
+    """The regression suite, once per preflight (every ruling below maps here). tests/test_pipeline.py is required;
+    tests/test_cards_levels_mtf.py (R39/R40 cards, levels and mtf.py, 2026-11-02) runs too when it ships."""
+    for name, required in (("test_pipeline.py", True), ("test_cards_levels_mtf.py", False)):
+        if name in _TESTS_RAN:
+            continue
+        _TESTS_RAN.add(name)
+        t = os.path.join(SKILL, "tests", name)
+        if not os.path.exists(t):
+            if required:
+                assert_("regression suite present", False, f"tests/{name} missing")
+            continue
+        # cwd = the skill dir, never the run dir: a test whose tool reads a default path (consensus --phase4 phase4.json)
+        # would otherwise read the RUN's file and fail on a fixture mismatch that is not a regression.
+        r = subprocess.run([sys.executable, t], capture_output=True, text=True, cwd=SKILL)
+        tail = (r.stdout or "").strip().split("\n")
+        summary = next((l for l in reversed(tail) if "passed" in l), "no summary")
+        assert_(f"regression suite {name}: {summary.strip()}", r.returncode == 0,
+                "\n".join(tail[-8:]))
 
 
 CHECKS = {
@@ -211,7 +239,11 @@ CHECKS = {
     "tests.test_objection_rule_counts_the_final_ratification": run_tests,   # R34
     "tests.test_the_record_is_written_per_voice_per_ticket": run_tests,     # R35
     "tests.test_floor_caps_are_counted_by_code": run_tests,                 # R36
-    "tests.test_valen_warnings_are_a_risk_block_not_a_vote_row": run_tests,  # R37
+    # R37 is superseded by R41 (2026-11-02); its test is replaced by R41's.
+    "tests.test_two_tier_funnel_is_counted_by_code": run_tests,             # R38
+    "tests.test_multi_timeframe_grid_is_required": run_tests,               # R39
+    "tests.test_one_trigger_per_ticket_and_market_kill": run_tests,         # R40
+    "tests.test_valen_flags_leave_ticket_selection": run_tests,             # R41
 }
 
 
@@ -230,7 +262,11 @@ def cmd_run():
         if c and c not in CHECKS: print(f"  ..    {r['id']}  {r['title']}  -> {c}")
     print("\nAdvisory rulings — the conductor must hold these itself:")
     for r in R["rulings"]:
-        if not r.get("check"): print(f"  !!    {r['id']}  {r['title']}")
+        if not r.get("check") and not str(r.get("status", "")).startswith("superseded"):
+            print(f"  !!    {r['id']}  {r['title']}")
+    sup = [f"{r['id']} ({r.get('status')})" for r in R["rulings"] if str(r.get("status", "")).startswith("superseded")]
+    if sup:
+        print(f"\nSuperseded rulings (on the record, no longer bind): {', '.join(sup)}")
     print(f"\nBudget: {sum(s.get('spawns', 0) for s in M['steps'])} model spawns across "
           f"{sum(1 for s in M['steps'] if s['kind'] == 'model')} spawn steps.")
     print(f"\n{'PREFLIGHT PASS' if not FAILS else 'PREFLIGHT FAIL: ' + str(FAILS)}")

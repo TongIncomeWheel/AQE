@@ -1,0 +1,42 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Tier-1 CROSS ruling form -- one decider ruling on the claims routed to it (R38, R39; PM 2026-11-02)",
+ "x_version": "1.0.0",
+ "x_purpose": "The first funnel. The claims board (pma_pipeline.py claims) routes each room claim to two reviewers from a different method family and, where one exists, the opposite camp. A reviewer does not restate its own case: it RULES on the claim through its own lens -- CONFIRM, REFUTE or CANNOT_SEE -- with the evidence its method reads, on the weekly / daily / 1-hour grid. registrar.py validate --kind cross --claims claims_board.json checks that the form covers exactly the claims routed to this voice. Code (claims-score) applies the survival rule; no seat sees another's ruling until funnel.json is posted.",
+ "type": "object",
+ "required": ["voice", "date", "rulings"],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {"type": "string", "x_note": "a decider (R31)"},
+  "date": {"type": "string", "format": "date"},
+  "declarations": {"type": "array", "items": {"type": "string", "maxLength": 300}},
+  "rulings": {
+   "type": "array", "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["claim_id", "ticker", "ruling", "evidence", "tf", "stance_after", "changed_mind"],
+    "additionalProperties": false,
+    "properties": {
+     "claim_id": {"type": "string", "maxLength": 48, "x_note": "from claims_board.json: <ticker>-<author>-<for|against>"},
+     "ticker": {"type": "string", "maxLength": 8},
+     "ruling": {"enum": ["CONFIRM", "REFUTE", "CANNOT_SEE"],
+      "x_note": "CONFIRM = my method sees the same thing; REFUTE = my method sees the opposite or the claim fails my test; CANNOT_SEE = my method has no test for this claim or the field is not served (say which in evidence)"},
+     "evidence": {"type": "string", "minLength": 1, "maxLength": 250, "x_note": "fields by name with their values, in my own method's terms; never a bracket as the reason (R1)"},
+     "tf": {"type": "object", "required": ["W", "D", "H1"], "additionalProperties": false,
+      "x_note": "R39: the multi-timeframe grid for THIS claim. Each entry <=90 chars: what my method sees on that frame from the MTF block, or 'not served' when the bars are missing (then evidence says so).",
+      "properties": {"W": {"type": "string", "maxLength": 90}, "D": {"type": "string", "maxLength": 90}, "H1": {"type": "string", "maxLength": 90}}},
+     "stance_after": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN"], "x_note": "my own stance on the NAME after this ruling (R35: recorded beside my blind vote)"},
+     "changed_mind": {"type": "boolean", "x_note": "true when stance_after differs from my blind vote on this name"},
+     "what_moved_me": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED when changed_mind is true: the evidence, by field name"}
+    }
+   }
+  }
+ },
+ "x_registrar_extra_checks": [
+  "rulings cover exactly the claim_ids routed to this voice in claims_board.json (no gap, no extra, no duplicate)",
+  "ticker on each ruling matches the claim's ticker",
+  "evidence using a bracket as a disqualifier => REJECT (R1)",
+  "changed_mind true without what_moved_me => REJECT",
+  "voice is a decider; a voice ruling on its own claim => REJECT"
+ ]
+}

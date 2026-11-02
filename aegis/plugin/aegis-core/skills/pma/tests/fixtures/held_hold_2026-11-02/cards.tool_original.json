@@ -1,0 +1,96 @@
+{
+ "advance": {
+  "FLYW": {
+   "triggers": [
+    {
+     "id": "FLYW-buy0",
+     "kind": "close_above",
+     "level": 19.79,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "FLYW: an hourly candle closes above 19.79 (5 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "FLYW-touch",
+     "kind": "trade_above",
+     "level": 19.79,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "FLYW traded through yesterday's intraday high 19.79: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "FLYW-wait",
+     "kind": "trade_below",
+     "level": 19.54,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "FLYW is back in the wait area 18.71-19.54."
+    },
+    {
+     "id": "FLYW-dead",
+     "kind": "close_below",
+     "level": 19.54,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "FLYW closed under 19.54, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 19.79; holds above today's VWAP",
+   "kills": "A daily close under 19.54 (4 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "HOG": {
+   "triggers": [
+    {
+     "id": "HOG-buy0",
+     "kind": "close_above",
+     "level": 31.23,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "HOG: an hourly candle closes above 31.23 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "HOG-touch",
+     "kind": "trade_above",
+     "level": 31.23,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HOG traded through yesterday's intraday high 31.23: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "HOG-wait",
+     "kind": "trade_below",
+     "level": 28.86,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HOG is back in the wait area 27.93-28.86."
+    },
+    {
+     "id": "HOG-dead",
+     "kind": "close_below",
+     "level": 30.17,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "HOG closed under 30.17, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 31.23",
+   "kills": "A daily close under 30.17 (1 analyst's exit line)."
+  }
+ },
+ "held": {
+  "V": {
+   "committee_exit": 411.82,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 391.8 (STP_LMT 38, GTC).",
+   "against": ""
+  },
+  "MP": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 36.66 (STP_LMT 300, GTC).",
+   "against": ""
+  }
+ }
+}
