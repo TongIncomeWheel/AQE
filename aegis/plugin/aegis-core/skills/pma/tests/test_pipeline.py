@@ -677,6 +677,28 @@ def test_the_expensive_steps_are_checkpointed(td):
         check("THE LOOP on the card carries --packet validation", "--packet" in card)
 
 
+def test_the_conductor_tells_the_desk_when_done_and_ships_what_the_desk_shows(td):
+    """PM 2026-11-02: "the report appears on the desk automatically each day; the conductor needs a done message
+    to the desk." The desk renders FROM MAIN (it never trusts the relay and never reads the conductor's disk), so
+    the Cards HTML, the brief and the run notes must be in the checkpoint's paths, the desk session must be a
+    declared parameter, and PUBLISH must carry the instruction to send DONE (and STUCK) after the final push."""
+    sys.path.insert(0, TOOLS)
+    import importlib, preflight_run
+    importlib.reload(preflight_run)
+    M = preflight_run.load_yaml("RUN.yaml")
+    ds = str((M.get("parameters") or {}).get("desk_session") or "")
+    check("RUN.yaml declares the desk session", ds.startswith("session_"), ds)
+    tool = (M.get("checkpoint") or {}).get("tool") or ""
+    for name in ("pma_cards_<date>.html", "pma_brief_<date>.md", "run_notes.md"):
+        check(f"the checkpoint ships {name} so the desk can render from main", name in tool, tool[-160:])
+    pub = [s for s in M["steps"] if s["name"] == "PUBLISH"][0]
+    msg = str(pub.get("desk_done_message") or "")
+    check("PUBLISH tells the conductor to message the desk after the final checkpoint",
+          "send_message" in msg and "PMA DONE" in msg and "AFTER the FINAL checkpoint" in msg, msg[:120])
+    check("a STUCK run tells the desk too", "PMA STUCK" in msg)
+    check("the desk re-reads main instead of trusting the relay", "does NOT trust the message" in msg)
+
+
 def test_fading_is_not_a_gate(td):
     """R13. mp_state FADING = 'momentum score not higher than 3 bars ago' (src/engines/mp.py).
     MSTR sat at mp 89 and read FADING on 2026-09-19; the AQE_LEADER door required STRONG."""
@@ -2428,8 +2450,14 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     def row(t): return {"ticker": t, "on_longlist": True, "on_elder": t != "CCC", "entry": 10.0}
     def write_all(**over):
         last = {"date_sgt": D, "status": "success", "started_at": f"{D} 06:31 SGT", "exported_at": f"{D} 06:58 SGT", "finished_at": f"{D} 07:12 SGT", "packets_status": "Voice packets published: 8/8"}
-        exp = {"date": D, "daily_list": [row("AAA"), row("BBB"), row("CCC")], "held_positions": [{"ticker": "HLD", "qty": 1}], "held_positions_status": "live",
+        exp = {"date": D, "daily_list": [row("AAA"), row("BBB"), row("CCC")], "held_positions_status": "live",
+               "held_positions": [{"ticker": "HLD", "qty": 1, "held_sl": 9.0, "held_stop_source": "journal 2026-11-02", "held_stop_status": "LIVE"}],
+               "held_stops": {"status": "OK", "journal_date": "2026-11-02", "second_read_at": "2026-11-02T22:20:00Z", "differs": {}},
                "data_quality": {"flagged_count": 0, "flagged": []}, "lens_ranking": {"ranked": [{"rank": 1, "ticker": "AAA"}]}}
+        jdir = os.path.join(td, "aegis", "data", "journal"); os.makedirs(jdir, exist_ok=True)
+        json.dump({"date": "2026-11-02", "broker_sync": {"open_orders_pull_ran": True},
+                   "open_positions": [{"ticker": "HLD", "qty": 1, "stop_live_broker": 9.0}], "review_flags": []},
+                  open(os.path.join(jdir, "aegis_journal_2026-11-02.json"), "w"))
         cs = {"run_date": D, "universe": [row("AAA"), row("BBB"), row("CCC"), {"ticker": "HLD", "held": True}]}
         crown = {"generated_at": f"{D}T06:55:00+08:00", "status": "OK", "the_call": {"expression_family": "X"}, "read_me_first": {"headline": "h"}}
         valen = {"read_me_first": {"as_of": f"{D[:4]}-{D[5:7]}-{int(D[8:])-1:02d}T23:05:00Z"}, "stance": {"word": "NEUTRAL"}}   # UTC evening = the run date in SGT
@@ -2464,6 +2492,69 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     write_all(exp={"date": "2026-11-02"}); rc, log = gate(); check("an export dated differently from the run is named", rc != 0 and "export date" in log, log[-300:])
     write_all(cs={"universe": [row("AAA"), row("BBB"), row("CCC")]}); rc, log = gate(); check("a held position missing from the candidate set is named (R12)", rc != 0 and "held position(s) missing" in log, log[-300:])
     write_all(last={"status": "partial"}); rc, log = gate(); check("a partial run is named", rc != 0 and "did not finish clean" in log, log[-300:])
+
+
+def test_the_book_and_its_stops_are_one_checked_source(td):
+    """PM 2026-11-02: 'Stop from Tiger is correct. That's the dependency ... ask for the stops then, both
+    from the trade report and also during the AQE run.' The close's dated journal is the book of record;
+    check.py data FAILS when it is missing, stale, did not read the orders, or disagrees with the export or a
+    live broker read. A name with no stop order is a WARN. pma_levels stops builds from the journal."""
+    CHK = os.path.abspath(os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    sys.path.insert(0, os.path.dirname(CHK))
+    import importlib; C = importlib.import_module("check")
+    check("a Tuesday SGT run reads Monday's close", C.last_us_close("2026-11-03") == "2026-11-02")
+    check("a Monday SGT run reads Friday's close", C.last_us_close("2026-11-02") == "2026-10-30")
+    check("the Friday after Thanksgiving SGT reads the Wednesday close", C.last_us_close("2026-11-27") == "2026-11-25")
+    jd = os.path.join(td, "book", "journal"); os.makedirs(jd, exist_ok=True)
+    def journal(date="2026-11-02", pulled=True, stops=(("MP", 300, 36.66), ("V", 38, 391.8)), flags=()):
+        for f in os.listdir(jd): os.remove(os.path.join(jd, f))
+        json.dump({"date": date, "broker_sync": {"open_orders_pull_ran": pulled}, "review_flags": list(flags),
+                   "open_positions": [{"ticker": t, "qty": q, "stop_live_broker": st, "entry": 1.0,
+                                       "stop_order": ({"type": "STP_LMT", "stop": st, "limit": st, "qty": q, "time_in_force": "GTC"} if st else None)}
+                                      for t, q, st in stops]}, open(os.path.join(jd, f"aegis_journal_{date}.json"), "w"))
+    def export(sl=None, differs=None, held=("MP", "V"), jdate="2026-11-02", second="2026-11-02T22:20:00Z"):
+        sl = sl or {"MP": 36.66, "V": 391.8}
+        return {"held_positions": [{"ticker": t, "held_sl": sl.get(t), "held_stop_source": f"journal {jdate}"} for t in held],
+                "held_stops": {"journal_date": jdate, "differs": differs or {}, "second_read_at": second, "second_read_reason": None if second else "not found"}}
+    journal(); f, n = C.check_book(jd, "2026-11-03", export())
+    check("a fresh journal with read stops that the export agrees with is clean", not f, f)
+    for d in os.listdir(jd): os.remove(os.path.join(jd, d))
+    f, n = C.check_book(jd, "2026-11-03", export()); check("a MISSING journal fails", f and "MISSING" in f[0], f)
+    journal(date="2026-10-30"); f, n = C.check_book(jd, "2026-11-03", export(jdate="2026-10-30"))
+    check("a STALE journal fails (yesterday's close did not file)", any("STALE" in x for x in f), f)
+    journal(pulled=None); f, n = C.check_book(jd, "2026-11-03", export())
+    check("a journal whose close did not read the orders fails", any("NOT read at the close" in x for x in f), f)
+    journal(); f, n = C.check_book(jd, "2026-11-03", export(sl={"MP": 36.0, "V": 391.8}))
+    check("an export stop that differs from the journal fails", any("MP: export held_sl 36.0" in x for x in f), f)
+    journal(); f, n = C.check_book(jd, "2026-11-03", export(held=("V",)))
+    check("an export held book that differs from the journal fails", any("!= journal" in x for x in f), f)
+    journal(); f, n = C.check_book(jd, "2026-11-03", export(differs={"MP": "DIFFERS: stop moved, journal 36.66 -> Tiger 36.0"}))
+    check("the two Tiger reads disagreeing fails, with what moved", any("stop moved" in x for x in f), f)
+    journal(); f, n = C.check_book(jd, "2026-11-03", {"held_positions": [{"ticker": "MP"}, {"ticker": "V"}]})
+    check("an export with no held_stops block fails", any("no held_stops block" in x for x in f), f)
+    journal(stops=(("MP", 300, 36.66), ("V", 38, None), ("COIN", 100, None)),
+            flags=[{"ticker": "COIN", "type": "auto_included_unrecognized", "detail": "auto-included"}])
+    f, n = C.check_book(jd, "2026-11-03", None)
+    check("a held name with NO stop is a WARN, not a FAIL", not f and any(x.startswith("WARN V") for x in n), (f, n))
+    check("a new name auto-included at the close is surfaced for the PM's review", any("COIN: auto_included_unrecognized" in x for x in n), n)
+    journal(); bs = os.path.join(td, "book", "broker_stops.json")
+    json.dump({"journal_date": "2026-11-02", "disagreements": ["MP: stop moved, journal 36.66 -> broker 36.0"], "positions": {}}, open(bs, "w"))
+    f, n = C.check_book(jd, "2026-11-03", None, bs)
+    check("a live broker read at GATHER that disagrees with the journal fails", any("live broker read vs journal" in x for x in f), f)
+    # pma_levels stops: from the journal alone (no Tiger connector needed), and cross-checked when live
+    LV = os.path.join(TOOLS, "pma_levels.py"); jpath = os.path.join(jd, "aegis_journal_2026-11-02.json")
+    out = os.path.join(td, "book", "bs_j.json")
+    rc, log = run([LV, "stops", "--journal", jpath, "--out", out])
+    B = json.load(open(out)) if rc == 0 else {}
+    check("GATHER builds broker_stops.json from the journal alone", rc == 0 and B["positions"]["V"]["stop"] == 391.8 and B["journal_date"] == "2026-11-02", log[-300:])
+    o = os.path.join(td, "book", "o.json"); p = os.path.join(td, "book", "p.json")
+    json.dump({"result": [{"action": "SELL", "order_type": "STP_LMT", "sec_type": "STK", "symbol": "V", "quantity": 38, "stop_price": 391.8, "limit_price": 390.8},
+                          {"action": "SELL", "order_type": "STP_LMT", "sec_type": "STK", "symbol": "MP", "quantity": 300, "stop_price": 36.0, "limit_price": 36.0}]}, open(o, "w"))
+    json.dump({"result": [{"symbol": s_, "sec_type": "STK", "quantity": q} for s_, q in (("MARA", 17000), ("MP", 300), ("V", 38))]}, open(p, "w"))
+    rc, log = run([LV, "stops", "--journal", jpath, "--orders", o, "--positions", p, "--out", out])
+    B = json.load(open(out)) if rc == 0 else {}
+    check("a live read is restricted to the journal's book (no MARA) and its disagreement is named",
+          rc == 0 and set(B["positions"]) == {"MP", "V"} and B["disagreements"] == ["MP: stop moved, journal 36.66 -> broker 36.0"], str(B.get("disagreements")) + log[-200:])
 
 
 def test_review_fixes_count_only_validated_forms_and_never_double_count(td):
@@ -3097,6 +3188,7 @@ def main():
                    test_a_seat_that_invents_its_numbers_is_refused,
                    test_the_expensive_steps_are_checkpointed,
                    test_a_position_the_pm_owns_reaches_every_seat,
+                   test_the_conductor_tells_the_desk_when_done_and_ships_what_the_desk_shows,
                    test_fading_is_not_a_gate,
                    test_a_momentum_lane_name_is_judged_by_the_strength_seats,
                    test_every_nominator_is_served_the_momentum_floor,
@@ -3133,6 +3225,7 @@ def main():
                    test_two_tier_funnel_is_counted_by_code, test_multi_timeframe_grid_is_required,
                    test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
+                   test_the_book_and_its_stops_are_one_checked_source,
                    test_review_fixes_count_only_validated_forms_and_never_double_count,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,

@@ -5,6 +5,8 @@
   check.py chain --run-dir aegis/output/pma/run/<date> --date <date> [--levels pma_levels.json]
                  [--run-yaml <RUN.yaml>] [--ceiling-tokens 2500000]
   check.py data  --output-dir aegis/output [--run-yaml <RUN.yaml>]     (the AQE -> voices HANDOFF gate)
+                 [--journal-dir aegis/data/journal] [--broker-stops <run-dir>/broker_stops.json]
+                 (also the book + stops: the close's journal, the export, a live broker read)
   check.py all   (ready + data + chain)
 
 Exit 0 = Healthy. Exit 1 = at least one FAIL line. Exit 2 = could not even read an input (also a failure --
@@ -223,7 +225,91 @@ def _deciders(run_yaml):
     return ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
 
 
-def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
+# NYSE full-day closures (the close a journal can be missing for without being stale).
+US_MARKET_HOLIDAYS = {
+    "2026-11-26", "2026-12-25",
+    "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31", "2027-06-18",
+    "2027-07-05", "2027-09-06", "2027-11-25", "2027-12-24",
+}
+
+
+def last_us_close(run_date_sgt):
+    """The US session a morning SGT run reads: the last weekday before the SGT date that was
+    not an NYSE holiday (a 06:30 SGT Tuesday run reads Monday's close)."""
+    d = _dt.date.fromisoformat(str(run_date_sgt)[:10]) - _dt.timedelta(days=1)
+    while d.weekday() >= 5 or d.isoformat() in US_MARKET_HOLIDAYS:
+        d -= _dt.timedelta(days=1)
+    return d.isoformat()
+
+
+def check_book(journal_dir, run_date, export=None, broker_stops_path=None):
+    """THE BOOK AND ITS STOPS (PM 2026-11-02: "Stop from Tiger is correct. That's the
+    dependency ... both from the trade report and also during the AQE run").
+    One source of truth: the close's dated journal (Tiger positions + working orders).
+    FAIL when it is missing, stale, did not read the orders, or disagrees with the export or with a
+    live broker read. A held name with no stop order is a WARN (the PM's choice to hold it naked
+    is real information, not a data defect) -- printed every time, never folded away."""
+    fails, notes = [], []
+    import glob as _glob
+    paths = sorted(_glob.glob(os.path.join(journal_dir, "aegis_journal_????-??-??.json")))
+    if not paths:
+        return [f"no journal in {journal_dir} -- the book of record is MISSING"], notes
+    J = _load(paths[-1], os.path.basename(paths[-1]), fails)
+    if J is None:
+        return fails, notes
+    jdate = J.get("date")
+    if run_date:
+        want = last_us_close(run_date)
+        if not jdate or jdate < want:
+            fails.append(f"journal is for {jdate}, the last US close is {want} -- the 05:30 book close did not file (STALE book)")
+    pulled = (J.get("broker_sync") or {}).get("open_orders_pull_ran")
+    if pulled is not True:
+        fails.append(f"journal {jdate}: Tiger's working orders were NOT read at the close "
+                     f"(open_orders_pull_ran={pulled!r}) -- no stop in it is today's answer")
+    book = {p.get("ticker"): p for p in J.get("open_positions") or []}
+    for t, p in sorted(book.items()):
+        if pulled is True and p.get("stop_live_broker") is None:
+            notes.append(f"WARN {t}: {p.get('qty')} shares held with NO working stop order at Tiger (UNPROTECTED)")
+    for f in J.get("review_flags") or []:
+        if f.get("type") in ("stop_partial_cover", "auto_included_unrecognized"):
+            notes.append(f"WARN {f.get('ticker')}: {f.get('type')} -- {f.get('detail')}")
+    notes.append(f"book: journal {jdate}, {len(book)} name(s) "
+                 + ", ".join(f"{t} {p.get('qty'):g} stop {p.get('stop_live_broker')}" for t, p in sorted(book.items())
+                             if isinstance(p.get('qty'), (int, float))))
+    if export is not None:
+        held = {h.get("ticker"): h for h in export.get("held_positions") or []}
+        if set(held) != set(book):
+            fails.append(f"export held book {sorted(held)} != journal {jdate} {sorted(book)}")
+        hs = export.get("held_stops")
+        if hs is None:
+            fails.append("export carries no held_stops block -- AQE did not resolve the stops")
+        else:
+            if hs.get("journal_date") != jdate:
+                fails.append(f"export read the stops from journal {hs.get('journal_date')}, the latest is {jdate}")
+            for t, why in sorted((hs.get("differs") or {}).items()):
+                fails.append(f"{t}: the two Tiger reads disagree -- {why}")
+            if not hs.get("second_read_at"):
+                notes.append(f"stops from the close's journal only (no pre-AQE Tiger read: {hs.get('second_read_reason')}) -- normal; the second read is optional (PM 2026-11-02)")
+        for t, h in sorted(held.items()):
+            if t not in book:
+                continue
+            src = str(h.get("held_stop_source") or "")
+            jstop = book[t].get("stop_live_broker")
+            if src.startswith("journal") and h.get("held_sl") != jstop:
+                fails.append(f"{t}: export held_sl {h.get('held_sl')} != journal stop {jstop}")
+    if broker_stops_path:
+        BS = _load(broker_stops_path, "broker_stops.json", fails)
+        if BS is not None:
+            if BS.get("journal_date") and BS.get("journal_date") != jdate:
+                fails.append(f"broker_stops.json was built from journal {BS.get('journal_date')}, the latest is {jdate}")
+            for d in BS.get("disagreements") or []:
+                fails.append(f"live broker read vs journal: {d}")
+            if "disagreements" not in BS:
+                notes.append("WARN broker_stops.json carries no journal cross-check (built without --journal)")
+    return fails, notes
+
+
+def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_stops=None):
     """THE HANDOFF GATE (PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and
     integrity from AQE to voices handoff'). Everything the seats will read, proven consistent with each other
     and with the run that produced them. Read-only; a FAIL line per defect; never 'probably fine'."""
@@ -263,6 +349,10 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML):
             if r.get("on_longlist") is None or r.get("on_elder") is None:
                 fails.append(f"export row {r.get('ticker')} lacks on_longlist/on_elder flags"); break
         notes.append(f"export: {len(daily)} rows, {len(EX.get('held_positions') or [])} held ({hps}), data_quality flagged {dq.get('flagged_count')}")
+    # --- the book and its stops (PM 2026-11-02) ---
+    jd = journal_dir or os.path.join(os.path.dirname(os.path.abspath(od)), "data", "journal")
+    bf, bn = check_book(jd, run_date, EX, broker_stops)
+    fails.extend(bf); notes.extend(bn)
     # --- the candidate set the packets are sliced from ---
     uni = {}
     if CS is not None:
@@ -362,8 +452,12 @@ def _report(label, fails, notes):
             print(f"  FAIL  {f}")
     else:
         print(f"{label}: Healthy")
+    for n in notes:                                  # WARN lines first: they are the PM's to read
+        if n.startswith("WARN "):
+            print(f"  WARN  {n[5:]}")
     for n in notes:
-        print(f"  note  {n}")
+        if not n.startswith("WARN "):
+            print(f"  note  {n}")
     return 0 if not fails else 1
 
 
@@ -375,6 +469,8 @@ def main(argv=None):
     c.add_argument("--levels", default=None); c.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
     c.add_argument("--ceiling-tokens", type=int, default=DEFAULT_CEILING)
     d_ = sub.add_parser("data"); d_.add_argument("--output-dir", required=True); d_.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
+    d_.add_argument("--journal-dir", default=None, help="default: <output-dir>/../data/journal")
+    d_.add_argument("--broker-stops", default=None, help="GATHER's broker_stops.json, cross-checked against the journal")
     a_ = sub.add_parser("all"); a_.add_argument("--last-run", required=True); a_.add_argument("--today", default=None)
     a_.add_argument("--output-dir", default=None)
     a_.add_argument("--run-dir", required=True); a_.add_argument("--date", required=True); a_.add_argument("--levels", default=None)
@@ -384,7 +480,8 @@ def main(argv=None):
     if a.cmd in ("ready", "all"):
         f, n = check_ready(a.last_run, a.today); rc |= _report("READY", f, n)
     if a.cmd == "data" or (a.cmd == "all" and getattr(a, "output_dir", None)):
-        f, n = check_data(a.output_dir, a.run_yaml); rc |= _report("DATA HANDOFF", f, n)
+        f, n = check_data(a.output_dir, a.run_yaml, getattr(a, "journal_dir", None),
+                          getattr(a, "broker_stops", None)); rc |= _report("DATA HANDOFF", f, n)
     if a.cmd in ("chain", "all"):
         f, n = check_chain(a.run_dir, a.date, a.levels, a.run_yaml, a.ceiling_tokens); rc |= _report("CHAIN", f, n)
     return rc

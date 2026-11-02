@@ -454,6 +454,7 @@ def _equity_position(row, broker, flags, unmappable):
         "stop_reference": None,
         "stop_live_broker": None,
         "stop_match": None,
+        "stop_order": None,
         "tp1": None, "tp2": None, "tp3": None,
         "trigger": None,
         "broker": broker,
@@ -626,7 +627,7 @@ def _carry(new_positions, prior_open):
         if not src:
             continue
         for field in ("entry_date", "stop_reference", "stop_live_broker", "stop_match",
-                      "tp1", "tp2", "tp3", "trigger"):
+                      "stop_order", "tp1", "tp2", "tp3", "trigger"):
             if src.get(field) not in (None, ""):
                 pos[field] = src[field]
         if src.get("aqe_snapshot"):
@@ -691,11 +692,19 @@ def _apply_live_stops(equities, open_orders, flags):
         by_ticker.setdefault(str(ticker).strip().upper(), []).append({
             "stop_price": stop_px, "quantity": _num(_pick(row, A_QTY)),
             "order_id": row.get("id"), "order_time": row.get("order_time"),
+            # PM 2026-11-02: the whole order, not just the trigger, so the export and the
+            # committee read the same stop the broker holds (type, limit, cover, duration).
+            "order_type": otype, "limit_price": _num(row.get("limit_price")),
+            "time_in_force": row.get("time_in_force"), "status": row.get("status"),
         })
 
     for pos in equities:
         rows = by_ticker.get(pos["ticker"]) or []
         if not rows:
+            # A stop carried forward from yesterday is NOT a working stop today: the orders
+            # were pulled and none protects this name, so the journal must say null.
+            pos["stop_live_broker"] = None
+            pos["stop_order"] = None
             _flag(flags, pos["ticker"], "no_live_stop",
                   f"No working SELL stop order found at the broker for {pos['ticker']} — this "
                   f"position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
@@ -706,6 +715,22 @@ def _apply_live_stops(equities, open_orders, flags):
         chosen = exact_qty[0] if len(exact_qty) == 1 else max(
             rows, key=lambda r: r.get("order_time") or 0)
         pos["stop_live_broker"] = chosen["stop_price"]
+        pos["stop_order"] = {
+            "type": chosen.get("order_type"), "stop": chosen["stop_price"],
+            "limit": chosen.get("limit_price"), "qty": chosen.get("quantity"),
+            "time_in_force": chosen.get("time_in_force"), "status": chosen.get("status"),
+            "order_id": chosen.get("order_id"), "source": "tiger_open_orders.json",
+        }
+        if chosen.get("quantity") is not None and chosen["quantity"] + 1e-6 < pos["qty"]:
+            _flag(flags, pos["ticker"], "stop_partial_cover",
+                  f"The working stop for {pos['ticker']} covers {chosen['quantity']:g} of "
+                  f"{pos['qty']:g} shares — the rest is UNPROTECTED.", "high")
+        lim = chosen.get("limit_price")
+        if lim is not None and lim > chosen["stop_price"] + 1e-9:
+            _flag(flags, pos["ticker"], "stop_limit_above_trigger",
+                  f"{pos['ticker']} stop-limit: limit {lim} sits ABOVE the trigger "
+                  f"{chosen['stop_price']} — on a fast drop it fills only if price recovers.",
+                  "medium")
         if len(rows) > 1 and len(exact_qty) != 1:
             _flag(flags, pos["ticker"], "multiple_live_stops",
                   f"{len(rows)} working SELL stop orders found for {pos['ticker']} and none "
@@ -857,7 +882,7 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
         _flag(flags, "-", "open_orders_pull_absent",
               "No tiger_open_orders.json in this pull — stop_live_broker was NOT refreshed "
               "this run; whatever it carried forward (if anything) is unverified as of today.",
-              "medium")
+              "high")
 
     # An absent option payload and an empty one are different facts (post_market's empty-book
     # rule). Absent = the pull did not happen, keep what we had. Present-and-empty = a real
@@ -948,6 +973,9 @@ def build(date, pull_dir, prior_journal=None, allocated=None, one_r_pct=1.5,
             "closes_booked": len(closed),
             "fills_unmatched": len(unmatched_fills),
             "option_pull_ran": bool(option_pull_ran),
+            # PM 2026-11-02: the stops are read from Tiger's working orders every close.
+            # False = the orders were not pulled, so no stop on this journal is today's.
+            "open_orders_pull_ran": bool(tiger_open_present),
         },
         "provenance": {
             "pull_dir": os.path.relpath(pull_dir, ROOT) if pull_dir.startswith(ROOT) else pull_dir,
@@ -1267,6 +1295,41 @@ def selftest():
     check("D-105: a real derived entry_date raises no entry_date_unknown flag",
           not any(f["type"] == "entry_date_unknown" and f["ticker"] == "NEWCO"
                   for f in j1d["review_flags"]))
+    check("PM 2026-11-02: the whole stop order is recorded, and the orders pull is stamped",
+          (by_ticker_1d["AMPL"].get("stop_order") or {}).get("type") == "STP"
+          and by_ticker_1d["AMPL"]["stop_order"]["qty"] == 571
+          and j1d["broker_sync"]["open_orders_pull_ran"] is True, by_ticker_1d["AMPL"])
+    # ---- 1e. the live Tiger shape (2026-11-02, read-only pull): STP_LMT, HELD, partial cover;
+    # and a stop carried from yesterday is blanked once the orders show it is gone.
+    _write(os.path.join(pull, TIGER_FILES["open_orders"]), {"result": [
+        {"id": 451, "status": "HELD", "action": "SELL", "order_type": "STP_LMT",
+         "sec_type": "STK", "symbol": "AMPL", "quantity": 300, "limit_price": 8.4,
+         "stop_price": 8.5, "time_in_force": "GTC", "order_time": 2},
+    ]})
+    prior_1e = copy.deepcopy(j1d)
+    prior_1e["date"] = "2026-07-27"
+    prior_1e_path = os.path.join(tmp, "prior_1e.json")
+    prior_1e["open_positions"][1]["stop_live_broker"] = 47.0     # yesterday NEWCO had a stop
+    _write(prior_1e_path, prior_1e)
+    _write(os.path.join(pull, TIGER_FILES["stock_positions"]), {
+        "content": [{"type": "text", "text": json.dumps([
+            {"symbol": "AMPL", "quantity": 571, "average_cost": 9.7494,
+             "latest_price": 9.69, "unrealized_pnl": -32.77, "currency": "USD"},
+            {"symbol": "NEWCO", "quantity": 100, "average_cost": 50.0,
+             "latest_price": 51.0, "unrealized_pnl": 100.0, "currency": "USD"},
+        ])}]})
+    j1e, _ = build(D, pull, prior_journal=prior_1e_path, allocated=75000.0, one_r_pct=1.5,
+                   prior_ledger=prior_ledger, now_utc="2026-07-28T21:00:00Z")
+    b1e = {p["ticker"]: p for p in j1e["open_positions"]}
+    check("live Tiger STP_LMT read: stop 8.5, limit 8.4, GTC, HELD",
+          b1e["AMPL"]["stop_live_broker"] == 8.5 and b1e["AMPL"]["stop_order"]["limit"] == 8.4
+          and b1e["AMPL"]["stop_order"]["time_in_force"] == "GTC", b1e["AMPL"])
+    check("a stop covering 300 of 571 shares is flagged HIGH",
+          any(f["type"] == "stop_partial_cover" and f["ticker"] == "AMPL"
+              and f["severity"] == "high" for f in j1e["review_flags"]))
+    check("yesterday's stop is NOT carried as today's when the orders show none",
+          b1e["NEWCO"]["stop_live_broker"] is None and b1e["NEWCO"].get("stop_order") is None,
+          b1e["NEWCO"])
     os.remove(os.path.join(pull, TIGER_FILES["open_orders"]))
     os.remove(os.path.join(pull, TIGER_FILES["filled_orders"]))
     _write(os.path.join(pull, TIGER_FILES["stock_positions"]), {

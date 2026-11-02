@@ -31,6 +31,7 @@ updated: 2026-11-02   # R38-R41 (docs/DECISIONS_2026-11-02.md): the two-tier fun
 # running the tools and writes why_agreed/dissent on tickets whose verdict and trigger code has fixed. MTF (R39) after RANK.
 parameters:
   deliberation_cap: 20
+  desk_session: session_012zhnXnQA5r7e7u5j5RDBqe     # the PMA desk: where the PM reads the daily output (PM 2026-11-02)
   deciders: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
   qa_seat: steenbarger
   shortlist_cap: 6
@@ -67,7 +68,7 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json consensus.json committee_record.json publish_receipt.json"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -143,12 +144,21 @@ steps:
     checkpoint_after: true        # the run lock -- run_manifest.json on main before any seat is spawned
     first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it"
     must_also: >
-      BROKER READ (R20, read-only): pull the broker's open orders and stock positions and normalise them
-      with `pma_levels.py stops --orders <o> --positions <p> --held <held book> --previous <yesterday's
-      broker_stops.json> --out broker_stops.json`. The PM's broker stop is the level in force on every held
-      name; AQE's held_sl is null on every row and must never again be reported as "no stops". A position
-      that vanished since yesterday is listed for the PM to confirm -- the broker's fill query has missed
-      a stop-out (GLD 2026-09-28).
+      THE BOOK AND ITS STOPS (R20, PM 2026-11-02: "Stop from Tiger is correct. That's the dependency").
+      The book of record is the close's journal on main, aegis/data/journal/aegis_journal_<last close>.json
+      (Tiger positions + Tiger's working orders, read at 05:30); AQE's export carries the same stops
+      (held_sl / held_stop_order / held_stop_check, merged with the 06:20 pre-AQE Tiger read). Build
+      broker_stops.json FROM THE JOURNAL: `pma_levels.py stops --journal <journal> --previous <yesterday's
+      broker_stops.json> --out broker_stops.json`. If this session has the Tiger connector, ALSO pull
+      get_open_orders + get_stock_positions (read-only) and run instead `pma_levels.py stops --journal
+      <journal> --orders <o> --positions <p> --previous <...> --out broker_stops.json` -- the live read is
+      restricted to the journal's book and every disagreement is written to `disagreements`. Then run
+      `check.py data --output-dir aegis/output --broker-stops broker_stops.json`: a missing, stale or
+      unread-orders journal, or any disagreement, is a FAIL -- page the PM, do not guess which is right.
+      A held name with NO stop order is a WARN the Cards must show as UNPROTECTED. A name the close
+      auto-included is in the book (PM: he says on review if it is not Aegis). A position that vanished
+      since yesterday is listed for the PM to confirm -- the broker's fill query has missed a stop-out
+      (GLD 2026-09-28).
       Record the sha256 of every tool this run will execute onto the scoreboard (R7).
       THE HELD BOOK IS AN INPUT, NOT AN AFTERTHOUGHT (R12). aqe_daily_export.json carries
       export.held_positions — AQE forces every ticker the PM owns through the scoring engines
@@ -705,6 +715,19 @@ steps:
       The objection is a FILE -- aegis/output/pma/run/<date>/PM_OBJECTION.md on main, any content -- or a message in
       the project. `check.py chain` FAILs when that file exists, so the 18:00 gate refuses the default load; the REPORT
       line tells the PM the path. Nothing in the run writes or deletes that file.
+    desk_done_message: >
+      PM 2026-11-02 ("the report appears on the desk automatically each day; the conductor needs a done message to
+      the desk"). AFTER the FINAL checkpoint has reached origin/main and `check.py chain` has run, send ONE short
+      message with `send_message` to parameters.desk_session (the PMA desk). Content, plain text, no attachment:
+      "PMA DONE <date>. Chain: <the check.py chain verdict line, Healthy or the FAIL lines>. Slate <n>; AGREED <a>,
+      CONTESTED <c>, PASS <p>. Files on main under aegis/output/pma/run/<date>/: pma_cards_<date>.html,
+      pma_brief_<date>.md, run_notes.md. Est tokens <n>, wall clock <hh:mm>." The desk does NOT trust the message:
+      it re-reads main, re-runs the chain check and then shows the Cards and brief to the PM. Therefore the
+      Cards HTML, the brief and run_notes.md MUST be in the final checkpoint's --paths (add pma_cards_<date>.html
+      pma_brief_<date>.md run_notes.md to the final `git_sync.py` call) -- the desk renders from main, not from your
+      disk. If the send fails, say so in your DONE push to the PM; never retry in a loop. When the run STOPS stuck,
+      send the same one-liner starting "PMA STUCK <date>: <step>, <reason>" so the desk can tell the PM which
+      step is waiting.
     must_also: >
       Write publish_receipt.json in the run dir: {pushed: [paths], read_back: {path: sha_match}, at} -- the tick
       checks THAT file; the remote paths are declared and proven by the read-back, not by a local existence test.

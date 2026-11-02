@@ -145,6 +145,7 @@ def refresh_held_positions() -> list[dict]:
         if floor_date and fetched_date and fetched_date < floor_date:
             cache = dict(floor)
             cache["status"] = "stale_fetch_rejected"
+            _attach_second_read(cache)
             cache["rejected_fetch"] = {
                 "source_file": ptj.get("_ptj_file"), "modified": fetched_date,
                 "reason": f"older than the already-published book ({floor_date})",
@@ -158,6 +159,7 @@ def refresh_held_positions() -> list[dict]:
     if not ptj:
         prior = load_ptj_cache()
         prior["status"] = "cache_fallback"
+        _attach_second_read(prior)
         try:
             OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
             PTJ_CACHE.write_text(json.dumps(prior, indent=2), encoding="utf-8")
@@ -172,13 +174,32 @@ def refresh_held_positions() -> list[dict]:
         "positions": held,
         "options": ptj.get("options") or [],
         "status": "live",
+        # PM 2026-11-02: the stops. The journal carries each held name's working Tiger stop
+        # (stop_live_broker / stop_order) when the close pulled the open orders; this flag
+        # says whether it did (None = a journal written before the flag existed).
+        "open_orders_pull_ran": (ptj.get("broker_sync") or {}).get("open_orders_pull_ran"),
+        "stop_flags": [f for f in (ptj.get("review_flags") or [])
+                       if f.get("type") in ("no_live_stop", "stop_partial_cover",
+                                            "multiple_live_stops", "open_orders_pull_absent",
+                                            "stop_limit_above_trigger")],
     }
+    _attach_second_read(cache)
     try:
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         PTJ_CACHE.write_text(json.dumps(cache, indent=2), encoding="utf-8")
     except Exception:  # noqa: BLE001
         pass
     return held
+
+
+def _attach_second_read(cache: dict) -> None:
+    """The pre-AQE Tiger read (src/data/broker_stops.py), fetched fresh every run whatever
+    happened to the journal fetch — it is a separate source and must not ride a stale cache."""
+    try:
+        from src.data.broker_stops import fetch_second_read
+        cache["second_read"] = fetch_second_read()
+    except Exception as e:  # noqa: BLE001
+        cache["second_read"] = {"ok": False, "reason": f"reader failed ({e.__class__.__name__})"}
 
 
 def load_ptj_cache() -> dict:
