@@ -41,7 +41,19 @@ def main() -> int:
               if res.get("ok") else "FAILED -> " + str(res.get("reason")))
         return 0 if res.get("ok") else 1
 
+    if "--deadman" in sys.argv:           # dead-man check only (no cycle)
+        from src.alerts.heartbeat import check_and_alarm
+        st = check_and_alarm()
+        print("[alert_poll] deadman:", st)
+        return 1 if st.get("stale") else 0
+
     force = "--force" in sys.argv or "-f" in sys.argv
+    try:                                   # the backstop doubles as a dead-man check on the primary
+        from src.alerts.heartbeat import check_and_alarm
+        st = check_and_alarm()
+        print("[alert_poll] primary poller:", st.get("reason"))
+    except Exception as exc:  # noqa: BLE001
+        print("[alert_poll] deadman pre-check failed:", exc)
     _tick("cycle start")
     summary = run_alert_cycle(send_email=True, force=force)
     _tick("cycle done")

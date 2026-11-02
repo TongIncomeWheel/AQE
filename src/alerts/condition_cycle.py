@@ -21,6 +21,7 @@ from . import condition_state as CS
 from . import live_measures as LM
 
 _ET = ZoneInfo("America/New_York")
+from .pma_levels import MK_ENTRY_STATES as PMA_MK_ENTRY_STATES  # noqa: E402
 
 
 def rows_with_conditions(pma_doc: dict | None) -> list[dict]:
@@ -93,15 +94,22 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     rows = rows + defaults
     summary["defaults"] = len(defaults)
     held_events = held_events or []
+    mk = (meta or {}).get("market_kill") or {}
+    market_broken, just_broke = bool(mk.get("broken")), bool(mk.get("just_broke"))
     if not rows:
         # No condition rows, but held-position events still go out -- in the
         # same single mail (PM 2026-10-06).
-        if held_events:
+        email = None
+        if held_events or just_broke:
             summary["held_events"] = [e.get("ticker") for e in held_events]
-            _maybe_email_digest([], now_et, held_events, meta)
+            email = _maybe_email_digest([], now_et, held_events, meta)
+        summary["_notice"] = _notice_inputs([], held_events, meta, email)
         return summary
     summary["enabled"] = True
     summary["rows"] = len(rows)
+    # Restore the day's ledger from Drive first (a rebuilt container starts with
+    # an empty disk), publish after the loop. Loud on failure.
+    summary["ledger_sync"] = CL.sync_with_drive(run_date)
 
     today = now_et.date()
     tickers = [r.get("ticker") for r in rows if r.get("ticker")]
@@ -111,6 +119,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
         client = FMPClient()
     except Exception:  # noqa: BLE001
         summary["errors"] += 1
+        summary["_notice"] = _notice_inputs([], held_events, meta, None)
         return summary
 
     profiles = CD.ensure_volume_profiles(client, tickers, today)
@@ -232,11 +241,18 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             except Exception:  # noqa: BLE001
                 legacy_pace = None
 
+            # R40: market condition broken -> no new entry states for names the PM
+            # does not hold. Ledgered, not dropped; stops/exits/failures still go.
+            suppressed = ([x for x in fired_states if x in PMA_MK_ENTRY_STATES]
+                          if (market_broken and not is_held) else [])
             line = CL.build_ledger_line(
                 ticker, eval_result, fired_states, vol_x=vol_x,
                 session_vwap=vwap_info, rs_today=rs, legacy_vol_pace=legacy_pace,
                 elder_live=live.get("elder"),
                 now=now_et.astimezone(ZoneInfo("Asia/Singapore")))
+            if suppressed:
+                line["suppressed_by_market_kill"] = suppressed
+                summary["suppressed"] = summary.get("suppressed", 0) + len(suppressed)
             CL.append_line(run_date, line)
 
             # Two states stay in the ledger (PMA's scorecard reads it) but
@@ -247,7 +263,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             # line ("why would I care about an exit I don't own?") -- only a
             # HELD position's exit line is worth an email.
             card_states = [s for s in fired_states
-                           if s not in ("ANALYST_OUT", "EXIT_LINE_WARN")]
+                           if s not in ("ANALYST_OUT", "EXIT_LINE_WARN") and s not in suppressed]
             if card_states:
                 cards.append((ticker, row, eval_result, card_states, live))
         except Exception:  # noqa: BLE001 — one name's failure never blocks the rest
@@ -256,14 +272,30 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
 
     if any_fired:
         CS.save_condition_state(state)
+    summary["ledger_sync_end"] = CL.sync_with_drive(run_date)
     if cards:
         summary["cards"] = [c[0] for c in cards]
     if held_events:
         summary["held_events"] = [e.get("ticker") for e in held_events]
-    if cards or held_events:
-        _maybe_email_digest(cards, now_et, held_events, meta)
+    email = None
+    if cards or held_events or just_broke:
+        email = _maybe_email_digest(cards, now_et, held_events, meta)
+    summary["_notice"] = _notice_inputs(cards, held_events, meta, email)
 
     return summary
+
+
+def _notice_inputs(cards: list[tuple], held_events: list[dict] | None, meta: dict | None,
+                   email: dict | None) -> dict:
+    """What src/alerts/notice.py needs to write the cockpit notice from the SAME
+    cards the email rendered. Split full cards / one-line U&R rows exactly as
+    build_condition_digest does."""
+    from . import config as C
+    compact = (C.CONDITION_CARD_STYLE or "compact") != "full"
+    setup_rows = [c for c in cards if compact and c[3] == ["UNR_ARMED"]]
+    full = [c for c in cards if c not in setup_rows]
+    return {"cards": full, "setup_rows": setup_rows, "held_events": list(held_events or []),
+            "meta": meta, "email": email}
 
 
 def _num(v) -> float | None:
@@ -283,9 +315,15 @@ def _maybe_email_digest(cards: list[tuple], now_et: datetime,
     fired_states, live), ...] for this cycle; one send for all of them."""
     from . import config as C
     if not C.PMA_CONDITIONS_LIVE:
-        return
+        return {"ok": None, "reason": "shadow mode"}
     try:
-        from .emailer import send_condition_digest
-        send_condition_digest(cards, now_et, held_events, meta)
-    except Exception:  # noqa: BLE001
-        pass
+        from .emailer import send_condition_digest, build_condition_digest
+        res = dict(send_condition_digest(cards, now_et, held_events, meta) or {})
+        if "subject" not in res:
+            try:
+                res["subject"] = build_condition_digest(cards, now_et, held_events, meta)[0]
+            except Exception:  # noqa: BLE001
+                pass
+        return res
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "reason": f"{type(exc).__name__}: {exc}"}

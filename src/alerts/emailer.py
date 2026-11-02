@@ -1875,6 +1875,20 @@ def _data_line(meta: dict | None) -> str | None:
     return ("Data: " + " · ".join(parts)) if parts else None
 
 
+def build_market_card(mk: dict) -> dict:
+    """The one cycle the committee's market condition confirms broken (R40):
+    a normal card in the digest, same shape as every other card. PM 2026-11-02:
+    no header line, no subject prefix -- a card, like any other state change."""
+    plain = mk.get("plain") or "the committee's market condition"
+    detail = mk.get("detail") or ""
+    sym = ((mk.get("kill") or {}).get("symbol")) or "Market"
+    lines = [f"Condition: {plain}" + (f" — {detail}" if detail else ""),
+             "No new buy alerts for the rest of this session. Stops, exits and failed-setup "
+             "alerts on names you hold continue."]
+    return {"headline": f"{sym} · 🔴 MARKET CONDITION BROKEN — take no new triggers",
+            "color": "#d00", "summary": None, "lines": lines}
+
+
 def build_condition_digest(cards: list[tuple], now_et,
                            held_events: list[dict] | None = None,
                            meta: dict | None = None) -> tuple[str, str, str]:
@@ -1900,9 +1914,13 @@ def build_condition_digest(cards: list[tuple], now_et,
     built += [build_held_card(ev) for ev in held_events]
     if held_events:
         counts["HELD"] = len(held_events)
+    mk = (meta or {}).get("market_kill") or {}
+    if mk.get("just_broke"):
+        built.insert(0, build_market_card(mk))
+        counts["MARKET"] = 1
     tally = " · ".join(f"{k} {v}" for k, v in counts.items())
     stamp = now_et.strftime("%H:%M ET")
-    n = len(cards) + len(held_events)
+    n = len(cards) + len(held_events) + (1 if mk.get("just_broke") else 0)
     subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
     header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
     data_line = _data_line(meta)
@@ -1918,7 +1936,7 @@ def build_condition_digest(cards: list[tuple], now_et,
                 if rows else "")
              + f"\n\n{_DISCLAIMER}")
     html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}"
-            + (f"<br>{data_line}" if data_line else "") + "</div>"
+            + (f"<br>{data_line}".replace("\n", "<br>") if data_line else "") + "</div>"
             + "".join(_card_html(c) for c in built)
             + ((f"<div style='border-left:4px solid #b8860b;padding:8px 12px;background:#fafafa;"
                 f"border-radius:6px;color:#1a1a1a;margin-bottom:10px'><b style='font-size:14px'>"
@@ -1955,7 +1973,7 @@ def send_condition_digest(cards: list[tuple], now_et,
     cfg = _cfg()
     if not (cfg["resend_key"] or cfg["smtp_pw"]):
         return {"ok": False, "reason": "no email backend configured"}
-    if not cards and not held_events:
+    if not cards and not held_events and not ((meta or {}).get("market_kill") or {}).get("just_broke"):
         return {"ok": False, "reason": "no cards this cycle"}
     subject, plain, html = build_condition_digest(cards, now_et, held_events, meta)
     if cfg["resend_key"]:

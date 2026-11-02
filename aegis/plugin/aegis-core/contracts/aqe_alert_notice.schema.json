@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "aqe_alert_notice.v1",
+  "description": "ONE machine-readable notice per AQE alert cycle, written by src/alerts/notice.py from the SAME cards the [AQE] email renders (so email and cockpit cannot disagree). Published every in-window cycle: Drive `aqe_alert_notice.json` (latest), GitHub `aegis/output/alerts/live/latest.json` (latest) and `aegis/output/alerts/live/<YYYY-MM-DD>.json` (the day's cycles, newest first). Read by aegis-live/tools/aqe_notice.py, which renders the executive table in the cockpit. AQE makes no decisions and no sizing: `action` is the plan's own plain verb, `entry/stop/target` are the committee's (or AQE-default) levels; share counts are the reader's arithmetic on the Aegis 1R, never AQE's.",
+  "type": "object",
+  "required": ["schema", "seq", "cycle_at_utc", "cycle_at_sgt", "cycle_at_et", "source", "data", "market", "actionable", "items", "setups_forming", "quiet_line", "email"],
+  "properties": {
+    "schema": {"const": "aqe_alert_notice.v1"},
+    "seq": {"type": "integer", "description": "Monotonic per day (resets at the first in-window cycle of a new ET date). The reader dedups on (session_date, seq)."},
+    "session_date": {"type": "string", "description": "US session date (ET) this cycle belongs to, YYYY-MM-DD."},
+    "cycle_at_utc": {"type": "string"},
+    "cycle_at_sgt": {"type": "string", "description": "YYYY-MM-DD HH:MM SGT"},
+    "cycle_at_et": {"type": "string", "description": "HH:MM ET"},
+    "source": {"enum": ["hf", "gha", "local"]},
+    "data": {
+      "type": "object",
+      "description": "Which data this cycle ran on -- the same meta the email's `Data:` line prints.",
+      "properties": {
+        "pma_run": {"type": ["string", "null"]},
+        "pma_session": {"type": ["string", "null"]},
+        "pma_missing": {"type": ["string", "null"], "description": "Set (latest session seen) when no PMA file for today's session: no committee names this cycle."},
+        "aqe_date": {"type": ["string", "null"]},
+        "aqe_covers": {"type": ["string", "null"]},
+        "aqe_current": {"type": ["boolean", "null"], "description": "False = export older than the last close; AQE-default names were skipped."}
+      }
+    },
+    "market": {
+      "type": "object",
+      "description": "R40 market_kill as evaluated this cycle. State only -- the reader prints NO market sentence (PM 2026-11-02); a confirmed break appears once as a normal item (class MARKET, severity RISK).",
+      "required": ["status", "broken", "just_broke"],
+      "properties": {
+        "state": {"enum": ["INTACT", "WARN", "BROKEN", "NO_QUOTE", null]},
+        "broken": {"type": "boolean", "description": "Sticky for the session once a break confirms."},
+        "just_broke": {"type": "boolean", "description": "True on the one cycle the break confirmed."},
+        "status": {"enum": ["ACTIVE", "NULL", "ABSENT", "STALE", "MALFORMED", "UNWATCHABLE", null]}
+      }
+    },
+    "actionable": {"type": "boolean", "description": "True iff items is non-empty or market.just_broke. A quiet cycle is a real answer: actionable=false with quiet_line set."},
+    "items": {
+      "type": "array",
+      "description": "Every name whose state changed this cycle (one per card in the email), severity ACT first, then RISK, then INFO.",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "class", "held", "states", "severity", "headline", "action", "price"],
+        "properties": {
+          "ticker": {"type": "string"},
+          "class": {"enum": ["ADVANCE", "HOLD_FOR_CONDITIONS", "HELD", "AQE_DEFAULT", "WATCH", "MARKET", "UNKNOWN"]},
+          "held": {"type": "boolean"},
+          "states": {"type": "array", "items": {"type": "string"}, "description": "Condition-state names that fired (CONDITION_MET, FAILED_PUSH, CHASED, UNR_TRIGGER, UNR_FAILED, EXIT_LINE_HELD) or, for a held-position event, the engine kind (near_stops, approaching_target, close_below, trade_below, no_stop_order, order_config, VETO_HELD)."},
+          "severity": {"enum": ["ACT", "RISK", "INFO"], "description": "ACT = an entry condition the plan says to act on; RISK = a held name's stop/exit/veto/order check; INFO = everything else (back under, chased, failed)."},
+          "headline": {"type": "string", "description": "The card headline, verbatim from the email."},
+          "action": {"type": "string", "description": "Plain verb from the plan, never a recommendation: e.g. 'Buy trigger hit: queue the Tiger preview on your word', 'Back under its buy price: wait', 'Near your broker stop: check it'."},
+          "price": {"type": ["number", "null"]},
+          "day_pct": {"type": ["number", "null"]},
+          "entry": {"type": ["number", "null"], "description": "The buy level in force (committee or AQE-default); the U&R trigger price when the state is a U&R entry."},
+          "stop": {"type": ["number", "null"], "description": "Committee stop, or the U&R low-of-day stop for a U&R state, or the broker stop for a held name."},
+          "stop_type": {"type": ["string", "null"], "description": "committee | aqe_atr_fallback | unr_low_of_day | broker | committee_exit | unknown"},
+          "target": {"type": ["number", "null"]},
+          "risk_per_share": {"type": ["number", "null"], "description": "entry - stop when both known and entry > stop."},
+          "conditions": {"type": ["object", "null"], "properties": {"met": {"type": "integer"}, "of": {"type": "integer"}, "who": {"type": "string"}}},
+          "unr": {"type": ["object", "null"], "properties": {"status": {"type": ["string", "null"]}, "stop": {"type": ["number", "null"]}, "level": {"type": ["number", "null"]}}},
+          "lines": {"type": "array", "items": {"type": "string"}, "description": "The card's plain lines, verbatim from the email, for the reader to expand on request."},
+          "suppressed_by_market_kill": {"type": "boolean"}
+        }
+      }
+    },
+    "setups_forming": {
+      "type": "array",
+      "description": "Names that are only a U&R setup forming this cycle (the email's one-line rows). Never actionable on their own.",
+      "items": {"type": "object", "required": ["ticker", "text"], "properties": {"ticker": {"type": "string"}, "price": {"type": ["number", "null"]}, "text": {"type": "string"}}}
+    },
+    "suppressed": {"type": "integer", "description": "Entry states/triggers this cycle that were suppressed by a broken market condition (ledgered, not shown)."},
+    "quiet_line": {"type": ["string", "null"], "description": "Set when not actionable: 'HH:MM SGT · AQE: no trigger, no action.' -- the reader prints it or stays silent per its own cadence rule."},
+    "email": {"type": "object", "properties": {"sent": {"type": ["boolean", "null"]}, "subject": {"type": ["string", "null"]}}, "description": "What the parallel email channel did this cycle -- the parity evidence for the cut-over."},
+    "engine": {"type": "object", "properties": {"checked": {"type": ["integer", "null"]}, "new_triggers": {"type": ["integer", "null"]}, "pma_fresh": {"type": ["boolean", "null"]}, "reason": {"type": ["string", "null"]}}}
+  }
+}

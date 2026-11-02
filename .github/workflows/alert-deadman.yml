@@ -1,0 +1,29 @@
+name: AQE alert dead-man check
+
+# Manual / routine-dispatched only (workflow_dispatch). A `schedule:` here would
+# sit in the same GitHub cron queue that drops most of alerts.yml's runs, so it
+# is deliberately NOT scheduled; dispatch it from a Claude-scheduled routine or by
+# hand. Reads the Drive heartbeat; emails once a day if the in-app poller has not
+# completed a cycle for 45 min inside the US window -- as an ALARM record in the
+# cockpit notice feed (aegis/output/alerts/live/latest.json), never an email.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deadman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Dead-man check
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m scripts.alert_deadman

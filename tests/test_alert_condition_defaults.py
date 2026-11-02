@@ -141,3 +141,4 @@ def test_disabled_flag_or_no_export_yields_nothing(monkeypatch):
 def test_default_tickers_feeds_the_quote_fetch():
     ex = _export(_rec("LL1", 100.0, lph=103.0, longlist=True))
     assert D.default_tickers(ex, None) == {"LL1"}
+

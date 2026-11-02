@@ -329,3 +329,50 @@ def test_one_names_error_never_blocks_the_rest(monkeypatch):
     summary = CC.run_condition_cycle(doc, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
                                      run_date="2026-10-02")
     assert "HPE" in summary["fired"]
+
+
+# ------------------------------------------------- R40 market_kill (2026-11-02)
+
+_MK_META = {"market_kill": {"status": "ACTIVE", "broken": True, "just_broke": False, "plain": "void"}}
+_MK_QUOTES = {"HPE": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5, "day_low": 61.9, "open": 62.0},
+              "SPY": {"price": 500.5, "prev_close": 499.0}}
+
+
+def test_market_broken_suppresses_a_new_entry_card_but_ledgers_it(monkeypatch):
+    from src.alerts import condition_ledger as CL
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    s = CC.run_condition_cycle(_pma_doc_with_conditions(), _MK_QUOTES,
+                               datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02",
+                               meta=_MK_META)
+    assert sent == [] and s.get("suppressed") == 1
+    line = CL.load_lines("2026-10-02")[0]
+    assert line["suppressed_by_market_kill"] == ["CONDITION_MET"]
+
+
+def test_market_broken_still_cards_a_held_name(monkeypatch):
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    doc = _pma_doc_with_conditions()
+    doc["rows"][0]["class"] = "HELD"
+    CC.run_condition_cycle(doc, _MK_QUOTES, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                           run_date="2026-10-02", meta=_MK_META)
+    assert len(sent) == 1
+
+
+def test_market_intact_changes_nothing(monkeypatch):
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    CC.run_condition_cycle(_pma_doc_with_conditions(), _MK_QUOTES,
+                           datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02",
+                           meta={"market_kill": {"status": "ACTIVE", "broken": False}})
+    assert len(sent) == 1
+
+
+def test_just_broke_sends_a_digest_even_with_no_cards(monkeypatch):
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    CC.run_condition_cycle(_pma_doc_without_conditions(), {}, datetime(2026, 10, 2, 11, 0, tzinfo=_ET),
+                           run_date="2026-10-02",
+                           meta={"market_kill": {"status": "ACTIVE", "broken": True, "just_broke": True}})
+    assert len(sent) == 1

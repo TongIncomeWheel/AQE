@@ -187,10 +187,11 @@ def is_first_cycle_of_session(now_et: datetime) -> bool:
 
 
 def is_final_cycle_of_session(now_et: datetime) -> bool:
-    """True from 16:00 ET — the last cycle inside the 16:15 window where a
-    `close_above`/`close_below` trigger's ACTION confirms for real."""
+    """True from C.FINAL_CYCLE_FROM_MIN (15:45 ET) — the cycles where a
+    `close_above`/`close_below` trigger's ACTION confirms for real. The poller
+    runs to C.ALERT_WINDOW_END so at least one cycle always lands here."""
     mins = now_et.hour * 60 + now_et.minute
-    return mins >= 16 * 60
+    return mins >= C.FINAL_CYCLE_FROM_MIN
 
 
 # ---------------------------------------------------------------------------
@@ -257,6 +258,114 @@ def live_base_ids(doc: dict) -> set[str]:
             if has_entry:
                 ids.add(f"{ticker}-entry")
     return ids
+
+
+# ---------------------------------------------------------------------------
+# market_kill (R40, PM 2026-11-02) -- the slate's ONE market condition that voids
+# every new trigger. Published as top-level `market_kill`
+# {symbol, word, level, plain, seats, origin_run} or null (+ `market_kill_note`).
+# ---------------------------------------------------------------------------
+
+MK_WORDS = {"close_below", "close_above", "trade_below", "trade_above", "h1_close_below", "h1_close_above"}
+MK_H1_WORDS = {"h1_close_below", "h1_close_above"}
+# Triggers/states that OPEN a position. Held-name stops/exits, failed-setup and
+# invalidation cards are never suppressed -- the PM still needs those.
+MK_ENTRY_KINDS = {"trade_above", "close_above", "approaching_entry"}
+MK_ENTRY_STATES = {"CONDITION_MET", "UNR_TRIGGER", "UNR_ARMED"}
+
+
+def read_market_kill(doc: dict | None) -> dict:
+    """Parse + validate the published market_kill. Never raises, never guesses.
+
+    status: ACTIVE (watchable) | NULL (declared none) | ABSENT (pre-R40 file / no
+    file) | STALE (origin_run is not this file's run) | MALFORMED |
+    UNWATCHABLE (a plain-words line the loop cannot evaluate: missing
+    symbol/word/level, or a word outside MK_WORDS). Every non-ACTIVE status
+    carries a `note` the digest prints -- a market condition that is not being
+    watched is said so, never a silent absence."""
+    out = {"status": "ABSENT", "kill": None, "note": None, "plain": None}
+    if not doc:
+        out["note"] = "no fresh PMA file"
+        return out
+    if "market_kill" not in doc:
+        out["note"] = "the levels file carries no market_kill (pre-R40 file)"
+        return out
+    mk = doc.get("market_kill")
+    if mk is None:
+        out.update(status="NULL", note=doc.get("market_kill_note") or "no market condition was named")
+        return out
+    if not isinstance(mk, dict) or "_bad" in mk:
+        out.update(status="MALFORMED", note="market_kill is not an object")
+        return out
+    plain = mk.get("plain")
+    if not isinstance(plain, str) or not plain.strip():
+        out.update(status="MALFORMED", note="market_kill has no plain words")
+        return out
+    out["plain"] = plain.strip()
+    level = mk.get("level")
+    if level is not None and (isinstance(level, bool) or not isinstance(level, (int, float))
+                              or level != level):
+        out.update(status="MALFORMED", note=f"market_kill level is not a number: {level!r}")
+        return out
+    origin, run = mk.get("origin_run"), doc.get("run_date")
+    if origin and run and origin != run:
+        out.update(status="STALE", note=f"market_kill is from run {origin}, not this file's {run}")
+        return out
+    sym, word = mk.get("symbol"), mk.get("word")
+    kill = {"symbol": sym.strip().upper() if isinstance(sym, str) and sym.strip() else None,
+            "word": word, "level": float(level) if level is not None else None,
+            "plain": out["plain"], "seats": list(mk.get("seats") or []), "origin_run": origin}
+    out["kill"] = kill
+    if not (kill["symbol"] and kill["level"] is not None and word in MK_WORDS):
+        why = ("word %r is not one the alert loop can evaluate" % word if word and word not in MK_WORDS
+               else "the line has no machine-readable symbol/word/level")
+        out.update(status="UNWATCHABLE", note=f"{why}; the committee's words: {out['plain']}")
+        return out
+    out["status"] = "ACTIVE"
+    return out
+
+
+def evaluate_market_kill(kill: dict, quote: dict | None, is_final: bool,
+                         h1_close: float | None = None) -> dict:
+    """Pure. state: BROKEN (confirmed) | WARN (a close_* line crossed intraday,
+    confirms only on the final cycle) | INTACT | NO_QUOTE (loud, not a pass) |
+    NO_BARS (an h1 word with no completed hourly candle yet -- not a pass).
+    `h1_close` = the last COMPLETED hourly candle's close (live_measures.hourly
+    on today's 15-min bars), the same read the condition evaluator uses."""
+    word, lvl = kill["word"], kill["level"]
+    if word in MK_H1_WORDS:
+        if h1_close is None:
+            return {"state": "NO_BARS", "detail": f"no completed hourly candle for {kill['symbol']} yet"}
+        hit = h1_close < lvl if word == "h1_close_below" else h1_close > lvl
+        side = "under" if word == "h1_close_below" else "over"
+        return {"state": "BROKEN" if hit else "INTACT", "price": _n((quote or {}).get("price")),
+                "detail": f"{kill['symbol']} hourly candle closed at {h1_close:g}, {side} the {lvl:g} line" if hit else ""}
+    price = _n((quote or {}).get("price"))
+    if price is None or price <= 0:
+        return {"state": "NO_QUOTE", "detail": f"no {kill['symbol']} quote this cycle"}
+    if word == "trade_below":
+        lo = _n(quote.get("day_low"))
+        hit = lo is not None and lo <= lvl
+        return {"state": "BROKEN" if hit else "INTACT", "price": price,
+                "detail": f"{kill['symbol']} traded down to {lo} (line {lvl:g})" if hit else ""}
+    if word == "trade_above":
+        hi = _n(quote.get("day_high"))
+        hit = hi is not None and hi >= lvl
+        return {"state": "BROKEN" if hit else "INTACT", "price": price,
+                "detail": f"{kill['symbol']} traded up to {hi} (line {lvl:g})" if hit else ""}
+    hit = price <= lvl if word == "close_below" else price >= lvl
+    if not hit:
+        return {"state": "INTACT", "price": price, "detail": ""}
+    side = "under" if word == "close_below" else "over"
+    if is_final:
+        return {"state": "BROKEN", "price": price,
+                "detail": f"{kill['symbol']} at {price:g}, {side} the {lvl:g} line at the close"}
+    return {"state": "WARN", "price": price,
+            "detail": f"{kill['symbol']} at {price:g}, {side} the {lvl:g} line intraday"}
+
+
+def is_entry_trigger(t: dict) -> bool:
+    return (not t.get("is_held")) and t.get("kind") in MK_ENTRY_KINDS
 
 
 # ---------------------------------------------------------------------------
