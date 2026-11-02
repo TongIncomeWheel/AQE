@@ -1,6 +1,118 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 9,
+  "session_date": "2026-11-02",
+  "cycle_at_utc": "2026-11-02T21:21:42+00:00",
+  "cycle_at_sgt": "2026-11-03 05:21 SGT",
+  "cycle_at_et": "16:21 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-02",
+   "pma_session": "2026-11-02",
+   "pma_missing": null,
+   "aqe_date": "2026-11-02",
+   "aqe_covers": "2026-10-30",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "ABSENT",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "GPK",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "GPK $9.33 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line \u00b7 AQE default criteria",
+    "action": "Past the chase price: do not chase",
+    "price": 9.33,
+    "day_pct": null,
+    "entry": 9.05,
+    "stop": 8.59,
+    "stop_type": "committee",
+    "target": 10.08,
+    "risk_per_share": 0.46,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 9.0,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 its 21-day average is not rising",
+     "Price is past the chase line (9.32)",
+     "AQE default criteria: all met \u2713",
+     "\u2713 hourly close above 9.05 (price 9.33, 3.1% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.5\u00d7)",
+     "AQE trade: entry 9.05 \u00b7 stop 8.59 \u00b7 risk 5.1% (0.46/share) \u00b7 1R $2,250 = 4,891 shares \u00b7 target 10.08 (2.2\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "OHI",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "OHI $47.00 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+    "action": "Back under its buy price: wait",
+    "price": 47.0,
+    "day_pct": null,
+    "entry": 47.05,
+    "stop": 45.98,
+    "stop_type": "committee",
+    "target": 47.35,
+    "risk_per_share": 1.07,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 46.7,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 47.05 (price 47.00, 0.1% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.6\u00d7)",
+     "AQE trade: entry 47.05 \u00b7 stop 45.98 \u00b7 risk 2.3% (1.07/share) \u00b7 1R $2,250 = 2,102 shares \u00b7 target 48.00 (0.9\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 16:20 ET conditions \u00b7 2 cards \u00b7 BACK UNDER 1 \u00b7 EXTENDED 1 \u00b7 PMA 11-02 \u00b7 AQE 11-02"
+  },
+  "engine": {
+   "checked": 186,
+   "new_triggers": 27,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 8,
   "session_date": "2026-11-02",
   "cycle_at_utc": "2026-11-02T20:48:08+00:00",
