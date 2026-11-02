@@ -1,6 +1,81 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 7,
+  "session_date": "2026-11-02",
+  "cycle_at_utc": "2026-11-02T20:14:36+00:00",
+  "cycle_at_sgt": "2026-11-03 04:14 SGT",
+  "cycle_at_et": "15:14 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-02",
+   "pma_session": "2026-11-02",
+   "pma_missing": null,
+   "aqe_date": "2026-11-02",
+   "aqe_covers": "2026-10-30",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "ABSENT",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "FLS",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "FLS $80.19 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+    "action": "Back under its buy price: wait",
+    "price": 80.19,
+    "day_pct": null,
+    "entry": 80.35,
+    "stop": 76.11,
+    "stop_type": "committee",
+    "target": 82.1,
+    "risk_per_share": 4.24,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 79.25,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 80.35 (price 80.19, 0.2% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.2\u00d7)",
+     "AQE trade: entry 80.35 \u00b7 stop 76.11 \u00b7 risk 5.3% (4.24/share) \u00b7 1R $2,250 = 530 shares \u00b7 target 85.26 (1.2\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 15:13 ET conditions \u00b7 1 card \u00b7 BACK UNDER 1 \u00b7 PMA 11-02 \u00b7 AQE 11-02"
+  },
+  "engine": {
+   "checked": 186,
+   "new_triggers": 4,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 6,
   "session_date": "2026-11-02",
   "cycle_at_utc": "2026-11-02T19:41:04+00:00",
