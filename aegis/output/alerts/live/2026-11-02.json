@@ -1,6 +1,163 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 6,
+  "session_date": "2026-11-02",
+  "cycle_at_utc": "2026-11-02T19:41:04+00:00",
+  "cycle_at_sgt": "2026-11-03 03:41 SGT",
+  "cycle_at_et": "14:41 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-02",
+   "pma_session": "2026-11-02",
+   "pma_missing": null,
+   "aqe_date": "2026-11-02",
+   "aqe_covers": "2026-10-30",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "ABSENT",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "CMCSA",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "CMCSA $23.61 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE default criteria",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 23.615,
+    "day_pct": null,
+    "entry": 23.29,
+    "stop": 22.53,
+    "stop_type": "committee",
+    "target": 24.63,
+    "risk_per_share": 0.76,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 23.1,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: all met \u2713",
+     "\u2713 hourly close above 23.29 (price 23.61, 1.4% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.1\u00d7)",
+     "AQE trade: entry 23.29 \u00b7 stop 22.53 \u00b7 risk 3.3% (0.76/share) \u00b7 1R $2,250 = 2,960 shares \u00b7 target 24.63 (1.8\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "OHI",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "OHI $47.28 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE default criteria",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 47.28,
+    "day_pct": null,
+    "entry": 47.05,
+    "stop": 45.98,
+    "stop_type": "committee",
+    "target": 47.35,
+    "risk_per_share": 1.07,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 46.7,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: all met \u2713",
+     "\u2713 hourly close above 47.05 (price 47.28, 0.5% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.1\u00d7)",
+     "AQE trade: entry 47.05 \u00b7 stop 45.98 \u00b7 risk 2.3% (1.07/share) \u00b7 1R $2,250 = 2,102 shares \u00b7 target 48.00 (0.9\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "ASAN",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "ASAN $11.40 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+    "action": "Back under its buy price: wait",
+    "price": 11.4,
+    "day_pct": null,
+    "entry": 11.41,
+    "stop": 10.56,
+    "stop_type": "committee",
+    "target": 12.24,
+    "risk_per_share": 0.85,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "ARMED",
+     "stop": 11.06,
+     "level": 11.29
+    },
+    "lines": [
+     "U&R: \u2713 ENTRY SIGNAL \u2014 a 15-min candle closed above VWAP at 10:30 (price 11.30)",
+     "U&R trade: entry 11.30 \u00b7 stop 11.06 (today's low) \u00b7 risk 2.1% (0.24/share) \u00b7 1R $2,250 = 9,374 shares",
+     "Dipped below the 9-day average (11.29) today and is back above it \u2713",
+     "Volume confirms \u2713",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 11.41 (price 11.40, 0.1% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.2\u00d7)",
+     "AQE trade: entry 11.41 \u00b7 stop 10.56 \u00b7 risk 7.4% (0.85/share) \u00b7 1R $2,250 = 2,647 shares \u00b7 target 12.94 (1.8\u00d7 the risk)",
+     "Nearby levels: 9-day average 11.29 \u00b7 21-day average 10.69 \u00b7 rising trendline 11.07"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [
+   {
+    "ticker": "TDC",
+    "price": 33.73,
+    "text": "\ud83d\udfe1 TDC $33.73 \u2014 dipped below the 9-day average (33.84), still under it; entry \u2248 34.49 \u00b7 stop 33.70 \u00b7 risk 2.3% \u00b7 AQE default criteria: 1 of 2 met"
+   }
+  ],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 14:39 ET conditions \u00b7 4 cards \u00b7 BACK UNDER 1 \u00b7 U&R SETUP 1 \u00b7 BUY MET 2 \u00b7 PMA 11-02 \u00b7 AQE 11-02"
+  },
+  "engine": {
+   "checked": 186,
+   "new_triggers": 6,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 5,
   "session_date": "2026-11-02",
   "cycle_at_utc": "2026-11-02T19:07:33+00:00",
