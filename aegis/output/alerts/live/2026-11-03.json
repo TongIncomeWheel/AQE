@@ -1,6 +1,128 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 11,
+  "session_date": "2026-11-03",
+  "cycle_at_utc": "2026-11-03T20:24:08+00:00",
+  "cycle_at_sgt": "2026-11-04 04:24 SGT",
+  "cycle_at_et": "15:24 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-03",
+   "pma_session": "2026-11-03",
+   "pma_missing": null,
+   "aqe_date": "2026-11-03",
+   "aqe_covers": "2026-11-02",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "UNWATCHABLE",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "PEG",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "UNR_FAILED"
+    ],
+    "severity": "INFO",
+    "headline": "PEG $73.06 \u00b7 \ud83d\udfe0 U&R FAILED",
+    "action": "U&R failed: stand down",
+    "price": 73.06,
+    "day_pct": null,
+    "entry": 73.06,
+    "stop": 73.04,
+    "stop_type": "unr_low_of_day",
+    "target": null,
+    "risk_per_share": 0.02,
+    "conditions": {
+     "met": 0,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "ARMED",
+     "stop": 73.04,
+     "level": 73.76
+    },
+    "lines": [
+     "U&R: \ud83d\udfe0 failed \u2014 price 73.06 fell under the stop (73.04) set at the entry signal",
+     "AQE default criteria: 0 of 2 met",
+     "\u2717 hourly close above 74.42 (price 73.06, 1.8% below)",
+     "\u2717 volume at least 1\u00d7 normal (now 0.7\u00d7)",
+     "AQE trade: entry 74.42 \u00b7 stop 73.08 \u00b7 risk 1.8% (1.34/share) \u00b7 1R $2,250 = 1,679 shares \u00b7 target 76.62 (1.6\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "YUM",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "YUM $157.81 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+    "action": "Back under its buy price: wait",
+    "price": 157.81,
+    "day_pct": null,
+    "entry": 158.05,
+    "stop": 154.24,
+    "stop_type": "committee",
+    "target": 160.24,
+    "risk_per_share": 3.81,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 156.65,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 158.05 (price 157.81, 0.2% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.7\u00d7)",
+     "AQE trade: entry 158.05 \u00b7 stop 154.24 \u00b7 risk 2.4% (3.81/share) \u00b7 1R $2,250 = 590 shares \u00b7 target 160.24 (0.6\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [
+   {
+    "ticker": "PFE",
+    "price": 30.01,
+    "text": "\ud83d\udfe1 PFE $30.01 \u2014 dipped below the 9-day average (30.02), still under it; entry \u2248 30.50 \u00b7 stop 29.95 \u00b7 risk 1.8% \u00b7 Committee (ADVANCE): 0 of 1 met"
+   },
+   {
+    "ticker": "UL",
+    "price": 65.015,
+    "text": "\ud83d\udfe1 UL $65.02 \u2014 dipped below the 9-day average (65.16), still under it; entry \u2248 65.26 \u00b7 stop 65.01 \u00b7 risk 0.4% \u00b7 AQE default criteria: 0 of 2 met"
+   }
+  ],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 15:22 ET conditions \u00b7 4 cards \u00b7 U&R SETUP 2 \u00b7 U&R FAILED 1 \u00b7 BACK UNDER 1 \u00b7 PMA 11-03 \u00b7 AQE 11-03"
+  },
+  "engine": {
+   "checked": 283,
+   "new_triggers": 2,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 9,
   "session_date": "2026-11-03",
   "cycle_at_utc": "2026-11-03T19:49:35+00:00",
