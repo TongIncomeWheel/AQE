@@ -1,0 +1,101 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-03",
+ "declarations": [
+  "R1: no stance below rests on a bracket. R41: no Valen flag is a reason. market_void is null throughout: my method carries no market kill line.",
+  "Breaks at the test (C7) get ACT_NOW on a sign-of-strength buy stop above bar_high (C12); names away from value get WAIT for the Creek test (R2, C3, C15)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high, follow-through on the break bar."},
+   "wrong_if": "Daily close under structure_shift_ref (the Creek), or a trade under bar_low.",
+   "market_void": null,
+   "reason": "Fresh BOS at the test (C7), wide bar on rvol_20d 1.31, W HH/HL 0.7% under the 20-wk high, H1 96% of range: break genuine on my grade (C5)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high."},
+   "wrong_if": "Daily close under structure_shift_ref (the Creek), or a trade under bar_low.",
+   "market_void": null,
+   "reason": "Fresh BOS over the Creek, price at the test; wide bar on rvol_20d 1.36, D HH/HL, 0.4% under the highs. W mixed keeps conviction modest."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for a pullback into the broken Creek, then a top-third close on volume."},
+   "wrong_if": "Close back under structure_shift_ref by half an ATR, or a bearish change of character.",
+   "market_void": null,
+   "reason": "TREND, W/D mixed, 1.7% under the highs; far from value (ext_atr20 4.27): no chase (C15), join on the test."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high confirms the rejection at the value edge."},
+   "wrong_if": "Daily close back under pvp_vah, or a trade under bar_low (the shakeout low).",
+   "market_void": null,
+   "reason": "Test-after-breakout (C11): probe under pvp_vah closed back above on rvol_20d 2.97 with a bullish pin; W HH/HL. Needs the next move to confirm, hence the buy stop (C6, C12)."
+  },
+  {
+   "ticker": "PFE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high, proving the break."},
+   "wrong_if": "Daily close back under structure_shift_ref (an upthrust).",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS, at the test by definition; D HH/HL, 1.2% under the highs. H1 at 60% of range is not a clear sign of strength, so follow-through is required (C12)."
+  },
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for the test of the broken Creek or a small base above it, then a strong close."},
+   "wrong_if": "Close back under structure_shift_ref by half an ATR, or a bearish change of character.",
+   "market_void": null,
+   "reason": "W/D HH/HL, 0.9% under the highs; the furthest from value here (ext_atr20 5.11). Trend good, location poor: wait (R2, C15)."
+  },
+  {
+   "ticker": "TTEK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for the test of the broken Creek, then a top-third close on volume."},
+   "wrong_if": "Close back under structure_shift_ref by half an ATR, or a bearish change of character.",
+   "market_void": null,
+   "reason": "W/D HH/HL, 0.6% under the highs; away from value (ext_atr20 4.55) on ordinary volume (day_vol 1.16). Join on the test (C3, C7)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for the test of the broken Creek, then a top-third close on volume."},
+   "wrong_if": "Close back under structure_shift_ref by half an ATR, or a bearish change of character.",
+   "market_void": null,
+   "reason": "W/D HH/HL, 0.9% under the highs; away from value (ext_atr20 3.99): the test is the location (R2)."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Held: keep; add only on a test of the broken Creek with a strong close."},
+   "wrong_if": "Daily close under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "Held, KEEP: trend intact, D HH/HL, 0.3% under the highs, H1 89% of range; bias long while above the Creek (C9). Away from value (ext_atr20 3.48) for adding."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for the test of the broken Creek, then a top-third close on volume."},
+   "wrong_if": "Close back under structure_shift_ref by half an ATR, or a bearish change of character.",
+   "market_void": null,
+   "reason": "Daily TREND, D HH/HL; W mixed 5.6% under the 20-wk high and H1 only 53% of range; away from value (ext_atr20 4.76). Lowest conviction of the set; test only."
+  }
+ ]
+}

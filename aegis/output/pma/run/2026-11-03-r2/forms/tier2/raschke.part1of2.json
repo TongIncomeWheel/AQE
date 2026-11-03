@@ -1,0 +1,109 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-03",
+ "answers": [
+  {
+   "pair_id": "EW-raschke-for~minervini",
+   "ticker": "EW",
+   "to": "minervini",
+   "text": "\"A shallow pullback hold is not a pivot breakout.\" Correct, and I never filed it as one: it is a RETRACEMENT (C2), not a breakout. RS rank and the 50/100 order are not tests in my canon. My test is a pullback inside a trend: W 9>21 HH/HL 3.15% under 20-wk high, D above EMA9 9>21 2.6% under 20-day high. The H1 tangle (ema9 93.1987 vs ema21 93.0587) is why my trigger is an hourly close above bar_high, not the hold itself.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "PYPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high: the breakout follows through"},
+   "wrong_if": "a daily close below yesterday's low (bar_low), one tick past the swing (C17)",
+   "market_void": null,
+   "reason": "BREAKOUT family (C12): D close 58.78 is 0.4% under the 20-day high, D and H1 above EMA9 with 9>21, H1 at 87% of the day's range. W only mixed, 6.3% under its 20-wk high, so this is a short-horizon break, not a trend buy."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan (C7 shape, ADX not served): W and D HH/HL, 0.6% under the highs, D close 138.6 far over ema21 125.5421. Trend is real but no pullback has printed; I buy the first pullback, not the extension (C19)."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high"},
+   "wrong_if": "a daily close below fib_618 102.59, the swing level under the break (C17)",
+   "market_void": null,
+   "reason": "BREAKOUT family (C12): D HH/HL 0.3% under the 20-day high, H1 at 89% of the day's range, all frames above EMA9 with 9>21. W mixed, 5.0% under its 20-wk high: a daily break, not a weekly one."
+  },
+  {
+   "ticker": "MA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan: D HH/HL 0.5% under the 20-day high, close 658.1 far over ema21 612.4551, and H1 already LH/LL: the short cycle is rolling. I wait for the first pullback, not the extension."
+  },
+  {
+   "ticker": "VRTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high: the dip has turned"},
+   "wrong_if": "a daily close back under the broken pivot (pivot_high)",
+   "market_void": null,
+   "reason": "RETRACEMENT, first pullback (C7 shape, ADX not served): W HH/HL above EMA9, D above EMA9 9>21 2.7% under the 20-day high, H1 below EMA9 at 39% of the day's range: the dip is in, the hourly turn is the trigger."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan: HH/HL on W, D and H1, all 0.5% under their 20-bar highs, the cleanest alignment here. No pullback yet (D close 44.44 vs ema21 41.6824), so I wait for the first one."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "an orderly pullback that holds the 20-day average with impulse intact would make it a retracement I could buy",
+   "market_void": null,
+   "reason": "Range-expansion run: D close 33.07 far over ema21 28.6472, H1 LH/LL. C19 reads such a leg as a likely climax, an exit cue not an entry, and I do not call a climax from composites (R9). No test, retracement or contraction is present."
+  },
+  {
+   "ticker": "FTV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan: W and D HH/HL 0.7% under the highs, D close 66.84 well over ema21 60.6719. Strong aligned trend but extended; I wait for the first pullback, not the range-expansion leg (C19)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan (C7 shape): W and D HH/HL 0.9% under the highs, H1 last bar red at 71% of the day's range: the short cycle easing. D close 278.89 over ema21 256.8862, so the first pullback is the buy."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "a daily close more than 1 ATR under the 20-day average after the pullback",
+   "market_void": null,
+   "reason": "RETRACEMENT plan: W and H1 HH/HL, H1 at 99% of the day's range, D close 36.82 over ema21 34.1633. A close on the high after a run is climax risk (C19); I wait for the first pullback."
+  }
+ ],
+ "declarations": [
+  "Setup type per name is in each reason (C2). adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); n_day_extreme read from the MTF 20-bar-high distance (substitute, C3/C4); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "market_void is null on every name: my method has no market-wide void (breadth is out of scope, R8). No bracket field is a reason for any stance (R1)."
+ ]
+}

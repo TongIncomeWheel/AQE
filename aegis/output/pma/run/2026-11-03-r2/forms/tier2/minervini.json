@@ -1,0 +1,307 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-03",
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,7,8 from entry, ma_50/ma_100/ma_200, from_52w_hi, rs_rank_pct; ma_100 stands in for ma_150; criteria 3 and 6 NOT_SERVED (C3)",
+  "vcp_detail: NOT_SERVED (C4). volume_signature: day_vol at the current bar only (C6). earnings_growth: NOT_SERVED, SEPA element 2 not run (C1, C12)",
+  "rs_proxy: rs_rank_pct with rs_leadership and rs_spy_20d, not claimed equal to IBD RS rank (C3/C11). market_void null: my method times from leadership, not an index level (C14)",
+  "R1: bracket read as information only; no OPPOSE rests on it.",
+  "market_void null: my method times from leadership, not an index level (C14). R1: bracket is information only."
+ ],
+ "answers": [
+  {
+   "pair_id": "FTV-minervini-against~livermore",
+   "ticker": "FTV",
+   "to": "livermore",
+   "concede": false,
+   "text": "Quote: 'A lagging long average does not outvote the tape.' My gate is the Trend Template, all eight (C3). W dist_to_20bar_high_pct 0.7 and D HH/HL satisfy criterion 7 only. ma_50 57.92 under ma_200 58.75 fails criterion 4 and rs_rank_pct 61.76 fails criterion 8. A new high on an unordered stack is a turn, not a confirmed stage 2 (C2). Not conceded."
+  },
+  {
+   "pair_id": "FTV-minervini-against~elder-lens",
+   "ticker": "FTV",
+   "to": "elder-lens",
+   "concede": false,
+   "text": "Quote: 'W ema9 over ema21, HH/HL: tide up.' EMA9/21 order is not a template criterion. Criterion 4 is the 50-day over the 150 and 200: ma_50 57.92 sits under ma_200 58.75; rs_rank_pct 61.76 fails criterion 8 (C3). The stretch was a weight only; the fail stands on criteria 4 and 8. Not conceded."
+  },
+  {
+   "pair_id": "EW-minervini-against~livermore",
+   "ticker": "EW",
+   "to": "livermore",
+   "concede": false,
+   "text": "Quote: 'Averages are not tangled on my read.' Fair on the short averages: W ema9 89.2131 over ema21 87.8866. My test is the long stack: ma_50 88.21 under ma_100 88.6 leaves criterion 4 unproven, and rs_rank_pct 63.57 fails criterion 8 (C3, C11). A normal reaction in a non-leader is still a non-leader. Not conceded."
+  },
+  {
+   "pair_id": "EW-minervini-against~elder-lens",
+   "ticker": "EW",
+   "to": "elder-lens",
+   "concede": false,
+   "text": "Quote: 'Not tangled on my frames ... RS unread.' The refuter leaves RS unread; my gate reads it: rs_rank_pct 63.57 is under the 70 floor (C3 criterion 8, C11), and ma_50 88.21 under ma_100 88.6 keeps criterion 4 unproven. H1 ema9 93.1987 vs ema21 93.0587 is flat. Not conceded."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "PYPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the breakout continuing from the pivot."
+   },
+   "wrong_if": "Daily close below pivot_high 57.95, or below ma_50 55.31.",
+   "market_void": null,
+   "reason": "Served template criteria pass: entry 58.78 > ma_50 55.31 > ma_100 53.67 > ma_200 49.98, rs_rank_pct 71.89. BULLISH_BOS only pct_from_pivot 1.43 past pivot: inside buy range (C5). D dist_to_20bar_high_pct 0.42. RS on the floor; W mixed."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, close to the pivot."
+   },
+   "wrong_if": "Daily close below the pivot 134.99, or below ma_20.",
+   "market_void": null,
+   "reason": "rs_rank_pct 92.04 leader near the high (C11); W and D HH/HL, D dist_to_20bar_high_pct 0.57. pct_from_pivot 2.67 is inside buy range (C5). Criterion 4 unproven: ma_50 121.93 under ma_100 122.86."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the fresh breakout holding."
+   },
+   "wrong_if": "Daily close below pivot_high, or below ma_50 99.42.",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS near the high on day_vol 1.89, D HH/HL, dist_to_20bar_high_pct 0.29; sma_dist 6.41% is not a chase (C5). Weak points: rs_rank_pct 71.05 on the floor, ma_50 99.42 under ma_100 100.07."
+  },
+  {
+   "ticker": "MA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight pause forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 658.1 > ma_50 588.28 > ma_100 562.98 > ma_200 536.31, rs_rank_pct 84.44 at the high. But 9.46% over pivot 601.23 is past buy range (C5): wait for a new tight base before buying."
+  },
+  {
+   "ticker": "VRTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the hour turning back up."
+   },
+   "wrong_if": "Daily close below pivot_high 529.89, or below ma_50 523.32.",
+   "market_void": null,
+   "reason": "Template passes: entry 553.15 > ma_50 523.32 > ma_100 507.09 > ma_200 479.79, rs_rank_pct 83.23 LEADER. Cleared pivot on day_vol 2.3 (C6 breakout half). pct_from_pivot 4.39 at the edge of range; H1 below EMA9, W HH/HL."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the new high extending."
+   },
+   "wrong_if": "Daily close below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 44.44 > ma_50 40.83 > ma_100 39.94 > ma_200 39.43, rs_rank_pct 72.74. New high on day_vol 1.83; HH/HL on W, D and H1. pct_from_pivot 4.54 near the chase edge; RS near the floor; defensive group (R9)."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight flag forms on the thrust, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 33.07 > ma_50 27.31 > ma_100 26.62 > ma_200 24.04, rs_rank_pct 90.11, day_vol 2.07. sma_dist 21.11% is a thrust with no flag yet: a power-play candidate (C18), not a buy point today (C5)."
+  },
+  {
+   "ticker": "FTV",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "ma_50 crosses above ma_200 with rs_rank_pct over 70 while price holds the new high.",
+   "market_void": null,
+   "reason": "Trend Template fails (C3): ma_50 57.92 under ma_200 58.75 (criterion 4) and rs_rank_pct 61.76 under 70 (criterion 8). W/D highs show criterion 7 only; a fresh turn, not a confirmed stage 2 (C2)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the breakout continuing."
+   },
+   "wrong_if": "Daily close below pivot_high 271.27, or below ma_50 248.67.",
+   "market_void": null,
+   "reason": "Template passes: entry 278.89 > ma_50 248.67 > ma_100 246.32 > ma_200 232.17, rs_rank_pct 86.61 LEADER. Broke pivot_high 271.27 on day_vol 1.79, pct_from_pivot 2.81: inside buy range (C5). W and D HH/HL."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the new high extending."
+   },
+   "wrong_if": "Daily close below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 36.82 > ma_50 32.54 > ma_100 31.83 > ma_200 30.04, rs_rank_pct 82.27. New high on day_vol 2.28, W HH/HL; pct_from_pivot 4.01 near the edge of range; sma_dist 13.16% weighs; defensive group (R9)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the fresh breakout holding."
+   },
+   "wrong_if": "Daily close below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 110.45 > ma_50 99.54 > ma_100 99.05 > ma_200 97.82, rs_rank_pct 75.03. Fresh BULLISH_BOS at the high on day_vol 1.34, W HH/HL. Bunched averages leave a rising 200 unshown; sma_dist 10.96%; defensive group (R9)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the breakout holding."
+   },
+   "wrong_if": "Daily close below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 95.83 > ma_50 89.56 > ma_100 86.94 > ma_200 82.26, rs_rank_pct 78.41, BULLISH_BOS on day_vol 1.36, D HH/HL. Low conviction: flow 48.7 does not confirm the volume signature (C6); a mega-cap staple is the rare exception (C15)."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a new tight base forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 99.63 > ma_50 86.42 > ma_100 82.96 > ma_200 77.04, rs_rank_pct 88.42, day_vol 2.18. But 15.42% over pivot 86.32 is well past buy range (C5), and the base was a sharp V: wait for a tight base."
+  },
+  {
+   "ticker": "EW",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "rs_rank_pct clears 70 and it breaks out to a new high on volume.",
+   "market_void": null,
+   "reason": "Trend Template fails (C3): rs_rank_pct 63.57 under the 70 floor (criterion 8, C11) and ma_50 88.21 under ma_100 88.6 leaves criterion 4 unproven. D dist_to_20bar_high_pct 2.6 is a reaction in a non-leader, not a pivot from strength."
+  },
+  {
+   "ticker": "PFE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, close to the pivot."
+   },
+   "wrong_if": "Daily close below pivot_high 30.44.",
+   "market_void": null,
+   "reason": "Template passes: entry 30.67 > ma_50 28.6 > ma_100 26.98 > ma_200 26.82, rs_rank_pct 71.77. Fresh BULLISH_BOS only pct_from_pivot 0.76 over pivot on day_vol 1.7: a proper buy-range spot (C5). RS on the floor, large cap (C15)."
+  },
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight flag forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 115.7 > ma_50 98.54 > ma_100 95.45 > ma_200 93.04, rs_rank_pct 84.92, day_vol 2.11, W and D HH/HL. But sma_dist 17.41% is far past any base top (C5): wait for a flag."
+  },
+  {
+   "ticker": "TTEK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a short tight pause, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 39.57 > ma_50 35.43 > ma_100 33.64 > ma_200 33.08, rs_rank_pct 80.58, W and D HH/HL. sma_dist 11.68% after run_10d 14.27% is a sharp lift off the base; a pause first keeps entry near a pivot (C5)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a new tight base forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 106.71 > ma_50 93.56 > ma_100 93.19 > ma_200 85.65, rs_rank_pct 90.23 at the high, W and D HH/HL. But sma_dist 14.05% after run_10d 17.02% is past buy range (C5)."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Held: add only after a fresh tight base, on an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_50 382.4 breaks the template.",
+   "market_void": null,
+   "reason": "Held, KEEP. Template intact: entry 425.51 > ma_50 382.4 > ma_100 367.58 > ma_200 342.69, rs_rank_pct 84.32 LEADER at the high. sma_dist 11.27%: no add here; any add waits for a new base and comes in-trend after a profit (C9)."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight base forms off the V, an hourly close above the prior day's high."
+   },
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 29.89 > ma_50 26.52 > ma_100 26.48 > ma_200 24.34, rs_rank_pct 92.88. But run_10d 26.44% off a dip is a V, not a tight base (C4, C5); W mixed, dist_to_20bar_high_pct 5.56."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 7117,
+   "sha256": "d8e75d848f33"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 5268,
+   "sha256": "3f9f75a9be1a"
+  }
+ ]
+}

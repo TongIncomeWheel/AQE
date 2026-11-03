@@ -1,0 +1,654 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-03T07:28:15Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-03",
+ "survivors": [
+  "PYPL",
+  "DLTR",
+  "USFD",
+  "MA",
+  "VRTX",
+  "WTRG",
+  "HOG",
+  "FTV",
+  "AJG",
+  "KDP",
+  "CHD",
+  "KO",
+  "GPN",
+  "EW",
+  "PFE",
+  "VLTO",
+  "TTEK",
+  "SWK",
+  "V",
+  "GEN"
+ ],
+ "pairs": [
+  {
+   "pair_id": "PYPL-wyckoff-for~oneil",
+   "ticker": "PYPL",
+   "claim_id": "PYPL-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "oneil",
+   "claim_text": "Creek and value edge stacked at the test; flow 86.8; D/H1 9>21.",
+   "refute_evidence": "flow 86.8 is advisory only, not my I letter. C7: weekly 6.3% under the 20-wk high, not a new high. C16: day_vol 1.3 under 1.40 on the break.",
+   "refute_tf": {
+    "W": "9>21, mixed, 6.3% under 20-wk high: no new high out of the base",
+    "D": "9>21, mixed, 0.4% under 20-day high; break volume short of 1.40",
+    "H1": "9>21, mixed, last bar red, 87% of range: no test of mine"
+   }
+  },
+  {
+   "pair_id": "PYPL-oneil-against~livermore",
+   "ticker": "PYPL",
+   "claim_id": "PYPL-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "15% off the high, sub-1.40 volume, fifth in its group, leadership lens warn.",
+   "refute_evidence": "Price is pressing its high on D (0.4% under 20-day high) and H1 (0.4% under 20-hr high), W 9>21. Volume thresholds are not my test (fill difficulty not served); the tape says strength (C2).",
+   "refute_tf": {
+    "W": "9>21, 6.3% under 20-wk high: up, not yet at the high",
+    "D": "0.4% under 20-day high: at the high",
+    "H1": "0.4% under 20-hr high, 87% of the day's range"
+   }
+  },
+  {
+   "pair_id": "PYPL-oneil-against~wyckoff",
+   "ticker": "PYPL",
+   "claim_id": "PYPL-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "15% off the high, sub-1.40 volume, fifth in its group, leadership lens warn.",
+   "refute_evidence": "Off-the-high is a weekly range read; my trade is the daily range exit at its test, which the frames show (D dist_to_20bar_high_pct 0.42, H1 pos_in_day_range_pct 86.7). Group rank and leadership lens: no test in my method.",
+   "refute_tf": {
+    "W": "9>21, mixed, 6.3% under 20-wk high: inside a weekly range",
+    "D": "above ema9 57.0235, 9>21, 0.42% under 20-day high: break of daily range",
+    "H1": "9>21, 86.7% of day's range, last bar red: close still high in range"
+   }
+  },
+  {
+   "pair_id": "USFD-oneil-against~livermore",
+   "ticker": "USFD",
+   "claim_id": "USFD-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Fourth-plus in its group, middling structure, overhead resistance warn.",
+   "refute_evidence": "D HH/HL 0.3% under 20-day high 106.11, W 9>21 above EMA9: a new daily high in an uptrend (C5). The 20-wk high 111.42 overhead is the pivotal point to clear (C17), not a reason against.",
+   "refute_tf": {
+    "W": "9>21, 5.0% under 20-wk high: up, pivot overhead",
+    "D": "HH/HL, 0.3% under 20-day high: new high",
+    "H1": "9>21 at 89% of the day's range"
+   }
+  },
+  {
+   "pair_id": "USFD-oneil-against~wyckoff",
+   "ticker": "USFD",
+   "claim_id": "USFD-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "Fourth-plus in its group, middling structure, overhead resistance warn.",
+   "refute_evidence": "Overhead supply at the 20-wk high (W dist_to_20bar_high_pct 5.0) is my first target (C14), not a reason against a daily break (D hh_hl_3 HH/HL, 0.3% under). Group rank and structure score: no test in my method.",
+   "refute_tf": {
+    "W": "9>21, mixed, 5.0% under 20-wk high: overhead = first target",
+    "D": "9>21, HH/HL, 0.3% under 20-day high: break in progress",
+    "H1": "9>21, 89% of the day's range: buyers in control into the close"
+   }
+  },
+  {
+   "pair_id": "MA-livermore-for~oneil",
+   "ticker": "MA",
+   "claim_id": "MA-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "structure 80.0, mp STRONG/ACCELERATING, W/D within 0.5% of highs, rank 78, V/AJG confirm the group.",
+   "refute_evidence": "The claim's own rank 78 fails C9: fourth in Financials behind AJG, GPN, KMPR. Group confirmation passes R9, but C16 fails: day_vol 1.24 under 1.40. mp is not my field.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.5% under 20-wk high: at the high, group confirming",
+    "D": "9>21, HH/HL, 0.5% under 20-day high; volume under 1.40",
+    "H1": "9>21, LH/LL, 87% of range: lower hourly highs"
+   }
+  },
+  {
+   "pair_id": "MA-seow-for~oneil",
+   "ticker": "MA",
+   "claim_id": "MA-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "New high with the break made, strength over 63 days, COM and TIF proxies confirm, weekly and daily above EMA9.",
+   "refute_evidence": "New high, yes (W 0.5% under the 20-wk high), but the break made fails C16: day_vol 1.24 under 1.40 is a hard rejection, not a softer buy. COM/TIF proxies are not mine.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.5% under 20-wk high: new-high zone",
+    "D": "9>21, HH/HL, 0.5% under 20-day high: break on thin volume",
+    "H1": "9>21, LH/LL, 87% of range"
+   }
+  },
+  {
+   "pair_id": "MA-oneil-against~seow",
+   "ticker": "MA",
+   "claim_id": "MA-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Thin volume (1.24), fourth in group, extended, overlaps V.",
+   "refute_evidence": "Extension is not a fault in the position system (C26): new high from_52w_hi 0.0%, ABOVE_STRUCTURE, cmf 0.21 with ACCELERATION, ret_63d 15.23. Volume 1.24 is above average. Group rank and V overlap are not my test; overlap is the PM's.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 0.5% under 20-wk high: at the highs",
+    "D": "above EMA9, 9>21, HH/HL, 0.5% under 20-day high: trend intact",
+    "H1": "LH/LL but 87% of range: minor ripple, managed by trail (C7)"
+   }
+  },
+  {
+   "pair_id": "MA-oneil-against~wyckoff",
+   "ticker": "MA",
+   "claim_id": "MA-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "Thin volume (1.24), fourth in group, extended, overlaps V.",
+   "refute_evidence": "Extension sets my entry location, never a reason against (C3, C15). Frames show trend: W dist_to_20bar_high_pct 0.5, D hh_hl_3 HH/HL. H1 hh_hl_3 LH/LL is a timing caution; overlap with V is a book call.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.5% under 20-wk high: trend up",
+    "D": "9>21, HH/HL, 0.5% under 20-day high: imbalance up",
+    "H1": "9>21 but LH/LL, 87% of range: short pause, wait for the test"
+   }
+  },
+  {
+   "pair_id": "VRTX-oneil-against~seow",
+   "ticker": "VRTX",
+   "claim_id": "VRTX-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Not the group leader; downday 0.71 weak; group fading.",
+   "refute_evidence": "Group leadership is not my test. A down day on 0.71 volume is light, not a fund-flow break. Signal stands: ABOVE_STRUCTURE, ACCELERATION, ret_63d 15.55, rs_rank_pct 83.23. My caution: red last bar, buy stop over bar_high must be retaken.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 2.7% under 20-wk high: up-trend",
+    "D": "above EMA9, 9>21, mixed, 2.7% under 20-day high: above resistance",
+    "H1": "below EMA9, 39% of range: weak hour, entry waits for bar_high"
+   }
+  },
+  {
+   "pair_id": "VRTX-oneil-against~raschke",
+   "ticker": "VRTX",
+   "claim_id": "VRTX-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Not the group leader; downday 0.71 weak; group fading.",
+   "refute_evidence": "The weak down day is the first pullback my retracement family buys: W HH/HL, D 9>21, D dist_to_20bar_high_pct 2.73, H1 below ema9 554.8396 but above ema21 550.3614. Group leadership: no test in my canon.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 2.73% under 20-wk high: trend intact",
+    "D": "9>21, red bar, 2.73% under 20-day high: shallow dip",
+    "H1": "below ema9, above ema21, 39.1% of range: dip holding"
+   }
+  },
+  {
+   "pair_id": "HOG-seow-for~raschke",
+   "ticker": "HOG",
+   "claim_id": "HOG-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "raschke",
+   "claim_text": "Every position step passed: liquid, top-decile rank, break above resistance at a new high, COM and TIF proxies confirm.",
+   "refute_evidence": "A break at a new high after a range-expansion run is not Crabel's contraction breakout (C12): D close 33.07 vs ema9 30.0858, H1 hh_hl_3 LH/LL. Fits none of my four; C19 reads such legs as exit cues.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.91% under 20-wk high",
+    "D": "HH/HL, close 33.07 far over ema9 30.0858: expansion, no contraction",
+    "H1": "LH/LL, 84.9% of range: short cycle not confirming"
+   }
+  },
+  {
+   "pair_id": "HOG-livermore-for~raschke",
+   "ticker": "HOG",
+   "claim_id": "HOG-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "rank 11, mp STRONG/ACCELERATING, day_vol 2.07, at the high on W and D, pairs with DLTR.",
+   "refute_evidence": "At the high on W and D is true (dist_to_20bar_high_pct 0.91 both), but through my taxonomy it is an extension, not a test, retracement or contraction break: H1 LH/LL, D close 33.07 vs ema9 30.0858. No entry in my method.",
+   "refute_tf": {
+    "W": "0.91% under 20-wk high, mixed",
+    "D": "HH/HL, extended over ema9 30.0858",
+    "H1": "LH/LL, ema9 32.5334 > ema21 31.5416"
+   }
+  },
+  {
+   "pair_id": "FTV-livermore-for~minervini",
+   "ticker": "FTV",
+   "claim_id": "FTV-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "structure 89.5, mp STRONG/ACCELERATING, W/D HH/HL 0.7% under highs, W 9>21, sector Momentum Building.",
+   "refute_evidence": "Weekly and daily strength at the high is real, but the template is all-or-nothing (C3): my served 50-day sits under the 100 and 200 (criterion 4) and RS rank is under 70 (criterion 8). Not a confirmed stage 2 (C2).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.7% under 20-wk high: strong weekly, long averages unordered",
+    "D": "9>21, HH/HL, 0.7% under 20-day high: new high off a stage 1 base",
+    "H1": "9>21, mixed, 66.3% of day's range: no template bearing"
+   }
+  },
+  {
+   "pair_id": "FTV-seow-for~minervini",
+   "ticker": "FTV",
+   "claim_id": "FTV-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "New high above resistance, SUSTAINED impulse, sector building, weekly HH/HL.",
+   "refute_evidence": "A new high above resistance does not repair criteria 4 and 8 (C3, R1): 50-day under the 200-day and RS rank under 70 on my served fields. Strength in a name failing the template is a turn, not a leader (C2).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.7% under 20-wk high: weekly lift, template still fails",
+    "D": "9>21, HH/HL, 0.7% under 20-day high: breakout bar",
+    "H1": "9>21, mixed, 66.3% of day's range: timing only"
+   }
+  },
+  {
+   "pair_id": "FTV-minervini-against~livermore",
+   "ticker": "FTV",
+   "claim_id": "FTV-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "ma_50 57.92 under ma_200 58.75 and rs_rank_pct 61.76; sma_dist 15.39% also stretched.",
+   "refute_evidence": "Price at new highs on both frames (C5, C16): W HH/HL 9>21 0.7% under 20-wk high 67.31, D HH/HL 0.7% under 20-day high. A lagging long average does not outvote the tape (C2).",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 0.7% under 20-wk high: at highs",
+    "D": "HH/HL, 9>21, 0.7% under 20-day high",
+    "H1": "9>21 at 66% of the day's range"
+   }
+  },
+  {
+   "pair_id": "FTV-minervini-against~elder-lens",
+   "ticker": "FTV",
+   "claim_id": "FTV-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "ma_50 57.92 under ma_200 58.75 and rs_rank_pct 61.76; sma_dist 15.39% also stretched.",
+   "refute_evidence": "My first screen reads up: W ema9 61.0205 over ema21 59.7935, HH/HL; D 9>21 HH/HL; mp 97.0 STRONG. Stretch needs channel_upper (C11), not served - unread, not a fail.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL: tide up, not down",
+    "D": "9>21, HH/HL; elder_5d [10,10,10,10,10] plateau",
+    "H1": "above EMA9, 9>21, mixed, 66% of range"
+   }
+  },
+  {
+   "pair_id": "FTV-oneil-against~seow",
+   "ticker": "FTV",
+   "claim_id": "FTV-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Fourth in group, base unreadable, extended.",
+   "refute_evidence": "Extension is the position system's signal, not a flaw (C26); a base read is not my entry. New high from_52w_hi 0.0%, ABOVE_STRUCTURE, elder_pattern SUSTAINED, ret_63d 10.46. Group rank is not my test.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 0.7% under 20-wk high: up and at highs",
+    "D": "above EMA9, 9>21, HH/HL, 0.7% under 20-day high: break holding",
+    "H1": "above EMA9, 9>21, 66% of range: steady"
+   }
+  },
+  {
+   "pair_id": "FTV-oneil-against~wyckoff",
+   "ticker": "FTV",
+   "claim_id": "FTV-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "Fourth in group, base unreadable, extended.",
+   "refute_evidence": "Structure is readable top-down as trend: W and D hh_hl_3 HH/HL, ema_order 9>21, 0.7% under the 20-bar high. Extension is entry location, never a reason against (C3). Group rank: no test.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.7% under 20-wk high: readable uptrend",
+    "D": "9>21, HH/HL, 0.7% under 20-day high: imbalance up",
+    "H1": "9>21, mixed, 66% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CHD-wyckoff-for~oneil",
+   "ticker": "CHD",
+   "claim_id": "CHD-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "oneil",
+   "claim_text": "Fresh BOS at a 52-week high, wide bar on rvol_20d 1.31, W/D HH/HL.",
+   "refute_evidence": "C16: the fresh BOS at the 52-week high is on rvol_20d 1.31 (day_vol 1.34 on my row), under 1.40: a hard rejection, not a softer buy. W/D HH/HL is real.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.7% under 20-wk high: new-high zone",
+    "D": "9>21, mixed, 0.7% under 20-day high: break on sub-1.40 volume",
+    "H1": "9>21, mixed, 96% of range: strong close"
+   }
+  },
+  {
+   "pair_id": "CHD-oneil-against~livermore",
+   "ticker": "CHD",
+   "claim_id": "CHD-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Breakout volume 1.34 under 1.40; insti_money warn.",
+   "refute_evidence": "A volume cut-off is not my test; fill difficulty is not served. Price says strength: W HH/HL 0.7% under 20-wk high, H1 at 96% of the day's range (C2, C21).",
+   "refute_tf": {
+    "W": "HH/HL, 0.7% under 20-wk high: at the high",
+    "D": "9>21, 0.7% under 20-day high",
+    "H1": "96% of the day's range: no fade"
+   }
+  },
+  {
+   "pair_id": "KO-seow-for~oneil",
+   "ticker": "KO",
+   "claim_id": "KO-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Fresh break above resistance at a new high with ACCELERATION impulse and deep liquidity.",
+   "refute_evidence": "C16: the fresh break at the new high is on day_vol 1.36, under 1.40. 'Deep liquidity' is the S letter, NOT_AVAILABLE (no share count served). flow 48.7 shows no accumulation.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.4% under 20-wk high: at the high",
+    "D": "9>21, HH/HL, 0.4% under 20-day high: break on thin volume",
+    "H1": "9>21, mixed, 81% of range"
+   }
+  },
+  {
+   "pair_id": "KO-oneil-against~seow",
+   "ticker": "KO",
+   "claim_id": "KO-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Bottom of its group, thin volume, flow 48.7, no coil read.",
+   "refute_evidence": "Flow 48.7 soft is a caution I already name, never a reject (R14). The buy signal fired: fresh BULLISH_BOS at a new high, elder_pattern ACCELERATION, ret_63d 10.71. Group rank and coil are not my tests.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, mixed, 0.4% under 20-wk high: at highs",
+    "D": "above EMA9, 9>21, HH/HL, 0.4% under 20-day high: break holding",
+    "H1": "above EMA9, 9>21, 81% of range: firm"
+   }
+  },
+  {
+   "pair_id": "GPN-seow-for~raschke",
+   "ticker": "GPN",
+   "claim_id": "GPN-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "raschke",
+   "claim_text": "New high above resistance on heavy volume with COM and TIF proxies confirming and a high rank.",
+   "refute_evidence": "As a breakout claim it fails my test: D close 99.63 vs ema9 88.9206 with hh_hl_3 mixed on W and D is a range-expansion leg, not a contraction break (C12). I support only the first pullback.",
+   "refute_tf": {
+    "W": "9>21, mixed, 1.67% under 20-wk high",
+    "D": "mixed, close 99.63 vs ema9 88.9206: expansion leg",
+    "H1": "9>21, mixed, 79.9% of range"
+   }
+  },
+  {
+   "pair_id": "EW-raschke-for~minervini",
+   "ticker": "EW",
+   "claim_id": "EW-raschke-for",
+   "kind": "for",
+   "author": "raschke",
+   "refuter": "minervini",
+   "claim_text": "Shallow pullback within a weekly HH/HL trend, heavy participation on the hold.",
+   "refute_evidence": "A shallow pullback hold is not a pivot breakout, and the name fails criterion 8: RS rank under 70 on my served fields, with the 50-day under the 100 (criterion 4 unproven). Buying a hold in a non-leader is buying weakness (C11).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 3.15% under 20-wk high: weekly lift, RS rank fails",
+    "D": "9>21, mixed, 2.6% under 20-day high: no pivot cleared",
+    "H1": "ema9 93.1987 vs ema21 93.0587, 68% of range: flat, tangled"
+   }
+  },
+  {
+   "pair_id": "EW-wyckoff-for~minervini",
+   "ticker": "EW",
+   "claim_id": "EW-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "minervini",
+   "claim_text": "Shakeout under the value edge rejected on heavy volume; W HH/HL; U&R MET.",
+   "refute_evidence": "A shakeout at the base low is a valid feature (C16) only inside a template-qualified stage 2 base; the template fails first (R1): RS rank under 70 and the 50-day under the 100 on my served fields.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 3.15% under 20-wk high: not a template leader",
+    "D": "9>21, mixed, 2.6% under 20-day high: bounce off the base low, no pivot",
+    "H1": "9>21, mixed, 68% of day's range: no bearing"
+   }
+  },
+  {
+   "pair_id": "EW-minervini-against~livermore",
+   "ticker": "EW",
+   "claim_id": "EW-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "rs_rank_pct 63.57; averages flat and tangled; not a leader by rank.",
+   "refute_evidence": "Averages are not tangled on my read: W HH/HL 9>21 (EMA9 89.2131 over EMA21 87.8866), D 9>21. D 2.6% under 20-day high is a normal reaction (C8), not a broken trend.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 3.1% under 20-wk high: uptrend",
+    "D": "9>21, 2.6% under 20-day high: normal reaction",
+    "H1": "9>21 at 68% of range"
+   }
+  },
+  {
+   "pair_id": "EW-minervini-against~elder-lens",
+   "ticker": "EW",
+   "claim_id": "EW-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "rs_rank_pct 63.57; averages flat and tangled; not a leader by rank.",
+   "refute_evidence": "Not tangled on my frames: W ema9 89.2131 over ema21 87.8866 HH/HL, D ema9 91.3154 over ema21 89.5458. elder_5d [10,10,10,7,7] is a pullback held at 7, not red. RS unread.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL: tide up",
+    "D": "9>21, mixed; elder 7 holding after green faded",
+    "H1": "EMA9 93.1987 vs EMA21 93.0587: flat only hourly"
+   }
+  },
+  {
+   "pair_id": "EW-oneil-against~livermore",
+   "ticker": "EW",
+   "claim_id": "EW-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Not the group leader; coil and insti_money warn; flat stack.",
+   "refute_evidence": "Stack is ordered on every frame (W, D, H1 all 9>21) with W HH/HL. Coil and insti fields are not mine. The trend holds; I wait for its new high (C5).",
+   "refute_tf": {
+    "W": "HH/HL, 9>21: established",
+    "D": "9>21, 2.6% under 20-day high",
+    "H1": "9>21, 2.7% under 20-hr high"
+   }
+  },
+  {
+   "pair_id": "EW-oneil-against~raschke",
+   "ticker": "EW",
+   "claim_id": "EW-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Not the group leader; coil and insti_money warn; flat stack.",
+   "refute_evidence": "The stack is not flat on my grid: D ema9 91.3154 > ema21 89.5458, W ema9 89.2131 > ema21 87.8866 with W HH/HL. D dist_to_20bar_high_pct 2.6 is a shallow pullback in trend. Coil/insti_money not my vote.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 3.15% under 20-wk high: uptrend",
+    "D": "9>21, mixed, 2.6% under 20-day high: shallow pullback",
+    "H1": "above ema9 93.1987, 9>21, 68.0% of range"
+   }
+  },
+  {
+   "pair_id": "PFE-oneil-against~livermore",
+   "ticker": "PFE",
+   "claim_id": "PFE-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Bearish divergence at the high; not the group leader; coil warn.",
+   "refute_evidence": "Divergence is advisory only on my card, never a vote. Price: D HH/HL 9>21 1.2% under 20-day high, W 9>21 1.2% under 20-wk high 31.04: a trend at its high (C5).",
+   "refute_tf": {
+    "W": "9>21, 1.2% under 20-wk high: near the high",
+    "D": "HH/HL, 1.2% under 20-day high",
+    "H1": "9>21 at 60% of range"
+   }
+  },
+  {
+   "pair_id": "PFE-oneil-against~seow",
+   "ticker": "PFE",
+   "claim_id": "PFE-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Bearish divergence at the high; not the group leader; coil warn.",
+   "refute_evidence": "The divergence field is not on my menu; my COM proxy reads cmf 0.19 above zero, bullish (C28). Group lead and coil are not my tests. Break stands: BULLISH_BOS, ACCELERATION; wrong only on a close under pivot 30.44.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, mixed, 1.2% under 20-wk high: up",
+    "D": "above EMA9, 9>21, HH/HL: no failure of the break",
+    "H1": "above EMA9, 9>21, 60% of range: no red flip"
+   }
+  },
+  {
+   "pair_id": "TTEK-livermore-for~oneil",
+   "ticker": "TTEK",
+   "claim_id": "TTEK-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "structure 83.2, mp STRONG/ACCELERATING, W/D HH/HL near highs, sector Momentum Building.",
+   "refute_evidence": "The 20-wk high is not the 52-wk high: from_52w_hi -7.13, not a new high (C7). day_vol 1.16 under 1.40 (C16). Industrials rank 35 behind HAYW, UPS, VLTO (C9). mp is not mine.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.6% under 20-wk high, yet 7% off the 52-wk high",
+    "D": "9>21, HH/HL, 0.6% under 20-day high; no volume",
+    "H1": "9>21, mixed, 84% of range"
+   }
+  },
+  {
+   "pair_id": "TTEK-oneil-against~livermore",
+   "ticker": "TTEK",
+   "claim_id": "TTEK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Thin volume, off the high, not a group leader.",
+   "refute_evidence": "Not off the high on my frames: W HH/HL 0.6% under 20-wk high, D HH/HL 0.6% under 20-day high, H1 at 84% of range. Volume as fill difficulty is not served.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 0.6% under 20-wk high",
+    "D": "HH/HL, 0.6% under 20-day high",
+    "H1": "9>21 at 84% of range"
+   }
+  },
+  {
+   "pair_id": "TTEK-oneil-against~seow",
+   "ticker": "TTEK",
+   "claim_id": "TTEK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Thin volume, off the high, not a group leader.",
+   "refute_evidence": "My buy is the resistance break: ABOVE_STRUCTURE, ret_63d 12.96 beats index -2.49, rs_rank_pct 80.58. Off the 52-week high (-7.13%) is not a fault; group lead is not my test. TIF unread, stated.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 0.6% under 20-wk high: weekly up at highs",
+    "D": "above EMA9, 9>21, HH/HL, 0.6% under 20-day high: above resistance",
+    "H1": "above EMA9, 9>21, 84% of range: firm"
+   }
+  },
+  {
+   "pair_id": "SWK-livermore-for~oneil",
+   "ticker": "SWK",
+   "claim_id": "SWK-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "structure 86.3, mp STRONG/ACCELERATING, W/D at highs, sector Momentum Building.",
+   "refute_evidence": "New high (from_52w_hi 0.0) in a confirming group passes R9, but C16 fails: day_vol 1.35 under 1.40, and Industrials rank 57 is outside the top three (C9). mp is not mine.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.9% under 20-wk high: at the high",
+    "D": "9>21, HH/HL, 0.9% under 20-day high: new high on thin volume",
+    "H1": "9>21, mixed, 72% of range"
+   }
+  },
+  {
+   "pair_id": "SWK-oneil-against~livermore",
+   "ticker": "SWK",
+   "claim_id": "SWK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Thin volume, not a group leader, extended.",
+   "refute_evidence": "W HH/HL 0.9% under 20-wk high, D HH/HL 0.9% under 20-day high: at the high, not chased far above it (C5). Extension from the average is not distance from the high.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 0.9% under 20-wk high",
+    "D": "HH/HL, 0.9% under 20-day high",
+    "H1": "9>21 at 72% of range"
+   }
+  },
+  {
+   "pair_id": "GEN-seow-for~oneil",
+   "ticker": "GEN",
+   "claim_id": "GEN-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Top-decile rank, above resistance, ACCELERATION impulse.",
+   "refute_evidence": "Rank passes (No.1 Tech here, rs_rank_pct 92.88), but the move above resistance is on day_vol 1.22, under 1.40 (C16), with W 5.6% under the 20-wk high. lens coil '--': no base read.",
+   "refute_tf": {
+    "W": "9>21, mixed, 5.6% under 20-wk high: not a new high",
+    "D": "9>21, HH/HL, 2.6% under 20-day high; thin volume",
+    "H1": "9>21, mixed, 53% of range"
+   }
+  },
+  {
+   "pair_id": "GEN-oneil-against~seow",
+   "ticker": "GEN",
+   "claim_id": "GEN-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Thin volume, no coil read, off the high.",
+   "refute_evidence": "Coil and 52-week distance are not my buy test. R13 fires ABOVE_STRUCTURE, TIF proxy ACCELERATION, rs_rank_pct 92.88, ret_63d 5.73 beats index -2.49.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, mixed, 5.6% under 20-wk high: up",
+    "D": "above EMA9, 9>21, HH/HL, 2.6% under 20-day high: above resistance",
+    "H1": "above EMA9, 53% of range: mid"
+   }
+  },
+  {
+   "pair_id": "GEN-oneil-against~raschke",
+   "ticker": "GEN",
+   "claim_id": "GEN-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Thin volume, no coil read, off the high.",
+   "refute_evidence": "Off the high on thin volume is the quiet first pullback my retracement family buys, not a failure: D HH/HL 2.6% under the 20-day high, H1 above EMA9 9>21. Coil is a substitute read only (R4).",
+   "refute_tf": {
+    "W": "9>21, mixed, 5.6% under 20-wk high",
+    "D": "HH/HL, 2.6% under 20-day high: orderly pause",
+    "H1": "above EMA9, 9>21, 53% of range: holding"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 40,
+  "by_author": {
+   "wyckoff": 3,
+   "oneil": 21,
+   "livermore": 5,
+   "seow": 6,
+   "minervini": 4,
+   "raschke": 1
+  },
+  "by_refuter": {
+   "oneil": 8,
+   "livermore": 9,
+   "wyckoff": 4,
+   "seow": 7,
+   "raschke": 6,
+   "minervini": 4,
+   "elder-lens": 2
+  }
+ }
+}
