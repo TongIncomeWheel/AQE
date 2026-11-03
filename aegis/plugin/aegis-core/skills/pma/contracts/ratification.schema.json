@@ -19,6 +19,7 @@
     "properties": {
      "ticker": {"type": "string", "maxLength": 8},
      "answer": {"enum": ["AGREE", "AGREE_WITH_RESERVATION", "OBJECT"]},
+     "conviction": {"type": "integer", "minimum": 1, "maximum": 5, "x_note": "R42, REQUIRED from 2026-11-04: how strongly this decider holds the ticket, 1 (weakest) to 5 (strongest). The committee conviction is the median of the deciders' scores; a readout, never a gate."},
      "reservation": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on AGREE_WITH_RESERVATION"},
      "objection": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on OBJECT: the one thing wrong with the ticket as written"},
      "would_clear": {"type": ["string", "null"], "maxLength": 200, "x_note": "REQUIRED on OBJECT: the one thing that would clear the objection"}

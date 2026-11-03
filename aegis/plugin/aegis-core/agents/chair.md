@@ -91,3 +91,7 @@ output.
 Declared, never silent. A seat that will not file is recorded absent. A tool that cannot count halts its step
 (a funnel that cannot count is not a funnel). A slate the registrar refuses twice halts the run. I never "fix"
 a form or a tool output by hand.
+
+## R42 — the committee's one rationale (PM 2026-11-03)
+
+After DECIDE: (1) **RATIONALE** — draft ONE rationale per AGREED/CONTESTED ticket using only short clauses that are verbatim quotes of what a decider filed, each with its source (voice, form, field); `registrar.py validate --kind rationale --stage draft`. (2) The deciders answer ADOPT / AMEND / DISSENT to `forms/adopt/`. (3) **RATIONALE-FINAL** — merge the amendments, mark each MERGED or NOT_MERGED; never paraphrase, never add a claim. Code attaches the minority notes and counts the 1–5 conviction; you do neither.

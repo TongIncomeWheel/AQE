@@ -35,7 +35,7 @@ SLATE_CAP = 15
 # The fallback only: the step list is READ FROM RUN.yaml (_steps_from_run_yaml). R38 (2026-11-02): FLOOR is retired;
 # MTF, CLAIMS, CROSS, FUNNEL, PAIR, TIER2 and TIMING replace it.
 KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "PM-LENS", "RANK", "MTF", "CHALLENGE", "VOTE",
-               "CLAIMS", "CROSS", "FUNNEL", "PAIR", "TIER2", "TIMING", "SLATE", "RATIFY", "QA", "DECIDE", "CONDITIONS",
+               "CLAIMS", "CROSS", "FUNNEL", "PAIR", "TIER2", "TIMING", "SLATE", "RATIFY", "QA", "DECIDE", "RATIONALE", "ADOPT", "RATIONALE-FINAL", "POSITION", "CONDITIONS",
                "REPEAT-WATCH", "BRACKET", "SCORECARD", "WRITE", "CHECK", "LEVELS", "REPORT", "PUBLISH"]
 
 

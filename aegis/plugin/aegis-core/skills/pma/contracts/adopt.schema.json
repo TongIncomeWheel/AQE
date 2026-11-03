@@ -1,0 +1,51 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Adopt form -- one decider's answer on the Chair's draft rationale (R42)",
+ "x_version": "1.0.0",
+ "x_purpose": "Per ticket: ADOPT the draft as the committee's rationale, AMEND (text to add), or DISSENT (own words). Unanswered is listed as no answer, never counted as ADOPT.",
+ "type": "object",
+ "required": [
+  "voice",
+  "date",
+  "tickets"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "voice": {
+   "type": "string"
+  },
+  "date": {
+   "type": "string"
+  },
+  "tickets": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "ticker",
+     "answer"
+    ],
+    "properties": {
+     "ticker": {
+      "type": "string"
+     },
+     "answer": {
+      "enum": [
+       "ADOPT",
+       "AMEND",
+       "DISSENT"
+      ]
+     },
+     "text": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "maxLength": 400,
+      "x_note": "REQUIRED on AMEND and DISSENT"
+     }
+    }
+   }
+  }
+ }
+}

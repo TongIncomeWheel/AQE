@@ -906,3 +906,21 @@ rulings:
       removed), not on a card, hold row or pass row, not on the slate, not in pma_levels.json. Selection is the seats' own
       judgment on their own methods.
     check: tests.test_valen_flags_leave_ticket_selection
+
+  - id: R42
+    title: The committee speaks as one body - a 1-5 conviction and ONE deliberated rationale
+    status: active
+    date: 2026-11-04
+    binds_at: [RATIFY, RATIONALE, ADOPT, POSITION, REPORT]
+    pm_words: >
+      Relayed by the conductor (2026-11-03): committee conviction 1-5 per slated ticket, and one committee rationale the
+      deciders have deliberated, not seven separate reasons on the card.
+    rule: >
+      Each decider adds a 1-5 conviction (5 = best) to its ratification. Code counts the committee conviction as the median
+      of the filed scores, ties to the lower, with a quorum of 4; a missing score is a gap, never filled in. The Chair drafts
+      the rationale ONLY as verbatim-quoted, sourced clauses from what deciders filed (machine-verified against the filed
+      forms). Each decider answers ADOPT / AMEND / DISSENT; the Chair merges and marks every amendment MERGED or NOT_MERGED;
+      code attaches the minority notes (every DISSENT, every unmerged AMEND) verbatim. Cards print: Committee: Conviction n/5.
+      Why. What would change it. Minority note. The earlier R34 `conviction` figure is renamed `ordering_score` (the old name
+      stays as a deprecated alias). The conviction is a readout, never a gate on a verdict and never sizing.
+    check: tests.test_committee_position_counts_the_median_and_never_invents_a_rationale
