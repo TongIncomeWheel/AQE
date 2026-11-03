@@ -320,8 +320,9 @@ COURIER_COST = "the courier fallback costs about 1.5M metered tokens (3 Nov 2026
 def check_committee_data(output_dir, run_date, export=None):
     """THE COMMITTEE'S FMP INPUTS (PM 2026-11-03: fetching is code, not a model). Written by the daily AQE run
     (src/pipeline/committee_data.py) to <output>/committee_data/. Missing, stale, FAILED or inconsistent = FAIL
-    (the PMA would need the courier fallback; do not start it unattended). A thin-but-honest PARTIAL = WARN that
-    names what is missing (the seats see those names as declared gaps)."""
+    (the PMA would need the courier fallback; do not start it unattended). ONE coverage rule: any file under 95% served
+    (manifest PARTIAL: many names unserved, e.g. the time budget ran out) = FAIL, stop and page; at or above 95% the
+    per-name gaps are a WARN that names them and the seats see them as declared gaps (the run proceeds)."""
     import hashlib
     fails, notes = [], []
     d = os.path.join(output_dir, "committee_data")
@@ -380,13 +381,17 @@ def check_committee_data(output_dir, run_date, export=None):
     if fails:
         return fails, notes
     gc, fc = G["coverage"], F["coverage"]
-    if M.get("status") == "PARTIAL" or M.get("quota_hit") or M.get("time_budget_exhausted"):
+    if M.get("status") == "PARTIAL":
         why = ", ".join(x for x, on in (("FMP refused the key", M.get("quota_hit")), ("time budget exhausted", M.get("time_budget_exhausted"))) if on)
-        notes.append(f"WARN committee data is PARTIAL{' (' + why + ')' if why else ''}: mtf {gc['complete']}/{gc['requested']} complete "
-                     f"(not served: {gc['not_served_names'][:8]}), fundamentals {fc['served']}/{fc['requested']} "
-                     f"(unserved: {fc['unserved_names'][:8]}, partial: {fc['partial_names'][:8]}), closes missing: {C['_missing'][:8]} "
-                     f"-- those names reach the seats as declared gaps")
-    elif gc["not_served_names"] or fc["unserved_names"] or fc["partial_names"] or C["_missing"]:
+        thin = [f"{n} {e['served']}/{e['served'] + e['unserved']}" for n, e in files.items() if (e["served"] + e["unserved"]) and e["served"] / (e["served"] + e["unserved"]) < 0.95]
+        fails.append(f"committee data is PARTIAL{' (' + why + ')' if why else ''}: under 95% served on {', '.join(thin)} "
+                     f"(mtf not served: {gc['not_served_names'][:8]}; fundamentals unserved: {fc['unserved_names'][:8]}) -- "
+                     f"stop and page the PM with two replies: 'couriers' ({COURIER_COST}) or 'skip' (run with those names as declared gaps)")
+        return fails, notes
+    if M.get("quota_hit") or M.get("time_budget_exhausted"):
+        why = ", ".join(x for x, on in (("FMP refused the key", M.get("quota_hit")), ("time budget exhausted", M.get("time_budget_exhausted"))) if on)
+        notes.append(f"WARN committee data fetch hit a limit ({why}) but every file is still at or above 95% served")
+    if gc["not_served_names"] or fc["unserved_names"] or fc["partial_names"] or C["_missing"]:
         notes.append(f"WARN committee data gaps (declared): mtf not served {gc['not_served_names'][:8]}, fundamentals unserved "
                      f"{fc['unserved_names'][:8]} / partial {fc['partial_names'][:8]}, closes missing {C['_missing'][:8]}")
     for e in (M.get("errors") or [])[:3]:

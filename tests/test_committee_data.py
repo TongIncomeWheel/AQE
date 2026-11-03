@@ -222,7 +222,7 @@ def test_no_hourly_bars_at_all_leaves_a_labelled_gap_and_a_partial_run():
     g = json.loads(r["files"]["mtf_grid.json"])["names"]["MP"]
     assert g["served"] is True and g["complete"] is False and g["gaps"] == ["H1"]
     assert g["fetch"]["hourly"]["source"] == "none" and "down" in g["fetch"]["hourly"]["error"]
-    assert r["manifest"]["status"] == "PARTIAL"                # 0 of 3 complete is below 90%, loudly
+    assert r["manifest"]["status"] == "PARTIAL"                # 0 of 3 complete is below 95%, loudly
     assert r["manifest"]["errors_total"] > 0
 
 
@@ -419,7 +419,16 @@ def test_the_gate_fails_when_the_set_belongs_to_another_export_or_the_closes_are
     assert any("SPY ends" in x and "stale closes" in x for x in f), f
 
 
-def test_a_partial_set_is_a_named_warning_not_a_silent_pass_and_not_a_block(tmp_path):
+def test_one_coverage_rule_under_95_percent_is_partial_and_check_fails_it_at_or_above_proceeds(tmp_path):
+    """ONE rule (conductor + engineering, 2026-11-03): any file under 95% served = manifest PARTIAL = check.py FAIL
+    (stop and page: 'couriers' / 'skip'); at or above 95% per-name gaps are a WARN and the run proceeds."""
+    def files(served, unserved):
+        e = {"served": served, "unserved": unserved}
+        return {n: dict(e) for n in cd.FILES}
+    assert cd.status_of(files(347, 4)) == "OK"            # the 3 Nov proof run: 347/351 = 98.9%
+    assert cd.status_of(files(95, 5)) == "OK"             # exactly 95%
+    assert cd.status_of(files(94, 6)) == "PARTIAL"
+    assert cd.status_of({}) == "FAILED"
     C = _check()
     routes = all_routes()
     for t in ("MP", "AAA", "V"):
@@ -427,12 +436,11 @@ def test_a_partial_set_is_a_named_warning_not_a_silent_pass_and_not_a_block(tmp_
         routes[("historical-chart/15min", t)] = []
     routes[("income-statement-growth", "V")] = []
     r = run(FakeClient(routes))
+    assert r["manifest"]["status"] == "PARTIAL"
     cd.write_local(r, tmp_path / "p" / "committee_data")
     f, n = C.check_committee_data(str(tmp_path / "p"), RUN_DATE, EXPORT)
-    assert f == [], f
-    warn = [x for x in n if x.startswith("WARN committee data is PARTIAL")]
-    assert warn and "mtf 0/3 complete" in warn[0] and "partial: ['V']" in warn[0] and "declared gaps" in warn[0], n
-    assert any("WARN committee data error" in x for x in n)
+    assert len(f) == 1 and "committee data is PARTIAL" in f[0] and "under 95% served" in f[0], f
+    assert "'couriers'" in f[0] and "'skip'" in f[0], f
 
 
 def test_check_data_includes_the_committee_data_gate(tmp_path):

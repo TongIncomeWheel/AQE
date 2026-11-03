@@ -57,7 +57,7 @@ MANIFEST = "manifest.json"
 MANIFEST_SCHEMA = "committee_data_manifest.v1"
 
 FUND_MAX_AGE_DAYS = 5          # a fully served entry younger than this is carried, with its own date
-MIN_COVERAGE = 0.90            # per file: below this the run is PARTIAL (and check.py FAILs it)
+MIN_COVERAGE = 0.95            # ONE rule (conductor + engineering 2026-11-03): any file under 95% served = PARTIAL = check.py FAILs (stop and page); at or above it, per-name gaps are declared and the run proceeds
 TIME_BUDGET_S = 900            # stop fetching after this; the rest are declared, not dropped quietly
 HOURLY_LOOKBACK_DAYS = 45      # ~30 sessions of 1-hour bars (7 per session)
 DAILY_SESSIONS = 300           # for the weekly bars
@@ -401,8 +401,8 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
             "closes_scorecard.json": _file_entry("closes_scorecard.json", bodies["closes_scorecard.json"], "closes_scorecard.v1",
                                                  n_closes + len(closes["_missing"]), n_closes, len(closes["_missing"]), run_date)}
         status = status_of(files)
-        if status == "OK" and (f.quota_hit or f.exhausted()):
-            status = "PARTIAL"          # a refused key or an exhausted budget is never a clean run, whatever the counts
+        # A refused key or an exhausted budget is NOT a status of its own: it shows up as unserved names. The status is
+        # the coverage test alone (under 95% on any file = PARTIAL); the two flags ride in the manifest and the WARN line.
         manifest = {"schema": MANIFEST_SCHEMA, "run_date": run_date, "status": status,
                     "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                     "scope": {"requested": len(tickers), "from": "export daily_list + held_positions"},

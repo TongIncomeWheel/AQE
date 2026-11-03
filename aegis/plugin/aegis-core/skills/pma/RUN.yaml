@@ -140,9 +140,12 @@ steps:
       the MTF step reads by path. data_health.json <- the data-steward's one-page note (agents/data-steward.md step 3),
       which now quotes the manifest's status and counts. The tick refuses on any missing file.
       COURIER FALLBACK, loud and declared: ONLY if `check.py data` FAILs on committee_data (manifest missing, stale,
-      FAILED, sha mismatch). That is about 1.5M metered tokens (3 Nov: 46% of the run), so it is the PM's call, not
-      the conductor's: stop and page, or proceed on the PM's word and write `committee_data_fallback` to the manifest
-      degradations. Never fall back because a few names are unserved - a PARTIAL set reaches the seats as declared gaps.
+      FAILED, sha mismatch) OR the manifest is PARTIAL. ONE coverage rule: any file under 95% served is PARTIAL and
+      `check.py data` FAILs it; at or above 95% the per-name gaps are a WARN that names them, and the run PROCEEDS with
+      those names as declared gaps (3 Nov proof run: fundamentals 347/351 = OK). The courier fallback is about 1.5M
+      metered tokens (3 Nov: 46% of the run), so it is the PM's call, not the conductor's: STOP AND PAGE with two replies,
+      'couriers' (run the fallback and write `committee_data_fallback` to the manifest degradations) or 'skip' (proceed
+      with the unserved names as declared gaps). FAILED / missing / stale / torn are the same stop-and-page.
     source: "TongIncomeWheel/AQE@main aegis/output/"
     barrier: "aqe_daily_export.json present and parses"
     on_fail: "FATAL - halt and page the PM. No export, no run."
