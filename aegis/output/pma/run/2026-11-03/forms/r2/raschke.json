@@ -1,0 +1,1557 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-03",
+ "round": 2,
+ "declarations": [
+  "Setup type (C2) named in every reason. adx: NOT_SERVED to my method - a packet adx figure is off my menu and unread (C7, C8). stochastic_kd: NOT_SERVED (C6). bar_range_history: NOT_SERVED (C12, C13). market_breadth: OUT_OF_SERVED_SCOPE (C16).",
+  "n_day_extreme: the MTF daily row 'under 20-day high' (proximity only; bars since the prior extreme not served, C3). Long-vs-short trend (C6): MTF weekly/daily EMA9 vs EMA21, a declared substitute for the %D slope.",
+  "Steenbarger BOS UNPROVEN: accepted. My R1 4s (FE, ETR) leaned on BULLISH_BOS; it now names shape only, never edge, and no SUPPORT of mine exceeds 3. ABOVE_STRUCTURE is undefined in my glossary and carries no weight.",
+  "Steenbarger CROWDING (R10): Utilities are one rate bet - my order FE, ETR, EVRG, then EXC and SO lowest; I oppose CMS and PEG. Staples are one factor - my order COST, MDLZ, USFD, CHD, KO; the room should carry few of each.",
+  "C6 applied: weekly 9<21 with price at or under ma200 = a short move against the longer trend, OPPOSE. Extension is a weight (R27); OPPOSEs on extended names rest on DECELERATING plus H1 LH/LL or a weekly conflict (C11, C19, R9).",
+  "House rule R1: bracket fields stated as information and invalidation only, never a basis. No ledger memory block injected; no standing lesson applies. Market weather read as context only; horizons kept short (C18).",
+  "Held: V KEEP (SUPPORT 3), MP EXIT-CASE (OPPOSE 4). House rule R1: bracket fields stated as information only, never a basis. No ledger memory injected. Market weather read as context only; horizons kept short (C18)."
+ ],
+ "votes": [
+  {
+   "ticker": "FE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT over the long averages (C2/C12): structure 84.2 BULLISH_BOS, sma_dist 4.79%, D 0.2% under 20-day high, H1 92% of the day's range, day_vol 1.26. Weekly 9<21: a base turning, not a Holy Grail. Structural stop close at ma100 46.67 (C17, C20).",
+   "conviction_change": "Down from 4: weekly 9<21 and ma50 45.45 < ma100 46.67 < ma200 47.52 mean no established uptrend to retrace in (C6, C7); my R1 4 leaned on BOS, which is shape, not edge.",
+   "falsifier": "Daily close under ma_100, or BEARISH_CHOCH.",
+   "challenge_reply": "HTF: weekly 9<21 HH/HL, 5.6% under 20-wk high; entry 47.63 just over ma200 47.52 - a base turning, not an uptrend. Yes, my 4 traced to BOS; it is now shape only and I cut to 3. Utilities: FE ranks first of mine.",
+   "case": {
+    "for": "Fresh break with a strong close and the invalidation close by at ma100 46.67: the low-risk family (C20).",
+    "against": "Weekly 9<21 runs against it (C6); mp STRONG/DECELERATING; one of six correlated utilities.",
+    "entry_trigger": "h1_close_above:bar_high, day-only; stand aside if it opens off-plan (C22).",
+    "wrong_if": "Close under ma_100 or BEARISH_CHOCH; no profit within a few bars (C11).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 crossing over 21 lifts me; a close back under ma_200 ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_100",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail precondition, no pullback yet (C7): weekly and daily 9>21 HH/HL, D 0.9% under 20-day high, mp STRONG/ACCELERATING, day_vol 2.08; but sma_dist 17.41% is no entry for my method. I buy only the first pullback to the 20-day.",
+   "challenge_reply": "ABOVE_STRUCTURE is undefined in my glossary and carries no weight; this vote rests on sma_dist 17.41% and the MTF rows.",
+   "case": {
+    "for": "All frames aligned up near fresh 20-day highs: the strong-trend half of the Holy Grail (C7).",
+    "against": "sma_dist 17.41%: no test, retracement or contraction at this price (C18); house EP setup FAILED.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me; a range-expansion spike is a C19 sell.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT with the trend aligned (C2/C12): structure 86.3 BULLISH_BOS, weekly 9>21 HH/HL 0.7% under 20-wk high, D 0.7% under 20-day high, H1 96% of the day's range, day_vol 1.34. sma_dist 10.96% extended, so short horizon (C18).",
+   "challenge_reply": "BOS is shape, not edge, here; the aligned weekly/daily rows and top-of-range close carry it. Staples: CHD is fourth in my Staples order; the room should carry few.",
+   "case": {
+    "for": "Weekly and daily aligned, fresh break, close at the high: the short trend resolving with the long (C6).",
+    "against": "sma_dist 10.96% extended; mp STRONG/FLAT; Staples crowding; BOS edge unmeasured.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high (failed break) or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back inside the old range in the first bars (C11).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "MDLZ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST held, then BREAKOUT (C2/C20): house U&R MET (dipped under the rising trendline, closed back), structure 86.3 BULLISH_BOS, weekly 9>21, D HH/HL 0.2% under 20-day high, H1 93% of the day's range, mp STRONG/ACCELERATING. div BEARISH/1 advisory only.",
+   "challenge_reply": "The observable that shows the break failing: a daily close back under pivot_high, or BEARISH_CHOCH. div BEARISH/1 is one of five, advisory. Staples: MDLZ is second in my order.",
+   "case": {
+    "for": "Support tested and held, then a fresh break: the double-stop location (C20), short trend with the long (C6).",
+    "against": "div BEARISH/1; Staples crowding; BOS edge unmeasured; the swing low is mine to name.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or back under pivot_high.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "div_bear_count rising with a close back under pivot_high.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT over the long averages, not a Holy Grail (C2/C6): structure 84.2 BULLISH_BOS, sma_dist 5.16%, day_vol 1.72, but weekly 9<21 6.0% under 20-wk high and H1 only 43% of the day's range: a mid-range close on a break.",
+   "conviction_change": "Down from 4: weekly 9<21 and ma50 104.48 under ma100 107.95 and ma200 107.59 leave no uptrend to retrace in (C7); the R1 4 leaned on BOS; H1 43% is not a strong close (C11).",
+   "falsifier": "Close under ma_100, or BEARISH_CHOCH.",
+   "challenge_reply": "A pullback inside which uptrend? None on the weekly: 9<21, 6.0% under 20-wk high. Entry 109.87 over ma100 107.95 and ma200 107.59 is a base turning. Reclassified as a breakout, cut to 2. Utilities: second to FE.",
+   "case": {
+    "for": "Fresh break on day_vol 1.72 with price above all long averages; weekly HH/HL.",
+    "against": "Weekly 9<21 (C6); H1 43% mid-range close; mp STRONG/DECELERATING; correlated utility.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under ma_100 or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A strong-close follow-through day lifts me; a close under ma_200 ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_100",
+     "choch_bearish"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "COST",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT with the trend aligned (C2/C12): structure 86.3 BULLISH_BOS, weekly 9>21 0.2% under 20-wk high, D HH/HL 0.2% under 20-day high, H1 93% of the day's range, day_vol 1.44. Swing-low stop 1017.94 (C17). sma_dist 10.09%: short horizon.",
+   "challenge_reply": "Which longer trend: the weekly, 9>21 at 0.2% under its 20-wk high. ma50 945.16 / ma100 946.69 / ma200 971.33 lag the recovery; entry 1040.55 is above all three. Short trend with the long (C6). Staples: first in my order.",
+   "case": {
+    "for": "Weekly and daily aligned at fresh highs, strong close, structural swing-low stop close by (C17, C20).",
+    "against": "sma_dist 10.09% extended; mp STRONG/DECELERATING; Staples crowding; BOS edge unmeasured.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A failed break back into the range in the first bars (C11).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST then BREAKOUT (C2/C20): house U&R MET (dipped under the rising trendline, closed back above), structure 65.3 BULLISH_BOS, D HH/HL 0.3% under 20-day high, H1 89% of the day's range, day_vol 1.89, mp BUILDING/ACCELERATING; weekly 9>21.",
+   "challenge_reply": "BOS is shape only; the held test carries the 3. Staples: third in my order (COST, MDLZ, USFD).",
+   "case": {
+    "for": "Support tested and held, then a fresh break on day_vol 1.89: double-stop location (C20), weekly aligned (C6).",
+    "against": "structure 65.3 is a weaker base; weekly 5.0% under its 20-wk high; Staples crowding.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under bar_low voids the test.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong trend, no setup at this price (C7): weekly and daily 9>21, D 1.7% under 20-day high, mp STRONG/ACCELERATING, day_vol 2.18; sma_dist 15.29% is extension, so I buy only the first pullback to the 20-day.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight with me; the read is sma_dist 15.29% and the MTF rows.",
+   "case": {
+    "for": "Aligned frames near fresh highs on heavy participation: the strong-trend half of the Holy Grail.",
+    "against": "sma_dist 15.29%: no test, retracement or contraction here (C18).",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong trend, extended (C7): weekly 9>21, D HH/HL 0.5% under 20-day high, mp STRONG/ACCELERATING, sma_dist 11.87%; H1 LH/LL inside the day. First-pullback entry only. Overlap with held V flagged to the PM (R10).",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is sma_dist 11.87% and the MTF rows.",
+   "case": {
+    "for": "Aligned up near fresh highs: the strong-trend half of C7.",
+    "against": "sma_dist 11.87%; H1 LH/LL; house EP FAILED; same exposure as held V (R10).",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "PFE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT, trend aligned (C2/C12): structure 74.7 BULLISH_BOS, weekly and daily 9>21, D HH/HL 1.2% under 20-day high, day_vol 1.66, mp STRONG/ACCELERATING; H1 60% of the day's range is a middling close and div BEARISH/2 is a caution (advisory).",
+   "challenge_reply": "BOS is shape only; my 2 reflects the middling close and div BEARISH/2.",
+   "case": {
+    "for": "Fresh break, aligned frames, participation day_vol 1.66.",
+    "against": "H1 60% close; div BEARISH/2; BOS edge unmeasured.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A strong-close follow-through lifts me; div_bear_count rising ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "PYPL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT from contraction (C2/C12): lens coil strong, structure 65.3 BULLISH_BOS, D 0.4% under 20-day high, H1 87% of the day's range, day_vol 1.26, mp BUILDING/ACCELERATING; house U&R MET. NR4/NR7 not countable (R5).",
+   "challenge_reply": "BOS is shape; the coil (lens coil strong) and the held test (U&R MET) carry the 3.",
+   "case": {
+    "for": "Contraction resolving up, the Crabel family (C12), after a test that held (C20).",
+    "against": "structure 65.3 weaker base; weekly 6.3% under its 20-wk high; contraction is a proxy only.",
+    "entry_trigger": "h1_close_above:bar_high; the opposite side voids it (C23).",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under bar_low: the break failed.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "UPS",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Strong daily thrust, weekly not aligned (C6): D HH/HL 0.4% under 20-day high, mp STRONG/ACCELERATING, but weekly 9<21 7.4% under 20-wk high and sma_dist 10.42%. No test or retracement at this price; first pullback only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is the MTF rows and sma_dist 10.42%.",
+   "case": {
+    "for": "Daily momentum strong and price above ma200 104.59: the longer trend may be turning.",
+    "against": "Weekly 9<21 (C6); ma50 99.36 under ma100 103.88 and ma200 104.59; house EP FAILED.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 crossing over 21 lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "EXC",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Weekly not aligned, no fresh break (C6): weekly 9<21 4.3% under 20-wk high, sma_dist 8.26%, D 1.4% under 20-day high, day_vol 1.51, mp STRONG/DECELERATING. Price over ma200 45.62 gives a test level (C20); I buy only a test of it that holds.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight. Utilities: EXC is low in my order; the six are one rate bet (R10).",
+   "case": {
+    "for": "Price above ma200 45.62 with participation day_vol 1.51; a test of the 200 would be a double-stop entry.",
+    "against": "Weekly 9<21 (C6); ma50 42.91 under ma100 44.56 and ma200 45.62; correlated utility.",
+    "entry_trigger": "Wait for ma_200; reclaim:ma_200.",
+    "wrong_if": "Close under ma_200 less half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 crossing over 21 lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_200"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Strong aligned trend, range-expansion extension (C7, C19): weekly and daily 9>21, D HH/HL 0.9% under 20-day high, mp STRONG/ACCELERATING, day_vol 2.07, sma_dist 21.11%; H1 LH/LL inside the day. First pullback to the 20-day only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is sma_dist 21.11% and the MTF rows.",
+   "case": {
+    "for": "Trend and participation are real; aligned frames.",
+    "against": "sma_dist 21.11% is where C19 locks profit, not where it buys; H1 LH/LL.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong aligned trend, extended (C7): weekly and daily 9>21 HH/HL, D 0.9% under 20-day high, day_vol 1.79, mp STRONG/DECELERATING, sma_dist 12.15%. First pullback to the 20-day only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is sma_dist 12.15% and the MTF rows.",
+   "case": {
+    "for": "Aligned frames near fresh highs on day_vol 1.79.",
+    "against": "sma_dist 12.15%: no test, retracement or contraction here; mp STRONG/DECELERATING.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong aligned trend at the high (C7): weekly 9>21 HH/HL 0.3% under 20-wk high, H1 HH/HL 99% of the day's range, day_vol 2.21, mp STRONG/ACCELERATING; sma_dist 13.16% extended, so first pullback only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight. Staples: KDP sits behind my BOS Staples names; beverage overlap with KO, CCEP is one factor (R10).",
+   "case": {
+    "for": "Aligned frames, close at the high on heavy participation.",
+    "against": "sma_dist 13.16%: no entry family at this price; Staples crowding.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT resolving inside an aligned weekly (C2/C7): weekly 9>21 HH/HL 2.3% under 20-wk high, D 0.2% under 20-day high, H1 88% of the day's range, sma_dist 6.34%, mp STRONG/DECELERATING. No fresh break.",
+   "challenge_reply": "HTF: unlike FE/ETR its weekly is 9>21 HH/HL; entry 86.55 is over ma100 83.04 and ma200 82.11. ABOVE_STRUCTURE carries no weight. Utilities: one rate bet; EVRG is third in my order.",
+   "case": {
+    "for": "Weekly aligned, pullback resolved back to the 20-day high, strong close.",
+    "against": "No fresh break; mp STRONG/DECELERATING; correlated utility.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under ma_100 ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Possible 80-20 buy setup (C4): structure 66.3 RANGE, H1 closed at 6% of the day's range on day_vol 2.03 after D HH/HL, weekly 9>21. Trigger is a trade under yesterday's low that reclaims it, managed as a day trade. The open-in-top-20% leg is not served.",
+   "case": {
+    "for": "Weekly and daily up, lens coil strong; a heavy-volume low close is the exhaustion bar C4 fades.",
+    "against": "A low close on day_vol 2.03 can be distribution; open position not served; RANGE, no break.",
+    "entry_trigger": "reclaim:bar_low, day-only (C4).",
+    "wrong_if": "Close under bar_low after the trigger.",
+    "horizon_sessions": 2,
+    "would_change_my_mind": "A gap down with no reclaim inside the session: stand aside (C22).",
+    "cannot_see": [
+     "open position in day range",
+     "stochastic",
+     "bar ranges",
+     "adx (off menu)"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "reclaim:bar_low"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT with the trend aligned (C2/C12): structure 83.2 BULLISH_BOS, weekly 9>21 0.5% under 20-wk high, D HH/HL 0.5% under 20-day high, H1 81% of the day's range, day_vol 1.26, mp STRONG/ACCELERATING; sma_dist 7.0%.",
+   "challenge_reply": "BOS is shape; the aligned frames carry it. Staples/beverage overlap with KDP and CCEP is one factor; KO is last in my Staples order.",
+   "case": {
+    "for": "Fresh break with weekly and daily aligned (C6) and a good close.",
+    "against": "Staples and beverage crowding; BOS edge unmeasured; no structural swing low served, mine is bar_low.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back inside the old range in the first bars (C11).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "First pullback, test held (C2/C7/C20): weekly 9>21 HH/HL, D 2.6% under 20-day high, house U&R MET (dipped under the 9-day average, closed back above) on day_vol 3.32, mp STRONG/ACCELERATING, sma_dist 5.72%.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is the held test and the MTF rows.",
+   "case": {
+    "for": "Shallow pullback in an aligned trend that tested and held on heavy volume: Holy Grail shape (C7), double-stop location (C20).",
+    "against": "day_vol 3.32 may be a one-bar reaction; two lenses warn; ADX gate unreadable.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the 9-day average after the trigger.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "VRTX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Pullback forming in an aligned trend (C7): weekly 9>21 HH/HL, D 2.7% under 20-day high, H1 below EMA9 at 40% of the day's range, day_vol 2.16, mp BUILDING/ACCELERATING, sma_dist 5.7%. Buy the turn back up, not the dip itself.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is the MTF rows and sma_dist 5.7%.",
+   "case": {
+    "for": "Aligned weekly, a shallow pullback toward the 20-day: the Holy Grail shape (C7).",
+    "against": "H1 below EMA9, the turn is not in yet; ma20 517.05 under ma50 523.32.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under ma_20 or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A hold at ma_20 with a turn up lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an aligned trend (C7): weekly and daily 9>21, D 3.3% under 20-day high, house U&R MET (dipped under the 9-day average, closed back above), day_vol 1.67, sma_dist 7.11%; H1 9<21 at 32% of the day's range, so the turn is not in.",
+   "case": {
+    "for": "Retracement in an aligned trend that tested the 9-day and held (C7, C20).",
+    "against": "H1 9<21 and a low close; structure 63.2 RANGE; ADX gate unreadable.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under ma_20 less half an ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A hold at ma_20 with a strong close lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT, trend aligned (C2/C12): structure 96.8 BULLISH_BOS, rank 1, weekly 9>21 5.7% under 20-wk high, D 0.9% under 20-day high, H1 84% of the day's range, day_vol 1.23, mp STRONG/DECELERATING. sma_dist 12.37% extended: short horizon (C18).",
+   "challenge_reply": "BOS is shape only; the 3 rests on the aligned frames and price above ma20 41.04 through ma200 38.95.",
+   "case": {
+    "for": "Strongest structure in the room breaking out with weekly and daily aligned (C6).",
+    "against": "sma_dist 12.37% extended; mp STRONG/DECELERATING; BOS edge unmeasured.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A failed break back into the range in the first bars (C11).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong aligned trend, extended (C7): weekly and daily 9>21 HH/HL 0.6% under 20-day high, H1 87% of the day's range, day_vol 1.36, mp STRONG/ACCELERATING, sma_dist 13.67%. First pullback to the 20-day only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the read is sma_dist 13.67% and the MTF rows.",
+   "case": {
+    "for": "All frames aligned near fresh highs: the strong-trend half of C7.",
+    "against": "sma_dist 13.67%: no test, retracement or contraction at this price (C18).",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong aligned trend, extended (C7): weekly 9>21 HH/HL 0.7% under 20-wk high, D HH/HL, H1 66% of the day's range, day_vol 1.42, mp STRONG/ACCELERATING, sma_dist 15.39%. First pullback only.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight; the weekly row, not the lagging ma50 57.92 / ma200 58.75, gives the trend.",
+   "case": {
+    "for": "Weekly and daily aligned near fresh highs.",
+    "against": "sma_dist 15.39% extension; house EP FAILED; ma50 57.92 under ma100 59.5.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "STAG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Short trend against the longer one (C6): weekly 9<21 12.0% under 20-wk high; entry 37.49 sits under ma100 37.71 and ma200 37.88, so the BULLISH_BOS breaks into overhead averages. The Anti principle says the short move resolves with the longer trend. I withdraw my R1 read.",
+   "conviction_change": "From SUPPORT 3 to OPPOSE 2: the weekly row and overhead ma100 37.71 / ma200 37.88 show the break runs against the longer trend (C6); my R1 test read leaned on BOS near the average.",
+   "opposing_case": "Fresh BULLISH_BOS, D HH/HL 0.1% under 20-day high, H1 88% of the day's range, day_vol 1.32, mp BUILDING/ACCELERATING; invalidation sits close at sma_dist 2.02%, a double-stop location (C20).",
+   "falsifier": "A daily close that holds above ma_200 with weekly 9 turning up.",
+   "challenge_reply": "Higher timeframe is against it: weekly 9<21, 12.0% under 20-wk high, ma50 36.75 < ma100 37.71 < ma200 37.88 with price under the last two. I move from SUPPORT to OPPOSE.",
+   "case": {
+    "for": "Fresh break with a strong close and close invalidation (C20).",
+    "against": "Weekly 9<21 and price under ma100 and ma200: the short move runs into the longer downtrend (C6).",
+    "entry_trigger": "A close above ma_200 with weekly 9 over 21 would let me support.",
+    "wrong_if": "A close that holds above ma_200.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Close above ma_200 holding, weekly 9 over 21.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "PK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Range contraction near the high (C12 proxy): structure 74.7 RANGE, day_vol 0.83 quiet, D 1.8% under 20-day high, weekly and daily 9>21, mp STRONG/ACCELERATING. Buy the break of the setup bar; the other side voids it (C23). NR4/NR7 not countable (R5).",
+   "case": {
+    "for": "Quiet bar near highs in an aligned trend: the contraction that precedes a trend day (C12, C13).",
+    "against": "Contraction proxied by day_vol only; H1 36% of the day's range; RANGE, no break yet.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low (failed side, C23).",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A break on a wide bar that fails back inside the range.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "FA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Range contraction near the high (C12 proxy): structure 82.1 RANGE, day_vol 0.83, D HH/HL 1.5% under 20-day high, weekly 9>21 HH/HL 12.3% under 20-wk high, mp STRONG/ACCELERATING; H1 LH/LL at 57%. Buy the setup-bar break only (C23).",
+   "case": {
+    "for": "Quiet bar near the 20-day high in an aligned trend (C12).",
+    "against": "Weekly still 12.3% under its high; H1 LH/LL; contraction proxied only.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low (failed side, C23).",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A break that fails back inside the range.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT over the 200-day (C2/C20): structure 74.7 BULLISH_BOS, entry 73.63 over ma200 71.92, D HH/HL 0.8% under 20-day high, day_vol 1.36, mp STRONG/ACCELERATING; weekly 9<21 HH/HL 3.4% under 20-wk high, so the longer trend is only turning (C6). Stop ma200 71.92.",
+   "challenge_reply": "BOS is shape only; weekly 9<21 caps me at 2.",
+   "case": {
+    "for": "Break over the 200-day with the invalidation level close by (C20).",
+    "against": "Weekly 9<21 (C6); H1 LH/LL inside the day; ma50 67.64 under ma100 68.4.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under ma_200.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 over 21 lifts me; a close under ma_200 ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_200"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "CCEP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of rising support in an aligned trend (C2/C20): structure 86.3 BULLISH_BOS, weekly 9>21 0.4% under 20-wk high, D HH/HL; house U&R SETUP - closed 1.2% under the rising trendline, reclaim day next. mp STRONG/DECELERATING. Buy only the reclaim.",
+   "challenge_reply": "BOS is shape only; Staples/beverage overlap with KO and KDP is one factor (R10).",
+   "case": {
+    "for": "A test of rising support inside an aligned trend: double-stop location if it reclaims (C20).",
+    "against": "Closed under the trendline; mp STRONG/DECELERATING; Staples crowding.",
+    "entry_trigger": "h1_close_above:bar_high on the reclaim day.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "No reclaim next session: stand aside (C22).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "SO",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Weekly not aligned, no fresh break (C6): weekly 9<21 4.7% under 20-wk high, D 0.2% under 20-day high, H1 87% of the day's range, sma_dist 7.64%, day_vol 1.06. Price over ma200 92.46 gives a test level (C20); I buy only a test of it that holds.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight. Utilities: SO is low in my order; one rate bet (R10).",
+   "case": {
+    "for": "Price over ma200 92.46 with a strong close; a held test of the 200 is a double-stop entry.",
+    "against": "Weekly 9<21 (C6); ma50 87.9 under ma100 91.17 and ma200 92.46; correlated utility.",
+    "entry_trigger": "Wait for ma_200; reclaim:ma_200.",
+    "wrong_if": "Close under ma_200 less half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 crossing over 21 lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_200"
+    ],
+    "wrong": [
+     "close_below:ma_200-0.5atr"
+    ],
+    "wait": [
+     "ma_200"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "BRK-B",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT, all frames aligned (C2/C12): structure 72.6 BULLISH_BOS, weekly and daily 9>21 HH/HL 0.3% under highs, H1 97% of the day's range, day_vol 1.38, mp STRONG/DECELERATING, lens coil ok; sma_dist 7.71%.",
+   "challenge_reply": "BOS is shape only; the aligned weekly/daily/hourly rows and the top-of-range close carry the 3.",
+   "case": {
+    "for": "Weekly, daily and hourly aligned, close at the high: short trend with the long (C6).",
+    "against": "mp STRONG/DECELERATING; BOS edge unmeasured; no structural swing low served, mine is bar_low.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close back under pivot_high or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A failed break back into the range in the first bars (C11).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "CMS",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Short trend against the longer one (C6): weekly 9<21 10.3% under 20-wk high; entry 70.76 under ma200 72.57; day_vol 0.75 gives the BULLISH_BOS no participation. The break runs into overhead averages inside a weekly downtrend.",
+   "opposing_case": "Fresh BULLISH_BOS, structure 84.2, D 0.3% under 20-day high, H1 87% of the day's range, mp STRONG/DECELERATING; a swing-low invalidation exists close by.",
+   "falsifier": "A close holding above ma_200 on above-normal participation.",
+   "challenge_reply": "BOS is shape only and I do not lean on it; weekly 9<21 and price under ma200 72.57 decide it. Utilities: I oppose CMS.",
+   "case": {
+    "for": "Fresh break with a strong close and close invalidation.",
+    "against": "Weekly 9<21, price under ma200 72.57, day_vol 0.75: the short move runs against the longer trend (C6).",
+    "entry_trigger": "A close above ma_200 on above-normal volume would let me support.",
+    "wrong_if": "A close that holds above ma_200.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Close above ma_200 holding, weekly 9 over 21.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of rising support (C2/C20): house U&R SETUP - closed 0.6% under the rising trendline, reclaim day next; weekly and daily 9>21, D 2.0% under 20-day high, mp STRONG/DECELERATING, structure 81.1 RANGE, day_vol 0.95. Buy only the reclaim.",
+   "challenge_reply": "Staples: PG is low in my order; the Staples names are one factor (R10).",
+   "case": {
+    "for": "A test of rising support inside an aligned trend: double-stop location if it reclaims (C20).",
+    "against": "Closed under the trendline on day_vol 0.95; RANGE; house EP FAILED; Staples crowding.",
+    "entry_trigger": "h1_close_above:bar_high on the reclaim day.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "No reclaim next session: stand aside (C22).",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Held, KEEP: trend intact and aligned (C2): weekly and daily 9>21, D HH/HL 0.3% under 20-day high, H1 89% of the day's range, mp STRONG/ACCELERATING; sma_dist 11.27% is extended but not parabolic, so no C19 exit. Trail under ma_20.",
+   "challenge_reply": "ABOVE_STRUCTURE carries no weight. Overlap with MA: I would not carry both as separate ideas (R10).",
+   "case": {
+    "for": "Aligned frames, strong close, momentum accelerating: a working position.",
+    "against": "sma_dist 11.27% extended; no fresh setup for an add; same exposure as MA.",
+    "entry_trigger": "No add now; an add only on reclaim:ma_20 after a first pullback.",
+    "wrong_if": "Close under ma_20 or BEARISH_CHOCH: tighten or exit.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A range-expansion spike higher triggers the C19 windfall flag: lock in.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held, EXIT-CASE: the up-structure failed (C2): structure 33.0 BEARISH_CHOCH, sma_dist -19.28%, weekly, daily and hourly all below EMA9 with 9<21, H1 LH/LL at 8% of the day's range. Fits none of my four long setups; minimise time in the market (C18), keep the loss small (C21).",
+   "opposing_case": "div BULLISH/0 hints at a selling climax, and a sma_dist -19.28% stretch is where a climax reversal can form - but only once visibly established (C11), which it is not.",
+   "falsifier": "A close back above ma_20 with structure turning up.",
+   "case": {
+    "for": "div BULLISH; the deep stretch could set up a climax reversal later.",
+    "against": "BEARISH_CHOCH, all three frames down, close at the low of the day: no long setup (C2, C18).",
+    "entry_trigger": "None for a long; I would need a visibly established reversal (C11) and a close over ma_20.",
+    "wrong_if": "A close back above ma_20 with weekly 9 turning up: the exit was early.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A held reversal above ma_20.",
+    "cannot_see": [
+     "rank (null)",
+     "lens (null)",
+     "atr_caution (null)",
+     "bar ranges"
+    ]
+   }
+  },
+  {
+   "ticker": "VVV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Short trend against the longer one (C6): weekly 9<21 16.3% under 20-wk high; entry 34.37 sits on ma200 34.35 with ma50 30.67 far below. House U&R MET and H1 97% of the day's range are short-term only; the bounce meets the longer downtrend at the 200-day.",
+   "opposing_case": "House U&R MET (dipped under the rising trendline, closed back), D HH/HL 0.2% under 20-day high, H1 97% of the day's range, day_vol 1.58: a test that held.",
+   "falsifier": "A close that holds above ma_200 with weekly 9 turning up.",
+   "case": {
+    "for": "A held test with a strong close on day_vol 1.58 (C20).",
+    "against": "Weekly 9<21, 16.3% under its 20-wk high; price on the 200-day from below (C6).",
+    "entry_trigger": "A daily close holding above ma_200 with weekly 9 over 21 would let me support.",
+    "wrong_if": "A close that holds above ma_200.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 over 21 with price holding over ma_200.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "PEG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Short trend against the longer one (C6): weekly 9<21 11.1% under 20-wk high; entry 74.38 under ma100 74.96 and ma200 78.04. The house U&R reclaim of the 9-day average is a short-term test inside a weekly downtrend, running into overhead averages.",
+   "opposing_case": "House U&R MET, H1 HH/HL at 98% of the day's range, day_vol 1.4, sma_dist 4.39%: a held test with close invalidation.",
+   "falsifier": "A close that holds above ma_100 and then ma_200.",
+   "challenge_reply": "Utilities: I oppose PEG; the sector is one rate bet and this one sits under its long averages.",
+   "case": {
+    "for": "A held short-term test with a strong close on day_vol 1.4.",
+    "against": "Weekly 9<21; price under ma100 74.96 and ma200 78.04 (C6); correlated utility.",
+    "entry_trigger": "A close holding above ma_200 would let me support.",
+    "wrong_if": "A close that holds above ma_200.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9 over 21 with price over ma_200.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "WMT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Test held in an aligned trend (C2/C20): house U&R MET (dipped under the rising trendline, closed back above), weekly and daily 9>21 HH/HL 0.2% under highs, H1 HH/HL 95% of the day's range, mp STRONG/ACCELERATING, day_vol 1.25. sma_dist 15.33% extended: short horizon.",
+   "case": {
+    "for": "All frames aligned and a test of rising support that held: double-stop location (C20).",
+    "against": "sma_dist 15.33% extended (C18); ADX gate unreadable.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the trendline (bar_low) voids the test.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No entry family fits (C2): sma_dist 44.98%, structure 74.7 RANGE, day_vol 0.71, momentum DECELERATING and H1 LH/LL below EMA9 at 26% of the day's range. The shape it resembles is a climax, which I decline to call (R9) and which C19 sells. Extension alone is a weight (R27); the rollover decides it.",
+   "opposing_case": "Leadership is real: weekly and daily 9>21, 0.6% under highs; a quiet day_vol 0.71 pause after a run can be a flag.",
+   "falsifier": "A fresh close at the 20-day high on expanding volume.",
+   "case": {
+    "for": "Weekly and daily aligned near highs; a quiet pause after a run.",
+    "against": "sma_dist 44.98%; momentum DECELERATING; H1 LH/LL: buying a possible climax (C11, C19).",
+    "entry_trigger": "A pullback to ma_20 that holds and turns up (C7).",
+    "wrong_if": "A fresh close at the 20-day high on expanding volume.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "KMPR",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Strong aligned trend, range-expansion extension (C7, C19): weekly, daily and hourly 9>21 HH/HL 0.9% under highs, mp STRONG/ACCELERATING, day_vol 1.05, sma_dist 26.09%. My canon sells range expansion; first pullback to the 20-day only.",
+   "case": {
+    "for": "All frames aligned and accelerating.",
+    "against": "sma_dist 26.09% is where C19 locks profit; no entry family at this price.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No entry family fits and the frames disagree (C2, C6): sma_dist 29.05% is a range-expansion run (C19) while the weekly reads 9<21, 3.5% under 20-wk high, with ma20 12.77 under ma200 14.55. A spike against the longer trend is a climax shape I decline to buy (R9, C11).",
+   "opposing_case": "rank 2, D HH/HL 0.6% under 20-day high, mp STRONG/ACCELERATING, day_vol 1.71: the momentum is unmistakable.",
+   "falsifier": "Weekly 9 crossing over 21 with an orderly pullback that holds.",
+   "case": {
+    "for": "Daily momentum and participation are strong.",
+    "against": "Weekly 9<21 (C6); sma_dist 29.05% range expansion (C19); house EP FAILED.",
+    "entry_trigger": "Weekly 9 over 21 and a pullback to ma_20 that holds.",
+    "wrong_if": "Weekly 9 over 21 with price holding its gains.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly alignment turning up.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strong daily trend, extended (C7): weekly 9>21 2.7% under 20-wk high, D HH/HL 0.6% under 20-day high, H1 86% of the day's range, day_vol 1.06, sma_dist 15.72%; house EP FAILED. First pullback to the 20-day only.",
+   "case": {
+    "for": "Weekly and daily aligned near the 20-day high.",
+    "against": "sma_dist 15.72%; ma50 166.36 under ma100 169.18 and ma200 176.81 lags; no entry family here.",
+    "entry_trigger": "Wait for ma_20; reclaim:ma_20.",
+    "wrong_if": "Close under ma_20 less one ATR, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds lifts me.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "GEN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback forming (C7): weekly and daily 9>21, D HH/HL 2.6% under 20-day high, H1 53% of the day's range, mp STRONG/ACCELERATING, day_vol 1.21, sma_dist 12.7%; house EP FAILED. Buy the turn back over the prior bar, not the dip.",
+   "case": {
+    "for": "A shallow pullback in an aligned trend: the Holy Grail shape (C7).",
+    "against": "H1 mid-range close; sma_dist 12.7%; house EP FAILED.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under fib_618 or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A strong-close turn up lifts me; a close under fib_618 ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:fib_618",
+     "choch_bearish"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ACN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Frames conflict and the break is failing (C2, C11): structure 70.9 BULLISH_BOS but house U&R SETUP shows a close 3.5% under the rising trendline, H1 LH/LL, momentum DECELERATING, day_vol 0.84, on sma_dist 27.74%. A break that does not hold is a failed test; I do not buy it.",
+   "opposing_case": "Weekly and daily 9>21 HH/HL 1.0% under highs, structure 70.9 BULLISH_BOS, lens coil ok: a reclaim of the trendline next session would be a valid test.",
+   "falsifier": "A reclaim of the trendline next session with a strong close.",
+   "case": {
+    "for": "Aligned weekly/daily trend; a reclaim next session would be a valid test.",
+    "against": "Closed under rising support; H1 LH/LL; sma_dist 27.74% range expansion (C19).",
+    "entry_trigger": "A reclaim day closing over bar_high would let me support.",
+    "wrong_if": "A strong-close reclaim of the trendline next session.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "That reclaim, held for a session.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No entry family fits (C2): sma_dist 24.39% range-expansion extension, momentum DECELERATING, H1 LH/LL at 35% of the day's range, day_vol 1.01. A climax shape I decline to buy (R9, C19); extension alone is a weight (R27), the hourly rollover decides it.",
+   "opposing_case": "Weekly and daily 9>21 HH/HL, 2.0% under 20-day high; structure 82.1; a shallow first pullback is forming.",
+   "falsifier": "A fresh close at the 20-day high on expanding volume.",
+   "case": {
+    "for": "Aligned weekly/daily; a shallow pullback is forming.",
+    "against": "sma_dist 24.39%; momentum DECELERATING; H1 LH/LL and a low close.",
+    "entry_trigger": "A pullback to ma_20 that holds and turns up (C7).",
+    "wrong_if": "A fresh close at the 20-day high on expanding volume.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No entry family fits (C2): sma_dist 21.91% extension, momentum DECELERATING, H1 LH/LL; a range-expansion run on day_vol 2.37 is where C19 locks profit, not where it buys. Extension alone is a weight (R27); the deceleration decides it.",
+   "opposing_case": "Weekly and daily 9>21, D HH/HL 1.5% under 20-day high, H1 86% of the day's range on day_vol 2.37: heavy participation.",
+   "falsifier": "Momentum turning ACCELERATING with a fresh 20-day high.",
+   "case": {
+    "for": "Aligned frames and heavy participation.",
+    "against": "sma_dist 21.91%; momentum DECELERATING; H1 LH/LL (C11, C19).",
+    "entry_trigger": "A pullback to ma_20 that holds and turns up (C7).",
+    "wrong_if": "A fresh 20-day high close with momentum re-accelerating.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "An orderly pullback to ma_20 that holds.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   }
+  },
+  {
+   "ticker": "RHI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an aligned trend (C7): weekly and daily 9>21, D HH/HL 5.0% under 20-day high on quiet day_vol 0.91, momentum ACCELERATING, structure 71.6 RANGE, sma_dist 15.41%; house EP WATCH. Buy the turn back over the prior bar.",
+   "case": {
+    "for": "A quiet pullback off the high inside an aligned trend: the Holy Grail shape (C7).",
+    "against": "sma_dist 15.41% still extended; RANGE, no break; ADX gate unreadable.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low after entry, or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A deeper pullback on rising volume ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback forming (C7): weekly and daily 9>21, D 3.2% under 20-day high, H1 LH/LL below EMA9 at 52% of the day's range, day_vol 1.46, sma_dist 17.07%, structure 85.3; house EP FAILED. Buy the turn back up, not the dip.",
+   "case": {
+    "for": "A shallow pullback inside an aligned trend (C7).",
+    "against": "H1 LH/LL, the turn is not in; sma_dist 17.07% still extended.",
+    "entry_trigger": "h1_close_above:bar_high.",
+    "wrong_if": "Close under bar_low or BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A deeper pullback on rising volume ends it.",
+    "cannot_see": [
+     "adx (off menu)",
+     "stochastic",
+     "bar ranges",
+     "bars since extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "tf": "1H"
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of3.json",
+   "bytes": 20022,
+   "votes": 17,
+   "sha256": "6d17e1ff707f"
+  },
+  {
+   "file": "raschke.part2of3.json",
+   "bytes": 17727,
+   "votes": 16,
+   "sha256": "c26ceed30a1b"
+  },
+  {
+   "file": "raschke.part3of3.json",
+   "bytes": 16873,
+   "votes": 16,
+   "sha256": "1076df7eaa0a"
+  }
+ ]
+}
