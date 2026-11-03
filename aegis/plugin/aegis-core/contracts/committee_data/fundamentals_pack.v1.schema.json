@@ -1,0 +1,164 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "fundamentals_pack.v1",
+ "description": "Per export name: profile, ratios_ttm, growth_3y - the same fields the data-steward couriers returned - written by src/pipeline/committee_data.py. status: served | carried (younger than 5 days, its own pulled_on kept) | partial (a part is missing; missing[] and reasons{} say which and why) | unserved. Nothing is estimated or filled.",
+ "type": "object",
+ "required": [
+  "schema",
+  "run_date",
+  "as_of",
+  "source",
+  "coverage",
+  "tickers"
+ ],
+ "properties": {
+  "schema": {
+   "const": "fundamentals_pack.v1"
+  },
+  "run_date": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+  },
+  "as_of": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+  },
+  "source": {
+   "type": "string"
+  },
+  "coverage": {
+   "type": "object",
+   "required": [
+    "requested",
+    "served",
+    "carried",
+    "partial",
+    "unserved",
+    "partial_names",
+    "unserved_names"
+   ],
+   "properties": {
+    "requested": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "served": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "carried": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "partial": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "unserved": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "partial_names": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "unserved_names": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "tickers": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "unserved",
+     "status",
+     "pulled_on"
+    ],
+    "properties": {
+     "unserved": {
+      "type": "boolean"
+     },
+     "status": {
+      "enum": [
+       "served",
+       "carried",
+       "partial",
+       "unserved"
+      ]
+     },
+     "pulled_on": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+     },
+     "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     },
+     "age_days": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "missing": {
+      "type": "array",
+      "items": {
+       "enum": [
+        "profile",
+        "ratios_ttm",
+        "growth_3y"
+       ]
+      }
+     },
+     "reasons": {
+      "type": "object"
+     },
+     "profile": {
+      "type": "object",
+      "required": [
+       "source",
+       "date"
+      ],
+      "properties": {
+       "sector": {},
+       "industry": {},
+       "marketCap": {},
+       "beta": {},
+       "range": {},
+       "source": {
+        "type": "string"
+       },
+       "date": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+       }
+      }
+     },
+     "ratios_ttm": {
+      "type": "object",
+      "required": [
+       "source"
+      ]
+     },
+     "growth_3y": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+       "type": "object",
+       "required": [
+        "date",
+        "growthRevenue",
+        "growthEPS"
+       ]
+      }
+     }
+    }
+   }
+  }
+ }
+}

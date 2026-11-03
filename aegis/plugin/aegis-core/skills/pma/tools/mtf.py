@@ -10,12 +10,28 @@ and no packet carried it.
 
   build   mtf_bars/<T>.json (transcribed from FMP by a data-steward courier) + phase4.json + the export
           -> mtf.json. One row per deliberation_set name, ALWAYS: a name with no bars, an `unserved` flag, too
-          few bars or stale bars is declared NOT SERVED with its reason -- never a neutral reading.
+          few bars or stale bars is declared NOT SERVED with its reason -- never a neutral reading. A name with
+          SOME frames shows them and labels the others a GAP (served: true, complete: false, gaps: [...]).
 
 Input per name, mtf_bars/<T>.json:
   {"daily": [{"date": "YYYY-MM-DD", "open", "high", "low", "close", "volume"}, ...],   any order; sorted here
    "h1":    [{"date": "YYYY-MM-DD HH:MM:SS", ...}, ...],
+   "m15":   [{"date": "YYYY-MM-DD HH:MM:SS", ...}, ...],                              optional: 15-minute bars
    "unserved": true}                                                                  optional
+
+`m15` is rolled up HERE (rollup_hourly) into :30-anchored 1-hour bars -- 09:30, 10:30 ... 15:30 ET, the last one
+the 30-minute close -- when the file carries no `h1` (a courier that cannot save FMP's hourly output to a file can
+save the 15-minute pulls instead). open = first, high = max, low = min, close = last, volume = sum; a bucket with
+fewer than 2 of its 15-minute bars is dropped and counted, never passed off as a full hour. Checked against FMP's
+own native hourly bars on MP, 2 Nov 2026 (tests/fixtures/fmp_mp): open / high / low / close identical in all 7
+buckets; volume identical in 6 of 7 -- the 09:30 bucket sums to 676,274 from the 15-minute bars against 583,974 in
+FMP's hourly bar (FMP's hourly leaves out volume the 15-minute opening bar carries). Nothing in the grid reads
+volume, so no reading changes; the native `1hour` pull is preferred and this roll-up is the fallback.
+
+  build --grid mtf_grid.json   (3 Nov 2026) take each room name's row from the grid the daily AQE run already
+          computed for the whole export (src/pipeline/committee_data.py) instead of from courier-written bars.
+          A grid that is missing, malformed or for another run date is a hard stop (exit 2) so the conductor
+          falls back to the courier loudly; a room name the grid does not hold is declared NOT SERVED.
 
 Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-hour):
   close, ema9, ema21 (EMA over closes, alpha 2/(n+1), seeded with the SMA of the first n closes; needs >= 21
@@ -23,6 +39,11 @@ Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-h
   "above" / "below", last_bar "green" / "red" / "flat", hh_hl_3 over the last 3 completed bars "HH/HL" /
   "LH/LL" / "mixed", dist_to_20bar_high_pct (how far the close sits under the highest high of the last 20 bars),
   and on H1 pos_in_day_range_pct (the last close inside the last session's H1 high-low, 0 = low, 100 = high).
+
+Every served frame also carries `summary`: its reading WITHOUT the W / D / H1 label (the packet, the claims board
+and the tier-2 packets print "W <summary> | D <summary> | H1 <summary>" and add the label themselves). The name row
+keeps the joined, labelled `summary` for reading the file by eye. (3 Nov 2026: build wrote only the joined one, so
+every name printed "W not served | D not served | H1 not served" the moment real bars arrived.)
 
 Deterministic, pure python (no pandas, like every pma tool). It forms no opinion: no score, no verdict, no
 "bullish". Bars dated after --date are dropped (never a look-ahead) and counted.
@@ -105,6 +126,43 @@ def weekly(daily):
     return out
 
 
+SESSION_OPEN_MIN = 9 * 60 + 30      # 09:30 ET, in minutes from midnight
+SESSION_CLOSE_MIN = 16 * 60         # 16:00 ET
+MIN_M15_PER_HOUR = 2                # a :30 bucket needs at least this many 15-minute bars to be a bar at all
+
+
+def rollup_hourly(m15):
+    """15-minute bars (cleaned, sorted) -> :30-anchored 1-hour bars. Returns (bars, dropped).
+    Only regular-session bars (09:30 <= start < 16:00) count; the rest are `dropped`, as are buckets thinner than
+    MIN_M15_PER_HOUR (the 15:30 bucket is a half hour by design and carries exactly 2)."""
+    buckets, dropped = {}, 0
+    for b in m15:
+        d = b["date"]
+        if len(d) < 16 or d[10] not in (" ", "T"):
+            dropped += 1                      # no time of day: not an intraday bar
+            continue
+        try:
+            mins = int(d[11:13]) * 60 + int(d[14:16])
+        except ValueError:
+            dropped += 1
+            continue
+        if not SESSION_OPEN_MIN <= mins < SESSION_CLOSE_MIN:
+            dropped += 1
+            continue
+        start = SESSION_OPEN_MIN + (mins - SESSION_OPEN_MIN) // 60 * 60
+        buckets.setdefault((d[:10], start), []).append(b)
+    out = []
+    for (day, start), bs in sorted(buckets.items()):
+        if len(bs) < MIN_M15_PER_HOUR:
+            dropped += len(bs)
+            continue
+        bs.sort(key=lambda x: x["date"])
+        out.append({"date": f"{day} {start // 60:02d}:{start % 60:02d}:00", "open": bs[0]["open"],
+                    "high": max(x["high"] for x in bs), "low": min(x["low"] for x in bs),
+                    "close": bs[-1]["close"], "volume": sum(x["volume"] for x in bs)})
+    return out, dropped
+
+
 def _hh_hl(bars):
     if len(bars) < 3:
         return None
@@ -142,9 +200,10 @@ def frame(bars, tf, completed=None):
     return f
 
 
-def frame_summary(tf, f):
+def frame_text(tf, f):
+    """The frame's reading, WITHOUT its W / D / H1 label -- what the per-frame `summary` holds."""
     if not f.get("served"):
-        return f"{tf}: NOT SERVED ({f.get('reason')})"
+        return f"NOT SERVED ({f.get('reason')})"
     d = f.get("dist_to_20bar_high_pct")
     hi = "at the 20-" + UNIT[tf] + " high" if d is not None and d <= 0 else (
         f"{d:.1f}% under 20-{UNIT[tf]} high" if d is not None else "no 20-bar high")
@@ -153,12 +212,18 @@ def frame_summary(tf, f):
         parts.append(f"{f['pos_in_day_range_pct']:.0f}% of the day's range")
     if f.get("partial_last_bar"):
         parts.append("this week still open")
-    return f"{tf}: " + ", ".join(parts)
+    return ", ".join(parts)
+
+
+def frame_summary(tf, f):
+    """The labelled form ("W: above EMA9, ...") used in the name-level summary."""
+    return f"{tf}: {frame_text(tf, f)}"
 
 
 # ------------------------------------------------------------------------------------------ build
 def _not_served(reason):
-    return {"served": False, "reason": reason, **{tf: {"served": False, "reason": reason} for tf in FRAMES},
+    return {"served": False, "complete": False, "gaps": list(FRAMES), "reason": reason,
+            **{tf: {"served": False, "reason": reason, "summary": f"NOT SERVED ({reason})"} for tf in FRAMES},
             "summary": f"MTF NOT SERVED: {reason}"}
 
 
@@ -168,6 +233,9 @@ def build_name(t, doc, run_date, export_close=None):
     if doc.get("unserved"):
         return _not_served("the courier declared it unserved (FMP returned no bars)")
     daily, h1 = _clean(doc.get("daily")), _clean(doc.get("h1"))
+    rolled_dropped = 0
+    if not h1 and doc.get("m15"):
+        h1, rolled_dropped = rollup_hourly(_clean(doc.get("m15")))
     dropped = sum(1 for b in daily if b["date"][:10] > run_date) + sum(1 for b in h1 if b["date"][:10] > run_date)
     daily = [b for b in daily if b["date"][:10] <= run_date]
     h1 = [b for b in h1 if b["date"][:10] <= run_date]
@@ -203,13 +271,39 @@ def build_name(t, doc, run_date, export_close=None):
         row["D"]["export_close"] = export_close
         row["D"]["close_matches_export"] = abs(c / export_close - 1) <= CLOSE_TOL
     missing = [tf for tf in FRAMES if not row[tf].get("served")]
-    row["served"] = not missing
+    # PM 2026-11-03: a name missing one timeframe SHOWS the others, the missing one labelled as a gap -- it is
+    # served if any frame is; `complete` says all three are, `gaps` names the ones that are not. A frame with no
+    # reading is never invented, and a name with no frame at all is still NOT SERVED (declared).
+    row["served"] = len(missing) < len(FRAMES)
+    row["complete"] = not missing
+    row["gaps"] = missing
     row["frames_served"] = [tf for tf in FRAMES if tf not in missing]
     row["reason"] = ("; ".join(f"{tf} not served: {row[tf].get('reason')}" for tf in missing) or None)
     if dropped:
         row["dropped_future_bars"] = dropped
+    if rolled_dropped:
+        row["m15_bars_not_used"] = rolled_dropped
+    for tf in FRAMES:                       # the packet / claims board / tier-2 packets read THIS, label added by them
+        row[tf]["summary"] = frame_text(tf, row[tf])
     row["summary"] = " | ".join(frame_summary(tf, row[tf]) for tf in FRAMES)
     return row
+
+
+def _load_grid(path, run_date):
+    """The precomputed grid, or a hard stop: a stale / broken grid must send the conductor to the courier
+    fallback loudly, never feed the seats a quietly wrong reading."""
+    def stop(why):
+        print(f"mtf: {why} -- use the courier fallback", file=sys.stderr)
+        raise SystemExit(2)
+    try:
+        g = _load(path)
+    except (ValueError, OSError, SystemExit) as e:
+        stop(f"grid {path} unreadable ({e})")
+    if g.get("schema") != "mtf_grid.v1" or not isinstance(g.get("names"), dict):
+        stop(f"grid {path} is not mtf_grid.v1")
+    if str(g.get("run_date"))[:10] != run_date:
+        stop(f"grid {path} is for run date {g.get('run_date')}, this run is {run_date} -- stale")
+    return g
 
 
 def cmd_build(a):
@@ -217,6 +311,13 @@ def cmd_build(a):
     room = list(p4.get("deliberation_set") or [])
     if not room:
         sys.exit("mtf: phase4 has no deliberation_set -- refusing to write an empty grid")
+    if getattr(a, "grid", None):
+        g = _load_grid(a.grid, a.date)
+        names = {t: (g["names"].get(t) or _not_served(f"{t} is not in the fetched grid ({len(g['names'])} names; fetched {g.get('generated_at')})"))
+                 for t in room}
+        _write_grid_out(a, room, names, extra={"source": "mtf_grid.json", "grid_generated_at": g.get("generated_at"),
+                                               "grid_manifest_sha256": g.get("sha256_of_names")})
+        return
     ex = _load(a.export, {}) if a.export else {}
     closes = {r.get("ticker"): r.get("entry") for r in (ex.get("daily_list") or []) if isinstance(r, dict)}
     names = {}
@@ -232,20 +333,29 @@ def cmd_build(a):
         names[t] = build_name(t, doc, a.date, closes.get(t))
     extra = sorted(f[:-5] for f in (os.listdir(a.bars) if os.path.isdir(a.bars) else [])
                    if f.endswith(".json") and f[:-5] not in names)
+    _write_grid_out(a, room, names, extra={"bars_files_not_in_room": extra})
+
+
+def _write_grid_out(a, room, names, extra=None):
+    extra = extra or {}
     mism = sorted(t for t, r in names.items() if r.get("D", {}).get("close_matches_export") is False)
     out = {"schema": SCHEMA, "date": a.date, "frames": list(FRAMES),
            "rule": "R39: every room name has a row; a frame without enough bars is NOT SERVED, never a neutral reading",
            "names": names,
            "measurement": {"room": len(room),
                            "served": sum(1 for r in names.values() if r["served"]),
+                           "complete": sum(1 for r in names.values() if r.get("complete")),
+                           "partial": sum(1 for r in names.values() if r["served"] and not r.get("complete")),
+                           "partial_names": sorted(t for t, r in names.items() if r["served"] and not r.get("complete")),
                            "not_served": sum(1 for r in names.values() if not r["served"]),
                            "not_served_names": sorted(t for t, r in names.items() if not r["served"]),
-                           "close_mismatch_vs_export": mism,
-                           "bars_files_not_in_room": extra}}
+                           "close_mismatch_vs_export": mism, **extra}}
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1)
     m = out["measurement"]
-    print(f"wrote {a.out}: {m['room']} room names, {m['served']} served, {m['not_served']} NOT SERVED"
+    print(f"wrote {a.out}: {m['room']} room names, {m['complete']} complete, {m['partial']} with a gap"
+          + (f" ({' '.join(m['partial_names'])})" if m["partial_names"] else "")
+          + f", {m['not_served']} NOT SERVED"
           + (f" ({' '.join(m['not_served_names'])})" if m["not_served_names"] else "")
           + (f"; close differs from the export on {' '.join(mism)}" if mism else ""))
 
@@ -259,6 +369,7 @@ def main(argv=None):
     b.add_argument("--export", default="aqe_daily_export.json", help="cross-checks the last daily close per name")
     b.add_argument("--date", required=True, help="run date YYYY-MM-DD; bars dated after it are dropped")
     b.add_argument("--out", default="mtf.json")
+    b.add_argument("--grid", default=None, help="mtf_grid.json from the daily AQE run: take the room's rows from it instead of from --bars")
     b.set_defaults(fn=cmd_build)
     a = ap.parse_args(argv)
     a.fn(a)

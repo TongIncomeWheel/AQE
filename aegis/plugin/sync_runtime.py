@@ -33,6 +33,9 @@ VOICES = HERE / "aegis-voices"
 PAIRS: list[tuple[Path, Path]] = [
     (CORE / "skills/pma/tools/pma_pipeline.py",
      AEGIS / "skills/premarket-analysis/tools/pma_pipeline.py"),
+    # 2026-11-03: src/pipeline/committee_data.py builds the weekly / daily / 1-hour grid in the nightly job.
+    (CORE / "skills/pma/tools/mtf.py",
+     AEGIS / "skills/premarket-analysis/tools/mtf.py"),
     (CORE / "skills/pma/contracts/voice_menus.json",
      AEGIS / "skills/premarket-analysis/contracts/voice_menus.json"),
 ]

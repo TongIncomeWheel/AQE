@@ -1,0 +1,212 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "mtf_grid.v1",
+ "description": "The weekly / daily / 1-hour row for every export name, computed by mtf.py build_name from panel daily bars and FMP hourly bars. served = at least one frame read; complete = all three; gaps[] names the frames that did not. fetch{} records where each bar series came from. sha256_of_names is the hash of the names object.",
+ "type": "object",
+ "required": [
+  "schema",
+  "run_date",
+  "generated_at",
+  "frames",
+  "names",
+  "sha256_of_names",
+  "coverage"
+ ],
+ "properties": {
+  "schema": {
+   "const": "mtf_grid.v1"
+  },
+  "run_date": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "frames": {
+   "const": [
+    "W",
+    "D",
+    "H1"
+   ]
+  },
+  "sha256_of_names": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "coverage": {
+   "type": "object",
+   "required": [
+    "requested",
+    "served",
+    "complete",
+    "not_served",
+    "not_served_names",
+    "hourly_native",
+    "hourly_rolled_up",
+    "hourly_none"
+   ]
+  },
+  "names": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "served",
+     "complete",
+     "gaps",
+     "W",
+     "D",
+     "H1",
+     "fetch",
+     "summary"
+    ],
+    "properties": {
+     "served": {
+      "type": "boolean"
+     },
+     "complete": {
+      "type": "boolean"
+     },
+     "gaps": {
+      "type": "array",
+      "items": {
+       "enum": [
+        "W",
+        "D",
+        "H1"
+       ]
+      }
+     },
+     "reason": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "summary": {
+      "type": "string"
+     },
+     "W": {
+      "type": "object",
+      "required": [
+       "served"
+      ],
+      "properties": {
+       "served": {
+        "type": "boolean"
+       },
+       "reason": {
+        "type": "string"
+       },
+       "summary": {
+        "type": "string"
+       }
+      }
+     },
+     "D": {
+      "type": "object",
+      "required": [
+       "served"
+      ],
+      "properties": {
+       "served": {
+        "type": "boolean"
+       },
+       "reason": {
+        "type": "string"
+       },
+       "summary": {
+        "type": "string"
+       }
+      }
+     },
+     "H1": {
+      "type": "object",
+      "required": [
+       "served"
+      ],
+      "properties": {
+       "served": {
+        "type": "boolean"
+       },
+       "reason": {
+        "type": "string"
+       },
+       "summary": {
+        "type": "string"
+       }
+      }
+     },
+     "fetch": {
+      "type": "object",
+      "required": [
+       "daily",
+       "hourly"
+      ],
+      "properties": {
+       "daily": {
+        "type": "object",
+        "required": [
+         "source",
+         "rows"
+        ],
+        "properties": {
+         "source": {
+          "enum": [
+           "panel",
+           "fmp",
+           "1hour",
+           "15min_rollup",
+           "none"
+          ]
+         },
+         "rows": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "error": {
+          "type": "string"
+         },
+         "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+         }
+        }
+       },
+       "hourly": {
+        "type": "object",
+        "required": [
+         "source",
+         "rows"
+        ],
+        "properties": {
+         "source": {
+          "enum": [
+           "panel",
+           "fmp",
+           "1hour",
+           "15min_rollup",
+           "none"
+          ]
+         },
+         "rows": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "error": {
+          "type": "string"
+         },
+         "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

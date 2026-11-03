@@ -481,6 +481,8 @@ def test_the_hf_mirror_still_carries_what_voice_packets_needs_at_runtime():
     # 2026-11-01: the menus live in the generated contracts/voice_menus.json (one code tree), and the whole
     # aegis/canon directory is re-added (a superset of every canon.lock.yaml).
     assert "aegis/skills/premarket-analysis/contracts/voice_menus.json" in wf
+    # 2026-11-03: committee_data.py builds the MTF grid in the nightly job and imports the generated mtf.py.
+    assert "aegis/skills/premarket-analysis/tools/mtf.py" in wf
     assert "aegis/canon" in wf
     # the re-add must come AFTER the exclusion, or a later `git add -A` could
     # re-exclude what was just carved back in

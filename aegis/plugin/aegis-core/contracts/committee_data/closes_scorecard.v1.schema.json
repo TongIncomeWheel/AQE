@@ -1,0 +1,27 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "closes_scorecard.v1",
+ "description": "Exactly the shape pma_scorecard.py --closes reads: {ticker: {YYYY-MM-DD: close}} plus _missing[] naming every requested ticker that could not be served. No envelope key, because the scorecard iterates the tickers; the schema name, sha256 and counts live in manifest.json.",
+ "type": "object",
+ "properties": {
+  "_missing": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "required": [
+  "_missing"
+ ],
+ "additionalProperties": {
+  "type": "object",
+  "minProperties": 1,
+  "patternProperties": {
+   "^\\d{4}-\\d{2}-\\d{2}$": {
+    "type": "number"
+   }
+  },
+  "additionalProperties": false
+ }
+}

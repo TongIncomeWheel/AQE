@@ -2475,10 +2475,40 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
             os.remove(os.path.join(od, "packets", f))
         for v, txt in pk.items():
             open(os.path.join(od, "packets", f"{v}.tsv"), "w").write(txt)
+        write_committee_data()
+    def write_committee_data(run_date=D, spy_last="2026-11-02", mutate=None):
+        """The files src/pipeline/committee_data.py publishes, built by hand (plugin tests are stdlib only)."""
+        import hashlib
+        cdd = os.path.join(od, "committee_data"); os.makedirs(cdd, exist_ok=True)
+        names = ["AAA", "BBB", "CCC", "HLD"]
+        def dumps(o): return json.dumps(o, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        fr = {"served": True, "summary": "above EMA9, 9>21, HH/HL, 1.0% under 20-day high"}
+        grid_names = {t: {"served": True, "complete": True, "gaps": [], "reason": None, "W": fr, "D": fr, "H1": fr, "summary": "W: x | D: y | H1: z",
+                          "fetch": {"daily": {"source": "panel", "rows": 300}, "hourly": {"source": "1hour", "rows": 70}}} for t in names}
+        sha_names = hashlib.sha256(dumps(grid_names)).hexdigest()
+        grid = {"schema": "mtf_grid.v1", "run_date": run_date, "generated_at": "x", "frames": ["W", "D", "H1"], "names": grid_names, "sha256_of_names": sha_names,
+                "coverage": {"requested": 4, "served": 4, "complete": 4, "not_served": 0, "not_served_names": [], "hourly_native": 4, "hourly_rolled_up": 0, "hourly_none": 0}}
+        fund = {"schema": "fundamentals_pack.v1", "run_date": run_date, "as_of": run_date, "source": "t",
+                "coverage": {"requested": 4, "served": 4, "carried": 0, "partial": 0, "unserved": 0, "partial_names": [], "unserved_names": []},
+                "tickers": {t: {"unserved": False, "status": "served", "pulled_on": run_date} for t in names}}
+        closes = {"SPY": {"2026-11-02": 500.0}, "AAA": {"2026-11-02": 10.0}, "_missing": []}
+        closes["SPY"] = {spy_last: 500.0}
+        if mutate: mutate(grid, fund, closes)
+        bodies = {"fundamentals_pack.json": dumps(fund), "mtf_grid.json": dumps(grid), "closes_scorecard.json": dumps(closes)}
+        sch = {"fundamentals_pack.json": "fundamentals_pack.v1", "mtf_grid.json": "mtf_grid.v1", "closes_scorecard.json": "closes_scorecard.v1"}
+        files = {n: {"schema": sch[n], "sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b), "rows": 4, "served": 4, "unserved": 0, "as_of": run_date} for n, b in bodies.items()}
+        files["closes_scorecard.json"].update({"served": 2, "rows": 2})
+        man = {"schema": "committee_data_manifest.v1", "run_date": run_date, "status": "OK", "generated_at": "x", "scope": {"requested": 4},
+               "files": files, "fmp_calls": 10, "elapsed_s": 1.0, "errors": []}
+        for n, b in bodies.items(): open(os.path.join(cdd, n), "wb").write(b)
+        open(os.path.join(cdd, "manifest.json"), "wb").write(dumps(man))
     def gate():
-        return run([CHK, "data", "--output-dir", od])
+        # the per-voice coverage check has its own tests on REAL packets (tests/test_voice_coverage.py); these
+        # minimal fixture packets carry two columns, so it is switched off - loudly, and the test asserts the note.
+        return run([CHK, "data", "--output-dir", od, "--voice-contract", "none"])
     write_all()
     rc, log = gate(); check("a clean handoff reads Healthy", rc == 0 and "DATA HANDOFF: Healthy" in log, log[-400:])
+    check("switching the per-voice coverage check off is never silent", "voice coverage check DISABLED" in log, log[-400:])
     write_all(pk={"seow": "# DICT\nticker\tsc_momentum\n"}); rc, log = gate(); check("an EMPTY decider packet is named", rc != 0 and "seow.tsv has a header but NO rows" in log, log[-300:])
     write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\nBBB\t60\nCCC\t55\nHLD\t50\nZZZ\t1\n"}); rc, log = gate(); check("a packet serving a name outside the candidate set is named", rc != 0 and "not in the candidate set" in log, log[-300:])
     write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\n"}); rc, log = gate(); check("a packet blind to most of the candidate set is named (yesterday's packet?)", rc != 0 and "blind to" in log, log[-300:])
@@ -2492,6 +2522,19 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     write_all(exp={"date": "2026-11-02"}); rc, log = gate(); check("an export dated differently from the run is named", rc != 0 and "export date" in log, log[-300:])
     write_all(cs={"universe": [row("AAA"), row("BBB"), row("CCC")]}); rc, log = gate(); check("a held position missing from the candidate set is named (R12)", rc != 0 and "held position(s) missing" in log, log[-300:])
     write_all(last={"status": "partial"}); rc, log = gate(); check("a partial run is named", rc != 0 and "did not finish clean" in log, log[-300:])
+    # PM 2026-11-03: the committee's FMP inputs are fetched by the daily run; absent / stale / torn = FAIL, thin = WARN
+    write_all(); shutil_cd = os.path.join(od, "committee_data", "manifest.json"); os.remove(shutil_cd)
+    rc, log = gate(); check("missing committee data is named, with the courier fallback cost", rc != 0 and "committee_data/manifest.json" in log and "courier fallback" in log, log[-300:])
+    write_all(); write_committee_data(run_date="2026-11-02")
+    rc, log = gate(); check("committee data for another day is named STALE", rc != 0 and "STALE" in log, log[-300:])
+    write_all(); write_committee_data(spy_last="2026-10-28")
+    rc, log = gate(); check("closes that stop before the last US close are named", rc != 0 and "stale closes" in log, log[-300:])
+    write_all(); p_ = os.path.join(od, "committee_data", "mtf_grid.json"); open(p_, "ab").write(b" ")
+    rc, log = gate(); check("a committee data file changed after its manifest is named", rc != 0 and "mtf_grid.json: sha256/bytes differ" in log, log[-300:])
+    def _thin(g, f, c):
+        g["coverage"]["not_served_names"] = ["CCC"]; f["coverage"]["unserved_names"] = ["BBB"]
+    write_all(); write_committee_data(mutate=_thin)
+    rc, log = gate(); check("declared gaps in committee data are a WARN naming the names, not a block", rc == 0 and "WARN" in log and "'CCC'" in log and "'BBB'" in log, log[-400:])
 
 
 def test_the_book_and_its_stops_are_one_checked_source(td):
@@ -2555,6 +2598,22 @@ def test_the_book_and_its_stops_are_one_checked_source(td):
     B = json.load(open(out)) if rc == 0 else {}
     check("a live read is restricted to the journal's book (no MARA) and its disagreement is named",
           rc == 0 and set(B["positions"]) == {"MP", "V"} and B["disagreements"] == ["MP: stop moved, journal 36.66 -> broker 36.0"], str(B.get("disagreements")) + log[-200:])
+
+
+def test_one_r_is_one_percent_of_the_journals_capital(td):
+    """PM 2026-11-03 (final, relayed by the conductor; the repo's own CLAUDE.md records the 27 Oct ruling as 1% of
+    the portfolio): the journal's 1R is 1% of its dynamic capital. aegis_fund.md one_r_usd (620) stays the single
+    figure the committee sizes from; this pins the PERCENT that still drives the journal's own dyncap.one_r."""
+    core = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    live = os.path.abspath(os.path.join(core, "..", "..", "charter", "parameters.yaml"))
+    for label, path in (("plugin", os.path.join(core, "charter", "parameters.yaml")), ("live", live)):
+        txt = open(path).read()
+        check(f"{label} parameters.yaml: one_r_pct_of_dyncap is 1.0", "one_r_pct_of_dyncap: 1.0" in txt and "one_r_pct_of_dyncap: 1.5" not in txt, path)
+    for path in (os.path.join(core, "tools", "journal_build.py"), os.path.abspath(os.path.join(core, "..", "..", "tools", "journal_build.py"))):
+        txt = open(path).read()
+        check(f"{os.path.relpath(path, core)}: the fallback default is 1.0", "one_r_pct = 1.0" in txt and "one_r_pct = 1.5" not in txt, path)
+    fund = open(os.path.join(core, "config", "aegis_fund.md")).read()
+    check("aegis_fund.md still carries the single committee figure, one_r_usd 620", "one_r_usd: 620" in fund)
 
 
 def test_review_fixes_count_only_validated_forms_and_never_double_count(td):
@@ -3039,6 +3098,93 @@ def test_multi_timeframe_grid_is_required(td):
     check("the VOTE packet in RUN.yaml passes --mtf", "--mtf mtf.json --out VOTE_PACKET.txt" in run_yaml)
 
 
+def test_mtf_build_from_real_bars_prints_the_grid_in_the_packet(td):
+    """3 Nov 2026 defect (conductor): mtf.py build wrote only a name-level `summary`, but r2digest / claims / pair
+    read the summary of each FRAME, so with real bars every name printed 'MTF: W not served | D not served | H1 not
+    served'. The old test read a hand-written fixture that already had per-frame summaries, and the dry run had no
+    bars at all. This builds mtf.json from SYNTHETIC BARS through the real tool, then runs the real r2digest."""
+    import datetime as _dt
+    run_date = "2026-11-02"
+    def sessions(n, end=run_date):
+        d, out = _dt.date.fromisoformat(end), []
+        while len(out) < n:
+            if d.weekday() < 5:
+                out.append(d.isoformat())
+            d -= _dt.timedelta(days=1)
+        return sorted(out)
+    def bar(date, i, vol=1000):
+        c = 100 + i * 0.3 + (i % 5) * 0.1
+        return {"date": date, "open": round(c - 0.1, 4), "high": round(c + 0.5, 4), "low": round(c - 0.5, 4),
+                "close": round(c, 4), "volume": vol}
+    daily = [bar(d, i) for i, d in enumerate(sessions(300))]
+    h1, m15, k = [], [], 0
+    for day in sessions(10):
+        for hh in range(7):
+            mins = 9 * 60 + 30 + hh * 60
+            h1.append(bar(f"{day} {mins // 60:02d}:{mins % 60:02d}:00", k)); k += 1
+        for q in range(26):                                   # 09:30 ... 15:45 in 15-minute bars
+            mins = 9 * 60 + 30 + q * 15
+            m15.append(bar(f"{day} {mins // 60:02d}:{mins % 60:02d}:00", k, vol=100 + q)); k += 1
+    bars = os.path.join(td, "mtf_bars_real"); os.makedirs(bars, exist_ok=True)
+    json.dump({"daily": daily, "h1": h1}, open(os.path.join(bars, "VLO.json"), "w"))
+    json.dump({"daily": daily, "m15": m15}, open(os.path.join(bars, "GNW.json"), "w"))     # no h1: rolled up by code
+    json.dump({"daily": daily}, open(os.path.join(bars, "BBY.json"), "w"))                 # no hourly bars at all: H1 is a gap
+    old_daily = [bar(d, i) for i, d in enumerate(sessions(300, end="2026-10-01"))]         # stale daily, fresh hourly
+    json.dump({"daily": old_daily, "h1": h1}, open(os.path.join(bars, "MFG.json"), "w"))
+    out = os.path.join(td, "mtf_real.json")
+    rc, log = run([os.path.join(TOOLS, "mtf.py"), "build", "--bars", bars, "--phase4", fx("phase4.json"),
+                   "--export", fx("export.json"), "--date", run_date, "--out", out])
+    check("mtf.py build runs on synthetic bars", rc == 0, log[-300:])
+    if rc != 0: return
+    M = json.load(open(out))["names"]
+    for t in ("VLO", "GNW"):
+        check(f"{t}: all three frames are served", M[t]["served"] is True and M[t]["frames_served"] == ["W", "D", "H1"], str(M[t].get("reason")))
+        for tf in ("W", "D", "H1"):
+            sm = M[t][tf].get("summary")
+            check(f"{t} {tf}: the frame carries its own summary, without the label", bool(sm) and not sm.startswith(f"{tf}:"), str(sm))
+    check("the joined name-level summary keeps the labels", M["VLO"]["summary"].startswith("W: ") and " | D: " in M["VLO"]["summary"] and " | H1: " in M["VLO"]["summary"], M["VLO"]["summary"])
+    check("a name with no bars file is declared NOT SERVED, with a summary on every frame", M["MPC"]["served"] is False and all(M["MPC"][tf].get("summary") for tf in ("W", "D", "H1")))
+    # PM 2026-11-03: a name missing one timeframe SHOWS the others, the gap labelled -- never wholly hidden, never invented
+    check("BBY (no hourly bars): served with a gap, not complete", M["BBY"]["served"] is True and M["BBY"]["complete"] is False and M["BBY"]["gaps"] == ["H1"], str(M["BBY"].get("gaps")))
+    check("MFG (stale daily): W and D are gaps, H1 is served", M["MFG"]["gaps"] == ["W", "D"] and M["MFG"]["frames_served"] == ["H1"], str(M["MFG"].get("gaps")))
+    check("the build counts complete / partial / not served", json.load(open(out))["measurement"]["partial_names"] == ["BBY", "MFG"], str(json.load(open(out))["measurement"]))
+    # the 15-minute roll-up: exact, :30-anchored, the last bucket is the 30-minute close
+    sess = sessions(10)[-1]
+    sys.path.insert(0, TOOLS)
+    import importlib; mtf = importlib.import_module("mtf")
+    day15 = [b for b in m15 if b["date"].startswith(sess)]
+    hb, dropped = mtf.rollup_hourly(mtf._clean(day15))
+    check("26 fifteen-minute bars roll to 7 :30-anchored hourly bars", [b["date"][11:] for b in hb] == ["09:30:00", "10:30:00", "11:30:00", "12:30:00", "13:30:00", "14:30:00", "15:30:00"] and dropped == 0, str([b["date"] for b in hb]))
+    first = day15[:4]
+    check("a rolled hour is open-first / high-max / low-min / close-last / volume-sum",
+          hb[0]["open"] == first[0]["open"] and hb[0]["close"] == first[-1]["close"] and hb[0]["high"] == max(x["high"] for x in first)
+          and hb[0]["low"] == min(x["low"] for x in first) and hb[0]["volume"] == sum(x["volume"] for x in first), str(hb[0]))
+    check("the 15:30 bucket is the 30-minute close (2 bars)", hb[-1]["volume"] == day15[-1]["volume"] + day15[-2]["volume"])
+    thin, d2 = mtf.rollup_hourly(mtf._clean(day15[:5] + [dict(day15[8], date=f"{sess} 17:00:00"), dict(day15[9], date=f"{sess} 08:00:00")]))
+    check("a one-bar bucket and out-of-session bars are dropped and counted, never passed off as an hour", len(thin) == 1 and d2 == 3, f"{len(thin)} bars, {d2} dropped")
+    # the real packet, from the real file
+    vp = os.path.join(td, "vp_real.txt")
+    rc, log = run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--mtf", out,
+                   "--run-id", "t", "--out", vp])
+    check("r2digest runs on the built mtf.json", rc == 0, log[-300:])
+    if rc != 0: return
+    L = open(vp).read().splitlines()
+    def mtf_line(t):
+        i = next(i for i, l in enumerate(L) if l.startswith(f"### {t} "))
+        return next(l for l in L[i:] if l.startswith("  MTF: "))
+    for t in ("VLO", "GNW"):
+        ln = mtf_line(t)
+        check(f"{t}: the packet prints the grid -- W, D and H1 each with a reading", ln.startswith("  MTF: W ") and " | D " in ln and " | H1 " in ln and "not served" not in ln.lower(), ln)
+        check(f"{t}: the labels are not doubled", not any(x in ln for x in ("W W:", "D D:", "H1 H1:", "W: ", "D: ", "H1: ")), ln)
+    check("a name with no bars still prints NOT SERVED (declared)", mtf_line("MPC") == "  MTF: NOT SERVED (declared)", mtf_line("MPC"))
+    ln = mtf_line("BBY")
+    check("BBY: W and D print their readings, H1 is labelled a GAP with its reason",
+          ln.startswith("  MTF: W ") and " | D " in ln and ln.endswith("| H1 GAP (no 1-hour bars)") and "NOT SERVED" not in ln, ln)
+    ln = mtf_line("MFG")
+    check("MFG: W and D are labelled GAPs (stale), H1 prints its reading", ln.startswith("  MTF: W GAP (") and " | D GAP (" in ln and " | H1 " in ln and "H1 GAP" not in ln, ln)
+
+
 def _slate_from(decision, tickers=None):
     D = json.load(open(decision))
     tk = []
@@ -3223,9 +3369,11 @@ def main():
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_the_weather_cards_exist_and_are_wired,
                    test_two_tier_funnel_is_counted_by_code, test_multi_timeframe_grid_is_required,
+                   test_mtf_build_from_real_bars_prints_the_grid_in_the_packet,
                    test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_the_book_and_its_stops_are_one_checked_source,
+                   test_one_r_is_one_percent_of_the_journals_capital,
                    test_review_fixes_count_only_validated_forms_and_never_double_count,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,
