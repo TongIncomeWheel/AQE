@@ -1,6 +1,6 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-11-03T14:56:36+08:00",
+  "generated_at": "2026-11-04T07:19:19+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
   "oldest_leg": "2026-11-02",
@@ -9,7 +9,7 @@
     {
       "name": "XLY",
       "grade": "DEPLOY",
-      "gate": "PASS",
+      "gate": "CAUTION",
       "sector_name": "Consumer Discretionary",
       "rrg_quadrant": "LEADING",
       "coherence": "DISAGREES",
@@ -27,7 +27,7 @@
     {
       "name": "XLB",
       "grade": "DEPLOY",
-      "gate": "PASS",
+      "gate": "CAUTION",
       "sector_name": "Materials",
       "rrg_quadrant": "LEADING",
       "coherence": "DISAGREES",
@@ -36,7 +36,7 @@
     {
       "name": "XLF",
       "grade": "DEPLOY",
-      "gate": "CAUTION",
+      "gate": "WATCH",
       "sector_name": "Financials",
       "rrg_quadrant": "LEADING",
       "coherence": "AGREES",
@@ -90,7 +90,7 @@
     {
       "name": "XLK",
       "grade": "TURNING",
-      "gate": "WATCH",
+      "gate": "BLOCKED",
       "sector_name": "Technology",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -99,7 +99,7 @@
     {
       "name": "XLC",
       "grade": "TURNING",
-      "gate": "WATCH",
+      "gate": "BLOCKED",
       "sector_name": "Communication Services",
       "rrg_quadrant": "LAGGING",
       "coherence": "UNTESTED",
@@ -108,8 +108,24 @@
   ],
   "thematic_read": [
     {
-      "name": "Travel_Leisure",
+      "name": "REITs",
       "grade": "DEPLOY",
+      "gate": null,
+      "parent_gics": "XLRE",
+      "coherence": "DISAGREES",
+      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLRE)"
+    },
+    {
+      "name": "Defense_Tech",
+      "grade": "DEPLOY",
+      "gate": null,
+      "parent_gics": "XLI",
+      "coherence": "DISAGREES",
+      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLI)"
+    },
+    {
+      "name": "Travel_Leisure",
+      "grade": "HOLD",
       "gate": null,
       "parent_gics": "XLY",
       "coherence": "DISAGREES",
@@ -124,44 +140,20 @@
       "coherence_reason": "scenario implies a headwind for this sector (bias -4.00); grade reads bullish (inherited from parent sector XLK)"
     },
     {
+      "name": "E_Commerce",
+      "grade": "DEPLOY",
+      "gate": null,
+      "parent_gics": "XLY",
+      "coherence": "DISAGREES",
+      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLY)"
+    },
+    {
       "name": "Homebuilders",
       "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLY",
       "coherence": "DISAGREES",
       "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLY)"
-    },
-    {
-      "name": "Defense_Tech",
-      "grade": "DEPLOY",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "DISAGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLI)"
-    },
-    {
-      "name": "E_Commerce",
-      "grade": "HOLD",
-      "gate": null,
-      "parent_gics": "XLY",
-      "coherence": "DISAGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLY)"
-    },
-    {
-      "name": "REITs",
-      "grade": "DEPLOY",
-      "gate": null,
-      "parent_gics": "XLRE",
-      "coherence": "DISAGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bullish (inherited from parent sector XLRE)"
-    },
-    {
-      "name": "Transport_Logistics",
-      "grade": "WATCH",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "AGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bearish (inherited from parent sector XLI)"
     },
     {
       "name": "Gaming_Streaming",
@@ -188,12 +180,12 @@
       "coherence_reason": "scenario implies a headwind for this sector (bias -4.00); grade reads bearish (inherited from parent sector XLK)"
     },
     {
-      "name": "Cybersecurity",
-      "grade": "AVOID",
+      "name": "Transport_Logistics",
+      "grade": "WATCH",
       "gate": null,
-      "parent_gics": "XLK",
+      "parent_gics": "XLI",
       "coherence": "AGREES",
-      "coherence_reason": "scenario implies a headwind for this sector (bias -4.00); grade reads bearish (inherited from parent sector XLK)"
+      "coherence_reason": "scenario implies a headwind for this sector (bias -2.00); grade reads bearish (inherited from parent sector XLI)"
     },
     {
       "name": "Big_Banks",
@@ -204,15 +196,7 @@
       "coherence_reason": "scenario implies a tailwind for this sector (bias +1.00); grade reads bullish (inherited from parent sector XLF)"
     },
     {
-      "name": "Infra_Construction",
-      "grade": "TURNING",
-      "gate": null,
-      "parent_gics": "XLI",
-      "coherence": "UNTESTED",
-      "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLI)"
-    },
-    {
-      "name": "Biotech",
+      "name": "MedTech",
       "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLV",
@@ -228,7 +212,7 @@
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLF)"
     },
     {
-      "name": "MedTech",
+      "name": "Biotech",
       "grade": "DEPLOY",
       "gate": null,
       "parent_gics": "XLV",
@@ -242,6 +226,14 @@
       "parent_gics": "XLK",
       "coherence": "UNTESTED",
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLK)"
+    },
+    {
+      "name": "Infra_Construction",
+      "grade": "TURNING",
+      "gate": null,
+      "parent_gics": "XLI",
+      "coherence": "UNTESTED",
+      "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLI)"
     },
     {
       "name": "AI_Infrastructure",
@@ -265,30 +257,30 @@
     "headline": "A broad market, with volatility around normal.",
     "regime_words": "broadening · normal_rising",
     "because": [
-      "The average stock is keeping up with the index — the rally is broad. Breadth is near the top of its 12-month range, so this phase is probably closer to its end than its start.",
-      "Single stocks are moving about as much as the index. The index itself is not quiet, with VIX at 21.1, higher than 84% of days in the past two years.",
+      "The average stock is keeping up with the index — the rally is broad.",
+      "Single stocks are moving about as much as the index. The index itself is not quiet, with VIX at 20.8, higher than 82% of days in the past two years.",
       "Option dealers are positioned in a way that amplifies moves — expect bigger swings in both directions than the news deserves.",
       "Trend-following funds are mixed across the 18 markets we track, and none is at an extreme — the positioning is not crowded.",
       "Big speculators are unusually long the Nasdaq, small caps, the 5-year and 1 others; unusually short crude, natural gas and silver (CFTC data to 2026-10-27).",
       "Together, that is a fragile setup, not a confident one: a lot of money is already leaning the same way, so a break past the levels below would force that SAME money to reverse fast, accelerating whatever move already started rather than fading it.",
       "1 warning sign lit: momentum is not keeping up with price. A further 8 showed up on individual markets. No single one of these is a reason to sell. They matter when several point the same way as the breadth reading."
     ],
-    "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 2 of its conditions are not met. Size at 1.00x your normal risk.",
+    "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 1 of its conditions are not met. Size at 1.00x your normal risk.",
     "watch_for": [
-      "If soybeans trades below 1,214.52 (0.4% away), trend funds start selling.",
-      "If small caps trades above 2,832.85 (0.7% away), trend funds start buying.",
+      "If soybeans trades above 1,214.52 (0.1% away), trend funds start buying.",
+      "If the Nasdaq trades above 28,457.74 (0.1% away), trend funds start buying.",
       "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
     "caveats": [],
-    "as_of": "2026-11-03T14:50:40+08:00",
+    "as_of": "2026-11-04T06:54:21+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
     "leading": "DOLLAR_SQUEEZE",
     "leading_score": 0.5833,
-    "runner_up": "LIQUIDITY_STRESS",
+    "runner_up": "GROWTH_SCARE",
     "contested": true,
-    "reading": "DOLLAR_SQUEEZE leads but LIQUIDITY_STRESS is within 12%. Two stories fit the same tape; treat the overlap as the honest read, not the winner.",
+    "reading": "DOLLAR_SQUEEZE leads but GROWTH_SCARE is within 12%. Two stories fit the same tape; treat the overlap as the honest read, not the winner.",
     "note": "A score is the SHARE OF CONDITIONS MET, not a probability. Nothing here was fitted or backtested and no base rate was measured. The evidence and the missing-conditions lists carry the value; the number only ranks them.",
     "scenarios": [
       {
@@ -298,32 +290,13 @@
         "story": "The dollar is the whole story and it is draining everything else — commodities, credit and non-US risk together.",
         "expression": "US large-cap domestic over international and commodities.",
         "evidence": [
-          "CPER down (roc5 -0.05%, roc20 -1.23%)",
-          "GLD down (roc5 -1.68%, roc20 -4.72%)",
-          "HYG down (roc5 -0.4%, roc20 -0.12%)",
-          "CTA fx bias +0.43"
+          "CPER down (roc5 -3.85%, roc20 -3.8%)",
+          "GLD down (roc5 -3.5%, roc20 -6.02%)",
+          "HYG down (roc5 -0.8%, roc20 -0.38%)",
+          "CTA fx bias +0.45"
         ],
         "missing_conditions": [
-          "UUP down (roc5 -0.17%, roc20 -0.1%)"
-        ],
-        "unavailable": [],
-        "can_lead": true
-      },
-      {
-        "scenario": "LIQUIDITY_STRESS",
-        "score": 0.5625,
-        "coverage": 1.0,
-        "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
-        "expression": "Cut gross. Defined-risk downside. Cash is a position.",
-        "evidence": [
-          "HYG down (roc5 -0.4%, roc20 -0.12%)",
-          "TLT up (roc5 0.06%, roc20 5.99%)",
-          "implied correlation at 65% pctl"
-        ],
-        "missing_conditions": [
-          "UUP down (roc5 -0.17%, roc20 -0.1%)",
-          "GLD down (roc5 -1.68%, roc20 -4.72%)",
-          "dispersion NORMAL"
+          "UUP flat (roc5 -0.38%, roc20 0.38%)"
         ],
         "unavailable": [],
         "can_lead": true
@@ -335,52 +308,51 @@
         "story": "Growth decelerating. Credit widens, small caps break, and duration bids as a hedge rather than as a rate call.",
         "expression": "Defensives, quality, long duration. Fade cyclical strength.",
         "evidence": [
-          "CPER down (roc5 -0.05%, roc20 -1.23%)",
-          "HYG down (roc5 -0.4%, roc20 -0.12%)",
-          "TLT up (roc5 0.06%, roc20 5.99%)"
+          "CPER down (roc5 -3.85%, roc20 -3.8%)",
+          "HYG down (roc5 -0.8%, roc20 -0.38%)",
+          "IWM down (roc5 -0.14%, roc20 -0.55%)"
         ],
         "missing_conditions": [
-          "COPPER_GOLD up (roc5 1.65%, roc20 3.66%)",
-          "IWM flat (roc5 0.78%, roc20 -1.5%)",
-          "CTA rates bias -0.40"
+          "COPPER_GOLD flat (roc5 -0.36%, roc20 2.36%)",
+          "TLT flat (roc5 -0.64%, roc20 4.96%)",
+          "CTA rates bias -0.44"
+        ],
+        "unavailable": [],
+        "can_lead": true
+      },
+      {
+        "scenario": "LIQUIDITY_STRESS",
+        "score": 0.4375,
+        "coverage": 1.0,
+        "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
+        "expression": "Cut gross. Defined-risk downside. Cash is a position.",
+        "evidence": [
+          "HYG down (roc5 -0.8%, roc20 -0.38%)",
+          "implied correlation at 71% pctl"
+        ],
+        "missing_conditions": [
+          "UUP flat (roc5 -0.38%, roc20 0.38%)",
+          "GLD down (roc5 -3.5%, roc20 -6.02%)",
+          "TLT flat (roc5 -0.64%, roc20 4.96%)",
+          "dispersion NORMAL"
         ],
         "unavailable": [],
         "can_lead": true
       },
       {
         "scenario": "DISINFLATION_GOLDILOCKS",
-        "score": 0.4167,
+        "score": 0.1667,
         "coverage": 1.0,
         "story": "Yields fall without credit breaking. The benign version of lower rates — the one where breadth improves rather than hides.",
         "expression": "Long duration equity, small caps, breadth trades.",
         "evidence": [
-          "TLT up (roc5 0.06%, roc20 5.99%)",
           "heartbeat regime = broadening"
         ],
         "missing_conditions": [
-          "HYG down (roc5 -0.4%, roc20 -0.12%)",
-          "IWM flat (roc5 0.78%, roc20 -1.5%)",
-          "USO flat (roc5 -5.63%, roc20 8.95%)"
-        ],
-        "unavailable": [],
-        "can_lead": true
-      },
-      {
-        "scenario": "REFLATION",
-        "score": 0.3077,
-        "coverage": 1.0,
-        "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
-        "expression": "Cyclicals, financials, small caps, energy. Short duration.",
-        "evidence": [
-          "COPPER_GOLD up (roc5 1.65%, roc20 3.66%)",
-          "CTA energy bias +0.16",
-          "CTA rates bias -0.40"
-        ],
-        "missing_conditions": [
-          "CPER down (roc5 -0.05%, roc20 -1.23%)",
-          "HYG down (roc5 -0.4%, roc20 -0.12%)",
-          "IWM flat (roc5 0.78%, roc20 -1.5%)",
-          "TLT up (roc5 0.06%, roc20 5.99%)"
+          "TLT flat (roc5 -0.64%, roc20 4.96%)",
+          "HYG down (roc5 -0.8%, roc20 -0.38%)",
+          "IWM down (roc5 -0.14%, roc20 -0.55%)",
+          "USO flat (roc5 -3.48%, roc20 9.15%)"
         ],
         "unavailable": [],
         "can_lead": true
@@ -392,12 +364,12 @@
         "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
         "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
         "evidence": [
-          "CTA sector spread 0.83"
+          "CTA sector spread 0.89"
         ],
         "missing_conditions": [
-          "implied correlation 14.52 (65% pctl)",
+          "implied correlation 16.39 (71% pctl)",
           "dispersion NORMAL (spread 23.52)",
-          "VIX 21.15"
+          "VIX 20.83"
         ],
         "unavailable": [],
         "can_lead": true
@@ -409,13 +381,33 @@
         "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
         "expression": "Real assets, energy, short duration. Multiple compression risk.",
         "evidence": [
-          "CTA energy bias +0.16"
+          "CTA energy bias +0.15"
         ],
         "missing_conditions": [
-          "USO flat (roc5 -5.63%, roc20 8.95%)",
-          "GLD down (roc5 -1.68%, roc20 -4.72%)",
-          "TLT up (roc5 0.06%, roc20 5.99%)",
-          "UUP down (roc5 -0.17%, roc20 -0.1%)"
+          "USO flat (roc5 -3.48%, roc20 9.15%)",
+          "GLD down (roc5 -3.5%, roc20 -6.02%)",
+          "TLT flat (roc5 -0.64%, roc20 4.96%)",
+          "UUP flat (roc5 -0.38%, roc20 0.38%)"
+        ],
+        "unavailable": [],
+        "can_lead": true
+      },
+      {
+        "scenario": "REFLATION",
+        "score": 0.0769,
+        "coverage": 1.0,
+        "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
+        "expression": "Cyclicals, financials, small caps, energy. Short duration.",
+        "evidence": [
+          "CTA energy bias +0.15",
+          "CTA rates bias -0.44"
+        ],
+        "missing_conditions": [
+          "CPER down (roc5 -3.85%, roc20 -3.8%)",
+          "COPPER_GOLD flat (roc5 -0.36%, roc20 2.36%)",
+          "HYG down (roc5 -0.8%, roc20 -0.38%)",
+          "IWM down (roc5 -0.14%, roc20 -0.55%)",
+          "TLT flat (roc5 -0.64%, roc20 4.96%)"
         ],
         "unavailable": [],
         "can_lead": true
