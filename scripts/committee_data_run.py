@@ -56,7 +56,7 @@ def main(argv=None) -> int:
     previous_pack = _read(out_dir / "fundamentals_pack.json")
     print(f"previous pack on disk: {'yes, ' + str(len((previous_pack or {}).get('tickers') or {})) + ' names (young entries are carried)' if previous_pack else 'none - every name is fetched'}")
 
-    res = cd.run(export, run_date, previous_pack=previous_pack, budget_s=a.budget_minutes * 60)
+    res = cd.run(export, run_date, previous_pack=previous_pack, universe_previous=_read(out_dir / cd.UNIVERSE_HISTORY), budget_s=a.budget_minutes * 60)
     print(cd.describe(res))
     m = res["manifest"]
 

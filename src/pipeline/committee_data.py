@@ -40,6 +40,8 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import re
+import subprocess
 import sys
 import time
 from datetime import date, datetime, timedelta, timezone
@@ -53,6 +55,8 @@ LOCAL_DIR = OUTPUT_DIR / "committee_data"
 FILES = {"fundamentals_pack.json": "fundamentals_pack.v1",
          "mtf_grid.json": "mtf_grid.v1",
          "closes_scorecard.json": "closes_scorecard.v1"}
+UNIVERSE_HISTORY = "universe_history.json"      # sidecar (not a manifest file): {label: [export tickers]} so the scorecard's per-run list is never lost
+EXPORT_REPO_PATH = "aegis/output/aqe_daily_export.json"
 MANIFEST = "manifest.json"
 MANIFEST_SCHEMA = "committee_data_manifest.v1"
 
@@ -88,6 +92,13 @@ def _mtf():
             spec.loader.exec_module(m)
             return m
     raise RuntimeError("mtf.py not found (aegis/skills/premarket-analysis/tools or the plugin tree)")
+
+
+def _read_json(p: Path):
+    try:
+        return json.loads(Path(p).read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def dumps(doc) -> bytes:
@@ -297,8 +308,8 @@ def build_grid(f: Fetcher, tickers: list[str], run_date: str, export: dict, pane
 # ------------------------------------------------------------------------------------------- closes
 def ledger_tickers(run_date: str, lookback_days: int = CLOSES_LOOKBACK_DAYS,
                    path: Path | None = None) -> list[str]:
-    p = path or (PROJECT_ROOT / "data" / "pma" / "verdict_ledger.json")
-    if not p.exists():
+    p = path or latest_ledger_path()
+    if p is None or not p.exists():
         return []
     try:
         L = json.loads(p.read_text(encoding="utf-8"))
@@ -308,6 +319,80 @@ def ledger_tickers(run_date: str, lookback_days: int = CLOSES_LOOKBACK_DAYS,
     start = (date.fromisoformat(run_date) - timedelta(days=lookback_days)).isoformat()
     return sorted({r.get("ticker") for r in rows or [] if isinstance(r, dict) and r.get("ticker")
                    and str(r.get("date", ""))[:10] >= start})
+
+
+def latest_ledger_path(root: Path | None = None) -> Path | None:
+    """The verdict ledger of the LAST PMA run (aegis/output/pma/run/<date>/verdict_ledger.json), never a rerun dir
+    (<date>-rN); the old data/pma path is the fallback. The ledger is cumulative, so the latest run holds every name."""
+    root = root or PROJECT_ROOT
+    runs = sorted(d for d in (root / "aegis" / "output" / "pma" / "run").glob("*")
+                  if d.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d.name) and (d / "verdict_ledger.json").exists())
+    if runs:
+        return runs[-1] / "verdict_ledger.json"
+    p = root / "data" / "pma" / "verdict_ledger.json"
+    return p if p.exists() else None
+
+
+def _git(root: Path, *args: str, timeout: int = 120) -> tuple[int, str]:
+    r = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, timeout=timeout)
+    return r.returncode, r.stdout
+
+
+def export_names(doc: dict) -> list[str]:
+    return scope_of(doc) if isinstance(doc, dict) else []
+
+
+def git_export_history(run_date: str, lookback_days: int = CLOSES_LOOKBACK_DAYS, have: set | None = None,
+                       root: Path | None = None) -> tuple[dict, str]:
+    """Bootstrap past exports' tickers from git history: every commit 'data: daily output <label>' of the export file in
+    the window. -> ({label: [tickers]}, note). An unavailable history is a NOTE the manifest and check.py repeat, never silence."""
+    root = root or PROJECT_ROOT
+    start = (date.fromisoformat(run_date) - timedelta(days=lookback_days)).isoformat()
+    have = have or set()
+    try:
+        rc, shallow = _git(root, "rev-parse", "--is-shallow-repository")
+        if rc != 0:
+            return {}, "UNAVAILABLE: not a git checkout"
+        if shallow.strip() == "true":
+            _git(root, "fetch", "-q", f"--shallow-since={start}", "origin", "main", timeout=300)
+        rc, log = _git(root, "log", f"--since={start}", "--format=%H%x09%s", "--", EXPORT_REPO_PATH)
+        if rc != 0:
+            return {}, "UNAVAILABLE: git log failed"
+        out: dict = {}
+        for line in log.splitlines():
+            sha, _, subj = line.partition("\t")
+            m = re.search(r"daily output (\d{4}-\d{2}-\d{2})", subj)
+            if not m or m.group(1) in have or m.group(1) < start:
+                continue
+            rc, body = _git(root, "show", f"{sha}:{EXPORT_REPO_PATH}", timeout=120)
+            if rc != 0:
+                continue
+            try:
+                names = export_names(json.loads(body))
+            except ValueError:
+                continue
+            out.setdefault(m.group(1), set()).update(names)
+        return {k: sorted(v) for k, v in out.items()}, ("git history" if out else "UNAVAILABLE: no past export commits in the window")
+    except Exception as e:  # noqa: BLE001
+        return {}, f"UNAVAILABLE: {e.__class__.__name__}: {e}"
+
+
+def build_universe_history(run_date: str, today_names: list[str], previous: dict | None,
+                           lookback_days: int = CLOSES_LOOKBACK_DAYS, git_loader=git_export_history) -> tuple[dict, str]:
+    """-> (history doc, source note). Past labels come from the previous sidecar; labels it lacks are bootstrapped from git
+    once; today's names are recorded under today's label. Entries older than the window are pruned."""
+    start = (date.fromisoformat(run_date) - timedelta(days=lookback_days)).isoformat()
+    entries = {k: list(v) for k, v in ((previous or {}).get("entries") or {}).items() if k >= start}
+    note = "history file" if entries else ""
+    if len(entries) < 5:                      # a thin or missing record: fill from git (the 45-day window holds ~30 runs)
+        got, gnote = git_loader(run_date, lookback_days, set(entries))
+        for k, v in got.items():
+            entries.setdefault(k, v)
+        note = gnote if not entries or not note else f"{note} + {gnote}"
+        if not got and not entries:
+            note = gnote
+    entries[run_date] = sorted(set(today_names))
+    return {"schema": "universe_history.v1", "entries": dict(sorted(entries.items()))}, note or "none"
 
 
 def build_closes(f: Fetcher, tickers: list[str], run_date: str, panel_all: dict,
@@ -366,7 +451,7 @@ def failed_manifest(run_date: str, reason: str, f: Fetcher | None = None) -> dic
             "fmp_calls": f.calls if f else 0, "errors": (f.errors[:50] if f else [])}
 
 
-def run(export: dict, run_date: str | None = None, client=None, panel: dict | None = None,
+def run(export: dict, run_date: str | None = None, client=None, panel: dict | None = None, universe_previous: dict | None = None, git_loader=None,
         previous_pack: dict | None = None, ledger: list[str] | None = None,
         budget_s: float = TIME_BUDGET_S, clock=time.monotonic) -> dict:
     """Fetch, build and return {manifest, files{name: bytes}}. Never raises: any failure is a FAILED manifest."""
@@ -386,9 +471,19 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
         daily_cache: dict = {}
         grid = build_grid(f, tickers, run_date, export, panel, mtf, daily_cache)
         led = ledger if ledger is not None else ledger_tickers(run_date)
+        # THE SCORECARD'S SCOPE (conductor defect 2026-11-03): today's export + every verdict-ledger name in the window +
+        # EVERY past export's names in the window (the equal-weight list per run) + SPY. The first cut had only the first
+        # and last, which dropped 178 names and shrank the 'vs list' denominators.
+        uh, uh_note = build_universe_history(run_date, tickers, universe_previous if universe_previous is not None else _read_json(PROJECT_ROOT / REPO_DIR / UNIVERSE_HISTORY),
+                                             git_loader=git_loader or git_export_history)
+        past = sorted({t for k, v in uh["entries"].items() for t in v})
+        if uh_note.startswith("UNAVAILABLE") or len([k for k in uh["entries"] if k != run_date]) == 0:
+            f.errors.append(f"closes scope: past exports' names are {uh_note or 'UNAVAILABLE'} - the scorecard's per-run list benchmark is understated")
+        scope = sorted(set(led) | set(tickers) | set(past) | {BENCH})
         # the closes step prefers the bars already in hand (panel, else the daily series the grid just fetched)
-        closes, cdetail = build_closes(f, sorted(set(led) | set(tickers) | {BENCH}), run_date, panel, daily_cache)
-        bodies = {"fundamentals_pack.json": dumps(fund), "mtf_grid.json": dumps(grid), "closes_scorecard.json": dumps(closes)}
+        closes, cdetail = build_closes(f, scope, run_date, panel, daily_cache)
+        bodies = {"fundamentals_pack.json": dumps(fund), "mtf_grid.json": dumps(grid), "closes_scorecard.json": dumps(closes),
+                  UNIVERSE_HISTORY: dumps(uh)}
         fc, gc = fund["coverage"], grid["coverage"]
         n_closes = len([k for k in closes if k != "_missing"])
         files = {
@@ -408,6 +503,9 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
                     "scope": {"requested": len(tickers), "from": "export daily_list + held_positions"},
                     "files": files, "fmp_calls": f.calls, "elapsed_s": round(clock() - f.t0, 1),
                     "time_budget_exhausted": f.exhausted(), "quota_hit": f.quota_hit,
+                    "closes_scope": {"today": len(tickers), "ledger": len(led), "past_exports": len(past),
+                                     "past_export_runs": len([k for k in uh["entries"] if k != run_date]),
+                                     "past_exports_source": uh_note, "total": len(scope)},
                     "closes_detail": cdetail, "errors": f.errors[:50], "errors_total": len(f.errors)}
         return {"manifest": manifest, "files": bodies}
     except Exception as e:  # noqa: BLE001 - FAILED is a file that says so; it must not take the export down
