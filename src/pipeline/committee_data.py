@@ -257,7 +257,10 @@ def fetch_hourly_one(f: Fetcher, t: str, run_date: str, mtf) -> tuple[list[dict]
     return [], {"source": "none", "rows": 0, "error": f"1hour: {why}; 15min: {err2 or 'empty answer'}"}
 
 
-def build_grid(f: Fetcher, tickers: list[str], run_date: str, export: dict, panel: dict, mtf) -> dict:
+def build_grid(f: Fetcher, tickers: list[str], run_date: str, export: dict, panel: dict, mtf,
+               daily_cache: dict | None = None) -> dict:
+    """`daily_cache`, when given, is filled with each name's daily bars so the closes step reuses them instead of
+    paying for the same FMP call twice (the runner is limited to ~80 calls a minute)."""
     closes = {r.get("ticker"): r.get("entry") for r in (export.get("daily_list") or []) if isinstance(r, dict)}
     names, daily_src = {}, {"panel": 0, "fmp": 0, "none": 0}
     for t in tickers:
@@ -266,6 +269,8 @@ def build_grid(f: Fetcher, tickers: list[str], run_date: str, export: dict, pane
             dmeta["last_bar"] = daily[-1]["date"]
         else:
             daily, dmeta = fetch_daily_one(f, t, run_date)
+        if daily_cache is not None and daily and dmeta["source"] != "panel":
+            daily_cache[t] = daily          # only bars FMP gave us; panel bars are read from the panel again, labelled so
         daily_src[dmeta["source"] if daily else "none"] += 1
         hourly, hmeta = fetch_hourly_one(f, t, run_date, mtf)
         if not daily and not hourly:
@@ -305,13 +310,19 @@ def ledger_tickers(run_date: str, lookback_days: int = CLOSES_LOOKBACK_DAYS,
                    and str(r.get("date", ""))[:10] >= start})
 
 
-def build_closes(f: Fetcher, tickers: list[str], run_date: str, panel_all: dict) -> tuple[dict, dict]:
-    """-> ({ticker: {date: close}, "_missing": [...]}, detail{ticker: source})."""
+def build_closes(f: Fetcher, tickers: list[str], run_date: str, panel_all: dict,
+                 fetched: dict | None = None) -> tuple[dict, dict]:
+    """-> ({ticker: {date: close}, "_missing": [...]}, detail{ticker: source}).
+    Source order, each labelled truthfully: the panel; the daily bars the grid step already fetched from FMP
+    (`fetched`, no second call); a fresh FMP call."""
     start = (date.fromisoformat(run_date) - timedelta(days=CLOSES_LOOKBACK_DAYS)).isoformat()
     out, detail, missing = {}, {}, []
     for t in tickers:
         bars = [b for b in (panel_all.get(t) or []) if start <= b["date"] <= run_date]
         src = "panel"
+        if not bars:
+            bars = [b for b in ((fetched or {}).get(t) or []) if start <= str(b["date"])[:10] <= run_date]
+            src = "fmp"
         if not bars:
             raw, err = f.get("historical-price-eod/full", symbol=t, **{"from": start, "to": run_date})
             if err is None and isinstance(raw, list) and raw:
@@ -372,9 +383,11 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
             return {"manifest": failed_manifest(run_date, "the export has no daily_list rows to fetch for", f), "files": {}}
         panel = panel if panel is not None else load_panel_daily(sorted(set(tickers) | {BENCH} | set(ledger or [])))
         fund = build_fundamentals(f, tickers, run_date, previous_pack)
-        grid = build_grid(f, tickers, run_date, export, panel, mtf)
+        daily_cache: dict = {}
+        grid = build_grid(f, tickers, run_date, export, panel, mtf, daily_cache)
         led = ledger if ledger is not None else ledger_tickers(run_date)
-        closes, cdetail = build_closes(f, sorted(set(led) | set(tickers) | {BENCH}), run_date, panel)
+        # the closes step prefers the bars already in hand (panel, else the daily series the grid just fetched)
+        closes, cdetail = build_closes(f, sorted(set(led) | set(tickers) | {BENCH}), run_date, panel, daily_cache)
         bodies = {"fundamentals_pack.json": dumps(fund), "mtf_grid.json": dumps(grid), "closes_scorecard.json": dumps(closes)}
         fc, gc = fund["coverage"], grid["coverage"]
         n_closes = len([k for k in closes if k != "_missing"])
@@ -449,3 +462,49 @@ def summary_line(result: dict, pub: dict | None = None) -> str:
     if pub is not None:
         s += f"; published {pub['written']}/{pub['total']}" + (f" (FAILED: {'; '.join(pub['failed'])})" if pub["failed"] else "")
     return s
+
+
+def describe(result: dict, top: int = 15) -> str:
+    """The numbers for a job log / a report: per file served / partial / unserved, where the hourly bars came from,
+    how many hourly bars per name, which fundamentals fields are filled, the errors, the run time. Plain text."""
+    import statistics
+    m = result["manifest"]
+    L = [f"COMMITTEE DATA {m['status']}  run_date {m['run_date']}  generated {m.get('generated_at')}"]
+    if m["status"] == "FAILED":
+        return "\n".join(L + [f"  FAILED: {m.get('reason')}", f"  FMP calls: {m.get('fmp_calls')}"])
+    L.append(f"  scope {m['scope']['requested']} names ({m['scope']['from']}); {m['fmp_calls']} FMP calls in {m['elapsed_s']}s"
+             f"; quota_hit={m.get('quota_hit')} time_budget_exhausted={m.get('time_budget_exhausted')}")
+    for name, e in m["files"].items():
+        L.append(f"  {name:24s} served {e['served']:>4}  unserved/partial {e['unserved']:>4}  of {e['rows']:>4}  {e['bytes']:>9,} bytes  sha256 {e['sha256'][:12]}")
+    docs = {n: json.loads(b) for n, b in result["files"].items()}
+    F, G = docs["fundamentals_pack.json"], docs["mtf_grid.json"]
+    fc = F["coverage"]
+    L.append(f"  FUNDAMENTALS  served {fc['served']} (carried {fc['carried']}), partial {fc['partial']}, unserved {fc['unserved']}"
+             + (f"; partial: {fc['partial_names'][:top]}" if fc["partial_names"] else "")
+             + (f"; unserved: {fc['unserved_names'][:top]}" if fc["unserved_names"] else ""))
+    ents = [e for e in F["tickers"].values() if e.get("status") in ("served", "carried", "partial")]
+    if ents:
+        fill = {}
+        for part, keys in (("profile", PROFILE_KEEP), ("ratios_ttm", RATIO_KEEP)):
+            for k in keys:
+                have = sum(1 for e in ents if isinstance((e.get(part) or {}).get(k), (int, float, str)) and (e.get(part) or {}).get(k) not in ("", None))
+                fill[f"{part}.{k}"] = have
+        g_have = sum(1 for e in ents if e.get("growth_3y") and all(x.get("growthRevenue") is not None and x.get("growthEPS") is not None for x in e["growth_3y"]))
+        fill["growth_3y (3 yrs, revenue+EPS)"] = g_have
+        L.append(f"  fundamentals fields filled (of {len(ents)} names with any part): " + ", ".join(f"{k} {v}" for k, v in fill.items()))
+    gc = G["coverage"]
+    L.append(f"  MTF GRID  complete {gc['complete']}/{gc['requested']}, with a gap {gc['served'] - gc['complete']}, not served {gc['not_served']}"
+             f"; hourly: {gc['hourly_native']} native, {gc['hourly_rolled_up']} rolled up from 15-min, {gc['hourly_none']} none; daily from {gc['daily_source']}")
+    rows = [r["fetch"]["hourly"]["rows"] for r in G["names"].values() if r["fetch"]["hourly"]["source"] != "none"]
+    if rows:
+        L.append(f"  hourly bars per name: min {min(rows)} / median {int(statistics.median(rows))} / max {max(rows)}")
+    gaps = {t: r["gaps"] for t, r in G["names"].items() if r.get("gaps")}
+    if gaps:
+        L.append(f"  names with a frame gap ({len(gaps)}): " + ", ".join(f"{t} {g}" for t, g in list(gaps.items())[:top]))
+    C = docs["closes_scorecard.json"]
+    L.append(f"  CLOSES  {len([k for k in C if k != '_missing'])} tickers, SPY last {max(C['SPY']) if 'SPY' in C else None}, missing {C['_missing'][:top]}")
+    for e in (m.get("errors") or [])[:top]:
+        L.append(f"  ERROR: {e}")
+    if m.get("errors_total", 0) > top:
+        L.append(f"  ... {m['errors_total']} errors in total (first {top} shown; all in manifest.json)")
+    return "\n".join(L)

@@ -53,7 +53,7 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # PM RULING 2026-09-22 (D120, THE MOMENTUM BOOK): the momentum numbers were in the export
     # all along and this whitelist dropped them because no seat MENU had asked. Seven of nine
     # seats never saw a return, a run length or an ADX. They are served to every nominator now.
-    "ret_63d","ret_6m","pct_run_10d","adx_14",
+    "ret_63d","index_pct_change_63d","ret_6m","pct_run_10d","adx_14",
     # R30 (PM 2026-10-30): Seow v2 position system + Wyckoff v2 (Wyckoff 2.0) read these. All are already
     # in the export; without them here trim nulled every new menu column (found on the 2026-10-30 dry build).
     "bar_open","bar_high","bar_low","bar_close","prior_bar_high","prior_bar_low","last_pivot_high","structure_shift_ref","fib_swing_low","base_low_20d","days_since_swing_high","bar_range_5d","subcomponents","rvol_20d","ma_20_slope_5d_pct","pvp_poc","pvp_vah","pvp_val","pvp_position","vwap_14d","vwap_14d_position","avwap_structure","avwap_swing","pos_in_50d_range_pct",

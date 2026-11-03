@@ -743,6 +743,10 @@ _FIELD_GLOSSARY.update({
                      "(FIP/earnings are never filters — see CLAUDE.md).",
     "cohort_hit_rate_20d": "Copy of signal_hit_rate_20d under the name Thorp's canon reads.",
     "cohort_n": "Copy of signal_n under the name Thorp's canon reads.",
+    "index_pct_change_63d": "The broad index's (SPY's) ~1-quarter (63 trading day) return, pct - the same number as "
+                            "the top-level spy_ret_63d, repeated on every row so it sits beside ret_63d. Seow's R8 "
+                            "compares the two. There is no industry-group series in AQE, so there is no "
+                            "industry_group_pct_change_63d.",
     "spy_ret_63d": "SPY's own ~1-quarter (63 trading day) return, top-level — the index "
                   "benchmark for ret_63d/pct_run_10d comparisons.",
     "hitrate_window": "The fixed cohort window signal_hit_rate_20d/cohort_hit_rate_20d are "
@@ -926,6 +930,7 @@ _FIELD_SCHEMA = {
     "prior_bar_low":  _fs("reference", "usd", "below_entry"),
     "ma_20_slope_5d_pct": _fs("signal", "pct", "n/a"),
     "ret_63d":       _fs("signal", "pct", "n/a"),
+    "index_pct_change_63d": _fs("reference", "pct", "n/a"),
     "pct_run_10d":   _fs("signal", "pct", "n/a"),
     "base_low_20d":  _fs("reference", "usd", "below_entry"),
     "days_since_swing_high": _fs("signal", "score", "n/a"),
@@ -1424,6 +1429,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "pos_in_50d_range_pct": None,
         "nr4_flag": None, "nr7_flag": None, "hv_ratio_6_100": None,
         "adx_14": None, "stoch_k_14": None, "stoch_d_3": None, "rvol_20d": None,
+        # 2026-11-03 (seow R8): the index's own 63-day return beside the stock's ret_63d, on every row.
+        "index_pct_change_63d": None,
         "gap_risk_flag": None, "cohort_hit_rate_20d": None, "cohort_n": None,
         # DSG-18 fib ladder (flat — retracement supports + swing anchors)
         "fib_swing_low": None, "fib_swing_high": None,
@@ -1713,6 +1720,11 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
 
+        # seow R8 ("stock_pct_change_63d <= index_pct_change_63d -> do not nominate long"): the broad index's
+        # 63-day return, same unit and window as ret_63d, so the comparison is on the row. It is SPY's, the
+        # same number as the top-level spy_ret_63d; null only when SPY history is unavailable.
+        fields["index_pct_change_63d"] = lk.get("spy_ret_63d")
+
         # ── Signal Radar (M14-M18) — additive DETECTION tags ──────────────
         # runner_setup / premove_setup + conviction + subtype. Never gate/size;
         # PM reads them like on_longlist/pe. % elsewhere = detection rate, not win rate.
@@ -1907,6 +1919,39 @@ def _held_sc_gates(s) -> dict:
         s.get("mp_100"), s.get("bq_100"), s.get("k39_gate"))
     return {"sc_m_gates": _gm["pass"], "sc_m_gate_detail": _gm["detail"],
             "sc_p_gates": _gp["pass"], "sc_p_gate_detail": _gp["detail"]}
+
+
+HELD_FILL_SKIP = frozenset({"rank", "source", "on_longlist", "on_elder", "on_qs", "in_ledger", "qs"})
+
+
+def _fill_held_rows(rows, full_record_for):
+    """Complete each held row from the SAME full record every other row is built from (PM 2026-11-03).
+
+    A held name that is not on the Longlist / Elder / QS lists is not in daily_list, so it used to reach the voices
+    through `_build_held_positions` alone, which takes only some fields: a normal row has ~299, MP's held row had
+    197 - no bar_*, base_low_20d, elder_5d, elder_context, lens, candles, pivots - so ~10 Wyckoff and ~17 Seow fields
+    read blank on the one name the PM actually owns. This fills ONLY keys the held row lacks: a held value
+    (entry, qty, held_sl, bracket, unreal_usd, ...) is never replaced, and list-membership keys (rank, source,
+    on_*, qs) are not copied - they would claim a list the name is not on. Returns {ticker: keys added} and the
+    names no full record could be built for (declared, not guessed). Never raises."""
+    added, missing = {}, []
+    for r in rows or []:
+        tk = r.get("ticker")
+        try:
+            full = full_record_for(tk) if tk else None
+        except Exception:  # noqa: BLE001
+            full = None
+        if not full:
+            missing.append(tk)
+            continue
+        n = 0
+        for k, v in full.items():
+            if k in HELD_FILL_SKIP or k in r:
+                continue
+            r[k] = v
+            n += 1
+        added[tk] = n
+    return {"keys_added": added, "no_full_record": missing}
 
 
 def _attach_held_stops(held, rows):
@@ -2646,6 +2691,22 @@ def build_export(shortlist: dict | None = None) -> dict:
 
         _attach_elder(_longlist)
         _attach_elder(_elderlist)
+
+        # Held rows get the same completion every list row has (PM 2026-11-03): the full record first (so
+        # elder_5d / bar_* / lens exist), then the same Elder context, rvol, earnings and hit-rate attach.
+        def _held_full(_tk):
+            _wr = _sc_by_tk.get(_tk)
+            if _wl_record is not None and _wr is not None:
+                return _wl_record(_wr, 0, "held")
+            _full = _v21_record_fields(_tk, dsl_all.get(_tk, {}), _v21_lk, sm, sector_grades,
+                                       regime_level=regime_level)
+            _full["elder_5d"] = elder5.get(_tk)
+            _full["elder_hi7_streak"] = _elder_hi7_streak(elder5.get(_tk))
+            return _full
+
+        _held_rows = export.get("held_positions") or []
+        export["held_positions_completion"] = _fill_held_rows(_held_rows, _held_full)
+        _attach_elder(_held_rows)
 
         # ── Volume-validated pivots (TV-analysis Phase 4) ─────────────────
         # A level DEFENDED on high volume is a stronger level. Delegates to

@@ -449,3 +449,109 @@ def test_publishing_without_github_is_a_named_failure_the_summary_line_can_print
     pub = cd.publish(r)
     assert pub["ok"] is False and pub["manifest_landed"] is False and "not configured" in pub["failed"][0]
     assert "published 0/0 (FAILED: GitHub not configured" in cd.summary_line(r, pub)
+
+
+# ------------------------------------------------------- the standalone proof run (committee-data.yml)
+def test_closes_reuse_the_daily_bars_the_grid_already_fetched_instead_of_paying_twice():
+    """The runner is limited to ~80 calls a minute: with no panel, each name's daily series is fetched ONCE."""
+    routes = all_routes()
+    for t in ("MP", "AAA", "V", "SPY"):
+        routes[("historical-price-eod/full", t)] = fx("eod_full")
+    c = FakeClient(routes)
+    r = cd.run(EXPORT, RUN_DATE, client=c, panel={}, ledger=[])
+    per_name = {}
+    for path, sym in c.calls:
+        if path == "historical-price-eod/full":
+            per_name[sym] = per_name.get(sym, 0) + 1
+    assert per_name.get("MP") == 1 and per_name.get("AAA") == 1 and per_name.get("V") == 1, per_name
+    assert per_name.get("SPY") == 1                                   # the benchmark is not in the grid: fetched once
+    closes = json.loads(r["files"]["closes_scorecard.json"])
+    assert closes["MP"]["2026-11-02"] == 38.35 and closes["_missing"] == []
+    assert r["manifest"]["closes_detail"]["MP"]["source"] == "fmp"
+
+
+def test_describe_prints_the_numbers_the_pm_asked_for():
+    r = run(FakeClient(all_routes()))
+    text = cd.describe(r)
+    assert text.startswith(f"COMMITTEE DATA OK  run_date {RUN_DATE}")
+    for needle in ("fundamentals_pack.json", "mtf_grid.json", "closes_scorecard.json", "sha256", "FMP calls",
+                   "FUNDAMENTALS  served 3", "fundamentals fields filled", "profile.sector 3", "growth_3y (3 yrs, revenue+EPS) 3",
+                   "MTF GRID  complete 3/3", "3 native", "hourly bars per name: min 70 / median 70 / max 70", "CLOSES"):
+        assert needle in text, (needle, text)
+    failed = {"manifest": cd.failed_manifest(RUN_DATE, "FMPError: FMP_API_KEY not set"), "files": {}}
+    assert "FAILED: FMPError: FMP_API_KEY not set" in cd.describe(failed)
+
+
+def _script():
+    import importlib
+    return importlib.import_module("scripts.committee_data_run")
+
+
+def _patch_fmp(monkeypatch, routes, default=None):
+    import src.data.fmp_client as fc
+    monkeypatch.setattr(fc, "FMPClient", lambda: FakeClient(routes, default))
+
+
+def _export_file(tmp_path, export=EXPORT):
+    p = tmp_path / "export.json"
+    p.write_text(json.dumps(dict(export, date=RUN_DATE)))
+    return p
+
+
+def test_the_standalone_run_writes_the_set_reads_the_export_date_and_exits_0_when_ok(tmp_path, monkeypatch, capsys):
+    S = _script()
+    _patch_fmp(monkeypatch, all_routes())
+    monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
+    monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
+    out = tmp_path / "cd"
+    rc = S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"])
+    log = capsys.readouterr().out
+    assert rc == 0, log
+    assert f"run date {RUN_DATE}" in log and "COMMITTEE DATA OK" in log
+    assert sorted(p.name for p in out.iterdir()) == sorted(list(cd.FILES) + ["manifest.json"])
+
+
+def test_a_failed_or_partial_rerun_never_overwrites_an_ok_set_for_the_same_date(tmp_path, monkeypatch, capsys):
+    S = _script()
+    _patch_fmp(monkeypatch, all_routes())
+    monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
+    monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
+    out = tmp_path / "cd"
+    assert S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"]) == 0
+    good = (out / "manifest.json").read_bytes()
+    capsys.readouterr()
+    # the key is refused: every call errors
+    _patch_fmp(monkeypatch, {}, default=FMPQuotaError("Invalid API KEY"))
+    rc = S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"])
+    log = capsys.readouterr().out
+    assert rc == 1 and "NOT publishing" in log and "Kept it" in log
+    assert (out / "manifest.json").read_bytes() == good
+
+
+def test_a_missing_export_or_key_is_a_loud_nonzero_exit(tmp_path, monkeypatch, capsys):
+    S = _script()
+    assert S.main(["--export", str(tmp_path / "nope.json"), "--out-dir", str(tmp_path / "o"), "--no-publish"]) == 1
+    assert "nothing to fetch for" in capsys.readouterr().out
+    monkeypatch.delenv("FMP_API_KEY", raising=False)
+    assert S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(tmp_path / "o2"), "--no-publish"]) == 1
+    assert "FAILED" in capsys.readouterr().out
+
+
+def test_the_workflow_is_manual_only_cannot_race_the_nightly_and_decides_on_the_committee_check():
+    import yaml
+    wf = yaml.safe_load((ROOT / ".github" / "workflows" / "committee-data.yml").read_text())
+    on = wf.get("on") or wf.get(True)
+    assert list(on) == ["workflow_dispatch"], "must never fire on a push or a schedule"
+    assert wf["concurrency"]["group"] == "aqe-daily" and wf["concurrency"]["cancel-in-progress"] is False
+    assert wf["permissions"] == {"contents": "write"}
+    steps = wf["jobs"]["fetch"]["steps"]
+    text = json.dumps(steps)
+    assert "FMP_API_KEY" in text and "secrets.FMP_API_KEY" in text and "scripts.committee_data_run" in text
+    assert "check.py data" in text and "check_committee_data" in text
+    assert steps[0]["with"]["ref"] == "main"
+    daily = (ROOT / ".github" / "workflows" / "daily-run.yml").read_text()
+    assert "committee_data_run" not in daily             # the nightly path is unchanged by the proof workflow
+    # the script publishes ONLY under aegis/output/committee_data/
+    assert cd.REPO_DIR == "aegis/output/committee_data"
+    src = (ROOT / "scripts" / "committee_data_run.py").read_text()
+    assert "publish_daily_outputs" not in src and "put_file(" not in src

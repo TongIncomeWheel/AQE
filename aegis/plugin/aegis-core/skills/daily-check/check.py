@@ -433,7 +433,7 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
       AQE GAP       not on the menu and not an AQE export field at all (a data gap)
       OFF MY MENU   not on the menu but AQE exports it (a menu choice - listed, never a gap, never blocks)
       CONDITIONAL   legitimately blank by AQE's own rule (contract conditional_blank, with the glossary reason)
-    A NOT SERVED / AQE GAP field blocks unless the contract lists it in known_gaps (printed every run, no block). Name-level
+    A NOT SERVED / AQE GAP field, or a NOT_AVAILABLE recogniser, blocks unless the contract has a WRITTEN REASON for it in `standing` / `capabilities` (printed every run, no block). Name-level
     blanks (a field served for most names, blank for some) are listed per field, scoped to `room` when given, and do
     not block: that is the seat's own declared no_data. Read-only; returns (fails, notes, report)."""
     fails, notes, report = [], [], {}
@@ -473,11 +473,21 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
         on_menu = lambda f: f in menu or any(m.startswith(f + ".") for m in menu)
         in_pkt = lambda f: f in cols or any(c.startswith(f + ".") for c in cols)
         in_exp = lambda f: f in export_cols or any(e.startswith(f + ".") for e in export_cols)
-        known = (contract.get("known_gaps") or {}).get(v) or {}
-        served, off_menu, conditional, new_gaps, known_hit, blanks = [], [], [], [], [], {}
+        known = (contract.get("standing") or {}).get(v) or {}
+        aliases = (contract.get("served_as") or {}).get(v) or {}
+        served, served_as, off_menu, conditional, new_gaps, known_hit, blanks = [], [], [], [], [], [], {}
         for f in req:
             if is_cond(f):
                 conditional.append(f); continue
+            if f in aliases:
+                # the canon's name for a column the packet carries under another name: the SOURCE must be served
+                src = aliases[f]["as"]
+                sidx = [i for i, c in enumerate(hdr) if c == src or c.startswith(src + ".")]
+                if on_menu(src) and sidx and not all(all(len(r) <= i or r[i].strip() in BLANK for i in sidx) for r in rows):
+                    served_as.append(f"{f}={src}")
+                else:
+                    new_gaps.append((f, f"SERVED AS {src}, but {src} is not served (not on the menu, no column, or blank for every name)"))
+                continue
             if not on_menu(f):
                 if in_exp(f):
                     off_menu.append(f)
@@ -502,16 +512,27 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
             blank_names = [r[0] for r in scope if all(blank(r, i) for i in idxs)]
             if blank_names:
                 blanks[f] = blank_names
-        rep = {"required": len(req), "served": len(served), "conditional": conditional, "off_my_menu": off_menu,
+        # NOT_AVAILABLE recognisers (the canon's own "this data does not exist"): empty `fields:`, so the loop above
+        # cannot see them. Each must be in `capabilities` with a written reason, or it is a new gap.
+        caps_known, caps_new = [], []
+        for item in (contract.get("declared_unavailable") or {}).get(v) or []:
+            why = ((contract.get("capabilities") or {}).get(v) or {}).get(item["id"])
+            (caps_known if why else caps_new).append(item)
+        for item in caps_new:
+            new_gaps.append((f"{item['id']} (NOT_AVAILABLE)", f"CAPABILITY NOT SERVED: the canon declares it unavailable ({item['needs'][:90]}) and no written reason is on file"))
+        rep = {"required": len(req), "served": len(served), "served_as": served_as, "conditional": conditional, "off_my_menu": off_menu,
+               "capabilities_not_served": [i["id"] for i in caps_known],
                "not_served_known": known_hit, "not_served_new": [f for f, _ in new_gaps], "name_blanks": {k: n[:NAME_CAP] for k, n in blanks.items()},
                "scope": "room" if room is not None else "all packet rows", "names_in_scope": len(scope)}
         report[v] = rep
         for f, why in new_gaps:
-            fails.append(f"{v}: {f} -- {why}. The charter reads it; a vote on this is a vote with a hole. Fix the feed, or waive it in contracts/voice_coverage.json known_gaps with the PM's name on it")
-        line = f"{v}: {len(served)}/{len(req)} served"
-        if known_hit: line += f" · NOT SERVED (known, waived): {', '.join(known_hit)}"
+            fails.append(f"{v}: {f} -- {why}. The charter reads it; a vote on this is a vote with a hole. Fix the feed, or put it in contracts/voice_coverage.json `standing` with a written reason")
+        line = f"{v}: {len(served) + len(served_as)}/{len(req)} served"
+        if served_as: line += f" ({len(served_as)} under another name: {', '.join(served_as)})"
+        if known_hit: line += f" · NOT SERVED (standing, written reason in the contract): {', '.join(known_hit)}"
+        if caps_known: line += f" · CAPABILITY NOT SERVED (canon says NOT_AVAILABLE): {', '.join(i['id'] for i in caps_known)}"
         if off_menu: line += f" · off my menu (a menu choice, not a gap): {', '.join(off_menu)}"
-        notes.append(("WARN " if known_hit else "") + "voice coverage " + line)
+        notes.append(("WARN " if (known_hit or caps_known) else "") + "voice coverage " + line)
         if blanks:       # one compact line per voice; the per-field name lists are in the JSON report (--out)
             per_name = {}
             for f, nm in blanks.items():
