@@ -318,7 +318,15 @@ steps:
     on_fail: "watch-table-only run, declared"
     rulings: [R1, R2, R3, R31, R32, R36]
     validate_with: "registrar.py validate --file <form> --round 2 --candidates candidate_set.json --phase4 phase4.json --packet VOTE_PACKET.txt"
+    before: "check.py coverage --packets-dir packets --export aqe_daily_export.json --phase4 phase4.json --out coverage.json"
     must_also: >
+      PER-VOICE DATA COVERAGE, BEFORE any seat is spawned (PM 2026-11-03: "BLOCK before the vote on a gap, loud,
+      never a silent pass"). Run the `before` command. Exit 1 = a seat's charter reads a field its packet does not
+      serve (a NEW gap, not in contracts/voice_coverage.json known_gaps): STOP, page the PM with the FAIL lines, and
+      do not spawn the vote. Exit 0 prints, per voice, what is served, the standing gaps that are waived but still
+      NOT SERVED (named every run), the fields that are off the voice's menu (a menu choice, never a gap), and the
+      name-level blanks scoped to this room: quote the NOT SERVED and name-level lines in the brief header, so a
+      vote taken on a hole is a vote the PM can see was taken on one. coverage.json is the full report; commit it.
       Packet is built by `pma_pipeline.py r2digest` and is IDENTICAL for every seat.
       Every seat votes on EVERY deliberation-set name. Commit per vote, not at end of stage.
       R36 CASE FORM (contracts/case_form.schema.json): every vote carries `case` -- for, against, entry

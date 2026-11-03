@@ -2503,9 +2503,12 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
         for n, b in bodies.items(): open(os.path.join(cdd, n), "wb").write(b)
         open(os.path.join(cdd, "manifest.json"), "wb").write(dumps(man))
     def gate():
-        return run([CHK, "data", "--output-dir", od])
+        # the per-voice coverage check has its own tests on REAL packets (tests/test_voice_coverage.py); these
+        # minimal fixture packets carry two columns, so it is switched off - loudly, and the test asserts the note.
+        return run([CHK, "data", "--output-dir", od, "--voice-contract", "none"])
     write_all()
     rc, log = gate(); check("a clean handoff reads Healthy", rc == 0 and "DATA HANDOFF: Healthy" in log, log[-400:])
+    check("switching the per-voice coverage check off is never silent", "voice coverage check DISABLED" in log, log[-400:])
     write_all(pk={"seow": "# DICT\nticker\tsc_momentum\n"}); rc, log = gate(); check("an EMPTY decider packet is named", rc != 0 and "seow.tsv has a header but NO rows" in log, log[-300:])
     write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\nBBB\t60\nCCC\t55\nHLD\t50\nZZZ\t1\n"}); rc, log = gate(); check("a packet serving a name outside the candidate set is named", rc != 0 and "not in the candidate set" in log, log[-300:])
     write_all(pk={"raschke": "ticker\tsc_momentum\nAAA\t70\n"}); rc, log = gate(); check("a packet blind to most of the candidate set is named (yesterday's packet?)", rc != 0 and "blind to" in log, log[-300:])
@@ -2595,6 +2598,22 @@ def test_the_book_and_its_stops_are_one_checked_source(td):
     B = json.load(open(out)) if rc == 0 else {}
     check("a live read is restricted to the journal's book (no MARA) and its disagreement is named",
           rc == 0 and set(B["positions"]) == {"MP", "V"} and B["disagreements"] == ["MP: stop moved, journal 36.66 -> broker 36.0"], str(B.get("disagreements")) + log[-200:])
+
+
+def test_one_r_is_one_percent_of_the_journals_capital(td):
+    """PM 2026-11-03 (final, relayed by the conductor; the repo's own CLAUDE.md records the 27 Oct ruling as 1% of
+    the portfolio): the journal's 1R is 1% of its dynamic capital. aegis_fund.md one_r_usd (620) stays the single
+    figure the committee sizes from; this pins the PERCENT that still drives the journal's own dyncap.one_r."""
+    core = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    live = os.path.abspath(os.path.join(core, "..", "..", "charter", "parameters.yaml"))
+    for label, path in (("plugin", os.path.join(core, "charter", "parameters.yaml")), ("live", live)):
+        txt = open(path).read()
+        check(f"{label} parameters.yaml: one_r_pct_of_dyncap is 1.0", "one_r_pct_of_dyncap: 1.0" in txt and "one_r_pct_of_dyncap: 1.5" not in txt, path)
+    for path in (os.path.join(core, "tools", "journal_build.py"), os.path.abspath(os.path.join(core, "..", "..", "tools", "journal_build.py"))):
+        txt = open(path).read()
+        check(f"{os.path.relpath(path, core)}: the fallback default is 1.0", "one_r_pct = 1.0" in txt and "one_r_pct = 1.5" not in txt, path)
+    fund = open(os.path.join(core, "config", "aegis_fund.md")).read()
+    check("aegis_fund.md still carries the single committee figure, one_r_usd 620", "one_r_usd: 620" in fund)
 
 
 def test_review_fixes_count_only_validated_forms_and_never_double_count(td):
@@ -3354,6 +3373,7 @@ def main():
                    test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_the_book_and_its_stops_are_one_checked_source,
+                   test_one_r_is_one_percent_of_the_journals_capital,
                    test_review_fixes_count_only_validated_forms_and_never_double_count,
                    test_rebuilt_seow_and_wyckoff_canons_are_sound,
                    test_the_figure_audit_reads_field_equals_value,

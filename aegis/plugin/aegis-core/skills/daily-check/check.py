@@ -8,6 +8,8 @@
                  [--journal-dir aegis/data/journal] [--broker-stops <run-dir>/broker_stops.json]
                  (also the book + stops: the close's journal, the export, a live broker read; and the committee's FMP
                   inputs the daily run fetched: <output>/committee_data/ - manifest, sha256s, coverage, freshness)
+  check.py coverage --packets-dir aegis/output/packets --export aegis/output/aqe_daily_export.json [--phase4 phase4.json] [--out coverage.json]
+                 (per-voice data coverage: each charter's required fields vs its packet; run BEFORE the vote)
   check.py all   (ready + data + chain)
 
 Exit 0 = Healthy. Exit 1 = at least one FAIL line. Exit 2 = could not even read an input (also a failure --
@@ -396,7 +398,135 @@ def check_committee_data(output_dir, run_date, export=None):
     return fails, notes
 
 
-def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_stops=None):
+DEFAULT_VOICE_CONTRACT = os.path.abspath(os.path.join(HERE, "..", "..", "contracts", "voice_coverage.json"))
+DEFAULT_MENUS = os.path.abspath(os.path.join(HERE, "..", "pma", "contracts", "voice_menus.json"))
+BLANK = ("", "null", "None", "nan", "NaN")
+NAME_CAP = 12
+
+
+def _flat_keys(o, prefix=""):
+    out = set()
+    if isinstance(o, dict):
+        for k, v in o.items():
+            out.add(prefix + k)
+            if isinstance(v, dict):
+                out |= _flat_keys(v, prefix + k + ".")
+    return out
+
+
+def _read_packet(path):
+    """-> (header, rows) of a voice packet TSV; comment lines (# DICT ...) skipped."""
+    lines = [l.rstrip("\n") for l in open(path, encoding="utf-8", errors="replace") if l.strip() and not l.startswith("#")]
+    if not lines:
+        return [], []
+    hdr = lines[0].split("\t")
+    return hdr, [l.split("\t") for l in lines[1:]]
+
+
+def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VOICE_CONTRACT, menus_path=DEFAULT_MENUS, room=None):
+    """PER-VOICE DATA COVERAGE (PM 2026-11-03: "a deterministic per-voice data-coverage report ... BLOCK before the
+    vote on a gap, loud, never a silent pass ... distinguish 'not served' from 'off my menu'").
+    For each decider: the fields its recognisers read (generated from the canon locks into the contract) against
+    its packet's columns and the non-blank rate per name. Every required field is exactly one of:
+      SERVED        on the voice's menu, a column in its packet, not blank for every name in scope
+      NOT SERVED    on the menu but the column is absent, or blank for EVERY name in scope (a data gap)
+      AQE GAP       not on the menu and not an AQE export field at all (a data gap)
+      OFF MY MENU   not on the menu but AQE exports it (a menu choice - listed, never a gap, never blocks)
+      CONDITIONAL   legitimately blank by AQE's own rule (contract conditional_blank, with the glossary reason)
+    A NOT SERVED / AQE GAP field blocks unless the contract lists it in known_gaps (printed every run, no block). Name-level
+    blanks (a field served for most names, blank for some) are listed per field, scoped to `room` when given, and do
+    not block: that is the seat's own declared no_data. Read-only; returns (fails, notes, report)."""
+    fails, notes, report = [], [], {}
+    contract = _load(contract_path, "voice_coverage contract", fails)
+    menus = _load(menus_path, "voice_menus", fails)
+    if contract is None or menus is None:
+        return fails, notes, report
+    cond = contract.get("conditional_blank") or {}
+    cond_exact = {k for k in cond if not k.endswith(".*")}
+    cond_prefix = tuple(k[:-1] for k in cond if k.endswith(".*"))
+    # `bracket.*` makes bracket.stop conditional AND the parent `bracket` a charter lists (it expands to the same columns)
+    is_cond = lambda f: f in cond_exact or (bool(cond_prefix) and (f.startswith(cond_prefix) or (f + ".") in cond_prefix))
+    export_cols = set()
+    for r in (export.get("daily_list") or []) + (export.get("held_positions") or []):
+        if isinstance(r, dict):
+            export_cols |= _flat_keys(r)
+    if not export_cols:
+        fails.append("voice coverage: the export has no daily_list columns to compare the charters against")
+        return fails, notes, report
+    for v in deciders:
+        req = (contract.get("required_fields") or {}).get(v)
+        if req is None:
+            fails.append(f"voice coverage: {v} has no required_fields in the contract (run tools/build_voice_coverage.py)"); continue
+        menu = set(menus.get(v) or [])
+        if not menu:
+            fails.append(f"voice coverage: {v} has no menu in voice_menus.json"); continue
+        pk = os.path.join(packets_dir, f"{v}.tsv")
+        if not os.path.exists(pk):
+            fails.append(f"voice coverage: packet MISSING for {v} ({pk})"); continue
+        hdr, rows = _read_packet(pk)
+        if not hdr or hdr[0] != "ticker":
+            fails.append(f"voice coverage: {v}.tsv has no ticker header"); continue
+        scope = [r for r in rows if (room is None or (r and r[0] in room))]
+        if room is not None and not scope:
+            fails.append(f"voice coverage: none of the room ({len(room)} names) is in {v}'s packet"); continue
+        cols = set(hdr)
+        on_menu = lambda f: f in menu or any(m.startswith(f + ".") for m in menu)
+        in_pkt = lambda f: f in cols or any(c.startswith(f + ".") for c in cols)
+        in_exp = lambda f: f in export_cols or any(e.startswith(f + ".") for e in export_cols)
+        known = (contract.get("known_gaps") or {}).get(v) or {}
+        served, off_menu, conditional, new_gaps, known_hit, blanks = [], [], [], [], [], {}
+        for f in req:
+            if is_cond(f):
+                conditional.append(f); continue
+            if not on_menu(f):
+                if in_exp(f):
+                    off_menu.append(f)
+                elif f in known:
+                    known_hit.append(f)
+                else:
+                    new_gaps.append((f, "AQE GAP: not on the menu and AQE does not export it"))
+                continue
+            # on the menu: the column must exist and carry something
+            idxs = [i for i, c in enumerate(hdr) if c == f or c.startswith(f + ".")]
+            if not idxs:
+                (known_hit if f in known else new_gaps).append(f if f in known else (f, "NOT SERVED: on the menu but no such column in the packet"))
+                continue
+            def blank(r, i): return len(r) <= i or r[i].strip() in BLANK
+            # A FEED gap is a property of the whole packet column: blank for every name the voice was sent. That is
+            # what blocks. Which room names are blank is a name-level fact the seat declares as no_data - it is
+            # listed (scoped to the room when given) but never blocks, and a small room can never fake a feed gap.
+            if rows and all(all(blank(r, i) for i in idxs) for r in rows) and contract.get("block_when_blank_for_every_name_in_scope", True):
+                (known_hit if f in known else new_gaps).append(f if f in known else (f, f"NOT SERVED: blank for all {len(rows)} names in the packet"))
+                continue
+            served.append(f)
+            blank_names = [r[0] for r in scope if all(blank(r, i) for i in idxs)]
+            if blank_names:
+                blanks[f] = blank_names
+        rep = {"required": len(req), "served": len(served), "conditional": conditional, "off_my_menu": off_menu,
+               "not_served_known": known_hit, "not_served_new": [f for f, _ in new_gaps], "name_blanks": {k: n[:NAME_CAP] for k, n in blanks.items()},
+               "scope": "room" if room is not None else "all packet rows", "names_in_scope": len(scope)}
+        report[v] = rep
+        for f, why in new_gaps:
+            fails.append(f"{v}: {f} -- {why}. The charter reads it; a vote on this is a vote with a hole. Fix the feed, or waive it in contracts/voice_coverage.json known_gaps with the PM's name on it")
+        line = f"{v}: {len(served)}/{len(req)} served"
+        if known_hit: line += f" · NOT SERVED (known, waived): {', '.join(known_hit)}"
+        if off_menu: line += f" · off my menu (a menu choice, not a gap): {', '.join(off_menu)}"
+        notes.append(("WARN " if known_hit else "") + "voice coverage " + line)
+        if blanks:       # one compact line per voice; the per-field name lists are in the JSON report (--out)
+            per_name = {}
+            for f, nm in blanks.items():
+                for n in nm:
+                    per_name[n] = per_name.get(n, 0) + 1
+            worst = sorted(per_name.items(), key=lambda x: (-x[1], x[0]))[:5]
+            fields = ", ".join(f"{f} {len(nm)}" for f, nm in sorted(blanks.items(), key=lambda x: (-len(x[1]), x[0]))[:6])
+            rep["name_blank_counts"] = {f: len(nm) for f, nm in blanks.items()}
+            notes.append(f"WARN voice coverage {v}: name-level blanks in {len(blanks)} served field(s) of {len(scope)} names ({fields}"
+                         f"{', ...' if len(blanks) > 6 else ''}); most affected: " + ", ".join(f"{n} ({c} fields)" for n, c in worst)
+                         + " -- the seat declares these no_data")
+    return fails, notes, report
+
+
+def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_stops=None, voice_contract=DEFAULT_VOICE_CONTRACT):
     """THE HANDOFF GATE (PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and
     integrity from AQE to voices handoff'). Everything the seats will read, proven consistent with each other
     and with the run that produced them. Read-only; a FAIL line per defect; never 'probably fine'."""
@@ -502,6 +632,12 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
         stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f != "no_technical_coverage.json"]
         if stray_json:
             fails.append(f"stray packet files (retired macro seats or unknown): {stray_json} (R31)")
+    # --- per-voice data coverage (PM 2026-11-03): each charter's required fields against its packet ---
+    if voice_contract and EX is not None and os.path.isdir(pk):
+        vf, vn, _ = check_voice_coverage(pk, EX, deciders, voice_contract)
+        fails.extend(vf); notes.extend(vn)
+    elif not voice_contract:
+        notes.append("WARN voice coverage check DISABLED by --voice-contract none (never use this in a real run)")
     # --- the weather files ---
     if CR is not None:
         if run_date and _date_of(CR.get("generated_at")) != run_date:
@@ -559,8 +695,14 @@ def main(argv=None):
     c.add_argument("--levels", default=None); c.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
     c.add_argument("--ceiling-tokens", type=int, default=DEFAULT_CEILING)
     d_ = sub.add_parser("data"); d_.add_argument("--output-dir", required=True); d_.add_argument("--run-yaml", default=DEFAULT_RUN_YAML)
+    d_.add_argument("--voice-contract", default=DEFAULT_VOICE_CONTRACT, help="voice_coverage.json; 'none' disables the per-voice coverage check (tests only)")
     d_.add_argument("--journal-dir", default=None, help="default: <output-dir>/../data/journal")
     d_.add_argument("--broker-stops", default=None, help="GATHER's broker_stops.json, cross-checked against the journal")
+    cv = sub.add_parser("coverage", help="per-voice data coverage; run BEFORE the vote with --phase4 so name-level blanks are scoped to the room")
+    cv.add_argument("--packets-dir", required=True); cv.add_argument("--export", required=True)
+    cv.add_argument("--phase4", default=None, help="phase4.json: scope name-level blanks to its deliberation_set")
+    cv.add_argument("--contract", default=DEFAULT_VOICE_CONTRACT); cv.add_argument("--menus", default=DEFAULT_MENUS)
+    cv.add_argument("--run-yaml", default=DEFAULT_RUN_YAML); cv.add_argument("--out", default=None, help="write the full report as JSON")
     a_ = sub.add_parser("all"); a_.add_argument("--last-run", required=True); a_.add_argument("--today", default=None)
     a_.add_argument("--output-dir", default=None)
     a_.add_argument("--run-dir", required=True); a_.add_argument("--date", required=True); a_.add_argument("--levels", default=None)
@@ -570,8 +712,26 @@ def main(argv=None):
     if a.cmd in ("ready", "all"):
         f, n = check_ready(a.last_run, a.today); rc |= _report("READY", f, n)
     if a.cmd == "data" or (a.cmd == "all" and getattr(a, "output_dir", None)):
+        vc = getattr(a, "voice_contract", DEFAULT_VOICE_CONTRACT)
         f, n = check_data(a.output_dir, a.run_yaml, getattr(a, "journal_dir", None),
-                          getattr(a, "broker_stops", None)); rc |= _report("DATA HANDOFF", f, n)
+                          getattr(a, "broker_stops", None), None if str(vc).lower() == "none" else vc); rc |= _report("DATA HANDOFF", f, n)
+    if a.cmd == "coverage":
+        fails, ex = [], None
+        ex = _load(a.export, "export", fails)
+        room = None
+        if a.phase4:
+            p4 = _load(a.phase4, "phase4.json", fails)
+            room = set((p4 or {}).get("deliberation_set") or []) or None
+            if p4 is not None and not room:
+                fails.append("phase4.json has an empty deliberation_set -- nothing to scope the coverage to")
+        if ex is not None and not fails:
+            f, n, rep = check_voice_coverage(a.packets_dir, ex, _deciders(a.run_yaml), a.contract, a.menus, room)
+            fails += f
+            if a.out:
+                json.dump(rep, open(a.out, "w"), indent=1)
+        else:
+            n = []
+        rc |= _report("VOICE COVERAGE", fails, n)
     if a.cmd in ("chain", "all"):
         f, n = check_chain(a.run_dir, a.date, a.levels, a.run_yaml, a.ceiling_tokens); rc |= _report("CHAIN", f, n)
     return rc

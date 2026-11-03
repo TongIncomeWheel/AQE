@@ -878,7 +878,7 @@ def cmd_build(args):
         except Exception:
             allocated = 0.0
     if one_r_pct is None:
-        one_r_pct = 1.5
+        one_r_pct = 1.0     # PM 2026-11-03 final: 1% of journal dynCap (was 1.5)
         try:
             import yaml
             params = yaml.safe_load(open(os.path.join(ROOT, "charter", "parameters.yaml")))
