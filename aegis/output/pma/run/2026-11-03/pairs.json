@@ -1,0 +1,286 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-03T01:00:53Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-03",
+ "survivors": [
+  "VLTO",
+  "CHD",
+  "GPN",
+  "MA",
+  "PFE",
+  "HOG",
+  "AJG",
+  "KDP",
+  "KO",
+  "VRTX",
+  "DLTR",
+  "CCEP",
+  "BRK-B",
+  "V"
+ ],
+ "pairs": [
+  {
+   "pair_id": "CHD-wyckoff-for~oneil",
+   "ticker": "CHD",
+   "claim_id": "CHD-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "oneil",
+   "claim_text": "Break at a new high on a wide bar closing near its high, rvol_20d 1.31; avwap_structure under the close; weekly up.",
+   "refute_evidence": "C16: the new-high break came on day_vol 1.34 (the claim's own rvol_20d 1.31), under the 1.40 bar - the breakout nobody bought in size. Lens coil warn: no tight handle (C14). Near-high and close position are seen.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.7% under 20-wk high: near new highs",
+    "D": "break on day_vol 1.34 < 1.40: C16 hard rejection",
+    "H1": "96% of the day's range: strong close, not a volume confirmation"
+   }
+  },
+  {
+   "pair_id": "CHD-oneil-against~seow",
+   "ticker": "CHD",
+   "claim_id": "CHD-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 1.34 fails C16 on the breakout day; coil warn, so no tight handle (C14); sma_dist 10.96 already well off the base.",
+   "refute_evidence": "Fails nothing on my test: a day_vol threshold is not my liquidity rule (C25 is volume vs trade size); extension is no fault in the position system (C26); handle/coil are not my instruments. Break and TIF confirm.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 0.7% under 20-wk high",
+    "D": "9>21, green, 0.7% under 20-day high: no red candle (C14)",
+    "H1": "9>21, 95.6% of day's range"
+   }
+  },
+  {
+   "pair_id": "MA-seow-for~oneil",
+   "ticker": "MA",
+   "claim_id": "MA-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Break, strength, flow and impulse all confirm.",
+   "refute_evidence": "C16: the push to the high came on day_vol 1.24, under 1.40. flow is advisory only and impulse is not my field. R2/C9: rank 78 trails RYAN, AJG and GPN in Financials; held V is the same group (C23).",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.5% under 20-wk high: near highs",
+    "D": "HH/HL, 0.5% under 20-day high on day_vol 1.24 < 1.40 (C16 fail)",
+    "H1": "LH/LL, 87% of the day's range: no confirming volume read"
+   }
+  },
+  {
+   "pair_id": "MA-oneil-against~livermore",
+   "ticker": "MA",
+   "claim_id": "MA-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "rank 78 fails C9; day_vol 1.24 under 1.40; duplicates held V; coil warn; pct_from_pivot 9.46 late (C17 weight).",
+   "refute_evidence": "W 9>21 dist_to_20bar_high_pct 0.49, D HH/HL 0.49 - at the high, not chasing above it (C5). V at its high is the C14 second name, not duplication (R7). rank and pct_from_pivot are not my tests. H1 LH/LL is my watch.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.49% under 20-wk high: Upward Trend at its high",
+    "D": "9>21, HH/HL, 0.49% under 20-day high: new-high action",
+    "H1": "9>21, LH/LL, 87.4% of range: hourly soft, no reaction off the high yet"
+   }
+  },
+  {
+   "pair_id": "PFE-minervini-for~wyckoff",
+   "ticker": "PFE",
+   "claim_id": "PFE-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "wyckoff",
+   "claim_text": "Breakout to a new high on expanding volume (C5, C6), mp STRONG/ACCELERATING, rs LEADER.",
+   "refute_evidence": "My break test (R3, C5) needs a close near the high: H1 pos_in_day_range_pct 59.5 with a red last hour, D 1.19% under the 20-day high. Not a top-third close at a new high; a sign-of-strength bar is still owed.",
+   "refute_tf": {
+    "W": "uptrend: 9>21, above EMA9, 1.19% under 20-wk high",
+    "D": "HH/HL but 1.19% under 20-day high: not closed at the high",
+    "H1": "pos_in_day_range_pct 59.5, last bar red: mid-bar close"
+   }
+  },
+  {
+   "pair_id": "KO-wyckoff-for~oneil",
+   "ticker": "KO",
+   "claim_id": "KO-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "oneil",
+   "claim_text": "Break at a new high on a wide top-third bar, value stepping up, weekly and averages rising.",
+   "refute_evidence": "C16: the new-high break came on day_vol 1.26, under 1.40. Lens coil '--' leaves no base to verify (R3); rank 218 fails C9 in Staples. The top-third close and rising averages are seen.",
+   "refute_tf": {
+    "W": "9>21, mixed, 0.5% under 20-wk high: near highs",
+    "D": "HH/HL, 0.5% under 20-day high on day_vol 1.26 < 1.40 (C16 fail)",
+    "H1": "81% of the day's range, red last bar"
+   }
+  },
+  {
+   "pair_id": "KO-oneil-against~raschke",
+   "ticker": "KO",
+   "claim_id": "KO-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "day_vol 1.26 fails C16; rank 218 fails C9; coil '--'.",
+   "refute_evidence": "My test reads the opposite: W 9>21 0.5% under 20-wk high, D HH/HL 0.5% under 20-day high, H1 81%: a break with the longer trend (C6). day_vol vs C16 and rank 218 are not my tests; coil '--' is no data, not a fail.",
+   "refute_tf": {
+    "W": "9>21 mixed, 0.5% under 20-wk high: longer trend up",
+    "D": "9>21 HH/HL, 0.5% under 20-day high: at the extreme",
+    "H1": "9>21 mixed, 81% of the day's range, red bar: good close"
+   }
+  },
+  {
+   "pair_id": "VRTX-oneil-for~livermore",
+   "ticker": "VRTX",
+   "claim_id": "VRTX-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "day_vol 2.16, LEADER, lens resistance and sector strong, weekly HH/HL 9>21.",
+   "refute_evidence": "C5: W 9>21 HH/HL agrees the trend is up, but D last_bar red, dist_to_20bar_high_pct 2.73, H1 close_vs_ema9 below at 39.5% of range - a reaction under way, not a new high. LEADER and lens fields not mine.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, red, 2.73% under 20-wk high: uptrend in a reaction",
+    "D": "9>21, mixed, red, 2.73% under 20-day high: no new high",
+    "H1": "below EMA9, 39.5% of day's range: reaction on the hour"
+   }
+  },
+  {
+   "pair_id": "VRTX-minervini-for~livermore",
+   "ticker": "VRTX",
+   "claim_id": "VRTX-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "Stage 2 leader pressing its high on expanding volume, flow 93.4.",
+   "refute_evidence": "Not pressing its high on my frames - D last_bar red, 2.73% under 20-day high; H1 below EMA9 at pos_in_day_range_pct 39.5. Wait for the new high (C5). flow is not my field.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, red, 2.73% under 20-wk high",
+    "D": "9>21, mixed, red, 2.73% under 20-day high: reacting",
+    "H1": "below EMA9, 39.5% of range"
+   }
+  },
+  {
+   "pair_id": "VRTX-livermore-against~minervini",
+   "ticker": "VRTX",
+   "claim_id": "VRTX-livermore-against",
+   "kind": "against",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "Reaction under way on the hourly; mp not STRONG.",
+   "refute_evidence": "An hourly reaction is not a template or volume failure: stack passes (ma50 523.32 > ma100 507.09 > ma200 479.79), rs_rank_pct 83.21, from_52w_hi -1.03%, sma_dist 5.7% near the pivot (C3, C5).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 2.7% under 20-wk high: stage 2 near high",
+    "D": "9>21, mixed, 2.7% under 20-day high: pressing the pivot",
+    "H1": "below EMA9, 40% of day's range: minor intraday dip, not my test"
+   }
+  },
+  {
+   "pair_id": "DLTR-livermore-for~oneil",
+   "ticker": "DLTR",
+   "claim_id": "DLTR-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Top-ranked leader at its highs on every frame, accelerating, group pair with HOG.",
+   "refute_evidence": "Leadership and group I confirm (rank 4, LEADER, HOG beside it), but C16 is a hard gate: day_vol 1.36, under 1.40. Under +40% is a rejection, not a weaker buy; one 1.40x day through the high would flip me.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.6% under 20-wk high: at new highs",
+    "D": "HH/HL, 0.6% under 20-day high on day_vol 1.36 < 1.40 (C16 fail)",
+    "H1": "87% of the day's range"
+   }
+  },
+  {
+   "pair_id": "DLTR-seow-for~oneil",
+   "ticker": "DLTR",
+   "claim_id": "DLTR-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Near the line, flow and impulse confirm, top-decile rank.",
+   "refute_evidence": "Top rank I confirm (rank 4, LEADER), but flow is advisory and impulse is not mine; my breakout test is C16 and day_vol 1.36 is under the 1.40 bar - a hard rejection. Near the pivot (pct_from_pivot 2.67) is seen.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.6% under 20-wk high: at new highs",
+    "D": "HH/HL, 0.6% under 20-day high on day_vol 1.36 < 1.40 (C16 fail)",
+    "H1": "87% of the day's range"
+   }
+  },
+  {
+   "pair_id": "DLTR-oneil-against~seow",
+   "ticker": "DLTR",
+   "claim_id": "DLTR-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 1.36 fails C16; coil warn; sma_dist 13.67.",
+   "refute_evidence": "Volume threshold and coil are not my tests; extension is no fault in the position system (C26). Close to the line: structure_shift ABOVE_STRUCTURE, pct_from_pivot 2.67, cmf 0.29, elder_pattern ACCELERATION.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.57% under 20-wk high",
+    "D": "9>21, HH/HL, green, 0.57% under 20-day high",
+    "H1": "9>21, above EMA9, 87.4% of day's range"
+   }
+  },
+  {
+   "pair_id": "CCEP-oneil-against~seow",
+   "ticker": "CCEP",
+   "claim_id": "CCEP-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 1.18 fails C16; rank 175; coil '--'.",
+   "refute_evidence": "Rank 175 fails nothing on my test: rs_rank_pct 80.92 passes C23. A day_vol threshold is not my liquidity rule (C25); coil is not my instrument. Break and TIF confirm.",
+   "refute_tf": {
+    "W": "9>21, above EMA9, 0.37% under 20-wk high",
+    "D": "9>21, HH/HL, green: no exit signal (C14)",
+    "H1": "9>21, above EMA9, 73.5% of day's range"
+   }
+  },
+  {
+   "pair_id": "BRK-B-livermore-for~oneil",
+   "ticker": "BRK-B",
+   "claim_id": "BRK-B-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "At its highs on every frame, pivot cleared, group pair.",
+   "refute_evidence": "At highs on every frame is seen, but the pivot break came on day_vol 1.38 - a near miss under the 1.40 bar, still a C16 rejection. Rank 245 trails the Financials leaders (C9).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.3% under 20-wk high: at new highs",
+    "D": "HH/HL, 0.3% under 20-day high on day_vol 1.38 < 1.40 (C16 fail)",
+    "H1": "97% of the day's range: strong close, not a volume test"
+   }
+  },
+  {
+   "pair_id": "BRK-B-oneil-against~seow",
+   "ticker": "BRK-B",
+   "claim_id": "BRK-B-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 1.38 fails C16; rank 245 fails C9.",
+   "refute_evidence": "Rank 245 is not my strength measure: rs_rank_pct 74.76 and ret_63d 7.52 pass C23/R12. A day_vol threshold is not my liquidity rule (C25). The break holds on all three frames.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.27% under 20-wk high",
+    "D": "9>21, HH/HL, green: no red candle (C14)",
+    "H1": "9>21, 97.4% of day's range"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 16,
+  "by_author": {
+   "wyckoff": 2,
+   "oneil": 7,
+   "seow": 2,
+   "minervini": 2,
+   "livermore": 3
+  },
+  "by_refuter": {
+   "oneil": 6,
+   "seow": 4,
+   "livermore": 3,
+   "wyckoff": 1,
+   "raschke": 1,
+   "minervini": 1
+  }
+ }
+}

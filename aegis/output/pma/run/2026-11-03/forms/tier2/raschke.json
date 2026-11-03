@@ -1,0 +1,138 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-03",
+ "answers": [],
+ "declarations": [
+  "No refutation of my claims was paired to me; answers is empty.",
+  "Every decision names its setup type (C2). adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16), so market_void is null throughout.",
+  "Long-vs-short trend read from the W and D EMA9/EMA21 rows, a declared substitute for the %D slope (C6). Extension read as D close vs D ema21. House rule R1: no bracket field is a reason. R41: no Valen flag is a reason."
+ ],
+ "decisions": [
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or structure turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Holy Grail shape without the pullback (C7): W and D 9>21 HH/HL, D dist_to_20bar_high_pct 0.87, D close 115.7 vs ema21 102.9493 stretched. No test or retracement at this price; first pullback only (C18)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high; stand aside if it opens off-plan (C22)."},
+   "wrong_if": "Daily close back under pivot_high (failed break) or BEARISH_CHOCH; no profit within a few bars (C11).",
+   "market_void": null,
+   "reason": "BREAKOUT with the trend aligned (C2, C6): W 9>21 HH/HL, D dist_to_20bar_high_pct 0.7, H1 pos_in_day_range_pct 95.6 strong close. Short horizon (C18); bar ranges not served (R5)."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Strong trend, no setup at this price (C7): W and D 9>21, D dist_to_20bar_high_pct 1.67, D close 99.63 vs ema21 86.1689 stretched, W hh_hl_3 mixed. Buy the first pullback, not the extension."
+  },
+  {
+   "ticker": "MA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Strong trend, extended (C7): D 9>21 HH/HL, dist_to_20bar_high_pct 0.49, D close 658.1 vs ema21 612.4551; H1 hh_hl_3 LH/LL inside the day. Same exposure as held V, flagged to the PM (R10)."
+  },
+  {
+   "ticker": "PFE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high."},
+   "wrong_if": "Daily close back under pivot_high or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "BREAKOUT, trend aligned (C2, C6): W and D 9>21, D HH/HL dist_to_20bar_high_pct 1.19, close 30.67 near ema9 30.0239, not stretched. H1 pos_in_day_range_pct 59.5 is a middling close, so the trigger asks for follow-through."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Aligned trend in range expansion (C7, C19): D 9>21 HH/HL, D close 33.07 vs ema21 28.6472, H1 hh_hl_3 LH/LL. This is where C19 locks profit, not where it buys; first pullback only."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Strong aligned trend, extended (C7): W and D 9>21 HH/HL, D dist_to_20bar_high_pct 0.94, D close 278.89 vs ema21 256.8862. No test or contraction at this price; first pullback only."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Strong aligned trend at the high (C7): W 9>21 HH/HL, H1 HH/HL pos_in_day_range_pct 99.0, D close 36.82 vs ema21 34.1633. No entry family at this price; beverage overlap with KO and CCEP is one factor (R10)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high."},
+   "wrong_if": "Daily close back under pivot_high or BEARISH_CHOCH; no profit within a few bars (C11).",
+   "market_void": null,
+   "reason": "BREAKOUT, trend aligned (C2, C6): W and D 9>21, D HH/HL dist_to_20bar_high_pct 0.45, H1 pos_in_day_range_pct 80.6. Close 95.83 vs D ema21 91.8143 is not stretched. Staples crowding flagged (R10)."
+  },
+  {
+   "ticker": "VRTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy the turn: an hourly close back above yesterday's high, never the dip itself."},
+   "wrong_if": "Daily close under ma_20 or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "RETRACEMENT in an aligned trend (C2, C7): W 9>21 HH/HL, D dist_to_20bar_high_pct 2.73, H1 close_vs_ema9 below at pos_in_day_range_pct 39.5. The pullback is in; the trigger is the turn back up. ADX gate not served (R3)."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "After a pullback to the 20-day MA, buy the first hourly close back above it."},
+   "wrong_if": "Daily close under ma_20 less one ATR, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Strong aligned trend, extended (C7): W and D 9>21 HH/HL, D dist_to_20bar_high_pct 0.57, D close 138.6 vs ema21 125.5421. No test or contraction at this price; first pullback only (C18)."
+  },
+  {
+   "ticker": "CCEP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "On the reclaim day, buy an hourly close above yesterday's high."},
+   "wrong_if": "Daily close under bar_low; no reclaim this session means stand aside (C22).",
+   "market_void": null,
+   "reason": "TEST of rising support in an aligned trend (C2, C20): W 9>21, D HH/HL dist_to_20bar_high_pct 0.37, H1 pos_in_day_range_pct 73.5. A held test is the double-stop location. Beverage overlap flagged (R10)."
+  },
+  {
+   "ticker": "BRK-B",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high."},
+   "wrong_if": "Daily close back under pivot_high or BEARISH_CHOCH; no profit within a few bars (C11).",
+   "market_void": null,
+   "reason": "BREAKOUT, all frames aligned (C2, C6): W and D 9>21 HH/HL, D dist_to_20bar_high_pct 0.27, H1 pos_in_day_range_pct 97.4 close at the high. Close 556.11 vs D ema21 533.3665 is not stretched."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Held: no add now; add only on an hourly close back above the 20-day MA after a first pullback."},
+   "wrong_if": "Daily close under ma_20 or BEARISH_CHOCH: tighten or exit.",
+   "market_void": null,
+   "reason": "Held, KEEP (C2): D 9>21 HH/HL, dist_to_20bar_high_pct 0.3, H1 pos_in_day_range_pct 88.7. Extended but not parabolic, so no C19 exit; a range-expansion spike triggers the windfall flag (R7). Overlaps MA (R10)."
+  }
+ ]
+}
