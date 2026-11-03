@@ -390,6 +390,66 @@ def _thrust_state(t):
     return "Falling faster"
 
 
+def _group_kind(grade, quadrant):
+    """The ONE rule for a group's state, shared by the group-turn section (8) and the top-20 table so the two
+    views cannot disagree: 'turn' = the grade is TURNING or the rotation quadrant is IMPROVING; 'lead' = the quadrant
+    is LEADING and the grade is DEPLOY or HOLD; anything else is None and is shown in its plain AQE words."""
+    if grade == "TURNING" or quadrant == "IMPROVING":
+        return "turn"
+    if quadrant == "LEADING" and grade in ("DEPLOY", "HOLD"):
+        return "lead"
+    return None
+
+
+def _sector_state(srm_by_sector, row):
+    """-> (label, pill class, plain AQE words). STRONG = the sector is leading the market; TURNING = improving or
+    recovering from weakness; anything else shows its plain AQE grade and quadrant - never blank, never invented."""
+    x = (srm_by_sector or {}).get((row or {}).get("gics_sector_name"))
+    if not x:
+        return "no sector grade", "p-n", "AQE has no sector grade for this name (declared gap)"
+    g, q = x.get("grade"), x.get("rrg_quadrant")
+    words = f"{g or 'no grade'} · {str(q).lower() if q else 'no quadrant'}"
+    k = _group_kind(g, q)
+    return ({"lead": "STRONG", "turn": "TURNING"}.get(k) or words, {"lead": "p-up", "turn": "p-warn"}.get(k, "p-n"), words)
+
+
+TOP_N = 20
+SHOWN_VERDICT = {"ADVANCE": "ADVANCE", "HOLD-FOR-CONDITIONS": "WATCH", "PASS": "PASS"}   # the Cards' own head pill reads "HOLD · WATCH"
+
+
+def _top20_panel(D, cons):
+    """PM 2026-11-03: the 20 best-ranked AQE names (export `rank` 1..20) at the very bottom of the Cards, built by code,
+    no model. For each: rank, ticker, sector, sector state (same grades as the group-turn section), the committee's
+    verdict (ADVANCE / WATCH / PASS, or 'not in the room'), and WHO VOTED FOR IT = the voices that SUPPORTED it at the
+    blind vote (consensus `split.support`), by name. Nothing invented: a name the room did not carry says so."""
+    rows = sorted([r for r in (D or {}).get("daily_list") or [] if isinstance(r, dict) and isinstance(r.get("rank"), int)],
+                  key=lambda r: r["rank"])[:TOP_N]
+    head = '<section class="card"><div class="eyebrow">Top 20 AQE names &middot; by AQE rank &middot; built by code, information only</div>'
+    if not rows:
+        return head + '<p class="cond">The export carries no ranked daily_list &mdash; declared gap, nothing invented.</p></section>'
+    srm = {x.get("sector"): x for x in (D or {}).get("srm") or [] if isinstance(x, dict)}
+    room = {c["ticker"]: c for c in cons}
+    body, n_strong, n_turn = [], 0, 0
+    for r in rows:
+        label, pill, words = _sector_state(srm, r)
+        n_strong += label == "STRONG"; n_turn += label == "TURNING"
+        c = room.get(r["ticker"])
+        if c:
+            v = SHOWN_VERDICT.get(c.get("verdict"), E(str(c.get("verdict"))))
+            vc = {"ADVANCE": "p-up", "WATCH": "p-warn", "PASS": "p-n"}.get(v, "p-n")
+            sup = (c.get("split") or {}).get("support") or []
+            who = ", ".join(E(x) for x in sup) if sup else "no voice supported it"
+            verdict_cell = f'<span class="pill {vc}">{E(v)}</span>' + (f' <span class="cond">{E(c["status"])}</span>' if c.get("status") else "")
+        else:
+            verdict_cell, who = '<span class="cond">not in the room</span>', "&mdash;"
+        body.append(f'<tr><td class="num">{E(str(r["rank"]))}</td><td><b>{E(r["ticker"])}</b></td><td>{E(str(r.get("gics_sector_name") or "—"))}</td>'
+                    f'<td><span class="pill {pill}" title="{E(words)}">{E(label)}</span></td><td>{verdict_cell}</td><td>{who}</td></tr>')
+    note = "" if len(rows) == TOP_N else f' Only {len(rows)} ranked names are in today\'s export.'
+    return (head + '<div class="tbl"><table><thead><tr><th>Rank</th><th>Ticker</th><th>Sector</th><th>Sector state</th><th>Committee verdict</th><th>Voted for it (blind vote)</th></tr></thead><tbody>'
+            + "".join(body) + f'</tbody></table></div><p class="cond">{n_strong} in a leading sector (STRONG), {n_turn} in a turning one (TURNING); the rest show their plain AQE state. '
+            'Verdict and voters are the committee\'s, copied from the record; &ldquo;not in the room&rdquo; means the committee did not carry the name. A voter is a voice that supported the name at the blind vote.' + note + '</p></section>')
+
+
 def _group_turns(D, verdicts, say):
     """PM 2026-10-23: "an easy section to see the strong stocks in supportive and/or turning sectors. This is info
     only ... a signal of where stocks are early in riding their sector turn and strengthen." Code-rendered from the
@@ -410,12 +470,7 @@ def _group_turns(D, verdicts, say):
         if q == "LEADING":
             return "Leading the market"
         return None
-    def kind(g, q):
-        if g == "TURNING" or q == "IMPROVING":
-            return "turn"
-        if q == "LEADING" and g in ("DEPLOY", "HOLD"):
-            return "lead"
-        return None
+    kind = _group_kind
     groups = collections.defaultdict(list); meta = {}
     for r in rows:
         if not strong(r):
@@ -925,6 +980,7 @@ def cmd_render(a):
             o.append("<tr>" + "".join(f"<{tag}>{E(x)}</{tag}>" for x in cells) + "</tr>")
         o.append("</table></div>" + (f'<p class="flag">{E(T["scorecard_note"])}</p>' if T.get("scorecard_note") else "") + "</section>")
     o.append('<section class="card"><div class="eyebrow">Read with care</div><ul>' + "".join(f"<li>{E(x)}</li>" for x in T["caveats"]) + "</ul></section>")
+    o.append(_top20_panel(D, cons))            # PM 2026-11-03: the very bottom of the Cards, built by code
     o.append('<div class="foot">DRAFT — PM approval required. Nothing is staged, nothing is armed.</div></div></body></html>')
     open(a.out, "w").write("\n".join(o))
     print(f"wrote {a.out}: {os.path.getsize(a.out)} bytes; {len(adv)} ADVANCE cards, {len(by['HOLD-FOR-CONDITIONS'])} holds, {len(by['PASS'])} passes")

@@ -2382,9 +2382,9 @@ def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(t
     check("a lens name that is also in the room carries the marker", "ADVANCE &middot; CONTESTED (in the room)" in h)
     order = ["Bottom line", "Part 1 · Daily weather", "Cross-asset · what happened", "Where money is moving",
              "Part 2 · Your book and the committee", "What it means for your book",
-             "Committee recommendations", "HOLD for conditions", "PASS · off the list", "Detect-lens top 10", "The plan", "Read with care", "DRAFT"]
+             "Committee recommendations", "HOLD for conditions", "PASS · off the list", "Detect-lens top 10", "The plan", "Read with care", "Top 20 AQE names", "DRAFT"]
     pos = [h.find(x) for x in order]
-    check("the fixed section order still holds, with the lens panel before the plan", all(p >= 0 for p in pos) and pos == sorted(pos), str(list(zip(order, pos))))
+    check("the fixed section order still holds, with the lens panel before the plan and the Top-20 table at the very bottom", all(p >= 0 for p in pos) and pos == sorted(pos), str(list(zip(order, pos))))
     # weather-spec item 6 (PM 2026-11-01): Valen's management switch + trim/trail facts render under the book table
     vfile = os.path.join(d, "valen_mgmt.json")
     json.dump({"read_me_first": {"as_of": "2026-11-01", "headline": "h", "so_what": "half size", "because": [], "watch_for": []}, "stance": {"word": "NEUTRAL", "status": "OK"},

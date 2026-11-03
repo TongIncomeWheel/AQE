@@ -1,0 +1,77 @@
+name: Committee data (standalone)
+
+# 2026-11-03 PM: prove the code-run fetch of the committee's FMP inputs LIVE, without redoing the whole daily
+# pipeline. Runs ONLY Step 8a-4 (src/pipeline/committee_data.py) against the export already on main, with
+# FMP_API_KEY, and publishes aegis/output/committee_data/ (manifest last). It never touches the day's export,
+# packets, levels or alerts, and `aegis/output/**` pushes do not rebuild the HF Space.
+#
+# Safe to rerun: fundamentals fetched in the last 5 days are carried (a rerun is fast); publishing identical
+# content is a no-op; a FAILED or PARTIAL rerun never overwrites an OK set already published for the same date.
+# It shares the `aqe-daily` concurrency group so it can never race the nightly run on the same files.
+#
+# After the run, the job log prints (1) the numbers (served / partial / unserved per file, hourly bars per name,
+# fundamentals fields filled, run time), (2) the committee-data check, which decides the job's result, and
+# (3) the full `check.py data` output for the record (other lines in it are informative; only (2) fails the job).
+on:
+  workflow_dispatch:
+    inputs:
+      budget_minutes:
+        description: "Stop fetching after this many minutes; the rest are declared unserved, loudly (default 30)"
+        type: string
+        default: "30"
+      publish:
+        description: "Publish to aegis/output/committee_data/ on main (untick for a dry run that only prints)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: aqe-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Fetch and publish the committee's FMP inputs
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUDGET_MIN: ${{ inputs.budget_minutes }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          if [ -z "$FMP_API_KEY" ]; then echo "::error::FMP_API_KEY is not set for this repository"; exit 1; fi
+          ARGS="--budget-minutes ${BUDGET_MIN:-30}"
+          if [ "$PUBLISH" = "false" ]; then ARGS="$ARGS --no-publish"; fi
+          python -m scripts.committee_data_run $ARGS
+      - name: Check - the same checks `check.py data` runs
+        if: always()
+        run: |
+          echo "=== check.py data (full, for the record; unrelated lines may FAIL on a mid-day main) ==="
+          python aegis/plugin/aegis-core/skills/daily-check/check.py data --output-dir aegis/output || true
+          echo
+          echo "=== committee-data check (this decides the job) ==="
+          python - <<'PY'
+          import importlib.util, json, sys
+          spec = importlib.util.spec_from_file_location("daily_check", "aegis/plugin/aegis-core/skills/daily-check/check.py")
+          m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          ex = json.load(open("aegis/output/aqe_daily_export.json"))
+          run = json.load(open("aegis/output/aqe_last_run.json"))["date_sgt"]
+          fails, notes = m.check_committee_data("aegis/output", run, ex)
+          print("COMMITTEE DATA: " + ("OK" if not fails else f"{len(fails)} PROBLEM(S)"))
+          for f in fails: print("  FAIL ", f)
+          for n in notes: print("  note ", n)
+          sys.exit(1 if fails else 0)
+          PY
