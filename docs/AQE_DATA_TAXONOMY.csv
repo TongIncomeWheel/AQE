@@ -333,6 +333,7 @@ prior_bar_high,bar_high,leaf,usd,,High of the bar immediately before the last co
 prior_bar_low,bar_low,leaf,usd,,Low of the bar immediately before the last completed bar,src/engines/enrichment.py:compute_bar_fields,stock_daily.low.iloc[-2],,,daily_list
 ma_20_slope_5d_pct,ma_20,leaf,pct,,5-session slope of the 20-day moving average,src/engines/enrichment.py:compute_bar_fields,(ma_20 / ma_20[-5] - 1) * 100,,,daily_list
 ret_63d,,leaf,pct,,~1-quarter (63 trading day) return,src/engines/enrichment.py:compute_bar_fields,"close[-1] / close[-64] - 1, as pct",,,daily_list
+index_pct_change_63d,,leaf,pct,,"The broad index's (SPY's) 63-day return beside the stock's ret_63d - the same number as the top-level spy_ret_63d, on every row. Seow's R8 compares the two",src/data/drive_sync.py:_v21_record_fields,"spy_ret_63d: close[-1] / close[-64] - 1 on SPY, as pct",,,daily_list
 pct_run_10d,,leaf,pct,,"10-session return, a short-run extension read",src/engines/enrichment.py:compute_bar_fields,"close[-1] / close[-11] - 1, as pct",,,daily_list
 base_low_20d,,leaf,usd,,Minimum low over the last 20 bars — base-of-consolidation reference,src/engines/enrichment.py:compute_bar_fields,min(low[-20:]),,,daily_list
 bar_range_5d,,leaf,list,,"High-low range for each of the last 5 bars, oldest to newest",src/engines/enrichment.py:compute_bar_fields,[high[i]-low[i] for the last 5 bars],,,daily_list

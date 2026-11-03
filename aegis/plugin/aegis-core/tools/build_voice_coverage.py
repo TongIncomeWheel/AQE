@@ -41,6 +41,28 @@ def required_fields(voice):
     return sorted(out)
 
 
+def declared_unavailable(voice):
+    """Recognisers whose own `if:` begins NOT_AVAILABLE: - the canon says the data to run them does not exist.
+    They carry an empty `fields:` list, which is why a fields-only check could not see them (3 Nov: elder-lens
+    R5 "fitted channel"). -> [{"id", "needs"}], needs = the `if:` text after the marker."""
+    import yaml
+    lock = yaml.safe_load(open(os.path.join(CANON, voice, "canon.lock.yaml"), encoding="utf-8"))
+    out = []
+
+    def walk(o):
+        if isinstance(o, dict):
+            cond = str(o.get("if", ""))
+            if "id" in o and cond.startswith("NOT_AVAILABLE"):
+                out.append({"id": str(o["id"]), "needs": " ".join(cond.split(":", 1)[1].split())[:200]})
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(lock)
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
@@ -48,8 +70,10 @@ def main(argv=None):
     cur = json.load(open(CONTRACT, encoding="utf-8")) if os.path.exists(CONTRACT) else {}
     new = dict(cur)
     new["required_fields"] = {v: required_fields(v) for v in DECIDERS}
+    new["declared_unavailable"] = {v: declared_unavailable(v) for v in DECIDERS if declared_unavailable(v)}
     if a.check:
-        if cur.get("required_fields") != new["required_fields"]:
+        if (cur.get("required_fields") != new["required_fields"]
+                or cur.get("declared_unavailable") != new["declared_unavailable"]):
             print("voice_coverage.json required_fields have DRIFTED from the canon locks -- run build_voice_coverage.py")
             return 1
         print("voice_coverage.json: required_fields match the canon locks")

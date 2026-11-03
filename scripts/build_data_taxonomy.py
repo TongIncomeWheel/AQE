@@ -1510,6 +1510,10 @@ SCORE_TREE = [
     R("ret_63d", "", "leaf", "pct", "",
       "~1-quarter (63 trading day) return", "engines/enrichment.py:compute_bar_fields",
       "close[-1] / close[-64] - 1, as pct"),
+    R("index_pct_change_63d", "", "leaf", "pct", "",
+      "The broad index's (SPY's) 63-day return beside the stock's ret_63d - the same number as the top-level "
+      "spy_ret_63d, on every row. Seow's R8 compares the two",
+      "src/data/drive_sync.py:_v21_record_fields", "spy_ret_63d: close[-1] / close[-64] - 1 on SPY, as pct"),
     R("pct_run_10d", "", "leaf", "pct", "",
       "10-session return, a short-run extension read",
       "engines/enrichment.py:compute_bar_fields", "close[-1] / close[-11] - 1, as pct"),

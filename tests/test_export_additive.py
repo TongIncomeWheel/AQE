@@ -85,6 +85,8 @@ def test_top_level_keys_are_additive_only():
         "unr_summary",
         # the held book's stops, Tiger's working orders (PM 2026-11-02)
         "held_stops",
+        # which keys each held row gained from the full record (PM 2026-11-03)
+        "held_positions_completion",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
