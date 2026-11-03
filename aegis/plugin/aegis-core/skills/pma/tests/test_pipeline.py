@@ -3069,6 +3069,9 @@ def test_mtf_build_from_real_bars_prints_the_grid_in_the_packet(td):
     bars = os.path.join(td, "mtf_bars_real"); os.makedirs(bars, exist_ok=True)
     json.dump({"daily": daily, "h1": h1}, open(os.path.join(bars, "VLO.json"), "w"))
     json.dump({"daily": daily, "m15": m15}, open(os.path.join(bars, "GNW.json"), "w"))     # no h1: rolled up by code
+    json.dump({"daily": daily}, open(os.path.join(bars, "BBY.json"), "w"))                 # no hourly bars at all: H1 is a gap
+    old_daily = [bar(d, i) for i, d in enumerate(sessions(300, end="2026-10-01"))]         # stale daily, fresh hourly
+    json.dump({"daily": old_daily, "h1": h1}, open(os.path.join(bars, "MFG.json"), "w"))
     out = os.path.join(td, "mtf_real.json")
     rc, log = run([os.path.join(TOOLS, "mtf.py"), "build", "--bars", bars, "--phase4", fx("phase4.json"),
                    "--export", fx("export.json"), "--date", run_date, "--out", out])
@@ -3082,6 +3085,10 @@ def test_mtf_build_from_real_bars_prints_the_grid_in_the_packet(td):
             check(f"{t} {tf}: the frame carries its own summary, without the label", bool(sm) and not sm.startswith(f"{tf}:"), str(sm))
     check("the joined name-level summary keeps the labels", M["VLO"]["summary"].startswith("W: ") and " | D: " in M["VLO"]["summary"] and " | H1: " in M["VLO"]["summary"], M["VLO"]["summary"])
     check("a name with no bars file is declared NOT SERVED, with a summary on every frame", M["MPC"]["served"] is False and all(M["MPC"][tf].get("summary") for tf in ("W", "D", "H1")))
+    # PM 2026-11-03: a name missing one timeframe SHOWS the others, the gap labelled -- never wholly hidden, never invented
+    check("BBY (no hourly bars): served with a gap, not complete", M["BBY"]["served"] is True and M["BBY"]["complete"] is False and M["BBY"]["gaps"] == ["H1"], str(M["BBY"].get("gaps")))
+    check("MFG (stale daily): W and D are gaps, H1 is served", M["MFG"]["gaps"] == ["W", "D"] and M["MFG"]["frames_served"] == ["H1"], str(M["MFG"].get("gaps")))
+    check("the build counts complete / partial / not served", json.load(open(out))["measurement"]["partial_names"] == ["BBY", "MFG"], str(json.load(open(out))["measurement"]))
     # the 15-minute roll-up: exact, :30-anchored, the last bucket is the 30-minute close
     sess = sessions(10)[-1]
     sys.path.insert(0, TOOLS)
@@ -3112,6 +3119,11 @@ def test_mtf_build_from_real_bars_prints_the_grid_in_the_packet(td):
         check(f"{t}: the packet prints the grid -- W, D and H1 each with a reading", ln.startswith("  MTF: W ") and " | D " in ln and " | H1 " in ln and "not served" not in ln.lower(), ln)
         check(f"{t}: the labels are not doubled", not any(x in ln for x in ("W W:", "D D:", "H1 H1:", "W: ", "D: ", "H1: ")), ln)
     check("a name with no bars still prints NOT SERVED (declared)", mtf_line("MPC") == "  MTF: NOT SERVED (declared)", mtf_line("MPC"))
+    ln = mtf_line("BBY")
+    check("BBY: W and D print their readings, H1 is labelled a GAP with its reason",
+          ln.startswith("  MTF: W ") and " | D " in ln and ln.endswith("| H1 GAP (no 1-hour bars)") and "NOT SERVED" not in ln, ln)
+    ln = mtf_line("MFG")
+    check("MFG: W and D are labelled GAPs (stale), H1 prints its reading", ln.startswith("  MTF: W GAP (") and " | D GAP (" in ln and " | H1 " in ln and "H1 GAP" not in ln, ln)
 
 
 def _slate_from(decision, tickers=None):

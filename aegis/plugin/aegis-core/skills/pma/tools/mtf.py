@@ -10,7 +10,8 @@ and no packet carried it.
 
   build   mtf_bars/<T>.json (transcribed from FMP by a data-steward courier) + phase4.json + the export
           -> mtf.json. One row per deliberation_set name, ALWAYS: a name with no bars, an `unserved` flag, too
-          few bars or stale bars is declared NOT SERVED with its reason -- never a neutral reading.
+          few bars or stale bars is declared NOT SERVED with its reason -- never a neutral reading. A name with
+          SOME frames shows them and labels the others a GAP (served: true, complete: false, gaps: [...]).
 
 Input per name, mtf_bars/<T>.json:
   {"daily": [{"date": "YYYY-MM-DD", "open", "high", "low", "close", "volume"}, ...],   any order; sorted here
@@ -213,7 +214,7 @@ def frame_summary(tf, f):
 
 # ------------------------------------------------------------------------------------------ build
 def _not_served(reason):
-    return {"served": False, "reason": reason,
+    return {"served": False, "complete": False, "gaps": list(FRAMES), "reason": reason,
             **{tf: {"served": False, "reason": reason, "summary": f"NOT SERVED ({reason})"} for tf in FRAMES},
             "summary": f"MTF NOT SERVED: {reason}"}
 
@@ -262,7 +263,12 @@ def build_name(t, doc, run_date, export_close=None):
         row["D"]["export_close"] = export_close
         row["D"]["close_matches_export"] = abs(c / export_close - 1) <= CLOSE_TOL
     missing = [tf for tf in FRAMES if not row[tf].get("served")]
-    row["served"] = not missing
+    # PM 2026-11-03: a name missing one timeframe SHOWS the others, the missing one labelled as a gap -- it is
+    # served if any frame is; `complete` says all three are, `gaps` names the ones that are not. A frame with no
+    # reading is never invented, and a name with no frame at all is still NOT SERVED (declared).
+    row["served"] = len(missing) < len(FRAMES)
+    row["complete"] = not missing
+    row["gaps"] = missing
     row["frames_served"] = [tf for tf in FRAMES if tf not in missing]
     row["reason"] = ("; ".join(f"{tf} not served: {row[tf].get('reason')}" for tf in missing) or None)
     if dropped:
@@ -301,6 +307,9 @@ def cmd_build(a):
            "names": names,
            "measurement": {"room": len(room),
                            "served": sum(1 for r in names.values() if r["served"]),
+                           "complete": sum(1 for r in names.values() if r.get("complete")),
+                           "partial": sum(1 for r in names.values() if r["served"] and not r.get("complete")),
+                           "partial_names": sorted(t for t, r in names.items() if r["served"] and not r.get("complete")),
                            "not_served": sum(1 for r in names.values() if not r["served"]),
                            "not_served_names": sorted(t for t, r in names.items() if not r["served"]),
                            "close_mismatch_vs_export": mism,
@@ -308,7 +317,9 @@ def cmd_build(a):
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1)
     m = out["measurement"]
-    print(f"wrote {a.out}: {m['room']} room names, {m['served']} served, {m['not_served']} NOT SERVED"
+    print(f"wrote {a.out}: {m['room']} room names, {m['complete']} complete, {m['partial']} with a gap"
+          + (f" ({' '.join(m['partial_names'])})" if m["partial_names"] else "")
+          + f", {m['not_served']} NOT SERVED"
           + (f" ({' '.join(m['not_served_names'])})" if m["not_served_names"] else "")
           + (f"; close differs from the export on {' '.join(mism)}" if mism else ""))
 

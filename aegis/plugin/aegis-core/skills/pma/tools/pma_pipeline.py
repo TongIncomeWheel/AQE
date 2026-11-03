@@ -2237,14 +2237,18 @@ def _mtf_for(names, why, t):
 
 
 def _mtf_line(m):
-    """One line of the grid for a packet: 'W <summary> | D <summary> | H1 <summary>', or NOT SERVED (declared)."""
+    """One line of the grid for a packet: 'W <summary> | D <summary> | H1 <summary>', or NOT SERVED (declared).
+    A frame the bars could not serve is labelled 'GAP (<reason>)' beside the frames that were (PM 2026-11-03)."""
     if not isinstance(m, dict) or m.get("served") is False or not any(isinstance(m.get(fr), dict) for fr in MTF_FRAMES):
         return "MTF: NOT SERVED (declared)"
     parts = []
     for fr in MTF_FRAMES:
         x = m.get(fr)
-        s = (x or {}).get("summary") if isinstance(x, dict) else None
-        parts.append(f"{fr} {s if s else 'not served'}")
+        if isinstance(x, dict) and x.get("served") is False:
+            parts.append(f"{fr} GAP ({x.get('reason') or 'no reading'})")
+            continue
+        s = x.get("summary") if isinstance(x, dict) else None
+        parts.append(f"{fr} {s if s else 'GAP (no reading)'}")
     return "MTF: " + " | ".join(parts)
 
 
