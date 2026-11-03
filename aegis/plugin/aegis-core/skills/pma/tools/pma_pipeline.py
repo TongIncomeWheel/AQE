@@ -2238,9 +2238,16 @@ def cmd_committee_position(a):
                 r["adopt_answer"] = (a_row or {}).get("answer")
                 r["adopt_text"] = (a_row or {}).get("text")
         save(a.record, rec)
-    doc = {"schema": "committee_position.v1", "date": a.date, "rule": "R42", "deciders_present": present, "tickets": out, "gaps": gaps,
+    declared = []
+    if final is None:
+        declared.append("R42 DECLARED: the committee rationale is " + ("the Chair's DRAFT, not adopted (no rationale_final.json)" if draft else "NOT FILED (no draft, no final)") + " - the Cards say so at the top")
+    if any(o["committee_conviction"] is None for o in out.values()):
+        declared.append("R42 DECLARED: fewer than 4 conviction scores on " + ", ".join(t for t, o in out.items() if o["committee_conviction"] is None))
+    doc = {"schema": "committee_position.v1", "declared": declared, "date": a.date, "rule": "R42", "deciders_present": present, "tickets": out, "gaps": gaps,
            "note": "committee_conviction is the body's 1-5 readout (5 = best); an ordering/readout figure, never a gate on a verdict. Individual scores and answers are on committee_record.json (R35)."}
     save(a.out, doc)
+    for d_ in declared:
+        print(d_)
     print(f"committee-position: {len(out)} slated ticket(s); " + ", ".join(f"{t}:{o['committee_conviction']}/5" for t, o in out.items())
           + (f" | {len(gaps)} gap(s): {gaps[:3]}" if gaps else " | no gaps") + f" -> {a.out}")
 

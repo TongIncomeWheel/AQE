@@ -594,6 +594,10 @@ steps:
     produces: [committee_position.json]
     rulings: [R42]
     on_fail: "declare it; the Cards render without the committee block"
+    must_also: >
+      LOUD (conductor + PM, 2026-11-03): every line `committee_position.json` carries under `declared` goes at the TOP of
+      run_notes.md. The Cards show a banner at the top ("DRAFT, not adopted" / "NOT FILED") and label each ticket's
+      rationale. A rationale that is not the adopted final is never presented as if it were.
     meter: "--tool-only"
 
   - name: CONDITIONS

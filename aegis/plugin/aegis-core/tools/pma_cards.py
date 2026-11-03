@@ -777,11 +777,28 @@ def _committee_block(pos, on):
     head = f"Committee: Conviction {n}/5." if isinstance(n, int) else "Committee: conviction not counted (fewer than 4 scores filed)."
     why = " ".join(E(c["text"]) for c in pos.get("why") or []) or "no rationale filed"
     wc = " ".join(E(c["text"]) for c in pos.get("what_would_change_it") or []) or "none filed"
-    stage = ' <span class="cond">(the Chair\'s draft, not merged)</span>' if pos.get("rationale_stage") == "draft" else ""
+    stage = ' <b>[DRAFT, not adopted]</b>' if pos.get("rationale_stage") == "draft" else ""
     mn = pos.get("minority_notes") or []
     mino = ('<div class="minority"><b>Minority note:</b> ' + " &middot; ".join(f'{E(m["voice"])} ({E(m["kind"])}): {E(m["text"])}' for m in mn) + "</div>") if mn else ""
     gaps = f'<div class="cond">{E("; ".join(pos.get("gaps") or []))}</div>' if pos.get("gaps") else ""
     return f'<div class="committee"><b>{E(head)}</b> Why: {why}{stage} What would change it: {wc}{mino}{gaps}</div>'
+
+
+def _rationale_banner(pos_doc, on):
+    """R42: a rationale that is not the adopted final is declared at the top of the page, never a silent fallback."""
+    if not on:
+        return ""
+    ts = list((pos_doc or {}).get("tickets", {}).values())
+    stages = {t.get("rationale_stage") for t in ts}
+    if not ts or stages == {"final"}:
+        return ""
+    if stages <= {"draft"}:
+        msg = "Committee rationale: DRAFT, not adopted - the final rationale was not filed (Chair draft shown, labelled)."
+    elif "draft" in stages:
+        msg = "Committee rationale: some tickets show a DRAFT, not adopted - the final rationale is incomplete."
+    else:
+        msg = "Committee rationale: NOT FILED this run - declared gap, nothing invented."
+    return f'<p class="flag"><b>{E(msg)}</b></p>'
 
 
 def _status_pills(cons):
@@ -898,6 +915,7 @@ def cmd_render(a):
         mk_line = '<p class="cond">Market kill (R40): none -- no seat named a market condition.</p>'
     else:
         mk_line = ""
+    mk_line += _rationale_banner(PS, POS_ON)
     by = collections.defaultdict(list)
     for c in cons:
         by[c["verdict"]].append(c)
