@@ -406,6 +406,10 @@ def check_committee_data(output_dir, run_date, export=None):
     if gc["not_served_names"] or fc["unserved_names"] or fc["partial_names"] or C["_missing"]:
         notes.append(f"WARN committee data gaps (declared): mtf not served {gc['not_served_names'][:8]}, fundamentals unserved "
                      f"{fc['unserved_names'][:8]} / partial {fc['partial_names'][:8]}, closes missing {C['_missing'][:8]}")
+    cs = M.get("closes_scope") or {}
+    if cs and (str(cs.get("past_exports_source", "")).startswith("UNAVAILABLE") or not cs.get("past_export_runs")):
+        notes.append(f"WARN committee data closes cover only today's export and the ledger ({cs.get('total')} names): past exports' names "
+                     f"are {cs.get('past_exports_source') or 'UNAVAILABLE'} - the scorecard's 'vs list' and 'vs SPY' denominators are understated")
     for e in (M.get("errors") or [])[:3]:
         notes.append(f"WARN committee data error: {e}")
     notes.append(f"committee data {M.get('status')}: {M.get('run_date')}, mtf {gc['complete']}/{gc['requested']} complete "

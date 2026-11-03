@@ -95,6 +95,8 @@ def panel_for(tickers):
 def run(client, **kw):
     kw.setdefault("panel", panel_for(["MP", "AAA", "V", "SPY"]))
     kw.setdefault("ledger", [])
+    # hermetic: five past labels of the same two names, so the run never shells out to git
+    kw.setdefault("universe_previous", {"entries": {f"2026-10-{d}": ["MP", "AAA"] for d in (20, 21, 22, 23, 26)}})
     return cd.run(EXPORT, RUN_DATE, client=client, **kw)
 
 
@@ -153,8 +155,9 @@ def test_a_clean_run_produces_the_three_files_and_a_manifest_that_matches_their_
     r = run(FakeClient(all_routes()))
     m = r["manifest"]
     assert m["status"] == "OK" and m["run_date"] == RUN_DATE and m["scope"]["requested"] == 3
-    assert set(r["files"]) == set(cd.FILES)
-    for name, body in r["files"].items():
+    assert set(r["files"]) == set(cd.FILES) | {cd.UNIVERSE_HISTORY}       # the sidecar rides along, outside the manifest's files
+    for name in cd.FILES:
+        body = r["files"][name]
         assert m["files"][name]["sha256"] == cd.hashlib.sha256(body).hexdigest()
         assert m["files"][name]["bytes"] == len(body) and m["files"][name]["schema"] == cd.FILES[name]
     assert cd.dumps(json.loads(r["files"]["mtf_grid.json"])) == r["files"]["mtf_grid.json"]      # deterministic bytes
@@ -266,14 +269,14 @@ def test_an_exhausted_time_budget_declares_the_rest_instead_of_dropping_it():
 
 def test_no_key_is_a_failed_manifest_that_says_why_not_a_missing_file(monkeypatch):
     monkeypatch.delenv("FMP_API_KEY", raising=False)
-    r = cd.run(EXPORT, RUN_DATE, client=None, panel={}, ledger=[])
+    r = cd.run(EXPORT, RUN_DATE, client=None, panel={}, ledger=[], universe_previous={"entries": {}}, git_loader=lambda *a, **k: ({}, "UNAVAILABLE: test"))
     m = r["manifest"]
     assert m["status"] == "FAILED" and "FMP_API_KEY" in m["reason"] and r["files"] == {} and m["files"] == {}
     jsonschema.validate(m, json.loads((SCHEMAS / "committee_data_manifest.v1.schema.json").read_text()))
 
 
 def test_an_empty_export_is_failed_not_an_empty_success():
-    r = cd.run({"daily_list": []}, RUN_DATE, client=FakeClient(), panel={}, ledger=[])
+    r = cd.run({"daily_list": []}, RUN_DATE, client=FakeClient(), panel={}, ledger=[], universe_previous={"entries": {}}, git_loader=lambda *a, **k: ({}, "UNAVAILABLE: test"))
     assert r["manifest"]["status"] == "FAILED" and "no daily_list" in r["manifest"]["reason"]
 
 
@@ -299,7 +302,7 @@ def test_publish_writes_the_manifest_last_and_names_any_file_that_did_not_land()
     r = run(FakeClient(all_routes()))
     seen = []
     ok = cd.publish(r, put_file=lambda path, content, msg: seen.append(path) or {"ok": True})
-    assert ok["ok"] and seen[-1].endswith("/manifest.json") and len(seen) == 4
+    assert ok["ok"] and seen[-1].endswith("/manifest.json") and len(seen) == 5
     assert all(p.startswith("aegis/output/committee_data/") for p in seen)
 
     def flaky(path, content, msg):
@@ -315,7 +318,7 @@ def test_publish_writes_the_manifest_last_and_names_any_file_that_did_not_land()
 def test_write_local_puts_the_manifest_last(tmp_path):
     r = run(FakeClient(all_routes()))
     d = cd.write_local(r, tmp_path / "cd")
-    assert sorted(p.name for p in d.iterdir()) == sorted(list(cd.FILES) + ["manifest.json"])
+    assert sorted(p.name for p in d.iterdir()) == sorted(list(cd.FILES) + [cd.UNIVERSE_HISTORY, "manifest.json"])
     assert (d / "manifest.json").stat().st_mtime_ns >= (d / "mtf_grid.json").stat().st_mtime_ns
 
 
@@ -466,7 +469,7 @@ def test_closes_reuse_the_daily_bars_the_grid_already_fetched_instead_of_paying_
     for t in ("MP", "AAA", "V", "SPY"):
         routes[("historical-price-eod/full", t)] = fx("eod_full")
     c = FakeClient(routes)
-    r = cd.run(EXPORT, RUN_DATE, client=c, panel={}, ledger=[])
+    r = cd.run(EXPORT, RUN_DATE, client=c, panel={}, ledger=[], universe_previous={"entries": {}}, git_loader=lambda *a, **k: ({}, "UNAVAILABLE: test"))
     per_name = {}
     for path, sym in c.calls:
         if path == "historical-price-eod/full":
@@ -511,12 +514,13 @@ def test_the_standalone_run_writes_the_set_reads_the_export_date_and_exits_0_whe
     _patch_fmp(monkeypatch, all_routes())
     monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
     monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
+    monkeypatch.setattr(cd, "git_export_history", lambda *a, **k: ({}, "UNAVAILABLE: test"))
     out = tmp_path / "cd"
     rc = S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"])
     log = capsys.readouterr().out
     assert rc == 0, log
     assert f"run date {RUN_DATE}" in log and "COMMITTEE DATA OK" in log
-    assert sorted(p.name for p in out.iterdir()) == sorted(list(cd.FILES) + ["manifest.json"])
+    assert sorted(p.name for p in out.iterdir()) == sorted(list(cd.FILES) + [cd.UNIVERSE_HISTORY, "manifest.json"])
 
 
 def test_a_failed_or_partial_rerun_never_overwrites_an_ok_set_for_the_same_date(tmp_path, monkeypatch, capsys):
@@ -524,6 +528,7 @@ def test_a_failed_or_partial_rerun_never_overwrites_an_ok_set_for_the_same_date(
     _patch_fmp(monkeypatch, all_routes())
     monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
     monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
+    monkeypatch.setattr(cd, "git_export_history", lambda *a, **k: ({}, "UNAVAILABLE: test"))
     out = tmp_path / "cd"
     assert S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"]) == 0
     good = (out / "manifest.json").read_bytes()
@@ -563,3 +568,51 @@ def test_the_workflow_is_manual_only_cannot_race_the_nightly_and_decides_on_the_
     assert cd.REPO_DIR == "aegis/output/committee_data"
     src = (ROOT / "scripts" / "committee_data_run.py").read_text()
     assert "publish_daily_outputs" not in src and "put_file(" not in src
+
+
+def test_closes_scope_is_today_plus_ledger_plus_every_past_export_plus_spy():
+    """Conductor defect 2026-11-03: closes held 353 names, the courier file 530 - the scorecard needs EVERY past run's
+    export names (the equal-weight list per run) and every ledger name, not only today's export and the ledger."""
+    past = {"2026-10-20": ["OLD1", "OLD2", "MP"], "2026-10-21": ["OLD3", "AAA"], "2026-10-22": ["OLD4"],
+            "2026-10-23": ["OLD5"], "2026-10-26": ["OLD6"]}
+    routes = all_routes()
+    r = run(FakeClient(routes), ledger=["LED1"], universe_previous={"entries": past})
+    m = r["manifest"]["closes_scope"]
+    want = {"MP", "AAA", "V", "SPY", "LED1", "OLD1", "OLD2", "OLD3", "OLD4", "OLD5", "OLD6"}
+    assert m["total"] == len(want) and m["past_export_runs"] == 5 and m["ledger"] == 1 and m["today"] == 3, m
+    closes = json.loads(r["files"]["closes_scorecard.json"])
+    got = {k for k in closes if k != "_missing"} | set(closes["_missing"])
+    assert got == want, got ^ want              # every scoped name is either served or NAMED missing, none silently absent
+    hist = json.loads(r["files"][cd.UNIVERSE_HISTORY])
+    assert hist["entries"][RUN_DATE] == ["AAA", "MP", "V"] and len(hist["entries"]) == 6      # today recorded for tomorrow's window
+
+
+def test_past_exports_unavailable_is_loud_not_silent():
+    r = run(FakeClient(all_routes()), universe_previous={"entries": {}}, git_loader=lambda *a, **k: ({}, "UNAVAILABLE: not a git checkout"))
+    m = r["manifest"]
+    assert m["closes_scope"]["past_export_runs"] == 0 and m["closes_scope"]["past_exports_source"].startswith("UNAVAILABLE")
+    assert any("closes scope" in e and "understated" in e for e in m["errors"]), m["errors"]
+
+
+def test_a_bootstrap_from_git_fills_missing_labels_once_and_the_window_prunes_old_ones():
+    calls = []
+    def loader(run_date, lookback, have):
+        calls.append(sorted(have))
+        return {"2026-10-15": ["G1", "G2"], "2026-10-16": ["G3"]}, "git history"
+    prev = {"entries": {"2026-08-01": ["TOOOLD"], "2026-10-20": ["KEEP"]}}
+    uh, note = cd.build_universe_history(RUN_DATE, ["T1"], prev, git_loader=loader)
+    assert "TOOOLD" not in {t for v in uh["entries"].values() for t in v}      # outside the 45-day window
+    assert {"G1", "G3", "KEEP", "T1"} <= {t for v in uh["entries"].values() for t in v} and note.endswith("git history") and len(calls) == 1
+    uh2, _ = cd.build_universe_history(RUN_DATE, ["T1"], {"entries": {f"2026-10-{d}": ["X"] for d in (20, 21, 22, 23, 26)}},
+                                       git_loader=lambda *a, **k: (_ for _ in ()).throw(AssertionError("git must not be called for a full record")))
+    assert uh2["entries"][RUN_DATE] == ["T1"]
+
+
+def test_the_ledger_comes_from_the_last_pma_run_dir_never_a_rerun_dir(tmp_path):
+    for name, tickers in (("2026-11-01", ["A"]), ("2026-11-02", ["A", "B"]), ("2026-11-02-r2", ["ZZZ"]), ("2026-11-03-r2", ["YYY"])):
+        d = tmp_path / "aegis" / "output" / "pma" / "run" / name
+        d.mkdir(parents=True)
+        (d / "verdict_ledger.json").write_text(json.dumps({"rows": [{"date": "2026-11-02", "ticker": t} for t in tickers]}))
+    p = cd.latest_ledger_path(tmp_path)
+    assert p.parent.name == "2026-11-02"
+    assert cd.ledger_tickers(RUN_DATE, path=p) == ["A", "B"]
