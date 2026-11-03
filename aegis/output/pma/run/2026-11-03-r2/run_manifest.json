@@ -1,7 +1,13 @@
 {
  "created": "2026-11-03T07:07:27Z",
  "date": "2026-11-03",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-03T07:07:51Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  }
+ ],
  "flags": [],
  "rerun": {
   "of": "pma-2026-11-03",
@@ -10,7 +16,50 @@
   "suffix": "r2"
  },
  "run_id": "pma-2026-11-03-r2",
- "seats": {},
+ "seats": {
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "c654e62dec0e391a4d7cb0dd3a510784b0993c1d46f86b6be7aabeb3765b93b2",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "494db613657f93754483726ec2b2a0454ed4a98327d4644333b6b4c12f1d0c04",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "c3993f2126120e95aafcf8150fcb86bde642b59d59d23fc18ce61530442d1b30",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "ab30881e8aeb363f005fd646ff627fcab0da9a745be2620753e5c74ae9f99189",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "1cdf730a9b98f0dfd565039a96f7bcd57a2615bc28b000864db5402bf5f21b5f",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "1564ad4ca77caa9401f7e66034bcb997973864b7b709f2111c9528a92cf8166b",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "b35c8a9fe2903f49d443948b20db6e258abd35ce3b86d7a98211a1ef80248ebf",
+   "status": "committed"
+  }
+ },
  "steps": {
   "GATHER": {
    "cost": {
@@ -25,6 +74,56 @@
     "rerun r2: export from forced daily-run #130; committee_data 2026-11-03 reused (347/351 fundamentals carried); stops reused from original run"
    ],
    "started": "2026-11-03T07:07:44Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-03T07:07:51Z",
+   "notes": [
+    "skipped: rerun"
+   ],
+   "started": "2026-11-03T07:07:51Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 194430,
+    "spawns": 7
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "c654e62dec0e391a4d7cb0dd3a510784b0993c1d46f86b6be7aabeb3765b93b2",
+    "forms/r1/livermore.json": "494db613657f93754483726ec2b2a0454ed4a98327d4644333b6b4c12f1d0c04",
+    "forms/r1/minervini.json": "c3993f2126120e95aafcf8150fcb86bde642b59d59d23fc18ce61530442d1b30",
+    "forms/r1/oneil.json": "ab30881e8aeb363f005fd646ff627fcab0da9a745be2620753e5c74ae9f99189",
+    "forms/r1/raschke.json": "1cdf730a9b98f0dfd565039a96f7bcd57a2615bc28b000864db5402bf5f21b5f",
+    "forms/r1/seow.json": "1564ad4ca77caa9401f7e66034bcb997973864b7b709f2111c9528a92cf8166b",
+    "forms/r1/wyckoff.json": "b35c8a9fe2903f49d443948b20db6e258abd35ce3b86d7a98211a1ef80248ebf"
+   },
+   "finished": "2026-11-03T07:12:43Z",
+   "notes": [],
+   "started": "2026-11-03T07:10:25Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T07:07:56Z",
+   "notes": [],
+   "started": "2026-11-03T07:07:56Z",
    "status": "done",
    "tokens": 0
   }

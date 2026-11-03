@@ -1,0 +1,116 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-03",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "UPS",
+   "reason": "Leader in the one leading group (XLI Momentum Building): rank 5, structure 86.3, ABOVE_STRUCTURE with mp_state STRONG/ACCELERATING. Trend is established and the break is made, not too extended (sma_distance_pct 10.42). Max loss set at bracket.stop 106.18. Group move confirmed by FTV/VLTO/SWK.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "bracket.stop", "bracket.valid", "gics_sector"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 86.3; structure_shift ABOVE_STRUCTURE; sma_distance_pct 10.42", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid True, bracket.stop 106.18 (fib_786), bracket.risk_pct 3.22; atr_14d 2.34; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Building — Add; rank 5; second XLI names FTV rank 14, VLTO rank 10 also ABOVE_STRUCTURE/STRONG", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; mp_accel_state ACCELERATING; any add only above entry 109.71, never below", "verdict": "pass", "fields": ["held", "entry", "mp_accel_state"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated as 2x atr_14d 2.34 off the day's high (my translation, not 6 points); day_vol 1.16 proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.stop 106.18, or a single-day reaction of 2x atr_14d 2.34 from the day's high (my translated danger signal), or structure_shift turning BEARISH_CHOCH."
+  },
+  {
+   "ticker": "FTV",
+   "reason": "Second Key Price name in leading XLI: rank 14, structure 89.5, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, day_vol 1.42. Confirms the group move with UPS/VLTO. Extension sma_distance_pct 15.39 means I buy strength, not a chase. No engine stop; my wrong-level is the 1xATR line under entry.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "day_vol", "bracket"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 89.5; structure_shift ABOVE_STRUCTURE; sma_distance_pct 15.39 (extended from 50-day; proximity to high not on my menu)", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid False; bracket.atr_fallback_stop 65.2 under entry 66.84; atr_14d 1.64; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket", "bracket.valid", "entry", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Building — Add; rank 14; confirmed by UPS rank 5, VLTO rank 10", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 66.84 while mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["held", "entry", "mp_accel_state"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal = 2x atr_14d 1.64 off the day's high, my translation; day_vol 1.42 is not a fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 65.2 (my named level, engine bracket invalid), a single-day reaction of 2x atr_14d 1.64 from the high, or the XLI peers failing together."
+  },
+  {
+   "ticker": "VLTO",
+   "reason": "XLI leader, rank 10, structure 86.3, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, with heavy participation (day_vol 2.11). Third confirming name in the leading group. Extended at sma_distance_pct 17.41, so I wait for no pullback but watch the danger signal closely.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "day_vol", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 86.3; structure_shift ABOVE_STRUCTURE; sma_distance_pct 17.41 (well extended from 50-day)", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid False; bracket.atr_fallback_stop 113.0 under entry 115.7; atr_14d 2.7; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket", "bracket.valid", "entry", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Building — Add; rank 10; peers UPS rank 5, FTV rank 14", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 115.7", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal = 2x atr_14d 2.7 off the day's high, my translation; day_vol 2.11 proxy only, fill difficulty not served", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 113.0 (my named level), or a one-day reaction of 2x atr_14d 2.7 from the day's high, or mp_accel_state turning DECELERATING with structure_shift leaving ABOVE_STRUCTURE."
+  },
+  {
+   "ticker": "SWK",
+   "reason": "XLI member in an established uptrend: structure 86.3, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, day_vol 1.35. The group is confirmed by UPS/FTV/VLTO, so this is a leader in a leading group. Rank 57 is lower than its peers, and sma_distance_pct 14.05 means it is stretched.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "day_vol", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 86.3; structure_shift ABOVE_STRUCTURE; sma_distance_pct 14.05", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid False; bracket.atr_fallback_stop 103.81 under entry 106.71; atr_14d 2.9; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket", "bracket.valid", "entry", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Building — Add; rank 57 (below peers UPS 5, VLTO 10, FTV 14)", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 106.71", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal = 2x atr_14d 2.9 off the day's high, my translation; day_vol 1.35 proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 103.81 (my named level), a one-day reaction of 2x atr_14d 2.9 off the high, or the stock failing to hold while XLI peers advance (C14 lag)."
+  },
+  {
+   "ticker": "TTEK",
+   "reason": "XLI name in an orderly established trend: rank 35, structure 83.2, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, and less extended than its peers (sma_distance_pct 11.68). Strength sits inside the confirmed leading group. My wrong-level is the 1xATR line, since the engine has no stop.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 83.2; structure_shift ABOVE_STRUCTURE; sma_distance_pct 11.68", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid False; bracket.atr_fallback_stop 38.66 under entry 39.57; atr_14d 0.91; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket", "bracket.valid", "entry", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Building — Add; rank 35; group confirmed by UPS, FTV, VLTO", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 39.57", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal = 2x atr_14d 0.91 off the day's high, my translation; day_vol 1.16 proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 38.66 (my named level), or a one-day reaction of 2x atr_14d 0.91 from the high, or structure_shift turning BEARISH_CHOCH."
+  },
+  {
+   "ticker": "DLTR",
+   "reason": "Top-ranked leader outside XLI: rank 4, structure 93.7, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, day_vol 1.36. Its XLY group reads Momentum Fading — Hold, so the group call rests on a second name, HOG (rank 11, STRONG/ACCELERATING). Leader strength, but the group is only partly confirmed.",
+   "fields_cited": ["rank", "sector_trend_state", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "day_vol", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 93.7; structure_shift ABOVE_STRUCTURE; sma_distance_pct 13.67", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "bracket.valid False; bracket.atr_fallback_stop 134.3 under entry 138.6; atr_14d 4.3; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["bracket", "bracket.valid", "entry", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLY, sector_trend_state Momentum Fading — Hold, Don't Add; rank 4; second XLY name HOG rank 11 ABOVE_STRUCTURE STRONG", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 138.6", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal = 2x atr_14d 4.3 off the day's high, my translation; day_vol 1.36 proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 134.3 (my named level), a one-day reaction of 2x atr_14d 4.3 from the high, or HOG breaking down alongside it (Key Price pair failing)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "KEEP", "line": "Trend intact: structure 76.8, ABOVE_STRUCTURE, mp_state STRONG/ACCELERATING, held_book.hl_state HOLD, open gain held_book.unreal_usd 465.49. No danger signal. Let the winner run (C15). Add only on strength above entry 425.51 (C6)."},
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "Trend has ended: structure 33.0, BEARISH_CHOCH, sma_distance_pct -19.28, mp_state FADING, held_book.hl_state EXIT, held_book.unreal_usd -4395.0. Take the loss now (C3, C22) and never average down (C4)."}
+ ],
+ "data_gaps": [
+  {"field": "bracket", "impact": "Only stop/stop_type/valid/risk_pct/atr_fallback_stop are served; targets and rr sub-fields are absent. This does not affect nominations (R1). Where the engine bracket was invalid I named my own level."},
+  {"field": "structure_shift", "impact": "Null for PEP and PDD, so their base-and-break step was no_data. Neither was nominated."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS/PARTIAL per name (structure/structure_shift + sma_distance_pct, C5). sma_distance_pct measures extension from the 50-day, not proximity to a high.",
+  "danger_signal_threshold: TRANSLATED via atr_14d as a single-day reaction of 2x atr_14d from the day's high. The multiplier is my own translation, not Livermore's literal 6 points (C7, C18-C20).",
+  "state_analogue: I read mp_state/mp_accel_state as the modern equivalent of my six-column classifier, not as identical to it (C18).",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only).",
+  "inside_information: NEVER (C11, standing maxim).",
+  "Ledger memory: no voice_memory block was injected this run, so no standing lesson applies.",
+  "Concentration in XLI, the only sector reading Momentum Building — Add, is deliberate (C12, R7). Four XLI names together give the two-stock Key Price confirmation (C14).",
+  "The packet carries columns that are off my data menu (e.g. high_52w, pct_from_52w_high, pivot_high, rs_rank_pct, lens, elder-type fields). I did not cite them."
+ ],
+ "shortfall_reason": null
+}
