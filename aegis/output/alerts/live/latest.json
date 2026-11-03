@@ -1,10 +1,10 @@
 {
  "schema": "aqe_alert_notice.v1",
- "seq": 6,
+ "seq": 7,
  "session_date": "2026-11-03",
- "cycle_at_utc": "2026-11-03T18:05:59+00:00",
- "cycle_at_sgt": "2026-11-04 02:05 SGT",
- "cycle_at_et": "13:05 ET",
+ "cycle_at_utc": "2026-11-03T18:40:35+00:00",
+ "cycle_at_sgt": "2026-11-04 02:40 SGT",
+ "cycle_at_et": "13:40 ET",
  "source": "hf",
  "data": {
   "pma_run": "2026-11-03",
@@ -20,29 +20,237 @@
   "broken": false,
   "just_broke": false
  },
- "actionable": false,
- "items": [],
- "setups_forming": [
+ "actionable": true,
+ "items": [
   {
-   "ticker": "PK",
-   "price": 16.595,
-   "text": "\ud83d\udfe1 PK $16.59 \u2014 dipped below the 9-day average (16.59), back above it \u2713; entry \u2248 16.71 \u00b7 stop 16.52 \u00b7 risk 1.1% \u00b7 AQE default criteria: 0 of 2 met"
+   "ticker": "ERIC",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "UNR_TRIGGER"
+   ],
+   "severity": "ACT",
+   "headline": "ERIC $10.98 \u00b7 \ud83d\udfe2 U&R ENTRY SIGNAL",
+   "action": "U&R entry signal: queue the Tiger preview on your word",
+   "price": 10.985,
+   "day_pct": null,
+   "entry": 10.985,
+   "stop": 10.91,
+   "stop_type": "unr_low_of_day",
+   "target": null,
+   "risk_per_share": 0.075,
+   "conditions": {
+    "met": 0,
+    "of": 2,
+    "who": "AQE default criteria"
+   },
+   "unr": {
+    "status": "ARMED",
+    "stop": 10.91,
+    "level": 11.1
+   },
+   "lines": [
+    "U&R: \u2713 ENTRY SIGNAL \u2014 a 15-min candle closed above VWAP at 13:45 (price 10.99)",
+    "U&R trade: entry 10.99 \u00b7 stop 10.91 (today's low) \u00b7 risk 0.7% (0.08/share) \u00b7 1R $2,250 = 28,124 shares",
+    "Dipped below the rising trendline (11.10) today; price is still 1.0% under it",
+    "Watch: buying volume only 0.8\u00d7 normal; the pullback ran on heavy volume",
+    "AQE default criteria: 0 of 2 met",
+    "\u2717 hourly close above 11.21 (price 10.98, 2.0% below)",
+    "\u2717 volume at least 1\u00d7 normal (now 0.8\u00d7)",
+    "AQE trade: entry 11.21 \u00b7 stop 10.34 \u00b7 risk 7.8% (0.87/share) \u00b7 1R $2,250 = 2,586 shares \u00b7 target 13.77 (2.9\u00d7 the risk)",
+    "Nearby levels: recent low 10.22 \u00b7 9-day average 10.89 \u00b7 21-day average 10.50 \u00b7 rising trendline 11.10"
+   ],
+   "suppressed_by_market_kill": false
   },
   {
-   "ticker": "EXPE",
-   "price": 285.6528,
-   "text": "\ud83d\udfe1 EXPE $285.65 \u2014 dipped below the 9-day average (286.73), still under it; entry \u2248 289.84 \u00b7 stop 285.05 \u00b7 risk 1.7% \u00b7 AQE default criteria: 1 of 2 met"
+   "ticker": "JPM",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "UNR_TRIGGER"
+   ],
+   "severity": "ACT",
+   "headline": "JPM $337.90 \u00b7 \ud83d\udfe2 U&R ENTRY SIGNAL",
+   "action": "U&R entry signal: queue the Tiger preview on your word",
+   "price": 337.9,
+   "day_pct": null,
+   "entry": 337.9,
+   "stop": 335.92,
+   "stop_type": "unr_low_of_day",
+   "target": null,
+   "risk_per_share": 1.98,
+   "conditions": {
+    "met": 0,
+    "of": 2,
+    "who": "AQE default criteria"
+   },
+   "unr": {
+    "status": "ARMED",
+    "stop": 335.92,
+    "level": 337.86
+   },
+   "lines": [
+    "U&R: \u2713 ENTRY SIGNAL \u2014 a 15-min candle closed above VWAP at 13:30 (price 337.86)",
+    "U&R trade: entry 337.86 \u00b7 stop 335.92 (today's low) \u00b7 risk 0.6% (1.94/share) \u00b7 1R $2,250 = 1,159 shares",
+    "Dipped below the 9-day average (337.86) today and is back above it \u2713",
+    "Watch: buying volume only 0.7\u00d7 normal",
+    "AQE default criteria: 0 of 2 met",
+    "\u2717 hourly close above 344.40 (price 337.90, 1.9% below)",
+    "\u2717 volume at least 1\u00d7 normal (now 0.7\u00d7)",
+    "AQE trade: entry 344.40 \u00b7 stop 334.31 \u00b7 risk 2.9% (10.09/share) \u00b7 1R $2,250 = 222 shares \u00b7 target 351.24 (0.7\u00d7 the risk)",
+    "Nearby levels: recent low 330.40 \u00b7 9-day average 337.86 \u00b7 21-day average 337.37 \u00b7 rising trendline 334.40"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "OUT",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "UNR_TRIGGER"
+   ],
+   "severity": "ACT",
+   "headline": "OUT $32.30 \u00b7 \ud83d\udfe2 U&R ENTRY SIGNAL",
+   "action": "U&R entry signal: queue the Tiger preview on your word",
+   "price": 32.305,
+   "day_pct": null,
+   "entry": 32.305,
+   "stop": 31.8,
+   "stop_type": "unr_low_of_day",
+   "target": null,
+   "risk_per_share": 0.505,
+   "conditions": {
+    "met": 0,
+    "of": 2,
+    "who": "AQE default criteria"
+   },
+   "unr": {
+    "status": "ARMED",
+    "stop": 31.8,
+    "level": 32.49
+   },
+   "lines": [
+    "U&R: \u2713 ENTRY SIGNAL \u2014 a 15-min candle closed above VWAP at 13:45 (price 32.34)",
+    "U&R trade: entry 32.34 \u00b7 stop 31.80 (today's low) \u00b7 risk 1.7% (0.54/share) \u00b7 1R $2,250 = 4,166 shares",
+    "Dipped below the rising trendline (32.49) today; price is still 0.6% under it",
+    "Watch: buying volume only 0.8\u00d7 normal",
+    "AQE default criteria: 0 of 2 met",
+    "\u2717 hourly close above 32.60 (price 32.30, 0.9% below)",
+    "\u2717 volume at least 1\u00d7 normal (now 0.8\u00d7)",
+    "AQE trade: entry 32.60 \u00b7 stop 31.42 \u00b7 risk 3.6% (1.18/share) \u00b7 1R $2,250 = 1,906 shares \u00b7 target 33.94 (1.1\u00d7 the risk)",
+    "Nearby levels: 9-day average 31.60 \u00b7 21-day average 30.79 \u00b7 rising trendline 32.49"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "MP",
+   "class": "HELD",
+   "held": true,
+   "states": [
+    "near_stops"
+   ],
+   "severity": "RISK",
+   "headline": "MP @ 37.70 \u00b7 \ud83d\udfe0 NEAR YOUR STOP \u2014 HELD POSITION",
+   "action": "Near your broker stop: check it",
+   "price": 37.7,
+   "day_pct": -1.69,
+   "entry": null,
+   "stop": 36.66,
+   "stop_type": "broker",
+   "target": null,
+   "risk_per_share": null,
+   "conditions": null,
+   "unr": null,
+   "lines": [
+    "Spot 37.70 \u00b7 -1.7% on the day",
+    "Your stop: 36.66 \u2014 spot is 2.8% above it",
+    "Price is close to your broker stop at 36.66. Your broker stop is the order in force unless the committee's own exit is nearer. Review your stop placement now."
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "FLYW",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "FAILED_PUSH"
+   ],
+   "severity": "INFO",
+   "headline": "FLYW $19.48 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+   "action": "Back under its buy price: wait",
+   "price": 19.48,
+   "day_pct": null,
+   "entry": 19.54,
+   "stop": 18.87,
+   "stop_type": "committee",
+   "target": 20.24,
+   "risk_per_share": 0.67,
+   "conditions": {
+    "met": 1,
+    "of": 2,
+    "who": "AQE default criteria"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 19.19,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE default criteria: 1 of 2 met",
+    "\u2717 hourly close above 19.54 (price 19.48, 0.3% below)",
+    "\u2713 volume at least 1\u00d7 normal (now 2.9\u00d7)",
+    "AQE trade: entry 19.54 \u00b7 stop 18.87 \u00b7 risk 3.4% (0.67/share) \u00b7 1R $2,250 = 3,358 shares \u00b7 target 20.24 (1.0\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "FTV",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "FAILED_PUSH"
+   ],
+   "severity": "INFO",
+   "headline": "FTV $67.14 \u00b7 \ud83d\udfe0 CONFIRMATION LOST \u2014 price still above the line \u00b7 AQE default criteria",
+   "action": "Back under its buy price: wait",
+   "price": 67.135,
+   "day_pct": null,
+   "entry": 67.03,
+   "stop": 65.2,
+   "stop_type": "committee",
+   "target": 67.31,
+   "risk_per_share": 1.83,
+   "conditions": {
+    "met": 1,
+    "of": 2,
+    "who": "AQE default criteria"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 66.15,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE default criteria: 1 of 2 met",
+    "\u2717 hourly close above 67.03 (price 67.14, 0.2% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.4\u00d7)",
+    "AQE trade: entry 67.03 \u00b7 stop 65.20 \u00b7 risk 2.7% (1.83/share) \u00b7 1R $2,250 = 1,229 shares \u00b7 target 70.76 (2.0\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
   }
  ],
+ "setups_forming": [],
  "suppressed": 0,
- "quiet_line": "02:05 SGT \u00b7 AQE: no trigger, no action.",
+ "quiet_line": null,
  "email": {
   "sent": true,
-  "subject": "[AQE] 13:04 ET conditions \u00b7 2 cards \u00b7 U&R SETUP 2 \u00b7 PMA 11-03 \u00b7 AQE 11-03"
+  "subject": "[AQE] 13:39 ET conditions \u00b7 6 cards \u00b7 BACK UNDER 2 \u00b7 U&R ENTRY 3 \u00b7 HELD 1 \u00b7 PMA 11-03 \u00b7 AQE 11-03"
  },
  "engine": {
   "checked": 283,
-  "new_triggers": 2,
+  "new_triggers": 4,
   "pma_fresh": true,
   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
  }
