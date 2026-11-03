@@ -468,52 +468,53 @@ principles:
   status: unsourced_retained
 recognisers:
 - id: R1
-  if: 'NOT_AVAILABLE: impulse_colour_last_bar == RED — needs a fast-EMA slope and a MACD-Histogram slope,
-    neither of which exists as a field'
+  if: impulse_colour_last_bar == 'RED'
   then: 'veto every long on the name for as long as the bar prints red, and lift the veto on the first
-    bar that is not red. To build it: a fast EMA of close, a MACD-Histogram series, their one-bar slopes,
-    and a three-state per-bar colour field. The elder 0-to-10 score cannot substitute, because a mid-range
-    value cannot say which of the two components is falling'
-  fields: []
+    bar that is not red. The colour is a three-state field: GREEN when EMA13 of close and the MACD-Histogram
+    both rose, RED when both fell, BLUE otherwise. The elder 0-to-10 score cannot substitute, because a
+    mid-range value cannot say which of the two components is falling'
+  fields:
+  - impulse_colour_last_bar
 - id: R2
-  if: 'NOT_AVAILABLE: impulse_colour_last_bar != impulse_colour_prior_bar — needs the same per-bar colour
-    on two consecutive bars'
+  if: impulse_colour_last_bar != impulse_colour_prior_bar
   then: 'raise the transition, not the level: red giving way is the buy-permission event, green giving
-    way on a held name is the profit-taking event. Requires the R1 colour field plus one bar of history
-    on it. This is the single highest-value item in the backlog, because Elder''s best signals live here
-    and the card currently reads only the presence of strength'
-  fields: []
+    way on a held name is the profit-taking event. This is the single highest-value test in the canon,
+    because Elder''s best signals live here and the card otherwise reads only the presence of strength'
+  fields:
+  - impulse_colour_last_bar
+  - impulse_colour_prior_bar
 - id: R3
-  if: 'NOT_AVAILABLE: force_index_ema_2 < 0 AND price_ema_slope > 0 — needs a signed Force Index series
-    and a 2-bar EMA of it'
+  if: force_index_ema_2 < 0 AND price_ema_slope > 0
   then: 'time the long here: a dip of the short force smoothing under zero while the price average rises
-    is Elder''s buy trigger. To build it: (close - close[1]) * volume as a signed series, a 2-period EMA
-    of it, and a zero line. Note this fires on WEAKNESS inside a rising market, so it cannot be expressed
+    is Elder''s buy trigger. Note this fires on WEAKNESS inside a rising market, so it cannot be expressed
     on a 0-to-10 scale that has no negative region'
-  fields: []
+  fields:
+  - force_index_ema_2
+  - price_ema_slope
 - id: R4
-  if: 'NOT_AVAILABLE: force_index_ema_13 > 0 — needs a 13-bar EMA of the same signed Force Index series'
+  if: force_index_ema_13 > 0
   then: treat the name as being in a bullish zone and read crossings of zero as trend reversals. This
-    is Elder's regime layer and it is PER NAME, computed from that name's own price and volume; it would
-    replace, for this seat, the market-wide tape colour the card scales by. Needs the R3 series plus a
-    13-bar EMA and its crossing events
-  fields: []
+    is Elder's regime layer and it is PER NAME, computed from that name's own price and volume; for this
+    seat it replaces the market-wide tape colour the card scales by
+  fields:
+  - force_index_ema_13
 - id: R5
-  if: 'NOT_AVAILABLE: price > channel_upper — needs a fitted moving-average channel (coefficient tuned
-    to hold 90-95% of the last 50-100 bars)'
-  then: refuse to initiate a long above the upper wall. The same channel is the denominator of the trade
-    grade and the reference target for a rally, so one build unlocks three rules. sma_distance_pct is
-    the nearest existing field and is a crude stand-in only — it is outside this voice's menu and it measures
-    distance from a simple average, not containment of recent action
-  fields: []
+  if: entry > channel_upper
+  then: refuse to initiate a long above the upper wall. channel_upper and channel_lower are the walls of a
+    channel that held 95% of the last 100 bars; the same channel is the denominator of the trade grade and
+    the reference target for a rally. sma_distance_pct is outside this voice's menu and measures distance
+    from a simple average, not containment of recent action, so it is not a substitute
+  fields:
+  - entry
+  - channel_upper
+  - channel_lower
 - id: R6
-  if: 'NOT_AVAILABLE: weekly_trend_direction == UP — needs a weekly resample of the daily bars, read BEFORE
-    the daily'
-  then: 'permit daily longs only while the weekly trend is up, and otherwise stand aside. This is cheap
-    and entirely computable: aggregate five daily bars into one weekly bar and take a trend read on it.
-    elder_context is an HOURLY object and is a step in the wrong direction — Elder''s ratio is five to
-    one UPWARD from the traded timeframe'
-  fields: []
+  if: weekly_trend_direction == 'UP'
+  then: 'permit daily longs only while the weekly trend is up, and otherwise stand aside (DOWN or FLAT is
+    not permission). Read this BEFORE the daily. elder_context is an HOURLY object and is a step in
+    the wrong direction — Elder''s ratio is five to one UPWARD from the traded timeframe'
+  fields:
+  - weekly_trend_direction
 - id: R7
   if: held == true AND elder_5d[-1] < elder_5d[-2]
   then: raise the name as a TIGHTEN or EXIT case on the single-bar drop, not on the whole series rolling

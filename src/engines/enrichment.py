@@ -305,6 +305,12 @@ def compute_bar_fields(stock_daily: pd.DataFrame) -> dict:
         "adx_14": None, "stoch_k_14": None, "stoch_d_3": None,
         "rvol_20d": None,
     }
+    # Elder data pack (PM 2026-11-03): the eight series fields for elder-lens R1-R6. Data only.
+    try:
+        from src.engines.elder_series import compute_elder_series
+        out.update(compute_elder_series(stock_daily))
+    except Exception:  # noqa: BLE001
+        pass
     if stock_daily is None or stock_daily.empty:
         return out
 
