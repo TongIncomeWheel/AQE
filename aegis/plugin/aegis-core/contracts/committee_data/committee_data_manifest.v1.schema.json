@@ -1,0 +1,205 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "committee_data_manifest.v1",
+ "description": "Written LAST. status OK = every file at or above 90% coverage and no refused key or exhausted time budget; PARTIAL = a file is produced but thin; FAILED = the run could not produce the set (reason says why; files is empty). A reader trusts the set only if status is OK, run_date is the run's date and every file's sha256 matches the bytes it reads.",
+ "type": "object",
+ "required": [
+  "schema",
+  "run_date",
+  "status",
+  "generated_at",
+  "files",
+  "fmp_calls",
+  "errors"
+ ],
+ "properties": {
+  "schema": {
+   "const": "committee_data_manifest.v1"
+  },
+  "run_date": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+  },
+  "status": {
+   "enum": [
+    "OK",
+    "PARTIAL",
+    "FAILED"
+   ]
+  },
+  "reason": {
+   "type": "string"
+  },
+  "generated_at": {
+   "type": "string"
+  },
+  "files": {
+   "type": "object",
+   "properties": {
+    "fundamentals_pack.json": {
+     "type": "object",
+     "required": [
+      "schema",
+      "sha256",
+      "bytes",
+      "rows",
+      "served",
+      "unserved",
+      "as_of"
+     ],
+     "properties": {
+      "schema": {
+       "type": "string"
+      },
+      "sha256": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      },
+      "bytes": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "rows": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "served": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "unserved": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "as_of": {
+       "type": "string",
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+      }
+     }
+    },
+    "mtf_grid.json": {
+     "type": "object",
+     "required": [
+      "schema",
+      "sha256",
+      "bytes",
+      "rows",
+      "served",
+      "unserved",
+      "as_of"
+     ],
+     "properties": {
+      "schema": {
+       "type": "string"
+      },
+      "sha256": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      },
+      "bytes": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "rows": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "served": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "unserved": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "as_of": {
+       "type": "string",
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+      }
+     }
+    },
+    "closes_scorecard.json": {
+     "type": "object",
+     "required": [
+      "schema",
+      "sha256",
+      "bytes",
+      "rows",
+      "served",
+      "unserved",
+      "as_of"
+     ],
+     "properties": {
+      "schema": {
+       "type": "string"
+      },
+      "sha256": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      },
+      "bytes": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "rows": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "served": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "unserved": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "as_of": {
+       "type": "string",
+       "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+      }
+     }
+    }
+   }
+  },
+  "fmp_calls": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "errors": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ },
+ "if": {
+  "properties": {
+   "status": {
+    "enum": [
+     "OK",
+     "PARTIAL"
+    ]
+   }
+  }
+ },
+ "then": {
+  "required": [
+   "files",
+   "scope"
+  ],
+  "properties": {
+   "files": {
+    "required": [
+     "fundamentals_pack.json",
+     "mtf_grid.json",
+     "closes_scorecard.json"
+    ]
+   }
+  }
+ },
+ "else": {
+  "required": [
+   "reason"
+  ]
+ }
+}

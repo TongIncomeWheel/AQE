@@ -611,6 +611,34 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:  # noqa: BLE001 — never breaks the export
         print(f"  [WARN] Voice packet split failed: {exc}")
 
+    # Step 8a-4: the committee's FMP inputs, fetched by CODE (PM 2026-11-03): hourly bars -> the weekly / daily /
+    # 1-hour grid, the scorecard's closes, the fundamentals pack. Replaces the model "couriers" at the PMA's
+    # GATHER (46% of the 3 Nov metered tokens, and the source of hand-transcription defects). A superset - every
+    # export row plus every held name - because the room is only known after RANK. Wrapped like QS and Crown:
+    # an ADDITION that must never take the export down; a failure writes a FAILED manifest that says so (see
+    # src/pipeline/committee_data.py) and prints a line the run marker surfaces.
+    print(f"{_el()} [daily] Step 8a-4: committee data...")
+    try:
+        import json as _json
+        from src.pipeline import committee_data as _cd
+        _prev = None
+        try:
+            _pp = Path(__file__).resolve().parents[2] / "aegis" / "output" / "committee_data" / "fundamentals_pack.json"
+            _prev = _json.loads(_pp.read_text(encoding="utf-8")) if _pp.exists() else None
+        except Exception:  # noqa: BLE001 - no previous pack = fetch everything
+            _prev = None
+        _export = _json.loads((OUTPUT_DIR / "aqe_daily_export.json").read_text(encoding="utf-8"))
+        _res = _cd.run(_export, str(run_date), previous_pack=_prev)
+        _cd.write_local(_res)
+        _cdp = _cd.publish(_res)
+        print(f"  {_cd.summary_line(_res, _cdp)}")
+        for _e in _res["manifest"].get("errors", [])[:5]:
+            print(f"  [WARN] committee data: {_e}")
+        if _res["manifest"]["status"] != "OK" or not _cdp.get("ok"):
+            print("  [WARN] committee data NOT clean - the PMA falls back to couriers, declared")
+    except Exception as exc:  # noqa: BLE001 - never breaks the export
+        print(f"  [WARN] Committee data step failed: Committee data FAILED: {exc}")
+
     # Step 8b: Daily-persist snapshot — zip the runtime parquets/outputs to BOTH
     # stores from one zip, so a restart can restore the last run without a full
     # re-pull. GitHub release asset is primary, Drive is the backup.

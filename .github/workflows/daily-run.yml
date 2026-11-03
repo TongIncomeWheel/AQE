@@ -37,7 +37,10 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 2026-11-03: 60 (was 45). The run is ~24 min; Step 8a-4 (the committee's FMP inputs, src/pipeline/committee_data.py)
+    # adds up to its own 15-minute budget on a first run with no carried fundamentals. The app's own
+    # pipeline cutoff (daily_job._PIPELINE_TIMEOUT) is 55 min, so the app stops first and writes its marker.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

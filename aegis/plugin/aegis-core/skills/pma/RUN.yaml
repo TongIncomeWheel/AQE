@@ -133,10 +133,16 @@ steps:
     produces: [run_manifest.json, aqe_daily_export.json, aqe_crown_macro.json, aqe_valen_dashboard.json, candidate_set.json, packets/, fundamentals_pack.json, phase4_ledger.json, verdict_ledger.json, data_health.json, closes_scorecard.json]
     producers: >
       run_manifest.json <- registrar.py init. The AQE files, candidate_set.json, packets/ and the two ledgers <- fetched
-      from main by the data-steward. fundamentals_pack.json and data_health.json <- WRITTEN BY THE DATA-STEWARD
-      (agents/data-steward.md steps 2-3), not by a tool; closes_scorecard.json <- the data-steward's close pull for
-      SCORECARD (the closes every graded run is marked against). The tick refuses on any missing file, so an
-      unserved one is written with `"unserved": true`, never skipped.
+      from main by the data-steward. fundamentals_pack.json and closes_scorecard.json <- COPIED VERBATIM from
+      aegis/output/committee_data/ on main (PM 2026-11-03: fetching is code, not a model): the daily AQE run fetched
+      them from FMP with its own key (src/pipeline/committee_data.py) and `check.py data` proved the manifest, the
+      sha256s, the run date and the coverage BEFORE you copy a byte. The same directory holds mtf_grid.json, which
+      the MTF step reads by path. data_health.json <- the data-steward's one-page note (agents/data-steward.md step 3),
+      which now quotes the manifest's status and counts. The tick refuses on any missing file.
+      COURIER FALLBACK, loud and declared: ONLY if `check.py data` FAILs on committee_data (manifest missing, stale,
+      FAILED, sha mismatch). That is about 1.5M metered tokens (3 Nov: 46% of the run), so it is the PM's call, not
+      the conductor's: stop and page, or proceed on the PM's word and write `committee_data_fallback` to the manifest
+      degradations. Never fall back because a few names are unserved - a PARTIAL set reaches the seats as declared gaps.
     source: "TongIncomeWheel/AQE@main aegis/output/"
     barrier: "aqe_daily_export.json present and parses"
     on_fail: "FATAL - halt and page the PM. No export, no run."
@@ -261,25 +267,28 @@ steps:
 
   - name: MTF
     kind: tool
-    spawns: 1                      # one data-steward courier (any model), not a voice; R39
-    command: "mtf.py build --bars mtf_bars --phase4 phase4.json --export aqe_daily_export.json --date <date> --out mtf.json"
-    reads: [phase4.json, aqe_daily_export.json, mtf_bars/]
+    spawns: 0                      # PM 2026-11-03: the grid is computed by the daily AQE run; no courier unless the fallback fires
+    command: "mtf.py build --grid aegis/output/committee_data/mtf_grid.json --phase4 phase4.json --date <date> --out mtf.json"
+    fallback_command: "mtf.py build --bars mtf_bars --phase4 phase4.json --export aqe_daily_export.json --date <date> --out mtf.json   # after ONE courier writes mtf_bars/; only if the line above exits 2; meter --spawns 1"
+    reads: [phase4.json, "aegis/output/committee_data/mtf_grid.json (daily AQE run)"]
     produces: [mtf.json]
-    barrier: "mtf.json present; every room name has a row (served or declared NOT SERVED)"
+    barrier: "mtf.json present; every room name has a row (served, served with a labelled GAP, or declared NOT SERVED)"
     on_fail: "declare it; the vote packet, the claims board and the tier-2 packets carry 'MTF NOT SERVED' on the affected names and CONTINUE"
     rulings: [R39]
     must_also: >
-      R39 (PM 2026-11-02): "force a multi timeframe look (weekly, daily, 1hour)". For the ROOM only (phase4 deliberation_set),
-      a data-steward courier pulls per name the daily EOD history (>= 300 sessions, for the weekly) and the 1-hour bars
-      (>= 30 sessions) from FMP into mtf_bars/<TICKER>.json {daily:[...], h1:[...]} -- transcribed exactly, nothing
-      estimated, a name that returns nothing is written with "unserved": true. A courier that cannot save FMP's
-      hourly output to a file (only results over ~25k tokens are saved) pulls intraday-15-min instead (saved to
-      files) and writes {daily:[...], m15:[...]}: mtf.py rolls the 15-minute bars up to :30-anchored hourly bars
-      (09:30 ... 15:30 ET, exact vs FMP's own hourly incl. volume) -- the roll-up is code, not the courier's. mtf.py then computes the W / D / H1 grid per name (close vs EMA9/EMA21, EMA order, last bar colour,
+      R39 (PM 2026-11-02): "force a multi timeframe look (weekly, daily, 1hour)". PM 2026-11-03: the bars are fetched
+      by CODE. The daily AQE run (src/pipeline/committee_data.py) pulls FMP's native 1hour bars for every export name
+      plus held (a superset: the room is only known after RANK), takes the daily bars from the panel it already holds,
+      and publishes mtf_grid.json (schema mtf_grid.v1, per-name `fetch` status, sha256 in the manifest). This step only
+      selects the room's rows from it: no FMP call, no model, no spawn. mtf.py exits 2 -- loudly, with the reason -- on
+      a grid that is missing, malformed or for another run date; that, and only that, fires the fallback_command: one
+      data-steward courier writes mtf_bars/<TICKER>.json {daily:[...], h1:[...]} (or {daily, m15} -- mtf.py rolls 15-minute
+      bars up to :30-anchored hourly bars), transcribed exactly, nothing estimated, "unserved": true for a name that
+      returns nothing. Declare the fallback in the brief header. A room name the grid does not hold is declared NOT SERVED. mtf.py then computes the W / D / H1 grid per name (close vs EMA9/EMA21, EMA order, last bar colour,
       higher-high/higher-low over the last 3 bars, distance to the 20-bar high, 1H position vs the day's range) and the
       weekly bars from the daily. The courier forms no opinion (data-steward rules). The grid rides in the vote packet
       (r2digest --mtf), the claims board and every tier-2 packet; every tier-1 ruling and tier-2 trigger names its frame.
-    meter: "--spawns 1"
+    meter: "--tool-only"
 
   - name: CHALLENGE
     kind: model
@@ -587,8 +596,10 @@ steps:
     must_also: >
       D122.1 (PM 2026-10-01): every call is graded three ways -- vs SPY, vs the equal-weight AQE list it
       was picked from, and net of beta -- with median and share-that-beat beside the mean. closes_scorecard.json
-      is FMP historical-price-eod-light (one symbol per call; batch quote is not on the plan) for every ledger
-      name and every AQE list name over the last ten sessions plus SPY. The brief and the card report carry
+      is written by the daily AQE run (PM 2026-11-03; src/pipeline/committee_data.py): the panel's closes (or FMP's
+      daily bars for a ledger name the panel does not hold) for every ledger name in the last 45 days, every export
+      name and SPY, with `_missing` naming any it could not serve. Exit 3 (a ledger price disagrees with its close):
+      re-pull ONLY the disagreeing closes once, by hand, and say so. The brief and the card report carry
       scorecard.md in place of any hand-built performance table; the card report embeds scorecard.html.
       MONITORING (PM 2026-10-01: "add this scorecard into daily PMA output, keep it running so we can log
       and monitor ... will review after 2 weeks"): scorecard_log.jsonl gains one line per close (a re-run

@@ -70,8 +70,10 @@ INBOX-CLEAN → GATHER (registrar init → run lock pushed) → PREPARE → NOMI
 → DECIDE (ratify-count) → CONDITIONS → REPEAT-WATCH → BRACKET → SCORECARD → WRITE → CHECK → LEVELS (--slate: market kill) → REPORT → PUBLISH
 ```
 
-Model spawn steps: NOMINATE 7 · CHALLENGE 1 · VOTE 7 · CROSS 7 · TIER2 7 · SLATE 1 · RATIFY 7 · QA 1 · WRITE 1 = **39 spawns** + MTF courier
-(one data-steward, not a voice). Everything else is a tool step and costs no model tokens. The macro seats are retired (R31): the weather
+Model spawn steps: NOMINATE 7 · CHALLENGE 1 · VOTE 7 · CROSS 7 · TIER2 7 · SLATE 1 · RATIFY 7 · QA 1 · WRITE 1 = **39 spawns**. Fetching costs none (PM 2026-11-03):
+the weekly / daily / 1-hour grid, the fundamentals pack and the scorecard closes are fetched by CODE in the daily AQE run
+(`aegis/output/committee_data/`, proven by `check.py data`); a data-steward courier spawns only as a loud, PM-approved
+fallback when that check fails. Everything else is a tool step and costs no model tokens. The macro seats are retired (R31): the weather
 comes from AQE's Crown and Valen files through `r2digest --crown --valen` and the weather cards. The 2 Nov open-floor design cost ~2.4M
 actual tokens for its two floor waves; the funnel has not been measured yet — `registrar.py status` prints the live number and
 `check.py chain` compares it to the 2,500,000 ceiling (registrar byte basis).

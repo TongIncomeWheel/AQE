@@ -6,7 +6,8 @@
                  [--run-yaml <RUN.yaml>] [--ceiling-tokens 2500000]
   check.py data  --output-dir aegis/output [--run-yaml <RUN.yaml>]     (the AQE -> voices HANDOFF gate)
                  [--journal-dir aegis/data/journal] [--broker-stops <run-dir>/broker_stops.json]
-                 (also the book + stops: the close's journal, the export, a live broker read)
+                 (also the book + stops: the close's journal, the export, a live broker read; and the committee's FMP
+                  inputs the daily run fetched: <output>/committee_data/ - manifest, sha256s, coverage, freshness)
   check.py all   (ready + data + chain)
 
 Exit 0 = Healthy. Exit 1 = at least one FAIL line. Exit 2 = could not even read an input (also a failure --
@@ -309,6 +310,92 @@ def check_book(journal_dir, run_date, export=None, broker_stops_path=None):
     return fails, notes
 
 
+COMMITTEE_FILES = {"fundamentals_pack.json": "fundamentals_pack.v1", "mtf_grid.json": "mtf_grid.v1",
+                   "closes_scorecard.json": "closes_scorecard.v1"}
+COURIER_COST = "the courier fallback costs about 1.5M metered tokens (3 Nov 2026: 46% of the run) and is the PM's call"
+
+
+def check_committee_data(output_dir, run_date, export=None):
+    """THE COMMITTEE'S FMP INPUTS (PM 2026-11-03: fetching is code, not a model). Written by the daily AQE run
+    (src/pipeline/committee_data.py) to <output>/committee_data/. Missing, stale, FAILED or inconsistent = FAIL
+    (the PMA would need the courier fallback; do not start it unattended). A thin-but-honest PARTIAL = WARN that
+    names what is missing (the seats see those names as declared gaps)."""
+    import hashlib
+    fails, notes = [], []
+    d = os.path.join(output_dir, "committee_data")
+    mp = os.path.join(d, "manifest.json")
+    M = _load(mp, "committee_data/manifest.json", fails)
+    if M is None:
+        fails[-1] += f" -- the daily run did not publish the committee's data; {COURIER_COST}"
+        return fails, notes
+    if M.get("schema") != "committee_data_manifest.v1":
+        fails.append(f"committee_data manifest schema is {M.get('schema')!r}, not committee_data_manifest.v1")
+        return fails, notes
+    if run_date and str(M.get("run_date"))[:10] != run_date:
+        fails.append(f"committee_data manifest is for {M.get('run_date')}, the run is {run_date} -- STALE; {COURIER_COST}")
+        return fails, notes
+    if M.get("status") == "FAILED":
+        fails.append(f"committee_data FAILED: {M.get('reason')} -- {COURIER_COST}")
+        return fails, notes
+    files = M.get("files") or {}
+    docs = {}
+    for name, schema in COMMITTEE_FILES.items():
+        e = files.get(name)
+        if not isinstance(e, dict):
+            fails.append(f"committee_data manifest lists no {name}"); continue
+        p = os.path.join(d, name)
+        if not os.path.exists(p):
+            fails.append(f"committee_data/{name}: MISSING (the manifest says it was published)"); continue
+        body = open(p, "rb").read()
+        if hashlib.sha256(body).hexdigest() != e.get("sha256") or len(body) != e.get("bytes"):
+            fails.append(f"committee_data/{name}: sha256/bytes differ from the manifest -- a torn or edited publish, do not trust it")
+            continue
+        try:
+            docs[name] = json.loads(body)
+        except ValueError:
+            fails.append(f"committee_data/{name}: not valid JSON"); continue
+        if e.get("schema") != schema:
+            fails.append(f"committee_data/{name}: schema {e.get('schema')!r}, expected {schema}")
+    if fails:
+        return fails, notes
+    G, F, C = docs["mtf_grid.json"], docs["fundamentals_pack.json"], docs["closes_scorecard.json"]
+    for nm, doc in (("mtf_grid.json", G), ("fundamentals_pack.json", F)):
+        if doc.get("schema") != COMMITTEE_FILES[nm] or str(doc.get("run_date"))[:10] != str(M.get("run_date"))[:10]:
+            fails.append(f"committee_data/{nm}: schema/run_date {doc.get('schema')}/{doc.get('run_date')} disagree with the manifest")
+    gh = hashlib.sha256(json.dumps(G.get("names"), sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+    if gh != G.get("sha256_of_names"):
+        fails.append("committee_data/mtf_grid.json: sha256_of_names does not match its names")
+    if not isinstance(C.get("_missing"), list) or len([k for k in C if k != "_missing"]) != files["closes_scorecard.json"]["served"]:
+        fails.append("committee_data/closes_scorecard.json: _missing / ticker count disagree with the manifest")
+    if "SPY" not in C:
+        fails.append("committee_data/closes_scorecard.json carries no SPY - the scorecard's benchmark calendar cannot be built")
+    elif run_date and max(C["SPY"]) < last_us_close(run_date):
+        fails.append(f"committee_data closes: SPY ends {max(C['SPY'])}, the last US close is {last_us_close(run_date)} -- stale closes")
+    if export is not None:
+        want = sorted({r.get("ticker") for r in (export.get("daily_list") or [])} | {h.get("ticker") for h in (export.get("held_positions") or [])} - {None})
+        if (M.get("scope") or {}).get("requested") != len(want) or sorted(G.get("names") or {}) != want:
+            fails.append(f"committee_data was fetched for {(M.get('scope') or {}).get('requested')} names, today's export has {len(want)} - a different export")
+    if fails:
+        return fails, notes
+    gc, fc = G["coverage"], F["coverage"]
+    if M.get("status") == "PARTIAL" or M.get("quota_hit") or M.get("time_budget_exhausted"):
+        why = ", ".join(x for x, on in (("FMP refused the key", M.get("quota_hit")), ("time budget exhausted", M.get("time_budget_exhausted"))) if on)
+        notes.append(f"WARN committee data is PARTIAL{' (' + why + ')' if why else ''}: mtf {gc['complete']}/{gc['requested']} complete "
+                     f"(not served: {gc['not_served_names'][:8]}), fundamentals {fc['served']}/{fc['requested']} "
+                     f"(unserved: {fc['unserved_names'][:8]}, partial: {fc['partial_names'][:8]}), closes missing: {C['_missing'][:8]} "
+                     f"-- those names reach the seats as declared gaps")
+    elif gc["not_served_names"] or fc["unserved_names"] or fc["partial_names"] or C["_missing"]:
+        notes.append(f"WARN committee data gaps (declared): mtf not served {gc['not_served_names'][:8]}, fundamentals unserved "
+                     f"{fc['unserved_names'][:8]} / partial {fc['partial_names'][:8]}, closes missing {C['_missing'][:8]}")
+    for e in (M.get("errors") or [])[:3]:
+        notes.append(f"WARN committee data error: {e}")
+    notes.append(f"committee data {M.get('status')}: {M.get('run_date')}, mtf {gc['complete']}/{gc['requested']} complete "
+                 f"({gc['hourly_native']} native hourly, {gc['hourly_rolled_up']} rolled up from 15-min, {gc['hourly_none']} none), "
+                 f"fundamentals {fc['served']}/{fc['requested']} ({fc['carried']} carried), closes "
+                 f"{len([k for k in C if k != '_missing'])}, {M.get('fmp_calls')} FMP calls in {M.get('elapsed_s')}s")
+    return fails, notes
+
+
 def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_stops=None):
     """THE HANDOFF GATE (PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and
     integrity from AQE to voices handoff'). Everything the seats will read, proven consistent with each other
@@ -353,6 +440,9 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
     jd = journal_dir or os.path.join(os.path.dirname(os.path.abspath(od)), "data", "journal")
     bf, bn = check_book(jd, run_date, EX, broker_stops)
     fails.extend(bf); notes.extend(bn)
+    # --- the committee's FMP inputs, fetched by the daily run (PM 2026-11-03) ---
+    cf, cn = check_committee_data(od, run_date, EX)
+    fails.extend(cf); notes.extend(cn)
     # --- the candidate set the packets are sliced from ---
     uni = {}
     if CS is not None:

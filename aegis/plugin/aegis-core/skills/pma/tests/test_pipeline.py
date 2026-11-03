@@ -2475,6 +2475,33 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
             os.remove(os.path.join(od, "packets", f))
         for v, txt in pk.items():
             open(os.path.join(od, "packets", f"{v}.tsv"), "w").write(txt)
+        write_committee_data()
+    def write_committee_data(run_date=D, spy_last="2026-11-02", mutate=None):
+        """The files src/pipeline/committee_data.py publishes, built by hand (plugin tests are stdlib only)."""
+        import hashlib
+        cdd = os.path.join(od, "committee_data"); os.makedirs(cdd, exist_ok=True)
+        names = ["AAA", "BBB", "CCC", "HLD"]
+        def dumps(o): return json.dumps(o, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        fr = {"served": True, "summary": "above EMA9, 9>21, HH/HL, 1.0% under 20-day high"}
+        grid_names = {t: {"served": True, "complete": True, "gaps": [], "reason": None, "W": fr, "D": fr, "H1": fr, "summary": "W: x | D: y | H1: z",
+                          "fetch": {"daily": {"source": "panel", "rows": 300}, "hourly": {"source": "1hour", "rows": 70}}} for t in names}
+        sha_names = hashlib.sha256(dumps(grid_names)).hexdigest()
+        grid = {"schema": "mtf_grid.v1", "run_date": run_date, "generated_at": "x", "frames": ["W", "D", "H1"], "names": grid_names, "sha256_of_names": sha_names,
+                "coverage": {"requested": 4, "served": 4, "complete": 4, "not_served": 0, "not_served_names": [], "hourly_native": 4, "hourly_rolled_up": 0, "hourly_none": 0}}
+        fund = {"schema": "fundamentals_pack.v1", "run_date": run_date, "as_of": run_date, "source": "t",
+                "coverage": {"requested": 4, "served": 4, "carried": 0, "partial": 0, "unserved": 0, "partial_names": [], "unserved_names": []},
+                "tickers": {t: {"unserved": False, "status": "served", "pulled_on": run_date} for t in names}}
+        closes = {"SPY": {"2026-11-02": 500.0}, "AAA": {"2026-11-02": 10.0}, "_missing": []}
+        closes["SPY"] = {spy_last: 500.0}
+        if mutate: mutate(grid, fund, closes)
+        bodies = {"fundamentals_pack.json": dumps(fund), "mtf_grid.json": dumps(grid), "closes_scorecard.json": dumps(closes)}
+        sch = {"fundamentals_pack.json": "fundamentals_pack.v1", "mtf_grid.json": "mtf_grid.v1", "closes_scorecard.json": "closes_scorecard.v1"}
+        files = {n: {"schema": sch[n], "sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b), "rows": 4, "served": 4, "unserved": 0, "as_of": run_date} for n, b in bodies.items()}
+        files["closes_scorecard.json"].update({"served": 2, "rows": 2})
+        man = {"schema": "committee_data_manifest.v1", "run_date": run_date, "status": "OK", "generated_at": "x", "scope": {"requested": 4},
+               "files": files, "fmp_calls": 10, "elapsed_s": 1.0, "errors": []}
+        for n, b in bodies.items(): open(os.path.join(cdd, n), "wb").write(b)
+        open(os.path.join(cdd, "manifest.json"), "wb").write(dumps(man))
     def gate():
         return run([CHK, "data", "--output-dir", od])
     write_all()
@@ -2492,6 +2519,19 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
     write_all(exp={"date": "2026-11-02"}); rc, log = gate(); check("an export dated differently from the run is named", rc != 0 and "export date" in log, log[-300:])
     write_all(cs={"universe": [row("AAA"), row("BBB"), row("CCC")]}); rc, log = gate(); check("a held position missing from the candidate set is named (R12)", rc != 0 and "held position(s) missing" in log, log[-300:])
     write_all(last={"status": "partial"}); rc, log = gate(); check("a partial run is named", rc != 0 and "did not finish clean" in log, log[-300:])
+    # PM 2026-11-03: the committee's FMP inputs are fetched by the daily run; absent / stale / torn = FAIL, thin = WARN
+    write_all(); shutil_cd = os.path.join(od, "committee_data", "manifest.json"); os.remove(shutil_cd)
+    rc, log = gate(); check("missing committee data is named, with the courier fallback cost", rc != 0 and "committee_data/manifest.json" in log and "courier fallback" in log, log[-300:])
+    write_all(); write_committee_data(run_date="2026-11-02")
+    rc, log = gate(); check("committee data for another day is named STALE", rc != 0 and "STALE" in log, log[-300:])
+    write_all(); write_committee_data(spy_last="2026-10-28")
+    rc, log = gate(); check("closes that stop before the last US close are named", rc != 0 and "stale closes" in log, log[-300:])
+    write_all(); p_ = os.path.join(od, "committee_data", "mtf_grid.json"); open(p_, "ab").write(b" ")
+    rc, log = gate(); check("a committee data file changed after its manifest is named", rc != 0 and "mtf_grid.json: sha256/bytes differ" in log, log[-300:])
+    def _thin(g, f, c):
+        g["coverage"]["not_served_names"] = ["CCC"]; f["coverage"]["unserved_names"] = ["BBB"]
+    write_all(); write_committee_data(mutate=_thin)
+    rc, log = gate(); check("declared gaps in committee data are a WARN naming the names, not a block", rc == 0 and "WARN" in log and "'CCC'" in log and "'BBB'" in log, log[-400:])
 
 
 def test_the_book_and_its_stops_are_one_checked_source(td):

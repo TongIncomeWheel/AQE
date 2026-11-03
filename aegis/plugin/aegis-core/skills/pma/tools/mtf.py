@@ -22,8 +22,16 @@ Input per name, mtf_bars/<T>.json:
 `m15` is rolled up HERE (rollup_hourly) into :30-anchored 1-hour bars -- 09:30, 10:30 ... 15:30 ET, the last one
 the 30-minute close -- when the file carries no `h1` (a courier that cannot save FMP's hourly output to a file can
 save the 15-minute pulls instead). open = first, high = max, low = min, close = last, volume = sum; a bucket with
-fewer than 2 of its 15-minute bars is dropped and counted, never passed off as a full hour. Verified exact against
-FMP's own hourly bars, volume included (conductor, 3 Nov 2026, FE).
+fewer than 2 of its 15-minute bars is dropped and counted, never passed off as a full hour. Checked against FMP's
+own native hourly bars on MP, 2 Nov 2026 (tests/fixtures/fmp_mp): open / high / low / close identical in all 7
+buckets; volume identical in 6 of 7 -- the 09:30 bucket sums to 676,274 from the 15-minute bars against 583,974 in
+FMP's hourly bar (FMP's hourly leaves out volume the 15-minute opening bar carries). Nothing in the grid reads
+volume, so no reading changes; the native `1hour` pull is preferred and this roll-up is the fallback.
+
+  build --grid mtf_grid.json   (3 Nov 2026) take each room name's row from the grid the daily AQE run already
+          computed for the whole export (src/pipeline/committee_data.py) instead of from courier-written bars.
+          A grid that is missing, malformed or for another run date is a hard stop (exit 2) so the conductor
+          falls back to the courier loudly; a room name the grid does not hold is declared NOT SERVED.
 
 Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-hour):
   close, ema9, ema21 (EMA over closes, alpha 2/(n+1), seeded with the SMA of the first n closes; needs >= 21
@@ -281,11 +289,35 @@ def build_name(t, doc, run_date, export_close=None):
     return row
 
 
+def _load_grid(path, run_date):
+    """The precomputed grid, or a hard stop: a stale / broken grid must send the conductor to the courier
+    fallback loudly, never feed the seats a quietly wrong reading."""
+    def stop(why):
+        print(f"mtf: {why} -- use the courier fallback", file=sys.stderr)
+        raise SystemExit(2)
+    try:
+        g = _load(path)
+    except (ValueError, OSError, SystemExit) as e:
+        stop(f"grid {path} unreadable ({e})")
+    if g.get("schema") != "mtf_grid.v1" or not isinstance(g.get("names"), dict):
+        stop(f"grid {path} is not mtf_grid.v1")
+    if str(g.get("run_date"))[:10] != run_date:
+        stop(f"grid {path} is for run date {g.get('run_date')}, this run is {run_date} -- stale")
+    return g
+
+
 def cmd_build(a):
     p4 = _load(a.phase4)
     room = list(p4.get("deliberation_set") or [])
     if not room:
         sys.exit("mtf: phase4 has no deliberation_set -- refusing to write an empty grid")
+    if getattr(a, "grid", None):
+        g = _load_grid(a.grid, a.date)
+        names = {t: (g["names"].get(t) or _not_served(f"{t} is not in the fetched grid ({len(g['names'])} names; fetched {g.get('generated_at')})"))
+                 for t in room}
+        _write_grid_out(a, room, names, extra={"source": "mtf_grid.json", "grid_generated_at": g.get("generated_at"),
+                                               "grid_manifest_sha256": g.get("sha256_of_names")})
+        return
     ex = _load(a.export, {}) if a.export else {}
     closes = {r.get("ticker"): r.get("entry") for r in (ex.get("daily_list") or []) if isinstance(r, dict)}
     names = {}
@@ -301,6 +333,11 @@ def cmd_build(a):
         names[t] = build_name(t, doc, a.date, closes.get(t))
     extra = sorted(f[:-5] for f in (os.listdir(a.bars) if os.path.isdir(a.bars) else [])
                    if f.endswith(".json") and f[:-5] not in names)
+    _write_grid_out(a, room, names, extra={"bars_files_not_in_room": extra})
+
+
+def _write_grid_out(a, room, names, extra=None):
+    extra = extra or {}
     mism = sorted(t for t, r in names.items() if r.get("D", {}).get("close_matches_export") is False)
     out = {"schema": SCHEMA, "date": a.date, "frames": list(FRAMES),
            "rule": "R39: every room name has a row; a frame without enough bars is NOT SERVED, never a neutral reading",
@@ -312,8 +349,7 @@ def cmd_build(a):
                            "partial_names": sorted(t for t, r in names.items() if r["served"] and not r.get("complete")),
                            "not_served": sum(1 for r in names.values() if not r["served"]),
                            "not_served_names": sorted(t for t, r in names.items() if not r["served"]),
-                           "close_mismatch_vs_export": mism,
-                           "bars_files_not_in_room": extra}}
+                           "close_mismatch_vs_export": mism, **extra}}
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1)
     m = out["measurement"]
@@ -333,6 +369,7 @@ def main(argv=None):
     b.add_argument("--export", default="aqe_daily_export.json", help="cross-checks the last daily close per name")
     b.add_argument("--date", required=True, help="run date YYYY-MM-DD; bars dated after it are dropped")
     b.add_argument("--out", default="mtf.json")
+    b.add_argument("--grid", default=None, help="mtf_grid.json from the daily AQE run: take the room's rows from it instead of from --bars")
     b.set_defaults(fn=cmd_build)
     a = ap.parse_args(argv)
     a.fn(a)
