@@ -115,6 +115,18 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
                 notes.append(f"step {s}: degraded -- " + "; ".join(str(x) for x in (st[s].get("degradations") or st[s].get("notes") or [])[:2]))
         if M.get("date") and date and M["date"] != date:
             fails.append(f"run_manifest.json is for {M['date']}, not {date}")
+        rr = M.get("rerun")
+        if rr:
+            # RERUN (PM 2026-11-03): not live. The run dir must be the r<N> dir, and its publish receipt may list only
+            # paths inside it (never the live levels, scorecard log or the original run's record).
+            want = str(rr.get("run_dir", "")).strip("/")
+            if not os.path.normpath(run_dir).replace("\\", "/").rstrip("/").endswith(want):
+                fails.append(f"RERUN {M.get('run_id')}: checked dir {run_dir} is not its run dir {want}")
+            rc_ = _load(os.path.join(run_dir, "publish_receipt.json"), "publish_receipt.json", [])
+            for pth in (rc_ or {}).get("pushed") or []:
+                if not str(pth).strip("/").startswith(want + "/") and str(pth).strip("/") != want:
+                    fails.append(f"RERUN {M.get('run_id')} pushed {pth} OUTSIDE {want} -- a rerun must never publish live")
+            notes.append(f"RERUN {M.get('run_id')} of {rr.get('of')}: NOT LIVE; the PM promotes it explicitly")
         est = 0
         for s, row in st.items():
             c = row.get("cost") or {}

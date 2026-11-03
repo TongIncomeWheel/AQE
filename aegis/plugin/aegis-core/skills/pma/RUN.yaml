@@ -69,6 +69,24 @@ parameters:
 # self-healing (clones if the checkout is absent), order-blind, idempotent and fail-visible. It was
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
+rerun:
+  how: "registrar.py init --date <date> --rerun r2   # run_id pma-<date>-r2, run dir aegis/output/pma/run/<date>-r2; every <date> in the checkpoint --dest below becomes <date>-r2"
+  rules: >
+    RERUN MODE (PM 2026-11-03, 'rerun today on the new code, reusing what we hold'). The rerun is NOT live and cannot
+    damage what is published. (1) IDENTITY: run_id pma-<date>-r2, run dir aegis/output/pma/run/<date>-r2, checkpoints
+    there (git_sync --dest aegis/output/pma/run/<date>-r2); git_sync REFUSES any other destination while the manifest
+    says rerun, and `check.py chain --run-dir aegis/output/pma/run/<date>-r2 --date <date>` accepts it. The dir name
+    differs from run/<date>, so a watcher keyed on run/<date>/run_manifest.json never mistakes it for the live run.
+    (2) PUBLISH: skip push_levels and push_scorecard and their read-backs entirely. Nothing is written to
+    aegis/output/pma/pma_levels.json, levels/<date>.json, scorecard_log.jsonl or scorecard/<date>.md; the rerun's own
+    levels, scorecard and brief exist only inside the r2 dir, and publish_receipt.json lists only paths inside it
+    (check.py chain FAILs otherwise). The PM promotes a rerun to live explicitly, later, as a separate act.
+    (3) REUSE: the committee data for <date> is taken as is when `check.py data` reads OK for it; the ledgers and the
+    repeat-watch / carry-forward inputs are the ones on main, which are the ORIGINAL <date> record because a rerun
+    never pushes a ledger. Pull only what is new (the fresh export, held rows, closes if stale).
+    (4) INBOX-CLEAN is skipped: tick it `degraded` with the note 'skipped: rerun'.
+    (5) The desk message starts 'PMA RERUN <date>-r2 DONE' and says it is not live.
+
 checkpoint:
   tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json rationale_draft.json rationale_final.json committee_position.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >
@@ -153,7 +171,7 @@ steps:
     on_fail: "FATAL - halt and page the PM. No export, no run."
     rulings: [R7, R12]
     checkpoint_after: true        # the run lock -- run_manifest.json on main before any seat is spawned
-    first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it"
+    first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it. RERUN: add --rerun r2 (see `rerun:` above)"
     must_also: >
       THE BOOK AND ITS STOPS (R20, PM 2026-11-02: "Stop from Tiger is correct. That's the dependency").
       The book of record is the close's journal on main, aegis/data/journal/aegis_journal_<last close>.json

@@ -3353,6 +3353,45 @@ def test_committee_position_counts_the_median_and_never_invents_a_rationale(td):
     check("a missing ticket on a post-R42 run is a declared gap", "declared gap" in pma_cards._committee_block(None, True))
 
 
+def test_a_rerun_has_its_own_identity_and_cannot_publish_live(td):
+    """PM 2026-11-03: a RERUN of the same date has its own run id and dir, git_sync refuses any other destination, and
+    check.py chain FAILs a rerun whose publish receipt names a path outside its own dir."""
+    d = os.path.join(td, "rr"); os.makedirs(d)
+    m = os.path.join(d, "run_manifest.json")
+    rc, o = run([REG, "--manifest", m, "init", "--date", "2026-11-03", "--rerun", "r2"])
+    M = json.load(open(m)) if os.path.exists(m) else {}
+    check("init --rerun r2 writes pma-2026-11-03-r2 and the r2 run dir", rc == 0 and M.get("run_id") == "pma-2026-11-03-r2"
+          and M["rerun"]["run_dir"] == "aegis/output/pma/run/2026-11-03-r2" and M["rerun"]["publishes_live"] is False, o + str(M))
+    rc, _ = run([REG, "--manifest", os.path.join(d, "bad.json"), "init", "--date", "2026-11-03", "--rerun", "x"])
+    check("a malformed rerun suffix is refused", rc == 2)
+    rc, _ = run([REG, "--manifest", os.path.join(d, "live.json"), "init", "--date", "2026-11-03"])
+    check("a normal init is unchanged: pma-<date>, no rerun key", json.load(open(os.path.join(d, "live.json"))).get("run_id") == "pma-2026-11-03"
+          and "rerun" not in json.load(open(os.path.join(d, "live.json"))))
+    # git_sync guard, run in the dir holding the rerun manifest
+    gs = os.path.join(TOOLS, "git_sync.py")
+    for dest in ("aegis/output/pma", "aegis/output/pma/run/2026-11-03", None):
+        args = [gs, "-m", "x", "--paths", "run_manifest.json", "--dry-run"] + (["--dest", dest] if dest else [])
+        r = subprocess.run([sys.executable] + args, capture_output=True, text=True, cwd=d)
+        check(f"git_sync refuses a rerun pushing to {dest}", r.returncode != 0 and "RERUN" in r.stdout and "REFUSED" in r.stdout, r.stdout[-300:] + r.stderr[-200:])
+    r = subprocess.run([sys.executable, gs, "-m", "x", "--paths", "run_manifest.json", "--dest", "aegis/output/pma/run/2026-11-03-r2", "--dry-run"],
+                       capture_output=True, text=True, cwd=d)
+    check("git_sync lets the rerun push to its own dir (the guard does not refuse it)", "REFUSED: this is a RERUN" not in r.stdout, r.stdout[-300:])
+    # the chain check
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("check_rr", os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    C = importlib.util.module_from_spec(spec); spec.loader.exec_module(C)
+    rd = os.path.join(d, "aegis", "output", "pma", "run", "2026-11-03-r2"); os.makedirs(rd)
+    shutil.copy(m, os.path.join(rd, "run_manifest.json"))
+    json.dump({"pushed": ["aegis/output/pma/pma_levels.json"]}, open(os.path.join(rd, "publish_receipt.json"), "w"))
+    f, n = C.check_chain(rd, "2026-11-03")
+    check("a rerun receipt naming the LIVE levels file FAILs the chain", any("OUTSIDE" in x and "never publish live" in x for x in f), str(f)[:300])
+    json.dump({"pushed": ["aegis/output/pma/run/2026-11-03-r2/pma_levels.json"]}, open(os.path.join(rd, "publish_receipt.json"), "w"))
+    f, n = C.check_chain(rd, "2026-11-03")
+    check("a rerun receipt inside its own dir is not flagged, and the note says NOT LIVE", not any("OUTSIDE" in x for x in f) and any("NOT LIVE" in x for x in n), str(f)[:200] + str(n)[:200])
+    ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
+    check("RUN.yaml states the rerun rules (no live levels, scorecard log, inbox skipped)", "RERUN MODE" in ry and "INBOX-CLEAN is skipped" in ry and "scorecard_log.jsonl or scorecard/<date>.md" in ry)
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3420,7 +3459,8 @@ def main():
                    test_the_flag_list_leads_with_the_strongest_names,
                    test_the_strongest_names_are_voted_in_the_momentum_lane,
                    test_a_buy_line_far_under_the_close_is_never_the_trigger,
-                   test_committee_position_counts_the_median_and_never_invents_a_rationale]:
+                   test_committee_position_counts_the_median_and_never_invents_a_rationale,
+                   test_a_rerun_has_its_own_identity_and_cannot_publish_live]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

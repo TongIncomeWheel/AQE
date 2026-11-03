@@ -237,6 +237,19 @@ def sync(message, paths=None, dry_run=False, dest=None, allow_outside_output=Fal
     paths = paths or DEFAULT_PATHS
     base = _remote_base()
 
+    # RERUN GUARD (PM 2026-11-03): a run whose manifest says `rerun` may push ONLY under its own run dir. Any other
+    # destination (the live levels, the scorecard log, the original date's record) is refused, not warned about.
+    try:
+        _rm = json.load(open("run_manifest.json", encoding="utf-8"))
+    except Exception:
+        _rm = {}
+    _rr = _rm.get("rerun") if isinstance(_rm, dict) else None
+    if _rr and (dest or "").strip("/") != str(_rr.get("run_dir", "")).strip("/"):
+        return {"ok": False, "pushed": False, "reason":
+                f"REFUSED: this is a RERUN ({_rm.get('run_id')}); it may push only with --dest {_rr.get('run_dir')}, "
+                f"never to {dest or paths} (live levels / scorecard log / the original run's record are not its to touch)",
+                "remote": base}
+
     P = plan(paths, dest)
     if P["outside"] and not allow_outside_output:
         # FAIL-VISIBLE, never a quiet rebuild of the Space. The legacy DEFAULT_PATHS (aegis/data, the decisions

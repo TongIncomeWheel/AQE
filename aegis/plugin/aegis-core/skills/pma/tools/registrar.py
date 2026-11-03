@@ -1365,10 +1365,21 @@ def cmd_meter(a):
 
 
 def cmd_init(a):
-    m = {"run_id": f"pma-{a.date}", "date": a.date, "created": _now(),
+    """--rerun SUFFIX (PM 2026-11-03): a RERUN of the same date on new code. Distinct identity pma-<date>-<suffix>, run dir
+    aegis/output/pma/run/<date>-<suffix>; the manifest says `rerun`, and git_sync / check.py chain hold it to that dir so it
+    can never overwrite the live levels, the scorecard log or the original run's record."""
+    suffix = getattr(a, "rerun", None)
+    rid = f"pma-{a.date}" + (f"-{suffix}" if suffix else "")
+    m = {"run_id": rid, "date": a.date, "created": _now(),
          "steps": {}, "seats": {}, "degradations": [], "flags": []}
+    if suffix:
+        if not re.fullmatch(r"r[0-9]{1,2}", suffix):
+            print(f"init: --rerun must look like r2, r3 ... not {suffix!r}", file=sys.stderr)
+            return 2
+        m["rerun"] = {"suffix": suffix, "of": f"pma-{a.date}", "run_dir": f"aegis/output/pma/run/{a.date}-{suffix}",
+                      "publishes_live": False}
     save_manifest(a.manifest, m)
-    print(f"scoreboard initialised: {a.manifest} run_id=pma-{a.date}")
+    print(f"scoreboard initialised: {a.manifest} run_id={rid}" + (" (RERUN: never publishes live)" if suffix else ""))
     return 0
 
 
@@ -1536,7 +1547,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--manifest", default="run_manifest.json")
     sub = p.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("init"); s.add_argument("--date", required=True)
+    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live")
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")
