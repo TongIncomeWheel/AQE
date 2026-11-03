@@ -220,6 +220,31 @@ def futures_bars(client: FMPClient | None = None) -> tuple[dict, list[str], dict
     return frames, bad, sources
 
 
+CBOE_RETRY_WAIT_S = 300          # one wait, one retry: Cboe posts a session's file some time after the close
+
+
+def _retry_if_behind(cboe, st: dict, *, sleep=None, expected=None, wait_s: float | None = None) -> dict:
+    """If Cboe's newest date is behind the last completed US session, wait ONCE and refresh again (2026-11-03: the 06:54 SGT
+    run read the 30 Oct volatility file; by 14:51 SGT 2 Nov was posted). If it is still behind, say so in `_retry`; the
+    leg is then labelled by Crown's freshness block and the Valen banner, never passed off as current."""
+    import os as _os, time as _time
+    from src.data.sessions import last_completed_session
+    expected = str(expected or last_completed_session())
+    newest = st.get("as_of")
+    if not newest or str(newest) >= expected:
+        st["_retry"] = {"waited_s": 0, "expected": expected, "as_of": newest, "retried": False}
+        return st
+    wait = CBOE_RETRY_WAIT_S if wait_s is None else wait_s
+    wait = float(_os.environ.get("CROWN_CBOE_RETRY_WAIT_S", wait))
+    (sleep or _time.sleep)(wait)
+    st2 = cboe.refresh()
+    ok = st2.get("ok") and st2.get("as_of")
+    out = st2 if ok else st
+    out["_retry"] = {"waited_s": wait, "expected": expected, "as_of_before": newest, "as_of": out.get("as_of"),
+                     "retried": True, "still_behind": bool(not out.get("as_of") or str(out.get("as_of")) < expected)}
+    return out
+
+
 def vix_bars(client: FMPClient | None = None, *, refresh: bool = True) -> dict:
     """The volatility complex — **Cboe first**, FMP only as a fallback for VIX.
 
@@ -237,6 +262,9 @@ def vix_bars(client: FMPClient | None = None, *, refresh: bool = True) -> dict:
         st = cboe.refresh()
         if not st.get("ok"):
             out["unavailable"].append(f"Cboe: {st.get('reason')}")
+        else:
+            st = _retry_if_behind(cboe, st)
+            out["cboe_retry"] = st.get("_retry")
 
     frames = cboe.series_frames()
     for key in ("vix", "vixeq", "vix3m", "vix9d", "dspx", "cor1m"):

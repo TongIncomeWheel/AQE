@@ -296,7 +296,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
     # long; 2400s was too tight and killed the process mid-tail (after the export
     # was already written). 3300s (55 min) gives headroom while still bounding a
     # genuine runaway.
-    _PIPELINE_TIMEOUT = 3300
+    _PIPELINE_TIMEOUT = 4500
 
     def _feed_status():
         """Was today's export actually written? Returns (exported_at, is_today)."""
@@ -335,6 +335,14 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             if "Committee data " in line and ("OK:" in line or "PARTIAL:" in line or "FAILED:" in line):
                 return line.strip()
         return "unknown -- Step 8a-4 produced no recognizable output"
+
+    def _line_status(stdout: str, needle: str, missing: str) -> str:
+        """The last stdout line containing `needle` (2026-11-03: macro legs' dates and the whole-market panel refresh must
+        show on the run marker, because both steps are wrapped in except-and-warn and would fail without anyone seeing)."""
+        for line in reversed((stdout or "").splitlines()):
+            if needle in line:
+                return line.strip()
+        return missing
 
     def _artifacts_published(stdout: str) -> dict | None:
         """Which of the DAILY_ARTIFACTS files (Step 8a-2) actually reached
@@ -383,6 +391,8 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "exported_at": exported_at,
             "packets_status": _packets_status(proc.stdout),
             "committee_data_status": _committee_data_status(proc.stdout),
+            "macro_legs": _line_status(proc.stdout, "Macro legs:", "unknown -- Step 6i printed no legs line"),
+            "ma_panel_refresh": _line_status(proc.stdout, "MA panel refresh", "unknown -- Step 6h-1 produced no recognizable output"),
             "artifacts_published": _artifacts_published(proc.stdout),
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",
             **({} if ok else {"reason": "pipeline exited 0 but the export was not "

@@ -201,10 +201,32 @@ def net_high_low(panel: pd.DataFrame, high_window: int) -> dict:
 
 
 def _expected_last_session() -> str:
-    from datetime import datetime
-    from zoneinfo import ZoneInfo
-    d = datetime.now(ZoneInfo("America/New_York")).date()
-    return str(np.busday_offset(np.datetime64(d), 0, roll="backward"))
+    """The last US session whose close has printed (NY clock + exchange holidays) - src/data/sessions.py."""
+    from src.data.sessions import last_completed_session
+    return str(last_completed_session())
+
+
+MIN_CURRENT_SHARE = 0.95      # share of the panel's tickers whose last bar IS the expected session
+
+
+def freshness(panel: pd.DataFrame, expected_last_session: str | None = None) -> dict:
+    """STRICT (2026-11-03): the whole-market panel is fresh only if its newest date IS the last completed session AND at least
+    95% of its tickers carry that bar. One session behind used to pass (Fri 30 Oct read as fresh on the morning that needed
+    Mon 2 Nov), and a half-refreshed panel read each ticker at its own last bar, silently mixing dates."""
+    expected = expected_last_session or _expected_last_session()
+    d = pd.to_datetime(panel["date"])
+    as_of = str(d.max().date())
+    last = panel.assign(_d=d).groupby("ticker")["_d"].max()
+    current = int((last >= pd.Timestamp(expected)).sum())
+    total = int(len(last))
+    share = current / total if total else 0.0
+    stale = bool(as_of < expected or share < MIN_CURRENT_SHARE)
+    reason = None
+    if stale:
+        reason = (f"panel newest bar {as_of} vs last completed session {expected}; {current}/{total} tickers "
+                  f"({100 * share:.0f}%) carry the {expected} bar, need {int(MIN_CURRENT_SHARE * 100)}%")
+    return {"as_of": as_of, "expected": expected, "current": current, "total": total,
+            "share_current": round(share, 4), "stale": stale, "reason": reason}
 
 
 def compute_breadth(panel: pd.DataFrame | None, expected_last_session: str | None = None) -> dict:
@@ -249,20 +271,23 @@ def compute_breadth(panel: pd.DataFrame | None, expected_last_session: str | Non
         "pct_above_50d": pct_above_ma(panel, 50),
         "pct_above_200d": pct_above_ma(panel, 200),
     }
-    # Staleness guard: the panel's last date must be within one session of the
-    # last completed US session, else every row reads STALE.
+    # Staleness guard (STRICT, 2026-11-03): see freshness(). A stale panel turns every row STALE, so stance.py degrades
+    # (no one-word stance) and the artifact carries a banner - a stale leg is never passed off as fresh.
     try:
-        as_of = str(pd.to_datetime(panel["date"]).max().date())
-        out["as_of"] = as_of
-        expected = expected_last_session or _expected_last_session()
-        out["stale"] = bool(np.busday_count(as_of, expected) > 1)
-        if out["stale"]:
+        fr = freshness(panel, expected_last_session)
+        out["as_of"], out["stale"], out["freshness"] = fr["as_of"], fr["stale"], fr
+        if fr["stale"]:
             for v in list(out.values()):
-                if isinstance(v, dict):
+                if isinstance(v, dict) and "status" in v:
                     v["status"] = "STALE"
-                    v["reason"] = f"panel last date {as_of} is older than {expected}"
-    except Exception:  # noqa: BLE001
-        pass
+                    v["reason"] = fr["reason"]
+    except Exception as exc:  # noqa: BLE001
+        out["stale"] = True
+        out["freshness"] = {"stale": True, "reason": f"freshness could not be computed: {exc}"}
+        for v in list(out.values()):
+            if isinstance(v, dict) and "status" in v:
+                v["status"] = "STALE"
+                v["reason"] = out["freshness"]["reason"]
     return out
 
 
