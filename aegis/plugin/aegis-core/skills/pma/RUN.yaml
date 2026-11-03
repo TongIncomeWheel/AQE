@@ -271,9 +271,11 @@ steps:
     must_also: >
       R39 (PM 2026-11-02): "force a multi timeframe look (weekly, daily, 1hour)". For the ROOM only (phase4 deliberation_set),
       a data-steward courier pulls per name the daily EOD history (>= 300 sessions, for the weekly) and the 1-hour bars
-      (>= 30 sessions) from FMP (historical-price-eod-light + intraday-1-hour) into mtf_bars/<TICKER>.json
-      {daily:[...], h1:[...]} -- transcribed exactly, nothing estimated, a name that returns nothing is written with
-      "unserved": true. mtf.py then computes the W / D / H1 grid per name (close vs EMA9/EMA21, EMA order, last bar colour,
+      (>= 30 sessions) from FMP into mtf_bars/<TICKER>.json {daily:[...], h1:[...]} -- transcribed exactly, nothing
+      estimated, a name that returns nothing is written with "unserved": true. A courier that cannot save FMP's
+      hourly output to a file (only results over ~25k tokens are saved) pulls intraday-15-min instead (saved to
+      files) and writes {daily:[...], m15:[...]}: mtf.py rolls the 15-minute bars up to :30-anchored hourly bars
+      (09:30 ... 15:30 ET, exact vs FMP's own hourly incl. volume) -- the roll-up is code, not the courier's. mtf.py then computes the W / D / H1 grid per name (close vs EMA9/EMA21, EMA order, last bar colour,
       higher-high/higher-low over the last 3 bars, distance to the 20-bar high, 1H position vs the day's range) and the
       weekly bars from the daily. The courier forms no opinion (data-steward rules). The grid rides in the vote packet
       (r2digest --mtf), the claims board and every tier-2 packet; every tier-1 ruling and tier-2 trigger names its frame.

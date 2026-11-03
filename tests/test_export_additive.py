@@ -83,6 +83,8 @@ def test_top_level_keys_are_additive_only():
         "setups_status",
         # U&R on the last completed trading day (2026-10-12)
         "unr_summary",
+        # the held book's stops, Tiger's working orders (PM 2026-11-02)
+        "held_stops",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (

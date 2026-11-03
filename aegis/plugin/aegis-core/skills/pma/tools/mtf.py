@@ -15,7 +15,14 @@ and no packet carried it.
 Input per name, mtf_bars/<T>.json:
   {"daily": [{"date": "YYYY-MM-DD", "open", "high", "low", "close", "volume"}, ...],   any order; sorted here
    "h1":    [{"date": "YYYY-MM-DD HH:MM:SS", ...}, ...],
+   "m15":   [{"date": "YYYY-MM-DD HH:MM:SS", ...}, ...],                              optional: 15-minute bars
    "unserved": true}                                                                  optional
+
+`m15` is rolled up HERE (rollup_hourly) into :30-anchored 1-hour bars -- 09:30, 10:30 ... 15:30 ET, the last one
+the 30-minute close -- when the file carries no `h1` (a courier that cannot save FMP's hourly output to a file can
+save the 15-minute pulls instead). open = first, high = max, low = min, close = last, volume = sum; a bucket with
+fewer than 2 of its 15-minute bars is dropped and counted, never passed off as a full hour. Verified exact against
+FMP's own hourly bars, volume included (conductor, 3 Nov 2026, FE).
 
 Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-hour):
   close, ema9, ema21 (EMA over closes, alpha 2/(n+1), seeded with the SMA of the first n closes; needs >= 21
@@ -23,6 +30,11 @@ Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-h
   "above" / "below", last_bar "green" / "red" / "flat", hh_hl_3 over the last 3 completed bars "HH/HL" /
   "LH/LL" / "mixed", dist_to_20bar_high_pct (how far the close sits under the highest high of the last 20 bars),
   and on H1 pos_in_day_range_pct (the last close inside the last session's H1 high-low, 0 = low, 100 = high).
+
+Every served frame also carries `summary`: its reading WITHOUT the W / D / H1 label (the packet, the claims board
+and the tier-2 packets print "W <summary> | D <summary> | H1 <summary>" and add the label themselves). The name row
+keeps the joined, labelled `summary` for reading the file by eye. (3 Nov 2026: build wrote only the joined one, so
+every name printed "W not served | D not served | H1 not served" the moment real bars arrived.)
 
 Deterministic, pure python (no pandas, like every pma tool). It forms no opinion: no score, no verdict, no
 "bullish". Bars dated after --date are dropped (never a look-ahead) and counted.
@@ -105,6 +117,43 @@ def weekly(daily):
     return out
 
 
+SESSION_OPEN_MIN = 9 * 60 + 30      # 09:30 ET, in minutes from midnight
+SESSION_CLOSE_MIN = 16 * 60         # 16:00 ET
+MIN_M15_PER_HOUR = 2                # a :30 bucket needs at least this many 15-minute bars to be a bar at all
+
+
+def rollup_hourly(m15):
+    """15-minute bars (cleaned, sorted) -> :30-anchored 1-hour bars. Returns (bars, dropped).
+    Only regular-session bars (09:30 <= start < 16:00) count; the rest are `dropped`, as are buckets thinner than
+    MIN_M15_PER_HOUR (the 15:30 bucket is a half hour by design and carries exactly 2)."""
+    buckets, dropped = {}, 0
+    for b in m15:
+        d = b["date"]
+        if len(d) < 16 or d[10] not in (" ", "T"):
+            dropped += 1                      # no time of day: not an intraday bar
+            continue
+        try:
+            mins = int(d[11:13]) * 60 + int(d[14:16])
+        except ValueError:
+            dropped += 1
+            continue
+        if not SESSION_OPEN_MIN <= mins < SESSION_CLOSE_MIN:
+            dropped += 1
+            continue
+        start = SESSION_OPEN_MIN + (mins - SESSION_OPEN_MIN) // 60 * 60
+        buckets.setdefault((d[:10], start), []).append(b)
+    out = []
+    for (day, start), bs in sorted(buckets.items()):
+        if len(bs) < MIN_M15_PER_HOUR:
+            dropped += len(bs)
+            continue
+        bs.sort(key=lambda x: x["date"])
+        out.append({"date": f"{day} {start // 60:02d}:{start % 60:02d}:00", "open": bs[0]["open"],
+                    "high": max(x["high"] for x in bs), "low": min(x["low"] for x in bs),
+                    "close": bs[-1]["close"], "volume": sum(x["volume"] for x in bs)})
+    return out, dropped
+
+
 def _hh_hl(bars):
     if len(bars) < 3:
         return None
@@ -142,9 +191,10 @@ def frame(bars, tf, completed=None):
     return f
 
 
-def frame_summary(tf, f):
+def frame_text(tf, f):
+    """The frame's reading, WITHOUT its W / D / H1 label -- what the per-frame `summary` holds."""
     if not f.get("served"):
-        return f"{tf}: NOT SERVED ({f.get('reason')})"
+        return f"NOT SERVED ({f.get('reason')})"
     d = f.get("dist_to_20bar_high_pct")
     hi = "at the 20-" + UNIT[tf] + " high" if d is not None and d <= 0 else (
         f"{d:.1f}% under 20-{UNIT[tf]} high" if d is not None else "no 20-bar high")
@@ -153,12 +203,18 @@ def frame_summary(tf, f):
         parts.append(f"{f['pos_in_day_range_pct']:.0f}% of the day's range")
     if f.get("partial_last_bar"):
         parts.append("this week still open")
-    return f"{tf}: " + ", ".join(parts)
+    return ", ".join(parts)
+
+
+def frame_summary(tf, f):
+    """The labelled form ("W: above EMA9, ...") used in the name-level summary."""
+    return f"{tf}: {frame_text(tf, f)}"
 
 
 # ------------------------------------------------------------------------------------------ build
 def _not_served(reason):
-    return {"served": False, "reason": reason, **{tf: {"served": False, "reason": reason} for tf in FRAMES},
+    return {"served": False, "reason": reason,
+            **{tf: {"served": False, "reason": reason, "summary": f"NOT SERVED ({reason})"} for tf in FRAMES},
             "summary": f"MTF NOT SERVED: {reason}"}
 
 
@@ -168,6 +224,9 @@ def build_name(t, doc, run_date, export_close=None):
     if doc.get("unserved"):
         return _not_served("the courier declared it unserved (FMP returned no bars)")
     daily, h1 = _clean(doc.get("daily")), _clean(doc.get("h1"))
+    rolled_dropped = 0
+    if not h1 and doc.get("m15"):
+        h1, rolled_dropped = rollup_hourly(_clean(doc.get("m15")))
     dropped = sum(1 for b in daily if b["date"][:10] > run_date) + sum(1 for b in h1 if b["date"][:10] > run_date)
     daily = [b for b in daily if b["date"][:10] <= run_date]
     h1 = [b for b in h1 if b["date"][:10] <= run_date]
@@ -208,6 +267,10 @@ def build_name(t, doc, run_date, export_close=None):
     row["reason"] = ("; ".join(f"{tf} not served: {row[tf].get('reason')}" for tf in missing) or None)
     if dropped:
         row["dropped_future_bars"] = dropped
+    if rolled_dropped:
+        row["m15_bars_not_used"] = rolled_dropped
+    for tf in FRAMES:                       # the packet / claims board / tier-2 packets read THIS, label added by them
+        row[tf]["summary"] = frame_text(tf, row[tf])
     row["summary"] = " | ".join(frame_summary(tf, row[tf]) for tf in FRAMES)
     return row
 

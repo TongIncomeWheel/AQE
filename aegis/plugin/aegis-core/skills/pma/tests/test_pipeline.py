@@ -3039,6 +3039,81 @@ def test_multi_timeframe_grid_is_required(td):
     check("the VOTE packet in RUN.yaml passes --mtf", "--mtf mtf.json --out VOTE_PACKET.txt" in run_yaml)
 
 
+def test_mtf_build_from_real_bars_prints_the_grid_in_the_packet(td):
+    """3 Nov 2026 defect (conductor): mtf.py build wrote only a name-level `summary`, but r2digest / claims / pair
+    read the summary of each FRAME, so with real bars every name printed 'MTF: W not served | D not served | H1 not
+    served'. The old test read a hand-written fixture that already had per-frame summaries, and the dry run had no
+    bars at all. This builds mtf.json from SYNTHETIC BARS through the real tool, then runs the real r2digest."""
+    import datetime as _dt
+    run_date = "2026-11-02"
+    def sessions(n, end=run_date):
+        d, out = _dt.date.fromisoformat(end), []
+        while len(out) < n:
+            if d.weekday() < 5:
+                out.append(d.isoformat())
+            d -= _dt.timedelta(days=1)
+        return sorted(out)
+    def bar(date, i, vol=1000):
+        c = 100 + i * 0.3 + (i % 5) * 0.1
+        return {"date": date, "open": round(c - 0.1, 4), "high": round(c + 0.5, 4), "low": round(c - 0.5, 4),
+                "close": round(c, 4), "volume": vol}
+    daily = [bar(d, i) for i, d in enumerate(sessions(300))]
+    h1, m15, k = [], [], 0
+    for day in sessions(10):
+        for hh in range(7):
+            mins = 9 * 60 + 30 + hh * 60
+            h1.append(bar(f"{day} {mins // 60:02d}:{mins % 60:02d}:00", k)); k += 1
+        for q in range(26):                                   # 09:30 ... 15:45 in 15-minute bars
+            mins = 9 * 60 + 30 + q * 15
+            m15.append(bar(f"{day} {mins // 60:02d}:{mins % 60:02d}:00", k, vol=100 + q)); k += 1
+    bars = os.path.join(td, "mtf_bars_real"); os.makedirs(bars, exist_ok=True)
+    json.dump({"daily": daily, "h1": h1}, open(os.path.join(bars, "VLO.json"), "w"))
+    json.dump({"daily": daily, "m15": m15}, open(os.path.join(bars, "GNW.json"), "w"))     # no h1: rolled up by code
+    out = os.path.join(td, "mtf_real.json")
+    rc, log = run([os.path.join(TOOLS, "mtf.py"), "build", "--bars", bars, "--phase4", fx("phase4.json"),
+                   "--export", fx("export.json"), "--date", run_date, "--out", out])
+    check("mtf.py build runs on synthetic bars", rc == 0, log[-300:])
+    if rc != 0: return
+    M = json.load(open(out))["names"]
+    for t in ("VLO", "GNW"):
+        check(f"{t}: all three frames are served", M[t]["served"] is True and M[t]["frames_served"] == ["W", "D", "H1"], str(M[t].get("reason")))
+        for tf in ("W", "D", "H1"):
+            sm = M[t][tf].get("summary")
+            check(f"{t} {tf}: the frame carries its own summary, without the label", bool(sm) and not sm.startswith(f"{tf}:"), str(sm))
+    check("the joined name-level summary keeps the labels", M["VLO"]["summary"].startswith("W: ") and " | D: " in M["VLO"]["summary"] and " | H1: " in M["VLO"]["summary"], M["VLO"]["summary"])
+    check("a name with no bars file is declared NOT SERVED, with a summary on every frame", M["MPC"]["served"] is False and all(M["MPC"][tf].get("summary") for tf in ("W", "D", "H1")))
+    # the 15-minute roll-up: exact, :30-anchored, the last bucket is the 30-minute close
+    sess = sessions(10)[-1]
+    sys.path.insert(0, TOOLS)
+    import importlib; mtf = importlib.import_module("mtf")
+    day15 = [b for b in m15 if b["date"].startswith(sess)]
+    hb, dropped = mtf.rollup_hourly(mtf._clean(day15))
+    check("26 fifteen-minute bars roll to 7 :30-anchored hourly bars", [b["date"][11:] for b in hb] == ["09:30:00", "10:30:00", "11:30:00", "12:30:00", "13:30:00", "14:30:00", "15:30:00"] and dropped == 0, str([b["date"] for b in hb]))
+    first = day15[:4]
+    check("a rolled hour is open-first / high-max / low-min / close-last / volume-sum",
+          hb[0]["open"] == first[0]["open"] and hb[0]["close"] == first[-1]["close"] and hb[0]["high"] == max(x["high"] for x in first)
+          and hb[0]["low"] == min(x["low"] for x in first) and hb[0]["volume"] == sum(x["volume"] for x in first), str(hb[0]))
+    check("the 15:30 bucket is the 30-minute close (2 bars)", hb[-1]["volume"] == day15[-1]["volume"] + day15[-2]["volume"])
+    thin, d2 = mtf.rollup_hourly(mtf._clean(day15[:5] + [dict(day15[8], date=f"{sess} 17:00:00"), dict(day15[9], date=f"{sess} 08:00:00")]))
+    check("a one-bar bucket and out-of-session bars are dropped and counted, never passed off as an hour", len(thin) == 1 and d2 == 3, f"{len(thin)} bars, {d2} dropped")
+    # the real packet, from the real file
+    vp = os.path.join(td, "vp_real.txt")
+    rc, log = run([PIPE, "r2digest", "--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"),
+                   "--fundamentals", fx("fundamentals.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--mtf", out,
+                   "--run-id", "t", "--out", vp])
+    check("r2digest runs on the built mtf.json", rc == 0, log[-300:])
+    if rc != 0: return
+    L = open(vp).read().splitlines()
+    def mtf_line(t):
+        i = next(i for i, l in enumerate(L) if l.startswith(f"### {t} "))
+        return next(l for l in L[i:] if l.startswith("  MTF: "))
+    for t in ("VLO", "GNW"):
+        ln = mtf_line(t)
+        check(f"{t}: the packet prints the grid -- W, D and H1 each with a reading", ln.startswith("  MTF: W ") and " | D " in ln and " | H1 " in ln and "not served" not in ln.lower(), ln)
+        check(f"{t}: the labels are not doubled", not any(x in ln for x in ("W W:", "D D:", "H1 H1:", "W: ", "D: ", "H1: ")), ln)
+    check("a name with no bars still prints NOT SERVED (declared)", mtf_line("MPC") == "  MTF: NOT SERVED (declared)", mtf_line("MPC"))
+
+
 def _slate_from(decision, tickers=None):
     D = json.load(open(decision))
     tk = []
@@ -3223,6 +3298,7 @@ def main():
                    test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10,
                    test_the_weather_cards_exist_and_are_wired,
                    test_two_tier_funnel_is_counted_by_code, test_multi_timeframe_grid_is_required,
+                   test_mtf_build_from_real_bars_prints_the_grid_in_the_packet,
                    test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_the_book_and_its_stops_are_one_checked_source,
