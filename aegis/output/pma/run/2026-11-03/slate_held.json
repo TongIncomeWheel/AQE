@@ -1,0 +1,50 @@
+{
+ "date": "2026-11-03",
+ "chair": "chair",
+ "tickets": [
+  {
+   "ticker": "VRTX",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close at a new 52-week closing high.",
+   "wrong_if": "minervini: \"Daily close below ma_50.\" | oneil: \"Daily close back under pivot_high on heavy volume, or a new high on falling volume (C25).\"",
+   "horizon_sessions": 15,
+   "why_agreed": "elder-lens (confirm): \"The weekly leg is mine and it stands: W 9>21 above EMA9 HH/HL.\" | seow (confirm): \"Strength and break read the same: rs_rank_pct 83.21, ret_63d 15.55, structure_shift ABOVE_STRUCTURE, elder_pattern ACCELERATION.\" | oneil: \"LEADER through its pivot on day_vol 2.16, pct_from_pivot 4.39 inside 5%\"",
+   "dissent": [
+    {
+     "voice": "livermore",
+     "why": "OPPOSE: Inside a reaction: D 2.7% under 20-day high, red bar; H1 below EMA9 at 40% of the day's range. C5 never buys the pullback; I wait for the new high. Weekly trend itself is up."
+    }
+   ],
+   "sources": [
+    "cross:VRTX-oneil-for",
+    "cross:VRTX-minervini-for",
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore"
+   ],
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close at a new 52-week closing high."
+   },
+   "timing_count": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 3,
+    "wait": 3
+   }
+  }
+ ],
+ "market_kill": {
+  "plain": "Index distribution days reach 4-5 inside 4-5 weeks (C2): market gate fails, no buys (C1).",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 7
+ },
+ "hold_round": true
+}
