@@ -1,7 +1,13 @@
 {
  "created": "2026-11-02T23:17:48Z",
  "date": "2026-11-03",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-03T01:19:19Z",
+   "note": "third courier attempt: found 13, trashed 12, skipped 6 GitHub notifications; one thread '[AQE] After close - 2 held, 54 on the shortlist, 8 watch' (id 1a19e227908c7839) refused trash with 'caller does not have permission' and could not be verified in Trash",
+   "step": "INBOX-CLEAN"
+  }
+ ],
  "flags": [],
  "run_id": "pma-2026-11-03",
  "seats": {
@@ -274,6 +280,12 @@
    "flags": [],
    "sha256": "3187e1e7c15560914a7f6337009d8aa8ef23d140c7979af3a5c52cf2e69b69b8",
    "status": "committed"
+  },
+  "WRITE/brief-writer": {
+   "file": "cards_text.json",
+   "flags": [],
+   "sha256": "a9e4536444b63b7ec8ac8d3906f9c3a038c712f380c74992f7f987b9f8b6e2d5",
+   "status": "committed"
   }
  },
  "steps": {
@@ -303,6 +315,20 @@
    "finished": "2026-11-03T00:36:20Z",
    "notes": [],
    "started": "2026-11-03T00:36:19Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHECK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T01:41:42Z",
+   "notes": [],
+   "started": "2026-11-03T01:41:42Z",
    "status": "done",
    "tokens": 0
   },
@@ -428,14 +454,32 @@
    "cost": {
     "inlined_bytes": 0,
     "returned_bytes": 0,
-    "spawns": 0
+    "spawns": 0,
+    "tool_only": true
    },
    "files": {},
+   "finished": "2026-11-03T01:19:19Z",
    "notes": [
     "courier respawned once (first stalled after a large Gmail page); committee proceeds, never blocks"
    ],
    "started": "2026-11-03T00:21:09Z",
-   "status": "in_flight",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "LEVELS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T01:41:50Z",
+   "notes": [
+    "57 rows / 183 triggers, window 3 runs, 34 carried, 20 retired"
+   ],
+   "started": "2026-11-03T01:41:50Z",
+   "status": "done",
    "tokens": 0
   },
   "MTF": {
@@ -518,6 +562,22 @@
    "status": "done",
    "tokens": 0
   },
+  "PUBLISH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T01:43:15Z",
+   "notes": [
+    "6 files read back sha-equal; first push rejected (remote moved), rebased and pushed"
+   ],
+   "started": "2026-11-03T01:43:14Z",
+   "status": "done",
+   "tokens": 0
+  },
   "QA": {
    "cost": {
     "inlined_bytes": 504023,
@@ -594,6 +654,20 @@
     "invariance PASS; ledger gaps 366 (older runs not in verdict ledger)"
    ],
    "started": "2026-11-03T01:16:11Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "REPORT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T01:41:50Z",
+   "notes": [],
+   "started": "2026-11-03T01:41:50Z",
    "status": "done",
    "tokens": 0
   },
@@ -689,6 +763,24 @@
     "7/7 x 3 parts validated + merged (49 votes each); packet 106KB over the 70KB soft cap, not trimmed; MTF per-frame summaries patched by conductor (mtf.tool_original.json kept); actual tokens oneil 245,925 minervini 242,253 livermore 242,607 elder-lens 226,550 seow 233,709 raschke 250,271 wyckoff 244,803"
    ],
    "started": "2026-11-03T00:48:59Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "WRITE": {
+   "cost": {
+    "inlined_bytes": 391689,
+    "returned_bytes": 561760,
+    "spawns": 1
+   },
+   "files": {
+    "cards_text.json": "a9e4536444b63b7ec8ac8d3906f9c3a038c712f380c74992f7f987b9f8b6e2d5",
+    "pma_brief_2026-11-03.md": "c54a3d7ab839e521bd3db851badaed11c38091502504909f6775f700aa7ef18d"
+   },
+   "finished": "2026-11-03T01:41:42Z",
+   "notes": [
+    "brief-writer opus 374,423 actual tokens; gate 0 FAIL; renderer 6 ADVANCE / 7 holds / 36 passes; PM authorised continuing past the 2.5M ceiling (declared)"
+   ],
+   "started": "2026-11-03T01:41:42Z",
    "status": "done",
    "tokens": 0
   }
