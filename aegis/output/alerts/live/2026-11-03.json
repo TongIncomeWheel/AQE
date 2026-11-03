@@ -1,6 +1,153 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 9,
+  "session_date": "2026-11-03",
+  "cycle_at_utc": "2026-11-03T19:49:35+00:00",
+  "cycle_at_sgt": "2026-11-04 03:49 SGT",
+  "cycle_at_et": "14:49 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-03",
+   "pma_session": "2026-11-03",
+   "pma_missing": null,
+   "aqe_date": "2026-11-03",
+   "aqe_covers": "2026-11-02",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "UNWATCHABLE",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "YUM",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "YUM $158.72 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE default criteria",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 158.72,
+    "day_pct": null,
+    "entry": 158.05,
+    "stop": 154.24,
+    "stop_type": "committee",
+    "target": 160.24,
+    "risk_per_share": 3.81,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 156.65,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: all met \u2713",
+     "\u2713 hourly close above 158.05 (price 158.72, 0.4% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.8\u00d7)",
+     "AQE trade: entry 158.05 \u00b7 stop 154.24 \u00b7 risk 2.4% (3.81/share) \u00b7 1R $2,250 = 590 shares \u00b7 target 160.24 (0.6\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "BUD",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "UNR_FAILED"
+    ],
+    "severity": "INFO",
+    "headline": "BUD $81.19 \u00b7 \ud83d\udfe0 U&R FAILED",
+    "action": "U&R failed: stand down",
+    "price": 81.19,
+    "day_pct": null,
+    "entry": 81.19,
+    "stop": 81.16,
+    "stop_type": "unr_low_of_day",
+    "target": null,
+    "risk_per_share": 0.03,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "ARMED",
+     "stop": 81.16,
+     "level": 81.73
+    },
+    "lines": [
+     "U&R: \ud83d\udfe0 failed \u2014 price 81.19 fell under the stop (81.16) set at the entry signal",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 85.55 (price 81.19, 5.1% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 2.2\u00d7)",
+     "AQE trade: entry 85.55 \u00b7 stop 82.15 \u00b7 risk 4.0% (3.40/share) \u00b7 1R $2,250 = 661 shares \u00b7 target 85.55 (0.0\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "CURB",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "CURB $29.12 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE default criteria",
+    "action": "Back under its buy price: wait",
+    "price": 29.12,
+    "day_pct": null,
+    "entry": 29.17,
+    "stop": 28.18,
+    "stop_type": "committee",
+    "target": 30.52,
+    "risk_per_share": 0.99,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE default criteria"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 28.7,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE default criteria: 1 of 2 met",
+     "\u2717 hourly close above 29.17 (price 29.12, 0.2% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 2.6\u00d7)",
+     "AQE trade: entry 29.17 \u00b7 stop 28.18 \u00b7 risk 3.4% (0.99/share) \u00b7 1R $2,250 = 2,272 shares \u00b7 target 30.52 (1.4\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 14:48 ET conditions \u00b7 3 cards \u00b7 BUY MET 1 \u00b7 U&R FAILED 1 \u00b7 BACK UNDER 1 \u00b7 PMA 11-03 \u00b7 AQE 11-03"
+  },
+  "engine": {
+   "checked": 283,
+   "new_triggers": 0,
+   "pma_fresh": true,
+   "reason": null
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 8,
   "session_date": "2026-11-03",
   "cycle_at_utc": "2026-11-03T19:15:06+00:00",
