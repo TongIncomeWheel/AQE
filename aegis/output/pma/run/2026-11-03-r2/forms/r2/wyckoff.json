@@ -1,0 +1,1818 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-03",
+ "round": 2,
+ "declarations": [
+  "No ledger memory block injected; no standing lesson applies.",
+  "Packet carries pvp_*, Creek, bar OHLC and rvol_20d only for my R1 names; elsewhere range/trend is read from structure_shift + MTF and extension from ext_atr20, conviction capped at 2-3, levels named by field.",
+  "HOLD-FOR-CONDITIONS is filed as SUPPORT with a PULLBACK block (in_zone:structure_shift_ref): a buy on the test, not at today's price (R2, C3, C15).",
+  "Steenbarger CROWDING/UNPROVEN: my defensive picks are separate structural reads but one environment bet; FE and KO cut a point. No served field is measured edge; convictions are method reads.",
+  "R1: bracket fields read as information only; no vote here rests on a bracket.",
+  "Steenbarger CROWDING/UNPROVEN: defensive names here are one environment bet, held at conviction 2. No served field is measured edge; convictions are method reads.",
+  "R1: bracket fields read as information only; the INTU OPPOSE rests on BEARISH_CHOCH, not a bracket.",
+  "Packet carries pvp_*, Creek and bar OHLC only for my R1 names; here range/trend is read from structure_shift + MTF and extension from ext_atr20, conviction capped at 2-3, levels named by field.",
+  "Held book: V KEEP, MP EXIT-CASE (R12, structure first). Steenbarger UNPROVEN accepted: convictions are method reads, not measured edge.",
+  "R1: bracket fields read as information only; the MP OPPOSE rests on BEARISH_CHOCH, not a bracket."
+ ],
+ "votes": [
+  {
+   "ticker": "FE",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "TREND out of a higher-frame range: fresh BULLISH_BOS over the Creek 47.24 where it meets pvp_vah 47.33, the C7 test zone. Break bar wide (bar_high 47.71, bar_low 46.74 vs atr_14d 0.73), close near high, rvol_20d 1.24; value stepping up (avwap_structure 45.28). Weekly 9<21 is the weak leg.",
+   "conviction_change": "5 to 4: weekly is a range being broken up, not an established uptrend (ma_50 45.45 under ma_200 47.52); C16 top-down docks a point.",
+   "self_counter": "No higher-frame trend yet: MA stack ordered downward, weekly 9<21. A Phase D/E exit from a range can fail back into value.",
+   "challenge_reply": "R4: the higher frame is a RANGE (balance), not an uptrend. Price has reclaimed ma_200 47.52 and broken the Creek; I enter the range exit on its test (C5, C7), not a pullback inside a trend. A close back under pvp_vah 47.33 ends it.",
+   "case": {
+    "for": "Creek and value edge coincide at the test; sign-of-strength bar on rvol_20d 1.24; structure 84.2.",
+    "against": "Weekly 9<21, MA stack downward, ret_63d -1.35; one more defensive name.",
+    "entry_trigger": "h1 close above bar_high 47.71 on vol >= 1.2x; buy stop, never a limit (C12).",
+    "wrong_if": "Daily close back under pvp_vah 47.33, or trade under bar_low 46.74.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close back inside value on heavy volume (failed breakout, C11).",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PYPL",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "TREND: fresh BOS over the Creek 57.95 with pvp_vah 57.26 just under it, price at the test; squeeze broke up on confirmed volume. Sign-of-strength bar (bar_high 59.03, bar_low 57.27, close near high, rvol_20d 1.26); value stepping up (vwap_5d RISING).",
+   "self_counter": "Top-down weaker: ret_12m -13.47, from_52w_hi -15.14%, adx 18.87; the daily break sits inside a larger weekly range.",
+   "challenge_reply": "Overlap: PYPL is a second payments line beside held V, not independent exposure; that is the PM's book call. My structural read (fresh BOS at the test, volume-confirmed squeeze) is unchanged.",
+   "case": {
+    "for": "Creek and value edge stacked at the test; flow 86.8; D/H1 9>21.",
+    "against": "Weekly 6.3% under 20-wk high, ret_12m -13.47; stacks on held V.",
+    "entry_trigger": "h1 close above bar_high 59.03 on vol >= 1.2x.",
+    "wrong_if": "Daily close back under pvp_vah 57.26, or trade under bar_low 57.27.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Re-entry into value on heavy volume.",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE, weekly and daily HH/HL near highs (from_52w_hi -1.85%). Away from value (ext_atr20 3.35, sma_dist 13.67%): no chase (C3, C15). HOLD-FOR-CONDITIONS: join on the test of the Creek with a sign-of-strength bar.",
+   "case": {
+    "for": "W/D HH/HL, day_vol 1.36, flow 92.1, mp STRONG/ACCELERATING.",
+    "against": "Extended from value; no test yet; value-area levels not in my packet.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Light-volume pullback holding the Creek raises it; heavy close back into range ends it.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NWL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Unclear context (C16, R10): daily BULLISH_BOS on day_vol 3.09, but weekly LH/LL 16.4% under its 20-wk high and daily 9<21; structure 43.2. Top-down says the higher frame is still falling; I cannot see value to tell a spring from a bounce.",
+   "case": {
+    "for": "Fresh BOS on heavy volume, flow 96.1; could be a range low being left.",
+    "against": "Weekly LH/LL, daily 9<21, structure 43.2: no clear structure to trade.",
+    "entry_trigger": "A weekly turn to HL plus a test of the broken level on light volume.",
+    "wrong_if": "Close back under the broken pivot on volume.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly HH/HL forming above the break.",
+    "cannot_see": [
+     "pvp_position",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "SUPPORT",
+   "conviction": 5,
+   "reason": "TREND: fresh BOS over the Creek 104.2 with pvp_vah 104.34 beside it, price at the C7 test. Sign-of-strength bar: wide (bar_high 106.11, bar_low 103.4 vs atr_14d 2.57), close near high, rvol_20d 1.82. Value stepping up (vwap_5d RISING, avwap_structure 102.8).",
+   "self_counter": "insti_money warn and weekly mixed (5.0% under 20-wk high); with CHD and KO it is one defensive theme, not independent evidence.",
+   "challenge_reply": "Crowding: fair. USFD, CHD and KO are three reads of one defensive tape; each is a fresh break at its own test, but the payoff is correlated. I keep USFD 5 (best bar), CHD 4, cut KO to 3; treat them as one theme.",
+   "case": {
+    "for": "Creek and value edge coincide; wide bar on rvol_20d 1.82; U&R MET.",
+    "against": "Weekly mixed; staples crowding.",
+    "entry_trigger": "h1 close above bar_high 106.11 on vol >= 1.2x.",
+    "wrong_if": "Daily close under pvp_vah 104.34, or trade under bar_low 103.4.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Heavy-volume re-entry into value.",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, daily HH/HL. Away from value (ext_atr20 3.78, sma_dist 11.87%); H1 LH/LL. HOLD-FOR-CONDITIONS on the Creek test (C3, C7).",
+   "challenge_reply": "Overlap: MA adds to held V's payments line; not independent exposure. That is the PM's sizing call; my read is a wait-for-test.",
+   "case": {
+    "for": "New high, day_vol 1.24, mp STRONG/ACCELERATING.",
+    "against": "Extended; H1 LH/LL; stacks on held V.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A light-volume test that holds.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VRTX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE, weekly HH/HL, day_vol 2.3. Close weak in the bar (H1 below EMA9, 39% of the day's range); ext_atr20 2.28. HOLD-FOR-CONDITIONS on the test of the Creek.",
+   "case": {
+    "for": "Weekly HH/HL, flow 93.4, from_52w_hi -1.03%.",
+    "against": "Weak close location on heavy volume: effort without reward.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up-bar closing near its high.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RANGE (structure_shift RANGE), price in the upper part (3.3% under 20-day high), ext_atr20 0.94. Not a range-low long; the trade is the break of the Creek on a sign-of-strength bar (C5, C12).",
+   "case": {
+    "for": "W/D 9>21, mp 86.0, day_vol 1.67, U&R MET.",
+    "against": "Mid-to-upper range, H1 9<21; no break yet.",
+    "entry_trigger": "h1 close above pivot_high on vol >= 1.2x.",
+    "wrong_if": "Close back 1 ATR under pivot_high after the break (upthrust).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A spring at the range low would be the better long.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "pos_in_50d_range_pct"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1atr"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "UPS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND on the daily (ABOVE_STRUCTURE, HH/HL) breaking up out of a higher-frame range (ma_50 99.36 under ma_200 104.59, weekly 9<21). Away from value (ext_atr20 4.35): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "elder SUSTAINED, mp 100.0, structure 86.3.",
+    "against": "Extended; higher frame still a range.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9>21 with a held test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WTRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, HH/HL on W/D/H1, day_vol 1.83. Away from value (ext_atr20 3.66): HOLD-FOR-CONDITIONS on the Creek test.",
+   "case": {
+    "for": "All three frames HH/HL, flow 94.7.",
+    "against": "Extended; another utility in a crowded theme.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, day_vol 2.07. Far from value (ext_atr20 4.25, sma_dist 21.11%): no chase (C15). HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 98.7, elder SUSTAINED, run_10d 23.72%.",
+    "against": "Run away from value; H1 LH/LL.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A small base forming above the Creek (C7).",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, W/D HH/HL. Away from value (ext_atr20 4.3, sma_dist 15.39%): HOLD-FOR-CONDITIONS on the Creek test.",
+   "case": {
+    "for": "W/D HH/HL, elder SUSTAINED, structure 89.5.",
+    "against": "Extended; ma_100 59.5 over ma_50 57.92.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, W/D HH/HL, day_vol 1.79. Away from value (ext_atr20 3.56): HOLD-FOR-CONDITIONS on the Creek test.",
+   "case": {
+    "for": "W/D HH/HL, structure 89.5.",
+    "against": "Extended; mp STRONG/DECELERATING.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, weekly HH/HL, day_vol 2.28. Away from value (ext_atr20 3.55, sma_dist 13.16%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 94.7, close at 99% of the day's range.",
+    "against": "Extended; staples crowding.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "TREND: fresh BOS over the Creek 108.93 at a 52-week high, price at the test (entry 110.45, atr_14d 2.28). Sign-of-strength bar (bar_high 110.6, bar_low 106.91, close near high, rvol_20d 1.31); value stepping up (vwap_5d RISING, avwap_structure 106.92).",
+   "self_counter": "insti_money warn, mp STRONG/FLAT; value area sits well under the Creek, and it is one of three staples on my slate.",
+   "challenge_reply": "Crowding: CHD is the same defensive theme as USFD/KO, not independent evidence. Structurally it is its own fresh break at the test; I hold 4 and ask the PM to count the three as one theme.",
+   "case": {
+    "for": "Fresh BOS at a 52-week high, wide bar on rvol_20d 1.31, W/D HH/HL.",
+    "against": "insti_money warn; staples crowding.",
+    "entry_trigger": "h1 close above bar_high 110.6 on vol >= 1.2x.",
+    "wrong_if": "Daily close under the Creek 108.93, or trade under bar_low 106.91.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Heavy-volume close back under the Creek.",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "avwap_structure"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND: fresh BOS over the Creek 95.37 at a 52-week high; price at the test (entry 95.83). Break bar wide (bar_high 96.25, bar_low 94.28 vs atr_14d 1.67), close near high, rvol_20d 1.36; value stepping up (avwap_structure 93.43).",
+   "conviction_change": "4 to 3: flow 48.7 is thin effort behind the break, and it is my third Consumer Staples name (crowding challenge).",
+   "challenge_reply": "Crowding: accepted; KO is the same defensive bet as USFD/CHD. Cut to 3.",
+   "case": {
+    "for": "Fresh BOS at the test, W/D 9>21.",
+    "against": "flow 48.7; staples crowding.",
+    "entry_trigger": "h1 close above bar_high 96.25 on vol >= 1.2x.",
+    "wrong_if": "Daily close under the Creek 95.37, or trade under bar_low 94.28.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Heavy-volume close back under the Creek.",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "avwap_structure"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high on day_vol 2.18. Far from value (ext_atr20 4.27, sma_dist 15.29%): no chase (C15). HOLD-FOR-CONDITIONS on the Creek test.",
+   "challenge_reply": "Overlap: GPN is a third payments/financials line beside held V; not independent exposure. PM's book call; my read is wait-for-test.",
+   "case": {
+    "for": "flow 100.0, mp STRONG/ACCELERATING, new high.",
+    "against": "Run away from value; ma_50 86.42 over ma_20 84.56; stacks on V.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND, test-after-breakout (C11): price probed to bar_low 87.9 under the Creek 89.7 and pvp_vah 91.31, then closed back above at 93.26 on rvol_20d 2.97 with a BULLISH_PIN: rejection at the value edge. Value stepping up (avwap_structure 88.14).",
+   "case": {
+    "for": "Shakeout under the value edge rejected on heavy volume; W HH/HL; U&R MET.",
+    "against": "ABOVE_STRUCTURE, not a fresh break; close only just in the top third; insti_money warn.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under pvp_vah 91.31, or trade under bar_low 87.9.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A second close back inside value.",
+    "cannot_see": [
+     "volume nodes beyond value area",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "pvp_vah",
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PFE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND: fresh BULLISH_BOS at a 52-week high, daily HH/HL, day_vol 1.7: price at the test by definition (within 2% of the Creek). div BEARISH/2 is a caution on effort vs reward.",
+   "case": {
+    "for": "Fresh break at the test, mp STRONG/ACCELERATING, structure 74.7.",
+    "against": "div BEARISH/2; close at 60% of the day's range, not a clear sign-of-strength.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A low-volume break that slips back under the Creek (upthrust).",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND on the daily (ABOVE_STRUCTURE, HH/HL) inside a weekly range (6.1% under 20-wk high, from_52w_hi -15.64%). day_vol 0.89 is low effort and div BEARISH/2 cautions. HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "Close at 96% of the day's range, coil strong, insti_money strong.",
+    "against": "day_vol 0.89, div BEARISH/2, weekly range.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Volume expanding on the next up-bar.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh BULLISH_BOS near value (sma_dist 1.18%, ext_atr20 1.39): at the test. But weekly mixed 7.4% under its 20-wk high, adx 15.56, structure 52.6: a break inside a larger range, so low conviction.",
+   "case": {
+    "for": "At the test, close near its average, coil strong.",
+    "against": "No higher-frame trend; day_vol 1.1 is ordinary effort.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up-bar on volume holding outside the range.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LYV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Ambiguous (R10, C16): BULLISH_BOS on day_vol 1.91 but adx 9.35 says balance, price sits near ma_100 176.54, and the bar closed at 24% of its range (H1 below EMA9). A break of a minor pivot inside a range I cannot locate.",
+   "case": {
+    "for": "Volume on the break, lens strong on coil and insti_money.",
+    "against": "No trend (adx 9.35), weak close location, weekly mixed.",
+    "entry_trigger": "A close holding above the break on a top-third bar with volume.",
+    "wrong_if": "Close back under the broken pivot.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A follow-through bar closing near its high.",
+    "cannot_see": [
+     "pvp_position",
+     "pos_in_50d_range_pct",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, W/D HH/HL, day_vol 2.11. Far from value (ext_atr20 5.11, sma_dist 17.41%): no chase. HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 100.0, W/D HH/HL.",
+    "against": "Most extended of its group.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A small base above the Creek.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE, W/D HH/HL. Away from value (ext_atr20 4.55, sma_dist 11.68%): HOLD-FOR-CONDITIONS on the Creek test.",
+   "case": {
+    "for": "W/D HH/HL, mp STRONG/ACCELERATING.",
+    "against": "Extended; day_vol 1.16 ordinary.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND: ABOVE_STRUCTURE at a 52-week high, W/D HH/HL. Away from value (ext_atr20 3.99, sma_dist 14.05%): HOLD-FOR-CONDITIONS on the Creek test.",
+   "case": {
+    "for": "W/D HH/HL, elder CORRECTION_REENTRY.",
+    "against": "Extended; insti_money warn.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND on the daily (ABOVE_STRUCTURE), weekly HH/HL, but ma_100 83.04 over ma_50 81.39: leaving a higher-frame range. ext_atr20 2.66: HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "Weekly HH/HL, mp 94.0.",
+    "against": "Mixed MA stack; utilities crowding.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE at its upper edge (at the pivot) but the bar closed at 6% of its range, H1 below EMA9, on day_vol 2.03: heavy volume rejected at the top reads as a possible upthrust (C5). Not a long until it resolves.",
+   "case": {
+    "for": "W/D 9>21, energy 75.6, near its high.",
+    "against": "Weak close at the range top on volume.",
+    "entry_trigger": "h1 close above pivot_high on vol >= 1.2x.",
+    "wrong_if": "Close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up-bar closing above the pivot.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh BULLISH_BOS out of a higher-frame range (ma_50 67.64 under ma_200 71.92, weekly 9<21); price back over ma_200, daily HH/HL, div BULLISH. A range exit at its test, low conviction until the weekly turns.",
+   "case": {
+    "for": "Break at the test, daily HH/HL, div BULLISH.",
+    "against": "from_52w_hi -15.54%, weekly 9<21, H1 LH/LL.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close back under ma_200 71.92.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "close_below:ma_200"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE (structure_shift RANGE), 2% under its 20-day high, on day_vol 0.95 with flow 39.5: low effort in the upper part of the range, and U&R SETUP closed under its trendline. Neither edge nor break (C1, C16).",
+   "case": {
+    "for": "W/D 9>21, mp 97.0.",
+    "against": "Mid-upper range, weak flow, no break.",
+    "entry_trigger": "h1 close above pivot_high on vol >= 1.2x, or a spring at the range low.",
+    "wrong_if": "Close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A sign-of-strength bar through the pivot.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "pos_in_50d_range_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "INTU",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "FAILED UP-STRUCTURE: structure_shift BEARISH_CHOCH, price under ma_200 359.55, weekly 9<21, from_52w_hi -47.96%. My card: no long until a new range and a shakeout form (C2, C5).",
+   "opposing_case": "Daily HH/HL, price above ma_20/50/100, U&R MET on the trendline, rs_spy_20d 26.62: an early range may be forming and the reclaim could be its spring.",
+   "case": {
+    "for": "Daily HH/HL and U&R reclaim; coil strong.",
+    "against": "BEARISH_CHOCH, under ma_200 359.55, weekly 9<21.",
+    "entry_trigger": "A defined range with a spring and a sign-of-strength bar off it.",
+    "wrong_if": "Close above ma_200 359.55 holding with volume.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "structure_shift back to BULLISH_BOS with weekly 9>21.",
+    "cannot_see": [
+     "pvp_position",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "EXC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE) breaking out of a higher-frame range: ma_50 42.91 under ma_200 45.62, weekly 9<21, price back above all. ext_atr20 3.51: HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 96.1, weekly HH/HL.",
+    "against": "from_52w_hi -7.64%, weekly 9<21; utilities crowding.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9>21 with a held test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE) leaving a higher-frame range: ma_50 87.9 under ma_200 92.46, weekly 9<21, price above all. ext_atr20 2.89: HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "Weekly HH/HL, mp 97.0.",
+    "against": "flow 53.9, weekly 9<21; utilities crowding.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9>21 with a held test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SRAD",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE under a downward MA stack (ma_50 12.49, ma_100 13.48, ma_200 14.87), weekly 9<21, 21.6% under its 20-wk high. day_vol 3.57 with a U&R reclaim could be a spring, but I cannot see base_low_20d or pvp_val to confirm it (C6, C16).",
+   "case": {
+    "for": "Heavy-volume reclaim of the 9-day line; flow 88.2.",
+    "against": "Higher frame falling; middle of a larger range.",
+    "entry_trigger": "A confirmed spring off the range low, then a sign-of-strength bar.",
+    "wrong_if": "New low under the range.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Spring confirmed by the next bar with weekly turning up.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "HELD, KEEP: TREND intact, ABOVE_STRUCTURE at a 52-week high, daily HH/HL, close at 89% of the day's range. Bias stays long while above the Creek and vwap_14d (C9). For adding, it is away from value (ext_atr20 3.48): add only on the test.",
+   "case": {
+    "for": "Trend intact on all frames, mp STRONG/ACCELERATING.",
+    "against": "Extended; MA/PYPL/GPN would stack on the same line.",
+    "entry_trigger": "Add: in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A heavy-volume close back under the Creek.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "HELD, EXIT-CASE: up-structure failed (structure_shift BEARISH_CHOCH), all three frames below EMA9 with 9<21, price below vwap14 39.72. The danger point is broken; no long until a new range and a shakeout form (C2, C17). AQE HEALTH EXIT agrees (R12).",
+   "opposing_case": "div BULLISH/0 says the decline is losing internal energy; a selling climax could be starting a new range here (Phase A).",
+   "challenge_reply": "Held line owed: EXIT-CASE. BEARISH_CHOCH, structure 33.0, under a downward MA stack; the structure that justified the long is broken, which is the only question that closes a Wyckoff trade (R12).",
+   "case": {
+    "for": "div BULLISH/0; could become a range low.",
+    "against": "BEARISH_CHOCH, under ma_20 41.4 and vwap14 39.72, rs LAGGARD.",
+    "entry_trigger": "None until a range forms and a spring holds.",
+    "wrong_if": "A reclaim of vwap_14d that holds with a sign-of-strength bar.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A defined range with a spring and a close back above vwap_14d.",
+    "cannot_see": [
+     "pvp_position",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "VVV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE, HH/HL) leaving a higher-frame range: price 34.37 just over ma_200 34.35, ma_100 34.16 over ma_50, weekly 9<21. ext_atr20 2.88: HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 94.7, U&R MET, close at 97% of the day's range.",
+    "against": "ret_63d -12.5, from_52w_hi -14.65%, weekly 9<21.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9>21 with a held test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PEG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Daily ABOVE_STRUCTURE, but top-down (C16) the weekly is a range: price 74.38 under ma_100 74.96 and ma_200 78.04, weekly 9<21, 14.46% off the high. A daily break in the middle of a larger range, not at its edge (C1).",
+   "case": {
+    "for": "U&R MET, energy 79.0, close at 98% of range.",
+    "against": "Under ma_200 78.04; weekly 9<21; middle of range.",
+    "entry_trigger": "Close above ma_200 holding, then a test.",
+    "wrong_if": "Close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9>21 above ma_200.",
+    "cannot_see": [
+     "pvp_position",
+     "pos_in_50d_range_pct",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "MDLZ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND: fresh BULLISH_BOS at a 52-week high, daily HH/HL, close at 93% of the day's range: at the test by definition. div BEARISH/1 and day_vol 1.16 are mild cautions on effort.",
+   "case": {
+    "for": "Fresh break at the test, U&R MET, structure 86.3.",
+    "against": "day_vol 1.16 ordinary; div BEARISH/1; staples crowding.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A low-volume slip back under the Creek (upthrust).",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "After a climactic run (run_10d 52.03%, sma_dist 44.98%) price is now ranging at the highs (RANGE) on day_vol 0.71, H1 LH/LL. Reaccumulation and distribution look alike here without the profile; C16 says skip what can only be labelled in hindsight.",
+   "case": {
+    "for": "rs_rank_pct 97.95, ret_63d 72.93: real demand.",
+    "against": "Climactic extension, low volume at the top.",
+    "entry_trigger": "A test of the range low on light volume, then a sign-of-strength bar.",
+    "wrong_if": "A heavy-volume break of the range low.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A spring or a breakout bar on volume.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "bar OHLC"
+    ]
+   }
+  },
+  {
+   "ticker": "KMPR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE), W/D/H1 HH/HL, but 22.03% off the 52-week high with ma_200 29.69 over ma_50 27.82. Far from value (ext_atr20 4.83, sma_dist 26.09%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "All frames HH/HL, mp 97.0.",
+    "against": "Extended; higher frame a recovery, not a trend.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A small base above the Creek.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE, HH/HL), weekly 9<21. Far from value (ext_atr20 7.77, sma_dist 29.05%): the move left without me (C15). HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "elder SUSTAINED, mp 100.0, run_10d 42.82%.",
+    "against": "Most extended name in the set.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A base forming above the Creek.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE, HH/HL), 15.18% off the high, ma_200 176.81 over ma_50. Away from value (ext_atr20 4.18): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "insti_money strong, close at 86% of range.",
+    "against": "Extended; higher frame a recovery.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GEN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE, HH/HL), ma_50 26.52 over ma_20 24.65. Away from value (ext_atr20 4.76, sma_dist 12.7%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "flow 92.1, mp STRONG/ACCELERATING.",
+    "against": "Extended; close at 53% of range.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ACN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BULLISH_BOS with W/D HH/HL, but on day_vol 0.85: a low-volume break is a potential upthrust until it proves itself (C5). Support only if volume arrives on the follow-through.",
+   "case": {
+    "for": "Weekly HH/HL, ret_63d 53.11, structure 70.9.",
+    "against": "day_vol 0.85; sma_dist 27.74%; U&R SETUP closed under the trendline.",
+    "entry_trigger": "h1 close above bar_high on vol >= 1.2x.",
+    "wrong_if": "Daily close back under structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Another low-volume bar slipping under the Creek.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "h1_close_below:bar_low"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE), W/D HH/HL, but H1 LH/LL and a close at 35% of range. Away from value (ext_atr20 3.55, sma_dist 24.39%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "W/D HH/HL, rs_rank_pct 80.7.",
+    "against": "Extended; weak close; insti_money warn.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE, HH/HL) in a recovery (from_52w_hi -34.46%). day_vol 2.37 behind it. Away from value (sma_dist 21.91%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "day_vol 2.37, flow 85.5.",
+    "against": "Higher frame still well off the high; H1 LH/LL.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RHI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE (structure_shift RANGE), 5.0% under its 20-day high on day_vol 0.91, ma_50 38.79 over ma_20 37.63. Neither at an edge nor breaking; I cannot see where in value it sits (C1, C16).",
+   "case": {
+    "for": "rs_rank_pct 96.26, ret_6m 69.78, div BULLISH.",
+    "against": "Mid-range, low volume, no break.",
+    "entry_trigger": "h1 close above pivot_high on vol >= 1.2x, or a spring at the range low.",
+    "wrong_if": "Close under the range low.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A sign-of-strength bar through the pivot.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_val",
+     "base_low_20d",
+     "pos_in_50d_range_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Daily TREND (ABOVE_STRUCTURE) near a 52-week high, but H1 below EMA9 with LH/LL and a close at 52% of range. Away from value (sma_dist 17.07%): HOLD-FOR-CONDITIONS on the test.",
+   "case": {
+    "for": "rs_rank_pct 90.95, structure 85.3.",
+    "against": "Extended; intraday structure rolling.",
+    "entry_trigger": "in_zone:structure_shift_ref, then a top-third close on vol >= 1.2x.",
+    "wrong_if": "Close 0.5 ATR under structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A held light-volume test.",
+    "cannot_see": [
+     "pvp_position",
+     "pvp_vah",
+     "structure_shift_ref",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref"
+    ],
+    "confirm": [
+     "clv_ge:0.67",
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref-0.5atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah",
+     "vwap_14d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of3.json",
+   "bytes": 18112,
+   "votes": 16,
+   "sha256": "df154720a0e2"
+  },
+  {
+   "file": "wyckoff.part2of3.json",
+   "bytes": 15004,
+   "votes": 16,
+   "sha256": "df1aa9cfbdf6"
+  },
+  {
+   "file": "wyckoff.part3of3.json",
+   "bytes": 14840,
+   "votes": 16,
+   "sha256": "2c4ed44e1a0e"
+  }
+ ]
+}

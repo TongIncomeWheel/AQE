@@ -1,0 +1,1419 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-03",
+ "round": 2,
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,7,8 read from entry, ma_50/ma_100/ma_200, from_52w_hi and rs_rank_pct; ma_150 is not in the packet so ma_100 stands in; criterion 3 (200-day rising) and criterion 6 (52w low) NOT_SERVED (C3)",
+  "vcp_detail: NOT_SERVED; structure/structure_shift are a composite proxy only (C4). volume_signature: day_vol and flow at the current bar only (C6)",
+  "earnings_growth: NOT_SERVED; SEPA element 2 not run on any name (C1, C12, C13, C20)",
+  "rs_proxy: rs_rank_pct with rs_leadership and rs_spy_20d; not claimed equal to IBD RS rank (C3/C11)",
+  "R9 advisory: supported names lean defensive (Utilities, Staples, Healthcare) while the house weather reads RISK OFF; a market-timing note, not a per-name verdict (C14, C17). UNPROVEN: no field here is a measured edge; convictions are method reads.",
+  "R1 bracket: read as information only; never a basis for any OPPOSE here. Ledger memory: none injected.",
+  "trend_template: criteria 1,2,4,5,7,8 read from entry, ma_50/ma_100/ma_200, from_52w_hi and rs_rank_pct; ma_150 is not in the packet so ma_100 stands in; criteria 3 and 6 NOT_SERVED (C3)",
+  "vcp_detail: NOT_SERVED (C4). volume_signature: day_vol and flow at the current bar only (C6)",
+  "earnings_growth: NOT_SERVED; SEPA element 2 not run (C1, C12, C13, C20)",
+  "R9 advisory: the room leans defensive under a RISK OFF weather read; market-timing note only (C14, C17). UNPROVEN: no field is a measured edge.",
+  "R1 bracket: information only; never a basis for any OPPOSE here.",
+  "trend_template: criteria 1,2,4,5,7,8 read from entry, ma_50/ma_100/ma_200, from_52w_hi and rs_rank_pct; ma_150 not in the packet so ma_100 stands in; criteria 3 and 6 NOT_SERVED (C3)",
+  "Held book: V KEEP (no add while extended), MP EXIT-CASE. UNPROVEN: no field is a measured edge."
+ ],
+ "votes": [
+  {
+   "ticker": "FE",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 45.45 is under ma_100 46.67 and ma_200 47.52 (criteria 2 and 4), and rs_rank_pct 44.39 is under the 70 floor (criterion 8). A BULLISH_BOS just over the 200-day is a stage 1 base trying to turn, not a confirmed stage 2 (C2). The checklist stops at step 2.",
+   "opposing_case": "structure 84.2 BULLISH_BOS, rs LEADER spy20 12.08, mp 78.0 STRONG, entry 47.63 back over ma_200 47.52: a turn that becomes stage 2 if the stack re-orders.",
+   "case": {
+    "for": "Fresh BULLISH_BOS, structure 84.2, rs_spy_20d 12.08 LEADER, price back over every average.",
+    "against": "Averages ordered downward (ma_50 45.45 < ma_100 46.67 < ma_200 47.52) and rs_rank_pct 44.39: stage 1 repair, bottom-fishing by my canon (C2, C11).",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70 first, then close_above:pivot_high on expanding volume.",
+    "wrong_if": "ma_50 crosses above ma_200 and RS rank clears 70 while price holds over ma_200 within 20 sessions.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A re-ordered stack (50 over 100 over 200) with rs_rank_pct above 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "52-week low",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "PYPL",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Served template criteria pass: entry 58.78 > ma_50 55.31 > ma_100 53.67 > ma_200 49.98, from_52w_hi -15.14%, rs_rank_pct 71.89. BULLISH_BOS through pivot_high 57.95, only pct_from_pivot 1.43 past it, day_vol 1.3, flow 86.8: a tight base resolving up, inside buy range (C4, C5).",
+   "self_counter": "rs_rank_pct 71.89 sits on the 70 floor, ret_12m -13.47 and the weekly frame is 6.3% under its 20-wk high: this is a leader by a thin margin.",
+   "falsifier": "A close back below pivot_high 57.95 is a failed breakout.",
+   "challenge_reply": "Financials overlap: PYPL's case is its own base and pivot, not V's trend; but it is the same sector, so I count it as added Financials exposure, not independent evidence. Sub-industry is not served to me.",
+   "case": {
+    "for": "Stage 2 stack in order, BULLISH_BOS through pivot_high 57.95, pct_from_pivot 1.43, flow 86.8.",
+    "against": "RS at the floor (rs_rank_pct 71.89), ret_12m -13.47, weekly mixed; overlaps held V by sector.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high 57.95, or below ma_50 55.31.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_rank_pct falling under 70 or a breakout day reversing on heavy volume.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "SEPA element 2 not run: earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Price over every average (entry 138.6, ma_200 116.7), from_52w_hi -1.85%, rs_rank_pct 92.04: strong leadership (C11). pct_from_pivot 2.67 over pivot 134.99 is inside buy range. Criterion 4 is not clean: ma_50 121.93 sits under ma_100 122.86, so 50-over-150 is unproven. sma_dist 13.67% weighs.",
+   "falsifier": "A close back below pivot 134.99.",
+   "case": {
+    "for": "rs_rank_pct 92.04, near the high, day_vol 1.36, flow 92.1, only pct_from_pivot 2.67 past the pivot.",
+    "against": "ma_50 121.93 under ma_100 122.86 leaves criterion 4 unproven; run_10d 12.55% and sma_dist 13.67% are stretched.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below the pivot (134.99) or below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma_50 failing to turn above ma_100, or the breakout failing back into the base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "NWL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Served template passes: entry 5.96 > ma_50 5.67 > ma_100 5.6 > ma_200 4.85, from_52w_hi -6.29%, rs_rank_pct 83.84. BULLISH_BOS through pivot_high 5.93 on day_vol 3.09, flow 96.1: the breakout half of the volume signature (C6). But structure 43.2, weekly LH/LL and 16.4% under its 20-wk high.",
+   "conviction_change": "3 to 2: the weekly frame reads LH/LL 16.4% under its 20-wk high and the house episodic-pivot read is FAILED; the base is weaker than the daily stack implies.",
+   "falsifier": "The spike-volume breakout fails back under pivot_high 5.93.",
+   "challenge_reply": "Disconfirmer: a daily close back below pivot_high 5.93 (or ma_50 5.67) after the day_vol 3.09 session means the spike was supply, not a breakout. Non-price: if the next sessions pull back on volume above normal rather than drying up (C6), the read is wrong.",
+   "case": {
+    "for": "Stack in order, rs_rank_pct 83.84, BULLISH_BOS at pivot_high 5.93 on day_vol 3.09, flow 96.1.",
+    "against": "structure 43.2 is weak, weekly LH/LL, ma_20 5.54 under ma_50; a stage 1-to-2 base, not a mature VCP.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high 5.93, or a pullback on rising volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume drying on a hold above pivot_high would lift it; a close under ma_50 ends it.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "volume per contraction",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Price over every average (entry 105.8, ma_200 94.62), from_52w_hi -4.63%, BULLISH_BOS on day_vol 1.89, flow 88.2. Two template weak points: rs_rank_pct 71.05 is on the floor and ma_50 99.42 sits under ma_100 100.07, so criterion 4 is unproven.",
+   "falsifier": "A close back into the base below pivot_high.",
+   "case": {
+    "for": "Fresh BULLISH_BOS near the high on day_vol 1.89, sma_dist 6.41% so not a chase.",
+    "against": "rs_rank_pct 71.05 marginal; ma_50 99.42 under ma_100 100.07; a defensive name in a crowded staples theme.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high, or below ma_50 99.42.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_rank_pct dropping under 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "MA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 658.1 > ma_50 588.28 > ma_100 562.98 > ma_200 536.31, from_52w_hi 0.0%, rs_rank_pct 84.44. A true leader, but 9.46% over pivot 601.23 with sma_dist 11.87% is past my buy range (C5); a weight, not a veto (R27). Low conviction until a new tight base forms.",
+   "falsifier": "A close below ma_20.",
+   "challenge_reply": "Financials overlap: MA adds the same sector line as held V, and with near-identical behaviour (both at the 52w high). I treat it as stacked exposure, not independent evidence.",
+   "case": {
+    "for": "Perfect stack at the 52-week high, rs_rank_pct 84.44, mp 97.0 STRONG.",
+    "against": "9.46% over pivot 601.23, ext_atr20 3.78: a chase under C5; overlaps held V.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, and only within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new tight base forming near the high would lift conviction.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "base shape",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "VRTX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Template passes on served fields: entry 553.15 > ma_50 523.32 > ma_100 507.09 > ma_200 479.79, from_52w_hi -1.03%, rs_rank_pct 83.23 LEADER. Cleared pivot_high 529.89 on day_vol 2.3 with flow 93.4: the breakout half of C6. pct_from_pivot 4.39 is at the edge of buy range.",
+   "self_counter": "pct_from_pivot 4.39 is near the chase limit, the hour frame is below its EMA9 at 39% of the day's range, and it is one of six Healthcare names in the room.",
+   "falsifier": "A close back below pivot_high 529.89.",
+   "challenge_reply": "Crowding: VRTX is filed on its own breakout and RS, but I concede it shares the defensive tilt (C15/R9). I count VRTX and ABBV as one Healthcare bet, not two.",
+   "case": {
+    "for": "Stage 2 stack, rs_rank_pct 83.23, breakout on day_vol 2.3 and flow 93.4.",
+    "against": "pct_from_pivot 4.39 at the chase edge; H1 below EMA9; defensive-sector crowding.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high 529.89, or below ma_50 523.32.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A breakout that fails back into the base on volume.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Template passes on served fields: entry 288.94 > ma_50 269.77 > ma_100 258.88 > ma_200 237.46, from_52w_hi -2.02%, rs_rank_pct 88.54 LEADER. Still under pivot_high 291.4 (pct_from_pivot -0.84, RANGE): the pre-breakout spot. Buy only as it clears the pivot on expanding volume (C5).",
+   "self_counter": "No breakout yet; the hour frame is below EMA9 with 9<21 at 32% of the day's range, so the base may need longer, and it shares the Healthcare theme with VRTX.",
+   "falsifier": "A close below ma_20 282.79 before any breakout.",
+   "challenge_reply": "Crowding: same Healthcare bet as VRTX, counted once (C15/R9). ABBV adds a different timing (pre-pivot), not a different environment.",
+   "case": {
+    "for": "Strong RS 88.54, near the high, waiting under pivot_high 291.4 with day_vol 1.67.",
+    "against": "No trigger yet; H1 soft; defensive-sector crowding.",
+    "entry_trigger": "close_above:pivot_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below ma_20 282.79 before the breakout.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A breakout on light volume would not count (C6).",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "UPS",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 99.36 is under ma_100 103.88 and ma_200 104.59 (criteria 2 and 4), and rs_rank_pct 67.55 is under 70 (criterion 8). A sharp rally above a downward-ordered stack is stage 1 turning, not a confirmed stage 2 (C2).",
+   "opposing_case": "Rank 5, mp 100.0 STRONG, structure 86.3 ABOVE_STRUCTURE, elder SUSTAINED and a leading Industrials group: a forceful turn that could re-order the stack.",
+   "case": {
+    "for": "Strong thrust: structure 86.3, mp 100.0, rs_spy_20d 20.72, in the group reading Momentum Building.",
+    "against": "ma_50 99.36 < ma_100 103.88 < ma_200 104.59 and rs_rank_pct 67.55; from_52w_hi -8.58%.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70, then a base and close_above:pivot_high.",
+    "wrong_if": "ma_50 crosses ma_200 and RS rank clears 70 while price holds above ma_200.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A re-ordered stack with RS rank over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "52-week low",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "WTRG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on served fields: entry 44.44 > ma_50 40.83 > ma_100 39.94 > ma_200 39.43, from_52w_hi 0.0%, rs_rank_pct 72.74. New high on day_vol 1.83, pct_from_pivot 4.54 at the edge of buy range. ma_100 to ma_200 gap is thin, so a rising 200 is not shown.",
+   "falsifier": "A close back under the pivot.",
+   "case": {
+    "for": "Stage 2 stack at the 52-week high, day_vol 1.83, flow 94.7.",
+    "against": "rs_rank_pct 72.74 near the floor, pct_from_pivot 4.54 near chase, a Utility in a defensive-crowded room (R9).",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high, or below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank falling under 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "HOG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 33.07 > ma_50 27.31 > ma_100 26.62 > ma_200 24.04, from_52w_hi 0.0%, rs_rank_pct 90.11, day_vol 2.07, flow 98.7. But sma_dist 21.11% and run_10d 23.72% is a thrust with no flag yet: a power-play candidate (C18), not a buy point today (C5).",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "Top-decile RS at a new high, mp 97.0, elder SUSTAINED.",
+    "against": "sma_dist 21.11%: chasing breaks the risk math (C5); the flag has not formed.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it; a tight flag first is better.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight, low-volume flag would raise conviction.",
+    "cannot_see": [
+     "ma_150",
+     "flag depth",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 57.92 is under ma_100 59.5 and ma_200 58.75 (criterion 4), and rs_rank_pct 61.76 is under 70 (criterion 8). The new high on entry 66.84 is a fresh turn, not a confirmed stage 2 (C2).",
+   "opposing_case": "from_52w_hi 0.0%, structure 89.5, mp 97.0 STRONG, elder SUSTAINED, in the Industrials group reading Momentum Building.",
+   "case": {
+    "for": "New high, structure 89.5, rs_spy_20d 19.42, strong group.",
+    "against": "ma_50 57.92 under ma_200 58.75 and rs_rank_pct 61.76; sma_dist 15.39% also stretched.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70, then a base breakout.",
+    "wrong_if": "ma_50 crosses ma_200 with RS rank over 70 and price holding.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Stack re-ordering and RS rank over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Template passes on served fields: entry 278.89 > ma_50 248.67 > ma_100 246.32 > ma_200 232.17, from_52w_hi 0.0%, rs_rank_pct 86.61 LEADER. Broke pivot_high 271.27 on day_vol 1.79, pct_from_pivot 2.81: inside buy range (C5). sma_dist 12.15% is a mild extension.",
+   "self_counter": "sma_dist 12.15% and run_10d 10.23% mean the move is already well under way; Financials sector shares the room's held V line.",
+   "falsifier": "A close back below pivot_high 271.27.",
+   "case": {
+    "for": "Leader at the 52w high, stack in order, fresh breakout on volume.",
+    "against": "Extended 12.15% over the average; mp DECELERATING.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high 271.27, or below ma_50 248.67.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A breakout reversal back into the base on volume.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on served fields: entry 36.82 > ma_50 32.54 > ma_100 31.83 > ma_200 30.04, from_52w_hi 0.0%, rs_rank_pct 82.27. New high on day_vol 2.28, pct_from_pivot 4.01 inside buy range but near its edge; sma_dist 13.16% weighs.",
+   "falsifier": "A close back below the pivot.",
+   "case": {
+    "for": "Stage 2 stack, new high, day_vol 2.28, flow 94.7.",
+    "against": "sma_dist 13.16%, a staples name in a defensive-crowded room (R9).",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high, or below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Breakout failing back into the base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on served fields: entry 110.45 > ma_50 99.54 > ma_100 99.05 > ma_200 97.82, from_52w_hi 0.0%, rs_rank_pct 75.03. Fresh BULLISH_BOS at the high on day_vol 1.34. Averages bunched close together, so a rising 200 is not shown; sma_dist 10.96%.",
+   "falsifier": "A close back under the pivot.",
+   "case": {
+    "for": "Fresh breakout at a 52-week high, stack in order, mp 100.0.",
+    "against": "rs_rank_pct 75.03 only mid-range; flat-looking averages; staples crowding.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high, or below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank slipping under 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 95.83 > ma_50 89.56 > ma_100 86.94 > ma_200 82.26, from_52w_hi 0.0%, rs_rank_pct 78.41, fresh BULLISH_BOS on day_vol 1.36. But flow 48.7 does not confirm the volume signature (C6), and a mega-cap staple is the rare exception for superperformance (C15).",
+   "falsifier": "A close back below the pivot.",
+   "case": {
+    "for": "Stage 2 stack, new high, BULLISH_BOS.",
+    "against": "flow 48.7 weak, large cap (C15), defensive crowding (R9).",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high, or below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume expansion on a hold above the pivot.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "volume per contraction",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 99.63 > ma_50 86.42 > ma_100 82.96 > ma_200 77.04, from_52w_hi 0.0%, rs_rank_pct 88.42, day_vol 2.18, flow 100.0. But 15.42% over pivot 86.32 and sma_dist 15.29% is well past buy range (C5): a weight under R27, kept at low conviction.",
+   "falsifier": "A close below ma_20.",
+   "challenge_reply": "Financials overlap: GPN is a payments name in the same sector as held V; I count it as stacked Financials exposure, not independent evidence. Sub-industry not served.",
+   "case": {
+    "for": "Leader at a new high on day_vol 2.18 with flow 100.0, rs_rank_pct 88.42.",
+    "against": "15.42% over the pivot: a chase (C5); ma_20 84.56 under ma_50 shows the base was a sharp V, not a tight VCP.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it; a new tight base is better.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight low-volume consolidation near the high.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "base shape",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 88.21 sits under ma_100 88.6 (criterion 4 unproven) and rs_rank_pct 63.57 is under the 70 floor (criterion 8). The day_vol 3.33 bounce off the base low is not a pivot breakout from strength (C11).",
+   "opposing_case": "Price over every average, from_52w_hi -2.02%, day_vol 3.33, flow 90.8 and a bullish pin at the value edge: a shakeout at the base low can be a healthy feature (C16).",
+   "case": {
+    "for": "Near the high, heavy volume support test, flow 90.8.",
+    "against": "rs_rank_pct 63.57; averages flat and tangled; not a leader by rank.",
+    "entry_trigger": "Needs rs_rank_pct over 70 and ma_50 over ma_100, then close_above:pivot_high on volume.",
+    "wrong_if": "RS rank clears 70 and it breaks out to a new high on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank above 70 with a clean breakout.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "PFE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 30.67 > ma_50 28.6 > ma_100 26.98 > ma_200 26.82, from_52w_hi 0.0%, rs_rank_pct 71.77. Fresh BULLISH_BOS only pct_from_pivot 0.76 over pivot 30.44 on day_vol 1.7: a proper buy-range spot (C5). RS on the floor, flat 100/200 gap, large cap (C15).",
+   "falsifier": "A close back under pivot 30.44.",
+   "case": {
+    "for": "At the pivot, new high, day_vol 1.7.",
+    "against": "rs_rank_pct 71.77 marginal; ma_100 26.98 and ma_200 26.82 near flat; div BEARISH/2 advisory; Healthcare crowding.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below pivot_high (30.44).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank under 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "ABT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Stack passes (entry 110.16 > ma_50 104.21 > ma_100 102.07 > ma_200 101.63, rs_rank_pct 81.3), but the breakout volume signature fails: day_vol 0.89 is below normal on a move pct_from_pivot 3.58 over the pivot. C6: the breakout must come on expanding volume or the setup is not valid. from_52w_hi -15.64% is also far from the high.",
+   "opposing_case": "rs_rank_pct 81.3 LEADER, stack in order, ABOVE_STRUCTURE, elder ACCELERATION: a template name that may simply need volume.",
+   "case": {
+    "for": "Template in order, RS 81.3.",
+    "against": "day_vol 0.89 breakout (C6), 15.64% under the 52w high, ret_12m -11.64.",
+    "entry_trigger": "A close_above:bar_high on vol_x_ge:1.4 would repair the volume leg.",
+    "wrong_if": "It runs to a new high on expanding volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Breakout-day volume well above normal.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 118.3 > ma_50 116.92 > ma_100 116.74 > ma_200 108.62, from_52w_hi -5.46%, rs_rank_pct 76.36. BULLISH_BOS from a base on the 50-day (sma_dist 1.18%): not a chase. But structure 52.6, day_vol 1.1 and flow 56.6 give a thin volume signature (C6).",
+   "falsifier": "A close back below ma_50 116.92.",
+   "case": {
+    "for": "In buy range at the 50-day, BOS, RS 76.36.",
+    "against": "Weak structure 52.6, ret_63d -4.24, muted volume, elder INTERRUPTED.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below ma_50 116.92.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Breakout volume well above normal would lift it.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "LYV",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 173.13 is under ma_100 176.54 (criterion 4 unproven) and rs_rank_pct 63.81 is under 70 (criterion 8). from_52w_hi -6.0% with averages tangled is a stage 1 range, not a stage 2 leader.",
+   "opposing_case": "BULLISH_BOS on day_vol 1.91, sma_dist 2.32% so low extension, elder ACCELERATION: a range break that could start a trend.",
+   "case": {
+    "for": "Range break on above-normal volume, close to the averages.",
+    "against": "rs_rank_pct 63.81; tangled stack; H1 below EMA9 at 24% of range.",
+    "entry_trigger": "Needs rs_rank_pct over 70 and ma_50 over ma_100, then close_above:pivot_high on volume.",
+    "wrong_if": "RS rank clears 70 with a new high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Stack ordered and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 115.7 > ma_50 98.54 > ma_100 95.45 > ma_200 93.04, from_52w_hi 0.0%, rs_rank_pct 84.92, day_vol 2.11. But sma_dist 17.41% and ext_atr20 5.11 is far past any base top (C5): a strength weight, low conviction until a flag forms.",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "Stage 2 leader at a new high on heavy volume.",
+    "against": "sma_dist 17.41%: a chase; same Industrials theme as several room names.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight flag on drying volume.",
+    "cannot_see": [
+     "ma_150",
+     "flag depth",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on served fields: entry 39.57 > ma_50 35.43 > ma_100 33.64 > ma_200 33.08, from_52w_hi -7.13%, rs_rank_pct 80.58. Weekly HH/HL 0.6% under its 20-wk high. sma_dist 11.68% and run_10d 14.27% weigh against a clean pivot entry.",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "Orderly stage 2 stack, RS 80.58, weekly higher highs.",
+    "against": "Extended run, ma_20 equal to ma_50 (35.43) shows a sharp lift off the base.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A pullback on rising volume (C6).",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "base shape",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 106.71 > ma_50 93.56 > ma_100 93.19 > ma_200 85.65, from_52w_hi 0.0%, rs_rank_pct 90.23. Top RS, but sma_dist 14.05% and run_10d 17.02% are past buy range (C5); low conviction until a tight base forms.",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "RS 90.23 at a new high, stack in order.",
+    "against": "Stretched 14.05% over the average after a 17.02% run.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight flag on drying volume.",
+    "cannot_see": [
+     "ma_150",
+     "flag depth",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 81.39 is under ma_100 83.04 and ma_200 82.11 (criterion 4), and rs_rank_pct 50.78 is far under 70 (criterion 8). Not a stage 2 leader.",
+   "opposing_case": "Price over every average, from_52w_hi -1.79%, structure 86.3, mp 94.0 STRONG: a utility near its high that could re-order.",
+   "case": {
+    "for": "Near the high, structure 86.3.",
+    "against": "ma_50 under ma_200, RS rank 50.78.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders and RS rank clears 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank above 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes on served fields: entry 19.49 > ma_50 18.3 > ma_100 17.8 > ma_200 15.55, from_52w_hi -1.02%, rs_rank_pct 87.94. Sits just under pivot_high 19.54 (pct_from_pivot -0.26) with day_vol 2.03 and energy 75.6. Trigger is the close above the pivot (C5). Smaller cap, where superperformance concentrates (C15).",
+   "falsifier": "A close below ma_20 18.78 before the breakout.",
+   "case": {
+    "for": "RS 87.94 at the pivot with volume arriving.",
+    "against": "Closed at 6% of the day's range, H1 below EMA9: the pivot rejected the last push.",
+    "entry_trigger": "close_above:pivot_high on vol_x_ge:1.4; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below ma_20 18.78.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A breakout on light volume would not count (C6).",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP contraction count",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 67.64 < ma_100 68.4 < ma_200 71.92 is a downward-ordered stack (criteria 2 and 4), rs_rank_pct 41.31 is under 70 and from_52w_hi -15.54% with ret_12m -0.85. An attempted turn, which my canon calls prediction, not trading (C2).",
+   "opposing_case": "BULLISH_BOS back over ma_200 71.92, mp 85.0 STRONG, rs_spy_20d 17.39 and a bullish divergence: a turn that could become stage 2.",
+   "case": {
+    "for": "Structure break over the 200-day with short-term RS.",
+    "against": "Downward stack, RS rank 41.31.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS rank over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank over 70 and ordered stack.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): rs_rank_pct 67.91 is under 70 (criterion 8), and ma_200 149.02 sits over ma_100 148.99, so 150-over-200 and a rising 200 are not shown (criteria 2 and 3). flow 39.5 and day_vol 0.95 give no volume confirmation (C6).",
+   "opposing_case": "Price over every average, from_52w_hi -2.18%, mp 97.0 STRONG, structure 81.1: a staple near its high.",
+   "case": {
+    "for": "Near the high, mp 97.0.",
+    "against": "RS rank 67.91, flat long averages, weak flow 39.5, large cap (C15).",
+    "entry_trigger": "Needs rs_rank_pct over 70, then close_above:pivot_high on volume.",
+    "wrong_if": "RS rank clears 70 with a volume breakout.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS over 70 with expanding volume.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "INTU",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Trend Template fails at criterion 1: entry 352.1 is under ma_200 359.55, with ma_50 319.08 and ma_100 309.2 both under the 200. from_52w_hi -47.96% and rs_rank_pct 20.02 fail criteria 7 and 8; structure_shift BEARISH_CHOCH. A former leader re-considered after a large fall: the broken-leader syndrome (C13, R6).",
+   "opposing_case": "rs_spy_20d 26.62 LEADER, mp 77.0 STRONG and a rising-trendline reclaim: a sharp bounce that can begin a base.",
+   "case": {
+    "for": "Short-term RS and a reclaim bounce.",
+    "against": "Under the 200-day, nearly 48% off the high, RS rank 20.02, BEARISH_CHOCH.",
+    "entry_trigger": "Needs price over ma_200 with ma_50 over ma_200 and RS rank over 70, then a new base.",
+    "wrong_if": "It rebuilds a full template pass within 20 sessions.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A renewed template pass and a fresh base (R6).",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "EXC",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 42.91 < ma_100 44.56 < ma_200 45.62 is downward-ordered (criteria 2 and 4), and rs_rank_pct 40.89 is under 70. A stage 1 bounce, not stage 2 (C2).",
+   "opposing_case": "Rank 9, structure 82.1 ABOVE_STRUCTURE, mp 97.0 STRONG, price back over ma_200 45.62.",
+   "case": {
+    "for": "Strong rank, price over the 200-day.",
+    "against": "Downward stack, RS rank 40.89, from_52w_hi -7.64%.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Ordered stack and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "SO",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 87.9 < ma_100 91.17 < ma_200 92.46 is downward-ordered (criteria 2 and 4), and rs_rank_pct 37.64 is under 70. A stage 1 recovery, not stage 2 (C2).",
+   "opposing_case": "structure 84.2 ABOVE_STRUCTURE, mp 97.0 STRONG, price over ma_200 92.46, near its 20-day high.",
+   "case": {
+    "for": "Price over all averages, strong mp.",
+    "against": "Downward stack, RS rank 37.64.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Ordered stack and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "SRAD",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Trend Template fails at criterion 1: entry 12.87 is under ma_100 13.48 and ma_200 14.87, the stack is downward-ordered, from_52w_hi -50.67% fails criterion 7 and rs_rank_pct 38.36 fails criterion 8. ret_12m -49.51: buying this is bottom-fishing a broken name (C2, C13).",
+   "opposing_case": "day_vol 3.57, flow 88.2, a 9-day reclaim and price back over ma_50 12.49: heavy buying that may mark the start of a base.",
+   "case": {
+    "for": "Volume spike and a short-term reclaim over the 50-day.",
+    "against": "Under the 200-day, half off the high, RS rank 38.36: stage 1 or 4, never a buy (C2).",
+    "entry_trigger": "Needs a full template pass: price over ma_200 with an ordered stack and RS rank over 70.",
+    "wrong_if": "It rebuilds a template pass within 20 sessions.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Renewed template pass and a fresh base (R6).",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "V",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Held: KEEP. Template intact: entry 425.51 > ma_50 382.4 > ma_100 367.58 > ma_200 342.69, from_52w_hi 0.0%, rs_rank_pct 84.32 LEADER, ABOVE_STRUCTURE. sma_dist 11.27% means no add here; per C9 any add waits for a new tight base and comes only in-trend after a profit.",
+   "falsifier": "A close below ma_50 382.4.",
+   "case": {
+    "for": "Stage 2 leader at its 52-week high, mp 97.0 STRONG.",
+    "against": "sma_dist 11.27% extension; three more Financials in the room would stack on this line.",
+    "entry_trigger": "Add only on h1_close_above:bar_high on vol_x_ge:1.4 after a fresh base; hold otherwise.",
+    "wrong_if": "Daily close below ma_50 382.4 breaks the template.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A heavy-volume reversal off the high, or loss of the 50-day.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Held name; any add follows C9 (only after a profit, in-trend). Earnings not served."
+   }
+  },
+  {
+   "ticker": "MP",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Held: EXIT-CASE. Template broken on every average: sma_dist -19.28%, ma_50 47.51, ma_100 49.64 and ma_200 55.07 all above price, structure_shift BEARISH_CHOCH, rs_rank_pct 4.22 LAGGARD, from_52w_hi -47.21%, AQE HEALTH EXIT. Stage 4; C7 and C10 say exit, do not wait to be proven right.",
+   "opposing_case": "div BULLISH/0 and price far stretched under its averages (sma_dist -19.28%): a deeply oversold name can bounce sharply.",
+   "challenge_reply": "Held-book line: EXIT-CASE. No template criterion holds; holding for a bounce is the ego trap C10 names. Written stop 36.66 is the outer limit, not a reason to wait.",
+   "case": {
+    "for": "Oversold, bullish divergence.",
+    "against": "Stage 4: below every average, RS rank 4.22, BEARISH_CHOCH, HEALTH EXIT.",
+    "entry_trigger": "No buy; exit the held position.",
+    "wrong_if": "It reclaims ma_50 47.51 and rebuilds an ordered stack.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A renewed template pass (R6), not a bounce.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "VVV",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 30.67 < ma_100 34.16 < ma_200 34.35 is downward-ordered, entry 34.37 barely clears the 200-day, and rs_rank_pct 53.2 is under 70. Its Energy group reads Declining. Not stage 2 (C2).",
+   "opposing_case": "Rank 24, structure 78.9, flow 94.7 and a trendline reclaim: a fast recovery that is testing the 200-day.",
+   "case": {
+    "for": "Strong flow and a reclaim.",
+    "against": "Downward stack, RS rank 53.2, from_52w_hi -14.65%, declining group.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Ordered stack and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "PEG",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails at criterion 1: entry 74.38 is under ma_100 74.96 and ma_200 78.04; rs_rank_pct 27.02 is far under 70 and from_52w_hi -14.46%. A stage 1 recovery (C2).",
+   "opposing_case": "structure 80.0, flow 86.8, energy 79.0 and a 9-day reclaim: a recovery attempt with buying behind it.",
+   "case": {
+    "for": "Strong flow and a reclaim bounce.",
+    "against": "Under the 200-day, RS rank 27.02.",
+    "entry_trigger": "Needs price over ma_200, ordered stack, RS over 70.",
+    "wrong_if": "It rebuilds a template pass.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Template pass with RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "MDLZ",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Criteria 1-7 pass on served fields (entry 66.38 > ma_50 61.83 > ma_100 61.58 > ma_200 60.43, from_52w_hi 0.0%), but rs_rank_pct 55.61 fails criterion 8. The template is all-or-nothing (C3); buy strength, not a mid-pack name (C11).",
+   "opposing_case": "New high on a BULLISH_BOS with an ordered stack, mp 87.0 STRONG and a trendline reclaim: a clean chart that only lacks rank.",
+   "case": {
+    "for": "Ordered stack, new high, BOS.",
+    "against": "RS rank 55.61; averages bunched and flat; large-cap staple (C15).",
+    "entry_trigger": "Needs rs_rank_pct over 70, then close_above:pivot_high on volume.",
+    "wrong_if": "RS rank clears 70 with a volume breakout.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "RS rank above 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 45.67 > ma_50 31.5 > ma_100 28.08 > ma_200 24.7, from_52w_hi -0.46%, rs_rank_pct 97.95, the room's top RS. run_10d 52.03% is the near-vertical thrust of a power play (C18), but sma_dist 44.98% is no buy point; the flag must form first. day_vol 0.71 is drying.",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "Strongest RS in the room, thrust plus drying volume near the high.",
+    "against": "sma_dist 44.98% and ext_atr20 6.07: a chase today (C5); house high-tight-flag read FAILED.",
+    "entry_trigger": "h1_close_above:high_52w_close on vol_x_ge:1.4 after a tight flag; no buy past it +3pct.",
+    "wrong_if": "Daily close below ma_20 (flag too deep).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight flag on low volume lifts it; a heavy-volume fall ends it.",
+    "cannot_see": [
+     "ma_150",
+     "flag depth",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "KMPR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 27.82 is under ma_200 29.69 (criterion 4), rs_rank_pct 49.58 is under 70, and from_52w_hi -22.03% with ret_12m -22.03 marks a recovery, not a leader. sma_dist 26.09% adds chase.",
+   "opposing_case": "mp 97.0 STRONG, structure 83.2, rs_spy_20d 38.85, run_10d 17.13%: a forceful turn that may become stage 2.",
+   "case": {
+    "for": "Strong short-term thrust.",
+    "against": "Stack unordered, RS rank 49.58.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Ordered stack and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 13.03 < ma_100 14.19 < ma_200 14.55 is downward-ordered (criteria 2 and 4). A thrust off a stage 1 base, now sma_dist 29.05%: not a confirmed stage 2 and not a buy point (C2, C5).",
+   "opposing_case": "AQE rank 2, mp 100.0, rs_rank_pct 72.14, elder SUSTAINED, run_10d 42.82%: the kind of thrust that starts new leaders.",
+   "case": {
+    "for": "Explosive move, top rank, RS over 70.",
+    "against": "Downward stack, extreme extension.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200, then a base and close_above:pivot_high.",
+    "wrong_if": "Stack re-orders and it bases above ma_200.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "An ordered stack with a tight base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 166.36 < ma_100 169.18 < ma_200 176.81 is downward-ordered, rs_rank_pct 63.21 is under 70 and from_52w_hi -15.18%. A rebound, not stage 2 (C2).",
+   "opposing_case": "rs_spy_20d 37.93, run_10d 21.4%, price over every average: a strong turn.",
+   "case": {
+    "for": "Strong 20-day RS, price over the averages.",
+    "against": "Downward stack, RS rank 63.21.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200 and rs_rank_pct over 70.",
+    "wrong_if": "Stack re-orders with RS over 70.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Ordered stack and RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "GEN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 29.89 > ma_50 26.52 > ma_100 26.48 > ma_200 24.34, from_52w_hi -4.84%, rs_rank_pct 92.88. But run_10d 26.44% and sma_dist 12.7% off a dip (ma_20 24.65 under ma_50) is a V, not a tight base: past buy range (C4, C5).",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "RS 92.88, ordered stack, near the high.",
+    "against": "Sharp V off the 20-day, no tight base; house EP read FAILED.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight handle under the high.",
+    "cannot_see": [
+     "ma_150",
+     "base shape",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "ACN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template unproven (C3): ma_100 178.81 sits under ma_200 191.25, so 150-over-200 and a rising 200 (criteria 2 and 3) are not shown. rs_rank_pct 91.19 is strong, but sma_dist 27.74% is far past any pivot (C5), and the stack is a recovery shape.",
+   "opposing_case": "rs_rank_pct 91.19, ret_63d 53.11, BULLISH_BOS, price over every average: a powerful turn that may already be stage 2.",
+   "case": {
+    "for": "Top RS and a strong 3-month run.",
+    "against": "100-day under 200-day; extreme extension; closed 3.5% under its trendline.",
+    "entry_trigger": "Needs ma_100 back over ma_200, then a tight base and close_above:pivot_high.",
+    "wrong_if": "It bases tightly and breaks out with the long averages re-ordered.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Long averages re-ordered and a new base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "BBWI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend Template fails (C3): ma_50 18.64 is under ma_100 19.51 and ma_200 19.8 (criteria 2 and 4). rs_rank_pct 80.7 is fine, but sma_dist 24.39% on a stage 1 turn is not a confirmed stage 2 entry (C2, C5).",
+   "opposing_case": "rs_rank_pct 80.7, rs_spy_20d 35.75, structure 82.1: a strong turn that could re-order the stack.",
+   "case": {
+    "for": "Good RS, strong 20-day move.",
+    "against": "Downward stack, extension, H1 LH/LL.",
+    "entry_trigger": "Needs ma_above:ma_50:ma_200, then a base breakout.",
+    "wrong_if": "Stack re-orders and it bases above ma_200.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "An ordered stack with a tight base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails (C3): ma_50 17.88 is under ma_200 18.01 (criterion 4), from_52w_hi -34.46% fails criterion 7 and rs_rank_pct 35.1 fails criterion 8. A rebound, not stage 2 (C2).",
+   "opposing_case": "run_10d 24.43%, day_vol 2.37, flow 85.5, rs_spy_20d 33.47: a heavy-volume turn.",
+   "case": {
+    "for": "Volume thrust, short-term RS.",
+    "against": "Three template criteria fail.",
+    "entry_trigger": "Needs a full template pass.",
+    "wrong_if": "It rebuilds a template pass within 20 sessions.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Template pass with RS over 70.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "RHI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 44.77 > ma_50 38.79 > ma_100 37.97 > ma_200 32.29, from_52w_hi -2.4%, rs_rank_pct 96.26. But run_10d 36.2% and sma_dist 15.41% are past buy range, structure 71.6 RANGE and day_vol 0.91 show it pausing (C5).",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "RS 96.26, ordered stack, near the high, pausing on lighter volume.",
+    "against": "Extended; ma_20 37.63 under ma_50 shows a V, not a tight base.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight low-volume pause would lift it.",
+    "cannot_see": [
+     "ma_150",
+     "base shape",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  },
+  {
+   "ticker": "ETSY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Price over every average (entry 92.45, ma_200 68.39), from_52w_hi 0.0%, rs_rank_pct 90.95. Criterion 4 is unproven: ma_50 78.97 sits a shade under ma_100 79.24. sma_dist 17.07% is past buy range and the hour frame is LH/LL (C5).",
+   "falsifier": "A close below ma_20.",
+   "case": {
+    "for": "RS 90.95 at a new high.",
+    "against": "ma_50 under ma_100, extension 17.07%, H1 below EMA9.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge:1.4, within 3% of it.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma_50 turning over ma_100 with a tight base.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "quarterly EPS acceleration (C12)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": "Earnings acceleration (C12) not served."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of3.json",
+   "bytes": 21133,
+   "votes": 16,
+   "sha256": "0f97685d3da2"
+  },
+  {
+   "file": "minervini.part2of3.json",
+   "bytes": 16049,
+   "votes": 16,
+   "sha256": "9da977f6def3"
+  },
+  {
+   "file": "minervini.part3of3.json",
+   "bytes": 14979,
+   "votes": 16,
+   "sha256": "48b47db64c46"
+  }
+ ]
+}
