@@ -1,0 +1,527 @@
+{
+ "date": "2026-11-03",
+ "chair": "chair",
+ "board_sha256": null,
+ "decision_sha256": "ab805cd31aa0061033439826490d1a13a8bf70eb14c044ecd8e4514c78293b7b",
+ "tickets": [
+  {
+   "ticker": "WTRG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy an hourly close over yesterday's high on volume 1.4x normal or better.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close over yesterday's high on volume 1.4x normal or better."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high, or below ma_20.\"; oneil: \"A close back under pivot_high on heavy volume\"; wyckoff: \"Close back under structure_shift_ref by half an ATR\"",
+   "horizon_sessions": 20,
+   "why_agreed": "wyckoff (cross): \"Imbalance up on every frame: W, D and H1 hh_hl_3 HH/HL, ema_order 9>21\"; raschke (cross): \"Cleanest alignment I see\"; oneil (r2): \"No.1 Utilities name (rank 7), rs LEADER, at its 52-week high\"; livermore (r2): \"The trend is established on every frame (C5)\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [
+    {
+     "voice": "elder-lens",
+     "why": "WAIT: elder_5d [7, 7, 7, 10, 10]: a plateau at the top is summer, not Elder's buying season (C20, C6); buy value under a rising tide (C10). W ema9 41.8975 > ema21 40.7654, close 44.44 (C21)."
+    },
+    {
+     "voice": "raschke",
+     "why": "WAIT: RETRACEMENT plan: HH/HL on W, D and H1, all 0.5% under their 20-bar highs, the cleanest alignment here. No pullback yet (D close 44.44 vs ema21 41.6824), so I wait for the first one."
+    },
+    {
+     "voice": "wyckoff",
+     "why": "WAIT: Cleanest trend in the set: HH/HL on W, D and H1, 0.5% under the highs; but away from value (ext_atr20 3.66): no chase (C3, C15)."
+    }
+   ],
+   "sources": [
+    "cross:WTRG-minervini-for",
+    "cross:WTRG-oneil-for",
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:minervini",
+    "tier2:oneil",
+    "tier2:wyckoff",
+    "tier2:elder-lens",
+    "tier2:raschke"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "KDP",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy an hourly close over yesterday's high on volume 1.4x normal or better.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close over yesterday's high on volume 1.4x normal or better."
+   },
+   "wrong_if": "oneil: \"A close back under pivot_high on heavy volume\"; minervini: \"Daily close below pivot_high, or below ma_20.\"; wyckoff: \"Close back under structure_shift_ref by half an ATR\"",
+   "horizon_sessions": 20,
+   "why_agreed": "livermore (cross): \"New high on every frame (C5, C16)\"; wyckoff (cross): \"New high with buyers in control into the close\"; oneil (r2): \"No.1 Consumer Staples name (rank 19), rs LEADER, at its 52-week high on day_vol 2.28\"; minervini (tier2): \"New high on day_vol 2.28\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [
+    {
+     "voice": "elder-lens",
+     "why": "WAIT: elder_5d [7, 7, 7, 10, 10]: a plateau at the top is summer, not Elder's buying season (C20, C6); buy value under a rising tide (C10). W ema9 33.9393 > ema21 32.3956, close 36.82 (C21)."
+    },
+    {
+     "voice": "raschke",
+     "why": "WAIT: RETRACEMENT plan: W and H1 HH/HL, H1 at 99% of the day's range, D close 36.82 over ema21 34.1633. A close on the high after a run is climax risk (C19); I wait for the first pullback."
+    },
+    {
+     "voice": "wyckoff",
+     "why": "WAIT: W and H1 HH/HL, H1 close at 99% of range; but away from value (ext_atr20 3.55): no chase, wait for the corrective wave (C3, C15)."
+    }
+   ],
+   "sources": [
+    "cross:KDP-oneil-for",
+    "cross:KDP-minervini-for",
+    "r2:oneil",
+    "tier2:minervini",
+    "tier2:oneil",
+    "tier2:wyckoff",
+    "tier2:elder-lens",
+    "tier2:raschke"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "verdict": "WATCH",
+   "entry_trigger": "Buy an hourly close over yesterday's high only on volume 1.4x normal or better.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close over yesterday's high only on volume 1.4x normal or better."
+   },
+   "wrong_if": "oneil: \"A close back under pivot_high on heavy volume, or 8% under entry 138.6 (C20).\"; minervini: \"Daily close below the pivot 134.99, or below ma_20.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil (cross): \"the group leader (rank 4) near its high\"; minervini (cross): \"Leader at the high (C11): weekly 9>21 HH/HL\"; seow (r2): \"Strength is the signal (C26)\"; oneil (r2): \"I act only on a volume-confirmed new high\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [],
+   "sources": [
+    "cross:DLTR-seow-for",
+    "r2:seow",
+    "r2:oneil",
+    "tier2:oneil",
+    "tier2:minervini"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 3,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pause, buy an hourly close over yesterday's high on 1.4x volume.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pause, buy an hourly close over yesterday's high on 1.4x volume."
+   },
+   "wrong_if": "oneil: \"A close 8% under entry 115.7 (C20), or choch_bearish.\"; minervini: \"Daily close below ma_20.\"; wyckoff: \"Close back under structure_shift_ref by half an ATR\"",
+   "horizon_sessions": 20,
+   "why_agreed": "seow (cross): \"Position system agrees: new high from_52w_hi 0.0%, ABOVE_STRUCTURE\"; wyckoff (cross): \"Imbalance up top-down: W and D hh_hl_3 HH/HL, ema_order 9>21\"; oneil (r2): \"No.3 Industrials name (rank 10), rs LEADER, at the 52-week high on day_vol 2.11\"; minervini (tier2): \"wait for a flag\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [],
+   "sources": [
+    "cross:VLTO-elder-lens-for",
+    "cross:VLTO-livermore-for",
+    "r2:oneil",
+    "tier2:minervini",
+    "tier2:oneil",
+    "tier2:wyckoff"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 3,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "GPN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a new tight base forms, an hourly close above the prior day's high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a new tight base forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "oneil: \"A close 8% under entry 99.63 (C20), or choch_bearish.\"; minervini: \"Daily close below ma_20.\"; seow: \"a close back under pivot_high says the break failed\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini (cross): \"Leader near its high on day_vol 2.18 (C6, C11)\"; wyckoff (cross): \"Above resistance with weekly and daily ordered up\"; oneil (r2): \"No.2 Financials name (rank 29), rs LEADER, at the 52-week high on day_vol 2.18\"; minervini (tier2): \"wait for a tight base\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [],
+   "sources": [
+    "cross:GPN-livermore-for",
+    "cross:GPN-seow-for",
+    "r2:oneil",
+    "tier2:minervini",
+    "tier2:oneil",
+    "tier2:seow"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 2,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "V",
+   "verdict": "WATCH",
+   "entry_trigger": "Held: add only after a fresh tight base, on an hourly close above the prior day's high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Held: add only after a fresh tight base, on an hourly close above the prior day's high."
+   },
+   "wrong_if": "Hold line - minervini: \"Daily close below ma_50 382.4 breaks the template.\"; oneil: \"A close under ma_50 382.4 on heavy volume (R8)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil (cross): \"the 10-week line holds (R8 not fired)\"; livermore (cross): \"Leader at its high in an established trend (C5, C16)\"; minervini (r2): \"Template intact: entry 425.51 > ma_50 382.4 > ma_100 367.58 > ma_200 342.69\"; minervini (r2): \"any add waits for a new tight base\". Horizon 20 = median of supporters' r2 horizons.",
+   "dissent": [],
+   "sources": [
+    "cross:V-livermore-for",
+    "cross:V-minervini-for",
+    "r2:minervini",
+    "tier2:minervini",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 7,
+    "act_now": 2,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "PYPL",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: an hourly close above yesterday's high, the sign-of-strength follow-through.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: an hourly close above yesterday's high, the sign-of-strength follow-through."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high 57.95, or below ma_50 55.31.\"; wyckoff: \"Daily close back under pvp_vah (re-entry into value)\"; raschke: \"a daily close below yesterday's low (bar_low)\"",
+   "horizon_sessions": 15,
+   "why_agreed": "livermore (cross): \"C5 new high after a pullback\"; seow (cross): \"BULLISH_BOS through pivot_high 57.95, pct_from_pivot 1.43\"; raschke (cross): \"two-timeframe alignment (C6 shape)\"; wyckoff (r2): \"fresh BOS over the Creek 57.95 with pvp_vah 57.26 just under it, price at the test\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C7 and C16: from_52w_hi -15.14, W 6.3% under its 20-wk high; day_vol 1.3 under 1.40. Financials rank 135 fails C9; lens leadership warn."
+    }
+   ],
+   "sources": [
+    "cross:PYPL-minervini-for",
+    "cross:PYPL-wyckoff-for",
+    "r2:wyckoff",
+    "tier2:minervini",
+    "tier2:wyckoff",
+    "tier2:raschke",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "USFD",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high, the fresh breakout holding.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the fresh breakout holding."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high, or below ma_50 99.42.\"; raschke: \"a daily close below fib_618 102.59\"; wyckoff: \"Daily close under pvp_vah\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil (cross): \"R4 passes: the wide bar is on rvol_20d 1.82, above 1.40, institutions showed up\"; minervini (cross): \"Wide bar on rvol_20d 1.82 is the breakout-day expansion half\"; wyckoff (r2): \"fresh BOS over the Creek 104.2 with pvp_vah 104.34 beside it, price at the C7 test\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C9: Staples rank 114 behind KDP, CHD, MDLZ, the sympathy name. day_vol 1.89 passes, but W sits 5.0% under its 20-wk high and lens resistance warns."
+    }
+   ],
+   "sources": [
+    "cross:USFD-wyckoff-for",
+    "r2:wyckoff",
+    "tier2:minervini",
+    "tier2:raschke",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "CHD",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: an hourly close above yesterday's high, follow-through on the break bar.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: an hourly close above yesterday's high, follow-through on the break bar."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high, or below ma_20.\"; raschke: \"a daily close back under the broken pivot (structure_shift_ref)\"; wyckoff: \"Daily close under structure_shift_ref (the Creek)\"",
+   "horizon_sessions": 15,
+   "why_agreed": "livermore (cross): \"Fresh high in an established trend\"; seow (cross): \"R13 fires: fresh BULLISH_BOS at a new high (from_52w_hi 0.0%)\"; minervini (cross): \"Fresh break at the high on rvol_20d 1.31 is a stage 2 breakout with expanding volume\"; wyckoff (r2): \"fresh BOS over the Creek 108.93 at a 52-week high, price at the test\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C16: the fresh BULLISH_BOS came on day_vol 1.34, under 1.40, a hard rejection. Otherwise sound: No.2 Staples (rank 36), at the high (W HH/HL 0.7% under), structure 86.3."
+    }
+   ],
+   "sources": [
+    "cross:CHD-minervini-for",
+    "cross:CHD-wyckoff-for",
+    "r2:wyckoff",
+    "tier2:minervini",
+    "tier2:raschke",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "KO",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high, the breakout holding.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the breakout holding."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high, or below ma_20.\"; raschke: \"a daily close back under the broken pivot (structure_shift_ref)\"; wyckoff: \"Daily close under structure_shift_ref (the Creek)\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini (cross): \"The rising weekly is stage 2 on my read\"; raschke (cross): \"A fresh break near the average with aligned frames\"; seow (r2): \"fresh BULLISH_BOS at a new high (from_52w_hi 0.0%), elder_pattern ACCELERATION\"; wyckoff (r2): \"fresh BOS over the Creek 95.37 at a 52-week high; price at the test\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C16 and C9: day_vol 1.36 under 1.40, Staples rank 221 far outside the top three; lens coil '--' leaves no base read (R3)."
+    }
+   ],
+   "sources": [
+    "cross:KO-elder-lens-for",
+    "cross:KO-seow-for",
+    "r2:seow",
+    "r2:wyckoff",
+    "tier2:minervini",
+    "tier2:raschke",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "PFE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: an hourly close above yesterday's high, proving the break.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: an hourly close above yesterday's high, proving the break."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high 30.44.\"; seow: \"Close back under pivot_high (break failed)\"; wyckoff: \"Daily close back under structure_shift_ref (an upthrust)\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil (cross): \"The break at the new high passes my volume test: BULLISH_BOS on day_vol 1.7, from_52w_hi 0.0\"; seow (cross): \"Position system agrees: fresh BULLISH_BOS, pct_from_pivot 0.76 over pivot 30.44\"; wyckoff (cross): \"A break of resistance at the high\"; minervini (r2): \"a proper buy-range spot (C5)\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C9 (Healthcare rank 109) and carries a C25 caution: a new high with div BEARISH/2. day_vol 1.7 and BULLISH_BOS pass; lens coil warns."
+    }
+   ],
+   "sources": [
+    "cross:PFE-seow-for",
+    "cross:PFE-elder-lens-for",
+    "r2:minervini",
+    "tier2:minervini",
+    "tier2:seow",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "MA",
+   "verdict": "WATCH",
+   "entry_trigger": "After a tight pause forms, an hourly close above the prior day's high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight pause forms, an hourly close above the prior day's high."
+   },
+   "wrong_if": "minervini: \"Daily close below ma_20.\"; wyckoff: \"Close back under structure_shift_ref by half an ATR\"; livermore: \"a one-day fade of two atr_14d off the day's high\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini (cross): \"Stage 2 leader at its high (C3, C11)\"; raschke (cross): \"At the high with trend aligned\"; livermore (r2): \"Established trend at its high (C5, C16): structure 80.0 ABOVE_STRUCTURE\"; minervini (r2): \"is past my buy range (C5); a weight, not a veto (R27)\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C16 and C9: day_vol 1.24 under 1.40, Financials rank 78 behind AJG, GPN, KMPR. A leader at its high (W 0.5% under), but the breakout was not bought on volume."
+    }
+   ],
+   "sources": [
+    "cross:MA-livermore-for",
+    "cross:MA-seow-for",
+    "r2:livermore",
+    "r2:minervini",
+    "tier2:minervini",
+    "tier2:wyckoff",
+    "tier2:livermore",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "AJG",
+   "verdict": "WATCH",
+   "entry_trigger": "wait for price to pull back to the 20-day average, then buy there",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for price to pull back to the 20-day average, then buy there"
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high 271.27, or below ma_50 248.67.\"; livermore: \"a one-day fade of two atr_14d off the day's high\"; wyckoff: \"Close back under structure_shift_ref by half an ATR\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil (cross): \"Leadership and volume pass: rank 15 is No.1 Financials, day_vol 1.79 above 1.40\"; elder-lens (cross): \"Stack in order on my frames\"; seow (cross): \"Same picture on my test: new high from_52w_hi 0.0%, ABOVE_STRUCTURE\"; minervini (r2): \"inside buy range (C5)\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [],
+   "sources": [
+    "cross:AJG-livermore-for",
+    "cross:AJG-minervini-for",
+    "r2:minervini",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:wyckoff"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   }
+  },
+  {
+   "ticker": "VRTX",
+   "verdict": "WATCH",
+   "entry_trigger": "After a green daily bar prints, buy stop 1 tick over that bar's high (C27).",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After a green daily bar prints, buy stop 1 tick over that bar's high (C27)."
+   },
+   "wrong_if": "minervini: \"Daily close below pivot_high 529.89, or below ma_50 523.32.\"; raschke: \"a daily close back under the broken pivot\"; livermore: \"the reaction deepens to a close under entry less one atr\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil (cross): \"R4 passes: day_vol 2.3 is real participation\"; livermore (cross): \"Established uptrend: W HH/HL 9>21\"; raschke (cross): \"The weak down day is the first pullback my retracement family buys\"; seow (r2): \"the buy stop over bar_high must be retaken\". Horizon 15 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails C9: second to EW in Healthcare, outside the top three. day_vol 2.3 passes, but D 2.7% under its high and H1 below EMA9 show no fresh breakout."
+    }
+   ],
+   "sources": [
+    "cross:VRTX-seow-for",
+    "cross:VRTX-minervini-for",
+    "cross:VRTX-oneil-against",
+    "r2:seow",
+    "tier2:minervini",
+    "tier2:raschke",
+    "tier2:livermore",
+    "tier2:oneil"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   }
+  },
+  {
+   "ticker": "HOG",
+   "verdict": "WATCH",
+   "entry_trigger": "After a tight flag forms on the thrust, an hourly close above the prior day's high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight flag forms on the thrust, an hourly close above the prior day's high."
+   },
+   "wrong_if": "oneil: \"A close 8% under entry 33.07 (C20), or choch_bearish.\"; minervini: \"Daily close below ma_20.\"; seow: \"Close below the support line max(fib_swing_low, base_low_20d)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini (cross): \"New high with top-decile RS is stage 2 leadership (C3, C11)\"; seow (cross): \"Fund flow behind the break (C26, C28)\"; oneil (r2): \"No.2 Consumer Discretionary name (rank 11), rs LEADER, at the 52-week high on day_vol 2.07\"; livermore (r2): \"It is DLTR's Key Price partner (C14)\". Horizon 20 = median of supporters' r2 horizons (lower middle).",
+   "dissent": [],
+   "sources": [
+    "cross:HOG-seow-for",
+    "cross:HOG-livermore-for",
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:seow"
+   ],
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 1
+   }
+  }
+ ],
+ "market_kill": {
+  "plain": "Index loses the Confirmed Uptrend: 4-5 distribution days in 4-5 weeks (C1, C2).",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 7
+ }
+}
