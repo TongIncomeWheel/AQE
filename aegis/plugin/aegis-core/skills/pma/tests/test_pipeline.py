@@ -3346,6 +3346,9 @@ def test_committee_position_counts_the_median_and_never_invents_a_rationale(td):
     check("the Cards declare a missing final at the top ('NOT FILED' / 'DRAFT, not adopted')", "NOT FILED" in banner or "DRAFT, not adopted" in banner, banner)
     check("a draft-stage rationale is labelled 'DRAFT, not adopted' on the ticket", "DRAFT, not adopted" in pma_cards._committee_block({"committee_conviction": 3, "rationale_stage": "draft", "why": [{"text": "x"}]}, True))
     check("a final rationale carries no banner", pma_cards._rationale_banner({"tickets": {"A": {"rationale_stage": "final"}}}, True) == "")
+    ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
+    check("RUN.yaml carries the one R42 switch and the retry cap", "committee_position: on" in ry and "r42_respawns: 1" in ry)
+    check("the Cards render is handed the committee position file", "pma_cards.py render --text cards_text.json --position committee_position.json" in ry)
     check("a run with no position file prints no block", pma_cards._committee_block(None, False) == "")
     check("a missing ticket on a post-R42 run is a declared gap", "declared gap" in pma_cards._committee_block(None, True))
 

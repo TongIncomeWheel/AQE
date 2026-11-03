@@ -54,6 +54,8 @@ parameters:
   slate_min_support: 4          # R38/R40: fewer than 4 of 7 SUPPORT after tier 2 = not slated
   tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
   mtf_frames: [W, D, H1]        # R39
+  committee_position: on        # R42 SWITCH: `off` = the conductor skips RATIONALE, ADOPT, RATIONALE-FINAL and POSITION for this run, ticks each `degraded` with the note 'R42 switched off', and writes that line at the top of run_notes.md. The Cards then print no committee block (no committee_position.json); verdicts and the conviction-free count are unaffected. No code change needed.
+  r42_respawns: 1               # R42 cost cap: a seat or Chair form that fails validation is respawned ONCE (= `respawns`); a second failure stops that step at a declared gap (tick `degraded`) - never a third spawn, never all seven seats again
 
 # ---------------------------------------------------------------------------- durability
 # RESTORED 2026-09-16. stages/S0_preflight.md has always said it plainly -- "local disk is
@@ -752,7 +754,7 @@ steps:
 
   - name: REPORT
     kind: tool
-    command: "pma_cards.py render --text cards_text.json --out pma_cards_<date>.html"
+    command: "pma_cards.py render --text cards_text.json --position committee_position.json --out pma_cards_<date>.html"
     reads: [cards_text.json, consensus.json, aqe_daily_export.json, cards.json, brackets.json, broker_stops.json, phase4.json, aqe_valen_dashboard.json, aqe_crown_macro.json, scorecard.md]
     produces: [pma_cards_<date>.html]
     barrier: "pma_cards.py exits 0 -- it REFUSES (exit 2) a words file missing any ADVANCE card, HOLD line or PASS line"
