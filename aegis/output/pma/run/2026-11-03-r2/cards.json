@@ -1,0 +1,538 @@
+{
+ "advance": {
+  "WTRG": {
+   "triggers": [
+    {
+     "id": "WTRG-buy0",
+     "kind": "close_above",
+     "level": 44.66,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "WTRG: an hourly candle closes above 44.66 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "WTRG-touch",
+     "kind": "trade_above",
+     "level": 44.66,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "WTRG traded through yesterday's intraday high 44.66: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "WTRG-dead",
+     "kind": "close_below",
+     "level": 42.51,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "WTRG closed under 42.51, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 44.66; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 42.51 (2 analysts' exit line)."
+  },
+  "KDP": {
+   "triggers": [
+    {
+     "id": "KDP-buy0",
+     "kind": "close_above",
+     "level": 36.95,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "KDP: an hourly candle closes above 36.95 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "KDP-touch",
+     "kind": "trade_above",
+     "level": 36.95,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "KDP traded through yesterday's intraday high 36.95: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "KDP-dead",
+     "kind": "close_below",
+     "level": 35.4,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "KDP closed under 35.4, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 36.95; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 35.4 (2 analysts' exit line)."
+  },
+  "PYPL": {
+   "triggers": [
+    {
+     "id": "PYPL-buy0",
+     "kind": "close_above",
+     "level": 59.03,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PYPL: an hourly candle closes above 59.03 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "PYPL-touch",
+     "kind": "trade_above",
+     "level": 59.03,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PYPL traded through yesterday's intraday high 59.03: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "PYPL-wait",
+     "kind": "trade_below",
+     "level": 57.95,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PYPL is back in the wait area 57.26-57.95."
+    },
+    {
+     "id": "PYPL-dead",
+     "kind": "close_below",
+     "level": 57.27,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PYPL closed under 57.27, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 59.03",
+   "kills": "A daily close under 57.27 (2 analysts' exit line)."
+  },
+  "USFD": {
+   "triggers": [
+    {
+     "id": "USFD-buy0",
+     "kind": "close_above",
+     "level": 106.11,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "USFD: an hourly candle closes above 106.11 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "USFD-touch",
+     "kind": "trade_above",
+     "level": 106.11,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "USFD traded through yesterday's intraday high 106.11: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "USFD-wait",
+     "kind": "trade_below",
+     "level": 104.34,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "USFD is back in the wait area 104.2-104.34."
+    },
+    {
+     "id": "USFD-dead",
+     "kind": "close_below",
+     "level": 104.34,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "USFD closed under 104.34, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 106.11",
+   "kills": "A daily close under 104.34 (1 analyst's exit line)."
+  },
+  "CHD": {
+   "triggers": [
+    {
+     "id": "CHD-buy0",
+     "kind": "close_above",
+     "level": 110.6,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CHD: an hourly candle closes above 110.6 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "CHD-touch",
+     "kind": "trade_above",
+     "level": 110.6,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHD traded through yesterday's intraday high 110.6: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CHD-wait",
+     "kind": "trade_below",
+     "level": 108.93,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHD is back in the wait area 106.92-108.93."
+    },
+    {
+     "id": "CHD-dead",
+     "kind": "close_below",
+     "level": 108.93,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CHD closed under 108.93, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 110.6",
+   "kills": "A daily close under 108.93 (3 analysts' exit line)."
+  },
+  "KO": {
+   "triggers": [
+    {
+     "id": "KO-buy0",
+     "kind": "close_above",
+     "level": 96.25,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "KO: an hourly candle closes above 96.25 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "KO-touch",
+     "kind": "trade_above",
+     "level": 96.25,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "KO traded through yesterday's intraday high 96.25: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "KO-wait",
+     "kind": "trade_below",
+     "level": 95.37,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "KO is back in the wait area 93.43-95.37."
+    },
+    {
+     "id": "KO-dead",
+     "kind": "close_below",
+     "level": 95.37,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "KO closed under 95.37, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 96.25",
+   "kills": "A daily close under 95.37 (3 analysts' exit line)."
+  },
+  "PFE": {
+   "triggers": [
+    {
+     "id": "PFE-buy0",
+     "kind": "close_above",
+     "level": 31.04,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PFE: an hourly candle closes above 31.04 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "PFE-touch",
+     "kind": "trade_above",
+     "level": 31.04,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PFE traded through yesterday's intraday high 31.04: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "PFE-wait",
+     "kind": "trade_below",
+     "level": 30.44,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PFE is back in the wait area 29.62-30.44."
+    },
+    {
+     "id": "PFE-dead",
+     "kind": "close_below",
+     "level": 30.44,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PFE closed under 30.44, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 31.04",
+   "kills": "A daily close under 30.44 (4 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "DLTR": {
+   "triggers": [
+    {
+     "id": "DLTR-buy0",
+     "kind": "close_above",
+     "level": 139.39,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "DLTR: an hourly candle closes above 139.39 (3 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "DLTR-touch",
+     "kind": "trade_above",
+     "level": 139.39,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DLTR traded through yesterday's intraday high 139.39: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "DLTR-wait",
+     "kind": "trade_below",
+     "level": 134.99,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DLTR is back in the wait area 124.21-134.99."
+    },
+    {
+     "id": "DLTR-dead",
+     "kind": "close_below",
+     "level": 134.99,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "DLTR closed under 134.99, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 139.39",
+   "kills": "A daily close under 134.99 (2 analysts' exit line)."
+  },
+  "VLTO": {
+   "triggers": [
+    {
+     "id": "VLTO-buy0",
+     "kind": "close_above",
+     "level": 116.71,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "VLTO: an hourly candle closes above 116.71 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "VLTO-touch",
+     "kind": "trade_above",
+     "level": 116.71,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "VLTO traded through yesterday's intraday high 116.71: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "VLTO-wait",
+     "kind": "trade_below",
+     "level": 105.19,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "VLTO is back in the wait area 97.58-105.19."
+    },
+    {
+     "id": "VLTO-dead",
+     "kind": "close_below",
+     "level": 113.0,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "VLTO closed under 113.0, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 116.71",
+   "kills": "A daily close under 113.0 (1 analyst's exit line)."
+  },
+  "GPN": {
+   "triggers": [
+    {
+     "id": "GPN-buy0",
+     "kind": "close_above",
+     "level": 100.37,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "GPN: an hourly candle closes above 100.37 (3 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "GPN-touch",
+     "kind": "trade_above",
+     "level": 100.37,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "GPN traded through yesterday's intraday high 100.37: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "GPN-dip1",
+     "kind": "trade_below",
+     "level": 84.56,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "GPN traded down to 84.56 (2 analysts' pullback line). The buy is an hourly close back above it, not the touch."
+    },
+    {
+     "id": "GPN-wait",
+     "kind": "trade_below",
+     "level": 92.55,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "GPN is back in the wait area 84.56-92.55."
+    },
+    {
+     "id": "GPN-dead",
+     "kind": "close_below",
+     "level": 79.35,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "GPN closed under 79.35, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 100.37; comes back to ma_20 84.56",
+   "kills": "A daily close under 79.35 (2 analysts' exit line)."
+  },
+  "V": {
+   "triggers": [
+    {
+     "id": "V-buy0",
+     "kind": "close_above",
+     "level": 426.78,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "V (held): an hourly candle closes above 426.78 (3 analysts' shared add line). ADD question only; your decision."
+    },
+    {
+     "id": "V-touch",
+     "kind": "trade_above",
+     "level": 426.78,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "V traded through yesterday's intraday high 426.78: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "V-wait",
+     "kind": "trade_below",
+     "level": 414.6,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "V is back in the wait area 398.91-414.6."
+    }
+   ],
+   "confirms": "ADD question: an hourly candle closes above bar_high 426.78",
+   "kills": "The broker stop 391.8 is the exit."
+  },
+  "MA": {
+   "triggers": [
+    {
+     "id": "MA-buy0",
+     "kind": "close_above",
+     "level": 661.34,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "MA: an hourly candle closes above 661.34 (3 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "MA-touch",
+     "kind": "trade_above",
+     "level": 661.34,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "MA traded through yesterday's intraday high 661.34: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "MA-wait",
+     "kind": "trade_below",
+     "level": 622.86,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "MA is back in the wait area 601.23-622.86."
+    },
+    {
+     "id": "MA-dead",
+     "kind": "close_below",
+     "level": 645.62,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "MA closed under 645.62, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 661.34",
+   "kills": "A daily close under 645.62 (1 analyst's exit line)."
+  },
+  "VRTX": {
+   "triggers": [
+    {
+     "id": "VRTX-buy0",
+     "kind": "close_above",
+     "level": 568.67,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "VRTX: an hourly candle closes above 568.67 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "VRTX-touch",
+     "kind": "trade_above",
+     "level": 568.67,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "VRTX traded through yesterday's intraday high 568.67: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "VRTX-wait",
+     "kind": "trade_below",
+     "level": 540.47,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "VRTX is back in the wait area 517.05-540.47."
+    },
+    {
+     "id": "VRTX-dead",
+     "kind": "close_below",
+     "level": 529.89,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "VRTX closed under 529.89, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 568.67",
+   "kills": "A daily close under 529.89 (2 analysts' exit line)."
+  },
+  "HOG": {
+   "triggers": [
+    {
+     "id": "HOG-buy0",
+     "kind": "close_above",
+     "level": 33.38,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "HOG: an hourly candle closes above 33.38 (3 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "HOG-touch",
+     "kind": "trade_above",
+     "level": 33.38,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HOG traded through yesterday's intraday high 33.38: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "HOG-wait",
+     "kind": "trade_below",
+     "level": 29.22,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HOG is back in the wait area 28.27-29.22."
+    },
+    {
+     "id": "HOG-dead",
+     "kind": "close_below",
+     "level": 31.94,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "HOG closed under 31.94, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 33.38",
+   "kills": "A daily close under 31.94 (1 analyst's exit line)."
+  }
+ },
+ "held": {
+  "V": {
+   "committee_exit": 417.86,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 391.8 (STP_LMT 38, GTC).",
+   "against": ""
+  },
+  "MP": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 36.66 (STP_LMT 300, GTC).",
+   "against": ""
+  }
+ }
+}
