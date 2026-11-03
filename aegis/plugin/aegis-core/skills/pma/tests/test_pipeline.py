@@ -3315,6 +3315,41 @@ def test_valen_flags_leave_ticket_selection(td):
           and "superseded_by_R41" in open(os.path.join(HERE, "..", "RULINGS.yaml")).read())
 
 
+def test_committee_position_counts_the_median_and_never_invents_a_rationale(td):
+    """R42 (PM 2026-11-03): conviction = median_low of the deciders' 1-5; fewer than 4 scores = no conviction;
+    no rationale filed = a declared gap; the Cards block prints exactly that."""
+    d = os.path.join(td, "r42"); os.makedirs(os.path.join(d, "ratify"))
+    json.dump([{"ticker": "AAA", "status": "AGREED", "verdict": "ADVANCE"}, {"ticker": "BBB", "status": "AGREED", "verdict": "ADVANCE"}],
+              open(os.path.join(d, "consensus.json"), "w"))
+    voices = ["oneil", "minervini", "livermore", "elder-lens", "seow"]
+    scores = {"AAA": [5, 4, 4, 2, 1], "BBB": [3, 3, 4]}            # AAA median 4; BBB only 3 scores -> none
+    for i, v in enumerate(voices):
+        tk = [{"ticker": t, "conviction": sc[i]} for t, sc in scores.items() if i < len(sc)]
+        json.dump({"voice": v, "tickets": tk}, open(os.path.join(d, "ratify", v + ".json"), "w"))
+    out = os.path.join(d, "committee_position.json")
+    rc, o = run([PIPE, "committee-position", "--consensus", os.path.join(d, "consensus.json"), "--ratifications", os.path.join(d, "ratify"),
+                 "--draft", os.path.join(d, "none1.json"), "--final", os.path.join(d, "none2.json"), "--adopts", os.path.join(d, "none3"),
+                 "--run-dir", d, "--record", os.path.join(d, "none4.json"), "--date", "2026-11-04", "--out", out])
+    check("committee-position runs", rc == 0, o)
+    P = json.load(open(out))["tickets"] if os.path.exists(out) else {}
+    check("conviction is the median of the five scores", P.get("AAA", {}).get("committee_conviction") == 4, str(P.get("AAA")))
+    check("fewer than 4 scores gives no conviction, with the reason", P.get("BBB", {}).get("committee_conviction") is None
+          and any("fewer than 4" in g for g in P["BBB"]["gaps"]), str(P.get("BBB")))
+    check("no rationale filed is a declared gap, not invented text", P["AAA"]["why"] == [] and any("no committee rationale" in g for g in P["AAA"]["gaps"]))
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards
+    importlib.reload(pma_cards)
+    on = pma_cards._committee_block(P["AAA"], True)
+    check("the Cards block prints 'Committee: Conviction 4/5.'", "Committee: Conviction 4/5." in on, on)
+    check("no final rationale is declared in the file and in the log", any("DRAFT" in x or "NOT FILED" in x for x in json.load(open(out)).get("declared", [])) and "R42 DECLARED" in o, o)
+    banner = pma_cards._rationale_banner(json.load(open(out)), True)
+    check("the Cards declare a missing final at the top ('NOT FILED' / 'DRAFT, not adopted')", "NOT FILED" in banner or "DRAFT, not adopted" in banner, banner)
+    check("a draft-stage rationale is labelled 'DRAFT, not adopted' on the ticket", "DRAFT, not adopted" in pma_cards._committee_block({"committee_conviction": 3, "rationale_stage": "draft", "why": [{"text": "x"}]}, True))
+    check("a final rationale carries no banner", pma_cards._rationale_banner({"tickets": {"A": {"rationale_stage": "final"}}}, True) == "")
+    check("a run with no position file prints no block", pma_cards._committee_block(None, False) == "")
+    check("a missing ticket on a post-R42 run is a declared gap", "declared gap" in pma_cards._committee_block(None, True))
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3381,7 +3416,8 @@ def main():
                    test_up_to_three_reserved_seats_for_a_valen_reclaim,
                    test_the_flag_list_leads_with_the_strongest_names,
                    test_the_strongest_names_are_voted_in_the_momentum_lane,
-                   test_a_buy_line_far_under_the_close_is_never_the_trigger]:
+                   test_a_buy_line_far_under_the_close_is_never_the_trigger,
+                   test_committee_position_counts_the_median_and_never_invents_a_rationale]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

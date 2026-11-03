@@ -738,6 +738,20 @@ _FIELD_GLOSSARY.update({
     "stoch_d_3": "3-period SMA of stoch_k_14 — the stochastic %D signal line.",
     "rvol_20d": "Relative volume vs the 20-day average: day_vol / "
                "elder_context.volume.avg_vol_20d. Null when avg_vol_20d is unavailable.",
+    "impulse_colour_last_bar": "Elder Impulse colour of the last completed daily bar: GREEN if EMA13 of close AND the "
+                               "MACD-histogram (12,26,9) both rose vs the bar before, RED if both fell, else BLUE. "
+                               "Data only. Null with fewer than 37 bars.",
+    "impulse_colour_prior_bar": "Same colour, for the bar before the last. A change from impulse_colour_prior_bar to "
+                                "impulse_colour_last_bar is the transition Elder acts on.",
+    "force_index_ema_2": "EMA(2) of Force Index, FI = (close - prior close) * volume. Signed; dollars-of-volume units.",
+    "force_index_ema_13": "EMA(13) of the same Force Index series. Positive = bullish zone, a zero cross = trend reversal.",
+    "price_ema_slope": "EMA13 of close, last bar minus the prior bar, in dollars. The sign is what the Force Index "
+                       "buy trigger reads (short force below zero while this is positive).",
+    "channel_upper": "Elder value channel, upper wall: EMA(22) * (1 + k), k = 95th percentile over the last 100 bars of "
+                     "max(|high-EMA|,|low-EMA|)/EMA. Null with fewer than 100 bars.",
+    "channel_lower": "Elder value channel, lower wall: EMA(22) * (1 - k), same k as channel_upper.",
+    "weekly_trend_direction": "UP / DOWN / FLAT: whether EMA13 of ISO-week closes rose or fell vs the prior week "
+                              "(the current week counts at its latest close). Elder reads it before the daily chart.",
     "gap_risk_flag": "True if an earnings print falls within the next 10 trading days "
                      "(days_to_earnings is not null and <= 10). Informational, never a gate "
                      "(FIP/earnings are never filters — see CLAUDE.md).",
@@ -947,6 +961,14 @@ _FIELD_SCHEMA = {
     "stoch_k_14":   _fs("signal", "score", "n/a"),
     "stoch_d_3":    _fs("signal", "score", "n/a"),
     "rvol_20d":     _fs("signal", "ratio", "n/a"),
+    "impulse_colour_last_bar":    _fs("signal", "label", "n/a"),
+    "impulse_colour_prior_bar":   _fs("signal", "label", "n/a"),
+    "force_index_ema_2":          _fs("signal", "score", "n/a"),
+    "force_index_ema_13":         _fs("signal", "score", "n/a"),
+    "price_ema_slope":            _fs("signal", "usd", "n/a"),
+    "channel_upper":              _fs("reference", "usd", "above_entry"),
+    "channel_lower":              _fs("reference", "usd", "below_entry"),
+    "weekly_trend_direction":     _fs("signal", "label", "n/a"),
     "gap_risk_flag": _fs("flag", "boolean", "n/a"),
     "cohort_hit_rate_20d": _fs("signal", "pct", "n/a"),
     "cohort_n":            _fs("signal", "score", "n/a"),
@@ -1429,6 +1451,10 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "pos_in_50d_range_pct": None,
         "nr4_flag": None, "nr7_flag": None, "hv_ratio_6_100": None,
         "adx_14": None, "stoch_k_14": None, "stoch_d_3": None, "rvol_20d": None,
+        # Elder data pack (PM 2026-11-03), src/engines/elder_series.py - elder-lens R1-R6
+        "impulse_colour_last_bar": None, "impulse_colour_prior_bar": None,
+        "force_index_ema_2": None, "force_index_ema_13": None, "price_ema_slope": None,
+        "channel_upper": None, "channel_lower": None, "weekly_trend_direction": None,
         # 2026-11-03 (seow R8): the index's own 63-day return beside the stock's ret_63d, on every row.
         "index_pct_change_63d": None,
         "gap_risk_flag": None, "cohort_hit_rate_20d": None, "cohort_n": None,
@@ -1716,7 +1742,11 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                      "hi_20d", "lo_20d", "hi_50d", "lo_50d",
                      "pos_in_50d_range_pct", "nr4_flag", "nr7_flag",
                      "hv_ratio_6_100", "adx_14", "stoch_k_14", "stoch_d_3",
-                     "rvol_20d"):
+                     "rvol_20d",
+                     # Elder data pack (PM 2026-11-03) - src/engines/elder_series.py
+                     "impulse_colour_last_bar", "impulse_colour_prior_bar",
+                     "force_index_ema_2", "force_index_ema_13", "price_ema_slope",
+                     "channel_upper", "channel_lower", "weekly_trend_direction"):
             if _ek in _enr and _enr[_ek] is not None:
                 fields[_ek] = _enr[_ek]
 

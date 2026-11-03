@@ -1,6 +1,8 @@
 # Elder data pack — what it takes to switch on elder-lens R1–R6 (spec for sign-off, 3 Nov 2026)
 
-**Status: specified, not built.** The six recognisers are the only standing capability gap the per-voice coverage check
+**Status: SIGNED by the PM 2026-11-03 ("Yes build the Elder pack") and BUILT** (`src/engines/elder_series.py`, canon R1-R6 flipped live, voice menu +8 columns, coverage capabilities cleared). Values appear on the next nightly export; settings are the constants at the top of `elder_series.py`. Original spec follows.
+
+**(was) specified, not built.** The six recognisers are the only standing capability gap the per-voice coverage check
 reports (`contracts/voice_coverage.json` → `capabilities`). They stay switched off in the canon
 (`aegis-voices/canon/elder-lens/canon.lock.yaml`, each `if:` begins `NOT_AVAILABLE:`). Building the data without
 the canon flip changes nothing a seat does, and flipping the canon without the data would have the seat reason on

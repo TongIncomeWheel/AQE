@@ -53,7 +53,7 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # PM RULING 2026-09-22 (D120, THE MOMENTUM BOOK): the momentum numbers were in the export
     # all along and this whitelist dropped them because no seat MENU had asked. Seven of nine
     # seats never saw a return, a run length or an ADX. They are served to every nominator now.
-    "ret_63d","index_pct_change_63d","ret_6m","pct_run_10d","adx_14",
+    "ret_63d","index_pct_change_63d","impulse_colour_last_bar","impulse_colour_prior_bar","force_index_ema_2","force_index_ema_13","price_ema_slope","channel_upper","channel_lower","weekly_trend_direction","ret_6m","pct_run_10d","adx_14",
     # R30 (PM 2026-10-30): Seow v2 position system + Wyckoff v2 (Wyckoff 2.0) read these. All are already
     # in the export; without them here trim nulled every new menu column (found on the 2026-10-30 dry build).
     "bar_open","bar_high","bar_low","bar_close","prior_bar_high","prior_bar_low","last_pivot_high","structure_shift_ref","fib_swing_low","base_low_20d","days_since_swing_high","bar_range_5d","subcomponents","rvol_20d","ma_20_slope_5d_pct","pvp_poc","pvp_vah","pvp_val","pvp_position","vwap_14d","vwap_14d_position","avwap_structure","avwap_swing","pos_in_50d_range_pct",
@@ -2054,7 +2054,8 @@ def cmd_ratify_count(a):
                    else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
         conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
         out.append({"ticker": t, "verdict": verdict, "status": status, "slate_verdict": x["verdict"],
-                    "conviction": conviction, "conviction_basis": "ordering only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate",
+                    "ordering_score": conviction, "conviction": conviction,
+                    "conviction_basis": "ORDERING figure only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate. `conviction` is a DEPRECATED alias of `ordering_score` kept for one release; it is NOT the committee's conviction (R42: committee_position.json committee_conviction)",
                     "lane": lanes.get(t, "PULLBACK"),
                     "split": {"support": agreers + reservers, "oppose": objectors, "abstain": []},
                     "advisory": {"support": [], "oppose": [], "abstain": []},
@@ -2071,8 +2072,8 @@ def cmd_ratify_count(a):
             continue
         b = bnames.get(t) or {}
         bs = b.get("split") or {"support": [], "oppose": [], "abstain": []}
-        out.append({"ticker": t, "verdict": "PASS", "status": "NOT_SLATED", "slate_verdict": None, "conviction": 1,
-                    "conviction_basis": "ordering only (R34)", "lane": lanes.get(t, "PULLBACK"),
+        out.append({"ticker": t, "verdict": "PASS", "status": "NOT_SLATED", "slate_verdict": None, "ordering_score": 1, "conviction": 1,
+                    "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)", "lane": lanes.get(t, "PULLBACK"),
                     "split": {k: list(bs.get(k, [])) for k in ("support", "oppose", "abstain")},
                     "advisory": {"support": [], "oppose": [], "abstain": []}, "objections": [], "reservations": [],
                     "held": False, "n_deciders": n, "drop_threshold": thr, "gaps": [] if b else ["no board row -- blind split unknown"]})
@@ -2134,6 +2135,121 @@ def cmd_ratify_count(a):
           + ", ".join(f"{k} {by[k]}" for k in ("AGREED", "CONTESTED", "DROPPED", "NOT_SLATED") if by.get(k))
           + " | receipt: " + ", ".join(f"{c['ticker']}:{c['verdict']}/{c['status']}" for c in out if c["status"] != "NOT_SLATED")
           + f" | record {len(record)} rows -> {a.record}")
+
+
+def cmd_committee_position(a):
+    """R42 (PM 2026-11-03): THE COMMITTEE'S POSITION per slated ticket (AGREED / CONTESTED), counted by code.
+      * committee_conviction = the MEDIAN of the deciders' 1-5 convictions on the FINAL ratification (5 = best),
+        ties to the LOWER (statistics.median_low). A missing score is never filled in: it is a gap, and the median
+        is over the voices that gave one (quorum 4).
+      * ONE rationale: the Chair's final clauses, each a verbatim quote of what a decider filed (re-verified here
+        against the filed forms - the registrar checked on arrival, this checks again at the count).
+      * MINORITY NOTES are attached by CODE, verbatim: every DISSENT, and every AMEND the Chair did not merge.
+      * Everything individual (conviction, adopt answer and text) goes on the record underneath (R35) for grading.
+    Voices judge, code counts. This changes no verdict and gates nothing."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import registrar
+    C = load(a.consensus)
+    eligible = [c for c in C if c.get("status") in ("AGREED", "CONTESTED")]
+    run_dir = a.run_dir
+    R1, _ = _split_deciders(_load_forms(a.ratifications, "committee-position"), "committee-position")
+    conv = {c["ticker"]: {} for c in eligible}
+    for f in R1:
+        for r in f.get("tickets") or []:
+            if r.get("ticker") in conv and isinstance(r.get("conviction"), int):
+                conv[r["ticker"]][f["voice"]] = r["conviction"]
+    if a.ratifications2 and os.path.isdir(a.ratifications2):
+        R2, _ = _split_deciders(_load_forms(a.ratifications2, "committee-position (hold round)"), "committee-position (hold round)")
+        for f in R2:
+            for r in f.get("tickets") or []:
+                if r.get("ticker") in conv and isinstance(r.get("conviction"), int):
+                    conv[r["ticker"]][f["voice"]] = r["conviction"]       # the hold round replaces the first score
+    present = sorted({f["voice"] for f in R1})
+    draft = load(a.draft) if a.draft and os.path.exists(a.draft) else None
+    final = load(a.final) if a.final and os.path.exists(a.final) else None
+    adopts = {}
+    if a.adopts and os.path.isdir(a.adopts):
+        for f in _split_deciders(_load_forms(a.adopts, "committee-position (adopt)"), "committee-position (adopt)")[0]:
+            adopts[f["voice"]] = {r.get("ticker"): r for r in f.get("tickets") or []}
+    gaps, out = [], {}
+    if final is None:
+        gaps.append("no final committee rationale (rationale_final.json): " + ("the Chair's DRAFT is shown, labelled, " if draft else "no rationale at all, ") + "never an invented one")
+    rat_src = final if final is not None else draft
+    rat = {r["ticker"]: r for r in (rat_src or {}).get("tickets") or [] if isinstance(r, dict) and r.get("ticker")}
+    for c in eligible:
+        t = c["ticker"]; scores = conv[t]
+        missing = [v for v in present if v not in scores]
+        tg = []
+        if len(scores) < 4:
+            tg.append(f"only {len(scores)} conviction score(s) filed ({sorted(scores)}) - fewer than 4: no committee conviction")
+            body = None
+        else:
+            body = statistics.median_low(sorted(scores.values()))
+        if missing:
+            tg.append(f"no conviction from {missing} - not filled in")
+        row = rat.get(t)
+        def clauses(key):
+            out_c = []
+            for j, cl in enumerate((row or {}).get(key) or []):
+                bad = registrar._clause_errors(cl, f"{t} {key}[{j}]", t, run_dir, ("vote", "ratify", "adopt"))
+                if bad:
+                    raise SystemExit("committee-position: a rationale clause is not a verbatim quote of what was filed - the form was not validated: " + "; ".join(bad))
+                out_c.append({"text": cl["text"], "voice": cl["source"]["voice"], "from": f"{cl['source']['form']}.{cl['source']['field']}"})
+            return out_c
+        why, wc = clauses("why"), clauses("would_change")
+        if row is None:
+            tg.append("no committee rationale for this ticket")
+        elif final is None:
+            tg.append("rationale is the Chair's DRAFT (no adopt/merge result)")
+        am = {x.get("voice"): x for x in (row or {}).get("amendments") or [] if isinstance(x, dict)} if final is not None else {}
+        adopters, amenders, dissenters, minority = [], [], [], []
+        for v in present:
+            a_row = (adopts.get(v) or {}).get(t)
+            if a_row is None:
+                continue
+            if a_row["answer"] == "ADOPT":
+                adopters.append(v)
+            elif a_row["answer"] == "AMEND":
+                st = (am.get(v) or {}).get("status", "NOT_MERGED")
+                amenders.append({"voice": v, "status": st})
+                if st == "NOT_MERGED":
+                    minority.append({"voice": v, "kind": "AMEND not merged", "text": a_row["text"]})
+            elif a_row["answer"] == "DISSENT":
+                dissenters.append(v)
+                minority.append({"voice": v, "kind": "DISSENT", "text": a_row["text"]})
+        silent = [v for v in present if (adopts.get(v) or {}).get(t) is None]
+        if silent and adopts:
+            tg.append(f"no adopt/amend/dissent answer from {silent} - not filled in")
+        out[t] = {"committee_conviction": body, "convictions": dict(sorted(scores.items())), "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
+                  "ordering_score": c.get("ordering_score", c.get("conviction")), "status": c.get("status"), "verdict": c.get("verdict"),
+                  "rationale_stage": "final" if final is not None else ("draft" if row else None),
+                  "why": why, "what_would_change_it": wc, "minority_notes": minority,
+                  "adopted_by": adopters, "amended_by": amenders, "dissent_from": dissenters, "no_answer_from": silent if adopts else present,
+                  "gaps": tg}
+        gaps += [f"{t}: {g}" for g in tg]
+    # R35: the individual scores and answers go on the record underneath
+    if a.record and os.path.exists(a.record):
+        rec = load(a.record)
+        for r in rec.get("rows") or []:
+            t, v = r.get("ticker"), r.get("voice")
+            if t in out:
+                r["committee_conviction_given"] = out[t]["convictions"].get(v)
+                a_row = (adopts.get(v) or {}).get(t)
+                r["adopt_answer"] = (a_row or {}).get("answer")
+                r["adopt_text"] = (a_row or {}).get("text")
+        save(a.record, rec)
+    declared = []
+    if final is None:
+        declared.append("R42 DECLARED: the committee rationale is " + ("the Chair's DRAFT, not adopted (no rationale_final.json)" if draft else "NOT FILED (no draft, no final)") + " - the Cards say so at the top")
+    if any(o["committee_conviction"] is None for o in out.values()):
+        declared.append("R42 DECLARED: fewer than 4 conviction scores on " + ", ".join(t for t, o in out.items() if o["committee_conviction"] is None))
+    doc = {"schema": "committee_position.v1", "declared": declared, "date": a.date, "rule": "R42", "deciders_present": present, "tickets": out, "gaps": gaps,
+           "note": "committee_conviction is the body's 1-5 readout (5 = best); an ordering/readout figure, never a gate on a verdict. Individual scores and answers are on committee_record.json (R35)."}
+    save(a.out, doc)
+    for d_ in declared:
+        print(d_)
+    print(f"committee-position: {len(out)} slated ticket(s); " + ", ".join(f"{t}:{o['committee_conviction']}/5" for t, o in out.items())
+          + (f" | {len(gaps)} gap(s): {gaps[:3]}" if gaps else " | no gaps") + f" -> {a.out}")
 
 
 def cmd_slate_cut(a):
@@ -3246,6 +3362,13 @@ if __name__ == "__main__":
     s.add_argument("--cross", default=None, help="forms/cross (R38 tier 1, for the record)"); s.add_argument("--tier2", default=None, help="forms/tier2 (R38 tier 2, for the record)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
+    s = sub.add_parser("committee-position", help="R42: the body's conviction (median of the deciders' 1-5, ties to the lower), the ONE committee rationale and the minority notes -> committee_position.json")
+    s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ratifications", default="forms/ratify")
+    s.add_argument("--ratifications2", default=None, help="forms/ratify2 -- after a QA hold; replaces the held tickets' scores")
+    s.add_argument("--draft", default="rationale_draft.json"); s.add_argument("--final", default="rationale_final.json")
+    s.add_argument("--adopts", default="forms/adopt"); s.add_argument("--run-dir", dest="run_dir", default=".")
+    s.add_argument("--record", default="committee_record.json"); s.add_argument("--date", required=True)
+    s.add_argument("--out", default="committee_position.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
@@ -3255,7 +3378,7 @@ if __name__ == "__main__":
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
-     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut,
+     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "claims": cmd_claims, "claims-score": cmd_claims_score, "pair": cmd_pair, "decide-timing": cmd_decide_timing,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

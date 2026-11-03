@@ -68,7 +68,7 @@ parameters:
 # simply never called from here. checkpoint_after marks the steps where a crash costs MODEL tokens
 # rather than a cheap tool re-run; those are the only ones worth the push.
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json rationale_draft.json rationale_final.json committee_position.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -81,7 +81,7 @@ checkpoint:
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
     would not resolve during an actual run -- the same duplication the pma tools already carry, for
     the same reason. Keep the two copies identical.
-  after: [GATHER, NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, SLATE, RATIFY, QA, WRITE, PUBLISH]
+  after: [GATHER, NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, SLATE, RATIFY, QA, RATIONALE, ADOPT, RATIONALE-FINAL, WRITE, PUBLISH]
   first_and_last: >
     GATHER's checkpoint is the RUN LOCK: it pushes run_manifest.json (written by `registrar.py init`) before any
     model spawn, so the READY watcher and the pma-auto backstop see `aegis/output/pma/run/<date>/run_manifest.json`
@@ -140,9 +140,12 @@ steps:
       the MTF step reads by path. data_health.json <- the data-steward's one-page note (agents/data-steward.md step 3),
       which now quotes the manifest's status and counts. The tick refuses on any missing file.
       COURIER FALLBACK, loud and declared: ONLY if `check.py data` FAILs on committee_data (manifest missing, stale,
-      FAILED, sha mismatch). That is about 1.5M metered tokens (3 Nov: 46% of the run), so it is the PM's call, not
-      the conductor's: stop and page, or proceed on the PM's word and write `committee_data_fallback` to the manifest
-      degradations. Never fall back because a few names are unserved - a PARTIAL set reaches the seats as declared gaps.
+      FAILED, sha mismatch) OR the manifest is PARTIAL. ONE coverage rule: any file under 95% served is PARTIAL and
+      `check.py data` FAILs it; at or above 95% the per-name gaps are a WARN that names them, and the run PROCEEDS with
+      those names as declared gaps (3 Nov proof run: fundamentals 347/351 = OK). The courier fallback is about 1.5M
+      metered tokens (3 Nov: 46% of the run), so it is the PM's call, not the conductor's: STOP AND PAGE with two replies,
+      'couriers' (run the fallback and write `committee_data_fallback` to the manifest degradations) or 'skip' (proceed
+      with the unserved names as declared gaps). FAILED / missing / stale / torn are the same stop-and-page.
     source: "TongIncomeWheel/AQE@main aegis/output/"
     barrier: "aqe_daily_export.json present and parses"
     on_fail: "FATAL - halt and page the PM. No export, no run."
@@ -542,6 +545,62 @@ steps:
       ledger row is written HERE, before any narrative step (R8). committee_record.json (R35) carries every
       decider's blind vote, horizon, floor messages, change of mind and ratification per ticket; the scorecard
       grades each voice at its own horizon from it. Brackets attach AFTER, render-only.
+    meter: "--tool-only"
+
+  - name: RATIONALE
+    kind: model
+    spawns: 1
+    seats: [chair]
+    reads: [consensus.json, forms/ratify/*.json, forms/cross/*.json, forms/tier2/*.json]
+    produces: [rationale_draft.json]
+    barrier: "registrar.py validate --file rationale_draft.json --kind rationale --stage draft --consensus consensus.json --run-dir . exits 0"
+    on_fail: "declare it and CONTINUE: the Cards print no rationale for the run (a declared gap), the conviction still counts"
+    rulings: [R42]
+    must_also: >
+      The Chair drafts ONE rationale per AGREED/CONTESTED ticket as short clauses, each a verbatim quote of what a decider
+      filed with its source (voice, form, field). No paraphrase, no new claim.
+    checkpoint_after: true
+    meter: "--spawns 1"
+
+  - name: ADOPT
+    kind: model
+    spawns: 7
+    seats: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
+    reads: [rationale_draft.json, consensus.json]
+    produces: [forms/adopt/*.json]
+    barrier: "6 of 7"
+    on_fail: "declare it and CONTINUE: a seat that does not answer is listed as no answer, never counted as ADOPT"
+    rulings: [R42]
+    validate_with: "registrar.py validate --file <form> --kind adopt --draft rationale_draft.json"
+    must_also: >
+      Each decider answers every ticket: ADOPT, AMEND (with the text it wants added) or DISSENT (with its own words).
+    checkpoint_after: true
+    meter: "--spawns 7"
+
+  - name: RATIONALE-FINAL
+    kind: model
+    spawns: 1
+    seats: [chair]
+    reads: [rationale_draft.json, forms/adopt/*.json]
+    produces: [rationale_final.json]
+    barrier: "registrar.py validate --file rationale_final.json --kind rationale --stage final --consensus consensus.json --run-dir . exits 0"
+    on_fail: "declare it and CONTINUE: the Chair's draft is shown, labelled as a draft"
+    rulings: [R42]
+    must_also: "The Chair merges amendments and marks each MERGED or NOT_MERGED. Code, not the Chair, attaches the minority notes."
+    checkpoint_after: true
+    meter: "--spawns 1"
+
+  - name: POSITION
+    kind: tool
+    command: "pma_pipeline.py committee-position --consensus consensus.json --ratifications forms/ratify --ratifications2 forms/ratify2 --draft rationale_draft.json --final rationale_final.json --adopts forms/adopt --run-dir . --record committee_record.json --date <date> --out committee_position.json"
+    reads: [consensus.json, forms/ratify/*.json, rationale_draft.json, rationale_final.json, forms/adopt/*.json]
+    produces: [committee_position.json]
+    rulings: [R42]
+    on_fail: "declare it; the Cards render without the committee block"
+    must_also: >
+      LOUD (conductor + PM, 2026-11-03): every line `committee_position.json` carries under `declared` goes at the TOP of
+      run_notes.md. The Cards show a banner at the top ("DRAFT, not adopted" / "NOT FILED") and label each ticket's
+      rationale. A rationale that is not the adopted final is never presented as if it were.
     meter: "--tool-only"
 
   - name: CONDITIONS

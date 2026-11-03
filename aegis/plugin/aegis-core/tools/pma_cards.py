@@ -220,6 +220,8 @@ dt{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.05em;text-transfor
 .hh{display:flex;align-items:center;gap:4px}.hh .num{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--mute)}
 .tk2{font-family:var(--f-disp);font-weight:800;font-size:1.05rem}.cond{color:var(--mute)}
 .flag{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
+.committee{border-left:3px solid var(--up);background:var(--up-soft,var(--warn-soft));padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;font-size:.9rem}
+.committee .minority{margin-top:4px;color:var(--ink-2,inherit)}
 .read{display:flex;flex-direction:column;gap:10px;max-width:72ch}
 .foot{font-family:var(--f-mono);font-size:.8rem;text-align:center;color:var(--mute);padding-top:8px}
 """
@@ -761,6 +763,44 @@ def _valen_card(v, rows, room):
 # ---- R34 / R31 (PM 2026-10-30): the slate's status, its objections, and the Detect-lens list. -------
 # Rendered from consensus.json / the export only -- never from the words file. Rows without `status`
 # (pre-redesign runs) render exactly as before: every helper returns "" when the field is absent.
+def _committee_block(pos, on):
+    """R42 (PM 2026-11-03): the committee speaks as ONE body - 'Committee: Conviction n/5. Why: <one rationale>. What would
+    change it: <...>. Minority note: <...>'. Every word is the voices' own, quoted by code from what they filed (the
+    registrar and committee-position re-check each clause); nothing here is written by the conductor or the brief-writer.
+    Individual voice rationales are not printed; individual scores and answers stay on committee_record.json (R35).
+    `on` False = the run predates R42 or no position file was passed: print nothing. On and missing = a declared gap."""
+    if not on:
+        return ""
+    if not pos:
+        return '<div class="committee"><b>Committee position:</b> not filed for this ticket &mdash; declared gap, nothing invented.</div>'
+    n = pos.get("committee_conviction")
+    head = f"Committee: Conviction {n}/5." if isinstance(n, int) else "Committee: conviction not counted (fewer than 4 scores filed)."
+    why = " ".join(E(c["text"]) for c in pos.get("why") or []) or "no rationale filed"
+    wc = " ".join(E(c["text"]) for c in pos.get("what_would_change_it") or []) or "none filed"
+    stage = ' <b>[DRAFT, not adopted]</b>' if pos.get("rationale_stage") == "draft" else ""
+    mn = pos.get("minority_notes") or []
+    mino = ('<div class="minority"><b>Minority note:</b> ' + " &middot; ".join(f'{E(m["voice"])} ({E(m["kind"])}): {E(m["text"])}' for m in mn) + "</div>") if mn else ""
+    gaps = f'<div class="cond">{E("; ".join(pos.get("gaps") or []))}</div>' if pos.get("gaps") else ""
+    return f'<div class="committee"><b>{E(head)}</b> Why: {why}{stage} What would change it: {wc}{mino}{gaps}</div>'
+
+
+def _rationale_banner(pos_doc, on):
+    """R42: a rationale that is not the adopted final is declared at the top of the page, never a silent fallback."""
+    if not on:
+        return ""
+    ts = list((pos_doc or {}).get("tickets", {}).values())
+    stages = {t.get("rationale_stage") for t in ts}
+    if not ts or stages == {"final"}:
+        return ""
+    if stages <= {"draft"}:
+        msg = "Committee rationale: DRAFT, not adopted - the final rationale was not filed (Chair draft shown, labelled)."
+    elif "draft" in stages:
+        msg = "Committee rationale: some tickets show a DRAFT, not adopted - the final rationale is incomplete."
+    else:
+        msg = "Committee rationale: NOT FILED this run - declared gap, nothing invented."
+    return f'<p class="flag"><b>{E(msg)}</b></p>'
+
+
 def _status_pills(cons):
     by = collections.Counter(c.get("status") for c in cons if c.get("status"))
     if not by:
@@ -865,6 +905,9 @@ def cmd_render(a):
     SC = open(a.scorecard).read() if a.scorecard and os.path.exists(a.scorecard) else ""
     # R41 (PM 2026-11-02): Valen's no-buy list is NOT read here -- no card, hold row or pass row carries it.
     SL = load(a.slate, {}) if getattr(a, "slate", None) else {}
+    PS = load(a.position, {}) if getattr(a, "position", None) and os.path.exists(a.position) else None
+    POS_ON = PS is not None                                    # R42: a position file was passed => every slated ticket shows one
+    POS = (PS or {}).get("tickets") or {}
     MK = _market_kill_text(SL.get("market_kill")) if isinstance(SL, dict) else ""
     if MK:
         mk_line = f'<p class="flag"><b>Market kill (R40):</b> void every new trigger if {E(MK)}.</p>'
@@ -872,6 +915,7 @@ def cmd_render(a):
         mk_line = '<p class="cond">Market kill (R40): none -- no seat named a market condition.</p>'
     else:
         mk_line = ""
+    mk_line += _rationale_banner(PS, POS_ON)
     by = collections.defaultdict(list)
     for c in cons:
         by[c["verdict"]].append(c)
@@ -921,7 +965,7 @@ def cmd_render(a):
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
                  f'<span class="pill {TONE.get(w["readiness_tone"], "p-n")}">{E(w["readiness"])}</span></header>'
-                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{_contest_html(c)}'
+                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Stop (render-only)</dt><dd>{E(stop)}</dd></div>'
                  f'{void}<div><dt>First target</dt><dd>{E(str(tp)) if tp else "—"}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
@@ -934,7 +978,7 @@ def cmd_render(a):
     for c in sorted(by["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"]):
         t = c["ticker"]; card = CD["hold"].get(t) or {}; r = rows.get(t) or {}
         o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span><span class="num">#{r.get("rank", "—")}</span></div>'
-                 f'<p>{E(T["holds"][t])}</p>{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
+                 f'<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{c["ticker"]}</b></td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted(by["PASS"], key=lambda c: c["ticker"]))
@@ -996,6 +1040,7 @@ def main():
     s.add_argument("--broker-stops", default="broker_stops.json"); s.add_argument("--phase4", default="phase4.json")
     s.add_argument("--valen", default="aqe_valen_dashboard.json"); s.add_argument("--crown", default="aqe_crown_macro.json"); s.add_argument("--scorecard", default="scorecard.md")
     s.add_argument("--slate", default="slate.json", help="R40: the slate's market_kill line prints on the bottom line and on every ADVANCE card")
+    s.add_argument("--position", default=None, help="R42: committee_position.json - each slated ticket shows 'Committee: Conviction n/5. Why ... What would change it ... Minority note ...'. Absent = no committee block (runs before 2026-11-04)")
     s.add_argument("--out", required=True); s.set_defaults(fn=cmd_render)
     a = ap.parse_args(); a.fn(a)
 

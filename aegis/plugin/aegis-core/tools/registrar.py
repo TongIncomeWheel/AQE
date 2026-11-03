@@ -67,6 +67,14 @@ CASE_LIMITS = {"for": 400, "against": 400, "entry_trigger": 200, "wrong_if": 200
 CASE_REQUIRED = ("for", "against", "entry_trigger", "wrong_if", "horizon_sessions",
                  "would_change_my_mind", "cannot_see")
 RATIFY_ANSWERS = ("AGREE", "AGREE_WITH_RESERVATION", "OBJECT")
+# R42 (PM 2026-11-03): the committee speaks with ONE conviction (1-5, 5 = best) and ONE rationale.
+CONVICTION_FROM = "2026-11-04"          # ratification forms dated on/after this carry a 1-5 conviction per ticket
+ADOPT_ANSWERS = ("ADOPT", "AMEND", "DISSENT")
+CLAUSE_MAX, CLAUSES_MAX, WOULD_CHANGE_MAX, ADOPT_TEXT_MAX = 300, 6, 4, 400
+FILED_FIELDS = {                          # the ONLY places a committee clause may be quoted from
+    "vote": ("reason", "case.for", "case.against", "case.entry_trigger", "case.wrong_if", "case.would_change_my_mind"),
+    "ratify": ("reservation", "objection", "would_clear"),
+    "adopt": ("text",)}
 # R38-R40 (PM 2026-11-02): the two-tier funnel's forms. A slate dated from here carries ONE trigger per ticket and
 # the slate-wide market_kill (R40); earlier slates validate exactly as they were filed.
 R38_EFFECTIVE = "2026-11-02"
@@ -799,6 +807,11 @@ def validate_ratification(form, slate):
         ans = r.get("answer")
         if ans not in RATIFY_ANSWERS:
             errs.append(f"{w} {t}: answer must be one of {list(RATIFY_ANSWERS)}")
+        cv = r.get("conviction")
+        if cv is not None and (isinstance(cv, bool) or not isinstance(cv, int) or not 1 <= cv <= 5):
+            errs.append(f"{w} {t}: conviction must be an integer 1-5 (5 = best), got {cv!r}")
+        elif cv is None and str(form.get("date") or "") >= CONVICTION_FROM:
+            errs.append(f"{w} {t}: conviction (integer 1-5, 5 = best) is required from {CONVICTION_FROM} (R42); a missing score is never filled in")
         if ans == "AGREE_WITH_RESERVATION":
             _str(errs, r, "reservation", 300, f"{w} {t}")
         if ans == "OBJECT":
@@ -813,6 +826,177 @@ def validate_ratification(form, slate):
             errs.append(f"no answer for slate tickets {sorted(missing)} -- every decider answers every ticket (R34)")
         if extra:
             errs.append(f"answers on names not on the slate: {sorted(extra)}")
+    return errs, flags
+
+
+def _norm(x):
+    return " ".join(str(x).split())
+
+
+def _read_form(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def filed_text(run_dir, voice, form, ticker, field):
+    """The text `voice` actually FILED in `form`/`field` for `ticker`, or None. R42: the only source a committee
+    clause may quote. 'ratify' reads the hold-round re-ratification first (it replaces the first for held tickets)."""
+    if form not in FILED_FIELDS or field not in FILED_FIELDS[form]:
+        return None
+    paths = {"vote": ["forms/r2/%s.json"], "ratify": ["forms/ratify2/%s.json", "forms/ratify/%s.json"],
+             "adopt": ["forms/adopt/%s.json"]}[form]
+    for rel in paths:
+        d = _read_form(os.path.join(run_dir, rel % voice))
+        if not isinstance(d, dict):
+            continue
+        rows = d.get("votes") if form == "vote" else d.get("tickets")
+        row = next((r for r in rows or [] if isinstance(r, dict) and r.get("ticker") == ticker), None)
+        if row is None:
+            continue
+        v = row
+        for part in (["case", field[5:]] if field.startswith("case.") else [field]):
+            v = v.get(part) if isinstance(v, dict) else None
+        if isinstance(v, str) and v.strip():
+            return v
+    return None
+
+
+def _clause_errors(c, where, ticker, run_dir, allowed_forms, banned=()):
+    errs = []
+    if not isinstance(c, dict):
+        return [f"{where}: a clause is {{text, source: {{voice, form, field}}}}"]
+    txt, src = c.get("text"), c.get("source")
+    if not isinstance(txt, str) or not txt.strip() or len(txt) > CLAUSE_MAX:
+        errs.append(f"{where}: text must be 1-{CLAUSE_MAX} characters")
+    if not isinstance(src, dict) or src.get("voice") not in DECIDERS or src.get("form") not in allowed_forms:
+        errs.append(f"{where}: source must be {{voice: a decider, form: one of {list(allowed_forms)}, field}}")
+        return errs
+    if (src["voice"], src["form"]) in banned:
+        errs.append(f"{where}: {src['voice']} DISSENTED - their words are a minority note, never committee text")
+        return errs
+    filed = filed_text(run_dir, src["voice"], src["form"], ticker, src.get("field"))
+    if filed is None:
+        errs.append(f"{where}: {src['voice']} filed nothing in {src['form']}.{src.get('field')} for {ticker} - the Chair may not quote what was not said")
+    elif isinstance(txt, str) and _norm(txt) not in _norm(filed):
+        errs.append(f"{where}: text is NOT a verbatim quote of {src['voice']}'s {src['form']}.{src.get('field')} for {ticker} - NO NEW CLAIMS (R42)")
+    return errs
+
+
+def validate_rationale(form, stage, eligible, run_dir):
+    """R42: the Chair's ONE committee rationale per slated ticket (AGREED / CONTESTED). Every clause is a VERBATIM quote of
+    what a decider filed, with its source; the registrar re-reads the filed form and rejects a clause that is not in it.
+    stage 'draft' quotes the votes and ratifications; stage 'final' may also quote an AMEND (form 'adopt') and must
+    account for every amendment: MERGED into a named clause, or NOT_MERGED (the code then prints it as a minority note)."""
+    errs, flags = [], []
+    for req in ("voice", "date", "stage", "tickets"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("voice") != "chair":
+        errs.append("voice: the committee rationale is the Chair's")
+    if form.get("stage") != stage:
+        errs.append(f"stage: this form must say stage {stage!r}")
+    rows = form.get("tickets") if isinstance(form.get("tickets"), list) else []
+    seen = set()
+    allowed = ("vote", "ratify") if stage == "draft" else ("vote", "ratify", "adopt")
+    for i, r in enumerate(rows):
+        w = f"tickets[{i}]"
+        t = r.get("ticker") if isinstance(r, dict) else None
+        if not t:
+            errs.append(f"{w}: missing ticker"); continue
+        if t in seen:
+            errs.append(f"{w}: duplicate ticker {t}")
+        seen.add(t)
+        adopt = {}
+        for v in DECIDERS:
+            d = _read_form(os.path.join(run_dir, "forms", "adopt", f"{v}.json"))
+            row = next((x for x in (d or {}).get("tickets") or [] if isinstance(x, dict) and x.get("ticker") == t), None) if isinstance(d, dict) else None
+            if row:
+                adopt[v] = row
+        dissent = {v for v, x in adopt.items() if x.get("answer") == "DISSENT"}
+        amenders = {v for v, x in adopt.items() if x.get("answer") == "AMEND"}
+        banned = {(v, "adopt") for v in dissent}
+        why, wc = r.get("why"), r.get("would_change", [])
+        if not isinstance(why, list) or not 1 <= len(why) <= CLAUSES_MAX:
+            errs.append(f"{w} {t}: why must be 1-{CLAUSES_MAX} clauses"); why = why if isinstance(why, list) else []
+        if not isinstance(wc, list) or len(wc) > WOULD_CHANGE_MAX:
+            errs.append(f"{w} {t}: would_change must be at most {WOULD_CHANGE_MAX} clauses"); wc = []
+        for j, c in enumerate(why):
+            errs += _clause_errors(c, f"{w} {t} why[{j}]", t, run_dir, allowed, banned)
+        for j, c in enumerate(wc):
+            errs += _clause_errors(c, f"{w} {t} would_change[{j}]", t, run_dir, allowed, banned)
+        if stage == "draft":
+            if "amendments" in r:
+                errs.append(f"{w} {t}: a draft carries no amendments")
+            continue
+        am = r.get("amendments")
+        if not isinstance(am, list):
+            errs.append(f"{w} {t}: amendments: list of {{voice, status: MERGED|NOT_MERGED, clause}} - one per AMEND answer, none silently dropped"); am = []
+        listed = [a.get("voice") for a in am if isinstance(a, dict)]
+        if sorted(listed) != sorted(amenders):
+            errs.append(f"{w} {t}: amendments must account for exactly the voices that AMENDed {sorted(amenders)}, got {sorted(listed)} - no silent drops")
+        for a in am:
+            if not isinstance(a, dict) or a.get("status") not in ("MERGED", "NOT_MERGED"):
+                errs.append(f"{w} {t}: each amendment is {{voice, status: MERGED|NOT_MERGED, clause}}"); continue
+            if a["status"] == "MERGED":
+                k = a.get("clause")
+                ok = (isinstance(k, int) and not isinstance(k, bool) and 0 <= k < len(why) and isinstance(why[k], dict)
+                      and (why[k].get("source") or {}).get("voice") == a.get("voice") and (why[k].get("source") or {}).get("form") == "adopt")
+                if not ok:
+                    errs.append(f"{w} {t}: {a.get('voice')} is MERGED but why[{k}] is not a quote of their amendment")
+            elif a.get("clause") is not None:
+                errs.append(f"{w} {t}: {a.get('voice')} is NOT_MERGED, so clause must be null")
+        merged = {a.get("voice") for a in am if isinstance(a, dict) and a.get("status") == "MERGED"}
+        for j, c in enumerate(why + wc):
+            if isinstance(c, dict) and (c.get("source") or {}).get("form") == "adopt" and (c["source"].get("voice") not in merged):
+                errs.append(f"{w} {t}: a clause quotes {c['source'].get('voice')}'s amendment but it is not listed MERGED")
+    missing, extra = set(eligible) - seen, seen - set(eligible)
+    if missing:
+        errs.append(f"no committee rationale for slated tickets {sorted(missing)}")
+    if extra:
+        errs.append(f"rationale on names that are not AGREED/CONTESTED on the slate: {sorted(extra)}")
+    return errs, flags
+
+
+def validate_adopt(form, draft):
+    """R42: a decider's answer on the Chair's draft - ADOPT it, AMEND it (say the exact change), or DISSENT (own words).
+    One answer per drafted ticket; a missing answer is never filled in. DISSENT is not a veto: it is recorded verbatim
+    as a minority note and counted in the conviction."""
+    errs, flags = [], []
+    for req in ("voice", "date", "tickets"):
+        if req not in form:
+            errs.append(f"missing required field: {req}")
+    if form.get("voice") not in DECIDERS:
+        errs.append(f"voice {form.get('voice')!r} is not a decider (R31)")
+    rows = form.get("tickets") if isinstance(form.get("tickets"), list) else []
+    seen = set()
+    for i, r in enumerate(rows):
+        w = f"tickets[{i}]"
+        t = r.get("ticker") if isinstance(r, dict) else None
+        if not t:
+            errs.append(f"{w}: missing ticker"); continue
+        if t in seen:
+            errs.append(f"{w}: duplicate ticker {t}")
+        seen.add(t)
+        ans = r.get("answer")
+        if ans not in ADOPT_ANSWERS:
+            errs.append(f"{w} {t}: answer must be one of {list(ADOPT_ANSWERS)}"); continue
+        txt = r.get("text")
+        if ans == "ADOPT":
+            if txt not in (None, ""):
+                errs.append(f"{w} {t}: ADOPT carries no text - say AMEND to change it")
+        else:
+            _str(errs, r, "text", ADOPT_TEXT_MAX, f"{w} {t}")
+            if isinstance(txt, str) and _bracket_as_reject([txt]):
+                errs.append(f"{w} {t}: {ans} uses a bracket as the disqualifier. {R1_TEXT}")
+    want = {x["ticker"] for x in (draft or {}).get("tickets", []) if isinstance(x, dict) and x.get("ticker")}
+    if draft is not None:
+        if want - seen:
+            errs.append(f"no answer for drafted tickets {sorted(want - seen)} - every decider answers every ticket")
+        if seen - want:
+            errs.append(f"answers on names the Chair did not draft: {sorted(seen - want)}")
     return errs, flags
 
 
@@ -1006,7 +1190,7 @@ def cmd_validate(a):
         universe = {r["ticker"] for r in cs.get("universe", [])}
     kind = getattr(a, "kind", None)
     if (a.round is None) == (kind is None):
-        print(json.dumps({"result": "REJECT", "errors": ["pass exactly one of --round 1|2 or --kind challenge|floor|slate|ratify|qa|cross|tier2"]}))
+        print(json.dumps({"result": "REJECT", "errors": ["pass exactly one of --round 1|2 or --kind challenge|floor|slate|ratify|qa|cross|tier2|rationale|adopt"]}))
         return 1
     dset = None
     if (a.round == 2 or kind in ("floor", "slate")) and a.phase4:
@@ -1016,6 +1200,21 @@ def cmd_validate(a):
             return 1
         dset = p4.get("deliberation_set")
     slate = None
+    rationale_eligible, draft_doc = None, None
+    if kind in ("rationale", "adopt"):
+        src_flag = "consensus" if kind == "rationale" else "draft"
+        path = getattr(a, src_flag, None)
+        if not path:
+            print(json.dumps({"result": "REJECT", "errors": [f"--{src_flag} {src_flag}.json is required to validate a {kind} form"]}))
+            return 1
+        doc, err = load_json(path, src_flag)
+        if err:
+            print(json.dumps({"result": "REJECT", "errors": [err]}))
+            return 1
+        if kind == "rationale":
+            rationale_eligible = [c["ticker"] for c in doc if isinstance(c, dict) and c.get("status") in ("AGREED", "CONTESTED")]
+        else:
+            draft_doc = doc
     if kind in ("ratify", "qa"):
         if not getattr(a, "slate", None):
             print(json.dumps({"result": "REJECT", "errors": [f"--slate slate.json is required to validate a {kind} form"]}))
@@ -1059,6 +1258,10 @@ def cmd_validate(a):
         errs, flags = validate_tier2(form, side["pairs"], side["funnel"], partial=bool(getattr(a, "of", None) and a.of > 1))
     elif kind == "ratify":
         errs, flags = validate_ratification(form, slate)
+    elif kind == "rationale":
+        errs, flags = validate_rationale(form, getattr(a, "stage", None) or "draft", rationale_eligible, getattr(a, "run_dir", None) or ".")
+    elif kind == "adopt":
+        errs, flags = validate_adopt(form, draft_doc)
     else:
         errs, flags = validate_qa_note(form, slate)
 
@@ -1337,10 +1540,14 @@ def main():
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")
-    s.add_argument("--kind", choices=("challenge", "floor", "slate", "ratify", "qa", "cross", "tier2"), default=None,
+    s.add_argument("--kind", choices=("challenge", "floor", "slate", "ratify", "qa", "cross", "tier2", "rationale", "adopt"), default=None,
                    help="R34-R38 deliberation forms: Steenbarger's challenge document, one floor message (QA hold round), "
                         "the Chair's slate, a decider's ratification, the QA note, a tier-1 cross ruling form, a tier-2 "
                         "decision form. Exactly one of --round/--kind.")
+    s.add_argument("--consensus", default=None, help="consensus.json (--kind rationale, R42): the slated AGREED/CONTESTED tickets the Chair must cover")
+    s.add_argument("--draft", default=None, help="rationale_draft.json (--kind adopt, R42): the Chair's draft the deciders answer")
+    s.add_argument("--stage", choices=("draft", "final"), default=None, help="--kind rationale: which of the Chair's two forms this is")
+    s.add_argument("--run-dir", dest="run_dir", default=None, help="--kind rationale: the run directory holding forms/r2, forms/ratify, forms/adopt (clauses are checked against them)")
     s.add_argument("--claims", default=None, help="claims_board.json (required for --kind cross)")
     s.add_argument("--pairs", default=None, help="pairs.json (required for --kind tier2)")
     s.add_argument("--funnel", default=None, help="funnel.json (required for --kind tier2)")

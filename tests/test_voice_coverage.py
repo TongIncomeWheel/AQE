@@ -80,12 +80,20 @@ def test_every_standing_item_is_real_and_carries_a_written_reason():
             assert len(contract["capabilities"][v][it["id"]]) > 60, f"{v} {it['id']}: NOT_AVAILABLE recogniser with no written reason"
 
 
-def test_the_not_available_recognisers_are_extracted_from_the_canon_locks():
-    """The 3 Nov blind spot: elder-lens R1-R6 carry an empty `fields:` and an `if:` that says NOT_AVAILABLE."""
-    got = {i["id"] for i in BUILD.declared_unavailable("elder-lens")}
-    assert got == {"R1", "R2", "R3", "R4", "R5", "R6"}
-    assert any("fitted moving-average channel" in i["needs"] for i in BUILD.declared_unavailable("elder-lens"))
-    assert all(BUILD.declared_unavailable(v) == [] for v in DECIDERS if v != "elder-lens")
+def test_no_recogniser_is_declared_not_available_after_the_elder_pack(tmp_path):
+    """3 Nov: the Elder pack was signed and built, so elder-lens R1-R6 are live fields, not NOT_AVAILABLE. The extractor
+    itself still catches a NOT_AVAILABLE recogniser (an empty `fields:`), proved on a synthetic lock."""
+    assert all(BUILD.declared_unavailable(v) == [] for v in DECIDERS)
+    assert {"impulse_colour_last_bar", "weekly_trend_direction", "channel_upper"} <= set(BUILD.required_fields("elder-lens"))
+    (tmp_path / "wyckoff").mkdir()
+    (tmp_path / "wyckoff" / "canon.lock.yaml").write_text(
+        "recognisers:\n- id: R99\n  if: 'NOT_AVAILABLE: price > some_new_channel -- needs a build'\n  then: x\n  fields: []\n")
+    old = BUILD.CANON
+    BUILD.CANON = str(tmp_path)
+    try:
+        assert [i["id"] for i in BUILD.declared_unavailable("wyckoff")] == ["R99"]
+    finally:
+        BUILD.CANON = old
 
 
 # --------------------------------------------------------------------------- the real packets pass
@@ -103,10 +111,9 @@ def test_real_packets_pass_with_the_standing_gaps_named_and_waived(work):
     assert "macro_brief" in rep["oneil"]["not_served_known"]
     seow = next(n for n in notes if n.startswith("WARN voice coverage seow:") and "standing" in n)
     assert "portfolio_value" in seow and "industry_group_pct_change_63d" in seow
-    # and the six Elder recognisers the canon itself declares NOT_AVAILABLE are named on every run
-    assert rep["elder-lens"]["capabilities_not_served"] == ["R1", "R2", "R3", "R4", "R5", "R6"]
-    el = next(n for n in notes if n.startswith("WARN voice coverage elder-lens:"))
-    assert "CAPABILITY NOT SERVED (canon says NOT_AVAILABLE): R1, R2, R3, R4, R5, R6" in el
+    # the six Elder recognisers are SERVED fields now (Elder pack, PM 2026-11-03): nothing is declared NOT_AVAILABLE
+    assert rep["elder-lens"]["capabilities_not_served"] == []
+    assert not any("CAPABILITY NOT SERVED" in n for n in notes)
 
 
 def test_off_my_menu_is_a_menu_choice_and_never_a_gap(work):
@@ -200,7 +207,7 @@ def test_a_not_available_recogniser_with_no_reason_on_file_blocks_and_a_new_one_
     """The blind spot itself: a recogniser the canon declares NOT_AVAILABLE is a gap even though it names no field."""
     _, pk, exp = work
     c = json.loads(CONTRACT.read_text())
-    del c["capabilities"]["elder-lens"]["R5"]
+    c["declared_unavailable"]["elder-lens"] = [{"id": "R5", "needs": "price > channel_upper -- needs a fitted moving-average channel"}]
     cp = tmp_path / "c.json"
     cp.write_text(json.dumps(c))
     fails, _, _ = cov(pk, exp, contract=cp)

@@ -1,0 +1,128 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Committee rationale -- the Chair's verbatim-quoted draft / final (R42)",
+ "x_version": "1.0.0",
+ "x_purpose": "ONE rationale per AGREED/CONTESTED ticket made only of sourced verbatim clauses. Draft stage, then final after the deciders answer ADOPT/AMEND/DISSENT; each amendment is marked MERGED or NOT_MERGED by the Chair. Minority notes are attached by code, not written here.",
+ "type": "object",
+ "required": [
+  "date",
+  "tickets"
+ ],
+ "properties": {
+  "date": {
+   "type": "string"
+  },
+  "tickets": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "ticker",
+     "why"
+    ],
+    "properties": {
+     "ticker": {
+      "type": "string"
+     },
+     "why": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+       "type": "object",
+       "required": [
+        "text",
+        "source"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "text": {
+         "type": "string",
+         "maxLength": 300,
+         "x_note": "a verbatim quote of what a decider filed - the registrar re-checks it against the filed form"
+        },
+        "source": {
+         "type": "object",
+         "required": [
+          "voice",
+          "form",
+          "field"
+         ],
+         "properties": {
+          "voice": {
+           "type": "string"
+          },
+          "form": {
+           "type": "string"
+          },
+          "field": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      }
+     },
+     "would_change": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+       "type": "object",
+       "required": [
+        "text",
+        "source"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "text": {
+         "type": "string",
+         "maxLength": 300,
+         "x_note": "a verbatim quote of what a decider filed - the registrar re-checks it against the filed form"
+        },
+        "source": {
+         "type": "object",
+         "required": [
+          "voice",
+          "form",
+          "field"
+         ],
+         "properties": {
+          "voice": {
+           "type": "string"
+          },
+          "form": {
+           "type": "string"
+          },
+          "field": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      }
+     },
+     "amendments": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "voice",
+        "status"
+       ],
+       "properties": {
+        "voice": {
+         "type": "string"
+        },
+        "status": {
+         "enum": [
+          "MERGED",
+          "NOT_MERGED"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

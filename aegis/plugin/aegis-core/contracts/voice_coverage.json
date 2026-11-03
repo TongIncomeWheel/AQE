@@ -81,18 +81,26 @@
   ],
   "elder-lens": [
    "bracket",
+   "channel_lower",
+   "channel_upper",
    "choch_state",
    "elder_5d",
    "elder_pattern",
    "entry",
+   "force_index_ema_13",
+   "force_index_ema_2",
    "held",
+   "impulse_colour_last_bar",
+   "impulse_colour_prior_bar",
    "ma_20",
    "ma_50",
    "malformed_bracket",
    "mp_state",
    "pin_bar_level",
    "pin_bar_state",
-   "structure_shift"
+   "price_ema_slope",
+   "structure_shift",
+   "weekly_trend_direction"
   ],
   "seow": [
    "atr_14d",
@@ -194,34 +202,7 @@
   "structure_shift_ref": "AQE glossary: null for a RANGE structure_shift (no broken level to measure against)"
  },
  "block_when_blank_for_every_name_in_scope": true,
- "declared_unavailable": {
-  "elder-lens": [
-   {
-    "id": "R1",
-    "needs": "impulse_colour_last_bar == RED \u2014 needs a fast-EMA slope and a MACD-Histogram slope, neither of which exists as a field"
-   },
-   {
-    "id": "R2",
-    "needs": "impulse_colour_last_bar != impulse_colour_prior_bar \u2014 needs the same per-bar colour on two consecutive bars"
-   },
-   {
-    "id": "R3",
-    "needs": "force_index_ema_2 < 0 AND price_ema_slope > 0 \u2014 needs a signed Force Index series and a 2-bar EMA of it"
-   },
-   {
-    "id": "R4",
-    "needs": "force_index_ema_13 > 0 \u2014 needs a 13-bar EMA of the same signed Force Index series"
-   },
-   {
-    "id": "R5",
-    "needs": "price > channel_upper \u2014 needs a fitted moving-average channel (coefficient tuned to hold 90-95% of the last 50-100 bars)"
-   },
-   {
-    "id": "R6",
-    "needs": "weekly_trend_direction == UP \u2014 needs a weekly resample of the daily bars, read BEFORE the daily"
-   }
-  ]
- },
+ "declared_unavailable": {},
  "served_as": {
   "oneil": {
    "rvol": {
@@ -266,14 +247,5 @@
    "target": "position-management input for an OPEN position (stop trail / time stop / exit trigger). The committee votes on candidates and holds; the PM manages and sizes the position at the broker. If the PM wants Seow to apply this to held names, add the held-row columns to his menu (held_book.held_sl, held_book.trade_date, held_book.held_tp1 exist; days_held and high_since_entry would be new AQE fields)."
   }
  },
- "capabilities": {
-  "elder-lens": {
-   "R1": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md.",
-   "R2": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md.",
-   "R3": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md.",
-   "R4": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md.",
-   "R5": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md.",
-   "R6": "AQE does not compute this; the canon declares it NOT_AVAILABLE. All six are computable from the daily panel (Elder impulse colour from EMA13 and MACD-histogram slopes, force index EMA2/EMA13, a fitted EMA channel, a weekly EMA13 trend read) but each is a signal DEFINITION, and the recognisers stay switched off until the canon owner signs both the definitions and the flip from NOT_AVAILABLE. Specification and the exact canon edits: docs/ELDER_DATA_PACK_SPEC.md."
-  }
- }
+ "capabilities": {}
 }

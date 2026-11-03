@@ -166,6 +166,8 @@ def test_section2_new_keys_present_on_v21_record_fields():
         "nr4_flag", "nr7_flag", "hv_ratio_6_100",
         "adx_14", "stoch_k_14", "stoch_d_3", "rvol_20d",
         "gap_risk_flag", "cohort_hit_rate_20d", "cohort_n",
+        "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13",
+        "price_ema_slope", "channel_upper", "channel_lower", "weekly_trend_direction",
     }
     missing = expected - set(fields.keys())
     assert not missing, f"§2 key(s) {missing} not present on the schema."
