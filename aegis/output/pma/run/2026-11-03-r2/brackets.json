@@ -1,0 +1,799 @@
+{
+ "schema": "brackets.v1",
+ "date": "2026-11-03",
+ "produced_by": "pma_pipeline.py brackets (PM ruling 2026-09-25)",
+ "render_only": "R1: brackets attach AFTER the vote and are information only. They never reach a seat, a door, the tally, the ranking or a verdict.",
+ "sizing_note": "dynCap lives in the journal on the daily side and is not carried by the committee run, so a bracket without it returns LEVELS and refuses to SIZE. `sized` says which.",
+ "counts": {
+  "requested": 14,
+  "produced": 13,
+  "skipped": 1,
+  "failed": 0
+ },
+ "brackets": {
+  "PYPL": {
+   "ticker": "PYPL",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 58.78,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 57.34,
+    "risk": 1.44,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.74,
+    "stop_pct": 2.45,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 59.47
+    },
+    {
+     "type": "resistance",
+     "price": 62.73
+    },
+    {
+     "type": "fib_1272",
+     "price": 64.05
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.74,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "DLTR": {
+   "ticker": "DLTR",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 138.6,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 134.3,
+    "risk": 4.3,
+    "atr_ratio": 1.0,
+    "rr_tp2": 1.97,
+    "stop_pct": 3.1,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": false,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 139.39
+    },
+    {
+     "type": "fib_1272",
+     "price": 147.08
+    },
+    {
+     "type": "fib_1618",
+     "price": 156.86
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 1.97,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": false,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "USFD": {
+   "ticker": "USFD",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 105.8,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_structural",
+    "price": 102.59,
+    "risk": 3.21,
+    "atr_ratio": 1.25,
+    "rr_tp2": 2.96,
+    "stop_pct": 3.03,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 111.28
+    },
+    {
+     "type": "fib_1272",
+     "price": 115.31
+    },
+    {
+     "type": "fib_1618",
+     "price": 120.25
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.96,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "PULLBACK",
+   "sized": false
+  },
+  "MA": {
+   "ticker": "MA",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 658.1,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 645.62,
+    "risk": 12.48,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.79,
+    "stop_pct": 1.9,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 661.34
+    },
+    {
+     "type": "fib_1272",
+     "price": 692.87
+    },
+    {
+     "type": "fib_1618",
+     "price": 732.98
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.79,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "VRTX": {
+   "ticker": "VRTX",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 553.15,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 537.33,
+    "risk": 15.82,
+    "atr_ratio": 1.0,
+    "rr_tp2": 0.98,
+    "stop_pct": 2.86,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": false,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 555.69
+    },
+    {
+     "type": "prior_high",
+     "price": 568.67
+    },
+    {
+     "type": "fib_1272",
+     "price": 591.68
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 0.98,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": false,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "WTRG": {
+   "ticker": "WTRG",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 44.44,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 43.52,
+    "risk": 0.92,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.15,
+    "stop_pct": 2.07,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 44.66
+    },
+    {
+     "type": "fib_1272",
+     "price": 46.42
+    },
+    {
+     "type": "fib_1618",
+     "price": 48.66
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.15,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "PULLBACK",
+   "sized": false
+  },
+  "HOG": {
+   "ticker": "HOG",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 33.07,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 31.94,
+    "risk": 1.13,
+    "atr_ratio": 1.0,
+    "rr_tp2": 1.93,
+    "stop_pct": 3.42,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": false,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 33.38
+    },
+    {
+     "type": "fib_1272",
+     "price": 35.25
+    },
+    {
+     "type": "fib_1618",
+     "price": 37.64
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 1.93,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": false,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "KDP": {
+   "ticker": "KDP",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 36.82,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 36.0,
+    "risk": 0.82,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.44,
+    "stop_pct": 2.23,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 36.95
+    },
+    {
+     "type": "fib_1272",
+     "price": 38.82
+    },
+    {
+     "type": "fib_1618",
+     "price": 41.21
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.44,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "CHD": {
+   "ticker": "CHD",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 110.45,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 108.17,
+    "risk": 2.28,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.48,
+    "stop_pct": 2.06,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 111.23
+    },
+    {
+     "type": "fib_1272",
+     "price": 116.1
+    },
+    {
+     "type": "fib_1618",
+     "price": 122.29
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.48,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "KO": {
+   "ticker": "KO",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 95.83,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 94.16,
+    "risk": 1.67,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.07,
+    "stop_pct": 1.74,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 96.25
+    },
+    {
+     "type": "fib_1272",
+     "price": 99.28
+    },
+    {
+     "type": "fib_1618",
+     "price": 103.13
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.07,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "GPN": {
+   "ticker": "GPN",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 99.63,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 96.1,
+    "risk": 3.53,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.17,
+    "stop_pct": 3.54,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 101.32
+    },
+    {
+     "type": "fib_1272",
+     "price": 107.3
+    },
+    {
+     "type": "fib_1618",
+     "price": 114.9
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.17,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "PFE": {
+   "ticker": "PFE",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 30.67,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 30.08,
+    "risk": 0.59,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.44,
+    "stop_pct": 1.92,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 31.04
+    },
+    {
+     "type": "fib_1272",
+     "price": 32.11
+    },
+    {
+     "type": "fib_1618",
+     "price": 33.46
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.44,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "VLTO": {
+   "ticker": "VLTO",
+   "date": "2026-11-03",
+   "authority": "COMMITTEE_HOLD_FOR_CONDITIONS",
+   "tier": "aqe",
+   "price": {
+    "value": 115.7,
+    "source": "aqe_export"
+   },
+   "regime": "YELLOW",
+   "regime_stop_pct_ceiling": 8.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 113.0,
+    "risk": 2.7,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.71,
+    "stop_pct": 2.33,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "prior_high",
+     "price": 116.71
+    },
+    {
+     "type": "fib_1272",
+     "price": 123.01
+    },
+    {
+     "type": "fib_1618",
+     "price": 131.02
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.71,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "lane": "MOMENTUM",
+   "sized": false
+  }
+ },
+ "skipped": {
+  "V": "HELD \u2014 a position the PM already owns is not bracketed; that is the trailing-stop path, not an entry queue"
+ },
+ "failed": {}
+}
