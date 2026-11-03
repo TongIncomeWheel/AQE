@@ -442,6 +442,19 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] Crown reading copy failed: {exc}")
 
+    # Step 6h-1: bring the whole-market ma_panel (Valen breadth) to the last completed session under its own time budget
+    # (2026-11-03). A refresh that cannot finish leaves the panel STALE and the strict guard says so on every breadth row;
+    # it never blocks the export and never passes a stale panel off as current. See src/scanner/ma_refresh.py.
+    print(f"{_el()} [daily] Step 6h-1: whole-market panel refresh...")
+    try:
+        from src.scanner import ma_refresh as _mr
+        _mres = _mr.refresh_for_breadth()
+        print(f"  {_mr.summary_line(_mres)}")
+        if _mres["status"] not in ("FRESH", "REFRESHED"):
+            print(f"  [WARN] whole-market breadth will read STALE: {_mres.get('reason')}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] whole-market panel refresh failed: {exc} - breadth will read STALE")
+
     # Step 6i: VALEN Dashboard — VIV System Part 1 (Weather) + rotation,
     # ported into AQE's own idiom. Wrapped like Crown/QS: an ADDITION to a
     # working real-money pipeline, never allowed to take the export down.
@@ -453,6 +466,12 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         _vl_paths = _valen_write(_vl)
         print(f"  status {_vl['status']} · regime {_vl['trend'].get('regime')} · "
               f"{_vl_paths['published']}")
+        # every macro leg's date, one line (run marker reads it): never a quiet stale leg
+        _fr = _vl.get("data_freshness") or {}
+        _lg = _fr.get("legs") or {}
+        print("  Macro legs: expected session " + str(_fr.get("expected_session")) + " | " +
+              " | ".join(f"{k} {v.get('as_of')}" + (" STALE" if v.get("stale") else "") for k, v in _lg.items()) +
+              (f" | BEHIND: {', '.join(_fr.get('behind') or [])}" if _fr.get("behind") else " | all current"))
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] VALEN Dashboard failed: {exc}")
 

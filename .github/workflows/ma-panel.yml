@@ -1,0 +1,46 @@
+name: Whole-market panel refresh (pre-step)
+
+# 2026-11-03: the Valen breadth reads data/ma_panel.parquet (~4,300 tickers). Bringing it to the last completed US session
+# costs one FMP call per ticker that is behind (80 calls/min on a runner = up to ~54 min from a full session behind), too long
+# to hide inside the nightly. Dispatch this BEFORE daily-run.yml (about an hour earlier); it refreshes the panel under a
+# generous budget and persists it (GitHub release asset + Drive) so the nightly's Step 6h-1 restores a CURRENT panel and
+# spends ~0 calls. If it is skipped, the nightly refreshes what it can inside its own 20-minute budget and the breadth reads
+# STALE, loudly, for whatever it could not reach - never silently fresh.
+on:
+  workflow_dispatch:
+    inputs:
+      budget_minutes:
+        description: "Stop refreshing after this many minutes (default 55)"
+        type: string
+        default: "55"
+
+concurrency:
+  group: aqe-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Refresh the whole-market panel and persist it
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MA_REFRESH_BUDGET_S: ${{ format('{0}', inputs.budget_minutes) }}
+        run: python -m scripts.ma_panel_run --budget-minutes "${{ inputs.budget_minutes }}"

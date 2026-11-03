@@ -140,7 +140,12 @@ def build_ma_panel(
         universe = get_ma_universe(client)
 
     tickers = sorted(universe["ticker"].unique())
-    to_date = date.today()
+    # "Current" means: carries the LAST COMPLETED US SESSION's bar (src/data/sessions.py). The old test (`last >= today - 1
+    # calendar day`) called a ticker current when it was a whole session behind, because the runner's UTC date trails the
+    # session it is reading (2026-11-03: the panel stayed on Fri 30 Oct through Monday's close).
+    from src.data.sessions import last_completed_session
+    expected_session = last_completed_session()
+    to_date = max(date.today(), expected_session)
     from_date = to_date - timedelta(days=LOOKBACK_CALENDAR_DAYS)
 
     existing = pd.DataFrame()
@@ -169,7 +174,7 @@ def build_ma_panel(
                   f"incrementally.")
             break
         last = last_dates.get(ticker)
-        if last and last >= to_date - timedelta(days=1):
+        if last and last >= expected_session:
             skipped += 1
             continue
 
