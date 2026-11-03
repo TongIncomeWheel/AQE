@@ -5,6 +5,12 @@
  "flags": [],
  "run_id": "pma-2026-11-03",
  "seats": {
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "d251deeca1b440a714b576a5f969d998f2eadb8569e3940ebfeebef0fcd4af0a",
+   "status": "committed"
+  },
   "NOMINATE/elder-lens": {
    "file": "forms/r1/elder-lens.json",
    "flags": [],
@@ -49,6 +55,21 @@
   }
  },
  "steps": {
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 66994,
+    "returned_bytes": 38874,
+    "spawns": 1
+   },
+   "files": {
+    "forms/challenge/steenbarger.json": "d251deeca1b440a714b576a5f969d998f2eadb8569e3940ebfeebef0fcd4af0a"
+   },
+   "finished": "2026-11-03T00:36:20Z",
+   "notes": [],
+   "started": "2026-11-03T00:36:19Z",
+   "status": "done",
+   "tokens": 0
+  },
   "GATHER": {
    "cost": {
     "inlined_bytes": 0,
@@ -98,6 +119,21 @@
    "status": "in_flight",
    "tokens": 0
   },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 70780,
+    "spawns": 3
+   },
+   "files": {},
+   "finished": "2026-11-03T00:32:42Z",
+   "notes": [
+    "49/49 served W/D/H1, daily closes match export on all 49; hourly = FMP 15-min rolled to :30-anchored hourly by code (verified exact vs FMP hourly on FE: open/high/low/close/volume); 5 files matched to tickers by best OHLC score (FA CHD DLTR ETSY KMPR), MP refetched after a filename collision; couriers could not save hourly output so conductor pulled 15-min in main context; fundamentals 49/49 hand-transcribed by 2 sonnet couriers, spot-checked exact vs FMP on MA PG V KMPR; courier tokens ~1.09M actual (declared, not on the byte basis)"
+   ],
+   "started": "2026-11-03T00:32:42Z",
+   "status": "done",
+   "tokens": 1090000
+  },
   "NOMINATE": {
    "cost": {
     "inlined_bytes": 1282036,
@@ -121,6 +157,20 @@
    "status": "done",
    "tokens": 0
   },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T00:27:48Z",
+   "notes": [],
+   "started": "2026-11-03T00:27:48Z",
+   "status": "done",
+   "tokens": 0
+  },
   "PREPARE": {
    "cost": {
     "inlined_bytes": 0,
@@ -132,6 +182,22 @@
    "finished": "2026-11-03T00:21:10Z",
    "notes": [],
    "started": "2026-11-03T00:21:10Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0,
+    "tool_only": true
+   },
+   "files": {},
+   "finished": "2026-11-03T00:27:57Z",
+   "notes": [
+    "49 in room: 34 nominated + 2 held + 3 U&R + 10 strength; 0 cut; phase4_ledger base is the 10-29 run (declared) so REPEAT counts are from that base"
+   ],
+   "started": "2026-11-03T00:27:57Z",
    "status": "done",
    "tokens": 0
   }
