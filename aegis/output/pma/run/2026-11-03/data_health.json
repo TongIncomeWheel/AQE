@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-03",
+ "export": {
+  "file": "aqe_daily_export.json",
+  "date": "2026-11-03",
+  "exported_at": "2026-11-03 06:54:12 SGT",
+  "rows": 350,
+  "held": 2,
+  "held_status": "live",
+  "carries_close_of": "2026-11-02 (unr_as_of)"
+ },
+ "aqe_run": {
+  "status": "success",
+  "finished": "2026-11-03 07:00:03 SGT",
+  "check_ready": "Healthy",
+  "check_data": "Healthy (incl. --broker-stops)"
+ },
+ "crown": {
+  "status": "DEGRADED",
+  "note": "declared by AQE, not a block"
+ },
+ "valen": "present",
+ "packets": {
+  "stamp": "ABSENT (no packet_stamp.json on main); md5 recorded at PREPARE",
+  "count": 7
+ },
+ "ledgers": {
+  "verdict_ledger": "aegis/output/pma/run/2026-11-02/ (last PMA run)",
+  "phase4_ledger": "aegis/output/pma/run/2026-10-29/ (the 2 Nov run did not push a phase4_ledger; canonical aegis/data/pma stops at 28 Oct)"
+ },
+ "broker": "Tiger read-only live 2026-11-03 ~07:30 SGT agrees with the 2026-11-02 journal: V 38 sh STP_LMT stop 391.80 lmt 390.80 GTC; MP 300 sh STP_LMT stop 36.66 lmt 36.66 GTC; 0 disagreements. Other Tiger positions (COIN, CRCL, CRDO, KO, MARA, MCD, NVDA) are outside the Aegis book per the journal.",
+ "closes_scorecard": "base = 2026-11-02 run file (through 2026-10-30) + 2026-11-02 closes from the export bar_close (all 350 daily_list rows, unr_as_of 2026-11-02) + FMP couriers for 236 symbols without history or without a daily_list row",
+ "fundamentals": "0 served at GATHER; pulled for the deliberation set after RANK",
+ "degradations": [
+  "fundamentals_deferred_to_post_rank",
+  "packet_stamp_absent",
+  "phase4_ledger_from_2026-10-29_run"
+ ]
+}
