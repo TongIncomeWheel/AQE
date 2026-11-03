@@ -1,0 +1,115 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-03",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "ETR",
+   "reason": "RETRACEMENT resolving (C2/C7, Holy-Grail-shaped): strong trend, structure 84.2 and mp_state 3 (STRONG), pulled back to sma_distance_pct 5.16 and now structure_shift 3 (BULLISH_BOS) on day_vol 1.72. Pullback-then-resume read; ADX proxied by mp_state, not gated.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "rank", "bracket.valid"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 84.2, structure_shift 3 (BULLISH_BOS), sma_distance_pct 5.16, rank 84", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING) pullback, BOS on day_vol 1.72; ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C7", "C3"], "observed": "adx NOT_SERVED (mp_state proxy); 20-EMA pullback read via sma_distance_pct 5.16; n-day extreme via structure_shift", "verdict": "partial", "fields": ["mp_state", "sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; no structural level served; reference bracket.atr_fallback_stop 108.11 (1xATR, not structural); atr_14d 1.76", "verdict": "partial", "fields": ["bracket", "bracket.valid", "atr_14d"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 108.11, or structure_shift flipping to 2 (BEARISH_CHOCH), means the pullback was a reversal, not a retracement — out within the first few bars (C18)."
+  },
+  {
+   "ticker": "FE",
+   "reason": "RETRACEMENT (C2/C7): structure 84.2, mp_state 3 (STRONG), pullback held near the average at sma_distance_pct 4.79, then structure_shift 3 (BULLISH_BOS), day_vol 1.26. Structural stop served at bracket.stop 46.67 (stop_type 3, ma100): C17 risk point defined.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "day_vol", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 84.2, structure_shift 3 (BULLISH_BOS), sma_distance_pct 4.79, rank 77", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING), BOS on day_vol 1.26; ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C7", "C3"], "observed": "adx NOT_SERVED (mp_state proxy); pullback depth via sma_distance_pct 4.79; n-day extreme via structure_shift", "verdict": "partial", "fields": ["mp_state", "sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 46.67, bracket.stop_type 3 (ma100), bracket.valid True, bracket.risk_pct 2.02", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 46.67 (the ma100 level) voids the retracement; structure_shift turning 2 (BEARISH_CHOCH) is the earlier warning."
+  },
+  {
+   "ticker": "COST",
+   "reason": "BREAKOUT from a strong trend (C2/C12): structure 86.3, mp_state 3 (STRONG), structure_shift 3 (BULLISH_BOS) on day_vol 1.44; C17 swing stop served exactly, bracket.stop 1017.94, stop_type 8 (swing_low). Extended at sma_distance_pct 10.09, so short horizon.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "day_vol", "sma_distance_pct", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 86.3, structure_shift 3 (BULLISH_BOS), sma_distance_pct 10.09, rank 51", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C12"], "observed": "structure break on day_vol 1.44 with mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING); NR4/ID contraction cannot be counted", "verdict": "partial", "fields": ["day_vol", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13"], "observed": "bar_range_history NOT_SERVED; contraction proxied by atr_14d 17.36, atr_caution False, day_vol 1.44; energy.squeeze_score absent", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.stop 1017.94, bracket.stop_type 8 (swing_low), bracket.valid True, bracket.risk_pct 2.17", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close back below bracket.stop 1017.94 (the swing low) means the break failed; a break that does not move favourably within a few bars is also wrong (C18)."
+  },
+  {
+   "ticker": "RYAN",
+   "reason": "BREAKOUT (C2/C12): structure_shift 3 (BULLISH_BOS) off the strongest structure in my packet, structure 96.8, rank 1; mp_state 3 (STRONG), day_vol 1.23 participation. Extended at sma_distance_pct 12.37, so not a pullback entry. Short horizon (C18).",
+   "fields_cited": ["structure", "structure_shift", "rank", "mp_state", "day_vol", "sma_distance_pct", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 96.8, structure_shift 3 (BULLISH_BOS), rank 1, sma_distance_pct 12.37", "verdict": "pass", "fields": ["structure", "structure_shift", "rank", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12"], "observed": "break on day_vol 1.23, mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING); no NR4/ID count possible", "verdict": "partial", "fields": ["day_vol", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13"], "observed": "bar_range_history NOT_SERVED; atr_14d 1.62, atr_caution False, day_vol 1.23 as proxies; energy.squeeze_score absent", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; no structural level served; reference bracket.atr_fallback_stop 43.86 (1xATR, not structural)", "verdict": "partial", "fields": ["bracket", "bracket.valid"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 43.86, or structure_shift turning 2 (BEARISH_CHOCH), means the break failed."
+  },
+  {
+   "ticker": "MDLZ",
+   "reason": "RETRACEMENT resuming (C2/C7): structure 86.3, mp_state 3 (STRONG) with mp_accel_state 1 (ACCELERATING), structure_shift 3 (BULLISH_BOS) at sma_distance_pct 7.36, day_vol 1.15. Caution: div_state BEARISH, div_bear_count 1 (advisory only).",
+   "fields_cited": ["structure", "mp_state", "mp_accel_state", "structure_shift", "sma_distance_pct", "day_vol", "div_state", "div_bear_count", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 86.3, structure_shift 3 (BULLISH_BOS), sma_distance_pct 7.36, rank 54", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING) resuming, day_vol 1.15; ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C7", "C3"], "observed": "adx NOT_SERVED (mp_state proxy); pullback depth via sma_distance_pct 7.36; div_state BEARISH, div_bear_count 1 noted as advisory", "verdict": "partial", "fields": ["mp_state", "sma_distance_pct", "div_state", "div_bear_count"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; no structural level served; reference bracket.atr_fallback_stop 64.97 (1xATR, not structural)", "verdict": "partial", "fields": ["bracket", "bracket.valid"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 64.97, or div_bear_count rising while structure_shift turns 2 (BEARISH_CHOCH), means the resumption failed."
+  },
+  {
+   "ticker": "STAG",
+   "reason": "TEST/BREAKOUT near support (C2/C20): structure_shift 3 (BULLISH_BOS) just off the average at sma_distance_pct 2.02, so invalidation sits close to the trigger; mp_accel_state 1 (ACCELERATING), day_vol 1.32, structure 75.8. Approximated, not a literal Turtle Soup.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "mp_accel_state", "day_vol", "structure", "elder_pattern", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 75.8, structure_shift 3 (BULLISH_BOS), sma_distance_pct 2.02, rank 73", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C20", "C12"], "observed": "break from near the average: mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING), day_vol 1.32; elder_pattern 1 (ACCELERATION) advisory", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C3", "C12"], "observed": "n-day extreme via sma_distance_pct 2.02 + structure_shift; bar_range_history NOT_SERVED; atr_14d 0.65, atr_caution False", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "atr_14d", "atr_caution"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; no structural level served; reference bracket.atr_fallback_stop 36.84 (1xATR, not structural)", "verdict": "partial", "fields": ["bracket", "bracket.valid"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 36.84 — back under the average it just broke from — means the test failed."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "KEEP", "line": "Trend intact: structure 76.8, structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); sma_distance_pct 11.27 is not parabolic, so no C19 exit. bracket.valid False; trail under bracket.atr_fallback_stop 417.86 (1xATR reference)."},
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "Up-structure failed: structure_shift 2 (BEARISH_CHOCH), structure 33.0, sma_distance_pct -19.28, mp_state 2 (FADING); fits none of my four long setups (C2), and minimising time in the market (C18) argues out. Reference bracket.atr_fallback_stop 36.03."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Absent from every packet row; the range-contraction read for breakout setups (C12/C13) rests only on atr_14d/atr_caution/day_vol proxies for COST, RYAN and STAG."},
+  {"field": "structure_shift_ref", "impact": "Absent; where bracket.valid is False (ETR, RYAN, MDLZ, STAG, V, MP) I cannot name the exact swing extreme for a C17 stop, only the 1xATR bracket.atr_fallback_stop reference."},
+  {"field": "rank", "impact": "Null for held MP; cannot place it in today's ranking in the held review."},
+  {"field": "atr_caution", "impact": "Null for held MP; volatility caution for the held review unread."},
+  {"field": "lens", "impact": "Null for held MP; no lens read for the held review."}
+ ],
+ "declarations": [
+  "setup_type per nomination (C2): ETR retracement, FE retracement, MDLZ retracement, COST breakout, RYAN breakout, STAG test/breakout",
+  "adx: NOT_SERVED (C7, C8) - mp_state/mp_accel_state used as proxy only; an adx_14 column appears in the packet but is not on my data menu and was not read",
+  "stochastic_kd: NOT_SERVED (C6)",
+  "n_day_extreme: sma_distance_pct + structure_shift (substitute, C3/C4)",
+  "bar_range_history: NOT_SERVED (C12, C13)",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16)",
+  "climax: no visual climax pattern called from a composite score (C10, R9); heavily extended ABOVE_STRUCTURE names were not treated as setups",
+  "structure_shift 1 (ABOVE_STRUCTURE) has no definition in my field glossary; I read it only as 'not a fresh break' and nominated none on it",
+  "ledger memory: no voice_memory block was injected this run; no standing lesson applies",
+  "House rule R1 observed: bracket fields are stated as information and invalidation levels only, never as a reason for or against a name"
+ ],
+ "shortfall_reason": null
+}

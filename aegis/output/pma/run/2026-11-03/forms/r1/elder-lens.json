@@ -1,0 +1,129 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-03",
+ "round": 1,
+ "universe_file": "packets/elder-lens.tsv",
+ "nominations": [
+  {
+   "ticker": "EVRG",
+   "reason": "Red giving way: elder_5d [10, 6, 6, 6, 10] is the permission event on the last bar after three unresolved bars (C3/C4), and elder_pattern CORRECTION_REENTRY with mp_state STRONG is the menu-legal dip-and-reclaim (R8, incomplete: no volume half). Rising-average leg unverifiable.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 on the last bar (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [10, 6, 6, 6, 10]: last >=7, prior <=6; elder_pattern CORRECTION_REENTRY, mp_state STRONG (R8)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "no slope field on menu; pattern not INTERRUPTED; structure_shift ABOVE_STRUCTURE, choch_state BULLISH (R11 clear)", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 83.12 vs entry 86.55 (entry sits above the average, not under it)", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "10,6,6,6,10 - permission event on last bar, pattern CORRECTION_REENTRY, mp STRONG (mp 94.0)", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or elder back to 6 or under next session, or a close under ma_20 83.12 (my named value-zone invalidation; stop moves up only, C18)."
+  },
+  {
+   "ticker": "FE",
+   "reason": "elder_5d [6, 6, 9, 6, 10]: ban lifted again on the last bar after a one-bar dip back to unresolved (C3/C4); elder_pattern CORRECTION_REENTRY with mp_state STRONG is the R8 dip-and-reclaim analogue (incomplete). Trend slope unverifiable; structure intact.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [6, 6, 9, 6, 10]: last >=7, prior 6; elder_pattern CORRECTION_REENTRY, mp_state STRONG (R8)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "no slope field on menu; pattern not INTERRUPTED; structure_shift BULLISH_BOS, choch_state BULLISH (R11 clear)", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 45.79 vs entry 47.63", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "6,6,9,6,10 - permission event on last bar, pattern CORRECTION_REENTRY, mp STRONG (mp 78.0)", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or a return to 6 or under next session, or a close under ma_20 45.79 (my named value-zone invalidation)."
+  },
+  {
+   "ticker": "SO",
+   "reason": "elder_5d [7, 7, 6, 6, 10]: two unresolved bars then the ban lifts on the last bar (C3/C4 permission event) with mp_state STRONG. elder_pattern null, so R8 cannot be read; rising-average leg unverifiable on my menu; structure not broken.",
+   "fields_cited": ["elder", "elder_5d", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 6, 6, 10]: last >=7, prior 6; elder_pattern null (R8 not evaluable)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "no slope field on menu; elder_pattern null; structure_shift ABOVE_STRUCTURE, choch_state BULLISH (R11 clear)", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 90.16 vs entry 94.61", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "7,7,6,6,10 - permission event on last bar, pattern null, mp STRONG (mp 97.0)", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or elder back to 6 or under next session, or a close under ma_20 90.16 (my named value-zone invalidation)."
+  },
+  {
+   "ticker": "CMS",
+   "reason": "elder_5d [7, 6, 6, 6, 10]: three unresolved bars, then the ban lifts on the last bar (C3/C4 permission event), mp_state STRONG, structure BULLISH_BOS. elder_pattern null so R8 unread; rising-average leg unverifiable on my menu.",
+   "fields_cited": ["elder", "elder_5d", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 6, 6, 6, 10]: last >=7, prior 6; elder_pattern null (R8 not evaluable)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "no slope field on menu; elder_pattern null; structure_shift BULLISH_BOS, choch_state BULLISH (R11 clear)", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 67.83 vs entry 70.76", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "7,6,6,6,10 - permission event on last bar, pattern null, mp STRONG (mp 78.0)", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or elder back to 6 or under next session, or a close under ma_20 67.83 (my named value-zone invalidation)."
+  },
+  {
+   "ticker": "BRK-B",
+   "reason": "elder_5d [7, 6, 6, 6, 9]: ban lifts on the last bar after three unresolved bars (C3/C4 permission event), mp_state STRONG, structure BULLISH_BOS. Last reading elder 9.0, not a pinned plateau. elder_pattern null; rising-average leg unverifiable.",
+   "fields_cited": ["elder", "elder_5d", "mp_state", "mp"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 9.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 6, 6, 6, 9]: last >=7, prior 6; elder_pattern null (R8 not evaluable)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "no slope field on menu; elder_pattern null; structure_shift BULLISH_BOS, choch_state BULLISH (R11 clear)", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 531.67 vs entry 556.11", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "7,6,6,6,9 - permission event on last bar, pattern null, mp STRONG (mp 97.0)", "verdict": "pass", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or elder back to 6 or under next session, or a close under ma_20 531.67 (my named value-zone invalidation)."
+  },
+  {
+   "ticker": "PG",
+   "reason": "elder_5d [6, 6, 6, 6, 10]: four unresolved bars then the ban lifts on the last bar (C3/C4 permission event), mp_state STRONG. Held to 2: structure_shift RANGE reads a flat channel, where Elder warns against entering at the average (C12); pattern null.",
+   "fields_cited": ["elder", "elder_5d", "mp_state", "mp"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0 (>=7, not red)", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [6, 6, 6, 6, 10]: last >=7, prior 6; elder_pattern null (R8 not evaluable)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C12"], "observed": "no slope field on menu; structure_shift RANGE (flat, not a rising trend), choch_state BULLISH", "verdict": "partial", "fields": ["elder_pattern", "structure_shift", "choch_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C15"], "observed": "bracket off menu; own invalidation = value-zone MA ma_20 157.04 vs entry 163.56", "verdict": "partial", "fields": ["ma_20", "entry"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "6,6,6,6,10 - permission event on last bar, pattern null, mp STRONG (mp 97.0); range structure tempers it", "verdict": "partial", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A single-bar drop in elder_5d or elder back to 6 or under next session, or a close under ma_20 157.04 (my named value-zone invalidation)."
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "MP",
+   "verdict": "EXIT-CASE",
+   "line": "elder 2.0 is the unresolved 2-6 band, so permission to be long is not proven (C3); elder_5d null so no transition or drop can be read; mp_state FADING with mp 0.0 and held_book.hl_state EXIT. No Elder case to stay; stop never lowered (C18)."
+  },
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "elder 10.0, elder_5d [6, 6, 9, 9, 10]: no single-bar drop (last 10 >= prior 9), so R7 does not fire; elder_pattern ACCELERATION, mp_state STRONG (mp 97.0). Approaching a pinned summer read (C20) - tighten on the first bar that drops."
+  }
+ ],
+ "data_gaps": [
+  {"field": "elder_5d", "impact": "null on held MP: R7 single-bar-drop test and any transition read cannot be evaluated; held review rests on elder 2.0 and mp_state alone."},
+  {"field": "elder_pattern", "impact": "null on MP and on nominees SO, CMS, BRK-B, PG: R8 (CORRECTION_REENTRY + STRONG) cannot be evaluated for them, so they rest on the elder_5d permission event alone."},
+  {"field": "impulse_colour (R1/R2), force_index_ema_2/13 (R3/R4), channel_upper (R5), weekly_trend_direction (R6)", "impact": "Not served by the engine: true colour veto, true transition, Elder's force buy trigger, per-name regime, channel wall and weekly first screen are all unread; the elder >=7 / <=6 decode is a proxy. Step 3 trend leg is partial on every name."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected for this run; no standing lesson applies.",
+  "Censor duty (C1/C3): RBRK elder 0.0 (elder_5d [10, 10, 7, 5, 0]) and TEAM elder 0.0 (elder_5d [7, 7, 0, 0, 0]) are red - buying is forbidden on both while the bar is red, whoever nominates them.",
+  "Off-menu recogniser fields read for disclosure only, per canon R9/R11 (packet-served): ma_20 and entry to name my own invalidation level (C10/C18), structure_shift and choch_state to suppress broken-structure longs (R11). Permission-event names suppressed on R11 include INTU, JPM, CLX, XLF, AXP, REG, HBAN, O, TROW, SRAD, WSBC, PCG.",
+  "Permission-event names failed on step 3 because elder_pattern reads INTERRUPTED include DG, ADP, ZTS, CTAS, WM, IFF, UL, DIS, BUD, SHW, AXTA.",
+  "Permission events with CORRECTION_REENTRY but mp_state BUILDING/FADING (R8 not met) were read and left: SFNC, EPRT, SYF, PFG, ITW, WFC, HON, COLD, RJF, FHN, CP. Bracket fields were not read and played no part in any selection (R1)."
+ ],
+ "shortfall_reason": null
+}

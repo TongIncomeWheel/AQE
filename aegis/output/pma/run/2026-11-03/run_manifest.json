@@ -4,7 +4,50 @@
  "degradations": [],
  "flags": [],
  "run_id": "pma-2026-11-03",
- "seats": {},
+ "seats": {
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "0cc1a14a06c4e321797563b2bf306a1b6509ef06d0fe7d8579d1653229bebd19",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "2eb75e8ab460ab90ea86012c805a8225a20844b526455c56b8348260cd0ce24b",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "ad1015ea63a4d0a84c82341502245d353482aa2bb35feeddbcf68bdf6556a8b7",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "9fd16bdcc42510e68eb2b7e6dfec116ba5224ca8f8bd66ad071090d55f9efaba",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "760b07659758d10bb86fedf75c57722a2dd81be590250b08f60858f40e3bf283",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "2658e3533b26e9411264b7531d7284d2afa5bb2bdd17a66aaa7cc5a0227d706e",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "690349c25bfb0e2d6f4d1d7f3e1b9517ee263ebd84424511d1ce7dcbbeee0a47",
+   "status": "committed"
+  }
+ },
  "steps": {
   "GATHER": {
    "cost": {
@@ -53,6 +96,29 @@
    ],
    "started": "2026-11-03T00:21:09Z",
    "status": "in_flight",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 1282036,
+    "returned_bytes": 220486,
+    "spawns": 7
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "0cc1a14a06c4e321797563b2bf306a1b6509ef06d0fe7d8579d1653229bebd19",
+    "forms/r1/livermore.json": "2eb75e8ab460ab90ea86012c805a8225a20844b526455c56b8348260cd0ce24b",
+    "forms/r1/minervini.json": "ad1015ea63a4d0a84c82341502245d353482aa2bb35feeddbcf68bdf6556a8b7",
+    "forms/r1/oneil.json": "9fd16bdcc42510e68eb2b7e6dfec116ba5224ca8f8bd66ad071090d55f9efaba",
+    "forms/r1/raschke.json": "760b07659758d10bb86fedf75c57722a2dd81be590250b08f60858f40e3bf283",
+    "forms/r1/seow.json": "2658e3533b26e9411264b7531d7284d2afa5bb2bdd17a66aaa7cc5a0227d706e",
+    "forms/r1/wyckoff.json": "690349c25bfb0e2d6f4d1d7f3e1b9517ee263ebd84424511d1ce7dcbbeee0a47"
+   },
+   "finished": "2026-11-03T00:27:37Z",
+   "notes": [
+    "7/7 validated OK (flags: BRACKET_MENTION UPS, FE, COST - informational under R1); actual tokens: oneil 258,950 minervini 224,773 livermore 181,257 elder-lens 183,052 seow 225,795 raschke 187,366 wyckoff pending"
+   ],
+   "started": "2026-11-03T00:27:36Z",
+   "status": "done",
    "tokens": 0
   },
   "PREPARE": {
