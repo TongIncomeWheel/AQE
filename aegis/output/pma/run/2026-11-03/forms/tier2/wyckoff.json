@@ -1,0 +1,155 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-03",
+ "answers": [
+  {
+   "pair_id": "CHD-wyckoff-for~oneil",
+   "ticker": "CHD",
+   "to": "oneil",
+   "text": "\"break came on day_vol 1.34, under the 1.40 bar\" - 1.40 is O'Neil's line, not my test. My C5/R3 test: rvol_20d >= 1.0 = genuine-looking break; R6 sign-of-strength needs >= 1.2. rvol_20d 1.31 clears both. H1 96% of the day's range = top-third close; W 9>21, HH/HL, 0.7% under 20-wk high = weekly frame up (C16). Lens coil is another engine's read. The break stands until a daily close back under the Creek.",
+   "concede": false
+  },
+  {
+   "pair_id": "KO-wyckoff-for~oneil",
+   "ticker": "KO",
+   "to": "oneil",
+   "text": "\"new-high break came on day_vol 1.26, under 1.40\" - my R3 test is rvol_20d >= 1.0, R6 >= 1.2: 1.26 clears both, a modest-volume caution I already filed, not an upthrust. H1 81% of the day's range keeps the close in the top third; D HH/HL, 0.5% under 20-day high; W 9>21. Sector rank is not a Wyckoff test. I am wrong on a daily close back under structure_shift_ref 95.37.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:vwap_14d", "tf": "H1", "plain": "Wait for a pull-in under the 14-day VWAP, then buy an hourly close back above it"},
+   "wrong_if": "Daily close below structure_shift_ref (the old Creek), or a bearish CHoCH",
+   "market_void": null,
+   "reason": "TREND away from value (ABOVE_STRUCTURE): W and D HH/HL, 0.9% under the 20-bar high. Demand in control (C9) but I do not chase extension (C3, C15); join on the corrective wave into value."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high - follow-through required, no resting limit"},
+   "wrong_if": "Daily close back under structure_shift_ref 108.93 (failed break, C11)",
+   "market_void": null,
+   "reason": "TREND at the test: fresh break at the Creek on rvol_20d 1.31, close at 96% of the day's range; W 9>21, HH/HL, 0.7% under 20-wk high. A genuine-looking break by C5/R3; refutation answered on my own test."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:vwap_14d", "tf": "H1", "plain": "Wait for the first pullback under the 14-day VWAP, then buy an hourly close back above it"},
+   "wrong_if": "Daily close below structure_shift_ref, or a bearish CHoCH",
+   "market_void": null,
+   "reason": "High-volume impulse, ABOVE_STRUCTURE, 1.7% under the 20-bar high on W and D. C7 allows the first pullback after such an impulse; I wait for it (C15)."
+  },
+  {
+   "ticker": "MA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:vwap_14d", "tf": "H1", "plain": "Wait for a test of the 14-day VWAP, then buy an hourly close back above it"},
+   "wrong_if": "Daily close below structure_shift_ref, or a bearish CHoCH",
+   "market_void": null,
+   "reason": "TREND away from value: D HH/HL, 0.5% under the 20-day high; H1 LH/LL is a minor pause, not yet the test. Do not chase (C3, C15)."
+  },
+  {
+   "ticker": "PFE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a daily top-third close on volume, buy an hourly close above that day's high"},
+   "wrong_if": "Daily close back under structure_shift_ref (failed break)",
+   "market_void": null,
+   "reason": "Fresh break at the pivot, D HH/HL, W 9>21; but H1 60% of the day's range is no sign-of-strength close (C12). At the test, trigger not yet given: wait for the SOS bar."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:vwap_14d", "tf": "H1", "plain": "Wait for a corrective wave under the 14-day VWAP, then buy an hourly close back above it"},
+   "wrong_if": "Daily close below structure_shift_ref, or a bearish CHoCH",
+   "market_void": null,
+   "reason": "High-volume TREND at the high, ABOVE_STRUCTURE; H1 LH/LL is the first pause. The move left without me (C15): enter on the test of value."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high"},
+   "wrong_if": "Daily close back under pivot_high 271.27",
+   "market_void": null,
+   "reason": "TREND near the test: ABOVE_STRUCTURE about one ATR over the pivot (C7 zone); W and D HH/HL, 0.9% under the 20-bar high, expanding volume. Entry by buy stop (C12)."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pull-in to the broken pivot (structure_shift_ref), buy an hourly close above the prior day's high"},
+   "wrong_if": "Daily close below structure_shift_ref, or a bearish CHoCH",
+   "market_void": null,
+   "reason": "Effort with result: H1 99% of the day's range, W HH/HL, 0.3% under 20-wk high. Over one ATR past the pivot (R2): hold for the test of the Creek."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high - follow-through required"},
+   "wrong_if": "Daily close back under structure_shift_ref 95.37 (failed break, C11)",
+   "market_void": null,
+   "reason": "TREND at the test: fresh break on the Creek, rvol_20d 1.26, H1 81% of the day's range; D HH/HL, 0.5% under 20-day high; W 9>21. Modest volume a caution, not a fail."
+  },
+  {
+   "ticker": "VRTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pull-in to the broken pivot (structure_shift_ref), buy an hourly close above the prior day's high"},
+   "wrong_if": "Daily close below structure_shift_ref, or a bearish CHoCH",
+   "market_void": null,
+   "reason": "W 9>21, HH/HL holds the trend, but D red bar, H1 below EMA9 at 40% of the day's range: effort without result near the high (C5). Hold for a test and an SOS bar."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high"},
+   "wrong_if": "Daily close back under structure_shift_ref",
+   "market_void": null,
+   "reason": "TREND near the test: within one ATR of the pivot (C7); W and D HH/HL, 0.6% under the 20-bar high; H1 87% of the day's range on above-average volume."
+  },
+  {
+   "ticker": "CCEP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high, ideally on above-normal volume"},
+   "wrong_if": "Daily close back under pivot_high 114.55",
+   "market_void": null,
+   "reason": "Fresh break at the pivot (C7 test zone); D HH/HL, 0.4% under 20-day high; W 9>21; H1 74% of the day's range. Volume just under my stand-in: a caution."
+  },
+  {
+   "ticker": "BRK-B",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above yesterday's high"},
+   "wrong_if": "Daily close back under structure_shift_ref",
+   "market_void": null,
+   "reason": "Fresh break at the high, H1 97% of the day's range = sign-of-strength shape; W and D HH/HL, 0.3% under the 20-bar high; very liquid (C16)."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Held: add only after a pull-in to the old Creek (structure_shift_ref), on an hourly close above the prior day's high"},
+   "wrong_if": "Daily close below structure_shift_ref (the danger point), or a bearish CHoCH",
+   "market_void": null,
+   "reason": "Held, KEEP: TREND intact, D HH/HL, 0.3% under 20-day high, H1 89% of the day's range. Extended from the Creek: no add until the test (C15)."
+  }
+ ],
+ "declarations": [
+  "Memory: no ledger memory block injected; no standing lesson applies.",
+  "No stance, timing or wrong_if rests on any bracket field (R1); Valen flags are not cited as a reason (R41).",
+  "market_void is null on every name: my method has no market-level kill condition.",
+  "Not served: successive value areas and HVN/LVN beyond the 60-day profile (R11); C5's hold outside the range over several bars is not visible on a one-row read.",
+  "WAIT names carry the test in plain words (pull-in to vwap_14d or structure_shift_ref); the one trigger is the entry after it (R2, C12)."
+ ]
+}
