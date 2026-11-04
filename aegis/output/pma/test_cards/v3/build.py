@@ -221,9 +221,12 @@ hb_svg = (f'<svg class="viz" width="100%" height="{PH+PT+22}" role="img" aria-la
     + f'<text x="0" y="{PH+PT+18}" class="t13" fill="var(--text-2)">{datetime.strptime(ser["dates"][-n], "%Y-%m-%d"):%-d %b %Y}</text>'
     + f'<text x="100%" y="{PH+PT+18}" text-anchor="end" class="t13" fill="var(--text-2)">{d(ser["dates"][-1])}</text></svg>')
 c_hb = card(f"The average stock is beating the index: breadth has been broadening for {hb['days_in_this_regime']} days.",
-    hb_svg + f'<div class="chips"><span>5 days {sg(hb["change_5d_pct"],1)}%</span><span>20 days {sg(hb["change_20d_pct"],1)}%</span>'
+    hb_svg + f'<div class="legend"><span><i class="sw" style="background:{CLAY}"></i>Equal-weight S&amp;P &divide; size-weighted S&amp;P (RSP/SPY)</span><span><i class="sw" style="background:var(--bar)"></i>Its 20-day average</span></div>'
+             + f'<div class="chips"><span>5 days {sg(hb["change_5d_pct"],1)}%</span><span>20 days {sg(hb["change_20d_pct"],1)}%</span>'
              f'<span>60 days {sg(hb["change_60d_pct"],1)}%</span><span>confidence {hb["confidence"]} (Crown stops under 0.40)</span></div>',
-    f"Falling back under its 20-day average, now {abs(ma_now['distance_pct'])}% below, is the first sign breadth is narrowing again.",
+    (f"The line is {abs(ma_now['distance_pct'])}% above its 20-day average ({ma_now['level']:.4f}); falling back under it would be the first sign breadth is narrowing again."
+     if ma_now['distance_pct'] < 0 else
+     f"The line is {abs(ma_now['distance_pct'])}% below its 20-day average ({ma_now['level']:.4f}): breadth is narrowing again."),
     ("What this line is", "<p>The equal-weight S&amp;P 500 (every stock the same size) divided by the normal, size-weighted S&amp;P 500. "
      "Rising means the average stock keeps up with the giants: a broad market. Crown reads this first; if it cannot read it, nothing else is used.</p>"))
 
@@ -241,6 +244,9 @@ c_cta = card(f"Trend funds are neutral; they turn sellers {abs(kl('Dow flip')['d
      f"{tf['markets_read']} futures markets to find the price where each one flips them. Those lines are where moves can speed up. "
      "The size dial is Crown&rsquo;s multiplier on your own normal risk: 1.00 means no change.</p>"))
 
+def ordn(x):
+    n = int(round(x)); suf = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suf}"
 vk = {k["what"]: k for k in KL if k["kind"] == "volatility"}
 calm, elev = vk["Single-stock vs index gap — calm band"]["level"], vk["Single-stock vs index gap — elevated band"]["level"]
 ic = next(k for k in KL if k["kind"] == "correlation")
@@ -252,8 +258,8 @@ c_vol = card(f"VIX at {vol['vix']} is higher than {vix_pct}% of the past two yea
                      (calm, f"Calm under {calm}", GRAY, 1), (elev, f"Elevated over {elev:.2f}", "var(--watch)", 1)],
             bands=[(calm, elev, "var(--soft)")], label="Volatility gap")
     + f'<div class="chips"><span>gap wider than {vol["gap_vs_history"]*100:.0f}% of history</span><span>{sg(vol["gap_change_20d"])} in 20 days</span>'
-      f'<span>implied correlation {vol["implied_correlation"]} ({ic["now"]:.0f}th percentile)</span><span>curve {vol["term_structure"].lower()}</span></div>',
-    f"The index is not quiet, the gap is normal but rising, and the other two gauges disagree with it, so hold this read loosely. Data as of {d(CR['how_current']['volatility_as_of'])}.",
+      f'<span>implied correlation {vol["implied_correlation"]} ({ordn(ic["now"])} percentile)</span><span>curve {vol["term_structure"].lower()}</span></div>',
+    f"The index is not quiet and the gap is rising, but two other gauges of how differently stocks move (Cboe's dispersion index and implied correlation) do not confirm the gap, so treat that read with caution. Committee-time data, dated {d(CR['how_current']['volatility_as_of'])}.",
     ("What these are", f"<p>VIX is the expected 30-day swing of the S&amp;P 500, read from options. Single-stock volatility ({vol['single_stock_vol']}) is the same for the average large stock. "
      "A wide gap means risk and opportunity sit in single names, not the index. Implied correlation is how much stocks are expected to move together; "
      "low means stock picking pays. Contango, near-term cheaper than longer-term, is the normal shape.</p>"))
@@ -299,8 +305,8 @@ c_cal = card(f"{len(shown_ev)} scheduled US data releases land before 11 Nov; cl
 
 COTN = {"NQ": "Nasdaq-100", "RTY": "Russell 2000", "ZF": "5-year Treasury", "ZT": "2-year Treasury", "CL": "Crude oil", "NG": "Natural gas", "SI": "Silver"}
 cot = V["crown_cockpit"]["cot"]; cm = RC["cot"]["markets"]
-cot_rows = [(f"{COTN[c]} &middot; crowded long", f"{cm[c]['percentile']*100:.0f}th percentile", cm[c]["percentile"] * 100, CLAY if c in ("NQ", "RTY") else GRAY) for c in cot["crowded_long"]] \
-         + [(f"{COTN[c]} &middot; crowded short", f"{cm[c]['percentile']*100:.0f}th percentile", cm[c]["percentile"] * 100, GRAY) for c in cot["crowded_short"]]
+cot_rows = [(f"{COTN[c]} &middot; crowded long", f"{ordn(cm[c]['percentile']*100)} percentile", cm[c]["percentile"] * 100, CLAY if c in ("NQ", "RTY") else GRAY) for c in cot["crowded_long"]] \
+         + [(f"{COTN[c]} &middot; crowded short", f"{ordn(cm[c]['percentile']*100)} percentile", cm[c]["percentile"] * 100, GRAY) for c in cot["crowded_short"]]
 c_cot = card("Big speculators are crowded long Nasdaq and small caps, and crowded short crude, gas and silver.",
     hbars(cot_rows, 0, 100, "Speculator positioning percentile vs 3 years", guides=((15, ""), (85, ""))),
     f"Crowding is fuel for a fast drop if a flip line breaks, never a timing signal. Report as of {d(cot['as_of'])}; the next one is out {d(nxt)}.",
