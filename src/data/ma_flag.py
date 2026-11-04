@@ -161,7 +161,7 @@ def load_cache(path: Path | None = None) -> dict:
         return {}
 
 
-def refresh(tickers, client, today: date | None = None, cache_path: Path | None = None, names: dict | None = None) -> dict:
+def refresh(tickers, client, today: date | None = None, cache_path: Path | None = None, names: dict | None = None, breaker: bool = True) -> dict:
     """Scan every ticker once per day (cache per ticker per day). Returns the artifact:
     {asof, window_days, scan_status: ok|partial|failed, n_scanned, n_failed, n_flagged, failed[], tickers{tk: flag}}.
     A ticker whose fetch failed carries ma_status UNKNOWN; if more than 10% fail the scan is `partial` (loud in data_quality)."""
@@ -185,10 +185,21 @@ def refresh(tickers, client, today: date | None = None, cache_path: Path | None 
             failed.append(tk)
             out[tk] = {"ma_status": "UNKNOWN", "ma_note": f"M&A scan failed: {e.__class__.__name__}", "ma_evidence": None}
     n = len(out)
+    # CIRCUIT BREAKER (conductor/PM 2026-11-04): R44 excludes a name from ADVANCE, so a scan that deal-pins more than max(5, 3%) of the names is a
+    # broken classifier, not a market with that many takeovers. Treat the whole scan as FAILED: every name UNKNOWN, R44 not applied, loud banner. Never a mass exclusion.
+    n_target = sum(1 for v in out.values() if v.get("ma_status") == "PENDING_TARGET")
+    limit = max(5, int(0.03 * n))
+    reason = None
+    if breaker and n_target > limit:
+        reason = f"circuit breaker: {n_target} names read as pending takeover targets (limit {limit} of {n} scanned); the scan is withheld, no name is deal-pinned"
+        out = {tk: {"ma_status": "UNKNOWN", "ma_note": "M&A scan withheld by the circuit breaker (too many target flags)", "ma_evidence": None} for tk in out}
+        failed = sorted(out)
     status = "ok" if not failed else ("failed" if len(failed) == n else ("partial" if len(failed) / max(n, 1) > 0.10 else "ok"))
     art = {"asof": today.isoformat(), "window_days": WINDOW_DAYS, "scan_status": status, "n_scanned": n, "n_failed": len(failed),
            "n_flagged": sum(1 for v in out.values() if str(v.get("ma_status", "")).startswith("PENDING")),
            "failed": failed[:50], "tickers": out}
+    if reason:
+        art["scan_status"], art["reason"], art["n_flagged"] = "failed", reason, 0
     try:
         Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
         Path(cache_path).write_text(json.dumps(art, indent=1), encoding="utf-8")

@@ -152,3 +152,25 @@ def test_dry_run_noise_of_4_nov_never_flags_and_loose_language_never_deal_pins()
     assert M.classify("YUM", "Yum Brands", [loose], today=date(2026, 11, 4))["ma_status"] != "PENDING_TARGET"
     real = {"publishedDate": "2026-11-02", "title": "As Roku's Merger With Fox Clears More Hurdles, Streaming Provider Delivers Strong Q3 Results.", "text": "", "url": "u"}
     assert M.classify("ROKU", "Roku, Inc.", [real], today=date(2026, 11, 4))["ma_status"] == "PENDING_TARGET"
+
+
+def test_the_circuit_breaker_fails_the_scan_instead_of_mass_deal_pinning(tmp_path):
+    from datetime import date
+    class Many:
+        """Every ticker's news reads as a pending takeover of that ticker: a broken classifier."""
+    def fake_fetch(client, tk, today):
+        return [{"publishedDate": "2026-11-01", "title": f"Fox will acquire {tk}", "text": f"Definitive agreement under which Fox will acquire {tk}. In light of the pending transaction, {tk} will not host a call.", "url": "u"}]
+    orig = M.fetch_items
+    M.fetch_items = fake_fetch
+    try:
+        tks = [f"T{i}" for i in range(20)]
+        names = {t: f"T{i} Corp" for i, t in enumerate(tks)}
+        art = M.refresh(tks, Many(), today=date(2026, 11, 4), cache_path=tmp_path / "c.json", names=names)
+        assert art["scan_status"] == "failed" and "circuit breaker" in art["reason"] and art["n_flagged"] == 0
+        assert all(v["ma_status"] == "UNKNOWN" for v in art["tickers"].values())
+        raw = M.refresh(tks, Many(), today=date(2026, 11, 5), cache_path=tmp_path / "d.json", names=names, breaker=False)
+        assert sum(v["ma_status"] == "PENDING_TARGET" for v in raw["tickers"].values()) == 20
+        few = M.refresh(tks[:3], Many(), today=date(2026, 11, 6), cache_path=tmp_path / "e.json", names=names)
+        assert few["scan_status"] == "ok" and few["n_flagged"] == 3          # a handful of real targets is within the limit
+    finally:
+        M.fetch_items = orig
