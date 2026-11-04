@@ -223,6 +223,26 @@ def run_crown(*, client=None, refresh_cot: bool = True,
         "cot": {"as_of": cot_read.get("as_of"),
                 "weeks_stale": cot_read.get("weeks_stale")},
     }
+    # per-series dates (2026-11-04): 'volatility' above is the DISPERSION read (VIX minus VIXEQ), which waits for VIXEQ; each
+    # series' own last date is what says which publisher is behind
+    freshness["volatility_series"] = {}
+    for _k in ("vix", "vixeq", "vix3m", "vix9d", "dspx", "cor1m"):
+        try:
+            _d = feeds.last_date(vixes.get(_k))
+            freshness["volatility_series"][_k] = _d.date().isoformat() if _d is not None else None
+        except Exception:  # noqa: BLE001
+            freshness["volatility_series"][_k] = None
+    try:
+        from src.macro import legs as _legs
+        from src.data.sessions import last_completed_session as _lcs
+        _exp = str(_lcs())
+        freshness["expected_session"] = _exp
+        freshness["legs_table"] = _legs.build_legs(
+            _exp, today, vol_series=freshness["volatility_series"], cot_as_of=cot_read.get("as_of"),
+            heartbeat_asof=min(v.get("as_of") or "" for v in freshness["heartbeat"].values()) or None,
+            cboe_ok=bool(vixes.get("source") == "cboe"))
+    except Exception as _e:  # noqa: BLE001
+        freshness["legs_table_error"] = str(_e)
     dates = [freshness["heartbeat"][k]["as_of"] for k in freshness["heartbeat"]]
     dates += [v.get("as_of") for v in fut_sources.values()]
     dates += [freshness["volatility"]["as_of"]]

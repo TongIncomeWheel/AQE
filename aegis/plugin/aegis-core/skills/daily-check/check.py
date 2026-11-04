@@ -585,6 +585,33 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
     return fails, notes, report
 
 
+def check_macro_legs(VA, FT):
+    """Every macro leg with its REASON CODE (PM 2026-11-04). FAIL: OUR_BUDGET / SOURCE_DOWN (we are slow or the source is down: the
+    committee would vote on stale weather), a missing table (a leg that cannot be audited is not passed), and ANY leg behind two
+    nights running whatever the reason. WARN with the code: PUBLISHER_LAG; PUBLISHER_CADENCE is a plain note."""
+    fails, notes = [], []
+    legs = ((VA or {}).get("data_freshness") or {}).get("legs_table")
+    if VA is not None and not legs:
+        fails.append("aqe_valen_dashboard carries no data_freshness.legs_table -- the macro legs cannot be audited (reason codes missing)")
+    for r in legs or []:
+        rc = r.get("reason")
+        if rc in ("OUR_BUDGET", "SOURCE_DOWN"):
+            fails.append(f"macro leg {r.get('leg')} as of {r.get('as_of')} vs {r.get('expected')}: {rc} -- {r.get('detail')}")
+        elif rc == "PUBLISHER_LAG":
+            notes.append(f"WARN macro leg {r.get('leg')} as of {r.get('as_of')} vs {r.get('expected')}: PUBLISHER_LAG -- {r.get('detail')}")
+        elif rc == "PUBLISHER_CADENCE":
+            notes.append(f"macro leg {r.get('leg')} as of {r.get('as_of')}: PUBLISHER_CADENCE -- {r.get('detail')}")
+    hist = [h for h in (FT or {}).get("history") or [] if h.get("legs")]
+    if len(hist) >= 2:
+        for cur in hist[-1]["legs"]:
+            if cur.get("reason") in ("CURRENT", "PUBLISHER_CADENCE"):
+                continue
+            prev = next((x for x in hist[-2]["legs"] if x.get("leg") == cur.get("leg")), None)
+            if prev and prev.get("reason") not in ("CURRENT", "PUBLISHER_CADENCE"):
+                fails.append(f"macro leg {cur.get('leg')} has been behind two nights running ({prev.get('reason')} then {cur.get('reason')}) -- someone must own this leg's freshness")
+    return fails, notes
+
+
 def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_stops=None, voice_contract=DEFAULT_VOICE_CONTRACT):
     """THE HANDOFF GATE (PM 2026-11-01: 'before we run PMA we need the data agent to check data delivery and
     integrity from AQE to voices handoff'). Everything the seats will read, proven consistent with each other
@@ -707,6 +734,8 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
             notes.append(f"Crown status {CR.get('status')} (degraded input declared, not a block)")
         if not (CR.get("the_call") and CR.get("read_me_first")):
             fails.append("aqe_crown_macro lacks the_call / read_me_first -- the vote packet's weather line would be blank")
+    mf, mn = check_macro_legs(VA, _load(os.path.join(od, "feed_timing.json"), "feed_timing.json", []))
+    fails += mf; notes += mn
     if VA is not None:
         va_as_of = (VA.get("read_me_first") or {}).get("as_of") or VA.get("as_of")
         if run_date and _date_of(va_as_of) != run_date:

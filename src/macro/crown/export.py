@@ -103,6 +103,15 @@ def build_llm_export(crown: dict, scenarios: dict | None = None) -> dict:
 
     return {
         "artifact": "aqe_crown_macro",
+        # FIRST key (PM 2026-11-04): every leg's as_of vs the expected session with a REASON CODE, so 'stale because we are
+        # slow' (OUR_BUDGET / SOURCE_DOWN) reads differently from 'stale because the publisher is' (PUBLISHER_LAG / PUBLISHER_CADENCE)
+        "data_legs": {"expected_session": (crown.get("freshness") or {}).get("expected_session"),
+                      "legs": (crown.get("freshness") or {}).get("legs_table") or [],
+                      "codes": {"CURRENT": "carries the expected session",
+                                "PUBLISHER_CADENCE": "the publisher's latest release on its fixed cadence (COT: weekly, Friday)",
+                                "PUBLISHER_LAG": "the publisher has not posted the expected session yet",
+                                "OUR_BUDGET": "we could have had it and ran out of time or budget",
+                                "SOURCE_DOWN": "the source was unreachable or empty"}},
         "version": ARTIFACT_VERSION,
         "kernel_version": crown.get("kernel_version"),
         "what_this_is": (
@@ -151,6 +160,8 @@ def build_llm_export(crown: dict, scenarios: dict | None = None) -> dict:
             "newest_source": fresh.get("newest_leg"),
             "volatility_as_of": (fresh.get("volatility") or {}).get("as_of"),
             "positioning_as_of": (fresh.get("cot") or {}).get("as_of"),
+            "positioning_note": "latest published CFTC release (weekly, Friday); not counted in oldest_source",
+            "volatility_series_as_of": fresh.get("volatility_series"),
         },
 
         "scenario": {

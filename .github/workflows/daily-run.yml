@@ -35,7 +35,35 @@ permissions:
   contents: write
 
 jobs:
+  # 2026-11-04 (PM angry about stale breadth): the whole-market panel refresh is now JOB 1 of this workflow, not a manual
+  # pre-step someone can forget. It needs the close printed (16:30 ET = 05:30 SGT), so DISPATCH THIS WORKFLOW AT 05:35 SGT:
+  # panel (<= 60 min) -> nightly (~28 min) -> committee data (<= 15 min) finishes ~07:15 SGT, before the 08:20 committee.
+  # The nightly runs even if the panel job fails or is partial (`if: always()`): its strict guard then reads the breadth STALE,
+  # loudly, with the reason code OUR_BUDGET - it is never passed off as fresh and never blocks the export.
+  panel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Refresh the whole-market panel to the last completed session and persist it
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MA_REFRESH_BUDGET_S: "3600"
+        run: python -m scripts.ma_panel_run --budget-minutes 60
   run:
+    needs: panel
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     # 2026-11-03: 75 (was 45). The run is ~24-28 min; Step 8a-4 (the committee's FMP inputs) adds up to its own 15-minute
     # budget and Step 6h-1 (whole-market panel refresh for the breadth) up to its own 20-minute budget: worst case ~63 min.
