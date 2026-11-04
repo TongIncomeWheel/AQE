@@ -1,0 +1,26 @@
+name: Feed probe (publish times and plan limits)
+
+# 2026-11-04 conductor Q1/Q3/Q5: evidence, not opinion. Prints Cboe's Last-Modified per file, whether our FMP plan serves a bulk
+# end-of-day endpoint, the FMP index series for the VIX family, and the CFTC file's own report date. Writes nothing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Probe
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python scripts/probe_feeds.py 2026-11-03
