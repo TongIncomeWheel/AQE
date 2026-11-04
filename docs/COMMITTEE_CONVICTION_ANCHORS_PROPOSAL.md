@@ -1,6 +1,6 @@
 # Committee conviction 1-5 — written anchors (PROPOSAL for PM sign-off, 4 Nov 2026)
 
-**Status: DRAFT. Not wired into any seat card or form until the PM signs.** The PM said YES to written anchors (relayed by the
+**Status: SIGNED by the PM 2026-11-04 ("I agree to your conviction definition"). Wired into `contracts/ratification.schema.json` (the `conviction` x_note) and the RATIFY step's prompt instruction in RUN.yaml. NOT adopted: rule 2 (4-5 may not OBJECT) was not separately signed, so nothing enforces it; the per-seat reading table is a reading aid, not yet on the cards.** The PM said YES to written anchors (relayed by the
 conductor, 4 Nov). This file is the whole change; on sign-off it goes into `contracts/ratification.schema.json` (`x_note` on
 `conviction`) and each decider's card as one short paragraph.
 

@@ -19,7 +19,7 @@
     "properties": {
      "ticker": {"type": "string", "maxLength": 8},
      "answer": {"enum": ["AGREE", "AGREE_WITH_RESERVATION", "OBJECT"]},
-     "conviction": {"type": "integer", "minimum": 1, "maximum": 5, "x_note": "R42, REQUIRED from 2026-11-04: how strongly this decider holds the ticket, 1 (weakest) to 5 (strongest). The committee conviction is the median of the deciders' scores; a readout, never a gate."},
+     "conviction": {"type": "integer", "minimum": 1, "maximum": 5, "x_note": "R42, REQUIRED from 2026-11-04: SIGNED ANCHORS (PM 2026-11-04). Score the TICKET AS WRITTEN (name, trigger, wrong-if) in YOUR method's terms: 5 = textbook, every condition my method requires is present and confirmed, nothing I treat as a veto is in play, I can name nothing I would still want to see; 4 = strong, all required conditions present, one supporting condition missing or unconfirmed and I can name it; 3 = qualified, a conditional yes: 'yes, once X'; 2 = marginal, a fair candidate but a required condition is failing or the trigger/wrong-if is not the one my method would use; 1 = weak as written, the ticket fails what my method requires (a better-written ticket on the same name could score higher). Never a size, never a probability. The committee conviction is the median of the deciders' scores; a readout, never a gate."},
      "reservation": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on AGREE_WITH_RESERVATION"},
      "objection": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED on OBJECT: the one thing wrong with the ticket as written"},
      "would_clear": {"type": ["string", "null"], "maxLength": 200, "x_note": "REQUIRED on OBJECT: the one thing that would clear the objection"}

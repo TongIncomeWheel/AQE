@@ -528,7 +528,9 @@ steps:
     validate_with: "registrar.py validate --file <form> --kind ratify --slate slate.json"
     must_also: >
       Each decider answers EVERY ticket (contracts/ratification.schema.json): AGREE, AGREE_WITH_RESERVATION
-      (say the reservation), or OBJECT with the one thing that would clear it. Commit per form on arrival.
+      (say the reservation), or OBJECT with the one thing that would clear it. Paste the SIGNED conviction anchors (PM 2026-11-04) from
+      the `conviction` x_note in ratification.schema.json into every RATIFY prompt: 5 textbook / 4 strong, one supporting thing missing /
+      3 a conditional yes 'yes, once X' / 2 marginal / 1 fails my method as written; scored on the ticket as written, in the seat's own method. Commit per form on arrival.
     checkpoint_after: true
     meter: "--spawns 7"
 
