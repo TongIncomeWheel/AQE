@@ -3852,6 +3852,38 @@ def test_ratify_count_excludes_a_pending_takeover_target_from_advance(td):
     check("a deal-pinned name needs no entry in the words file", not any("GNW" in g for g in gaps), str(gaps)[:300])
 
 
+def test_the_manual_r44_override_unpins_a_misread_name_and_says_so(td):
+    """RUN.yaml ma_not_deal_pinned lists names the scan misread as pending targets: they are NOT deal-pinned, and ratify-count prints and records it.
+    The shipped list is read from the run map; the committee fixture is exercised with the list set to its own tickers."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_pipeline as PP
+    importlib.reload(PP)
+    shipped = PP._run_yaml_list("ma_not_deal_pinned")
+    check("the run map ships the 5 Nov override list (APO, RY, F, COMP)", shipped == {"APO", "RY", "F", "COMP"}, str(shipped))
+    d, p4 = _committee_fixture(td, "ratifyov")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    slate = os.path.join(d, "slate_ov.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    for v in DEC:
+        _ratify(d, "ratifyov", v, {"GNW": "AGREE", "BBY": "AGREE"})
+    exp = os.path.join(d, "export_ov.json")
+    json.dump({"daily_list": [{"ticker": "GNW", "ma_status": "PENDING_TARGET", "ma_note": "misread (2026-06-15)", "entry": 10.0},
+                              {"ticker": "BBY", "ma_status": "PENDING_TARGET", "ma_note": "Acme will acquire Bby (2026-06-15)", "entry": 20.0}]}, open(exp, "w"))
+    out = os.path.join(d, "cons_ov.json")
+    os.environ["AEGIS_MA_NOT_DEAL_PINNED"] = "GNW"
+    try:
+        rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyov"), "--board", board, "--phase4", p4,
+                       "--date", "2026-11-01", "--export", exp, "--out", out, "--record", os.path.join(d, "rec_ov.json")])
+    finally:
+        os.environ.pop("AEGIS_MA_NOT_DEAL_PINNED", None)
+    check("ratify-count with an override exits clean", rc == 0, log[-300:])
+    if rc != 0: return
+    C = {c["ticker"]: c for c in json.load(open(out))}
+    check("the overridden name is not deal-pinned, carries ma_override, and the run prints it", C["GNW"]["status"] != "DEAL_PINNED" and "ma_override" in C["GNW"] and "manual override" in log, str(C["GNW"])[:300])
+    check("a target not on the list is still deal-pinned", C["BBY"]["status"] == "DEAL_PINNED", str(C["BBY"])[:200])
+
+
 def test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminate(td=None):
     """aegis-writing exists with its credit, is read by cio-voice / brief-writer / chair / the WRITE step,
     and its five eval cases tell slop from a fix (fidelity and uncertainty are hard gates)."""
@@ -3878,7 +3910,7 @@ def test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminat
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminate, test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_the_manual_r44_override_unpins_a_misread_name_and_says_so, test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminate, test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,
