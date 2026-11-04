@@ -1606,6 +1606,13 @@ SCORE_TREE = [
       "exchange holidays not -- an approximation, not an exact "
       "trading-session count)", "src/data/drive_sync.py:_v21_record_fields",
       "np.busday_count(last_pivot_high.date, today)"),
+    R("ma_status", "", "leaf", "label", "NONE|PENDING_TARGET|PENDING_ACQUIRER|PENDING_UNCLEAR|UNKNOWN",
+      "Pending merger / acquisition / buyout flag (keyword scan of 120 days of FMP stock news); UNKNOWN = the scan failed, never NONE",
+      "src/data/ma_flag.py:classify", "deal terms in news + role from the company's own name"),
+    R("ma_note", "ma_status", "leaf", "label", "",
+      "The matched sentence and date behind the flag (auditable)", "src/data/ma_flag.py:classify", "first sentence containing a deal term"),
+    R("ma_evidence", "ma_status", "leaf", "label", "",
+      "{headline, date, url, terms, n_deal_items} behind the flag", "src/data/ma_flag.py:classify", "matched news item"),
     R("continuation_pivot", "", "leaf", "usd", "",
       "Second pivot reading (data only; pivot_high unchanged): high of the most recent tight 3-10 bar window "
       "(range <= 2.5 ATR, with an inside bar or NR7) that ended within the last 5 bars",

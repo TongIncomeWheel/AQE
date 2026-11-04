@@ -84,14 +84,14 @@ def classify(ticker: str, company_name: str | None, items: list[dict], today: da
     for it in items or []:
         title, text = str(it.get("title") or ""), str(it.get("text") or "")
         blob = f"{title}. {text}"
+        d = str(it.get("publishedDate") or "")[:10]
+        if _DONE.search(blob):
+            done.append(d)                                  # a completion headline is evidence on its own, even with no pending term
+            continue
         found = [m.group(0) for rx in _PENDING_RE for m in [rx.search(blob)] if m]
         if not found:
             continue
         terms = found
-        d = str(it.get("publishedDate") or "")[:10]
-        if _DONE.search(blob):
-            done.append(d)
-            continue
         sent = next((x.strip() for x in re.split(r"(?<=[.!?])\s+", blob) if any(rx.search(x) for rx in _PENDING_RE)), title)
         hits.append({"date": d, "headline": title, "sentence": sent[:200], "url": it.get("url"), "terms": terms[:3], "role": _role(blob, name), "blob": blob})
     base = {"ma_status": "NONE", "ma_note": None, "ma_evidence": None}

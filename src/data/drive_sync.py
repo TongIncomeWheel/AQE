@@ -131,6 +131,12 @@ _FIELD_GLOSSARY = {
     "pct_from_pivot": "(entry / pivot_high − 1) × 100. O'Neil's own read: 0-5% is the buy "
                       "zone, 5-10% is a late buy carrying a warning, over 10% is a "
                       "rejection (C17).",
+    "ma_status": "Pending merger / acquisition / buyout flag from a keyword scan of the last 120 days of FMP stock news: NONE, "
+                 "PENDING_TARGET (this company is being bought: it trades on the deal spread, so flow / energy / structure mean little), "
+                 "PENDING_ACQUIRER (the buyer), PENDING_UNCLEAR (a pending deal is in its news, role not readable), or UNKNOWN "
+                 "(the scan failed for this ticker; NEVER read UNKNOWN as NONE). Data only: nothing is excluded by AQE.",
+    "ma_note": "The matched sentence and its date, so every flag is auditable by a human in ten seconds. Null when ma_status is NONE.",
+    "ma_evidence": "{headline, date, url, terms[], n_deal_items} behind the flag. Null when ma_status is NONE or UNKNOWN.",
     "continuation_pivot": "Second pivot reading (data only; pivot_high is unchanged). The high of the "
                           "most recent tight window of 3-10 daily bars (total range <= 2.5 ATR, with an "
                           "inside bar or NR7 in it) that ended within the last 5 bars. For a name trending "
@@ -842,6 +848,9 @@ _FIELD_SCHEMA = {
     "pivot_high":        _fs("reference", "usd", "n/a"),
     "pct_from_pivot":    _fs("signal", "pct", "n/a"),
     "extension_atr_20":  _fs("signal", "ratio", "n/a"),
+    "ma_status":         _fs("signal", "label", "n/a"),
+    "ma_note":           _fs("reference", "label", "n/a"),
+    "ma_evidence":       _fs("reference", "label", "n/a"),
     "continuation_pivot": _fs("reference", "usd", "n/a"),
     "continuation_low":  _fs("reference", "usd", "n/a"),
     "continuation_bars": _fs("reference", "score", "n/a"),
@@ -3113,6 +3122,25 @@ def build_export(shortlist: dict | None = None) -> dict:
                 f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
             )
 
+    # ---- M&A flag (PM 2026-11-04): any name with a pending merger / acquisition / buyout is flagged on its row, so the committee,
+    # the cards, the lists and the alerts all see the same field. A failed scan is LOUD: every row reads UNKNOWN (never NONE) and
+    # `ma_scan` / `data_quality.ma_scan` say why. Never blocks the export.
+    _ma_rows = (export.get("daily_list") or []) + (export.get("held_positions") or [])
+    try:
+        from src.data import ma_flag as _MA
+        from src.data.fmp_client import FMPClient as _FMP
+        _ma_art = _MA.refresh({r.get("ticker") for r in _ma_rows if r.get("ticker")}, _FMP(),
+                              today=date.fromisoformat(str(export.get("date"))[:10]))
+    except Exception as _mae:  # noqa: BLE001
+        _ma_art = {"scan_status": "failed", "asof": None, "n_scanned": 0, "n_failed": len(_ma_rows), "n_flagged": 0,
+                   "failed": [], "tickers": {}, "reason": f"{_mae.__class__.__name__}: {str(_mae)[:120]}"}
+    _unknown = {"ma_status": "UNKNOWN", "ma_note": "M&A scan did not run for this ticker", "ma_evidence": None}
+    for _r in _ma_rows:
+        _f = (_ma_art.get("tickers") or {}).get(_r.get("ticker")) or _unknown
+        _r["ma_status"], _r["ma_note"], _r["ma_evidence"] = _f["ma_status"], _f["ma_note"], _f.get("ma_evidence")
+    export["ma_scan"] = {k: _ma_art.get(k) for k in ("scan_status", "asof", "window_days", "n_scanned", "n_failed", "n_flagged", "failed", "reason")}
+    export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
+
     # ---- Data-quality guard — VALUE-level, not just key-level (2026-07-15 ruling).
     # _REQUIRED_FIELDS above only checks a key exists; a NaN engine result (e.g.
     # insufficient bar-history warmup) silently becomes JSON null via _num() and
@@ -3126,6 +3154,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     # AQE_INSTRUCTIONS.md §4 — declare silent defaults so a failed VIX quote
     # (18.0/GREEN fallback, daily_orchestrator.py:808) or a stale macro cache
     # is VISIBLE, never a silent-empty read.
+    export["data_quality"]["ma_scan"] = export["ma_scan"]
     export["data_quality"]["macro"] = {
         "vix_source": "default" if (sl.get("regime", {}) or {}).get("vix") == 18.0 else "fmp",
         "intermarket_cache_date": (export.get("intermarket") or {}).get("as_of"),

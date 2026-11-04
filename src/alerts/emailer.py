@@ -1661,8 +1661,24 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
     """Dispatch on config.CONDITION_CARD_STYLE ("compact" default / "full")."""
     from . import config as C
     if (C.CONDITION_CARD_STYLE or "compact") == "full":
-        return _build_full_card(ticker, row, eval_result, fired_states, live)
-    return _build_compact_card(ticker, row, eval_result, fired_states, live)
+        card = _build_full_card(ticker, row, eval_result, fired_states, live)
+    else:
+        card = _build_compact_card(ticker, row, eval_result, fired_states, live)
+    return _with_ma_flag(card, row)
+
+
+def _with_ma_flag(card: dict, row: dict) -> dict:
+    """PM 2026-11-04: a name with a pending merger / acquisition / buyout is flagged on every alert card. The headline carries the
+    flag and the first line says what was found; a name the scan could not check says so instead of reading as clean."""
+    st = str((row or {}).get("ma_status") or "")
+    if st.startswith("PENDING"):
+        role = {"PENDING_TARGET": "being acquired", "PENDING_ACQUIRER": "the buyer"}.get(st, "pending deal")
+        card["headline"] = f"{card['headline']} · 🔴 M&A PENDING ({role})"
+        note = str(row.get("ma_note") or "").strip()
+        card["lines"] = [f"M&A PENDING: {note}" + (" A deal-pinned stock trades on the deal spread, not momentum." if st == "PENDING_TARGET" else "")] + list(card.get("lines") or [])
+    elif st == "UNKNOWN":
+        card["lines"] = list(card.get("lines") or []) + ["M&A: not checked (scan did not run for this name)"]
+    return card
 
 
 def _build_full_card(ticker: str, row: dict, eval_result: dict,
