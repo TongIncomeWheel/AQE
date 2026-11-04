@@ -776,12 +776,13 @@ def _committee_block(pos, on):
     n = pos.get("committee_conviction")
     head = f"Committee: Conviction {n}/5." if isinstance(n, int) else "Committee: conviction not counted (fewer than 4 scores filed)."
     why = " ".join(E(c["text"]) for c in pos.get("why") or []) or "no rationale filed"
+    also = "".join(f' <span class="also"><b>Also ({E(a["voice"])}):</b> {E(a["text"])}</span>' for a in pos.get("also") or [])
     wc = " ".join(E(c["text"]) for c in pos.get("what_would_change_it") or []) or "none filed"
     stage = ' <b>[DRAFT, not adopted]</b>' if pos.get("rationale_stage") == "draft" else ""
     mn = pos.get("minority_notes") or []
     mino = ('<div class="minority"><b>Minority note:</b> ' + " &middot; ".join(f'{E(m["voice"])} ({E(m["kind"])}): {E(m["text"])}' for m in mn) + "</div>") if mn else ""
     gaps = f'<div class="cond">{E("; ".join(pos.get("gaps") or []))}</div>' if pos.get("gaps") else ""
-    return f'<div class="committee"><b>{E(head)}</b> Why: {why}{stage} What would change it: {wc}{mino}{gaps}</div>'
+    return f'<div class="committee"><b>{E(head)}</b> Why: {why}{stage}{also} What would change it: {wc}{mino}{gaps}</div>'
 
 
 def _rationale_banner(pos_doc, on):

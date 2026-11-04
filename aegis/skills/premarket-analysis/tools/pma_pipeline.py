@@ -2191,7 +2191,7 @@ def cmd_committee_position(a):
         def clauses(key):
             out_c = []
             for j, cl in enumerate((row or {}).get(key) or []):
-                bad = registrar._clause_errors(cl, f"{t} {key}[{j}]", t, run_dir, ("vote", "ratify", "adopt"))
+                bad = registrar._clause_errors(cl, f"{t} {key}[{j}]", t, run_dir, ("vote", "ratify", "cross", "tier2"))
                 if bad:
                     raise SystemExit("committee-position: a rationale clause is not a verbatim quote of what was filed - the form was not validated: " + "; ".join(bad))
                 out_c.append({"text": cl["text"], "voice": cl["source"]["voice"], "from": f"{cl['source']['form']}.{cl['source']['field']}"})
@@ -2200,8 +2200,8 @@ def cmd_committee_position(a):
         if row is None:
             tg.append("no committee rationale for this ticket")
         elif final is None:
-            tg.append("rationale is the Chair's DRAFT (no adopt/merge result)")
-        am = {x.get("voice"): x for x in (row or {}).get("amendments") or [] if isinstance(x, dict)} if final is not None else {}
+            tg.append("rationale is the Chair's DRAFT (rationale_final.json not written)")
+        also, overflow = registrar.amend_also(run_dir, t)          # P2: AMEND texts attached by CODE, verbatim - the Chair merges nothing
         adopters, amenders, dissenters, minority = [], [], [], []
         for v in present:
             a_row = (adopts.get(v) or {}).get(t)
@@ -2210,20 +2210,19 @@ def cmd_committee_position(a):
             if a_row["answer"] == "ADOPT":
                 adopters.append(v)
             elif a_row["answer"] == "AMEND":
-                st = (am.get(v) or {}).get("status", "NOT_MERGED")
-                amenders.append({"voice": v, "status": st})
-                if st == "NOT_MERGED":
-                    minority.append({"voice": v, "kind": "AMEND not merged", "text": a_row["text"]})
+                amenders.append({"voice": v, "status": "OVER_CAP" if any(o["voice"] == v for o in overflow) else "ALSO"})
             elif a_row["answer"] == "DISSENT":
                 dissenters.append(v)
                 minority.append({"voice": v, "kind": "DISSENT", "text": a_row["text"]})
+        for o in overflow:
+            minority.append({"voice": o["voice"], "kind": "AMEND (over the byte cap)", "text": o["text"]})
         silent = [v for v in present if (adopts.get(v) or {}).get(t) is None]
         if silent and adopts:
             tg.append(f"no adopt/amend/dissent answer from {silent} - not filled in")
         out[t] = {"committee_conviction": body, "convictions": dict(sorted(scores.items())), "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
                   "ordering_score": c.get("ordering_score", c.get("conviction")), "status": c.get("status"), "verdict": c.get("verdict"),
                   "rationale_stage": "final" if final is not None else ("draft" if row else None),
-                  "why": why, "what_would_change_it": wc, "minority_notes": minority,
+                  "why": why, "also": also, "what_would_change_it": wc, "minority_notes": minority,
                   "adopted_by": adopters, "amended_by": amenders, "dissent_from": dissenters, "no_answer_from": silent if adopts else present,
                   "gaps": tg}
         gaps += [f"{t}: {g}" for g in tg]
@@ -2250,6 +2249,51 @@ def cmd_committee_position(a):
         print(d_)
     print(f"committee-position: {len(out)} slated ticket(s); " + ", ".join(f"{t}:{o['committee_conviction']}/5" for t, o in out.items())
           + (f" | {len(gaps)} gap(s): {gaps[:3]}" if gaps else " | no gaps") + f" -> {a.out}")
+
+
+def cmd_rationale_final(a):
+    """P2: rationale_final.json = the Chair's draft + `also` (every AMEND text, attached verbatim by CODE as 'Also (voice): ...',
+    capped at registrar.ALSO_MAX_CHARS per ticket; the overflow becomes a minority note at the position step). The Chair
+    merges nothing and no amendment is dropped."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import registrar
+    D = load(a.draft, needs=["tickets"])
+    out = dict(D)
+    out["stage"] = "final"
+    rows = []
+    for r in D["tickets"]:
+        r = dict(r)
+        r["also"], r["also_overflow"] = registrar.amend_also(a.run_dir, r["ticker"])
+        rows.append(r)
+    out["tickets"] = rows
+    save(a.out, out)
+    n_also = sum(len(r["also"]) for r in rows); n_over = sum(len(r["also_overflow"]) for r in rows)
+    print(f"rationale-final: {len(rows)} ticket(s); {n_also} AMEND text(s) attached verbatim as 'Also', {n_over} over the cap (minority notes) -> {a.out}")
+
+
+def cmd_slate_plan(a):
+    """P3-cap (conductor 2026-11-04): the slate cap cut, by CODE, by the Chair's own rule - most SUPPORT, then most ACT_NOW,
+    then ADVANCE before WATCH, then ticker A-Z (a stated deterministic tie-break). Writes slate_plan.json (keep, in rank
+    order) and slate_excluded.json (the rest, each with its rank and the reason). The Chair drafts exactly the `keep` names;
+    `registrar.py validate --kind slate --plan slate_plan.json` refuses a slate that differs."""
+    D = load(a.decision, needs=["names"])
+    slated = [r for r in D["names"].values() if r.get("proposal") in ("ADVANCE", "WATCH")]
+    def key(r):
+        c = r.get("counts") or {}
+        return (-(c.get("support") or 0), -(c.get("act_now") or 0), 0 if r["proposal"] == "ADVANCE" else 1, r["ticker"])
+    ranked = sorted(slated, key=key)
+    keep, excl = ranked[:a.cap], ranked[a.cap:]
+    def row(i, r):
+        c = r.get("counts") or {}
+        return {"rank": i + 1, "ticker": r["ticker"], "verdict": r["proposal"], "support": c.get("support"), "act_now": c.get("act_now")}
+    plan = {"schema": "slate_plan.v1", "date": D.get("date"), "cap": a.cap, "rule": "most SUPPORT, then most ACT_NOW, then ADVANCE before WATCH, then ticker A-Z",
+            "slated_by_decision": len(slated), "keep": [row(i, r) for i, r in enumerate(keep)]}
+    excluded = {"date": D.get("date"), "cap": a.cap, "excluded": [
+        dict(row(a.cap + i, r), reason=f"rank {a.cap + i + 1} of {len(slated)}: over the cap of {a.cap} (SUPPORT {(r.get('counts') or {}).get('support')}, ACT_NOW {(r.get('counts') or {}).get('act_now')}, {r['proposal']})")
+        for i, r in enumerate(excl)]}
+    save(a.out, plan); save(a.excluded, excluded)
+    print(f"slate-plan: {len(slated)} slated by decision.json, cap {a.cap}: keep {len(keep)}, exclude {len(excl)}"
+          + (f" ({', '.join(r['ticker'] for r in excl)})" if excl else "") + f" -> {a.out}, {a.excluded}")
 
 
 def cmd_slate_cut(a):
@@ -2730,11 +2774,16 @@ def _parse_void(text):
     words = set(conditions.vocab()["words"])
     toks = str(text).replace(",", " ").split()
     sym = next((x for x in toks if re.fullmatch(r"\^?[A-Z]{1,6}", x)), None)
-    wd = next((x.split(":")[0] for x in toks if x.split(":")[0] in words), None)
+    wi = next((i for i, x in enumerate(toks) if x.split(":")[0] in words), None)
+    wd = toks[wi].split(":")[0] if wi is not None else None
     lv = None
-    for x in toks:
-        if re.fullmatch(r"-?\d+(?:\.\d+)?", x):
-            lv = float(x); break
+    # P2 (conductor 2026-11-04, market_kill {symbol null, word null, level 5.0}): a level is only meaningful beside a
+    # symbol AND a vocabulary word - never the first stray number ('4-5 weeks'). Otherwise all three stay null and the
+    # plain words alone are shown, declared as not watchable.
+    if sym and wi is not None:
+        lv = next((float(x) for x in toks[wi + 1:] if re.fullmatch(r"-?\d+(?:\.\d+)?", x)), None)
+    else:
+        sym = wd = None
     return sym, wd, lv
 
 
@@ -3369,6 +3418,12 @@ if __name__ == "__main__":
     s.add_argument("--adopts", default="forms/adopt"); s.add_argument("--run-dir", dest="run_dir", default=".")
     s.add_argument("--record", default="committee_record.json"); s.add_argument("--date", required=True)
     s.add_argument("--out", default="committee_position.json")
+    s = sub.add_parser("rationale-final", help="P2: rationale_final.json = the draft + the AMEND texts attached verbatim by code")
+    s.add_argument("--draft", default="rationale_draft.json"); s.add_argument("--run-dir", dest="run_dir", default=".")
+    s.add_argument("--out", default="rationale_final.json")
+    s = sub.add_parser("slate-plan", help="P2: the slate cap cut by code (most SUPPORT, then ACT_NOW, then ADVANCE first, then A-Z)")
+    s.add_argument("--decision", default="decision.json"); s.add_argument("--cap", type=int, default=25)
+    s.add_argument("--out", default="slate_plan.json"); s.add_argument("--excluded", default="slate_excluded.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
     s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
@@ -3378,7 +3433,7 @@ if __name__ == "__main__":
     {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
-     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position,
+     "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
      "claims": cmd_claims, "claims-score": cmd_claims_score, "pair": cmd_pair, "decide-timing": cmd_decide_timing,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

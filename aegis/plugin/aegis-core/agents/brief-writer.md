@@ -170,7 +170,7 @@ Then one line for the candidate set as a group. That is §1. No paragraphs.
 
 **§3 HELD BOOK** — one table: name · qty · entry · mark · P&L · stop written today · AQE state · one-line read. Concentration line beneath it if any sector is over cap.
 
-**§4 REPEAT WATCH** — `repeat_watch.json` markdown, verbatim (Q6r). One line beneath it if a name was downgraded or upgraded since its last appearance.
+**§4 REPEAT WATCH** — `repeat_watch.json` markdown, verbatim (Q6r). **Paste it BY COMMAND** (e.g. `python3 -c "import json;print(json.load(open('repeat_watch.json'))['markdown'])"` into the file), never retype or summarise it: the gate (check Q6r) fails a brief whose section 4 differs from the file by one character (4 Nov: 173 FAILs). One line beneath it if a name was downgraded or upgraded since its last appearance.
 
 **§5 QS LIST** — table, verbatim fields, even when empty (say so).
 
@@ -202,6 +202,8 @@ This is the section the PM reads last and acts on first.
 **§8 NEAR MISSES** — one table: name · door it nearly cleared · what it lacked.
 
 **§9 ACTION PLAN** — numbered, one line each, addressed to the PM. What needs a decision today; what is watch-only; what the doors surfaced that no seat picked.
+
+**DECLARED ITEMS go BELOW the appendix, never above it.** Seat names may appear only in APPENDIX A (gate QX2): a 'Declared items' block above APPENDIX A that names a seat trips QX2 (4 Nov). Put the Declared items table after APPENDIX A, or word it without seat names.
 
 **APPENDIX A — VOTE RECORD (audit only).** Per name: the split and each seat's one-line reason, verbatim and attributed. This is the only place seat names and counts appear.
 

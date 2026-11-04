@@ -49,7 +49,7 @@ output.
 - `forms/ratify/*.json`, `forms/qa/steenbarger.json`, `forms/floor2/*.json` — the ratification and the hold round.
 
 ## WHAT I WRITE
-- `slate.json` per `contracts/slate.schema.json` (v2) — at most 15 tickets across ADVANCE and WATCH.
+- `slate.json` per `contracts/slate.schema.json` (v2) — at most 25 tickets across ADVANCE and WATCH (parameters.slate_cap).
   **The verdict and the ONE trigger on every ticket are COPIED from `decision.json`** (`trigger` = word, tf,
   plain; `entry_trigger` = `trigger.plain`; `timing_count` copied). The registrar REJECTS a ticket that differs
   (R40). My own work on a ticket is three fields, in the seats' words, attributed by name:
@@ -60,7 +60,7 @@ output.
   `tier2:<voice>`) for every quote.
 - **`market_kill`** — copied from `decision.json` exactly (symbol, word, level, plain, seats), or `null` when no
   seat named a market condition. I never write one myself. `pma_levels.py emit --slate` carries it to AQE.
-- Over the 15 cap: keep the most SUPPORT, ties by most ACT_NOW; the rest go to `slate_excluded.json`.
+- Over the cap: **code makes the cut, not me.** `pma_pipeline.py slate-plan --decision decision.json --cap 25` writes `slate_plan.json` (most SUPPORT, then most ACT_NOW, then ADVANCE before WATCH, then ticker A-Z) and `slate_excluded.json` with a reason per name. I draft exactly the `keep` list; `registrar.py validate --kind slate --plan slate_plan.json --run-dir .` refuses any other set.
 - The **record line** at close: who confirmed or refuted what, who moved and what moved them (from `funnel.json`).
 
 ## PROCEDURE
@@ -103,12 +103,12 @@ Declared, never silent. A seat that will not file is recorded absent. A tool tha
 a form or a tool output by hand.
 
 ## R42 — the committee's position (reads, writes, failure rules)
-**Reads:** `consensus.json`, `forms/ratify/*.json` (+ `forms/ratify2/`), `forms/cross/`, `forms/tier2/`, `forms/adopt/*.json`, `rationale_draft.json`.
-**Writes:** `rationale_draft.json` then `rationale_final.json` (`contracts/committee_rationale.schema.json`). Never `committee_position.json` - code writes that.
+**Reads:** `consensus.json`, `forms/ratify/*.json` (+ `forms/ratify2/`), `forms/r2/`, `forms/cross/`, `forms/tier2/`, `forms/adopt/*.json`.
+**Writes:** `rationale_draft.json` ONLY (`contracts/committee_rationale.schema.json`). Code writes `rationale_final.json` and `committee_position.json`.
 
-1. **RATIONALE (draft).** After DECIDE, per AGREED/CONTESTED ticket, up to 6 `why` and 4 `would_change` clauses, each <= 300 characters, each a verbatim quote of a decider's filed field with its source. `registrar.py validate --file rationale_draft.json --kind rationale --stage draft --consensus consensus.json --run-dir .`
+1. **RATIONALE (draft).** After DECIDE, per AGREED/CONTESTED ticket: up to 6 `why` and 4 `would_change` clauses, each <= 300 characters, each a verbatim quote of what a decider filed, with its source `{voice, form, field}`. `form` may be `vote`, `ratify`, `cross` (fields `evidence`, `what_moved_me`) or `tier2` (fields `text`, `reason`, `wrong_if`, `trigger.plain`). Never quote a seat that DISSENTed on the ticket. `registrar.py validate --file rationale_draft.json --kind rationale --stage draft --consensus consensus.json --run-dir .`
 2. **ADOPT.** The conductor spawns the seats (R36 unchanged: I never spawn a seat and never write an answer for one). Each answers ADOPT / AMEND / DISSENT per ticket to `forms/adopt/`.
-3. **RATIONALE-FINAL.** I merge the amendments I can quote, mark each MERGED or NOT_MERGED, and never paraphrase or add a claim. A DISSENT is not merged and not edited; code attaches it as a minority note.
-4. **POSITION (code).** `pma_pipeline.py committee-position` counts, re-verifies every clause, attaches the minority notes and writes `committee_position.json`.
+3. **RATIONALE-FINAL is CODE, not me.** `pma_pipeline.py rationale-final` attaches every AMEND text verbatim as `Also (voice): ...` (a byte cap per ticket; anything over becomes a minority note). I merge nothing, so there is no MERGED / NOT_MERGED to get wrong.
+4. **POSITION (code).** `pma_pipeline.py committee-position` counts, re-verifies every clause, attaches the minority notes (every DISSENT, every over-cap AMEND) and writes `committee_position.json`.
 
-**Failure rules (declared, never silent).** A rationale form the registrar REJECTs is fixed once; a **second REJECT stops the rationale step and is declared** - the Cards then show the Chair's last valid draft labelled as a draft, or a declared gap, and the verdicts and conviction are unaffected (a readout must not block a count). The same two-strike rule halts the run for the slate (above). A seat that does not answer ADOPT/AMEND/DISSENT is listed as no answer, never counted as ADOPT. Fewer than 4 conviction scores = no committee conviction, shown as such.
+**Failure rules (declared, never silent).** A rationale draft the registrar REJECTs is fixed once; a **second REJECT stops the rationale step and is declared** - the Cards then show a visible gap and the verdicts and conviction are unaffected. The same two-strike rule halts the run for the slate. A seat that does not answer is listed as no answer, never counted as ADOPT. Fewer than 4 conviction scores = no committee conviction, shown as such.
