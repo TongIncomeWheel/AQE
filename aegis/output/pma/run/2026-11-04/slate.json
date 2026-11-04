@@ -1,0 +1,283 @@
+{
+ "date": "2026-11-04",
+ "chair": "chair",
+ "board_sha256": "0a2803be6b2c147a48f0dc8a087b5607316e44f3fecea813fc344cae8742d5c0",
+ "market_kill": {
+  "plain": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).",
+  "symbol": null,
+  "word": null,
+  "level": 5.0,
+  "seats": ["oneil"],
+  "n_decisions": 4
+ },
+ "tickets": [
+  {
+   "ticker": "ROKU",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day."
+   },
+   "timing_count": {"support": 7, "oppose": 0, "abstain": 0, "act_now": 7, "wait": 0},
+   "horizon_sessions": 20,
+   "wrong_if": "oneil: \"Daily close back under pivot_high, or 8pct under entry (C20).\" elder-lens: \"Impulse returns to red (elder_le:1) or a daily close under ma_50.\"",
+   "why_agreed": "oneil: \"LEADER at the pivot on day_vol 1.61 (R4 pass), lens coil strong, structure 72.6 BULLISH_BOS.\" livermore: \"trend at its high; DIS confirms the group (C14).\" cross oneil: \"day_vol 1.61 clears R4, H1 pos_in_day_range_pct 86.6, D dist_to_20bar_high_pct 0.56, rs_leadership LEADER.\"",
+   "dissent": [],
+   "sources": ["tier2:oneil", "tier2:livermore", "cross:ROKU-wyckoff-for", "tier2:elder-lens"]
+  },
+  {
+   "ticker": "AJG",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 2, "wait": 4},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close back under pivot_high; thesis void on a close under ma_50\" wyckoff: \"Daily close back under structure_shift_ref: the break fails.\"",
+   "why_agreed": "minervini: \"Top-RS Financials name (rs_rank_pct 86.66); W HH/HL, 9>21, 2.9% under the 20-wk high.\" wyckoff: \"Weekly HH/HL trend, but no sign-of-strength bar: D last_bar red, H1 below EMA9 at pos_in_day_range_pct 21.9.\" cross minervini: \"Leadership and a stage 2 trend pass my Trend Template read (C3, C11)\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 1.26 is under the C16 breakout bar; coil -- leaves no countable base (R3). D red bar 2.87% under the 20-day high, H1 below EMA9 at 21.9% of range: no breakout today. Leadership is real."}
+   ],
+   "sources": ["tier2:minervini", "tier2:wyckoff", "cross:AJG-livermore-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "DIS",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day."
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 6, "wait": 0},
+   "horizon_sessions": 10,
+   "wrong_if": "oneil: \"Daily close back under pivot_high, or 8pct under entry (C20).\" wyckoff: \"Daily close back under structure_shift_ref: the break becomes an upthrust.\"",
+   "why_agreed": "oneil: \"LEADER, BULLISH_BOS on day_vol 1.47 (R4 pass), lens coil strong.\" livermore: \"D HH/HL, dist_to_20bar_high_pct 0.24; H1 91.1% of range; ROKU second name (C14). Best C5 shape in the set.\" cross raschke: \"A break closing at its extreme is my breakout read (C2)\"",
+   "dissent": [
+    {"voice": "minervini", "why": "Trend Template fails criterion 8: rs_rank_pct 69.65; flat ma100/ma200 leaves stage 2 unconfirmed (C2, C3). All eight or none."}
+   ],
+   "sources": ["tier2:oneil", "tier2:livermore", "cross:DIS-wyckoff-for", "tier2:minervini"]
+  },
+  {
+   "ticker": "HOG",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 2, "wait": 4},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A pullback on rising volume, or a close under ma_50\" raschke: \"daily close more than 1 ATR under the 20-day average\"",
+   "why_agreed": "elder-lens: \"Permission on; entry only on a return to value (C10).\" raschke: \"Trend is real (D hh_hl_3 HH/HL, ema_order 9>21) but price is far off the average; I buy the first pullback, not the extension (C19).\" cross elder-lens: \"Trend leg is real on my screens: W 9>21 above EMA9, D HH/HL above EMA9.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "No sound base or pivot: ABOVE_STRUCTURE with coil warn (R3), and day_vol 1.39 is short of the R4 1.40 bar. W/D 1.22% under the 20-bar high is a trend, not a base breakout. LEADER and sector strong."}
+   ],
+   "sources": ["tier2:elder-lens", "tier2:raschke", "cross:HOG-seow-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "EW",
+   "verdict": "ADVANCE",
+   "entry_trigger": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "timing_count": {"support": 6, "oppose": 0, "abstain": 1, "act_now": 5, "wait": 1},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close below bar_low (the pullback low)\"",
+   "why_agreed": "elder-lens: \"R8 fires: CORRECTION_REENTRY with mp_state STRONG (mp 84.0)\" livermore: \"trend at its high (C5); GEHC confirms Healthcare (C14).\" cross oneil: \"New high on volume is my test: day_vol 1.59 clears R4, D dist_to_20bar_high_pct 0.94, W HH/HL, rs_leadership LEADER.\"",
+   "dissent": [
+    {"voice": "wyckoff", "why": "TREND: W HH/HL, D above EMA9 9>21, dist_to_20bar_high_pct 0.94, but ABOVE_STRUCTURE away from the Creek; H1 last_bar red. Wait for the test (C3, C7)."}
+   ],
+   "sources": ["tier2:elder-lens", "tier2:livermore", "cross:EW-livermore-for", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "VLTO",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 2, "wait": 4},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A pullback on rising volume, or a close under ma_50\" raschke: \"daily close more than 1 ATR under the 20-day average\"",
+   "why_agreed": "livermore: \"W and D HH/HL, 0.62% under the 20-day high: leader of the leading group; TTEK and SWK confirm (C12, C14).\" elder-lens: \"Buy the pullback into value, not the top (C10).\" cross oneil: \"Leader of a leading group is my R2/R9 test and it passes: rank 2, rs_leadership LEADER, sector Momentum Building, D dist_to_20bar_high_pct 0.62.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 1.25 fails C16; coil -- gives no base (R3); ABOVE_STRUCTURE with no fresh pivot. Rank 2 LEADER in a Momentum Building group is real leadership; the volume and base are not there."}
+   ],
+   "sources": ["tier2:livermore", "tier2:elder-lens", "cross:VLTO-livermore-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "TTEK",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 2, "wait": 4},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close more than 1 ATR under the 20-day average\"",
+   "why_agreed": "livermore: \"W HH/HL, D 0.98% under the 20-day high, 9>21 on all frames; VLTO confirms the group (C14).\" minervini: \"Template passes, rs_rank_pct 80.89, W HH/HL\" cross raschke: \"Trend confirmed on my frames: W hh_hl_3 HH/HL, W ema_order 9>21, D ema_order 9>21; mp 97.0 STRONG agrees.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 1.14 fails C16; ABOVE_STRUCTURE with coil warn leaves no base (R3). W HH/HL 0.98% under the 20-wk high is trend. Group confirms; the volume does not."}
+   ],
+   "sources": ["tier2:livermore", "tier2:minervini", "cross:TTEK-minervini-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "SWK",
+   "verdict": "WATCH",
+   "entry_trigger": "After a light-volume pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a light-volume pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 0, "wait": 6},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close more than 1 ATR under the 20-day average\"",
+   "why_agreed": "minervini: \"rs_rank_pct 87.62, W HH/HL; the move is ten days old, sma_dist 11.67%, H1 LH/LL at 14% of range: let it base first (C5).\" seow: \"POSITION system: ABOVE_STRUCTURE, rs_rank_pct 87.62, ret_63d 1.31 beats the index thinly.\" cross raschke: \"Trend and participation stand: W hh_hl_3 HH/HL, D ema_order 9>21, day_vol 1.58.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "No base: ABOVE_STRUCTURE, coil warn (R3). On day_vol 1.58 the H1 closed at 14.0% of the day's range with LH/LL and D red: heavy volume closing near the low is C25's distribution warning."}
+   ],
+   "sources": ["tier2:minervini", "tier2:seow", "cross:SWK-minervini-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "BRK-B",
+   "verdict": "ADVANCE",
+   "entry_trigger": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 6, "wait": 0},
+   "horizon_sessions": 10,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close below structure_shift_ref\"",
+   "why_agreed": "livermore: \"W and D HH/HL, 0.45% under the 20-wk high: a brand-new high in an Upward Trend (C16).\" minervini: \"Full stack, W/D HH/HL, 0.5% under the 20-bar high, rs_rank_pct 77.58\" cross seow: \"Fresh BULLISH_BOS over structure_shift_ref 549.96 with elder_pattern ACCELERATION, D HH/HL, W HH/HL 0.45% under 20-wk high.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 1.2 fails the C16 breakout bar. LEADER with BULLISH_BOS and D HH/HL 0.45% under the 20-day high is real, but a breakout nobody bought is not my buy."}
+   ],
+   "sources": ["tier2:livermore", "tier2:minervini", "cross:BRK-B-elder-lens-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "MDT",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high, the new high after a quiet reaction",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the new high after a quiet reaction"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 4, "wait": 2},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close below bar_low (the pullback low)\"",
+   "why_agreed": "livermore: \"W and D HH/HL, 1.07% under the 20-day high: a normal quiet reaction in an Upward Trend (C8); EW confirms Healthcare (C14).\" raschke: \"RETRACEMENT resolving with the trend (C6 by proxy).\" cross wyckoff: \"Trend intact on both frames (W and D hh_hl_3 HH/HL) and the reaction is on dry volume (day_vol 0.24)\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 0.24 is a quarter of normal volume, a hard C16 rejection; ABOVE_STRUCTURE with no fresh pivot. H1 below EMA9 at 39.1% of range shows no buying. Nobody bought this move."},
+    {"voice": "elder-lens", "why": "R8 fires: CORRECTION_REENTRY, mp_state STRONG (mp 87.0); elder_5d [6, 9, 7, 10, 10]. W HH/HL 9>21. day_vol 0.24 is a drastic shrinkage (C23) - volume must return first."},
+    {"voice": "wyckoff", "why": "W and D HH/HL above EMA9, 9>21: uptrend context. H1 below EMA9 at pos_in_day_range_pct 39.1 and the last session carried no volume evidence; wait for effort (C5, C18)."}
+   ],
+   "sources": ["tier2:livermore", "tier2:raschke", "cross:MDT-livermore-for", "tier2:oneil", "tier2:elder-lens", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "SN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {"support": 7, "oppose": 0, "abstain": 0, "act_now": 1, "wait": 6},
+   "horizon_sessions": 20,
+   "wrong_if": "oneil: \"Daily close 7pct under pivot_high (C20)\" minervini: \"A close back under pivot_high; thesis void on a close under ma_50\"",
+   "why_agreed": "oneil: \"LEADER on the heaviest volume in the room, day_vol 2.72 (C16), group strong.\" minervini: \"Top-RS leader (rs_rank_pct 97.12), W HH/HL, 9>21\" cross minervini: \"Trend on both frames and heavy participation match C3/C6: rs_rank_pct 97.12, W hh_hl_3 HH/HL\"",
+   "dissent": [],
+   "sources": ["tier2:oneil", "tier2:minervini", "cross:SN-livermore-for"]
+  },
+  {
+   "ticker": "TMO",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, follow-through off the light-volume back-up",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, follow-through off the light-volume back-up"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 6, "wait": 0},
+   "horizon_sessions": 10,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close below bar_low (the reclaim-day low)\"",
+   "why_agreed": "minervini: \"rs_rank_pct 92.31, full rising stack, W HH/HL, 1.9% under the 20-wk high, not extended.\" wyckoff: \"C7 back-up: W HH/HL, D above EMA9 9>21, H1 pos_in_day_range_pct 93.8 on day_vol 0.68.\" cross elder-lens: \"This is Elder's own shape: a dip into weakness inside a rising weekly, then a reclaim (C6, C10).\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R2: rs_leadership IN-LINE fails C9/C10; R4: day_vol 0.68 fails C16. W HH/HL 1.9% under the 20-wk high is trend, not a leader's volume breakout."}
+   ],
+   "sources": ["tier2:minervini", "tier2:wyckoff", "cross:TMO-wyckoff-for", "tier2:oneil"]
+  },
+  {
+   "ticker": "V",
+   "verdict": "WATCH",
+   "entry_trigger": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot.",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot."
+   },
+   "timing_count": {"support": 7, "oppose": 0, "abstain": 0, "act_now": 1, "wait": 6},
+   "horizon_sessions": 20,
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume: the 10-week line has failed (R8).\" minervini: \"A close under ma_50\"",
+   "why_agreed": "oneil: \"HELD, KEEP: LEADER riding above the 10-week line, BULLISH_BOS; R8 not triggered.\" raschke: \"HELD, KEEP. Breakout intact (D ema_order 9>21, dist_to_20bar_high_pct 1.49)\" cross minervini: \"Trend intact and a quiet reaction fit C3/C6: Template passes, rs_rank_pct 85.1\"",
+   "dissent": [],
+   "sources": ["tier2:oneil", "tier2:raschke", "cross:V-livermore-for"]
+  },
+  {
+   "ticker": "HNGE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, follow-through after the first pullback",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, follow-through after the first pullback"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 4, "wait": 2},
+   "horizon_sessions": 10,
+   "wrong_if": "minervini: \"A pullback on rising volume, or a close under ma_50\" raschke: \"daily close below bar_low (the reclaim-day low)\"",
+   "why_agreed": "livermore: \"W HH/HL, D above EMA9, 1.71% under the 20-day high: an Upward Trend at its high (C5).\" raschke: \"TEST family: short-average reclaim, a tested low (C20).\" cross wyckoff: \"the dip under the 9-day average closed back above it on day_vol 1.85 (C7 first pullback)\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R7 climax: entry 116.84 against ma200 67.78 is more than 70% above the 200-day; C24 sells into that, never buys it. No base under it: ABOVE_STRUCTURE, coil warn."},
+    {"voice": "minervini", "why": "Highest RS in the room (rs_rank_pct 99.76), W HH/HL; sma_dist 17.73% says entry waits for a tight pause (C5, C11)."},
+    {"voice": "elder-lens", "why": "elder_5d [10, 10, 7, 7, 7]: green faded, holding not-red - a pullback in progress, no transition yet (C3, C4). W HH/HL 9>21, mp 89.0 STRONG; H1 LH/LL. Buy the value reclaim (C10)."}
+   ],
+   "sources": ["tier2:livermore", "tier2:raschke", "cross:HNGE-minervini-for", "tier2:oneil", "tier2:minervini", "tier2:elder-lens"]
+  },
+  {
+   "ticker": "GEN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {"support": 6, "oppose": 1, "abstain": 0, "act_now": 1, "wait": 5},
+   "horizon_sessions": 15,
+   "wrong_if": "minervini: \"A close under ma_50\" raschke: \"daily close more than 1 ATR under the 20-day average\"",
+   "why_agreed": "seow: \"POSITION system: ABOVE_STRUCTURE, ret_63d 6.3, rs_rank_pct 92.67, elder_pattern ACCELERATION; W and D green above EMA9.\" minervini: \"Template passes barely, rs_rank_pct 92.67\" cross wyckoff: \"Above structure on my test: D ema_order 9>21, close above EMA9 27.28, W 9>21.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "R4: day_vol 0.81 fails C16; coil -- leaves no countable base (R3). W 6.13% and D 3.16% under the 20-bar high: not a new high out of a base (C7)."}
+   ],
+   "sources": ["tier2:seow", "tier2:minervini", "cross:GEN-seow-for", "tier2:oneil"]
+  }
+ ]
+}
