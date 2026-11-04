@@ -151,9 +151,11 @@ CONDITION_CARD_MAX_SEATS = int(_f("CONDITION_CARD_MAX_SEATS", 3))
 
 # --- AQE-default conditions (PM ruling 2026-10-04: universe = committee
 # book + AQE Longlist/Elder). See condition_defaults.py.
-# PM 2026-11-04 (standing, relayed by the conductor): alerts watch the COMMITTEE book + HELD names only. The default is
-# set HERE, in code, so the HF poller and the GitHub backstop cannot disagree; an env var may still override either way.
-CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", False)
+# PM 2026-11-04 (corrected same day): the alert universe is the committee book + held + the BRIEF'S THREE LISTS (Elder top
+# 15, AQE top 20, Detect-lens top 15 -- the same lists, in the same order, as the brief's section 5b), not the whole
+# Longlist + Elder. Defaults are set HERE, in code, so the HF poller and the GitHub backstop cannot disagree; an env var
+# may still override either way.
+CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", True)
 # U&R alerts (PM 2026-11-04 noise review: 28 of 30 U&R cards on 3 Nov were AQE-default names). ONE switch for the
 # whole U&R lifecycle (UNR_ARMED / UNR_TRIGGER / UNR_FAILED). Default is now FALSE (PM 2026-11-04). It is read in
 # condition_cycle.run_condition_cycle, which BOTH the in-app HF poller and the GitHub backstop call, so setting it on one
@@ -161,8 +163,13 @@ CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", False)
 # PM 2026-11-04: U&R alerts OFF by default (default True before this date). U&R remains a context tick on a committee
 # card (the card's "U&R:" line is still computed); it just no longer fires UNR_ARMED / UNR_TRIGGER / UNR_FAILED cards.
 CONDITION_UNR_ENABLED = _b("CONDITION_UNR_ENABLED", False)
-# Which AQE lists feed default-watched names: "longlist", "elder", or both.
-CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "longlist,elder")
+# Which AQE lists feed default-watched names: "brief_lists" (the default: the brief's Elder 15 + AQE 20 + Detect-lens 15),
+# or the older "longlist" / "elder" (whole lists).
+CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "brief_lists")
+# Sizes of the brief's three lists (aegis/output/pma/test_cards/v3/lists_vs_committee.py N_ELDER / N_AQE / N_LENS).
+BRIEF_LIST_ELDER_N = int(_f("BRIEF_LIST_ELDER_N", 15))
+BRIEF_LIST_AQE_N = int(_f("BRIEF_LIST_AQE_N", 20))
+BRIEF_LIST_LENS_N = int(_f("BRIEF_LIST_LENS_N", 15))
 # WATCH is the committee's "not yet" bucket -- off unless the PM flips it.
 CONDITION_DEFAULTS_INCLUDE_WATCH = _b("CONDITION_DEFAULTS_INCLUDE_WATCH", False)
 CONDITION_DEFAULT_VOL_X = _f("CONDITION_DEFAULT_VOL_X", 1.0)

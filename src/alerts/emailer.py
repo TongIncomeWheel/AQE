@@ -1408,6 +1408,8 @@ _CLASS_LABEL = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD FOR CONDITION
 
 
 def _who(row: dict) -> str:
+    if row.get("aqe_list"):
+        return "AQE list, not a committee pick"
     if row.get("aqe_default"):
         return "AQE default criteria"
     return f"Committee ({_CLASS_LABEL.get(row.get('class'), row.get('class') or 'book')})"
@@ -1614,7 +1616,7 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         head, color = "🟡 U&R SETUP FORMING", "#b8860b"
     else:
         head, color = _state_label(primary, row, eval_result, live)
-        head += " · AQE default criteria" if row.get("aqe_default") else ""
+        head += (" · AQE list, not a committee pick" if row.get("aqe_list") else " · AQE default criteria") if row.get("aqe_default") else ""
 
     lines = [_unr_status_line(unr, live, fired_states, eval_result)]
     if armed and "UNR_FAILED" not in fired_states:
@@ -1670,7 +1672,7 @@ def _build_full_card(ticker: str, row: dict, eval_result: dict,
     if row.get("aqe_default"):
         # Said on every such card: these are AQE's own default criteria
         # (condition_defaults.py), not committee words.
-        headline += " · AQE default criteria"
+        headline += " · AQE list, not a committee pick" if row.get("aqe_list") else " · AQE default criteria"
 
     lines: list[str] = []
     spot_line = _spot_line(row, live)

@@ -24,6 +24,7 @@ def _switches_on(monkeypatch):
     from src.alerts import config as _C
     monkeypatch.setattr(_C, "CONDITION_DEFAULTS_ENABLED", True)
     monkeypatch.setattr(_C, "CONDITION_UNR_ENABLED", True)
+    monkeypatch.setattr(_C, "CONDITION_DEFAULT_SOURCES", "longlist,elder")
 
 
 def _cond():

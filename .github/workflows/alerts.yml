@@ -65,10 +65,11 @@ jobs:
           # the handoff's proposed separate `AQE_GH_TOKEN` was unnecessary.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The PM's noise switches (2026-11-04). Set them as repo VARIABLES (Settings -> Secrets and variables -> Actions ->
-          # Variables) AND as HF Space variables of the same name; unset = the code default (both FALSE since
-          # PM 2026-11-04). The `|| 'false'` fallback keeps an unset variable ("", which config._b() reads as false anyway) explicit.
+          # Variables) AND as HF Space variables of the same name; unset = the code default (U&R off, defaults on,
+          # sources brief_lists since PM 2026-11-04). The `|| 'false'` fallback keeps an unset variable ("", which config._b() reads as false anyway) explicit.
           CONDITION_UNR_ENABLED: ${{ vars.CONDITION_UNR_ENABLED || 'false' }}
-          CONDITION_DEFAULTS_ENABLED: ${{ vars.CONDITION_DEFAULTS_ENABLED || 'false' }}
+          CONDITION_DEFAULT_SOURCES: ${{ vars.CONDITION_DEFAULT_SOURCES || 'brief_lists' }}
+          CONDITION_DEFAULTS_ENABLED: ${{ vars.CONDITION_DEFAULTS_ENABLED || 'true' }}
         run: |
           if [ "${{ inputs.test }}" = "true" ]; then
             python -m scripts.alert_poll --test-email
