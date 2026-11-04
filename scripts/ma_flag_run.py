@@ -15,7 +15,7 @@ tickers = {r["ticker"] for r in (exp.get("daily_list") or []) if r.get("ticker")
 print(f"scanning {len(tickers)} tickers from {path} (export date {exp.get('date')})")
 art = M.refresh(sorted(tickers), FMPClient(), today=date.today(), breaker=False)      # dry-run shows the raw flags; the nightly keeps the circuit breaker
 n_t = sum(1 for v in art['tickers'].values() if v['ma_status'] == 'PENDING_TARGET')
-print(f"PENDING_TARGET={n_t}; the nightly circuit breaker trips above {max(5, int(0.03 * art['n_scanned']))}")
+print(f"PENDING_TARGET={n_t}; the nightly circuit breaker trips above {max(M.BREAKER_MIN, int(M.BREAKER_SHARE * art['n_scanned']))}")
 print(f"scan_status={art['scan_status']} scanned={art['n_scanned']} failed={art['n_failed']} flagged={art['n_flagged']}")
 if art["failed"]:
     print("FAILED:", art["failed"])

@@ -130,7 +130,9 @@ def test_a_real_cash_offer_and_stock_merger_on_lci_reads_as_a_target():
                       "received from Monomoy Capital Partners to acquire LCI for $101 per share in cash does not constitute a superior proposal"},
              {"publishedDate": "2026-10-28 06:03:00", "url": "u2", "title": "Patrick Industries, Inc. Reaffirms Merger Agreement with LCI Industries",
               "text": "Patrick reaffirmed its agreement to combine with LCI Industries (NYSE: LCII) in an all-stock merger"}]
-    assert M.classify("LCII", "LCI Industries, Inc.", items)["ma_status"] == "PENDING_TARGET"
+    # After the 4 Nov precision fix: a non-binding proposal and "X's merger agreement with Y" do not say who buys whom, so LCI is flagged (the pill and
+    # the sentence show) but as PENDING_UNCLEAR, which excludes nothing. R44 deal-pins only a clearly-read target.
+    assert M.classify("LCII", "LCI Industries, Inc.", items)["ma_status"] == "PENDING_UNCLEAR"
     assert M.classify("PATK", "Patrick Industries, Inc.", items[1:])["ma_status"].startswith("PENDING")       # flagged; role unclear is fine (flag-only)
 
 
@@ -150,8 +152,20 @@ def test_dry_run_noise_of_4_nov_never_flags_and_loose_language_never_deal_pins()
     # loose language alone ("Merger with" in a results headline of a third party) is at most UNCLEAR, never a target
     loose = {"publishedDate": "2026-10-20", "title": "Wendy's Surges 14% on Trian-Led $1.4B Take-Private Offer; McDonald's Edges Higher, Yum Brands Stays Put.", "text": "", "url": "u"}
     assert M.classify("YUM", "Yum Brands", [loose], today=date(2026, 11, 4))["ma_status"] != "PENDING_TARGET"
-    real = {"publishedDate": "2026-11-02", "title": "As Roku's Merger With Fox Clears More Hurdles, Streaming Provider Delivers Strong Q3 Results.", "text": "", "url": "u"}
-    assert M.classify("ROKU", "Roku, Inc.", [real], today=date(2026, 11, 4))["ma_status"] == "PENDING_TARGET"
+    # "X's merger with Y" says X is a party, not which side: it is not a role on its own
+    only = {"publishedDate": "2026-11-02", "title": "As Roku's Merger With Fox Clears More Hurdles, Streaming Provider Delivers Strong Q3 Results.", "text": "", "url": "u"}
+    assert M.classify("ROKU", "Roku, Inc.", [only], today=date(2026, 11, 4))["ma_status"] == "PENDING_UNCLEAR"
+    deal = {"publishedDate": "2026-10-16", "title": "Fox to buy Roku", "text": "Fox will acquire Roku in a cash and stock deal under a definitive merger agreement.", "url": "u"}
+    assert M.classify("ROKU", "Roku, Inc.", [only, deal], today=date(2026, 11, 4))["ma_status"] == "PENDING_TARGET"
+    cases = [("AWK", "American Water Works", "American Water announced Brad Nielsen will become President upon the closing of American Water's proposed merger with Essential Utilities."),
+             ("FITB", "Fifth Third Bancorp", "Fifth Third Bancorp is seeing early results of its merger with Comerica and is making progress on the integration."),
+             ("CZR", "Caesars Entertainment", "Caesars received a non-binding proposal from the Icahn Group to acquire Caesars for $34.00 per share in cash.")]
+    for tk, nm, txt in cases:   # the three wrong PENDING_TARGET reads of the first corrected dry-run
+        r = M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": txt, "text": "", "url": "u"}], today=date(2026, 11, 4))
+        assert r["ma_status"] != "PENDING_TARGET", (tk, r["ma_status"])
+    for tk, nm, txt in [("BRZE", "Braze", "Braze entered into a definitive agreement to be acquired by Salesforce."),
+                        ("PAYO", "Payoneer", "Payoneer announced an agreement to be acquired by Nuvei on June 15, 2026.")]:
+        assert M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": txt, "text": "", "url": "u"}], today=date(2026, 11, 4))["ma_status"] == "PENDING_TARGET"
 
 
 def test_the_circuit_breaker_fails_the_scan_instead_of_mass_deal_pinning(tmp_path):

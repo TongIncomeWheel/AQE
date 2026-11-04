@@ -31,6 +31,7 @@ from src.data.paths import DATA_DIR
 CACHE_PATH = DATA_DIR / "ma_flags.json"
 WINDOW_DAYS = 120
 NEWS_LIMIT = 100
+BREAKER_MIN, BREAKER_SHARE = 8, 0.05      # 4 Nov: 6 verified real takeover targets in 261 names; the broken classifier gave 62. Trips at max(8, 5%) = 13 of 261.
 
 # Terms that put a pending DEAL in a headline or summary. Investor-filing noise ("Acquires 29,656 Shares of ...") does not match:
 # none of these is the bare word "acquires".
@@ -70,13 +71,19 @@ def _name_variants(name: str) -> list[str]:
     return out
 
 
+_UNAGREED = re.compile(r"non-?binding|unsolicited|rumou?rs?|reportedly|in talks|denies|denial|withdr[ae]w|abandon|explor(?:es|ing) (?:a )?sale|may (?:acquire|bid)|considering", re.I)
+
+
 def _role(text: str, name: str) -> str | None:
-    """'TARGET' / 'ACQUIRER' / 'BOTH' / None from one headline+summary, judged around this company's own short name (or its first-word alias)."""
+    """'TARGET' / 'ACQUIRER' / 'BOTH' / None from one headline+summary, judged around this company's own short name (or its first-word alias).
+    "X's merger with Y" names both parties without saying who buys whom, so it is not a role. A proposal that is not agreed (non-binding, rumoured, denied, withdrawn) is not a role either."""
+    if _UNAGREED.search(text):
+        return None
     t = a = False
     for nm in _name_variants(name):
         n = re.escape(nm)
-        target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|merger with|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
-                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private|merger with)",
+        target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
+                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private)",
                   rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
         acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]
         t = t or any(re.search(p, text, re.I) for p in target)
@@ -185,10 +192,10 @@ def refresh(tickers, client, today: date | None = None, cache_path: Path | None 
             failed.append(tk)
             out[tk] = {"ma_status": "UNKNOWN", "ma_note": f"M&A scan failed: {e.__class__.__name__}", "ma_evidence": None}
     n = len(out)
-    # CIRCUIT BREAKER (conductor/PM 2026-11-04): R44 excludes a name from ADVANCE, so a scan that deal-pins more than max(5, 3%) of the names is a
+    # CIRCUIT BREAKER (conductor/PM 2026-11-04): R44 excludes a name from ADVANCE, so a scan that deal-pins more than max(8, 5%) of the names is a
     # broken classifier, not a market with that many takeovers. Treat the whole scan as FAILED: every name UNKNOWN, R44 not applied, loud banner. Never a mass exclusion.
     n_target = sum(1 for v in out.values() if v.get("ma_status") == "PENDING_TARGET")
-    limit = max(5, int(0.03 * n))
+    limit = max(BREAKER_MIN, int(BREAKER_SHARE * n))
     reason = None
     if breaker and n_target > limit:
         reason = f"circuit breaker: {n_target} names read as pending takeover targets (limit {limit} of {n} scanned); the scan is withheld, no name is deal-pinned"
