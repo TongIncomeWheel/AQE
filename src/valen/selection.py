@@ -96,7 +96,7 @@ def no_buy_flags(row: dict, market_stance_word: str | None = None) -> list[dict]
     if ext20 is not None and ext20 >= S.PER_STOCK_ATR_MULT_LAUNCHPAD_BELOW:
         flags.append({
             "flag": "stretched",
-            "label": f"{ext20:.1f} ATR extended (20-day basis)",
+            "label": f"{ext20:.1f} daily ranges extended (20-day basis)",
         })
 
     dte = row.get("days_to_earnings")

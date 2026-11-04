@@ -2376,7 +2376,7 @@ def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(t
     check("HOLD is labelled WATCH for the PM", "HOLD &middot; WATCH" in h)
     check("a CONTESTED ticket prints the objection and what would clear it",
           "Contested &middot; 1 of 7 object" in h and "no test of the break yet" in h and "a hold above the pivot on a down day" in h)
-    check("an AGREED ticket prints its reservations", "Agreed, with reservations" in h and "size it small" in h)
+    check("an AGREED ticket prints its reservations", "Agreed, with 1 reservation" in h and "size it small" in h)
     check("a DROPPED name says so on the PASS row", "DROPPED</b> by 4 of 7 objections" in h)
     check("the Detect-lens top 10 renders from lens_ranking.ranked", "Detect-lens top 10" in h and "ZZZ" in h)
     check("a lens name that is also in the room carries the marker", "ADVANCE &middot; CONTESTED (in the room)" in h)
@@ -3341,7 +3341,7 @@ def test_committee_position_counts_the_median_and_never_invents_a_rationale(td):
     import importlib, pma_cards
     importlib.reload(pma_cards)
     on = pma_cards._committee_block(P["AAA"], True)
-    check("the Cards block prints 'Committee: Conviction 4/5.'", "Committee: Conviction 4/5." in on, on)
+    check("the Cards block shows 'Conviction 4 of 5'", "Conviction 4 of 5" in on, on)
     check("no final rationale is declared in the file and in the log", any("DRAFT" in x or "NOT FILED" in x for x in json.load(open(out)).get("declared", [])) and "R42 DECLARED" in o, o)
     banner = pma_cards._rationale_banner(json.load(open(out)), True)
     check("the Cards declare a missing final at the top ('NOT FILED' / 'DRAFT, not adopted')", "NOT FILED" in banner or "DRAFT, not adopted" in banner, banner)
@@ -3592,7 +3592,7 @@ def test_freshness_line_and_withheld_stance_print_on_the_cards(td):
           and "COT 2026-10-27 [PUBLISHER_CADENCE] (latest published; next release 2026-11-06)" in line, line)
     html = pma_cards._freshness_html({"data_freshness": {"line": line}})
     check("it renders as a flag line on the page", "FRESHNESS | expected 2026-11-03" in html and 'class="flag freshness"' in html)
-    check("a missing Valen file or legs table is a declared gap, not silence", "not served" in pma_cards._freshness_html({}) and "cannot be dated" in pma_cards._freshness_html({"x": 1}))
+    check("a missing Valen file or legs table is a declared gap, not silence", "no Valen file and no run marker" in pma_cards._freshness_html({}) and "cannot be dated" in pma_cards._freshness_html({"x": 1}))
     check("a withheld stance says WITHHELD with the reason", pma_cards._stance_word({"stance": {"stance": None, "reason": "breadth STALE"}}).startswith("WITHHELD - breadth STALE")
           and pma_cards._stance_word({"stance": {"word": "NEUTRAL"}}) == "NEUTRAL")
 
@@ -3622,6 +3622,36 @@ def test_plain_words_in_the_rendered_page_and_the_html_gate(td):
     check("no target reaching 1R says 'Reward does not justify the risk' and 'No level reaches 1R'", "Reward does not justify the risk at this entry" in h0 and "No level reaches 1R above the entry" in h0, h0)
     h1 = pma_cards._bracket_html(pma_cards.bracket_view(161.26, "buy line", 157.90, "x", [161.26, 164.31, 168.20], 620))
     check("the first line of the bracket is 'Reward/risk to the first real target: 2.1R'", "Reward/risk to the first real target: <b>2.1R</b>" in h1, h1)
+
+
+def test_committee_words_fold_into_the_audit_trail_and_freshness_falls_back_to_the_marker(td):
+    """PM 2026-11-04: the card shows 'Conviction 4 of 5' only; the committee's verbatim rationale and the objections are kept whole
+    but folded in <details>, and the gate FAILs C-codes / W/D/H1 / ADX / %K/%D outside a <details>. FRESHNESS falls back to the run
+    marker's 'Macro legs:' line instead of a silent 'declared gap'."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards
+    importlib.reload(pma_cards)
+    pos = {"committee_conviction": 4, "rationale_stage": "final", "why": [{"text": "Trend Template passes: C5 fits, ADX 31, W/D/H1 aligned", "voice": "minervini"}],
+           "also": [], "what_would_change_it": [{"text": "C16 breaks", "voice": "oneil"}], "minority_notes": [{"voice": "seow", "kind": "DISSENT", "text": "no"}], "gaps": []}
+    blk = pma_cards._committee_block(pos, True)
+    visible = re.sub(r"<details.*?</details>", "", blk, flags=re.S)
+    check("the visible committee line is plain: 'Conviction 4 of 5' and a dissent count", "Conviction 4 of 5" in visible and "1 reviewer dissents" in visible and "C5" not in visible and "ADX" not in visible, visible)
+    check("the verbatim rationale is kept whole inside a closed <details> audit trail", "<details" in blk and "open" not in blk.split(">")[1] and "Audit trail: what each reviewer filed (verbatim)" in blk and "Trend Template passes: C5 fits, ADX 31, W/D/H1 aligned" in blk, blk)
+    c = pma_cards._contest_html({"status": "CONTESTED", "n_deciders": 7, "objections": [{"voice": "oneil", "objection": "C2 distribution days fail the gate"}]})
+    check("contested objections are folded too, with the count visible", "Contested &middot; 1 of 7 object" in re.sub(r"<details.*?</details>", "", c, flags=re.S) and "C2 distribution days" in c and "<details" in c, c)
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("chk_fold", os.path.join(HERE, "..", "..", "daily-check", "check.py")); ck = _iu.module_from_spec(sp); sp.loader.exec_module(ck)
+    bad = os.path.join(td, "bad.html"); open(bad, "w").write("<body><p>Trend fits C5 and W/D/H1 with ADX 31 and %K/%D up</p><details><summary>x</summary><p>C16 ADX</p></details></body>")
+    ok = os.path.join(td, "ok.html"); open(ok, "w").write("<body><p>Trend fits and the move is clean</p><details><summary>x</summary><p>C16 ADX W/D/H1</p></details></body>")
+    f, _ = ck.check_cards_html(bad)
+    check("the gate FAILs C-codes, W/D/H1, ADX and %K/%D outside a <details>, and ignores the audit trail", len(f) == 1 and all(x in f[0] for x in ("C5", "W/D/H1", "ADX", "%K/%D")) and "C16" not in f[0], str(f))
+    check("the gate passes a page whose jargon is only inside the audit trail", ck.check_cards_html(ok)[0] == [])
+    line = pma_cards._freshness_html({}, {"macro_legs": "Macro legs: expected session 2026-11-03 | breadth 2026-11-03 STALE | volatility 2026-11-02"}, None)
+    check("with no legs table the FRESHNESS line comes from the run marker, never a silent gap", "expected session 2026-11-03" in line and "from the run marker" in line and "declared gap" not in line, line)
+    line2 = pma_cards._freshness_html({"data_freshness": {"line": "FRESHNESS | old"}}, None, {"data_freshness": {"line": "FRESHNESS | new", "expected_session": "2026-11-03"}})
+    check("when main's refreshed weather is newer the page says so in plain words", "As the committee saw it at run time; refreshed after: see aegis/output/aqe_crown_macro.json" in line2, line2)
+    check("indicator names in prose become plain words; a bare ticker cell is left alone", pma_cards.plain_prose("momentum (RSI) is not confirming; 5-day VWAP rising; 2.4 ATR above") == "momentum is not confirming; 5-day volume-weighted price rising; 2.4 daily ranges above"
+          and pma_cards.plain_prose("RSI") == "RSI")
 
 
 def main():
@@ -3699,7 +3729,8 @@ def main():
                    test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table,
                    test_cards_bracket_first_target_rule_and_plain_reason,
                    test_freshness_line_and_withheld_stance_print_on_the_cards,
-                   test_plain_words_in_the_rendered_page_and_the_html_gate]:
+                   test_plain_words_in_the_rendered_page_and_the_html_gate,
+                   test_committee_words_fold_into_the_audit_trail_and_freshness_falls_back_to_the_marker]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

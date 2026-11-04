@@ -594,6 +594,19 @@ def check_cards_html(path):
         return [f"cards html: MISSING ({path})"], notes
     h = open(path, encoding="utf-8", errors="replace").read()
     h = _re.sub(r"<style.*?</style>|<script.*?</script>", "", h, flags=_re.S | _re.I)
+    # PM 2026-11-04: the committee's verbatim words are the AUDIT TRAIL and live folded in <details>; everything OUTSIDE a <details>
+    # must be readable by a trader: no C-codes (C5, C16...), no W/D/H1, no ADX, no %K/%D.
+    outside = _re.sub(r"<details.*?</details>", "", h, flags=_re.S | _re.I)
+    jargon = {}
+    for m in _re.finditer(r">([^<>]+)<", outside):
+        node = m.group(1)
+        for pat, label in ((r"\bC\d{1,2}\b", "C-codes"), (r"W/D/H1", "W/D/H1"), (r"%K/%D", "%K/%D")):
+            for t in _re.findall(pat, node):
+                jargon[t] = jargon.get(t, 0) + 1
+        if len(node.split()) > 1 and _re.search(r"\bADX\b", node):
+            jargon["ADX"] = jargon.get("ADX", 0) + 1
+    if jargon:
+        fails.append("the rendered cards show committee jargon OUTSIDE the folded audit trail: " + ", ".join(f"{k} x{v}" for k, v in sorted(jargon.items(), key=lambda kv: -kv[1])[:12]))
     bad = {}
     for m in _re.finditer(r">([^<>]+)<", h):
         for t in _re.findall(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b", m.group(1)):
