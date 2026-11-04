@@ -101,7 +101,7 @@ def classify(ticker: str, company_name: str | None, items: list[dict], today: da
         terms = found
         sent = next((x.strip() for x in re.split(r"(?<=[.!?])\s+", blob) if any(rx.search(x) for rx in _PENDING_RE)), title)
         hits.append({"date": d, "headline": title, "sentence": sent[:200], "url": it.get("url"), "terms": terms[:3], "role": _role(blob, name), "blob": blob})
-    base = {"ma_status": "NONE", "ma_note": None, "ma_evidence": None}
+    base = {"ma_status": "NONE", "ma_note": f"no pending deal found in {WINDOW_DAYS} days of news", "ma_evidence": None}      # never null: a null column reads as a missing field in the voice packets
     if not hits:
         return base
     hits.sort(key=lambda h: h["date"], reverse=True)

@@ -135,7 +135,7 @@ _FIELD_GLOSSARY = {
                  "PENDING_TARGET (this company is being bought: it trades on the deal spread, so flow / energy / structure mean little), "
                  "PENDING_ACQUIRER (the buyer), PENDING_UNCLEAR (a pending deal is in its news, role not readable), or UNKNOWN "
                  "(the scan failed for this ticker; NEVER read UNKNOWN as NONE). Data only: nothing is excluded by AQE.",
-    "ma_note": "The matched sentence and its date, so every flag is auditable by a human in ten seconds. Null when ma_status is NONE.",
+    "ma_note": "The matched sentence and its date, so every flag is auditable by a human in ten seconds. When ma_status is NONE it says no pending deal was found; when UNKNOWN, that the scan did not run.",
     "ma_evidence": "{headline, date, url, terms[], n_deal_items} behind the flag. Null when ma_status is NONE or UNKNOWN.",
     "continuation_pivot": "Second pivot reading (data only; pivot_high is unchanged). The high of the "
                           "most recent tight window of 3-10 daily bars (total range <= 2.5 ATR, with an "
