@@ -1,0 +1,175 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-04",
+ "seat_kind": "challenge",
+ "names_read": 44,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "\"ticker\": \"MDT\", \"gics_sector_name\": \"Healthcare\", \"sc_momentum\": 61.1, \"lens_warnings\": 2, \"day_vol\": 0.24"},
+ "findings": [
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Every multi-seat name in the room shares one anchor: all six names with 2+ nominations read structure_shift BULLISH_BOS. Convergence on a single shared field is shared-anchor agreement, not independent convergence. Each decider owes the reason that survives with structure_shift hidden.",
+   "evidence": "ROKU structure_shift BULLISH_BOS (4 seats); AJG BULLISH_BOS (3); DIS BULLISH_BOS (3); OHI BULLISH_BOS (2); TEVA BULLISH_BOS (2); AHR BULLISH_BOS (2)",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "ROKU",
+   "kind": "OVERLAP",
+   "ticker": "ROKU",
+   "canon_ref": ["C15", "C5"],
+   "claim": "The room's biggest consensus (4 seats) sits on the only multi-seat name with a fired bearish_divergence caution. Four seats agreeing past an oscillator non-confirmation needs each seat to say how its own method reads the divergence, not to lean on the others' agreement.",
+   "evidence": "ROKU nomination_count 4 (elder-lens, minervini, oneil, wyckoff); div_state BEARISH, div_bear_count 2; lens_warnings 1; day_vol 1.61; ma_50 155.15 > ma_100 150.01 > ma_200 128.26",
+   "addressed_to": "elder-lens, minervini, oneil, wyckoff"
+  },
+  {
+   "scope": "lane",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C3"],
+   "claim": "Livermore's slate is one sector bet: 5 of 6 picks are Industrials. The six names are not six independent ideas; a single sector drawdown hits all of them together.",
+   "evidence": "livermore: VLTO, TTEK, SWK, TXT, UPS gics_sector_name Industrials; AJG gics_sector_name Financials",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C3"],
+   "claim": "Financials is the most crowded sector in the room: 8 of 29 nominated names, plus the held V. Industrials 6 and Healthcare 5 follow. Sector concentration across seats should be read as one exposure.",
+   "evidence": "Financials nominated: AJG, PYPL, EQH, BRK-B, CRBG, ICE, TPG, PB; held V gics_sector_name Financials. Industrials: VLTO, TTEK, SWK, TXT, UPS, FA. Healthcare: TEVA, EW, GEHC, MDT, TMO",
+   "addressed_to": "livermore, raschke, seow, wyckoff, elder-lens, minervini"
+  },
+  {
+   "scope": "lane",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12"],
+   "claim": "O'Neil's slate is 3 of 4 Communication Services; Wyckoff carries both Real Estate names. Seat-level sector clustering, flagged for each seat to answer whether the sector, not the name, is the thesis.",
+   "evidence": "oneil: ROKU, DIS, LYV gics_sector_name Communication Services; TEVA Healthcare. wyckoff: OHI, AHR gics_sector_name Real Estate",
+   "addressed_to": "oneil, wyckoff"
+  },
+  {
+   "scope": "HOG",
+   "kind": "EXTENSION",
+   "ticker": "HOG",
+   "canon_ref": ["C5", "C6", "C16"],
+   "claim": "The room's only conviction 5 is a solo pick on a name about 5.2 ATR above its 50-day. Seow owes the reason a fresh entry this far from the 50-day is a setup rather than a chase, and the observable that proves it wrong.",
+   "evidence": "HOG seow conviction 5, SOLO; ma_50 27.41, atr_14d 1.13; price located via bracket.atr_fallback_stop 32.19 + atr_14d 1.13 (price locator only) = about 5.2 ATR above ma_50; structure_shift ABOVE_STRUCTURE",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "VLTO",
+   "kind": "EXTENSION",
+   "ticker": "VLTO",
+   "canon_ref": ["C5", "C6"],
+   "claim": "VLTO is about 6.2 ATR above its 50-day, the most stretched nominated name. Livermore owes the pivot it is buying off and the reaction that would show the move is exhausted.",
+   "evidence": "VLTO livermore conviction 4, SOLO; ma_50 98.88, atr_14d 2.81; price via bracket.atr_fallback_stop 113.51 + atr_14d 2.81 (locator only) = about 6.2 ATR above ma_50",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "GEHC",
+   "kind": "EXTENSION",
+   "ticker": "GEHC",
+   "canon_ref": ["C5"],
+   "claim": "GEHC is about 5.6 ATR above its 50-day while the 50-day is still under the 200-day: a stretched move inside an unsettled longer-term stack, with two lens warnings. Seow owes the higher-timeframe context it enters with.",
+   "evidence": "GEHC seow conviction 4, SOLO; ma_50 68.68, ma_100 67.76, ma_200 69.8; atr_14d 2.15; price via bracket.atr_fallback_stop 78.5 + atr_14d 2.15 (locator only); lens_warnings 2",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "BRK-B",
+   "kind": "EXTENSION",
+   "ticker": "BRK-B",
+   "canon_ref": ["C5"],
+   "claim": "BRK-B is about 5.4 ATR above its 50-day on modest participation. Wyckoff owes the phase read that makes this markup rather than a late leg.",
+   "evidence": "BRK-B wyckoff conviction 4, SOLO; ma_50 517.37, atr_14d 7.29; price via bracket.atr_fallback_stop 549.78 + atr_14d 7.29 (locator only); day_vol 1.2",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "TXT",
+   "kind": "PROCESS",
+   "ticker": "TXT",
+   "canon_ref": ["C5"],
+   "claim": "TXT is a MOMENTUM-lane pick inside a fully descending moving-average stack. R4: the higher-timeframe context must be named; on these fields the longer trend is down.",
+   "evidence": "TXT livermore conviction 3; ma_50 78.79 < ma_100 84.16 < ma_200 88.25; day_vol 0.93; lane MOMENTUM",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "UPS",
+   "kind": "PROCESS",
+   "ticker": "UPS",
+   "canon_ref": ["C5"],
+   "claim": "UPS is a MOMENTUM-lane pick with a descending stack and below-average volume. R4: name the higher-timeframe context or this is a pattern in isolation.",
+   "evidence": "UPS livermore conviction 3; ma_50 99.49 < ma_100 103.89 < ma_200 104.6; day_vol 0.74; lens_warnings 2",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "YOU",
+   "kind": "PROCESS",
+   "ticker": "YOU",
+   "canon_ref": ["C5", "C16"],
+   "claim": "YOU is a PULLBACK-lane pick where the 50-day is under both longer averages and a bearish divergence is firing. A pullback needs an uptrend to pull back into; Wyckoff owes the context.",
+   "evidence": "YOU wyckoff conviction 3; ma_50 43.11 < ma_100 47.7 < ma_200 47.84; div_state BEARISH, div_bear_count 1",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "MDT",
+   "kind": "UNPROVEN",
+   "ticker": "MDT",
+   "canon_ref": ["C3", "C16"],
+   "claim": "MDT was nominated on the thinnest participation in the room, about a quarter of normal volume, with two lens warnings. Activity-normalised context does not support the read; elder-lens owes why this is not an abstain.",
+   "evidence": "MDT elder-lens conviction 3; day_vol 0.24; lens_warnings 2",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "PYPL",
+   "kind": "UNPROVEN",
+   "ticker": "PYPL",
+   "canon_ref": ["C3", "C17"],
+   "claim": "PYPL carries a solo conviction 4 on about half-normal volume. Seow owes what in the read is deep enough to carry conviction 4 with participation this light.",
+   "evidence": "PYPL seow conviction 4, SOLO; day_vol 0.55; sc_momentum 65.7; lens_warnings 1",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "MP",
+   "kind": "PROCESS",
+   "ticker": "MP",
+   "canon_ref": ["C5", "C6"],
+   "claim": "Held name MP has lost its structure: character change down, descending stack, structure 33.0. No seat nominated it. Its held-book review owes a KEEP / TIGHTEN / EXIT-CASE line against this context.",
+   "evidence": "MP held true; structure_shift BEARISH_CHOCH; structure 33.0; ma_50 47.12 < ma_100 49.45 < ma_200 54.91; sc_momentum 31.5; lens_warnings null",
+   "addressed_to": "wyckoff, livermore, elder-lens"
+  },
+  {
+   "scope": "V",
+   "kind": "EXTENSION",
+   "ticker": "V",
+   "canon_ref": ["C6"],
+   "claim": "Held name V is about 4.9 ATR above its 50-day on below-average volume. This is not an exit call; the held review should say whether the faster timeframes still align.",
+   "evidence": "V held true; ma_50 383.16, atr_14d 7.62; price via bracket.atr_fallback_stop 412.8 + atr_14d 7.62 (locator only); day_vol 0.86",
+   "addressed_to": "elder-lens, minervini"
+  }
+ ],
+ "obligations": [
+  {"seat": "seow", "ticker": "HOG", "class": "EXTENSION", "what_is_owed": "the setup reason at about 5.2 ATR above ma_50 and the observable that proves the conviction-5 thesis wrong"},
+  {"seat": "livermore", "ticker": "VLTO", "class": "EXTENSION", "what_is_owed": "the pivot being bought and the reaction that would mark exhaustion"},
+  {"seat": "livermore", "ticker": "TXT", "class": "PROCESS", "what_is_owed": "the higher-timeframe context inside a descending ma_50/ma_100/ma_200 stack"},
+  {"seat": "elder-lens", "ticker": "MDT", "class": "UNPROVEN", "what_is_owed": "why day_vol 0.24 is not grounds to abstain"},
+  {"seat": "elder-lens", "ticker": "ROKU", "class": "OVERLAP", "what_is_owed": "own-method read of div_state BEARISH, div_bear_count 2"},
+  {"seat": "wyckoff", "ticker": "YOU", "class": "PROCESS", "what_is_owed": "the uptrend this pullback sits in, given ma_50 < ma_100 < ma_200"}
+ ],
+ "declarations": [
+  "I never nominate and never vote; these findings are QA reads on the room.",
+  "psychology_claims: NONE; C18-C21 are PM-facing (R9).",
+  "Price is not a served field. Extension figures locate price as bracket.atr_fallback_stop + atr_14d (the glossary defines that field as 1x ATR below price). That is a price locator only; no bracket field is a reason in any finding (R1).",
+  "pct_from_52w_high and rs_rank_pct appear in the packet but are off my data menu; not read."
+ ],
+ "data_gaps": [
+  {"field": "regime / srm", "impact": "Not in packet; R3 (regime named) cannot be checked for any case before the vote."},
+  {"field": "nomination reasons / fields_cited", "impact": "Packet gives seats and convictions only; R5 (invalidation stated) and R12 (field count) cannot be tested pre-vote."},
+  {"field": "price", "impact": "No price field served; extension derived from bracket.atr_fallback_stop + atr_14d as a locator."},
+  {"field": "lens_warnings (MP)", "impact": "Null for held MP; crowding/lens read incomplete for that name."},
+  {"field": "ledger memory (voice_memory render)", "impact": "Not injected; no own-history clustering check possible."}
+ ]
+}
