@@ -43,7 +43,8 @@ def test_a_panel_we_did_not_refresh_is_our_budget_and_blocks_and_a_missing_sourc
     assert t["positioning_cot"]["reason"] == L.DOWN and "missing" in t["positioning_cot"]["detail"]      # a missed weekly release is not 'cadence'
 
 
-def test_feed_timing_appends_one_entry_per_run_keeps_history_and_never_raises(tmp_path):
+def test_feed_timing_appends_one_entry_per_run_keeps_history_and_never_raises(tmp_path, monkeypatch):
+    monkeypatch.setattr(FT, "REPO_COPY", tmp_path / "no_committed_copy.json")      # hermetic: the nightly commits a real feed_timing.json (5 Nov) that record() falls back to
     class R:
         def __init__(self, text, lm): self.text, self.status_code, self.headers = text, 200, {"Last-Modified": lm}
     def get(u):
