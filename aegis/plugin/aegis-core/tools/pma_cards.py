@@ -645,10 +645,10 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
     if not v:
         return ('<div class="section-title"><h2>Part 1 · Daily weather</h2></div><section class="card"><p class="flag">'
                 'Valen dashboard not served this run — declared gap, not a neutral reading.</p></section>')
-    rm = v.get("read_me_first") or {}; st = (v.get("stance") or {}).get("word") or "?"
+    rm = v.get("read_me_first") or {}; st = _stance_word(v)
     hist = {h["label"]: h for h in v.get("history") or []}
     tone = {"RISK_ON": "p-up", "NEUTRAL": "p-warn", "RISK_OFF": "p-down"}.get(st, "p-n")
-    o = ['<div class="section-title"><h2>Part 1 · Daily weather</h2><span class="eyebrow">AQE numbers · plain-English read · as of '
+    o = [_freshness_html(v), '<div class="section-title"><h2>Part 1 · Daily weather</h2><span class="eyebrow">AQE numbers · plain-English read · as of '
          + E(str(v.get("exported_at") or v.get("date"))) + '</span></div>']
     # 1. Situational awareness and stance
     o.append(f'<section class="card"><div class="eyebrow">1 · Situational awareness and stance</div>'
@@ -837,10 +837,30 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
              + (". <b>None is TRIGGERED or READY.</b>" if not ready else "") + "</p></section>")
     return "\n".join(o)
 
+def _freshness_html(v):
+    """One line on every card page: expected session and each macro leg's date with its reason code (PM 2026-11-04)."""
+    line = ((v or {}).get("data_freshness") or {}).get("line")
+    if not v:
+        return '<div class="flag freshness"><b>FRESHNESS</b> | Valen dashboard not served this run - no macro leg can be dated</div>'
+    if not line:
+        return '<div class="flag freshness"><b>FRESHNESS</b> | this Valen file carries no legs table - the macro legs cannot be dated (declared gap)</div>'
+    return f'<div class="flag freshness">{E(line)}</div>'
+
+
+def _stance_word(v):
+    """The stance, or WITHHELD with the reason - never blank, never a guess."""
+    st = (v or {}).get("stance") or {}
+    w = st.get("word") or st.get("stance")
+    if w:
+        return str(w)
+    why = st.get("reason") or ((v or {}).get("data_freshness") or {}).get("banner") or (v or {}).get("reason") or "inputs not current"
+    return "WITHHELD - " + str(why)[:160]
+
+
 def _valen_card(v, rows, room):
     if not v:
         return '<section class="card"><div class="eyebrow">Valen · market weather</div><p class="flag">Valen dashboard not served this run — declared gap, not a neutral reading.</p></section>'
-    rm = v.get("read_me_first") or {}; st = (v.get("stance") or {}).get("word") or "?"
+    rm = v.get("read_me_first") or {}; st = _stance_word(v)
     hist = {h["label"]: h for h in v.get("history") or []}
     tone = {"RISK_ON": "p-up", "NEUTRAL": "p-warn", "RISK_OFF": "p-down"}.get(st, "p-n")
     o = ['<section class="card"><div class="eyebrow">Valen · the VIV System market weather (AQE)</div>',
@@ -1057,6 +1077,7 @@ def cmd_render(a):
     o.append(f'<div class="head"><div><div class="eyebrow">{E(T["session_label"])}</div><h1>Committee Cards</h1></div><div>'
              f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
              f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span></div></div>')
+    o.append(_freshness_html(V))
     bl = T["bottom_line"]
     o.append(f'<section class="card bottom"><div class="eyebrow">Bottom line</div><h2>{E(bl["headline"])}</h2><p>{E(bl.get("paragraph", ""))}</p><div class="grid4">'
              + "".join(f'<div class="stat"><div class="v {TONE.get(s.get("tone"), "")}">{E(str(s["value"]))}</div><div class="l">{E(s["label"])}</div></div>' for s in bl["stats"])

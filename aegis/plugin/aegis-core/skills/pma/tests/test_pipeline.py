@@ -3574,6 +3574,29 @@ def test_cards_bracket_first_target_rule_and_plain_reason(td):
     check("check.py cards FAILs the bad reason and the missing one, passes the good one", any("cards.AAA" in x for x in fails) and any("cards.CCC: no `reason`" in x for x in fails) and not any("cards.BBB" in x for x in fails), str(fails)[:300])
 
 
+def test_freshness_line_and_withheld_stance_print_on_the_cards(td):
+    """PM 2026-11-04: the one-line FRESHNESS header (expected session, each leg's date with its reason code, COT 'latest published')
+    prints on the card page, and a withheld Valen stance says WITHHELD with the reason, never blank."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards
+    importlib.reload(pma_cards)
+    sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", "..", "..")))
+    from src.macro import legs as L
+    from datetime import date
+    rows = L.build_legs("2026-11-03", date(2026, 11, 4), breadth={"freshness": {"as_of": "2026-11-03", "stale": True, "reason": "1600/4314", "current": 1600, "total": 4314}},
+                        vol_series={"vix": "2026-11-03", "vixeq": "2026-11-02", "dspx": "2026-11-02", "vix3m": "2026-11-03", "vix9d": "2026-11-03", "cor1m": "2026-11-03"},
+                        cot_as_of="2026-10-27", heartbeat_asof="2026-11-03")
+    line = L.freshness_line("2026-11-03", rows)
+    check("the FRESHNESS line carries expected, breadth OUR_BUDGET, dispersion PUBLISHER_LAG and COT latest published with the next release",
+          line.startswith("FRESHNESS | expected 2026-11-03") and "breadth 2026-11-03 [OUR_BUDGET]" in line and "dispersion 2026-11-02 [PUBLISHER_LAG]" in line
+          and "COT 2026-10-27 [PUBLISHER_CADENCE] (latest published; next release 2026-11-06)" in line, line)
+    html = pma_cards._freshness_html({"data_freshness": {"line": line}})
+    check("it renders as a flag line on the page", "FRESHNESS | expected 2026-11-03" in html and 'class="flag freshness"' in html)
+    check("a missing Valen file or legs table is a declared gap, not silence", "not served" in pma_cards._freshness_html({}) and "cannot be dated" in pma_cards._freshness_html({"x": 1}))
+    check("a withheld stance says WITHHELD with the reason", pma_cards._stance_word({"stance": {"stance": None, "reason": "breadth STALE"}}).startswith("WITHHELD - breadth STALE")
+          and pma_cards._stance_word({"stance": {"word": "NEUTRAL"}}) == "NEUTRAL")
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3647,7 +3670,8 @@ def main():
                    test_form_cap_scales_with_tickets_and_trigger_ties_are_stated,
                    test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat,
                    test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table,
-                   test_cards_bracket_first_target_rule_and_plain_reason]:
+                   test_cards_bracket_first_target_rule_and_plain_reason,
+                   test_freshness_line_and_withheld_stance_print_on_the_cards]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

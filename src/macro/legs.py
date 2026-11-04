@@ -70,3 +70,17 @@ def blocking(rows: list[dict]) -> list[dict]:
 
 def one_line(rows: list[dict]) -> str:
     return " | ".join(f"{r['leg']} {r['as_of']} {r['reason']}" for r in rows)
+
+
+def freshness_line(expected: str, rows: list[dict]) -> str:
+    """The one-line FRESHNESS header the desk proposed (PM 2026-11-04): printed on every card page and summary."""
+    short = {"breadth_whole_market": "breadth", "vix_level": "VIX", "dispersion_vixeq": "dispersion", "dspx": "DSPX",
+             "vix3m": "VIX3M", "vix9d": "VIX9D", "implied_correlation_cor1m": "COR1M", "positioning_cot": "COT",
+             "heartbeat_rsp_spy": "heartbeat"}
+    parts = []
+    for r in rows:
+        label = short.get(r["leg"], r["leg"])
+        tag = "" if r["reason"] == CURRENT else f" [{r['reason']}]"
+        extra = " (latest published; next release " + r["detail"].split("next release ")[-1] + ")" if r["leg"] == "positioning_cot" and "next release" in (r.get("detail") or "") else ""
+        parts.append(f"{label} {r['as_of']}{tag}{extra}")
+    return f"FRESHNESS | expected {expected} | " + " | ".join(parts)
