@@ -1,0 +1,32 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-04",
+ "round": 1,
+ "tickets": [
+  {"ticker": "ROKU", "answer": "AGREE", "conviction": 4},
+  {"ticker": "AJG", "answer": "AGREE", "conviction": 3},
+  {"ticker": "DIS", "answer": "AGREE", "conviction": 4},
+  {"ticker": "HOG", "answer": "OBJECT", "conviction": 2,
+   "objection": "Trigger reclaim:ma_20 enters on the reclaim close itself: buying the probe, not the follow-through. ma_20 is not a structural or value level on my test (C6, C12, R9: confirm with the next move).",
+   "would_clear": "Make the trigger the follow-through after the pull-in: h1_close_above:bar_high, a buy stop over the reclaim bar's high (C12)."},
+  {"ticker": "EW", "answer": "OBJECT", "conviction": 2,
+   "objection": "ACT_NOW on h1_close_above:bar_high with no pull-in buys ABOVE_STRUCTURE away from the Creek (dist_to_20bar_high_pct 0.94, H1 last_bar red): chasing, not the test (C3, C7, C15, R2).",
+   "would_clear": "Put the test first: after a pull-in to the Creek (structure_shift_ref), then h1_close_above:bar_high."},
+  {"ticker": "VLTO", "answer": "OBJECT", "conviction": 2,
+   "objection": "Trigger reclaim:ma_20 enters on the reclaim close itself: buying the probe, not the follow-through. ma_20 is not a structural or value level on my test (C6, C12, R9: confirm with the next move).",
+   "would_clear": "Make the trigger the follow-through after the pull-in: h1_close_above:bar_high, a buy stop over the reclaim bar's high (C12)."},
+  {"ticker": "TTEK", "answer": "OBJECT", "conviction": 2,
+   "objection": "Trigger reclaim:ma_20 enters on the reclaim close itself: buying the probe, not the follow-through. ma_20 is not a structural or value level on my test (C6, C12, R9: confirm with the next move).",
+   "would_clear": "Make the trigger the follow-through after the pull-in: h1_close_above:bar_high, a buy stop over the reclaim bar's high (C12)."},
+  {"ticker": "SWK", "answer": "AGREE", "conviction": 3},
+  {"ticker": "BRK-B", "answer": "AGREE", "conviction": 3},
+  {"ticker": "MDT", "answer": "OBJECT", "conviction": 2,
+   "objection": "ACT_NOW on h1_close_above:bar_high with no effort condition: the last session had day_vol 0.24 and H1 sits below EMA9 at pos_in_day_range_pct 39.1. A sign-of-strength trigger needs volume (C5, C12).",
+   "would_clear": "Require effort on the trigger: h1_close_above:bar_high on volume at least 1.2x normal for the time of day (vol_x_ge:1.2)."},
+  {"ticker": "SN", "answer": "AGREE", "conviction": 3},
+  {"ticker": "TMO", "answer": "AGREE", "conviction": 4},
+  {"ticker": "V", "answer": "AGREE", "conviction": 3},
+  {"ticker": "HNGE", "answer": "AGREE", "conviction": 3},
+  {"ticker": "GEN", "answer": "AGREE", "conviction": 2}
+ ]
+}
