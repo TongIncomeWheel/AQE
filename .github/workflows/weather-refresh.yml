@@ -1,0 +1,43 @@
+name: Macro weather refresh (Crown + Valen only)
+
+# 2026-11-04 (PM angry about stale Crown/VIX/COT/breadth): some legs only become current after the nightly started (Cboe VIX/VIXEQ
+# post ~10:11 SGT, DSPX ~10:41 SGT). This reruns the weather (Crown, scenarios, macro pack, Valen, feed timing) from current data and
+# republishes ONLY those files. It never touches the export, packets, committee data or committee run files, nor the nightly's marker
+# (it writes aqe_weather_refresh.json). Dispatch after 10:45 SGT to bring dispersion and DSPX current for the same close.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: aqe-daily
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Refresh the weather
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          TIGER_ID: ${{ secrets.TIGER_ID }}
+          TIGER_ACCOUNT: ${{ secrets.TIGER_ACCOUNT }}
+          TIGER_PRIVATE_KEY: ${{ secrets.TIGER_PRIVATE_KEY }}
+        run: python -m scripts.weather_refresh

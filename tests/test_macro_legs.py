@@ -82,3 +82,13 @@ def test_the_gate_fails_our_budget_and_two_nights_running_and_only_warns_a_publi
     assert len(f) == 1 and "two nights running" in f[0] and "dspx" in f[0]
     f, _ = C.check_macro_legs({"data_freshness": {"legs_table": [row("dspx", "CURRENT")]}}, {"history": [{"legs": [{"leg": "dspx", "reason": "PUBLISHER_LAG"}]}, {"legs": [{"leg": "dspx", "reason": "CURRENT"}]}]})
     assert f == []
+
+
+def test_weather_refresh_publishes_only_weather_files_and_never_the_committee_ones():
+    import importlib
+    from src.data import github_sync
+    W = importlib.import_module("scripts.weather_refresh")
+    published = set(github_sync.DAILY_ARTIFACTS)
+    assert set(W.WEATHER_FILES) - {"aqe_weather_refresh.json"} <= published        # every weather file is a normal daily artifact
+    forbidden = {"aqe_daily_export.json", "candidate_set.json", "aqe_last_run.json", "held_positions.json", "aqe_sector_map.json"}
+    assert not (set(W.WEATHER_FILES) & forbidden)                                  # the export, packets, held book and the nightly marker are not touched
