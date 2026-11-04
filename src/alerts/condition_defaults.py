@@ -100,14 +100,16 @@ def _levels_block(rec: dict, line: float) -> dict | None:
             "tp": [round(p, 2) if p is not None else None for p in tps]}
 
 
-def build_default_conditions(rec: dict) -> dict | None:
+def build_default_conditions(rec: dict, apply_distance_cap: bool = True) -> dict | None:
     """The synthesized block for one export row, or None when the row can't
-    be armed (no line above the close, or the line is too far away)."""
+    be armed (no line above the close, or -- unless `apply_distance_cap` is
+    False -- the line is too far away). The brief's list names pass False:
+    PM 2026-11-04, the 2-5%-under-the-line coiling names are the ones he wants."""
     line = breakout_line(rec)
     entry = _n(rec.get("entry"))
     if line is None or entry is None:
         return None
-    if 100.0 * (line / entry - 1.0) > C.CONDITION_DEFAULT_MAX_LEVEL_PCT:
+    if apply_distance_cap and 100.0 * (line / entry - 1.0) > C.CONDITION_DEFAULT_MAX_LEVEL_PCT:
         return None
     chase = round(line * (1.0 + C.CONDITION_DEFAULT_CHASE_PCT / 100.0), 2)
     vol_x = C.CONDITION_DEFAULT_VOL_X
@@ -126,13 +128,35 @@ def build_default_conditions(rec: dict) -> dict | None:
     }
 
 
+def build_watch_only_conditions(rec: dict) -> dict | None:
+    """A brief-list name already THROUGH its pivot with no line above the close (PM 2026-11-04: it must appear on the
+    digest, not vanish). There is NO buy trigger: `no_shared_buy` with no analysts can never read buy-met. The only word is
+    the chase line (word trade_above: true from the first cycle, unlike close_above which waits for the final cycle), set at the level the name already traded past (its last confirmed pivot high, else just under the
+    close), so the existing EXTENDED card fires once and the card says 'no entry line'. Nothing here decides anything."""
+    entry = _n(rec.get("entry"))
+    if entry is None or entry <= 0:
+        return None
+    lph = _n((rec.get("last_pivot_high") or {}).get("price"))
+    level = lph if lph is not None and 0 < lph < entry else entry * 0.995
+    level = round(level, 2)
+    return {
+        "shared": {"buy": [], "confirm": [], "no_shared_buy": True,
+                   "chase": {"w": "trade_above", "level": level,
+                             "plain": f"already traded above {level:.2f}{_SUFFIX}"}},
+        "exits": [], "analysts": [],
+    }
+
+
 def _as_row(rec: dict, klass: str, conditions: dict) -> dict:
-    line = _n(conditions["shared"]["buy"][0]["level"])
+    buy = conditions["shared"]["buy"]
+    line = _n(buy[0]["level"]) if buy else None
     row = {"ticker": rec["ticker"], "class": klass, "atr_14d": rec.get("atr_14d"),
            "conditions": conditions, "aqe_default": True}
     if klass == DEFAULT_CLASS["brief_lists"]:
         row["aqe_list"] = True
-    levels = _levels_block(rec, line) if line is not None else None
+    if not buy:
+        row["watch_only"] = True
+    levels = _levels_block(rec, line if line is not None else _n(rec.get("entry"))) if (line is not None or not buy) else None
     if levels:
         row["levels"] = levels
     return row
@@ -191,7 +215,9 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
                else "elder" if rec.get("on_elder") and "elder" in want else None)
         if not src:
             continue
-        cond = build_default_conditions(rec)
+        cond = build_default_conditions(rec, apply_distance_cap=(src != "brief_lists"))
+        if not cond and src == "brief_lists":
+            cond = build_watch_only_conditions(rec)          # through its pivot, no line above: watch-only, never silent
         if cond:
             row = _as_row(rec, DEFAULT_CLASS[src], cond)
             if src == "brief_lists":

@@ -1160,6 +1160,11 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
         now = (f" Spot is {spot:.2f}." if spot is not None else "")
         return (f"{cleared}, then fell back under{tail}.{now} "
                 f"Still watched: it re-qualifies on the next hourly close{back}.")
+    if primary == "CHASED" and row.get("watch_only"):
+        lvl = _lvl(shared.get("chase") or {})
+        where = f" (its last pivot, {lvl:.2f})" if lvl is not None else ""
+        return (f"On the AQE list, already through its pivot{where}: extended, no entry line above the close. "
+                "Watch only; there is no buy trigger for this name.")
     if primary == "CHASED":
         lvl = _lvl(shared.get("chase") or {})
         where = f" {lvl:.2f}" if lvl is not None else ""
