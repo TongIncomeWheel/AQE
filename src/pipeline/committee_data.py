@@ -57,6 +57,7 @@ FILES = {"fundamentals_pack.json": "fundamentals_pack.v1",
          "closes_scorecard.json": "closes_scorecard.v1"}
 UNIVERSE_HISTORY = "universe_history.json"      # sidecar (not a manifest file): {label: [export tickers]} so the scorecard's per-run list is never lost
 EXPORT_REPO_PATH = "aegis/output/aqe_daily_export.json"
+UNIVERSE_HISTORY_REPO = PROJECT_ROOT / "aegis" / "output" / "committee_data" / UNIVERSE_HISTORY    # the published sidecar in the checkout
 MANIFEST = "manifest.json"
 MANIFEST_SCHEMA = "committee_data_manifest.v1"
 
@@ -474,7 +475,7 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
         # THE SCORECARD'S SCOPE (conductor defect 2026-11-03): today's export + every verdict-ledger name in the window +
         # EVERY past export's names in the window (the equal-weight list per run) + SPY. The first cut had only the first
         # and last, which dropped 178 names and shrank the 'vs list' denominators.
-        uh, uh_note = build_universe_history(run_date, tickers, universe_previous if universe_previous is not None else _read_json(PROJECT_ROOT / REPO_DIR / UNIVERSE_HISTORY),
+        uh, uh_note = build_universe_history(run_date, tickers, universe_previous if universe_previous is not None else _read_json(UNIVERSE_HISTORY_REPO),
                                              git_loader=git_loader or git_export_history)
         past = sorted({t for k, v in uh["entries"].items() for t in v})
         if uh_note.startswith("UNAVAILABLE") or len([k for k in uh["entries"] if k != run_date]) == 0:
