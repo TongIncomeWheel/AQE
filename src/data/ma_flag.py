@@ -71,7 +71,7 @@ def _name_variants(name: str) -> list[str]:
     return out
 
 
-_UNAGREED = re.compile(r"non-?binding|unsolicited|rumou?rs?|reportedly|in talks|denies|denial|withdr[ae]w|abandon|explor(?:es|ing) (?:a )?sale|may (?:acquire|bid)|considering", re.I)
+_UNAGREED = re.compile(r"non-?binding|unsolicited|rumou?rs?|reportedly|in talks|denies|denial|withdr[ae]w|abandon|explor(?:es|ing) (?:a )?sale|may (?:acquire|bid)|considering|discuss(?:ed|es|ing)|\btalks\b|weigh(?:s|ing)|mulls?|sounds? out|approach(?:ed|es)|class[- ]action|lawsuit|misled|alleg(?:ed|edly|es)", re.I)
 
 
 def _role(text: str, name: str) -> str | None:
@@ -82,7 +82,7 @@ def _role(text: str, name: str) -> str | None:
     t = a = False
     for nm in _name_variants(name):
         n = re.escape(nm)
-        target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
+        target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|takeover of|take[- ]private)\s+(?:(?:the|its|all of|all|remaining|outstanding shares of|shares of|stake in|a|an)\s+)?{n}\b",
                   rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private)",
                   rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
         acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]

@@ -188,3 +188,23 @@ def test_the_circuit_breaker_fails_the_scan_instead_of_mass_deal_pinning(tmp_pat
         assert few["scan_status"] == "ok" and few["n_flagged"] == 3          # a handful of real targets is within the limit
     finally:
         M.fetch_items = orig
+
+
+def test_the_5_nov_misreads_are_not_targets_and_real_ones_still_are():
+    """5 Nov export (395 names): APO, RY, F, COMP were read as pending takeover targets and were not. The target verb must sit next to the company's name,
+    and a rumour, a discussion or a class-action notice is not an agreed deal."""
+    from datetime import date
+    wrong = [("APO", "Apollo Global Management", "Universal Music Group discussed going private with buyout firms including Apollo, Bloomberg News reports."),
+             ("RY", "Royal Bank of Canada", "Francisco Partners Agrees to Buy Moneris From BMO and Royal Bank of Canada for $1.4 Billion."),
+             ("F", "Ford Motor Company", "Crescent Energy to Acquire Eagle Ford Assets from Devon Energy under a definitive agreement."),
+             ("COMP", "Compass, Inc.", "Compass allegedly misled investors in connection with its merger with Anywhere Real Estate Inc. Robbins reminds investors of the class action.")]
+    for tk, nm, txt in wrong:
+        r = M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": txt, "text": "", "url": "u"}], today=date(2026, 11, 5))
+        assert r["ma_status"] != "PENDING_TARGET", (tk, r["ma_status"], r["ma_note"])
+    right = [("ROKU", "Roku, Inc.", "Fox will acquire Roku under a definitive merger agreement."),
+             ("CART", "Maplebear", "DoorDash agreed to acquire Maplebear Inc. for $17 billion under a definitive agreement."),
+             ("D", "Dominion Energy", "NextEra Energy announced the proposed acquisition of Dominion Energy in an all-stock deal under a merger agreement."),
+             ("CZR", "Caesars Entertainment", "Caesars Entertainment agreed to be acquired in a definitive agreement; Robbins LLP is investigating the proposed acquisition of Caesars.")]
+    for tk, nm, txt in right:
+        r = M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": txt, "text": "", "url": "u"}], today=date(2026, 11, 5))
+        assert r["ma_status"] == "PENDING_TARGET", (tk, r["ma_status"], r["ma_note"])
