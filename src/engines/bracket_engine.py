@@ -167,6 +167,24 @@ def _candidate_stops(levels: dict, ma: dict | None, price: float,
 # ---------------------------------------------------------------------------
 # The canonical bracket
 # ---------------------------------------------------------------------------
+def _gate_summary(cands: list, tp2_ref, price: float, atr14: float) -> dict:
+    """Which gate rejected the structural stop candidates (the export strips the candidate list, so this is the audit
+    trail for a valid=false bracket). Counts are per candidate; one candidate can fail several gates.
+    `tp2_reach_atr` = how far the R:R reference (TP2) sits above price in daily ranges. Because the stop must be at least
+    ATR_FLOOR ranges away AND R:R must be at least RR_MIN, a TP2 closer than ATR_FLOOR * RR_MIN ranges makes the bracket
+    impossible whatever the stops are: `tp2_too_near`."""
+    reach = round((tp2_ref - price) / atr14, 2) if _num(tp2_ref) and atr14 > 0 else None
+    return {
+        "n_candidates": len(cands),
+        "fail_atr_floor": sum(1 for c in cands if not (c.get("atr_dist") is not None and c["atr_dist"] >= ATR_FLOOR)),
+        "fail_rr_min": sum(1 for c in cands if not (c.get("rr") is not None and c["rr"] >= RR_MIN)),
+        "fail_regime_ceiling": sum(1 for c in cands if not c.get("regime_valid")),
+        "passed_all": sum(1 for c in cands if c.get("valid")),
+        "tp2_reach_atr": reach,
+        "tp2_too_near": bool(reach is not None and reach < ATR_FLOOR * RR_MIN),
+    }
+
+
 def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
                     price: float, price_source: str = "eod_close") -> dict:
     """THE bracket for a ticker at `price`. Returns the canonical object every
@@ -190,6 +208,7 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
         # NOT the operative stop when a structural bracket exists.
         "atr_fallback_stop": None,
         "valid": False, "invalid_reason": None,
+        "rejected_by_gate": None,
         "candidates": [], "regime_ceiling_pct": ceiling,
     }
     if not _num(price, atr14) or atr14 <= 0 or price <= 0:
@@ -211,6 +230,7 @@ def compute_bracket(levels: dict, ma: dict | None, regime_level: str | None,
     # 2) Structural stop candidates below price, gated vs the structural TP2.
     cands = _candidate_stops(levels, ma, price, atr14, tp2_ref, ceiling)
     out["candidates"] = cands
+    out["rejected_by_gate"] = _gate_summary(cands, tp2_ref, price, atr14)
     valids = [c for c in cands if c["valid"]]
     if not valids:
         out["targets"] = [

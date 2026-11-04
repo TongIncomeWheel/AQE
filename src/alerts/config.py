@@ -152,6 +152,11 @@ CONDITION_CARD_MAX_SEATS = int(_f("CONDITION_CARD_MAX_SEATS", 3))
 # --- AQE-default conditions (PM ruling 2026-10-04: universe = committee
 # book + AQE Longlist/Elder). See condition_defaults.py.
 CONDITION_DEFAULTS_ENABLED = _b("CONDITION_DEFAULTS_ENABLED", True)
+# U&R alerts (PM 2026-11-04 noise review: 28 of 30 U&R cards on 3 Nov were AQE-default names). ONE switch for the
+# whole U&R lifecycle (UNR_ARMED / UNR_TRIGGER / UNR_FAILED). Default true = today's behaviour. It is read in
+# condition_cycle.run_condition_cycle, which BOTH the in-app HF poller and the GitHub backstop call, so setting it on one
+# without the other is the only way to get a mixed result -- set it on both (HF Space secret + Actions variable).
+CONDITION_UNR_ENABLED = _b("CONDITION_UNR_ENABLED", True)
 # Which AQE lists feed default-watched names: "longlist", "elder", or both.
 CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "longlist,elder")
 # WATCH is the committee's "not yet" bucket -- off unless the PM flips it.

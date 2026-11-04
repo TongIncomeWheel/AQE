@@ -15,6 +15,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from . import condition_data as CD
+from . import config as _cfg
 from . import condition_evaluator as CE
 from . import condition_ledger as CL
 from . import condition_state as CS
@@ -219,7 +220,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
-            eval_result["unr_armed"] = live["unr"]["status"] == "ARMED"
+            eval_result["unr_armed"] = (_cfg.CONDITION_UNR_ENABLED and live["unr"]["status"] == "ARMED")
             eval_result["unr_trigger"] = (eval_result["unr_armed"]
                                           and live["vwap_trigger"].get("state") == "TRIGGERED")
             eval_result["unr_spot"] = live["price"]
