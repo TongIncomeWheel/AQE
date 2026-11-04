@@ -443,3 +443,41 @@ def test_brief_list_names_are_never_dropped_for_distance_or_a_missing_line(monke
     from src.alerts import condition_defaults as D
     assert D.build_default_conditions(rec("FAR", 1, 63.0, 61.0)) is None
     assert D.build_default_conditions(rec("FAR", 1, 63.0, 61.0), apply_distance_cap=False) is not None
+
+
+def test_brief_list_names_fire_on_their_lanes_own_trigger(monkeypatch):
+    """PM 2026-11-04: continuation = break of the pause high, breakout = base pivot, pullback = reclaim of the 20-day; a lane line that
+    is not above the close falls back to the generic line and says so; the continuation stop is the extension bracket's."""
+    from src.alerts import config as C, condition_defaults as D
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    monkeypatch.setattr(C, "CONDITION_LANE_TRIGGERS", True)
+
+    def rec(t, rank, **k):
+        base = {"ticker": t, "rank": rank, "entry": 100.0, "atr_14d": 2.0, "prior_bar_high": 100.4, "ma_20": 95.0, "ma_20_slope_5d_pct": 1.0, "ma_50": 90.0,
+                "hi_20d": 101.0, "last_pivot_high": {"price": 99.0}, "on_longlist": True, "on_elder": False,
+                "bracket": {"valid": False, "atr_fallback_stop": 98.0}}
+        base.update(k); return base
+    export = {"daily_list": [
+        rec("CONT", 1, pct_from_pivot=12.0, continuation_pivot=103.5, continuation_state="BELOW",
+            extension_bracket={"available": True, "stop": 96.5, "targets": []}),
+        rec("BRK", 2, pct_from_pivot=-3.0, last_pivot_high={"price": 102.0}, nr7_flag=True, hi_20d=101.5),
+        rec("PUL", 3, pct_from_pivot=-6.0, hi_20d=120.0, ma_20=101.0, ma_20_slope_5d_pct=1.0, unr_status="SETUP", last_pivot_high={"price": 99.0}),
+        rec("BEHIND", 4, pct_from_pivot=12.0, continuation_pivot=99.0, continuation_state="EXTENDED")],
+        "held_positions": [], "lens_ranking": {"ranked": []}}
+    rows = {r["ticker"]: r for r in D.synthesize_rows(export, None)}
+    assert rows["CONT"]["lane"] == "MOMENTUM_CONTINUATION" and rows["CONT"]["conditions"]["shared"]["buy"][0]["level"] == 103.5
+    assert "pause" in rows["CONT"]["conditions"]["shared"]["buy"][0]["plain"] and rows["CONT"]["levels"]["stop"] == 96.5       # the extension bracket's stop
+    assert rows["BRK"]["lane"] == "MOMENTUM_BREAKOUT" and rows["BRK"]["conditions"]["shared"]["buy"][0]["level"] == 102.0
+    assert rows["PUL"]["lane"] == "PULLBACK" and rows["PUL"]["conditions"]["shared"]["buy"][0]["level"] == 101.0
+    assert "20-day" in rows["PUL"]["conditions"]["shared"]["buy"][0]["plain"]
+    # the pause high is behind price: generic line (prior bar high), and the card says it fell back
+    assert rows["BEHIND"]["lane"] == "MOMENTUM_CONTINUATION" and rows["BEHIND"]["conditions"]["shared"]["buy"][0]["level"] == 100.4
+    assert "generic" in rows["BEHIND"]["lane_note"]
+    from src.alerts import emailer as E
+    card = E._with_lane({"headline": "CONT $100 · X", "lines": []}, rows["CONT"])
+    assert card["headline"].endswith("Continuation lane") and card["lines"][0].startswith("Continuation lane:")
+    # switch off -> today's generic line for everyone
+    monkeypatch.setattr(C, "CONDITION_LANE_TRIGGERS", False)
+    off = {r["ticker"]: r for r in D.synthesize_rows(export, None)}
+    assert "lane" not in off["CONT"] and off["CONT"]["conditions"]["shared"]["buy"][0]["level"] == 100.4

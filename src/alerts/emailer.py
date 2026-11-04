@@ -1664,7 +1664,16 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         card = _build_full_card(ticker, row, eval_result, fired_states, live)
     else:
         card = _build_compact_card(ticker, row, eval_result, fired_states, live)
-    return _with_ma_flag(card, row)
+    return _with_ma_flag(_with_lane(card, row), row)
+
+
+def _with_lane(card: dict, row: dict) -> dict:
+    """PM 2026-11-04: an AQE-list card names the lane whose trigger it is (or says it fell back to the generic line)."""
+    lab = (row or {}).get("lane_label")
+    if lab and not row.get("watch_only"):
+        card["headline"] = f"{card['headline']} · {lab} lane"
+        card["lines"] = [f"{lab} lane: {row.get('lane_note') or 'generic line'}."] + list(card.get("lines") or [])
+    return card
 
 
 def _with_ma_flag(card: dict, row: dict) -> dict:

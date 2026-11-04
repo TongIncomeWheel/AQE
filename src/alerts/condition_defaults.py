@@ -82,11 +82,13 @@ def breakout_line(rec: dict) -> float | None:
     return None
 
 
-def _levels_block(rec: dict, line: float) -> dict | None:
+def _levels_block(rec: dict, line: float, stop_override: float | None = None) -> dict | None:
     """stop/targets for the card's Bracket line -- read from the export's
     own bracket block, never recomputed. None when no stop exists."""
     b = rec.get("bracket") or {}
     stop = _n(b.get("stop")) if b.get("valid") else None
+    if stop_override is not None:
+        stop = stop_override                       # the lane's own stop (continuation: the extension bracket's)
     if stop is None:
         stop = _n(b.get("atr_fallback_stop"))
     if stop is None:
@@ -100,12 +102,13 @@ def _levels_block(rec: dict, line: float) -> dict | None:
             "tp": [round(p, 2) if p is not None else None for p in tps]}
 
 
-def build_default_conditions(rec: dict, apply_distance_cap: bool = True) -> dict | None:
+def build_default_conditions(rec: dict, apply_distance_cap: bool = True, line_override: float | None = None,
+                             plain_override: str | None = None) -> dict | None:
     """The synthesized block for one export row, or None when the row can't
     be armed (no line above the close, or -- unless `apply_distance_cap` is
     False -- the line is too far away). The brief's list names pass False:
     PM 2026-11-04, the 2-5%-under-the-line coiling names are the ones he wants."""
-    line = breakout_line(rec)
+    line = line_override if line_override is not None else breakout_line(rec)
     entry = _n(rec.get("entry"))
     if line is None or entry is None:
         return None
@@ -116,7 +119,7 @@ def build_default_conditions(rec: dict, apply_distance_cap: bool = True) -> dict
     return {
         "shared": {
             "buy": [{"w": "h1_close_above", "level": round(line, 2),
-                     "plain": f"an hourly candle closes above {line:.2f}{_SUFFIX}"}],
+                     "plain": (plain_override or f"an hourly candle closes above {line:.2f}") + _SUFFIX}],
             "confirm": [{"w": "vol_x_ge", "x": vol_x,
                          "plain": f"volume at least {vol_x:g}x normal for the time of day{_SUFFIX}"}],
             "no_shared_buy": False,
@@ -147,7 +150,7 @@ def build_watch_only_conditions(rec: dict) -> dict | None:
     }
 
 
-def _as_row(rec: dict, klass: str, conditions: dict) -> dict:
+def _as_row(rec: dict, klass: str, conditions: dict, stop_override: float | None = None) -> dict:
     buy = conditions["shared"]["buy"]
     line = _n(buy[0]["level"]) if buy else None
     row = {"ticker": rec["ticker"], "class": klass, "atr_14d": rec.get("atr_14d"),
@@ -156,7 +159,7 @@ def _as_row(rec: dict, klass: str, conditions: dict) -> dict:
         row["aqe_list"] = True
     if not buy:
         row["watch_only"] = True
-    levels = _levels_block(rec, line if line is not None else _n(rec.get("entry"))) if (line is not None or not buy) else None
+    levels = _levels_block(rec, line if line is not None else _n(rec.get("entry")), stop_override) if (line is not None or not buy) else None
     if levels:
         row["levels"] = levels
     return row
@@ -215,13 +218,25 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
                else "elder" if rec.get("on_elder") and "elder" in want else None)
         if not src:
             continue
-        cond = build_default_conditions(rec, apply_distance_cap=(src != "brief_lists"))
+        lt = None
+        if src == "brief_lists" and C.CONDITION_LANE_TRIGGERS:
+            from . import lane_trigger as _LT
+            lt = _LT.lane_trigger(rec)
+        cond = None
+        if lt and lt.get("line") is not None:
+            cond = build_default_conditions(rec, apply_distance_cap=False, line_override=lt["line"], plain_override=lt["plain"])
+        if not cond:
+            cond = build_default_conditions(rec, apply_distance_cap=(src != "brief_lists"))
         if not cond and src == "brief_lists":
             cond = build_watch_only_conditions(rec)          # through its pivot, no line above: watch-only, never silent
         if cond:
-            row = _as_row(rec, DEFAULT_CLASS[src], cond)
+            row = _as_row(rec, DEFAULT_CLASS[src], cond, (lt or {}).get("stop") if (lt and lt.get("line") is not None) else None)
             if src == "brief_lists":
                 row["on_lists"] = on_lists[tk]
+                if lt:
+                    row["lane"], row["lane_label"] = lt["lane"], lt["label"]
+                    row["lane_note"] = ("trigger is this lane's own line" if lt.get("line") is not None
+                                        else lt.get("note") or "generic line")
             out.append(row)
             covered.add(tk)
         if len(out) >= C.CONDITION_MAX_WATCHED:
