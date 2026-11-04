@@ -460,6 +460,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # working real-money pipeline, never allowed to take the export down.
     # See docs/AQE_VALEN_DASHBOARD_PROPOSAL.md.
     print(f"{_el()} [daily] Step 6i: VALEN Dashboard...")
+    _vl = None
     try:
         from src.valen.daily import run_valen, write_artifacts as _valen_write
         _vl = run_valen()
@@ -468,12 +469,22 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
               f"{_vl_paths['published']}")
         # every macro leg's date, one line (run marker reads it): never a quiet stale leg
         _fr = _vl.get("data_freshness") or {}
-        _lg = _fr.get("legs") or {}
-        print("  Macro legs: expected session " + str(_fr.get("expected_session")) + " | " +
-              " | ".join(f"{k} {v.get('as_of')}" + (" STALE" if v.get("stale") else "") for k, v in _lg.items()) +
-              (f" | BEHIND: {', '.join(_fr.get('behind') or [])}" if _fr.get("behind") else " | all current"))
+        from src.macro import legs as _L
+        print("  Macro legs: expected session " + str(_fr.get("expected_session")) + " | " + _L.one_line(_fr.get("legs_table") or []) +
+              (f" | BEHIND: {', '.join(_fr.get('behind') or [])}" if _fr.get("behind") else " | all current") +
+              (f" | BLOCKING: {', '.join(_fr.get('blocking') or [])}" if _fr.get("blocking") else ""))
     except Exception as exc:  # noqa: BLE001
         print(f"  [WARN] VALEN Dashboard failed: {exc}")
+
+    # Step 6i-2: record when Cboe/CFTC actually post (feed_timing.json, published with the other artifacts). Never blocks.
+    try:
+        from src.data import feed_timing as _ft
+        _ftd = _ft.record(str(run_date), legs=((_vl or {}).get('data_freshness') or {}).get('legs_table'))
+        _last = (_ftd.get("history") or [{}])[-1]
+        print("  Feed timing: " + ", ".join(f"{k} {v.get('last_modified')}" for k, v in (_last.get("cboe") or {}).items()) +
+              f" | CFTC {(_last.get('cftc') or {}).get('report_date')} {(_last.get('cftc') or {}).get('last_modified')}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] feed timing not recorded: {exc}")
 
     # Step 7: Output
     print("[daily] Step 7: Output...")

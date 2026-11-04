@@ -56,26 +56,26 @@ def _today_sgt() -> str:
 
 
 def _data_freshness(breadth: dict, crown: dict | None) -> dict:
-    """Every macro leg's date beside the last completed session (2026-11-03). A leg behind that session is named in a banner;
-    nothing is passed off as fresh. Legs: whole-market breadth, Crown's volatility, positioning (weekly COT, expected to
-    lag), and the oldest Crown leg."""
+    """Every macro leg's date beside the last completed session, each with a REASON CODE (src/macro/legs.py; 2026-11-04):
+    CURRENT / PUBLISHER_CADENCE / PUBLISHER_LAG / OUR_BUDGET / SOURCE_DOWN. A leg that is not current is named in a banner with
+    its code, so 'stale because we are slow' is never confused with 'stale because the publisher is'."""
+    from datetime import date as _date
     from src.data.sessions import last_completed_session
+    from src.macro import legs as L
     expected = str(last_completed_session())
-    fr = (breadth or {}).get("freshness") or {}
     cf = ((crown or {}).get("freshness") or {})
-    legs = {
-        "breadth": {"as_of": fr.get("as_of"), "stale": bool(fr.get("stale")), "detail": fr.get("reason") or
-                    (f"{fr.get('current')}/{fr.get('total')} tickers current" if fr else "not computed")},
-        "volatility": {"as_of": (cf.get("volatility") or {}).get("as_of")},
-        "positioning_cot": {"as_of": (cf.get("cot") or {}).get("as_of"), "note": "weekly CFTC release; expected to lag"},
-        "crown_oldest_leg": {"as_of": cf.get("oldest_leg")},
-    }
-    behind = [k for k in ("breadth", "volatility") if legs[k].get("as_of") and str(legs[k]["as_of"]) < expected]
+    hb = [v.get("as_of") for v in (cf.get("heartbeat") or {}).values() if v.get("as_of")]
+    table = L.build_legs(expected, _date.fromisoformat(_today_sgt()), breadth=breadth,
+                         vol_series=cf.get("volatility_series") or {}, cot_as_of=(cf.get("cot") or {}).get("as_of"),
+                         heartbeat_asof=min(hb) if hb else None, cboe_ok=bool(cf.get("volatility_series")))
+    behind = [r for r in table if r["reason"] not in (L.CURRENT, L.CADENCE)]
     banner = None
     if behind:
-        banner = ("DATA NOT CURRENT: " + "; ".join(f"{k} is as of {legs[k]['as_of']}" for k in behind) +
-                  f", the last completed session is {expected}. Readings that depend on them are one session old, not today's.")
-    return {"expected_session": expected, "legs": legs, "behind": behind, "banner": banner}
+        banner = ("DATA NOT CURRENT (expected session " + expected + "): " +
+                  "; ".join(f"{r['leg']} as of {r['as_of']} [{r['reason']}]" for r in behind) +
+                  ". Readings that depend on them are older than today's close.")
+    return {"expected_session": expected, "legs": {r["leg"]: r for r in table}, "legs_table": table,
+            "behind": [r["leg"] for r in behind], "blocking": [r["leg"] for r in L.blocking(table)], "banner": banner}
 
 
 def run_valen() -> dict:

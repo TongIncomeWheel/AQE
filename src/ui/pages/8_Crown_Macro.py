@@ -124,7 +124,7 @@ if fresh:
                       "Days behind": None, "Via": v.get("source")})
         c_ = fresh.get("cot") or {}
         frows.append({"Source": "CFTC COT", "As of": c_.get("as_of"),
-                      "Days behind": (c_.get("weeks_stale") or 0) * 7,
+                      "Days behind": None,
                       "Via": "cftc.gov (weekly)"})
         table_with_copy(pd.DataFrame(frows), key="crown_freshness",
                         label="📋 Copy freshness table")
@@ -578,7 +578,7 @@ with st.expander("CFTC Commitment of Traders — large-spec positioning"):
         st.warning(f"COT unavailable: {cot.get('reason') or cot.get('status')}")
     else:
         st.caption(
-            f"As of **{cot.get('as_of')}** ({cot.get('weeks_stale')} weeks stale). "
+            f"As of **{cot.get('as_of')}** (latest published CFTC release; the next one is Friday). "
             "Straight from cftc.gov — FMP gates COT behind Premium, the CFTC "
             "publishes it free. The report covers Tuesday's positions and comes "
             "out on Friday, so it is always at least three days old. Use it to "

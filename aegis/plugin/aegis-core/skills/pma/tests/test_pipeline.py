@@ -2460,7 +2460,8 @@ def test_the_data_handoff_gate_catches_bad_data_before_a_committee(td):
                   open(os.path.join(jdir, "aegis_journal_2026-11-02.json"), "w"))
         cs = {"run_date": D, "universe": [row("AAA"), row("BBB"), row("CCC"), {"ticker": "HLD", "held": True}]}
         crown = {"generated_at": f"{D}T06:55:00+08:00", "status": "OK", "the_call": {"expression_family": "X"}, "read_me_first": {"headline": "h"}}
-        valen = {"read_me_first": {"as_of": f"{D[:4]}-{D[5:7]}-{int(D[8:])-1:02d}T23:05:00Z"}, "stance": {"word": "NEUTRAL"}}   # UTC evening = the run date in SGT
+        valen = {"read_me_first": {"as_of": f"{D[:4]}-{D[5:7]}-{int(D[8:])-1:02d}T23:05:00Z"}, "stance": {"word": "NEUTRAL"},
+                 "data_freshness": {"legs_table": [{"leg": "breadth_whole_market", "as_of": D, "expected": D, "reason": "CURRENT", "detail": ""}]}}   # UTC evening = the run date in SGT
         pk = {v: "# DICT x: 1=a\nticker\tsc_momentum\nAAA\t70\nBBB\t60\nCCC\t55\nHLD\t50\n" for v in DEC}
         for k, v in over.items():
             if k == "pk": pk.update(v)
@@ -3392,6 +3393,16 @@ def test_a_rerun_has_its_own_identity_and_cannot_publish_live(td):
     check("RUN.yaml states the rerun rules (no live levels, scorecard log, inbox skipped)", "RERUN MODE" in ry and "INBOX-CLEAN is skipped" in ry and "scorecard_log.jsonl or scorecard/<date>.md" in ry)
 
 
+def test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table(td):
+    """PM 2026-11-04: the data handoff gate must FAIL on OUR_BUDGET / SOURCE_DOWN legs and on a Valen file with no legs table."""
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("chk_legs", os.path.join(HERE, "..", "..", "daily-check", "check.py")); ck = _iu.module_from_spec(sp); sp.loader.exec_module(ck)
+    f, n = ck.check_macro_legs({"data_freshness": {"legs_table": [{"leg": "breadth_whole_market", "as_of": "x", "expected": "y", "reason": "OUR_BUDGET", "detail": "37%"}]}}, None)
+    check("the gate FAILs breadth that is behind because of our own budget", len(f) == 1 and "OUR_BUDGET" in f[0], str(f))
+    f, n = ck.check_macro_legs({"stance": {}}, None)
+    check("the gate FAILs a Valen file with no legs table", len(f) == 1 and "cannot be audited" in f[0], str(f))
+
+
 def test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also(td):
     """P2 (conductor 2026-11-04): slate cap 25 with a code-made cut; why_agreed / wrong_if quotes must be a SUPPORT seat's
     verbatim words; cross and tier2 words are quotable; AMEND texts are attached verbatim by CODE (no MERGED ladder);
@@ -3605,7 +3616,8 @@ def main():
                    test_a_rerun_has_its_own_identity_and_cannot_publish_live,
                    test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also,
                    test_form_cap_scales_with_tickets_and_trigger_ties_are_stated,
-                   test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat]:
+                   test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat,
+                   test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

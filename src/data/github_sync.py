@@ -418,6 +418,7 @@ DAILY_ARTIFACTS = (
     "held_positions.json",
     "aqe_sector_map.json",
     "options_scan.json",          # universe CSP theta sweep
+    "feed_timing.json",           # when Cboe/CFTC actually post (history, one entry per nightly)
     "aqe_last_run.json",          # the run marker the status bar reads
 )
 
