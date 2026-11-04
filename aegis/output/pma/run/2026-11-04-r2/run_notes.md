@@ -1,0 +1,16 @@
+# PMA RERUN r2 -- 2026-11-04 (NOT LIVE)
+
+Rerun of today's committee on the FROZEN votes of the live run (NOMINATE through TIMING are the live run's forms, re-recorded here), re-run from SLATE onward on the code fixes merged today: slate cap 25 (PM ruling 2026-11-04), code-cut slate plan, the slate-quote rule (why_agreed/wrong_if only from SUPPORT seats), and the code-built final rationale. Nothing here touches the published levels, the scorecard log or the ledgers on main.
+
+## Declared items
+- SLATE: 17 survivors, cap 25, 0 excluded (the live run cut FA and CART at 15).
+- QA (Steenbarger): HOLD on 12 of 17 tickets (MDT BRK-B EW HOG TTEK VLTO CART AJG SN V GEN SWK). His finding: for 11 tickets the why_agreed quotes a seat that supports the name but OBJECTS to the ticket's trigger at ratify; five 2-2 trigger ties (SN GEN SWK V EW) were broken toward the trigger the objectors reject, and decision.json states no tie-break rule; DIS omits earnings 17 Nov inside its horizon. The hold round (84 floor messages) changed no stance; both ratification rounds filed 7/7. The ticket text is not amended (held-ticket revision step not built yet).
+- RESULT (R34, by code): AGREED 1 (ROKU), CONTESTED 11 (SN V BRK-B DIS TMO EW HNGE AJG GEN SWK FA), DROPPED 5 (MDT HOG TTEK VLTO CART, 4 or more objections each), NOT_SLATED 27.
+- RATIONALE-FINAL: the code-built rationale_final.json (28,079 B, 12 tickets) was first REJECTed on the old fixed 24,576 B form cap; engineering made the cap scale with ticket count (c7e7952, same day); that fix unmasked a second defect (the code kept 'what would change it' clauses from seats that then DISSENTED, 25 validator errors), which engineering fixed the same day (c7234ec: those clauses are dropped and listed, their words ride as the minority note). The rerun was re-run on the fixed code and validates OK. committee_position.json lists 11 declared gaps, one per ticket where a dissenter's clause was removed from the committee text (their words are the minority note); no other gaps.
+- CODE DEFECT FOUND AND FIXED ON THE DAY: pma_pipeline.py ratify-count still refused any slate over 15 (the cap change had moved the registrar only). Engineering fixed it (5fe2b30); the count was re-run after the fix.
+- COMMITTEE POSITION (R42): switch on; 7/7 ADOPT answers; 4 AMEND texts attached verbatim by code; convictions by code: ROKU 4, DIS 4; SN V BRK-B TMO EW HNGE AJG SWK FA 3; GEN 2.
+- TRIGGER TIES: engineering's c7e7952 also states the tie rule in decision.json (higher blind conviction, then decider order); this rerun's decision.json was produced before that change, so its five 2-2 ties carry no stated rule.
+- DATA/BOOK/MARKET declarations are those of the live run (same inputs): Valen stance withheld and breadth STALE (1,600 of 4,314 panel tickers carry the 3 Nov bar; the panel refresh was dispatched after the live run), Crown DEGRADED, market kill has no watchable level, V stop 414.45 and MP stop 36.66 agree with Tiger.
+- SCORECARD: graded 1846 rows over 12 runs (asof 2026-11-03); not pushed (rerun).
+- INBOX-CLEAN: skipped (rerun).
+- WRITE: the writer nested the weather block under market only; the renderer needs it at top level, so the block was copied up verbatim (structure only, no words changed) before rendering.
