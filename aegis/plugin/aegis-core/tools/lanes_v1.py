@@ -94,3 +94,29 @@ def lane_status(lane, objectors, n_present, present, drop_threshold_all, thresho
     thr = (math.ceil(len(leads) / 2) if threshold_mode == "proportional" else drop_threshold_all) if leads else drop_threshold_all
     status = "AGREED" if not lead_obj else ("DROPPED" if len(lead_obj) >= thr else "CONTESTED")
     return {"status": status, "counted_objectors": lead_obj, "advisor_objectors": adv_obj, "threshold": thr, "leads_present": leads}
+
+
+YARDSTICK = {
+    BREAKOUT: ("judge it against its BASE PIVOT: is it breaking out (0-5% past pivot_high, the 5% chase line), is the volume test met, "
+               "or is it coiling just under the pivot with a tight bar. Continuation fields do not apply to it."),
+    CONTINUATION: ("judge it against its CONTINUATION PIVOT (continuation_pivot, continuation_state, pct_from_continuation_pivot): the high of "
+                   "its last 3-10 bar tight pause. BELOW = coiling under the pause high (the break has not happened); BUY_ZONE = 0-5% past it; "
+                   "EXTENDED = more than 5% past it. The base pivot_high and its 5% chase line are NOT the yardstick for this name - it is "
+                   "already past them by design. Stretch is read in daily ranges over the 20-day average; 'more than 70% over the 200-day' is a "
+                   "WARNING you state, not a veto. extension_bracket is AQE's second, labelled bracket (1.272 / 1.618 of the last leg) for a "
+                   "name in open air; it ignores nearby resistance, so say so if you rely on it."),
+    PULLBACK: ("judge it as a pullback: a reclaim of a rising average or a reclaim day (undercut and rally), under its base pivot. "
+               "Extension and distance past the pivot do not apply."),
+}
+
+
+def prompt_lines():
+    """The vote-packet text when lanes_v1 is on: the lanes, who leads, and each lane's yardstick (R43)."""
+    out = ["LANES v1 (R43, PM 2026-11-04): every ticket carries ONE lane assigned by code from AQE fields: lane=MOMENTUM_BREAKOUT, "
+           "MOMENTUM_CONTINUATION, PULLBACK, or UNLANED (no lane rule applied: every seat counts, as before). Continuation is a subset of momentum.",
+           "LEADS decide: in a laned ticket only the LEAD seats' OBJECT answers count toward AGREED / CONTESTED / DROPPED (DROP at half of the leads, "
+           "rounded up). An ADVISOR's objection is printed on the ticket and never counted - file it anyway, in your own method, with what would clear it."]
+    for lane in LANES:
+        out.append(f"  {lane}: leads {', '.join(LEADS[lane])}; advisors {', '.join(advisors(lane))}. Yardstick: {YARDSTICK[lane]}")
+    out.append("Say which seat-role you are on each ticket (lead or advisor) in your own words only if it changes your answer; the lane and role are in the packet.")
+    return out

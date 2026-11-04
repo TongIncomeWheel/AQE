@@ -3729,10 +3729,70 @@ def test_lanes_v1_assigns_by_code_and_leads_decide(td):
     check("lanes_v1 ships off", "lanes_v1: off" in ry and "id: R43" in rl and "status: proposed" in rl.split("id: R43")[1])
 
 
+def test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged(td):
+    """R43 (PM-approved 2026-11-04, switch lanes_v1): ON -> lead seats' objections decide, advisors' are printed with counted=false;
+    the threshold is half of the leads (proportional). OFF (default) -> exactly the R34 count. UNLANED -> R34."""
+    d, p4 = _committee_fixture(td, "ratifyv1")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    P = json.load(open(p4))
+    laned = {"GNW": "MOMENTUM_CONTINUATION", "BBY": "MOMENTUM_BREAKOUT", "LNG": "MOMENTUM_CONTINUATION", "MFG": "UNLANED"}
+    for r in P["ranked"]:
+        if r["ticker"] in laned: r["lane"] = laned[r["ticker"]]
+    p4v = os.path.join(d, "phase4_v1.json"); json.dump(P, open(p4v, "w"))
+    slate = os.path.join(d, "slate_v1.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY"), _ticket("LNG"), _ticket("MFG")]}, open(slate, "w"))
+    obj = {"GNW": {"oneil", "minervini", "wyckoff"},                 # all three ADVISORS on a continuation ticket
+           "BBY": {"elder-lens", "seow", "raschke"},                 # all three ADVISORS on a breakout ticket
+           "LNG": {"livermore", "seow"},                             # two of the four continuation LEADS
+           "MFG": {"oneil", "minervini", "wyckoff", "seow"}}         # UNLANED: today's rule, 4 of 7
+    for v in DEC:
+        _ratify(d, "ratifyv1", v, {t: ("OBJECT" if v in obj[t] else "AGREE") for t in obj})
+    def count(on):
+        out = os.path.join(d, f"cons_{on}.json")
+        if on: os.environ["AEGIS_LANES_V1"] = "on"
+        else: os.environ["AEGIS_LANES_V1"] = "off"
+        try:
+            rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyv1"), "--board", board,
+                           "--phase4", p4v, "--date", "2026-11-01", "--out", out, "--record", os.path.join(d, f"rec_{on}.json")])
+        finally:
+            os.environ.pop("AEGIS_LANES_V1", None)
+        check(f"ratify-count lanes_v1={'on' if on else 'off'} exits clean", rc == 0, log[-300:])
+        return {c["ticker"]: c for c in json.load(open(out))} if rc == 0 else {}
+    off = count(False); on = count(True)
+    if not off or not on: return
+    check("OFF: three objections on GNW is CONTESTED, four on MFG DROPPED, two on LNG CONTESTED (R34 as before)",
+          (off["GNW"]["status"], off["MFG"]["status"], off["LNG"]["status"]) == ("CONTESTED", "DROPPED", "CONTESTED") and "lanes_v1" not in off["GNW"], str({k: v["status"] for k, v in off.items()}))
+    check("ON: advisors-only objections leave GNW and BBY AGREED and print them uncounted",
+          on["GNW"]["status"] == "AGREED" and on["BBY"]["status"] == "AGREED"
+          and all(o["counted"] is False for o in on["GNW"]["objections"]) and sorted(on["GNW"]["lanes_v1"]["advisor_objectors"]) == ["minervini", "oneil", "wyckoff"], str(on["GNW"]))
+    check("ON: two of four continuation leads DROP LNG (threshold 2)", on["LNG"]["status"] == "DROPPED" and on["LNG"]["drop_threshold"] == 2 and on["LNG"]["verdict"] == "PASS", str(on["LNG"]))
+    check("ON: an UNLANED ticket is counted exactly as before", on["MFG"]["status"] == "DROPPED" and on["MFG"]["drop_threshold"] == 4 and "lanes_v1" not in on["MFG"] or on["MFG"].get("lanes_v1", {}).get("lane") == "UNLANED")
+
+
+def test_lanes_v1_switch_prompt_and_rank_lane(td):
+    """R43: the switch defaults OFF (door-based label); ON the rank lane is the code-assigned lane and the vote prompt names the leads and each yardstick."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_pipeline as PP
+    importlib.reload(PP)
+    os.environ.pop("AEGIS_LANES_V1", None)
+    check("lanes_v1 is OFF by default and the lane is the door label", PP.lanes_v1_on() is False and PP._lane_for({"pct_from_pivot": 2.0}, ["STRENGTH"])[0] == "MOMENTUM")
+    os.environ["AEGIS_LANES_V1"] = "on"
+    try:
+        check("ON: the lane comes from the AQE row", PP._lane_for({"pct_from_pivot": 12.0, "continuation_pivot": 99.0}, [])[0] == "MOMENTUM_CONTINUATION"
+              and PP._lane_for({"pct_from_pivot": 2.0}, ["STRENGTH"])[0] == "MOMENTUM_BREAKOUT")
+        txt = "\n".join(PP._lanes_mod().prompt_lines())
+        check("ON: the prompt names the leads, the advisors and the continuation yardstick",
+              "MOMENTUM_CONTINUATION: leads livermore, seow, elder-lens, raschke; advisors oneil, minervini, wyckoff" in txt
+              and "CONTINUATION PIVOT" in txt and "WARNING you state, not a veto" in txt, txt[:400])
+    finally:
+        os.environ.pop("AEGIS_LANES_V1", None)
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,
