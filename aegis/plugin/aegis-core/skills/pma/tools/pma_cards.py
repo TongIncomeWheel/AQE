@@ -233,6 +233,67 @@ REQUIRED_TOP = ["session_label", "stance_pill", "bottom_line", "market", "money"
 
 
 
+
+# ---------------------------------------------------------------------------------------------------------------
+# PLAIN WORDS (PM 2026-11-04: "random words that don't explain"): ONE table turns every raw field / state name that reaches the
+# page into words a trader reads. Applied to every text node of the rendered HTML, so no block (Confirms, Valen, Sector, committee
+# quotes, ...) can leak a field name. A token not in the table falls back to lower-case words and is reported at render so the
+# table gets extended; check.py cards --html then FAILs any underscore token that still appears.
+PLAIN_WORDS = {
+    "bar_high": "yesterday's high", "bar_low": "yesterday's low", "prior_bar_high": "yesterday's high", "prior_bar_low": "yesterday's low",
+    "high_52w_close": "the 52-week closing high", "high_52w": "the 52-week high", "low_52w": "the 52-week low",
+    "from_52w_hi": "distance from the 52-week high", "pct_from_52w_high": "distance from the 52-week high",
+    "ma_20": "the 20-day average", "ma_40": "the 40-day average", "ma_50": "the 50-day average", "ma_100": "the 100-day average",
+    "ma_150": "the 150-day average", "ma_200": "the 200-day average",
+    "hi_20d": "the 20-day high", "lo_20d": "the 20-day low", "hi_50d": "the 50-day high", "lo_50d": "the 50-day low",
+    "base_low_20d": "the 20-day base low", "pivot_high": "the last pivot high", "pct_from_pivot": "distance from the pivot",
+    "structure_shift_ref": "the structure break level", "structure_shift": "market structure",
+    "day_vol": "today's volume against its average", "rvol_20d": "volume against its 20-day average",
+    "rs_rank_pct": "relative-strength rank", "rs_leadership": "relative-strength leadership", "rs_spy_20d": "20-day strength against the index",
+    "elder_5d": "the 5-day Elder score run", "elder_pattern": "the Elder pattern", "mp_state": "momentum state", "ret_63d": "3-month return",
+    "dist_to_20bar_high_pct": "distance from the 20-bar high", "pos_in_day_range_pct": "position in today's range",
+    "hh_hl_3": "higher highs and higher lows", "sma_dist": "distance from the average", "close_vs_ema9": "close against the 9-day average",
+    "ema_order": "the order of the averages", "last_bar": "the last bar", "held_tp1": "the held first target",
+    "horizon_sessions": "horizon in sessions", "why_agreed": "why agreed", "atr_14d": "the average daily range",
+    "ext_atr20": "stretch from the 20-day average", "vol_x_ge": "volume at least", "run_10d": "10-day run", "elder_le": "Elder score at most",
+    "pvp_vah": "the top of the value area", "pvp_val": "the bottom of the value area", "pvp_poc": "the highest-volume price",
+    "vwap_14d": "the 14-day volume-weighted price", "avwap_structure": "the structure-anchored volume-weighted price",
+    "avwap_swing": "the swing-anchored volume-weighted price",
+    "h1_close_above": "an hourly close above", "close_above": "a daily close above", "close_below": "a daily close below",
+    "trade_above": "trading above", "trade_below": "trading below", "in_zone": "in the zone",
+    "aqe_atr_fallback": "one daily range below the price", "stop_type": "stop type",
+    "STP_LMT": "stop-limit order", "ACT_NOW": "act now", "NOT_SLATED": "not slated", "ABOVE_STRUCTURE": "above structure",
+    "BULLISH_BOS": "a bullish break of structure", "BEARISH_CHOCH": "a bearish change of character", "BULLISH_CHOCH": "a bullish change of character",
+    "BROADENING_CARRY": "broadening", "CORRECTION_REENTRY": "correction re-entry", "PAST_PIVOT": "past the pivot", "RISK_OFF": "risk-off",
+    "RISK_ON": "risk-on", "DOLLAR_SQUEEZE": "dollar squeeze", "GROWTH_SCARE": "growth scare",
+}
+_PLAIN_TOKEN = re.compile(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b")
+_PLAIN_FALLBACK: set = set()
+
+
+def plain_words(text):
+    def sub(m):
+        t = m.group(0)
+        if t in PLAIN_WORDS:
+            return PLAIN_WORDS[t]
+        if t.lower() in PLAIN_WORDS:
+            return PLAIN_WORDS[t.lower()]
+        _PLAIN_FALLBACK.add(t)
+        return t.lower().replace("_", " ")
+    return _PLAIN_TOKEN.sub(sub, text)
+
+
+def plainify_html(page):
+    """Translate raw tokens in the TEXT of the page only (never <style>, <script> or tag attributes)."""
+    parts = re.split(r"(<style.*?</style>|<script.*?</script>)", page, flags=re.S | re.I)
+    out = []
+    for seg in parts:
+        if seg[:6].lower() in ("<style", "<scrip"):
+            out.append(seg)
+        else:
+            out.append(re.sub(r">([^<>]+)<", lambda m: ">" + plain_words(m.group(1)) + "<", seg))
+    return "".join(out)
+
 # ---------------------------------------------------------------------------------------------------------------
 # B1/B2 (PM 2026-11-04): every ADVANCE card carries a code-rendered BRACKET - entry, stop, risk, each target in R, RR to TP2, 1R in
 # dollars - and a level under 1.0R is never presented as a target. "The first target is ultra stupid once you consider RR"
@@ -277,8 +338,8 @@ def bracket_view(entry, entry_src, stop, stop_type, levels, one_r=None):
         if len(out["targets"]) >= 2:
             out["rr_tp2"] = out["targets"][1]["r"]
         if len(out["targets"]) < 2:
-            out["note"] = (f"Only {len(out['targets'])} level reaches 1R above the entry - no usable target ladder; "
-                           f"treat the nearby levels as resistance to trade through, not as targets")
+            out["note"] = (("No level reaches 1R above the entry" if not out["targets"] else "Only one level reaches 1R above the entry")
+                           + " - no usable target ladder; treat the nearby levels as resistance to trade through, not as targets")
         if one_r:
             out["shares"] = int(one_r // risk)
     except Exception as e:  # noqa: BLE001
@@ -293,8 +354,10 @@ def _bracket_html(b):
     near = (" · ".join(f'{x["price"]:.2f} ({x["r"]:.1f}R)' for x in b["nearby"]) or "")
     one = (f'1R ${b["one_r_usd"]:,.0f} = {b["shares"]} shares' if b.get("shares") is not None else "1R $ not set")
     rr = f'{b["rr_tp2"]:.1f}R' if b.get("rr_tp2") is not None else "n/a"
+    first = (f'Reward/risk to the first real target: <b>{b["targets"][0]["r"]:.1f}R</b>' if b["targets"] else
+             '<b class="neg">Reward does not justify the risk at this entry: no target reaches 1R</b>')
     st = str(b.get("stop_type") or "").replace("_", " ")
-    return (f'<div class="full bracket"><dt>Bracket</dt><dd>'
+    return (f'<div class="full bracket"><dt>Bracket</dt><dd>{first}<br>'
             f'Entry <b>{b["entry"]:.2f}</b> ({E(b["entry_src"])}) &nbsp;·&nbsp; Stop <b>{b["stop"]:.2f}</b> ({E(st)}) &nbsp;·&nbsp; '
             f'Risk <b>{b["risk"]:.2f}</b>/share ({b["risk_pct"]:.1f}%) &nbsp;·&nbsp; {tp} &nbsp;·&nbsp; RR to TP2 <b>{rr}</b> &nbsp;·&nbsp; {E(one)}'
             + (f'<br><span class="cond">Nearby resistance, not targets: {E(near)}</span>' if near else "")
@@ -1070,13 +1133,23 @@ def cmd_render(a):
         by[c["verdict"]].append(c)
     order = {"ok": 0, "warn": 1, "bad": 2}
     adv = sorted(by["ADVANCE"], key=lambda c: (order.get(T["cards"][c["ticker"]]["readiness_tone"], 3), c["ticker"]))
+    def _no_ladder(t):
+        _b = BR.get(t) or {}
+        _c = (CD["advance"].get(t) or {})
+        _tr = next((x for x in (_c.get("triggers") or []) if x.get("kind") == "close_above" and isinstance(x.get("level"), (int, float))), None)
+        _p = (_b.get("price") or {}).get("value") if isinstance(_b.get("price"), dict) else None
+        _e = _tr["level"] if _tr else (_p if isinstance(_p, (int, float)) else (rows.get(t) or {}).get("entry"))
+        _s = (_b.get("stop") or {}).get("price") if isinstance(_b.get("stop"), dict) else (BS.get(t) or {}).get("stop")
+        return not bracket_view(_e, "", _s, "", [x.get("price") for x in (_b.get("tp_ladder") or [])], None)["targets"]
+    n_no_ladder = sum(1 for c in adv if _no_ladder(c["ticker"]))
     o = ['<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
          '<title>Aegis Committee Cards</title>',
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">',
          f"<style>{CSS}</style></head><body><div class=\"wrap\">"]
     o.append(f'<div class="head"><div><div class="eyebrow">{E(T["session_label"])}</div><h1>Committee Cards</h1></div><div>'
              f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
-             f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span></div></div>')
+             f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
+             + (f'<span class="pill p-warn">{n_no_ladder} of {len(adv)} ADVANCE: reward does not justify the risk at this entry</span>' if n_no_ladder else "") + '</div></div>')
     o.append(_freshness_html(V))
     bl = T["bottom_line"]
     o.append(f'<section class="card bottom"><div class="eyebrow">Bottom line</div><h2>{E(bl["headline"])}</h2><p>{E(bl.get("paragraph", ""))}</p><div class="grid4">'
@@ -1124,7 +1197,7 @@ def cmd_render(a):
         void = f'<div class="full"><dt>Void if</dt><dd>{E(MK)}</dd></div>' if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
-                 f'<span class="pill {TONE.get(w["readiness_tone"], "p-n")}">{E(w["readiness"])}</span></header>'
+                 f'<span class="pill {("p-warn" if not bracket["targets"] else TONE.get(w["readiness_tone"], "p-n"))}">{E("Reward does not justify the risk at this entry" if not bracket["targets"] else w["readiness"])}</span></header>'
                  f'<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
@@ -1186,7 +1259,10 @@ def cmd_render(a):
     o.append('<section class="card"><div class="eyebrow">Read with care</div><ul>' + "".join(f"<li>{E(x)}</li>" for x in T["caveats"]) + "</ul></section>")
     o.append(_top20_panel(D, cons))            # PM 2026-11-03: the very bottom of the Cards, built by code
     o.append('<div class="foot">DRAFT — PM approval required. Nothing is staged, nothing is armed.</div></div></body></html>')
-    open(a.out, "w").write("\n".join(o))
+    page = plainify_html("\n".join(o))
+    if _PLAIN_FALLBACK:
+        print("  [plain words] no table entry for: " + ", ".join(sorted(_PLAIN_FALLBACK)) + " (rendered as lower-case words; add them to PLAIN_WORDS)")
+    open(a.out, "w").write(page)
     print(f"wrote {a.out}: {os.path.getsize(a.out)} bytes; {len(adv)} ADVANCE cards, {len(by['HOLD-FOR-CONDITIONS'])} holds, {len(by['PASS'])} passes")
 
 

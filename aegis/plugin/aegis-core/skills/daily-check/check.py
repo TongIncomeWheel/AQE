@@ -585,6 +585,25 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
     return fails, notes, report
 
 
+def check_cards_html(path):
+    """The RENDERED card page must carry no raw field name anywhere in its text (PM 2026-11-04): any underscore token (bar_high,
+    high_52w_close, day_vol, ABOVE_STRUCTURE...) in a text node FAILs. The renderer translates them from one table; this proves it."""
+    import re as _re
+    fails, notes = [], []
+    if not path or not os.path.exists(path):
+        return [f"cards html: MISSING ({path})"], notes
+    h = open(path, encoding="utf-8", errors="replace").read()
+    h = _re.sub(r"<style.*?</style>|<script.*?</script>", "", h, flags=_re.S | _re.I)
+    bad = {}
+    for m in _re.finditer(r">([^<>]+)<", h):
+        for t in _re.findall(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b", m.group(1)):
+            bad[t] = bad.get(t, 0) + 1
+    if bad:
+        fails.append("the rendered cards still show raw field names: " + ", ".join(f"{k} x{v}" for k, v in sorted(bad.items(), key=lambda kv: -kv[1])[:14]))
+    notes.append(f"cards html: {len(h):,} chars scanned for raw field names")
+    return fails, notes
+
+
 def check_cards_text(path):
     """B3 (PM 2026-11-04): the Cards' reason block is ONE plain voice - three one-sentence parts, no raw field names, no vote
     tallies, no jargon, at most 4 numbers. FAIL, not WARN. The rules live in pma_cards.validate_reason (one source); the render
@@ -815,7 +834,7 @@ def main(argv=None):
     d_.add_argument("--journal-dir", default=None, help="default: <output-dir>/../data/journal")
     d_.add_argument("--broker-stops", default=None, help="GATHER's broker_stops.json, cross-checked against the journal")
     ct = sub.add_parser("cards", help="B3: the Cards' plain one-voice reason block (FAIL on raw field names, tallies, jargon, > 4 numbers)")
-    ct.add_argument("--text", default="cards_text.json")
+    ct.add_argument("--text", default="cards_text.json"); ct.add_argument("--html", default=None, help="the rendered pma_cards_<date>.html: FAIL on any raw field name in its text")
     cv = sub.add_parser("coverage", help="per-voice data coverage; run BEFORE the vote with --phase4 so name-level blanks are scoped to the room")
     cv.add_argument("--packets-dir", required=True); cv.add_argument("--export", required=True)
     cv.add_argument("--phase4", default=None, help="phase4.json: scope name-level blanks to its deliberation_set")
@@ -835,6 +854,8 @@ def main(argv=None):
                           getattr(a, "broker_stops", None), None if str(vc).lower() == "none" else vc); rc |= _report("DATA HANDOFF", f, n)
     if a.cmd == "cards":
         f, n = check_cards_text(a.text); rc |= _report("CARDS TEXT", f, n)
+        if getattr(a, "html", None):
+            f, n = check_cards_html(a.html); rc |= _report("CARDS HTML", f, n)
     if a.cmd == "coverage":
         fails, ex = [], None
         ex = _load(a.export, "export", fails)
