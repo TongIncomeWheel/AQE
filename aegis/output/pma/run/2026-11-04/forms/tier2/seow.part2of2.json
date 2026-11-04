@@ -1,0 +1,107 @@
+{
+ "voice": "seow",
+ "date": "2026-11-04",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MDT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed to each new prior-day high (C27)"
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line (C14/C29)",
+   "market_void": null,
+   "reason": "POSITION system: ABOVE_STRUCTURE, ret_63d 14.99, rs_rank_pct 83.29; W and D HH/HL green 1.1% under the high. Cautions: elder_pattern CORRECTION_REENTRY, day_vol 0.24 (R11), cmf unseen."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Last daily bar was red: wait for a daily close back above that red bar's high"
+   },
+   "wrong_if": "Trade under bar_low after the red bar, or a daily close below max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "POSITION system: ABOVE_STRUCTURE, rs_rank_pct 97.12, ret_63d 15.64, break on day_vol 2.72. Last D and W bars red (candle-flip proxy, C14): wait for a close back over that bar's high before buying."
+  },
+  {
+   "ticker": "FA",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A close below the support line before any break of pivot_high",
+   "market_void": null,
+   "reason": "No signal in either system: RANGE, pct_from_pivot -2.46 under pivot_high 22.37, last D bar red; swing set-up unreadable (cci_20 not served). Strength would pass (rs_rank_pct 96.39). Mechanical: no signal, no vote."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed to each new prior-day high (C27)"
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line (C14/C29)",
+   "market_void": null,
+   "reason": "POSITION system: BULLISH_BOS, ret_63d 20.86, rs_rank_pct 92.31; D green 1.9% under the high, H1 at 94% of range. Cautions: elder_pattern INTERRUPTED, day_vol 0.68, cmf unseen."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Last daily bar was red: wait for a daily close back above that red bar's high"
+   },
+   "wrong_if": "Trade under bar_low (the red candle's low, C14), or a daily close below max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "HELD, POSITION system: BULLISH_BOS, ret_63d 14.08, rs_rank_pct 85.1, cmf positive in R1. Last D bar red and H1 LH/LL: the exit is armed under that bar's low; adds wait for a close back above its high (C30)."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed to each new prior-day high (C27)"
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line (C14/C29)",
+   "market_void": null,
+   "reason": "POSITION system: ABOVE_STRUCTURE at the high, ret_63d 44.62, rs_rank_pct 99.76; W HH/HL, D green 1.7% under the high. Impulse and fund flow unread (elder_pattern None)."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed to each new prior-day high (C27)"
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line (C14/C29)",
+   "market_void": null,
+   "reason": "POSITION system: ABOVE_STRUCTURE, ret_63d 6.3, rs_rank_pct 92.67, elder_pattern ACCELERATION; W and D green above EMA9. H1 below EMA9, 3.2% under the 20-day high: the buy stop makes price prove it."
+  },
+  {
+   "ticker": "CART",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A close below the support line before any break of pivot_high",
+   "market_void": null,
+   "reason": "No signal on the bar: RANGE, 6.0% under the 20-day high, no resistance-line break (C26). Strength strong (ret_63d 28.58, rs_rank_pct 86.9). Mechanical: the vote waits for the break."
+  }
+ ],
+ "declarations": [
+  "Declared proxies: structure_shift/pct_from_pivot/pivot_high = resistance line; cmf = COM; elder_pattern = TIF; max(fib_swing_low, base_low_20d) = support line; red daily bar (close < open) = candle-flip proxy.",
+  "Position system on every survivor; no swing set-up readable (cci_20 not served). ACT_NOW where the break is in place and the last daily bar is green; WAIT where the last daily bar is red. No bracket field is the basis of any decision (R1). No market_void: my method has none."
+ ]
+}

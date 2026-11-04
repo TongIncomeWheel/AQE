@@ -1,0 +1,84 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-04",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MDT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high on expanding volume"},
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 83.29; W/D HH/HL, 1.1% under the 20-bar high. day_vol 0.24 is no breakout yet; the buy needs volume (C6)."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a light-volume pullback toward the pivot, an hourly close above yesterday's high"},
+   "wrong_if": "A close back under pivot_high; thesis void on a close under ma_50",
+   "market_void": null,
+   "reason": "Top-RS leader (rs_rank_pct 97.12), W HH/HL, 9>21; pct_from_pivot 5.09 is past a few percent. Buy the first quiet pullback (C5, C6)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly close above the pivot high on expanding volume"},
+   "wrong_if": "A close under ma_50, or a pivot clear on light volume",
+   "market_void": null,
+   "reason": "rs_rank_pct 96.39, W HH/HL; D RANGE just under the pivot (pct_from_pivot -2.46) on quiet volume: the final contraction (C4, C5)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high on expanding volume"},
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "rs_rank_pct 92.31, full rising stack, W HH/HL, 1.9% under the 20-wk high, not extended. rs IN-LINE and day_vol 0.68 are weights."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Held: add only once the hourly re-aligns, on a new closing high with volume"},
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Held KEEP: Template intact, rs_rank_pct 85.1; W/D above EMA9, 9>21 but H1 below EMA9, LH/LL. Add on strength only (C9)."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"},
+   "wrong_if": "A pullback on rising volume, or a close under ma_50",
+   "market_void": null,
+   "reason": "Highest RS in the room (rs_rank_pct 99.76), W HH/HL; sma_dist 17.73% says entry waits for a tight pause (C5, C11)."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"},
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Template passes barely, rs_rank_pct 92.67; W mixed, 6.1% under the 20-wk high, sma_dist 11.97% past the pivot: buy a pause (C5)."
+  },
+  {
+   "ticker": "CART",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"},
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "rs_rank_pct 86.9, W/D HH/HL; D RANGE 6.0% under the 20-day high and sma_dist 18.2%: no pivot to buy yet (C5)."
+  }
+ ],
+ "declarations": [
+  "trend_template read from the MA stack, from_52w_hi and rs_rank_pct as an RS proxy (not IBD RS); ma_150, 200-day slope and low_52w NOT_SERVED (C3).",
+  "vcp_detail NOT_SERVED (C4); volume_signature day_vol at the current bar only (C6, partial); earnings_growth NOT_SERVED, SEPA element 2 not run (C1, C12).",
+  "R1: no bracket field is the basis of any stance. market_void null: my method reads the market from leadership (C14), not a single watchable level."
+ ]
+}

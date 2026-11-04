@@ -1,0 +1,277 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-04",
+ "declarations": [
+  "trend_template read from the MA stack, from_52w_hi and rs_rank_pct as an RS proxy (not IBD RS); ma_150, 200-day slope and low_52w NOT_SERVED (C3).",
+  "vcp_detail NOT_SERVED (C4); volume_signature day_vol at the current bar only (C6, partial); earnings_growth NOT_SERVED, SEPA element 2 not run (C1, C12).",
+  "R1: no bracket field is the basis of any stance. market_void null: my method reads the market from leadership (C14), not a single watchable level."
+ ],
+ "answers": [
+  {
+   "pair_id": "DIS-minervini-against~livermore",
+   "ticker": "DIS",
+   "to": "livermore",
+   "text": "\"A fresh new high in a rising weekly is the buy.\" A new high is criterion 7 only. The Template is all eight or none (C3): rs_rank_pct 69.65 fails criterion 8, and W mixed (not HH/HL) with flat ma100/ma200 does not confirm stage 2 (C2). The grid adds nothing my test fails on; I hold.",
+   "concede": false
+  },
+  {
+   "pair_id": "DIS-minervini-against~wyckoff",
+   "ticker": "DIS",
+   "to": "wyckoff",
+   "text": "\"Stage label by MA slope is not my test.\" It is mine: the MA stack and RS are criteria 1-4 and 8 (C3). D HH/HL at dist_to_20bar_high_pct 0.24 shows the break, but rs_rank_pct 69.65 under 70 still fails the gate. A value-area break is not evidence my method weighs; I hold.",
+   "concede": false
+  },
+  {
+   "pair_id": "SN-minervini-for~elder-lens",
+   "ticker": "SN",
+   "to": "elder-lens",
+   "text": "\"Not a breakout bar: elder drops 10 to 7.\" Elder is advisory on my card. The breakout already printed on day_vol 2.72; the D red bar 2.5% under the 20-day high is the first pullback my case waits for (C5). W HH/HL, 9>21 keeps stage 2. Volume on the pullback decides (C6), not the impulse tick.",
+   "concede": false
+  },
+  {
+   "pair_id": "FA-minervini-for~seow",
+   "ticker": "FA",
+   "to": "seow",
+   "text": "\"A base under the pivot is no buy signal.\" Agreed, and my claim never said buy now: the buy is the pivot clear on volume (C5). Strength stands (rs_rank_pct 96.39); W 13.2% under the 20-wk high is inside criterion 7's 25%. D RANGE, red bar is the quiet right side of the base I want.",
+   "concede": false
+  },
+  {
+   "pair_id": "CART-minervini-for~seow",
+   "ticker": "CART",
+   "to": "seow",
+   "text": "\"'Near highs' is 6.0% under the 20-day high.\" Criterion 7 asks within 25%; 6.0% passes. The point I accept is timing: D RANGE with no pivot break means no buy yet (C5), which is why I wait for a tight pause and a new closing high. The claim itself stands on the Template.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "ROKU",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close back under pivot_high on rising volume; thesis void on a close under ma_50",
+   "market_void": null,
+   "reason": "Template passes on proxies, rs_rank_pct 84.01; W/D above EMA9, 9>21, 0.6% under the 20-bar high: at the pivot, not a chase (C3, C5)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close back under pivot_high; thesis void on a close under ma_50",
+   "market_void": null,
+   "reason": "Top-RS Financials name (rs_rank_pct 86.66); W HH/HL, 9>21, 2.9% under the 20-wk high. D red bar is a pause, not a break (C11, C5)."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A new closing high with rs_rank_pct back over 70 and ma100 clearly rising above ma200",
+   "market_void": null,
+   "reason": "Trend Template fails criterion 8: rs_rank_pct 69.65; flat ma100/ma200 leaves stage 2 unconfirmed (C2, C3). All eight or none."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A pullback on rising volume, or a close under ma_50",
+   "market_void": null,
+   "reason": "Leader (rs_rank_pct 86.42) but sma_dist 21.57% is far past any pivot; C5 forbids the chase. D HH/HL, W 9>21 keep stage 2."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "W HH/HL, 9>21, 1.1% under the 20-wk high; rs_rank_pct 71.39 passes barely, flat ma50/ma100: young stage 2, low conviction (C3)."
+  },
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A pullback on rising volume, or a close under ma_50",
+   "market_void": null,
+   "reason": "True leader in the leading group, W/D HH/HL, rs_rank_pct 85.82; sma_dist 17.64% means no base to buy from now (C5, C11)."
+  },
+  {
+   "ticker": "TTEK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 80.89, W HH/HL; sma_dist 11.07% is past the pivot and H1 sits below EMA9: wait for the pause (C5)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "rs_rank_pct 87.62, W HH/HL; the move is ten days old, sma_dist 11.67%, H1 LH/LL at 14% of range: let it base first (C5)."
+  },
+  {
+   "ticker": "BRK-B",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Full stack, W/D HH/HL, 0.5% under the 20-bar high, rs_rank_pct 77.58; a mega-cap is the rare superperformer (C15), so low conviction."
+  },
+  {
+   "ticker": "MDT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 83.29; W/D HH/HL, 1.1% under the 20-bar high. day_vol 0.24 is no breakout yet; the buy needs volume (C6)."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a light-volume pullback toward the pivot, an hourly close above yesterday's high"
+   },
+   "wrong_if": "A close back under pivot_high; thesis void on a close under ma_50",
+   "market_void": null,
+   "reason": "Top-RS leader (rs_rank_pct 97.12), W HH/HL, 9>21; pct_from_pivot 5.09 is past a few percent. Buy the first quiet pullback (C5, C6)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "An hourly close above the pivot high on expanding volume"
+   },
+   "wrong_if": "A close under ma_50, or a pivot clear on light volume",
+   "market_void": null,
+   "reason": "rs_rank_pct 96.39, W HH/HL; D RANGE just under the pivot (pct_from_pivot -2.46) on quiet volume: the final contraction (C4, C5)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high on expanding volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "rs_rank_pct 92.31, full rising stack, W HH/HL, 1.9% under the 20-wk high, not extended. rs IN-LINE and day_vol 0.68 are weights."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Held: add only once the hourly re-aligns, on a new closing high with volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Held KEEP: Template intact, rs_rank_pct 85.1; W/D above EMA9, 9>21 but H1 below EMA9, LH/LL. Add on strength only (C9)."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A pullback on rising volume, or a close under ma_50",
+   "market_void": null,
+   "reason": "Highest RS in the room (rs_rank_pct 99.76), W HH/HL; sma_dist 17.73% says entry waits for a tight pause (C5, C11)."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "Template passes barely, rs_rank_pct 92.67; W mixed, 6.1% under the 20-wk high, sma_dist 11.97% past the pivot: buy a pause (C5)."
+  },
+  {
+   "ticker": "CART",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a tight, quiet pause near the 20-day average, a new closing high on volume"
+   },
+   "wrong_if": "A close under ma_50",
+   "market_void": null,
+   "reason": "rs_rank_pct 86.9, W/D HH/HL; D RANGE 6.0% under the 20-day high and sma_dist 18.2%: no pivot to buy yet (C5)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 6591,
+   "sha256": "b0d37ef906e2"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 4100,
+   "sha256": "fb361781626c"
+  }
+ ]
+}

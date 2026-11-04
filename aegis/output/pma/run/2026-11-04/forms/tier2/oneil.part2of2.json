@@ -1,0 +1,19 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-04",
+ "answers": [],
+ "decisions": [
+  {"ticker": "MDT", "stance": "OPPOSE", "wrong_if": "It advances to new highs on rising volume.", "market_void": null, "reason": "R4: day_vol 0.24 is a quarter of normal volume, a hard C16 rejection; ABOVE_STRUCTURE with no fresh pivot. H1 below EMA9 at 39.1% of range shows no buying. Nobody bought this move."},
+  {"ticker": "SN", "stance": "SUPPORT", "timing": "WAIT", "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Wait for a pullback toward the pivot, then buy a 1-hour close back above it; never chase past pivot +5pct."}, "wrong_if": "Daily close 7pct under pivot_high (C20), or the pullback comes on heavier volume than the breakout (C25).", "market_void": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).", "reason": "LEADER on the heaviest volume in the room, day_vol 2.72 (C16), group strong. pct_from_pivot 5.09 is a late buy (C17), and D 2.55% under the 20-day high with a red bar: buy only the pull-in. C/A/S/I untested."},
+  {"ticker": "FA", "stance": "ABSTAIN", "wrong_if": "A served base read shows a sound base and it clears pivot_high on 1.4x volume.", "market_void": null, "reason": "LEADER basing just under the pivot on quiet volume, but lens coil -- means I cannot count the base (R3), and W is 13.24% under the 20-wk high. A data gap, not a negative."},
+  {"ticker": "TMO", "stance": "OPPOSE", "wrong_if": "It turns LEADER and leads higher on 1.4x volume.", "market_void": null, "reason": "R2: rs_leadership IN-LINE fails C9/C10; R4: day_vol 0.68 fails C16. W HH/HL 1.9% under the 20-wk high is trend, not a leader's volume breakout."},
+  {"ticker": "V", "stance": "SUPPORT", "timing": "WAIT", "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot."}, "wrong_if": "Close under ma_50 on heavy volume: the 10-week line has failed (R8).", "market_void": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).", "reason": "HELD, KEEP: LEADER riding above the 10-week line, BULLISH_BOS; R8 not triggered. day_vol 0.86 fails R4, so no add yet (C21). D red 1.49% under the 20-day high, H1 LH/LL below EMA9: wait for volume."},
+  {"ticker": "HNGE", "stance": "OPPOSE", "wrong_if": "It keeps climbing on volume for weeks with no climax top.", "market_void": null, "reason": "R7 climax: entry 116.84 against ma200 67.78 is more than 70% above the 200-day; C24 sells into that, never buys it. No base under it: ABOVE_STRUCTURE, coil warn."},
+  {"ticker": "GEN", "stance": "OPPOSE", "wrong_if": "It breaks out to a new high on 1.4x volume.", "market_void": null, "reason": "R4: day_vol 0.81 fails C16; coil -- leaves no countable base (R3). W 6.13% and D 3.16% under the 20-bar high: not a new high out of a base (C7)."},
+  {"ticker": "CART", "stance": "OPPOSE", "wrong_if": "It runs to a new high on 1.4x volume.", "market_void": null, "reason": "R4: day_vol 0.93 fails C16; coil warn, no tight base (R3). W/D 5.95% under the 20-bar high: not a new high; the H1 close at 100% of range is intraday only."}
+ ],
+ "declarations": [
+  "Market gate DELEGATED (C1-C3); fundamentals NOT_AVAILABLE (R10): C, A, S, I untested; base stage C19 NOT_AVAILABLE.",
+  "R1: no bracket field is the basis of any stance. R41: no Valen flag cited."
+ ]
+}
