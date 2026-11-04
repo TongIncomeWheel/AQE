@@ -66,7 +66,7 @@ def _name_variants(name: str) -> list[str]:
     """'LCI Industries' -> ['LCI Industries', 'LCI']: releases refer to their company by its short alias ("LCI"), not its full name."""
     out = [name] if name else []
     first = (name or "").split()[0] if name else ""
-    if first and first != name and len(first) >= 3 and first.lower() not in {"the", "new", "first", "united", "american", "global", "general", "national", "international"}:
+    if first and first != name and len(first) >= 3 and first.lower() not in {"the", "new", "first", "united", "american", "global", "general", "national", "international", "royal", "bank", "capital", "financial", "energy", "group", "first", "great"}:
         out.append(first)
     return out
 
@@ -83,10 +83,21 @@ def _role(text: str, name: str) -> str | None:
     for nm in _name_variants(name):
         n = re.escape(nm)
         target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|takeover of|take[- ]private)\s+(?:(?:the|its|all of|all|remaining|outstanding shares of|shares of|stake in|a|an)\s+)?{n}\b",
-                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private)",
+                  rf"\b{n}\b(?P<gap>[^.]{{0,70}}?)(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private)",
                   rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
         acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]
-        t = t or any(re.search(p, text, re.I) for p in target)
+        for p in target:
+            for m in re.finditer(p, text, re.I):
+                gap = (m.groupdict().get("gap") or "")
+                # "Moneris, owned by Royal Bank and BMO, is to be acquired": the name is a seller / owner / list member, not the target
+                before = text[max(0, m.start() - 40):m.start()]
+                if (gap and re.search(r"\b(?:owned|owner|owners|stake|unit|subsidiary|seller|sellers|selling|sell|sale|divest\w*|from|and)\b", gap, re.I)) \
+                        or re.search(r"\b(?:owned by|owners? (?:of|are)|sold by|sellers?|from|jointly)\s*$", before, re.I):
+                    continue
+                t = True
+                break
+            if t:
+                break
         a = a or any(re.search(p, text, re.I) for p in acq)
     if t and not a:
         return "TARGET"

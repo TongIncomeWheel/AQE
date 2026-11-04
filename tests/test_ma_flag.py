@@ -208,3 +208,13 @@ def test_the_5_nov_misreads_are_not_targets_and_real_ones_still_are():
     for tk, nm, txt in right:
         r = M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": txt, "text": "", "url": "u"}], today=date(2026, 11, 5))
         assert r["ma_status"] == "PENDING_TARGET", (tk, r["ma_status"], r["ma_note"])
+
+
+def test_a_seller_or_owner_named_before_a_to_be_acquired_phrase_is_not_the_target():
+    """5 Nov: RY (Royal Bank of Canada) read as a pending target because 'Moneris, owned by Royal Bank of Canada and BMO, is to be acquired by Francisco Partners'."""
+    from datetime import date
+    txt = "Moneris, owned by Royal Bank of Canada and Bank of Montreal, is to be acquired by Francisco Partners for $1.4 Billion."
+    r = M.classify("RY", "Royal Bank of Canada", [{"publishedDate": "2026-08-12", "title": "Francisco Partners Agrees to Buy Moneris From BMO and RBC for $1.4 Billion.", "text": txt, "url": "u"}], today=date(2026, 11, 5))
+    assert r["ma_status"] != "PENDING_TARGET", (r["ma_status"], r["ma_note"])
+    ok = M.classify("PAYO", "Payoneer", [{"publishedDate": "2026-08-06", "title": "Payoneer reports", "text": "Payoneer announced an agreement to be acquired by Nuvei on June 15, 2026.", "url": "u"}], today=date(2026, 11, 5))
+    assert ok["ma_status"] == "PENDING_TARGET"
