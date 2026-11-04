@@ -1,0 +1,393 @@
+{
+ "date": "2026-11-04",
+ "chair": "chair",
+ "board_sha256": "0a2803be6b2c147a48f0dc8a087b5607316e44f3fecea813fc344cae8742d5c0",
+ "decision_sha256": "5c99af0eb7439d4bd3ae82dddd62c7eb4b6ca87cd47088e3379825b7ae31af02",
+ "tickets": [
+  {
+   "ticker": "SN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 1,
+    "wait": 6,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"LEADER on the heaviest volume in the room, day_vol 2.72 (C16), group strong.\" | seow: \"ABOVE_STRUCTURE, strength top-ranked (ret_63d 15.64 vs index -2.01, rs_rank_pct 97.12)\"",
+   "wrong_if": "wyckoff: \"Daily close back under pivot_high: the break failed.\" | oneil: \"Daily close 7pct under pivot_high (C20), or the pullback comes on heavier volume than the breakout (C25).\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "r2:seow",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "V",
+   "verdict": "WATCH",
+   "entry_trigger": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot.",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 1,
+    "wait": 6,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"HELD, KEEP: LEADER riding above the 10-week line, BULLISH_BOS; R8 not triggered.\" | wyckoff: \"Held, KEEP: break holding above the Creek, W/D above EMA9 9>21.\"",
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume: the 10-week line has failed (R8).\" | wyckoff: \"Daily close back under structure_shift_ref.\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "BRK-B",
+   "verdict": "ADVANCE",
+   "entry_trigger": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 10,
+   "why_agreed": "livermore: \"W and D HH/HL, 0.45% under the 20-wk high: a brand-new high in an Upward Trend (C16).\" | minervini: \"New high on day_vol 1.2.\" | elder-lens: \"W HH/HL 9>21 and D HH/HL; mp 97.0 STRONG.\"",
+   "wrong_if": "wyckoff: \"Daily close back under structure_shift_ref: the break did not hold outside the range.\" | minervini: \"close under ma50 517.37\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 1.2 fails the C16 breakout bar. LEADER with BULLISH_BOS and D HH/HL 0.45% under the 20-day high is real, but a breakout nobody bought is not my buy."
+    }
+   ],
+   "sources": [
+    "tier2:livermore",
+    "r2:minervini",
+    "tier2:elder-lens",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "EW",
+   "verdict": "ADVANCE",
+   "entry_trigger": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 5,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"At a new high (from_52w_hi 0.0%) on day_vol 1.59; entry 95.19 over ma50 88.31 and ma200 85.53\" | elder-lens: \"W hh_hl_3 HH/HL, 9>21.\"",
+   "wrong_if": "minervini: \"close under ma50 88.31\" | elder-lens: \"Impulse red (elder_le:1), mp_state leaving STRONG on a single-bar drop, or a daily close under ma_20.\"",
+   "dissent": [
+    {
+     "voice": "wyckoff",
+     "why": "TREND: W HH/HL, D above EMA9 9>21, dist_to_20bar_high_pct 0.94, but ABOVE_STRUCTURE away from the Creek; H1 last_bar red. Wait for the test (C3, C7)."
+    }
+   ],
+   "sources": [
+    "r2:minervini",
+    "tier2:elder-lens",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "MDT",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high, the new high after a quiet reaction",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the new high after a quiet reaction"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "livermore: \"W and D HH/HL, 1.07% under the 20-day high: a normal quiet reaction in an Upward Trend (C8)\" | seow: \"ABOVE_STRUCTURE, strength passes (ret_63d 14.99 vs index -2.01, rs_rank_pct 83.29).\"",
+   "wrong_if": "livermore: \"A one-day fall of 1x atr_14d from the day's high, or a close under bar_low-1atr (C7, my translation).\" | seow: \"Daily close below max(fib_swing_low, base_low_20d).\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 0.24 is a quarter of normal volume, a hard C16 rejection; ABOVE_STRUCTURE with no fresh pivot. H1 below EMA9 at 39.1% of range shows no buying. Nobody bought this move."
+    },
+    {
+     "voice": "elder-lens",
+     "why": "R8 fires: CORRECTION_REENTRY, mp_state STRONG (mp 87.0); elder_5d [6, 9, 7, 10, 10]. W HH/HL 9>21. day_vol 0.24 is a drastic shrinkage (C23) - volume must return first."
+    },
+    {
+     "voice": "wyckoff",
+     "why": "W and D HH/HL above EMA9, 9>21: uptrend context. H1 below EMA9 at pos_in_day_range_pct 39.1 and the last session carried no volume evidence; wait for effort (C5, C18)."
+    }
+   ],
+   "sources": [
+    "tier2:livermore",
+    "r2:seow",
+    "tier2:oneil",
+    "tier2:elder-lens",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "AJG",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "elder-lens: \"W hh_hl_3 HH/HL, 9>21, mp 93.0 STRONG - permission on; buy the pullback into value (C10).\" | wyckoff: \"Weekly HH/HL trend, but no sign-of-strength bar\"",
+   "wrong_if": "wyckoff: \"Daily close back under structure_shift_ref: the break fails.\" | elder-lens: \"Impulse red (elder_le:1) or a daily close under ma_50.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 1.26 is under the C16 breakout bar; coil -- leaves no countable base (R3). D red bar 2.87% under the 20-day high, H1 below EMA9 at 21.9% of range: no breakout today. Leadership is real."
+    }
+   ],
+   "sources": [
+    "tier2:elder-lens",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "HOG",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "wyckoff: \"Imbalance up on all frames (W/D/H1 above EMA9, 9>21) but away from value\" | elder-lens: \"W 9>21, D HH/HL, mp 93.0. Permission on; entry only on a return to value (C10).\"",
+   "wrong_if": "wyckoff: \"Daily close back under structure_shift_ref, or choch_bearish.\" | elder-lens: \"Impulse red (elder_le:1) or a daily close under ma_50.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "No sound base or pivot: ABOVE_STRUCTURE with coil warn (R3), and day_vol 1.39 is short of the R4 1.40 bar. W/D 1.22% under the 20-bar high is a trend, not a base breakout. LEADER and sector strong."
+    }
+   ],
+   "sources": [
+    "tier2:wyckoff",
+    "tier2:elder-lens",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "TTEK",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"from_52w_hi -7.51%, rs_rank_pct 80.89, leading Industrials group\" | wyckoff: \"W HH/HL, D above EMA9 9>21\"",
+   "wrong_if": "minervini: \"close under ma50 35.48\" | wyckoff: \"Daily close back under structure_shift_ref.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 1.14 fails C16; ABOVE_STRUCTURE with coil warn leaves no base (R3). W HH/HL 0.98% under the 20-wk high is trend. Group confirms; the volume does not."
+    }
+   ],
+   "sources": [
+    "r2:minervini",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "VLTO",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"from_52w_hi 0.0%, rs_rank_pct 85.82, in the leading Industrials group (Momentum Building)\" | wyckoff: \"W and D HH/HL: markup with demand.\"",
+   "wrong_if": "wyckoff: \"Daily close back under structure_shift_ref, or choch_bearish.\" | minervini: \"a pullback on rising volume, or a close under ma50 98.88\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 1.25 fails C16; coil -- gives no base (R3); ABOVE_STRUCTURE with no fresh pivot. Rank 2 LEADER in a Momentum Building group is real leadership; the volume and base are not there."
+    }
+   ],
+   "sources": [
+    "r2:minervini",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "GEN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 1,
+    "wait": 5,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "seow: \"ABOVE_STRUCTURE, strength passes (ret_63d 6.3 vs index -2.01, rs_rank_pct 92.67), TIF confirms (elder_pattern ACCELERATION)\" | elder-lens: \"W ema_order 9>21 above EMA9, mp 77.0 STRONG\"",
+   "wrong_if": "wyckoff: \"Daily close back under structure_shift_ref.\" | seow: \"Daily close below max(fib_swing_low, base_low_20d)\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 0.81 fails C16; coil -- leaves no countable base (R3). W 6.13% and D 3.16% under the 20-bar high: not a new high out of a base (C7)."
+    }
+   ],
+   "sources": [
+    "r2:seow",
+    "tier2:elder-lens",
+    "tier2:wyckoff",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "SWK",
+   "verdict": "WATCH",
+   "entry_trigger": "After a light-volume pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a light-volume pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 0,
+    "wait": 6,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"from_52w_hi -1.96%, rs_rank_pct 87.62\" | elder-lens: \"W HH/HL 9>21, mp 97.0 STRONG\"",
+   "wrong_if": "minervini: \"close under ma50 93.68\" | elder-lens: \"Impulse red (elder_le:1) or a daily close under ma_50.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "No base: ABOVE_STRUCTURE, coil warn (R3). On day_vol 1.58 the H1 closed at 14.0% of the day's range with LH/LL and D red: heavy volume closing near the low is C25's distribution warning."
+    }
+   ],
+   "sources": [
+    "r2:minervini",
+    "tier2:elder-lens",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "CART",
+   "verdict": "WATCH",
+   "entry_trigger": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "horizon_sessions": 15,
+   "why_agreed": "wyckoff: \"Rising range inside a weekly uptrend (W and D HH/HL)\" | elder-lens: \"W HH/HL 9>21, D HH/HL\"",
+   "wrong_if": "wyckoff: \"Daily close under base_low_20d.\" | elder-lens: \"Impulse red (elder_le:1) or a daily close under ma_50.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 0.93 fails C16; coil warn, no tight base (R3). W/D 5.95% under the 20-bar high: not a new high; the H1 close at 100% of range is intraday only."
+    }
+   ],
+   "sources": [
+    "tier2:wyckoff",
+    "tier2:elder-lens",
+    "tier2:oneil"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).",
+  "symbol": null,
+  "word": null,
+  "level": 5.0,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 4
+ },
+ "hold_round": true
+}
