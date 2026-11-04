@@ -218,3 +218,13 @@ def test_a_seller_or_owner_named_before_a_to_be_acquired_phrase_is_not_the_targe
     assert r["ma_status"] != "PENDING_TARGET", (r["ma_status"], r["ma_note"])
     ok = M.classify("PAYO", "Payoneer", [{"publishedDate": "2026-08-06", "title": "Payoneer reports", "text": "Payoneer announced an agreement to be acquired by Nuvei on June 15, 2026.", "url": "u"}], today=date(2026, 11, 5))
     assert ok["ma_status"] == "PENDING_TARGET"
+
+
+def test_the_real_moneris_sentence_does_not_make_royal_bank_a_target():
+    """The real 5 Nov FMP item: 'Moneris ... jointly owned by BMO and Royal Bank of Canada (RBC), is set to be acquired by ... Francisco Partners'."""
+    from datetime import date
+    item = {"publishedDate": "2026-08-12", "title": "Francisco Partners Agrees to Buy Moneris From BMO and RBC for $1.4 Billion", "url": "u",
+            "text": "Moneris Solutions Corp., a Canadian provider of payments and commerce solutions that is jointly owned by BMO and Royal Bank of Canada (RBC), is set to be acquired by global investment firm Francisco Partners, Moneris said in a Monday (Aug. 10) press release."}
+    for tk, nm in (("RY", "Royal Bank of Canada"), ("BMO", "Bank of Montreal")):
+        r = M.classify(tk, nm, [item], today=date(2026, 11, 5))
+        assert r["ma_status"] != "PENDING_TARGET", (tk, r["ma_status"], r["ma_note"])

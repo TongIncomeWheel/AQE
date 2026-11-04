@@ -90,9 +90,10 @@ def _role(text: str, name: str) -> str | None:
             for m in re.finditer(p, text, re.I):
                 gap = (m.groupdict().get("gap") or "")
                 # "Moneris, owned by Royal Bank and BMO, is to be acquired": the name is a seller / owner / list member, not the target
-                before = text[max(0, m.start() - 40):m.start()]
+                before = text[max(0, m.start() - 90):m.start()]
                 if (gap and re.search(r"\b(?:owned|owner|owners|stake|unit|subsidiary|seller|sellers|selling|sell|sale|divest\w*|from|and)\b", gap, re.I)) \
-                        or re.search(r"\b(?:owned by|owners? (?:of|are)|sold by|sellers?|from|jointly)\s*$", before, re.I):
+                        or re.search(r"\b(?:owned by|owners? (?:of|are)|sold by|sellers?|from|jointly|and|or)\s*$", before, re.I) \
+                        or re.search(r"\b(?:jointly owned|owned by)\b", before, re.I):
                     continue
                 t = True
                 break
