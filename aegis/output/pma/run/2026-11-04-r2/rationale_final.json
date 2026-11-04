@@ -95,7 +95,8 @@
      "text": "The ticket's words drop the impulse condition: the hourly close above bar_high should read 'while elder holds 7+', since the permission event is one bar old (elder_5d [3, 4, 0, 0, 8], C3, C4)."
     }
    ],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": []
   },
   {
    "ticker": "SN",
@@ -135,30 +136,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1: a pullback under the 20-day average, then an hourly close back above it while elder holds 7+.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Cap the trigger at pivot_high +5pct (C17): h1_close_above:pivot_high after the pull-in.",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Drop the pull-in precondition: trigger close_above:bar_high on D, a daily close back above the red bar's high.",
-     "source": {
-      "voice": "seow",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under pivot_high: the break failed.",
      "source": {
       "voice": "wyckoff",
@@ -168,7 +145,24 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1: a pullback under the 20-day average, then an hourly close back above it while elder holds 7+."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Cap the trigger at pivot_high +5pct (C17): h1_close_above:pivot_high after the pull-in."
+    },
+    {
+     "field": "would_change",
+     "voice": "seow",
+     "text": "Drop the pull-in precondition: trigger close_above:bar_high on D, a daily close back above the red bar's high."
+    }
+   ]
   },
   {
    "ticker": "V",
@@ -208,22 +202,6 @@
    ],
    "would_change": [
     {
-     "text": "Add trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+); a Creek pull-in first would also clear me.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Make the add trigger reclaim:ma_20 on H1, or a pull-in to the Creek (structure_shift_ref) before the bar_high close. KEEP unchanged.",
-     "source": {
-      "voice": "raschke",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "The add reads a pull-in to in_zone:structure_shift_ref, then h1_close_above:bar_high on H1.",
      "source": {
       "voice": "wyckoff",
@@ -246,7 +224,19 @@
      "text": "KEEP I stand behind, but the add trigger close_above:bar_high on D adds on a push away from the Creek: H1 LH/LL at pos_in_day_range_pct 38.3 on light volume is an upthrust caution. The method adds on the test (C3, C7): the add reads a pull-in to in_zone:structure_shift_ref, then h1_close_above:bar_high on H1."
     }
    ],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Add trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+); a Creek pull-in first would also clear me."
+    },
+    {
+     "field": "would_change",
+     "voice": "raschke",
+     "text": "Make the add trigger reclaim:ma_20 on H1, or a pull-in to the Creek (structure_shift_ref) before the bar_high close. KEEP unchanged."
+    }
+   ]
   },
   {
    "ticker": "BRK-B",
@@ -294,22 +284,6 @@
    ],
    "would_change": [
     {
-     "text": "Add to the trigger: on volume at least 1.4x normal for the time of day; or drop me as a why_agreed voice.",
-     "source": {
-      "voice": "minervini",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16).",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under structure_shift_ref: the break did not hold outside the range.",
      "source": {
       "voice": "wyckoff",
@@ -327,7 +301,19 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "minervini",
+     "text": "Add to the trigger: on volume at least 1.4x normal for the time of day; or drop me as a why_agreed voice."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16)."
+    }
+   ]
   },
   {
    "ticker": "DIS",
@@ -383,14 +369,6 @@
    ],
    "would_change": [
     {
-     "text": "rs_rank_pct back over 70 with ma100 clearly rising above ma200, so all eight criteria pass before the trigger counts.",
-     "source": {
-      "voice": "minervini",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under pivot_high, or 8pct under entry (C20).",
      "source": {
       "voice": "oneil",
@@ -416,7 +394,14 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "minervini",
+     "text": "rs_rank_pct back over 70 with ma100 clearly rising above ma200, so all eight criteria pass before the trigger counts."
+    }
+   ]
   },
   {
    "ticker": "TMO",
@@ -472,14 +457,6 @@
    ],
    "would_change": [
     {
-     "text": "rs_leadership LEADER and a trigger bar on day_vol 1.40 or more.",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close under structure_shift_ref.",
      "source": {
       "voice": "wyckoff",
@@ -505,7 +482,14 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "rs_leadership LEADER and a trigger bar on day_vol 1.40 or more."
+    }
+   ]
   },
   {
    "ticker": "EW",
@@ -545,30 +529,6 @@
    ],
    "would_change": [
     {
-     "text": "Add to the trigger: on volume at least 1.4x normal for the time of day.",
-     "source": {
-      "voice": "minervini",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16), base stated unconfirmed.",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "WAIT: a pull-in to in_zone:structure_shift_ref first, then h1_close_above:bar_high on H1.",
-     "source": {
-      "voice": "wyckoff",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Impulse red (elder_le:1), mp_state leaving STRONG on a single-bar drop, or a daily close under ma_20.",
      "source": {
       "voice": "elder-lens",
@@ -578,7 +538,24 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "minervini",
+     "text": "Add to the trigger: on volume at least 1.4x normal for the time of day."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16), base stated unconfirmed."
+    },
+    {
+     "field": "would_change",
+     "voice": "wyckoff",
+     "text": "WAIT: a pull-in to in_zone:structure_shift_ref first, then h1_close_above:bar_high on H1."
+    }
+   ]
   },
   {
    "ticker": "HNGE",
@@ -618,22 +595,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+), timing WAIT.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Price back under 70% above ma_200 out of a countable base before the trigger fires.",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under bar_low (the reclaim low).",
      "source": {
       "voice": "wyckoff",
@@ -656,7 +617,19 @@
      "text": "Highest RS in the room (rs_rank_pct 99.76), W HH/HL; sma_dist 17.73% says entry waits for a tight pause (C5, C11). The first pullback must be quiet and come first (C5, C6)."
     }
    ],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+), timing WAIT."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Price back under 70% above ma_200 out of a countable base before the trigger fires."
+    }
+   ]
   },
   {
    "ticker": "AJG",
@@ -696,30 +669,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1 while elder holds 7+; failing that, drop my quote from why_agreed.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16).",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Trigger close_above:bar_high on D with no pull-in precondition.",
-     "source": {
-      "voice": "seow",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under structure_shift_ref: the break fails.",
      "source": {
       "voice": "wyckoff",
@@ -729,7 +678,24 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1 while elder holds 7+; failing that, drop my quote from why_agreed."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16)."
+    },
+    {
+     "field": "would_change",
+     "voice": "seow",
+     "text": "Trigger close_above:bar_high on D with no pull-in precondition."
+    }
+   ]
   },
   {
    "ticker": "GEN",
@@ -769,30 +735,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1 while elder holds 7+, or a fresh transition bar (elder under 7 then 7+, C4) before a bar_high break.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "A new high on volume at least 1.4x normal (day_vol 1.40, C16).",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Trigger trade_above:bar_high on D with no pull-in precondition.",
-     "source": {
-      "voice": "seow",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under structure_shift_ref.",
      "source": {
       "voice": "wyckoff",
@@ -802,7 +744,24 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1 while elder holds 7+, or a fresh transition bar (elder under 7 then 7+, C4) before a bar_high break."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "A new high on volume at least 1.4x normal (day_vol 1.40, C16)."
+    },
+    {
+     "field": "would_change",
+     "voice": "seow",
+     "text": "Trigger trade_above:bar_high on D with no pull-in precondition."
+    }
+   ]
   },
   {
    "ticker": "SWK",
@@ -842,30 +801,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1: a pullback under the 20-day average, then an hourly close back above it while elder holds 7+.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "h1_close_above:bar_high on volume at least 1.4x normal with the close in the upper half of the day's range (C16, C25).",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Trigger close_above:bar_high on D with no pull-in or volume precondition.",
-     "source": {
-      "voice": "seow",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close back under structure_shift_ref.",
      "source": {
       "voice": "wyckoff",
@@ -875,7 +810,24 @@
     }
    ],
    "also": [],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1: a pullback under the 20-day average, then an hourly close back above it while elder holds 7+."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "h1_close_above:bar_high on volume at least 1.4x normal with the close in the upper half of the day's range (C16, C25)."
+    },
+    {
+     "field": "would_change",
+     "voice": "seow",
+     "text": "Trigger close_above:bar_high on D with no pull-in or volume precondition."
+    }
+   ]
   },
   {
    "ticker": "FA",
@@ -907,22 +859,6 @@
    ],
    "would_change": [
     {
-     "text": "Trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+), timing WAIT.",
-     "source": {
-      "voice": "elder-lens",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
-     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16).",
-     "source": {
-      "voice": "oneil",
-      "form": "ratify",
-      "field": "would_clear"
-     }
-    },
-    {
      "text": "Daily close under base_low_20d.",
      "source": {
       "voice": "wyckoff",
@@ -945,7 +881,19 @@
      "text": "D dist_to_20bar_high_pct 2.55: not yet at the high. The entry is the new high out of the range, never a pullback under ma_20 and its reclaim (C5)."
     }
    ],
-   "also_overflow": []
+   "also_overflow": [],
+   "dropped_dissent_clauses": [
+    {
+     "field": "would_change",
+     "voice": "elder-lens",
+     "text": "Trigger reclaim:ma_20 on H1 (pullback under the 20-day average, hourly close back above it while elder holds 7+), timing WAIT."
+    },
+    {
+     "field": "would_change",
+     "voice": "oneil",
+     "text": "Add to the trigger: on volume at least 1.4x normal (day_vol 1.40, C16)."
+    }
+   ]
   }
  ]
 }
