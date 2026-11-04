@@ -40,7 +40,7 @@ consensus.json · phase4.json (with doors) · tally.json · macro forms (2) · c
 
 ## HOW I WRITE — the `cio-voice` skill governs, not this card
 
-**Read `skills/cio-voice/SKILL.md` before writing a line.** This card says WHAT goes in each
+**Read `skills/aegis-writing/SKILL.md` and `skills/cio-voice/SKILL.md` before writing a line.** This card says WHAT goes in each
 section; `cio-voice` says HOW it is written — the so-what rule, the framing vocabulary, the
 guardrails, the plain-English translations and the worked contrasts. Where the two disagree about
 language, cio-voice wins.
