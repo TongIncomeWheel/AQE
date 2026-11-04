@@ -1,6 +1,573 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 14,
+  "session_date": "2026-11-04",
+  "cycle_at_utc": "2026-11-04T20:57:28+00:00",
+  "cycle_at_sgt": "2026-11-05 04:57 SGT",
+  "cycle_at_et": "15:57 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-04",
+   "pma_session": "2026-11-04",
+   "pma_missing": null,
+   "aqe_date": "2026-11-04",
+   "aqe_covers": "2026-11-03",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "UNWATCHABLE",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "HST",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "HST $26.16 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 26.165,
+    "day_pct": null,
+    "entry": 26.04,
+    "stop": 25.26,
+    "stop_type": "committee",
+    "target": 27.11,
+    "risk_per_share": 0.78,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 25.76,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE list, not a committee pick: all met \u2713",
+     "\u2713 hourly close above 26.04 (price 26.16, 0.5% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.4\u00d7)",
+     "AQE trade: entry 26.04 \u00b7 stop 25.26 \u00b7 risk 3.0% (0.78/share) \u00b7 1R $2,250 = 2,884 shares \u00b7 target 27.11 (1.4\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "AJG",
+    "class": "HOLD_FOR_CONDITIONS",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "AJG $288.66 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 288.66,
+    "day_pct": null,
+    "entry": 278.83,
+    "stop": 266.08,
+    "stop_type": "aqe_atr_fallback",
+    "target": 281.53,
+    "risk_per_share": 12.75,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (HOLD FOR CONDITIONS)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 276.07,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (284.83)",
+     "Committee (HOLD FOR CONDITIONS): all met \u2713",
+     "\u2713 hourly close above 278.83 (price 288.66, 3.5% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 1.5\u00d7)",
+     "Exit line: closes below 271.27",
+     "Committee trade: entry 278.83 \u00b7 stop 266.08 \u00b7 risk 4.6% (12.75/share) \u00b7 1R $2,250 = 176 shares \u00b7 target 288.54 (0.8\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "BRK-B",
+    "class": "ADVANCE",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "BRK-B $580.45 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 580.45,
+    "day_pct": null,
+    "entry": 559.58,
+    "stop": 549.78,
+    "stop_type": "aqe_atr_fallback",
+    "target": 576.88,
+    "risk_per_share": 9.8,
+    "conditions": {
+     "met": 1,
+     "of": 1,
+     "who": "Committee (ADVANCE)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 562.61,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (564.36)",
+     "Committee (ADVANCE): 1 of 1 met",
+     "\u2713 hourly close above 559.58 (price 580.45, 3.7% above)",
+     "Exit line: closes below 549.96",
+     "Committee trade: entry 559.58 \u00b7 stop 549.78 \u00b7 risk 1.8% (9.80/share) \u00b7 1R $2,250 = 229 shares \u00b7 target 576.88 (1.8\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "D",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "FAILED_PUSH"
+    ],
+    "severity": "INFO",
+    "headline": "D $69.60 \u00b7 \ud83d\udfe0 BACK UNDER THE LEVEL \u2014 breakout didn't hold \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Back under its buy price: wait",
+    "price": 69.6,
+    "day_pct": null,
+    "entry": 69.75,
+    "stop": 64.87,
+    "stop_type": "committee",
+    "target": 71.93,
+    "risk_per_share": 4.88,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 68.35,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "AQE list, not a committee pick: 1 of 2 met",
+     "\u2717 hourly close above 69.75 (price 69.60, 0.2% below)",
+     "\u2713 volume at least 1\u00d7 normal (now 2.1\u00d7)",
+     "AQE trade: entry 69.75 \u00b7 stop 64.87 \u00b7 risk 7.0% (4.88/share) \u00b7 1R $2,250 = 461 shares \u00b7 target 71.93 (0.4\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "DIS",
+    "class": "ADVANCE",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "DIS $119.14 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 119.14,
+    "day_pct": null,
+    "entry": 114.46,
+    "stop": 112.15,
+    "stop_type": "aqe_atr_fallback",
+    "target": 118.08,
+    "risk_per_share": 2.31,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (ADVANCE)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 116.3,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (116.49)",
+     "Committee (ADVANCE): all met \u2713",
+     "\u2713 hourly close above 114.46 (price 119.14, 4.1% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 1.8\u00d7)",
+     "Exit line: closes below 113.38",
+     "Committee trade: entry 114.46 \u00b7 stop 112.15 \u00b7 risk 2.0% (2.31/share) \u00b7 1R $2,250 = 974 shares \u00b7 target 118.08 (1.6\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "EW",
+    "class": "ADVANCE",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "EW $99.16 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 99.16,
+    "day_pct": null,
+    "entry": 96.09,
+    "stop": 92.57,
+    "stop_type": "aqe_atr_fallback",
+    "target": 96.29,
+    "risk_per_share": 3.52,
+    "conditions": {
+     "met": 1,
+     "of": 1,
+     "who": "Committee (ADVANCE)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 96.72,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (97.81)",
+     "Committee (ADVANCE): 1 of 1 met",
+     "\u2713 hourly close above 96.09 (price 99.16, 3.2% above)",
+     "Exit line: closes below 93.27",
+     "Committee trade: entry 96.09 \u00b7 stop 92.57 \u00b7 risk 3.7% (3.52/share) \u00b7 1R $2,250 = 639 shares \u00b7 target 99.86 (1.1\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "HNGE",
+    "class": "ADVANCE",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "HNGE $120.50 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 120.5,
+    "day_pct": null,
+    "entry": 118.85,
+    "stop": 112.26,
+    "stop_type": "aqe_atr_fallback",
+    "target": 118.87,
+    "risk_per_share": 6.59,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (ADVANCE)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 116.0,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (119.20)",
+     "Committee (ADVANCE): 2 of 2 met",
+     "\u2713 daily close above 116.90 (price 120.50, 3.1% above)",
+     "\u2713 hourly close above 118.85 (price 120.50, 1.4% above)",
+     "Exit line: closes below 112",
+     "Committee trade: entry 118.85 \u00b7 stop 112.26 \u00b7 risk 5.5% (6.59/share) \u00b7 1R $2,250 = 341 shares \u00b7 target 124.70 (0.9\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "HOG",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "HOG $34.50 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Past the chase price: do not chase",
+    "price": 34.5,
+    "day_pct": null,
+    "entry": 33.38,
+    "stop": 32.19,
+    "stop_type": "committee",
+    "target": 33.73,
+    "risk_per_share": 1.19,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 33.98,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (34.38)",
+     "AQE list, not a committee pick: all met \u2713",
+     "\u2713 hourly close above 33.38 (price 34.50, 3.4% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.7\u00d7)",
+     "AQE trade: entry 33.38 \u00b7 stop 32.19 \u00b7 risk 3.6% (1.19/share) \u00b7 1R $2,250 = 1,890 shares \u00b7 target 35.70 (1.9\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "RYAN",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "RYAN $47.39 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Past the chase price: do not chase",
+    "price": 47.39,
+    "day_pct": null,
+    "entry": 45.9,
+    "stop": 44.09,
+    "stop_type": "committee",
+    "target": 48.21,
+    "risk_per_share": 1.81,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 46.45,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (47.28)",
+     "AQE list, not a committee pick: all met \u2713",
+     "\u2713 hourly close above 45.90 (price 47.39, 3.2% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.1\u00d7)",
+     "AQE trade: entry 45.90 \u00b7 stop 44.09 \u00b7 risk 3.9% (1.81/share) \u00b7 1R $2,250 = 1,243 shares \u00b7 target 50.85 (2.7\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "SN",
+    "class": "HOLD_FOR_CONDITIONS",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "SN $224.24 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 224.24,
+    "day_pct": null,
+    "entry": 215.09,
+    "stop": 203.46,
+    "stop_type": "aqe_atr_fallback",
+    "target": 216.11,
+    "risk_per_share": 11.63,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (HOLD FOR CONDITIONS)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 213.0,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (222.22)",
+     "Committee (HOLD FOR CONDITIONS): all met \u2713",
+     "\u2713 hourly close above 215.09 (price 224.24, 4.3% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 1.9\u00d7)",
+     "Exit line: closes below 200.39",
+     "Committee trade: entry 215.09 \u00b7 stop 203.46 \u00b7 risk 5.4% (11.63/share) \u00b7 1R $2,250 = 193 shares \u00b7 target 232.19 (1.5\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "SNY",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "SNY $47.39 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Past the chase price: do not chase",
+    "price": 47.386,
+    "day_pct": null,
+    "entry": 45.59,
+    "stop": 44.43,
+    "stop_type": "committee",
+    "target": 45.67,
+    "risk_per_share": 1.16,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 46.46,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (46.96)",
+     "AQE list, not a committee pick: all met \u2713",
+     "\u2713 hourly close above 45.59 (price 47.39, 3.9% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 1.4\u00d7)",
+     "AQE trade: entry 45.59 \u00b7 stop 44.43 \u00b7 risk 2.5% (1.16/share) \u00b7 1R $2,250 = 1,939 shares \u00b7 target 46.89 (1.1\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "SWK",
+    "class": "HOLD_FOR_CONDITIONS",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "SWK $118.59 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 118.59,
+    "day_pct": null,
+    "entry": 107.13,
+    "stop": 101.7,
+    "stop_type": "aqe_atr_fallback",
+    "target": 107.67,
+    "risk_per_share": 5.43,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (HOLD FOR CONDITIONS)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 110.04,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (110.05)",
+     "Committee (HOLD FOR CONDITIONS): all met \u2713",
+     "\u2713 hourly close above 107.13 (price 118.59, 10.7% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 3.3\u00d7)",
+     "Exit line: closes below 101.09",
+     "Committee trade: entry 107.13 \u00b7 stop 101.70 \u00b7 risk 5.1% (5.43/share) \u00b7 1R $2,250 = 414 shares \u00b7 target 107.67 (0.1\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "V",
+    "class": "HOLD_FOR_CONDITIONS",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "V $435.17 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line",
+    "action": "Past the chase price: do not chase",
+    "price": 435.17,
+    "day_pct": null,
+    "entry": 425.51,
+    "stop": null,
+    "stop_type": null,
+    "target": null,
+    "risk_per_share": null,
+    "conditions": {
+     "met": 1,
+     "of": 2,
+     "who": "Committee (HOLD FOR CONDITIONS)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 423.28,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (431.34)",
+     "Committee (HOLD FOR CONDITIONS): 1 of 2 met",
+     "\u2713 daily close above 425.51 (price 435.17, 2.3% above)",
+     "\u2717 volume at least 1.4\u00d7 normal (now 1.3\u00d7)",
+     "Exit line: trades below 418.27",
+     "Committee trade: no entry / stop levels published"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "YOU",
+    "class": "AQE_DEFAULT",
+    "held": false,
+    "states": [
+     "CHASED"
+    ],
+    "severity": "INFO",
+    "headline": "YOU $59.45 \u00b7 \ud83d\udfe0 EXTENDED \u2014 past the chase line \u00b7 AQE list, not a committee pick \u00b7 No lane lane",
+    "action": "Past the chase price: do not chase",
+    "price": 59.45,
+    "day_pct": null,
+    "entry": 48.65,
+    "stop": 45.0,
+    "stop_type": "committee",
+    "target": 57.79,
+    "risk_per_share": 3.65,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "AQE list, not a committee pick"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 51.3,
+     "level": null
+    },
+    "lines": [
+     "No lane lane: no lane rule applies: generic line.",
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Price is past the chase line (50.11)",
+     "AQE list, not a committee pick: all met \u2713",
+     "\u2713 hourly close above 48.65 (price 59.45, 22.2% above)",
+     "\u2713 volume at least 1\u00d7 normal (now 4.9\u00d7)",
+     "AQE trade: entry 48.65 \u00b7 stop 45.00 \u00b7 risk 7.5% (3.65/share) \u00b7 1R $2,250 = 616 shares \u00b7 target 58.81 (2.8\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 15:57 ET conditions \u00b7 14 cards \u00b7 EXTENDED 12 \u00b7 BUY MET 1 \u00b7 BACK UNDER 1 \u00b7 PMA 11-04 \u00b7 AQE 11-04"
+  },
+  "engine": {
+   "checked": 97,
+   "new_triggers": 19,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 13,
   "session_date": "2026-11-04",
   "cycle_at_utc": "2026-11-04T20:25:54+00:00",
