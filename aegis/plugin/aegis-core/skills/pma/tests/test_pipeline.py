@@ -3557,7 +3557,7 @@ def test_cards_bracket_first_target_rule_and_plain_reason(td):
     check("TP1/TP2 are the levels at or above 1R, each with its own R", [(x["n"], x["price"], x["r"]) for x in b["targets"]] == [(1, 164.31, 1.61), (2, 168.2, 3.19)], str(b["targets"]))
     check("RR to TP2 is TP2's own R, risk is entry - stop, 1R in dollars gives shares", b["rr_tp2"] == 3.19 and b["risk"] == 2.46 and b["shares"] == 252, str(b))
     b = pma_cards.bracket_view(161.26, "buy line", 157.90, "aqe_atr_fallback", [161.26, 164.31, 168.20], 620)
-    check("entered at the buy line only ONE level reaches 1R, and the card says so instead of inventing a ladder", len(b["targets"]) == 1 and b["rr_tp2"] is None and "Only 1 level" in (b["note"] or ""), str(b))
+    check("entered at the buy line only ONE level reaches 1R, and the card says so instead of inventing a ladder", len(b["targets"]) == 1 and b["rr_tp2"] is None and "Only one level reaches 1R" in (b["note"] or ""), str(b))
     check("no valid stop is said plainly, not rendered as numbers", "no valid stop" in pma_cards.bracket_view(100, "last close", None, None, [110], 620)["note"])
     html = pma_cards._bracket_html(pma_cards.bracket_view(160.36, "last close", 157.90, "aqe_atr_fallback", [161.26, 164.31, 168.20], 620))
     check("the bracket HTML shows entry, stop, risk, TP in R, RR to TP2, 1R and the nearby line", all(x in html for x in ("Entry", "Stop", "Risk", "TP1", "(1.6R)", "RR to TP2", "1R $620", "Nearby resistance, not targets")), html[:400])
@@ -3595,6 +3595,33 @@ def test_freshness_line_and_withheld_stance_print_on_the_cards(td):
     check("a missing Valen file or legs table is a declared gap, not silence", "not served" in pma_cards._freshness_html({}) and "cannot be dated" in pma_cards._freshness_html({"x": 1}))
     check("a withheld stance says WITHHELD with the reason", pma_cards._stance_word({"stance": {"stance": None, "reason": "breadth STALE"}}).startswith("WITHHELD - breadth STALE")
           and pma_cards._stance_word({"stance": {"word": "NEUTRAL"}}) == "NEUTRAL")
+
+
+def test_plain_words_in_the_rendered_page_and_the_html_gate(td):
+    """PM 2026-11-04: no raw field name anywhere on the page. One table translates them in every text node; check.py cards --html FAILs any left."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards
+    importlib.reload(pma_cards)
+    t = pma_cards.plain_words("an hourly candle closes above bar_high 161.26; closes above high_52w_close 160.36")
+    check("Confirms reads in plain words", t == "an hourly candle closes above yesterday's high 161.26; closes above the 52-week closing high 160.36", t)
+    page = ('<html><head><style>.a_b{color:red}</style></head><body><div class="x_y" title="bar_high"><p>day_vol is 2 and ABOVE_STRUCTURE with mystery_field</p></div>'
+            '<script>var a_b=1;</script></body></html>')
+    out = pma_cards.plainify_html(page)
+    check("only TEXT is translated (style, script, attributes untouched)", ".a_b{color:red}" in out and 'class="x_y" title="bar_high"' in out and "var a_b=1;" in out, out)
+    check("table entries and caps states are translated; an unknown token falls back to words and is reported",
+          "today's volume against its average is 2 and above structure with mystery field" in out and "mystery_field" in pma_cards._PLAIN_FALLBACK, out)
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("chk_html", os.path.join(HERE, "..", "..", "daily-check", "check.py")); ck = _iu.module_from_spec(sp); sp.loader.exec_module(ck)
+    f1 = os.path.join(td, "raw.html"); open(f1, "w").write(page)
+    f2 = os.path.join(td, "clean.html"); open(f2, "w").write(out)
+    fails, _ = ck.check_cards_html(f1)
+    check("the gate FAILs a page that shows raw field names (naming them)", len(fails) == 1 and "day_vol" in fails[0] and "mystery_field" in fails[0], str(fails))
+    check("the gate passes the translated page (class names and CSS are not text)", ck.check_cards_html(f2)[0] == [])
+    b0 = pma_cards.bracket_view(161.26, "buy line", 157.90, "x", [161.26, 164.31], 620)
+    h0 = pma_cards._bracket_html(b0)
+    check("no target reaching 1R says 'Reward does not justify the risk' and 'No level reaches 1R'", "Reward does not justify the risk at this entry" in h0 and "No level reaches 1R above the entry" in h0, h0)
+    h1 = pma_cards._bracket_html(pma_cards.bracket_view(161.26, "buy line", 157.90, "x", [161.26, 164.31, 168.20], 620))
+    check("the first line of the bracket is 'Reward/risk to the first real target: 2.1R'", "Reward/risk to the first real target: <b>2.1R</b>" in h1, h1)
 
 
 def main():
@@ -3671,7 +3698,8 @@ def main():
                    test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat,
                    test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table,
                    test_cards_bracket_first_target_rule_and_plain_reason,
-                   test_freshness_line_and_withheld_stance_print_on_the_cards]:
+                   test_freshness_line_and_withheld_stance_print_on_the_cards,
+                   test_plain_words_in_the_rendered_page_and_the_html_gate]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)
