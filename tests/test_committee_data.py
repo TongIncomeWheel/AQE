@@ -515,6 +515,7 @@ def test_the_standalone_run_writes_the_set_reads_the_export_date_and_exits_0_whe
     monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
     monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
     monkeypatch.setattr(cd, "git_export_history", lambda *a, **k: ({}, "UNAVAILABLE: test"))
+    monkeypatch.setattr(cd, "PROJECT_ROOT", tmp_path)          # hermetic: never read the repo's published universe_history.json
     out = tmp_path / "cd"
     rc = S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"])
     log = capsys.readouterr().out
@@ -529,6 +530,7 @@ def test_a_failed_or_partial_rerun_never_overwrites_an_ok_set_for_the_same_date(
     monkeypatch.setattr(cd, "load_panel_daily", lambda tickers, sessions=cd.DAILY_SESSIONS: panel_for(["MP", "AAA", "V", "SPY"]))
     monkeypatch.setattr(cd, "ledger_tickers", lambda run_date, **k: [])
     monkeypatch.setattr(cd, "git_export_history", lambda *a, **k: ({}, "UNAVAILABLE: test"))
+    monkeypatch.setattr(cd, "PROJECT_ROOT", tmp_path)          # hermetic: never read the repo's published universe_history.json
     out = tmp_path / "cd"
     assert S.main(["--export", str(_export_file(tmp_path)), "--out-dir", str(out), "--no-publish"]) == 0
     good = (out / "manifest.json").read_bytes()
