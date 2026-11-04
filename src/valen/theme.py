@@ -743,7 +743,7 @@ def macro_cockpit_html(gauge_rows: list[dict], divergence: dict, cot: dict) -> s
         f'<div class="valen-stat-value">{_esc(div_value)}</div>'
         + (f'<div style="margin-top:6px">{div_types}</div>' if div_ok else '')
         + '<div class="valen-explainer">How many of Crown’s 8 independent '
-          'divergence checks (RSI, cross-asset, VIX, breadth, positioning and '
+          'divergence checks (momentum, cross-asset, VIX, breadth, positioning and '
           'more) are lit right now. One alone is a straw; several agreeing is '
           'what the handbook calls a pile of them.</div></div>')
 

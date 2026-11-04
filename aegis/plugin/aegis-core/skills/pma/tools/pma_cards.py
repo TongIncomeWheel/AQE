@@ -221,7 +221,7 @@ dt{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.05em;text-transfor
 .hh{display:flex;align-items:center;gap:4px}.hh .num{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--mute)}
 .tk2{font-family:var(--f-disp);font-weight:800;font-size:1.05rem}.cond{color:var(--mute)}
 .flag{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
-.reason p{margin:.25rem 0;font-size:.95rem}.bracket dd{font-family:var(--f-mono);font-size:.86rem}
+.reason p{margin:.25rem 0;font-size:.95rem}\n.audit{margin-top:4px;font-size:.82rem;color:var(--mute)}.audit summary{cursor:pointer}.bracket dd{font-family:var(--f-mono);font-size:.86rem}
 .committee{border-left:3px solid var(--up);background:var(--up-soft,var(--warn-soft));padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;font-size:.9rem}
 .committee .minority{margin-top:4px;color:var(--ink-2,inherit)}
 .read{display:flex;flex-direction:column;gap:10px;max-width:72ch}
@@ -283,6 +283,20 @@ def plain_words(text):
     return _PLAIN_TOKEN.sub(sub, text)
 
 
+_JARGON_PROSE = [
+    (re.compile(r"\s*\(RSI\)"), ""), (re.compile(r"(?<=[a-z] )RSI\b"), "momentum gauge"),
+    (re.compile(r"(?<=[a-z0-9\-] )VWAP\b"), "volume-weighted price"), (re.compile(r"(?<=[a-z] )MACD\b"), "momentum trend gauge"),
+    (re.compile(r"(?<=[a-z] )ATR(?= multiple| extended| of| from)"), "daily range"), (re.compile(r"(?<=[0-9] )ATR\b"), "daily ranges"),
+]
+
+
+def plain_prose(text):
+    """Indicator names in PROSE (a lower-case word before them), never a bare ticker cell: RSI / VWAP / MACD / ATR -> plain words."""
+    for rx, rep in _JARGON_PROSE:
+        text = rx.sub(rep, text)
+    return text
+
+
 def plainify_html(page):
     """Translate raw tokens in the TEXT of the page only (never <style>, <script> or tag attributes)."""
     parts = re.split(r"(<style.*?</style>|<script.*?</script>)", page, flags=re.S | re.I)
@@ -291,7 +305,7 @@ def plainify_html(page):
         if seg[:6].lower() in ("<style", "<scrip"):
             out.append(seg)
         else:
-            out.append(re.sub(r">([^<>]+)<", lambda m: ">" + plain_words(m.group(1)) + "<", seg))
+            out.append(re.sub(r">([^<>]+)<", lambda m: ">" + plain_prose(plain_words(m.group(1))) + "<", seg))
     return "".join(out)
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -405,6 +419,8 @@ def validate_reason(reason):
 
 
 _ONE_R = None
+_MARKER = None
+_REFRESHED = None
 
 
 def _reason_html(w):
@@ -711,7 +727,7 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
     rm = v.get("read_me_first") or {}; st = _stance_word(v)
     hist = {h["label"]: h for h in v.get("history") or []}
     tone = {"RISK_ON": "p-up", "NEUTRAL": "p-warn", "RISK_OFF": "p-down"}.get(st, "p-n")
-    o = [_freshness_html(v), '<div class="section-title"><h2>Part 1 · Daily weather</h2><span class="eyebrow">AQE numbers · plain-English read · as of '
+    o = [_freshness_html(v, _MARKER, _REFRESHED), '<div class="section-title"><h2>Part 1 · Daily weather</h2><span class="eyebrow">AQE numbers · plain-English read · as of '
          + E(str(v.get("exported_at") or v.get("date"))) + '</span></div>']
     # 1. Situational awareness and stance
     o.append(f'<section class="card"><div class="eyebrow">1 · Situational awareness and stance</div>'
@@ -900,14 +916,28 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
              + (". <b>None is TRIGGERED or READY.</b>" if not ready else "") + "</p></section>")
     return "\n".join(o)
 
-def _freshness_html(v):
-    """One line on every card page: expected session and each macro leg's date with its reason code (PM 2026-11-04)."""
+def _freshness_html(v, marker=None, refreshed=None):
+    """One line on every card page: expected session and each macro leg's date with its reason code (PM 2026-11-04). Source order:
+    the Valen file's legs table; else the run's aqe_last_run.json 'Macro legs:' marker line (it carries the same facts); only if
+    neither exists is it a declared gap. When the committee copy is older than main's refreshed weather, say so in plain words."""
     line = ((v or {}).get("data_freshness") or {}).get("line")
-    if not v:
-        return '<div class="flag freshness"><b>FRESHNESS</b> | Valen dashboard not served this run - no macro leg can be dated</div>'
+    note = ""
+    if refreshed is not None:
+        r_line = (refreshed.get("data_freshness") or {}).get("line")
+        r_exp = (refreshed.get("data_freshness") or {}).get("expected_session")
+        if r_line and r_line != line:
+            note = (' <span class="cond">As the committee saw it at run time; refreshed after: see aegis/output/aqe_crown_macro.json'
+                    f' (expected {E(str(r_exp))}).</span>')
+    if not line and marker:
+        ml = str(marker.get("macro_legs") or "")
+        if ml and not ml.startswith("unknown"):
+            body = ml.replace("Macro legs:", "").strip()
+            return f'<div class="flag freshness"><b>FRESHNESS</b> | {E(body)} | from the run marker (as the committee saw it at run time){note}</div>'
     if not line:
-        return '<div class="flag freshness"><b>FRESHNESS</b> | this Valen file carries no legs table - the macro legs cannot be dated (declared gap)</div>'
-    return f'<div class="flag freshness">{E(line)}</div>'
+        if not v:
+            return '<div class="flag freshness"><b>FRESHNESS</b> | no Valen file and no run marker - no macro leg can be dated (declared gap)</div>'
+        return '<div class="flag freshness"><b>FRESHNESS</b> | this Valen file carries no legs table and the run marker has none - the macro legs cannot be dated (declared gap)</div>'
+    return f'<div class="flag freshness">{E(line)}{note}</div>'
 
 
 def _stance_word(v):
@@ -973,25 +1003,28 @@ def _valen_card(v, rows, room):
 # Rendered from consensus.json / the export only -- never from the words file. Rows without `status`
 # (pre-redesign runs) render exactly as before: every helper returns "" when the field is absent.
 def _committee_block(pos, on):
-    """R42 (PM 2026-11-03): the committee speaks as ONE body - 'Committee: Conviction n/5. Why: <one rationale>. What would
-    change it: <...>. Minority note: <...>'. Every word is the voices' own, quoted by code from what they filed (the
-    registrar and committee-position re-check each clause); nothing here is written by the conductor or the brief-writer.
-    Individual voice rationales are not printed; individual scores and answers stay on committee_record.json (R35).
+    """R42: the committee's position. VISIBLE on the card: 'Conviction 4 of 5' (plain, PM-signed scale) and a dissent count. The
+    committee's verbatim rationale (Why / Also / What would change it / minority notes) is the AUDIT TRAIL: kept whole, folded in a
+    <details> closed by default (PM 2026-11-04: the wall of C-codes, scores and indicator names was unreadable on the card).
     `on` False = the run predates R42 or no position file was passed: print nothing. On and missing = a declared gap."""
     if not on:
         return ""
     if not pos:
         return '<div class="committee"><b>Committee position:</b> not filed for this ticket &mdash; declared gap, nothing invented.</div>'
     n = pos.get("committee_conviction")
-    head = f"Committee: Conviction {n}/5." if isinstance(n, int) else "Committee: conviction not counted (fewer than 4 scores filed)."
+    head = f"Conviction {n} of 5" if isinstance(n, int) else "Conviction not counted (fewer than 4 scores filed)"
+    mn = pos.get("minority_notes") or []
+    ndis = sum(1 for m in mn if "DISSENT" in str(m.get("kind", "")))
+    vis = E(head) + (f" &middot; {ndis} reviewer{'s' if ndis != 1 else ''} dissent{'s' if ndis == 1 else ''} (see the audit trail)" if ndis else "")
     why = " ".join(E(c["text"]) for c in pos.get("why") or []) or "no rationale filed"
     also = "".join(f' <span class="also"><b>Also ({E(a["voice"])}):</b> {E(a["text"])}</span>' for a in pos.get("also") or [])
     wc = " ".join(E(c["text"]) for c in pos.get("what_would_change_it") or []) or "none filed"
     stage = ' <b>[DRAFT, not adopted]</b>' if pos.get("rationale_stage") == "draft" else ""
-    mn = pos.get("minority_notes") or []
     mino = ('<div class="minority"><b>Minority note:</b> ' + " &middot; ".join(f'{E(m["voice"])} ({E(m["kind"])}): {E(m["text"])}' for m in mn) + "</div>") if mn else ""
     gaps = f'<div class="cond">{E("; ".join(pos.get("gaps") or []))}</div>' if pos.get("gaps") else ""
-    return f'<div class="committee"><b>{E(head)}</b> Why: {why}{stage}{also} What would change it: {wc}{mino}{gaps}</div>'
+    return (f'<div class="committee"><b>{vis}</b>{" " + stage if stage else ""}'
+            f'<details class="audit"><summary>Audit trail: what each reviewer filed (verbatim)</summary>'
+            f'<div>Why: {why}{also} What would change it: {wc}{mino}{gaps}</div></details></div>')
 
 
 def _rationale_banner(pos_doc, on):
@@ -1028,11 +1061,13 @@ def _contest_html(c):
         items = "".join(f"<li><b>{E(str(o.get('voice', '')))}</b>: {E(str(o.get('objection') or ''))}"
                         + (f" &mdash; <i>would clear:</i> {E(str(o.get('would_clear')))}" if o.get("would_clear") else "") + "</li>"
                         for o in objs)
-        return f'<div class="flag">Contested &middot; {len(objs)} of {n} object &middot; stays listed (R34)<ul>{items}</ul></div>'
+        return (f'<div class="flag">Contested &middot; {len(objs)} of {n} object &middot; stays listed'
+                f'<details class="audit"><summary>Audit trail: the objections (verbatim)</summary><ul>{items}</ul></details></div>')
     res = c.get("reservations") or []
     if st == "AGREED" and res:
-        return '<p class="cond">Agreed, with reservations: ' + "; ".join(
-            f"<b>{E(str(r.get('voice', '')))}</b> &mdash; {E(str(r.get('reservation') or ''))}" for r in res) + "</p>"
+        return ('<p class="cond">Agreed, with ' + f"{len(res)} reservation{'s' if len(res) != 1 else ''}" +
+                '<details class="audit"><summary>Audit trail: the reservations (verbatim)</summary>' + "; ".join(
+            f"<b>{E(str(r.get('voice', '')))}</b> &mdash; {E(str(r.get('reservation') or ''))}" for r in res) + "</details></p>")
     if st == "AGREED":
         return '<p class="cond">Agreed &middot; no objections</p>'
     return ""
@@ -1094,8 +1129,10 @@ def _valen_management_html(V, held):
     return "".join(out)
 
 def cmd_render(a):
-    global _ONE_R
+    global _ONE_R, _MARKER, _REFRESHED
     _ONE_R = _one_r_usd()
+    _MARKER = load(a.last_run, None) if getattr(a, "last_run", None) and os.path.exists(a.last_run) else None
+    _REFRESHED = load(a.refreshed_valen, None) if getattr(a, "refreshed_valen", None) and os.path.exists(a.refreshed_valen) else None
     T = load(a.text); cons = load(a.consensus)
     gaps = _validate_text(T, cons, legacy=bool(getattr(a, "allow_legacy_text", False)))
     if a.valen and os.path.exists(a.valen):
@@ -1150,7 +1187,7 @@ def cmd_render(a):
              f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
              f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
              + (f'<span class="pill p-warn">{n_no_ladder} of {len(adv)} ADVANCE: reward does not justify the risk at this entry</span>' if n_no_ladder else "") + '</div></div>')
-    o.append(_freshness_html(V))
+    o.append(_freshness_html(V, _MARKER, _REFRESHED))
     bl = T["bottom_line"]
     o.append(f'<section class="card bottom"><div class="eyebrow">Bottom line</div><h2>{E(bl["headline"])}</h2><p>{E(bl.get("paragraph", ""))}</p><div class="grid4">'
              + "".join(f'<div class="stat"><div class="v {TONE.get(s.get("tone"), "")}">{E(str(s["value"]))}</div><div class="l">{E(s["label"])}</div></div>' for s in bl["stats"])
@@ -1277,6 +1314,8 @@ def main():
     s.add_argument("--valen", default="aqe_valen_dashboard.json"); s.add_argument("--crown", default="aqe_crown_macro.json"); s.add_argument("--scorecard", default="scorecard.md")
     s.add_argument("--slate", default="slate.json", help="R40: the slate's market_kill line prints on the bottom line and on every ADVANCE card")
     s.add_argument("--position", default=None, help="R42: committee_position.json - each slated ticket shows 'Committee: Conviction n/5. Why ... What would change it ... Minority note ...'. Absent = no committee block (runs before 2026-11-04)")
+    s.add_argument("--last-run", dest="last_run", default="aqe_last_run.json", help="the run marker: its 'Macro legs:' line dates the FRESHNESS header when the Valen file has no legs table")
+    s.add_argument("--refreshed-valen", dest="refreshed_valen", default=None, help="main's refreshed aqe_valen_dashboard.json: if newer than the committee copy the page says so")
     s.add_argument("--allow-legacy-text", dest="allow_legacy_text", action="store_true", help="accept the old `why` wall instead of the plain 3-part `reason` (re-rendering an old run only)")
     s.add_argument("--out", required=True); s.set_defaults(fn=cmd_render)
     a = ap.parse_args(); a.fn(a)
