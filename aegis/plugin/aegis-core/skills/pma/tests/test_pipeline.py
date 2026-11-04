@@ -3684,10 +3684,25 @@ def test_a_missing_or_stale_net_highs_read_never_prints_a_direction(td):
     check("a real True still reads Improving", "Improving" in ok2)
 
 
+def test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check(td):
+    """P3 (2026-11-04): real seat-reported usage beats the byte estimate; a step over its RUN.yaml budget_tokens FAILs."""
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("chk_p3", os.path.join(HERE, "..", "..", "daily-check", "check.py")); ck = _iu.module_from_spec(sp); sp.loader.exec_module(ck)
+    d = os.path.join(td, "p3"); os.makedirs(d, exist_ok=True)
+    ry = os.path.join(d, "RUN.yaml")
+    open(ry, "w").write("steps:\n  - name: VOTE\n    kind: spawn\n    budget_tokens: 100000\n  - name: GATHER\n    kind: tool\n")
+    check("budgets are read per step", ck._step_budgets(ry) == {"VOTE": 100000}, str(ck._step_budgets(ry)))
+    json.dump({"date": "2026-11-03", "steps": {"VOTE": {"status": "done", "tokens": 3_000_000, "cost": {"inlined_bytes": 400, "returned_bytes": 400}}}},
+              open(os.path.join(d, "run_manifest.json"), "w"))
+    f, n = ck.check_chain(d, "2026-11-03", run_yaml=ry)
+    check("seat-reported tokens beat a tiny byte estimate and trip the ceiling", any("SPEND OVER CEILING" in x for x in f), str(f)[:300])
+    check("a step over its own budget is named", any("STEP OVER BUDGET: VOTE" in x for x in f), str(f)[:300])
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,
