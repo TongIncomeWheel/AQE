@@ -803,6 +803,24 @@ def _run_yaml_param(name, default):
     return default
 
 
+def _run_yaml_list(name):
+    """A RUN.yaml `parameters:` flow list such as `ma_not_deal_pinned: [APO, RY]` -> {"APO", "RY"} (empty set if absent)."""
+    env = os.environ.get("AEGIS_" + name.upper())          # a test (or a one-off run) can set the list without editing the run map
+    if env is not None:
+        return {x.strip().upper() for x in env.split(",") if x.strip()}
+    here = os.path.dirname(os.path.abspath(__file__))
+    for rel in ("..", "../skills/pma", "../../pma", "../../../skills/pma", "../../skills/pma", "../pma"):
+        p = os.path.join(here, rel, "RUN.yaml")
+        if os.path.exists(p):
+            try:
+                m = re.search(rf"^\s*{re.escape(name)}:\s*\[([^\]]*)\]", open(p, encoding="utf-8").read(), re.M)
+                if m:
+                    return {x.strip().strip("'\"").upper() for x in m.group(1).split(",") if x.strip()}
+            except OSError:
+                pass
+    return set()
+
+
 def lanes_v1_on():
     """R43 switch (parameters.lanes_v1). OFF = today's rule exactly. Env AEGIS_LANES_V1=on|off overrides for a dry-run."""
     v = os.environ.get("AEGIS_LANES_V1") or _run_yaml_param("lanes_v1", "off")
@@ -2111,6 +2129,9 @@ def cmd_ratify_count(a):
             ma_why = f"export unreadable: {_e.__class__.__name__}"
     else:
         ma_why = f"no export at {exp_path}"
+    ma_override = _run_yaml_list("ma_not_deal_pinned")   # a MANUAL override: names the scan wrongly read as a pending target; each is printed and recorded, never silent
+    if ma_override:
+        print(f"NOTE ratify-count: R44 manual override (RUN.yaml ma_not_deal_pinned): {sorted(ma_override)} are NOT deal-pinned this run (the scan misread them).")
     if not ma_applied:
         print(f"WARNING ratify-count: M&A exclusion (R44) NOT applied -- {ma_why}. A pending-takeover name could be ADVANCE.")
     board = load(a.board, needs=["names"]) if a.board and os.path.exists(a.board) else None
@@ -2132,7 +2153,7 @@ def cmd_ratify_count(a):
         verdict = ("PASS" if status == "DROPPED"
                    else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
         _ma = ma_rows.get(t) or {}
-        deal_pinned = ma_applied and _ma.get("ma_status") == "PENDING_TARGET"
+        deal_pinned = ma_applied and _ma.get("ma_status") == "PENDING_TARGET" and t.upper() not in ma_override
         if deal_pinned:
             status, verdict = "DEAL_PINNED", "PASS"
         conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
@@ -2154,7 +2175,10 @@ def cmd_ratify_count(a):
                     "dissent": x.get("dissent") or [],
                     "gaps": [f"no ratification from {v}" for v in missing],
                     **({"deal_pinned": {"rule": "R44", "ma_status": _ma.get("ma_status"), "ma_note": _ma.get("ma_note"), "ma_evidence": _ma.get("ma_evidence"),
-                                        "excluded_from": x["verdict"], "objections_if_counted": n_obj}} if deal_pinned else {})})
+                                        "excluded_from": x["verdict"], "objections_if_counted": n_obj}} if deal_pinned else {}),
+                    **({"ma_override": {"rule": "R44", "ma_status": _ma.get("ma_status"), "ma_note": _ma.get("ma_note"),
+                                        "why": "RUN.yaml ma_not_deal_pinned: the scan misread this name as a pending takeover target"}}
+                       if (ma_applied and _ma.get("ma_status") == "PENDING_TARGET" and t.upper() in ma_override) else {})})
     for t in ds:
         if t in answers:
             continue
