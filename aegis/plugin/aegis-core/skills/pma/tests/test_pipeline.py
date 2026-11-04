@@ -3497,6 +3497,43 @@ def test_form_cap_scales_with_tickets_and_trigger_ties_are_stated(td):
     check("the tie is broken by the higher blind conviction in the group, then decider order", win[0] == ("h1_close_above:bar_high", "H1"), str(win))
 
 
+def test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat(td):
+    """4 Nov rerun: the draft legitimately quoted an objector's would_clear for 'what would change it'; that seat then answered
+    DISSENT at ADOPT, and the final-stage validator refused 25 clauses. rationale-final (code) now drops every why / would_change
+    clause sourced from a seat that DISSENTed on that ticket, lists what it dropped, says so when nothing is left, and the final
+    then validates. The dissenter's words ride as the minority note."""
+    sys.path.insert(0, TOOLS)
+    import importlib, registrar, pma_pipeline
+    importlib.reload(registrar); importlib.reload(pma_pipeline)
+    rd = os.path.join(td, "dissent"); 
+    for sub in ("forms/r2", "forms/ratify", "forms/adopt"): os.makedirs(os.path.join(rd, sub))
+    json.dump({"voice": "seow", "votes": [{"ticker": "QQQ1", "stance": "SUPPORT", "reason": "cmf 0.34 confirms the high"}]}, open(os.path.join(rd, "forms/r2/seow.json"), "w"))
+    json.dump({"voice": "oneil", "date": "2026-11-04", "tickets": [{"ticker": "QQQ1", "answer": "OBJECT", "objection": "Market gate", "would_clear": "A follow-through day on the index"}]}, open(os.path.join(rd, "forms/ratify/oneil.json"), "w"))
+    json.dump({"voice": "oneil", "date": "2026-11-04", "tickets": [{"ticker": "QQQ1", "answer": "DISSENT", "text": "I still oppose: the market gate fails"}]}, open(os.path.join(rd, "forms/adopt/oneil.json"), "w"))
+    cl = lambda txt, v, f, fld: {"text": txt, "source": {"voice": v, "form": f, "field": fld}}
+    draft = {"voice": "chair", "date": "2026-11-04", "stage": "draft", "tickets": [{"ticker": "QQQ1", "why": [cl("cmf 0.34 confirms the high", "seow", "vote", "reason")],
+             "would_change": [cl("A follow-through day on the index", "oneil", "ratify", "would_clear")]}]}
+    json.dump(draft, open(os.path.join(rd, "rationale_draft.json"), "w"))
+    e, _ = registrar.validate_rationale(draft, "draft", ["QQQ1"], rd)
+    check("the draft may quote an objector's would_clear only until they dissent: with the dissent on file the draft is refused too", any("DISSENTED" in x for x in e), str(e))
+    # the draft as the Chair filed it BEFORE the dissent existed
+    os.remove(os.path.join(rd, "forms/adopt/oneil.json"))
+    e, _ = registrar.validate_rationale(draft, "draft", ["QQQ1"], rd)
+    check("before the dissent the draft validates", e == [], str(e))
+    json.dump({"voice": "oneil", "date": "2026-11-04", "tickets": [{"ticker": "QQQ1", "answer": "DISSENT", "text": "I still oppose: the market gate fails"}]}, open(os.path.join(rd, "forms/adopt/oneil.json"), "w"))
+    rc, o = run([PIPE, "rationale-final", "--draft", os.path.join(rd, "rationale_draft.json"), "--run-dir", rd, "--out", os.path.join(rd, "rationale_final.json")])
+    F = json.load(open(os.path.join(rd, "rationale_final.json")))["tickets"][0]
+    check("rationale-final drops the dissenter's clause and lists it", rc == 0 and F["would_change"] == [] and F["dropped_dissent_clauses"] == [{"field": "would_change", "voice": "oneil", "text": "A follow-through day on the index"}], o + str(F)[:300])
+    check("the seat that did not dissent keeps its clause", len(F["why"]) == 1 and F["why"][0]["source"]["voice"] == "seow")
+    e, _ = registrar.validate_rationale({"voice": "chair", "date": "2026-11-04", "stage": "final", "tickets": [F]}, "final", ["QQQ1"], rd)
+    check("the dropped-clause final validates", e == [], str(e))
+    F2 = dict(F); F2["would_change"] = [cl("A follow-through day on the index", "oneil", "ratify", "would_clear")]
+    e, _ = registrar.validate_rationale({"voice": "chair", "date": "2026-11-04", "stage": "final", "tickets": [F2]}, "final", ["QQQ1"], rd)
+    check("a final that still quotes the dissenter is refused", any("DISSENTED" in x for x in e))
+    check("the position step declares what was removed and that no 'what would change it' is left",
+          "removed from the rationale" in open(PIPE).read() and "no 'what would change it' is left" in open(PIPE).read())
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3567,7 +3604,8 @@ def main():
                    test_committee_position_counts_the_median_and_never_invents_a_rationale,
                    test_a_rerun_has_its_own_identity_and_cannot_publish_live,
                    test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also,
-                   test_form_cap_scales_with_tickets_and_trigger_ties_are_stated]:
+                   test_form_cap_scales_with_tickets_and_trigger_ties_are_stated,
+                   test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)

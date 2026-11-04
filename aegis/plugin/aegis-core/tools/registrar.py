@@ -990,6 +990,17 @@ def _clause_errors(c, where, ticker, run_dir, allowed_forms, banned=()):
     return errs
 
 
+def dissenters(run_dir, ticker):
+    """The deciders who answered DISSENT on `ticker` in forms/adopt."""
+    out = set()
+    for v in DECIDERS:
+        d = _read_form(os.path.join(run_dir, "forms", "adopt", f"{v}.json"))
+        row = next((x for x in (d or {}).get("tickets") or [] if isinstance(x, dict) and x.get("ticker") == ticker), None) if isinstance(d, dict) else None
+        if row and row.get("answer") == "DISSENT":
+            out.add(v)
+    return out
+
+
 def amend_also(run_dir, ticker):
     """P2: every AMEND answer's text for `ticker`, in decider order, attached by CODE verbatim as 'Also (voice): ...'.
     -> (also, overflow): `also` fits ALSO_MAX_CHARS in total; whatever does not fit goes to `overflow`, which the position
@@ -1040,8 +1051,9 @@ def validate_rationale(form, stage, eligible, run_dir):
                 dissent.add(v)
         banned = {(v, f) for v in dissent for f in allowed + ("adopt",)}
         why, wc = r.get("why"), r.get("would_change", [])
-        if not isinstance(why, list) or not 1 <= len(why) <= CLAUSES_MAX:
-            errs.append(f"{w} {t}: why must be 1-{CLAUSES_MAX} clauses"); why = why if isinstance(why, list) else []
+        lo = 0 if (stage == "final" and r.get("dropped_dissent_clauses")) else 1       # a final may be left with no `why` ONLY by dropping a dissenter's clauses, declared
+        if not isinstance(why, list) or not lo <= len(why) <= CLAUSES_MAX:
+            errs.append(f"{w} {t}: why must be {lo}-{CLAUSES_MAX} clauses"); why = why if isinstance(why, list) else []
         if not isinstance(wc, list) or len(wc) > WOULD_CHANGE_MAX:
             errs.append(f"{w} {t}: would_change must be at most {WOULD_CHANGE_MAX} clauses"); wc = []
         for j, c in enumerate(why):
@@ -1054,6 +1066,10 @@ def validate_rationale(form, stage, eligible, run_dir):
             if "also" in r or "also_overflow" in r:
                 errs.append(f"{w} {t}: a draft carries no `also` - the code attaches the AMEND texts")
             continue
+        want_drop = sorted(dissenters(run_dir, t))
+        got_drop = sorted({(c or {}).get("voice") for c in (r.get("dropped_dissent_clauses") or [])})
+        if not set(got_drop) <= set(want_drop):
+            errs.append(f"{w} {t}: dropped_dissent_clauses name {got_drop}, but only {want_drop} DISSENTed on this ticket")
         want_also, want_over = amend_also(run_dir, t)
         if r.get("also") != want_also or (r.get("also_overflow") or []) != want_over:
             errs.append(f"{w} {t}: `also` / `also_overflow` must be exactly the code-attached AMEND texts - run pma_pipeline.py rationale-final")
