@@ -74,7 +74,7 @@ def _data_freshness(breadth: dict, crown: dict | None) -> dict:
         banner = ("DATA NOT CURRENT (expected session " + expected + "): " +
                   "; ".join(f"{r['leg']} as of {r['as_of']} [{r['reason']}]" for r in behind) +
                   ". Readings that depend on them are older than today's close.")
-    return {"expected_session": expected, "legs": {r["leg"]: r for r in table}, "legs_table": table,
+    return {"expected_session": expected, "line": L.freshness_line(expected, table), "legs": {r["leg"]: r for r in table}, "legs_table": table,
             "behind": [r["leg"] for r in behind], "blocking": [r["leg"] for r in L.blocking(table)], "banner": banner}
 
 

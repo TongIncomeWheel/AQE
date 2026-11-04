@@ -71,3 +71,15 @@ def test_refresh_for_breadth_reports_fresh_refreshed_partial_and_never_raises(mo
     r4 = ma_refresh.refresh_for_breadth(60, client=FakeClient("2026-11-02"), panel_path=p, expected="2026-11-02")
     assert r4["status"] == "FAILED" and "boom" in r4["reason"]
     assert "FAILED" in ma_refresh.summary_line(r4)
+
+
+def test_an_explicit_budget_wins_over_the_env_so_minutes_cannot_become_seconds(monkeypatch, tmp_path):
+    """2026-11-04: ma-panel.yml put 55 (minutes) in MA_REFRESH_BUDGET_S (seconds); the env overrode the argument and the refresh ran 55 s."""
+    p = _patch(monkeypatch, tmp_path, "2026-11-02")
+    monkeypatch.setenv("MA_REFRESH_BUDGET_S", "55")
+    monkeypatch.setattr(ma_scanner, "get_ma_universe", lambda client=None: pd.DataFrame({"ticker": ["AAA"]}))
+    r = ma_refresh.refresh_for_breadth(3300, client=FakeClient("2026-11-02"), panel_path=p, expected="2026-11-02")
+    assert r["budget_s"] == 3300.0
+    r = ma_refresh.refresh_for_breadth(None, client=FakeClient("2026-11-02"), panel_path=p, expected="2026-11-02")
+    assert r["budget_s"] == 55.0                       # the env is only the default when no argument is given
+    assert "MA_REFRESH_BUDGET_S" not in open(".github/workflows/ma-panel.yml").read()

@@ -92,3 +92,13 @@ def test_weather_refresh_publishes_only_weather_files_and_never_the_committee_on
     assert set(W.WEATHER_FILES) - {"aqe_weather_refresh.json"} <= published        # every weather file is a normal daily artifact
     forbidden = {"aqe_daily_export.json", "candidate_set.json", "aqe_last_run.json", "held_positions.json", "aqe_sector_map.json"}
     assert not (set(W.WEATHER_FILES) & forbidden)                                  # the export, packets, held book and the nightly marker are not touched
+
+
+def test_the_nightly_restores_the_qs_memory_before_qs_runs():
+    """2026-11-04: on Actions nothing restored aqe.db, so qs_persist read 0 every day. The restore step exists, restores ONLY aqe.db
+    (a full restore would roll the panels back), runs before the QS step, and aqe.db is in the Daily Persist file list."""
+    src = (ROOT / "src" / "pipeline" / "daily_orchestrator.py").read_text(encoding="utf-8")
+    assert "Step 0a3" in src and 'only=["aqe.db"]' in src
+    assert src.index("Step 0a3") < src.index("Step 6e: QS engine")
+    persist = (ROOT / "src" / "data" / "persist.py").read_text(encoding="utf-8")
+    assert '"aqe.db"' in persist

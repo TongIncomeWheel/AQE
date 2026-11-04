@@ -20,7 +20,10 @@ MA_REFRESH_BUDGET_S = 20 * 60
 def refresh_for_breadth(budget_s: float | None = None, *, client=None, panel_path=None, expected=None) -> dict:
     """-> {status: FRESH|REFRESHED|PARTIAL|FAILED, before, after, budget_s, elapsed_s, reason}. Never raises."""
     t0 = time.time()
-    budget = float(os.environ.get("MA_REFRESH_BUDGET_S", budget_s if budget_s is not None else MA_REFRESH_BUDGET_S))
+    # An explicit budget_s argument wins; the MA_REFRESH_BUDGET_S env (SECONDS) only sets the default when no argument is given.
+    # (2026-11-04: the pre-step workflow passed MINUTES in that env var and the env overrode the argument: a 55-minute refresh ran
+    # for 55 SECONDS and left the breadth at 39%.)
+    budget = float(budget_s) if budget_s is not None else float(os.environ.get("MA_REFRESH_BUDGET_S", MA_REFRESH_BUDGET_S))
     out = {"status": "FAILED", "budget_s": budget, "before": None, "after": None, "elapsed_s": 0.0, "reason": None}
     try:
         from src.scanner import ma_scanner

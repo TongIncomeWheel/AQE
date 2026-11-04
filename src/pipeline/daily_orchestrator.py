@@ -108,6 +108,25 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Drive sector-map restore: {exc}")
 
+    # Step 0a3: Restore the QS MEMORY (aqe.db: recipe_hits trail + regime series) from the Daily Persist snapshot (2026-11-04).
+    # On GitHub Actions the run starts from a fresh checkout and nothing restored aqe.db, so QS counted ONE stored session every
+    # day: `qs_persist` read 0 on every name since the Actions path became the only trigger (15 Sep sampled), and persistence
+    # recipes could never fire. Only aqe.db is restored here (a full restore would roll the panels back); a failure is printed,
+    # never silent, and QS then says its memory is thin as it already does.
+    try:
+        from src.data import qs_store as _qss
+        if not _qss.DB_PATH.exists():
+            from src.data.persist import load_snapshot_github, load_snapshot
+            _r = load_snapshot_github(only=["aqe.db"])
+            if not (_r or {}).get("ok"):
+                _r = load_snapshot(only=["aqe.db"])
+            print(f"[daily] Step 0a3: QS memory (aqe.db) restore: "
+                  + ("ok" if (_r or {}).get("ok") else f"NOT restored - {(_r or {}).get('reason')} (qs_persist will read low)"))
+        else:
+            print("[daily] Step 0a3: QS memory (aqe.db) already present")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] QS memory restore: {exc} (qs_persist will read low)")
+
     # Step 0b: Pull the latest held-positions journal (PTJ) from git so the
     # export can flag held names and attach the engine's read on them.
     _held = []
