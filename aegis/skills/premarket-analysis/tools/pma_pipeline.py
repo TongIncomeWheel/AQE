@@ -2776,6 +2776,10 @@ def _trigger_word_errors(word):
     return []
 
 
+TRIGGER_TIE_RULE = ("the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND "
+                    "conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)")
+
+
 def _modal(groups, conv):
     """groups: {key: [seats]} -> the modal key. Ties by the seat with the higher blind conviction, then seat order."""
     def best(seats):
@@ -2879,7 +2883,12 @@ def cmd_decide_timing(a):
             plain = max(holders_o, key=lambda v: len(D[v]["trigger"]["plain"]))
             row.update({"proposal": prop, "timing_camp": "ACT_NOW" if prop == "ADVANCE" else "WAIT",
                         "trigger": {"word": word, "tf": tf, "plain": D[plain]["trigger"]["plain"], "seats": holders,
-                                    "of_camp": len(camp), "plain_from": plain},
+                                    "of_camp": len(camp), "plain_from": plain,
+                                    # P2: a tie between triggers is no longer silent - the competing groups and the stated rule ride along
+                                    **({"tie_broken": True, "tied": [{"word": k[0], "tf": k[1], "seats": v} for k, v in groups.items()
+                                                                      if len(v) == len(holders)],
+                                        "tie_rule": TRIGGER_TIE_RULE}
+                                       if sum(1 for v in groups.values() if len(v) == len(holders)) > 1 else {"tie_broken": False})},
                         "why": f"{len(sup)} SUPPORT of {len(present)}; ACT_NOW {len(now)} vs WAIT {len(wait)}"
                                + (" (tie -> WATCH)" if len(now) == len(wait) else "")})
         hz = [h for h in ((fn.get("horizons") or {}).get(v) for v in sup) if isinstance(h, int)]
@@ -2913,7 +2922,7 @@ def cmd_decide_timing(a):
               "seats": sorted(e["seats"], key=DECIDERS.index), "n_decisions": e["n"]}
     by = collections.Counter(r["proposal"] for r in names.values())
     out = {"schema": "decision.v1", "date": a.date, "rules": {"min_support": a.min_support, "tie": TIMING_TIE,
-                                                             "advance": "ACT_NOW > WAIT among SUPPORT", "trigger": "modal (word, tf) of the winning timing camp"},
+                                                             "advance": "ACT_NOW > WAIT among SUPPORT", "trigger": "modal (word, tf) of the winning timing camp", "trigger_tie_rule": TRIGGER_TIE_RULE},
            "survivors": surv, "names": names, "market_kill": mk,
            "market_kill_note": None if mk else "no SUPPORT decision named a market condition -- declared, never invented",
            "ignored_forms": ignored,

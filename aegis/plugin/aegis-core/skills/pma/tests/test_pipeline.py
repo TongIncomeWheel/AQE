@@ -3473,6 +3473,30 @@ def test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also(td):
     check("the Cards print 'Also (voice): ...'", "Also (seow):" in blk and "Add that cmf is above 0.3" in blk, blk)
 
 
+def test_form_cap_scales_with_tickets_and_trigger_ties_are_stated(td):
+    """P2 (conductor 2026-11-04): a 12-ticket rationale_final was 28KB and hit the 24KB essay-leak cap; with a 25-ticket slate every
+    ticket-keyed form would. The cap scales per kind with the ticket count (per-field caps remain the real essay guard), and a
+    trigger tie in decision.json carries the competing groups and the stated rule."""
+    sys.path.insert(0, TOOLS)
+    import importlib, registrar, pma_pipeline
+    importlib.reload(registrar); importlib.reload(pma_pipeline)
+    raw12 = json.dumps({"tickets": [{"ticker": f"T{i}"} for i in range(12)]}).encode()
+    raw25 = json.dumps({"tickets": [{"ticker": f"T{i}"} for i in range(25)]}).encode()
+    check("a 12-ticket rationale may be 100KB, a 25-ticket slate 69KB, but a vote form stays at 24KB",
+          registrar.form_byte_cap("rationale", raw12) == 8000 * 12 + 4096 and registrar.form_byte_cap("slate", raw25) == 2600 * 25 + 4096
+          and registrar.form_byte_cap("vote", raw25) == registrar.MAX_FORM_BYTES)
+    check("the floor is the old 24KB for a tiny form", registrar.form_byte_cap("ratify", b'{"tickets": []}') == registrar.MAX_FORM_BYTES)
+    d = os.path.join(td, "capform"); os.makedirs(d)
+    big = {"voice": "chair", "date": "2026-11-04", "stage": "draft", "tickets": [{"ticker": f"T{i}", "why": [], "would_change": [], "pad": "x" * 2400} for i in range(12)]}
+    json.dump(big, open(os.path.join(d, "r.json"), "w"))
+    rc, o = run([REG, "validate", "--file", os.path.join(d, "r.json"), "--kind", "rationale", "--stage", "draft", "--run-dir", d])
+    check("a 29KB 12-ticket rationale is no longer refused for size (it may be refused for content)", "essay leak; forms not essays" not in o, o[-300:])
+    check("a trigger tie names the competing groups and the rule", "TRIGGER_TIE_RULE" in open(PIPE).read() and "tie_broken" in open(PIPE).read())
+    groups = collections_ordered = {("h1_close_above:bar_high", "H1"): ["oneil", "seow"], ("close_above:ma_20", "D"): ["minervini", "wyckoff"]}
+    win = pma_pipeline._modal(groups, {"oneil": 5, "seow": 3, "minervini": 4, "wyckoff": 2})
+    check("the tie is broken by the higher blind conviction in the group, then decider order", win[0] == ("h1_close_above:bar_high", "H1"), str(win))
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3542,7 +3566,8 @@ def main():
                    test_a_buy_line_far_under_the_close_is_never_the_trigger,
                    test_committee_position_counts_the_median_and_never_invents_a_rationale,
                    test_a_rerun_has_its_own_identity_and_cannot_publish_live,
-                   test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also]:
+                   test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also,
+                   test_form_cap_scales_with_tickets_and_trigger_ties_are_stated]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)
