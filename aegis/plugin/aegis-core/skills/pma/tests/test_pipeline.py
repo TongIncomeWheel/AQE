@@ -2103,10 +2103,10 @@ def test_objection_rule_counts_the_final_ratification(td):
     _ratify(d, "ratify2", "oneil", {"LNG": "AGREE", "GNW": "OBJECT"})
     rc, log = run(args + ["--ratifications2", os.path.join(d, "forms", "ratify2"), "--qa", qa])
     check("re-ratifying a ticket that was NOT held is refused", rc != 0 and "NOT held" in log, log[-300:])
-    # a 16-ticket slate is refused even if the registrar were bypassed
-    big = os.path.join(d, "slate16.json"); json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket(t) for t in ROOM] * 4}, open(big, "w"))
+    # a slate over the cap (25) is refused even if the registrar were bypassed
+    big = os.path.join(d, "slate16.json"); json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket(t) for t in ROOM] * 9}, open(big, "w"))
     rc, log = run([PIPE, "ratify-count", "--slate", big, "--ratifications", os.path.join(d, "forms", "ratify"), "--phase4", p4, "--date", "2026-11-01", "--out", os.path.join(d, "x.json"), "--record", os.path.join(d, "y.json")])
-    check("a slate over 15 is refused by the counter too (R34, defence in depth)", rc != 0 and "15" in log, log[-300:])
+    check("a slate over 25 is refused by the counter too (R34, defence in depth)", rc != 0 and "25" in log, log[-300:])
     # fewer than 4 deciders ratifying is no committee
     few = os.path.join(d, "forms", "few"); os.makedirs(few, exist_ok=True)
     for v in DEC[:3]:
@@ -2317,8 +2317,8 @@ def test_the_checker_catches_a_seeded_failure(td):
     m = json.loads(json.dumps(healthy_manifest)); m["steps"]["VOTE"]["cost"]["est_tokens"] = 2_600_000; write("run_manifest.json", m)
     rc, log = run(base); check("spend over the ceiling is named for the PM", rc != 0 and "SPEND OVER CEILING" in log, log[-300:])
     write("run_manifest.json", healthy_manifest)
-    write("slate.json", {"tickets": [{"ticker": f"T{i}"} for i in range(16)]})
-    rc, log = run(base); check("a 16-ticket slate is named (R34)", rc != 0 and "16 tickets > 15" in log, log[-300:])
+    write("slate.json", {"tickets": [{"ticker": f"T{i}"} for i in range(26)]})
+    rc, log = run(base); check("a 26-ticket slate is named (R34, cap 25)", rc != 0 and "26 tickets > 25" in log, log[-300:])
     write("slate.json", {"tickets": [{"ticker": "GNW", "verdict": "ADVANCE"}]})
     write("consensus.json", [{"ticker": "GNW", "verdict": "ADVANCE"}])
     rc, log = run(base); check("a consensus without `status` (the retired rule) is named", rc != 0 and "retired rule" in log, log[-300:])
@@ -3400,6 +3400,11 @@ def test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also(td):
     import importlib, registrar, pma_pipeline
     importlib.reload(registrar); importlib.reload(pma_pipeline)
     check("SLATE_CAP is 25", registrar.SLATE_CAP == 25)
+    import re as _re, importlib.util as _iu
+    cap_yaml = int(_re.search(r"^\s*slate_cap:\s*(\d+)", open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read(), _re.M).group(1))
+    _sp = _iu.spec_from_file_location("chk_cap", os.path.join(HERE, "..", "..", "daily-check", "check.py")); _ck = _iu.module_from_spec(_sp); _sp.loader.exec_module(_ck)
+    check("registrar, pma_pipeline and check.py all read the cap from RUN.yaml, so they cannot drift (4 Nov: ratify-count still said 15)",
+          registrar.SLATE_CAP == pma_pipeline.SLATE_CAP == _ck.SLATE_CAP == cap_yaml == 25, f"{registrar.SLATE_CAP} {pma_pipeline.SLATE_CAP} {_ck.SLATE_CAP} {cap_yaml}")
     sch = json.load(open(os.path.join(HERE, "..", "contracts", "slate.schema.json")))
     check("slate.schema maxItems is 25", sch["properties"]["tickets"]["maxItems"] == 25)
     ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()

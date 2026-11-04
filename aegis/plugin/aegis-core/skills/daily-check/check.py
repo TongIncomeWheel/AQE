@@ -31,7 +31,24 @@ DEFAULT_RUN_YAML = os.path.abspath(os.path.join(HERE, "..", "pma", "RUN.yaml"))
 # figure (1.5x the 905k baseline) predates the 7-seat, 39-name design and tripped before FLOOR on 2 Nov.
 # Optimisation is a later PM decision.
 DEFAULT_CEILING = 2_500_000
-SLATE_CAP = 15
+def _slate_cap_from_run_yaml(default=25):
+    """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
+    run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
+    import os as _o, re as _r
+    here = _o.path.dirname(_o.path.abspath(__file__))
+    for rel in ("..", "../skills/pma", "../../pma", "../../../skills/pma", "../../skills/pma", "../pma"):
+        p = _o.path.join(here, rel, "RUN.yaml")
+        if _o.path.exists(p):
+            try:
+                m = _r.search(r"^\s*slate_cap:\s*(\d+)", open(p, encoding="utf-8").read(), _r.M)
+                if m:
+                    return int(m.group(1))
+            except OSError:
+                pass
+    return default
+
+
+SLATE_CAP = _slate_cap_from_run_yaml()   # R34 (15 -> 25, PM 2026-11-04), read from RUN.yaml parameters.slate_cap
 # The fallback only: the step list is READ FROM RUN.yaml (_steps_from_run_yaml). R38 (2026-11-02): FLOOR is retired;
 # MTF, CLAIMS, CROSS, FUNNEL, PAIR, TIER2 and TIMING replace it.
 KNOWN_STEPS = ["INBOX-CLEAN", "GATHER", "PREPARE", "NOMINATE", "PM-LENS", "RANK", "MTF", "CHALLENGE", "VOTE",

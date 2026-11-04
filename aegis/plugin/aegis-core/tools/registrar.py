@@ -60,7 +60,24 @@ DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", 
 QA_SEAT = "steenbarger"
 R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
 SHORTLIST_CAP = 6              # R33
-SLATE_CAP = 25                 # R34 (15 -> 25, PM 2026-11-04: 17 survived on the first live R42 run and FA, an ADVANCE with 5 SUPPORT, was cut)
+def _slate_cap_from_run_yaml(default=25):
+    """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
+    run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
+    import os as _o, re as _r
+    here = _o.path.dirname(_o.path.abspath(__file__))
+    for rel in ("..", "../skills/pma", "../../pma", "../../../skills/pma", "../../skills/pma", "../pma"):
+        p = _o.path.join(here, rel, "RUN.yaml")
+        if _o.path.exists(p):
+            try:
+                m = _r.search(r"^\s*slate_cap:\s*(\d+)", open(p, encoding="utf-8").read(), _r.M)
+                if m:
+                    return int(m.group(1))
+            except OSError:
+                pass
+    return default
+
+
+SLATE_CAP = _slate_cap_from_run_yaml()   # R34 (15 -> 25, PM 2026-11-04), read from RUN.yaml parameters.slate_cap
 FLOOR_MSG_CAP = 2              # R36 (counted across files by `pma_pipeline.py floor-check`)
 CASE_LIMITS = {"for": 400, "against": 400, "entry_trigger": 200, "wrong_if": 200,
                "would_change_my_mind": 250}

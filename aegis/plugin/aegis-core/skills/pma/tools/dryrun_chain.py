@@ -17,7 +17,17 @@ Exit 0 = every step passed its barrier. Exit 1 = a FAIL line (named). Writes <ru
 """
 from __future__ import annotations
 
-import argparse, glob, json, os, random, shutil, subprocess, sys, time
+import argparse, glob, json, os, random, re, shutil, subprocess, sys, time
+
+
+def _slate_cap(default=25):
+    """parameters.slate_cap from RUN.yaml (the one source); the literal is only the fallback."""
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "RUN.yaml")
+    try:
+        m = re.search(r"^\s*slate_cap:\s*(\d+)", open(p, encoding="utf-8").read(), re.M)
+        return int(m.group(1)) if m else default
+    except OSError:
+        return default
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PMA_DIR = os.path.abspath(os.path.join(HERE, ".."))
@@ -335,10 +345,10 @@ def main():
         FAILS.append(f"decide-timing: {tie_name} was seeded ACT_NOW 3 / WAIT 3 -- the tie must be WATCH, got {DEC_['names'][tie_name]['proposal']}")
     if not DEC_.get("market_kill") or DEC_["market_kill"].get("symbol") != "SPY":
         FAILS.append(f"decide-timing: the modal market_void (SPY close_below ma_50) is not the market kill: {DEC_.get('market_kill')}")
-    # ---- 10. SLATE (Chair): verdict + ONE trigger COPIED from decision.json; over 15 -> most SUPPORT, ties most ACT_NOW ----
+    # ---- 10. SLATE (Chair): verdict + ONE trigger COPIED from decision.json; over the cap -> most SUPPORT, ties most ACT_NOW ----
     slated = [(t, n) for t, n in DEC_["names"].items() if n["proposal"] in ("ADVANCE", "WATCH")]
     slated.sort(key=lambda tn: (-tn[1]["counts"]["support"], -tn[1]["counts"]["act_now"], ds.index(tn[0])))
-    keep, excl = slated[:15], slated[15:]
+    keep, excl = slated[:_slate_cap()], slated[_slate_cap():]
     tickets = []
     for t, n in keep:
         bn = B["names"][[x["ticker"] for x in B["names"]].index(t)]

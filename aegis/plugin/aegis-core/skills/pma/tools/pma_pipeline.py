@@ -767,7 +767,24 @@ BENCH_SEATS = ["weis", "thorp"]
 STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
 R33_EFFECTIVE = "2026-11-01"   # ballots dated from here carry the shortlist cap (6) and the case form
 SHORTLIST_CAP = 6              # R33: at most six nominations per decider (fewer is valid, never padded)
-SLATE_CAP = 15                 # R34: at most fifteen tickets across ADVANCE and WATCH
+def _slate_cap_from_run_yaml(default=25):
+    """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
+    run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
+    import os as _o, re as _r
+    here = _o.path.dirname(_o.path.abspath(__file__))
+    for rel in ("..", "../skills/pma", "../../pma", "../../../skills/pma", "../../skills/pma", "../pma"):
+        p = _o.path.join(here, rel, "RUN.yaml")
+        if _o.path.exists(p):
+            try:
+                m = _r.search(r"^\s*slate_cap:\s*(\d+)", open(p, encoding="utf-8").read(), _r.M)
+                if m:
+                    return int(m.group(1))
+            except OSError:
+                pass
+    return default
+
+
+SLATE_CAP = _slate_cap_from_run_yaml()   # R34: PM 2026-11-04 = 25, read from RUN.yaml parameters.slate_cap
 FLOOR_MSG_CAP = 2              # R36: two floor messages per decider per name
 # ---- LEGACY LABELS (R32). All seven deciders count on every name; the lane tag is a reading aid. ----
 # These two lists are read ONLY by the superseded `consensus` blind tally (kept so the 2026-09-06
