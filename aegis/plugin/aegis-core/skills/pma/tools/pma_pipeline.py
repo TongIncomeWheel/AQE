@@ -2218,6 +2218,10 @@ def cmd_committee_position(a):
             tg.append("no committee rationale for this ticket")
         elif final is None:
             tg.append("rationale is the Chair's DRAFT (rationale_final.json not written)")
+        _dr = (row or {}).get("dropped_dissent_clauses") or []
+        if _dr:
+            tg.append(f"{len(_dr)} clause(s) from DISSENTing seat(s) {sorted({d['voice'] for d in _dr})} removed from the rationale (their words are the minority note)"
+                      + ("" if wc else "; no 'what would change it' is left, so none is shown") + ("" if why else "; no 'why' clause is left"))
         also, overflow = registrar.amend_also(run_dir, t)          # P2: AMEND texts attached by CODE, verbatim - the Chair merges nothing
         adopters, amenders, dissenters, minority = [], [], [], []
         for v in present:
@@ -2278,14 +2282,33 @@ def cmd_rationale_final(a):
     out = dict(D)
     out["stage"] = "final"
     rows = []
+    n_drop = 0
     for r in D["tickets"]:
         r = dict(r)
-        r["also"], r["also_overflow"] = registrar.amend_also(a.run_dir, r["ticker"])
+        t = r["ticker"]
+        r["also"], r["also_overflow"] = registrar.amend_also(a.run_dir, t)
+        # A seat that DISSENTed on this ticket at ADOPT has its words carried as a MINORITY NOTE, never as committee text: every
+        # why / would_change clause sourced from that seat is dropped at the final stage (4 Nov: the draft legitimately quoted an
+        # objector's would_clear, then that seat dissented). What is dropped is listed, and a ticket left with no would_change
+        # says so instead of inventing one.
+        dis = registrar.dissenters(a.run_dir, t)
+        dropped = []
+        for key in ("why", "would_change"):
+            keep = []
+            for c in r.get(key) or []:
+                if isinstance(c, dict) and (c.get("source") or {}).get("voice") in dis:
+                    dropped.append({"field": key, "voice": c["source"]["voice"], "text": c.get("text")})
+                else:
+                    keep.append(c)
+            r[key] = keep
+        r["dropped_dissent_clauses"] = dropped
+        n_drop += len(dropped)
         rows.append(r)
     out["tickets"] = rows
     save(a.out, out)
     n_also = sum(len(r["also"]) for r in rows); n_over = sum(len(r["also_overflow"]) for r in rows)
-    print(f"rationale-final: {len(rows)} ticket(s); {n_also} AMEND text(s) attached verbatim as 'Also', {n_over} over the cap (minority notes) -> {a.out}")
+    print(f"rationale-final: {len(rows)} ticket(s); {n_also} AMEND text(s) attached verbatim as 'Also', {n_over} over the cap (minority notes), "
+          f"{n_drop} clause(s) from DISSENTing seats dropped (their words ride as minority notes) -> {a.out}")
 
 
 def cmd_slate_plan(a):
