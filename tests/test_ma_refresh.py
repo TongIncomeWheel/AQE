@@ -83,3 +83,11 @@ def test_an_explicit_budget_wins_over_the_env_so_minutes_cannot_become_seconds(m
     r = ma_refresh.refresh_for_breadth(None, client=FakeClient("2026-11-02"), panel_path=p, expected="2026-11-02")
     assert r["budget_s"] == 55.0                       # the env is only the default when no argument is given
     assert "MA_REFRESH_BUDGET_S" not in open(".github/workflows/ma-panel.yml").read()
+
+
+def test_tickers_that_left_the_universe_are_pruned_and_reported(monkeypatch, tmp_path, capsys):
+    p = _patch(monkeypatch, tmp_path, "2026-10-30")
+    uni = pd.DataFrame({"ticker": ["AAA", "BBB"]})          # CCC left the universe (delisted / below the floor)
+    panel = ma_scanner.build_ma_panel(uni, FakeClient("2026-10-30"), max_runtime_seconds=None)
+    assert sorted(panel["ticker"].unique()) == ["AAA", "BBB"]
+    assert "pruned 1 ticker" in capsys.readouterr().out

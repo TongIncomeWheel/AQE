@@ -207,6 +207,7 @@ def _expected_last_session() -> str:
 
 
 MIN_CURRENT_SHARE = 0.95      # share of the panel's tickers whose last bar IS the expected session
+DEAD_SESSIONS = 10            # newest bar this many sessions behind = a ghost, excluded from the denominator and reported
 
 
 def freshness(panel: pd.DataFrame, expected_last_session: str | None = None) -> dict:
@@ -217,6 +218,13 @@ def freshness(panel: pd.DataFrame, expected_last_session: str | None = None) -> 
     d = pd.to_datetime(panel["date"])
     as_of = str(d.max().date())
     last = panel.assign(_d=d).groupby("ticker")["_d"].max()
+    # a ticker whose newest bar is more than DEAD_SESSIONS sessions behind the expected one is a ghost (delisted / out of the
+    # universe), not a refresh we missed: it is excluded from the denominator and REPORTED, so it can neither fake a fresh panel
+    # nor make a refreshed one read stale
+    dead_cut = pd.Timestamp(expected) - pd.tseries.offsets.BDay(DEAD_SESSIONS)
+    live = last[last >= dead_cut]
+    excluded_dead = int(len(last) - len(live))
+    last = live
     current = int((last >= pd.Timestamp(expected)).sum())
     total = int(len(last))
     share = current / total if total else 0.0
@@ -225,7 +233,7 @@ def freshness(panel: pd.DataFrame, expected_last_session: str | None = None) -> 
     if stale:
         reason = (f"panel newest bar {as_of} vs last completed session {expected}; {current}/{total} tickers "
                   f"({100 * share:.0f}%) carry the {expected} bar, need {int(MIN_CURRENT_SHARE * 100)}%")
-    return {"as_of": as_of, "expected": expected, "current": current, "total": total,
+    return {"as_of": as_of, "expected": expected, "current": current, "total": total, "excluded_dead": excluded_dead,
             "share_current": round(share, 4), "stale": stale, "reason": reason}
 
 

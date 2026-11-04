@@ -83,3 +83,23 @@ def test_cboe_is_retried_once_after_a_wait_when_it_is_a_session_behind_and_label
     c = FakeCboe([])                                                # already current: no wait, no retry
     st = D._retry_if_behind(c, {"ok": True, "as_of": "2026-11-02"}, sleep=waited.append, expected="2026-11-02")
     assert waited == [] and c.calls == 0 and st["_retry"]["retried"] is False
+
+
+def test_ghost_tickers_neither_fake_a_fresh_panel_nor_make_a_refreshed_one_read_stale():
+    """4 Nov: 537 of 4,316 tickers had left the universe and never got a new bar, so a fully refreshed panel read 87% current. Tickers
+    more than 10 sessions behind are excluded from the denominator and reported."""
+    d = pd.bdate_range(end="2026-11-02", periods=70)
+    rows = []
+    for i in range(100):
+        rows += [{"ticker": f"T{i}", "date": x, "close": 10 + j * 0.1} for j, x in enumerate(d)]        # 100 live names carry the bar
+    old = pd.bdate_range(end="2026-09-01", periods=70)
+    for i in range(20):
+        rows += [{"ticker": f"G{i}", "date": x, "close": 5 + j * 0.1} for j, x in enumerate(old)]       # 20 ghosts, last bar in September
+    fr = B.freshness(pd.DataFrame(rows), "2026-11-02")
+    assert not fr["stale"] and fr["current"] == 100 and fr["total"] == 100 and fr["excluded_dead"] == 20, fr
+    # but a panel that is genuinely behind is still stale (the live names are the ones that matter)
+    rows2 = []
+    for i in range(100):
+        dd = d if i < 60 else d[:-1]
+        rows2 += [{"ticker": f"T{i}", "date": x, "close": 10 + j * 0.1} for j, x in enumerate(dd)]
+    assert B.freshness(pd.DataFrame(rows2), "2026-11-02")["stale"]
