@@ -111,6 +111,22 @@ def check_ready(last_run_path, today=None):
     return fails, notes
 
 
+def _step_budgets(run_yaml):
+    """Per-step token budgets from RUN.yaml (`budget_tokens: N` inside a step block). None defined = no per-step check."""
+    import re as _r
+    try:
+        txt = open(run_yaml, encoding="utf-8").read()
+    except OSError:
+        return {}
+    out = {}
+    for blk in _r.split(r"^  - name:\s*", txt, flags=_r.M)[1:]:
+        name = blk.split("\n", 1)[0].strip().strip("'\"")
+        m = _r.search(r"^\s{4}budget_tokens:\s*([0-9_]+)", blk, _r.M)
+        if m:
+            out[name] = int(m.group(1).replace("_", ""))
+    return out
+
+
 def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceiling=DEFAULT_CEILING):
     fails, notes = [], []
     steps = _steps_from_run_yaml(run_yaml)
@@ -145,16 +161,24 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
                     fails.append(f"RERUN {M.get('run_id')} pushed {pth} OUTSIDE {want} -- a rerun must never publish live")
             notes.append(f"RERUN {M.get('run_id')} of {rr.get('of')}: NOT LIVE; the PM promotes it explicitly")
         est = 0
+        budgets = _step_budgets(run_yaml)
         for s, row in st.items():
             c = row.get("cost") or {}
             # review finding 5 (2026-11-01): the registrar stores spawns/inlined_bytes/returned_bytes and derives
             # est_tokens only when printing -- mirror registrar._est_tokens (bytes / 4) so the ceiling can trip.
+            # P3 (2026-11-04): a seat-reported count (`tokens`, from registrar meter/commit --tokens) is REAL usage; it
+            # wins over the byte estimate whenever it is larger (registrar._est_tokens takes the same max).
+            reported = int(row.get("tokens") or 0)
             if c.get("est_tokens"):
-                est += int(c["est_tokens"])
+                one = int(c["est_tokens"])
             elif c and not c.get("tool_only"):
-                est += int((int(c.get("inlined_bytes") or 0) + int(c.get("returned_bytes") or 0)) / 4.0)
+                one = int((int(c.get("inlined_bytes") or 0) + int(c.get("returned_bytes") or 0)) / 4.0)
             else:
-                est += int(row.get("tokens") or 0)
+                one = 0
+            one = max(one, reported)
+            est += one
+            if s in budgets and one > budgets[s]:
+                fails.append(f"STEP OVER BUDGET: {s} est {one:,} > {budgets[s]:,} tokens (RUN.yaml budget_tokens) -- tell the PM")
         notes.append(f"spend est {est:,} tokens (ceiling {ceiling:,})")
         if est > ceiling:
             fails.append(f"SPEND OVER CEILING: est {est:,} > {ceiling:,} tokens -- tell the PM")
