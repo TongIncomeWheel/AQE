@@ -45,5 +45,28 @@ spread, not momentum, so flow / energy / structure mean little, and the committe
   loudly; a missing scan never reads as a clean name.
 
 ## 5. Dry-run on the 4 Nov export
-Run by `.github/workflows/ma-flag-dryrun.yml` (needs the FMP secret; the sandbox has no key). To be appended here with every flagged row
-and its matched sentence once the workflow is on main and run.
+Run by `.github/workflows/ma-flag-dryrun.yml` on the 4 Nov export (261 names, FMP `news/stock`, 120 days).
+
+**First run (main 4fd3b05): wrong.** 202 flagged, 62 PENDING_TARGET. The matcher read fund-holding filings ("13,413 Shares in Truist ... Acquired by Archer
+Investment") and advice pieces ("Stocks to Buy", "Rating Upgrade to Buy") as deals. Only ROKU was a true target. It was caught before any nightly export used it.
+
+**Fix (PR #40, main 9bde92a) and second run:** filing and advice noise is dropped; bare "acquired by" and "to buy" no longer count; "X's merger with Y" and
+unagreed proposals (non-binding, rumoured, denied, withdrawn) are not roles; a target needs strong deal language, else PENDING_UNCLEAR (excludes nothing).
+Result: 77 flagged (52 unclear, 19 acquirer, 6 target), 0 failed.
+
+PENDING_TARGET (the only status R44 acts on):
+
+| Ticker | Matched sentence | Date |
+|---|---|---|
+| BRZE | Braze entered into a definitive agreement to be acquired by Salesforce. | 2026-11-03 |
+| CART | ...to acquire Maplebear Inc. (DoorDash deal) | 2026-10-30 |
+| CZR | Robbins LLP is Investigating the Proposed Acquisition of Caesars Entertainment (law-firm alert; terms: definitive agreement, to be acquired by). Needs a human read. | 2026-08-25 |
+| D | NextEra Energy's proposed acquisition of Dominion Energy ... | 2026-08-19 |
+| PAYO | Payoneer announced an agreement to be acquired by Nuvei on June 15, 2026. | 2026-08-06 |
+| ROKU | Fox and Roku announced a definitive agreement under which Fox will acquire Roku (company release). | 2026-11-02 |
+
+**Known misses (read as PENDING_UNCLEAR, so the pill and sentence show but R44 does not exclude):** LCII (non-binding bid plus merger agreement with Patrick), WTRG
+(American Water's proposed merger with Essential Utilities). The matcher cannot tell who buys whom from "merger with" alone; it prefers a missed exclusion to a wrong one.
+
+**Circuit breaker.** If more than max(8, 5%) of scanned names (13 of 261) read as targets, the scan is treated as FAILED: every name UNKNOWN, R44 not applied, loud
+banner on the Cards and in run_notes. The limit comes from this run: 6 verified real targets in 261 names versus 62 from the broken matcher.
