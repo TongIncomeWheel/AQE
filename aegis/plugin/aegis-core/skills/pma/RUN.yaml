@@ -35,7 +35,7 @@ parameters:
   deciders: [oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff]
   qa_seat: steenbarger
   shortlist_cap: 6
-  slate_cap: 15
+  slate_cap: 25                 # PM 2026-11-04 (was 15): 17 survived on the first live R42 run and FA, an ADVANCE with 5 SUPPORT, was cut. The cut itself is CODE: pma_pipeline.py slate-plan
   floor_messages_per_seat_per_name: 2
   holds_per_ticket: 1
   case_form_effective: 2026-11-01
@@ -88,7 +88,7 @@ rerun:
     (5) The desk message starts 'PMA RERUN <date>-r2 DONE' and says it is not live.
 
 checkpoint:
-  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json rationale_draft.json rationale_final.json committee_position.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
+  tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json slate_plan.json rationale_draft.json rationale_final.json committee_position.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >
     THE CHECKPOINT PATH (PM 2026-10-30, BUILD_PLAN Phase 1). --dest puts every working file under
     aegis/output/pma/run/<date>/ in the checkout -- the ONE prefix deploy-hf.yml ignores. Without it the bare
@@ -101,7 +101,7 @@ checkpoint:
     copies skills/ and not the plugin's top-level tools/, so a checkpoint pointed at the root copy
     would not resolve during an actual run -- the same duplication the pma tools already carry, for
     the same reason. Keep the two copies identical.
-  after: [GATHER, NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, SLATE, RATIFY, QA, RATIONALE, ADOPT, RATIONALE-FINAL, WRITE, PUBLISH]
+  after: [GATHER, NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, SLATE, RATIFY, QA, RATIONALE, ADOPT, WRITE, PUBLISH]
   first_and_last: >
     GATHER's checkpoint is the RUN LOCK: it pushes run_manifest.json (written by `registrar.py init`) before any
     model spawn, so the READY watcher and the pma-auto backstop see `aegis/output/pma/run/<date>/run_manifest.json`
@@ -501,17 +501,18 @@ steps:
     spawns: 1
     seats: [chair]
     reads: [decision.json, funnel.json, forms/tier2/*.json, forms/cross/*.json, claims_board.json]
-    produces: [slate.json, slate_excluded.json]
-    barrier: "registrar.py validate --file slate.json --kind slate --phase4 phase4.json --decision decision.json exits 0"
+    produces: [slate_plan.json, slate.json, slate_excluded.json]
+    first: "pma_pipeline.py slate-plan --decision decision.json --cap 25 --out slate_plan.json --excluded slate_excluded.json   # the cap cut by CODE (most SUPPORT, then ACT_NOW, then ADVANCE first, then A-Z)"
+    barrier: "registrar.py validate --file slate.json --kind slate --phase4 phase4.json --decision decision.json --plan slate_plan.json --run-dir . exits 0"
     on_fail: "fix the slate (one re-file); a slate that cannot validate halts the run and is declared"
     rulings: [R1, R34, R38, R40]
     must_also: >
-      The Chair drafts the committee's AGREED BEST (contracts/slate.schema.json v2): at most 15 tickets. The VERDICT and the ONE
+      The Chair drafts the committee's AGREED BEST (contracts/slate.schema.json v2): at most 25 tickets (parameters.slate_cap), exactly the names in slate_plan.json. The VERDICT and the ONE
       TRIGGER of every ticket are COPIED from decision.json -- the registrar REJECTS a ticket that differs (R40). The Chair's own
       work is `why_agreed` (the confirming reviewers' evidence and the deciders' reasons, quoted and attributed), `dissent`
       (every OPPOSE / WAIT-against-ADVANCE seat in its own words), the horizon (median of the supporters' stated horizons) and
-      `market_kill` copied from decision.json. Over the 15 cap: keep the most SUPPORT, ties by most ACT_NOW, list the rest in
-      slate_excluded.json. Built ONLY from what the seats said; the Chair never votes, ranks by its own view or judges a reason.
+      `market_kill` copied from decision.json. Over the cap the CODE cuts (slate-plan) and writes slate_excluded.json with a reason per name. Every why_agreed / wrong_if
+      piece reads  voice: "verbatim quote"  from a SUPPORT seat on that ticket and a form where that seat's stance was SUPPORT (registrar checks it). Built ONLY from what the seats said; the Chair never votes, ranks by its own view or judges a reason.
     checkpoint_after: true
     meter: "--spawns 1"
 
@@ -598,17 +599,15 @@ steps:
     meter: "--spawns 7"
 
   - name: RATIONALE-FINAL
-    kind: model
-    spawns: 1
-    seats: [chair]
+    kind: tool
+    command: "pma_pipeline.py rationale-final --draft rationale_draft.json --run-dir . --out rationale_final.json"
     reads: [rationale_draft.json, forms/adopt/*.json]
     produces: [rationale_final.json]
     barrier: "registrar.py validate --file rationale_final.json --kind rationale --stage final --consensus consensus.json --run-dir . exits 0"
     on_fail: "declare it and CONTINUE: the Chair's draft is shown, labelled as a draft"
     rulings: [R42]
-    must_also: "The Chair merges amendments and marks each MERGED or NOT_MERGED. Code, not the Chair, attaches the minority notes."
-    checkpoint_after: true
-    meter: "--spawns 1"
+    must_also: "P2: CODE attaches every AMEND text verbatim as 'Also (voice): ...' (byte-capped; the overflow is a minority note). The Chair merges nothing."
+    meter: "--tool-only"
 
   - name: POSITION
     kind: tool

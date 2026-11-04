@@ -60,7 +60,7 @@ DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", 
 QA_SEAT = "steenbarger"
 R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
 SHORTLIST_CAP = 6              # R33
-SLATE_CAP = 15                 # R34
+SLATE_CAP = 25                 # R34 (15 -> 25, PM 2026-11-04: 17 survived on the first live R42 run and FA, an ADVANCE with 5 SUPPORT, was cut)
 FLOOR_MSG_CAP = 2              # R36 (counted across files by `pma_pipeline.py floor-check`)
 CASE_LIMITS = {"for": 400, "against": 400, "entry_trigger": 200, "wrong_if": 200,
                "would_change_my_mind": 250}
@@ -74,7 +74,12 @@ CLAUSE_MAX, CLAUSES_MAX, WOULD_CHANGE_MAX, ADOPT_TEXT_MAX = 300, 6, 4, 400
 FILED_FIELDS = {                          # the ONLY places a committee clause may be quoted from
     "vote": ("reason", "case.for", "case.against", "case.entry_trigger", "case.wrong_if", "case.would_change_my_mind"),
     "ratify": ("reservation", "objection", "would_clear"),
-    "adopt": ("text",)}
+    "adopt": ("text",),
+    # P2 (conductor 2026-11-04): the two-tier funnel's words are quotable too, so a rationale can cite a reviewer's
+    # evidence or a tier-2 answer/decision, not only the blind vote and the ratification.
+    "cross": ("evidence", "what_moved_me"),
+    "tier2": ("text", "reason", "wrong_if", "trigger.plain")}
+ALSO_MAX_CHARS = 900                      # per ticket: AMEND texts the CODE attaches verbatim as 'Also (voice): ...'; the rest become minority notes
 # R38-R40 (PM 2026-11-02): the two-tier funnel's forms. A slate dated from here carries ONE trigger per ticket and
 # the slate-wide market_kill (R40); earlier slates validate exactly as they were filed.
 R38_EFFECTIVE = "2026-11-02"
@@ -453,7 +458,7 @@ def validate_floor_message(form, deliberation_set, contested=None):
     return errs, flags
 
 
-def validate_slate(form, deliberation_set, decision=None):
+def validate_slate(form, deliberation_set, decision=None, run_dir=None, plan=None):
     """The Chair's slate (R34/R36 round 4): at most 15 tickets across ADVANCE and WATCH, each with its
     trigger, wrong-if, horizon, why the room agrees and who dissents. The Chair uses only what the
     seats said; the registrar checks completeness and membership, never the reasoning."""
@@ -502,7 +507,85 @@ def validate_slate(form, deliberation_set, decision=None):
         if _bracket_as_reject([x.get("why_agreed", ""), x.get("wrong_if", "")]):
             errs.append(f"{w}: uses a bracket as a disqualifier. {R1_TEXT}")
     _slate_r40(form, decision, errs)
+    if plan is not None:                       # P2: the cap cut is a code step; the Chair drafts exactly its `keep` list
+        keep = {x.get("ticker") for x in plan.get("keep") or []}
+        if seen != keep:
+            errs.append(f"slate tickets differ from slate_plan.json (the code-made cap cut, cap {plan.get('cap')}): "
+                        f"missing {sorted(keep - seen)}, extra {sorted(seen - keep)}")
+    if decision is not None and str(form.get("date", ""))[:10] >= SLATE_QUOTES_FROM:
+        _slate_quotes(form, decision, run_dir, errs)
     return errs, flags
+
+
+SLATE_QUOTES_FROM = "2026-11-04"
+_QUOTE_PIECE = re.compile(r'^\s*([a-z][a-z-]*)(?:\s*\([^)]*\))?\s*:\s*"(.*)"\s*$', re.S)
+
+
+def _leaf_strings(o):
+    if isinstance(o, str):
+        yield o
+    elif isinstance(o, dict):
+        for v in o.values():
+            yield from _leaf_strings(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _leaf_strings(v)
+
+
+def _filed_entries(run_dir, voice, ticker):
+    """-> [(text, stance_at_that_form)] every string the voice filed for the ticker in r2 / cross / tier2 (stance None = unknown)."""
+    out = []
+    d = _read_form(os.path.join(run_dir, "forms", "r2", f"{voice}.json"))
+    for r in (d or {}).get("votes") or []:
+        if isinstance(r, dict) and r.get("ticker") == ticker:
+            out += [(x, r.get("stance")) for x in _leaf_strings(r)]
+    d = _read_form(os.path.join(run_dir, "forms", "cross", f"{voice}.json"))
+    for r in (d or {}).get("rulings") or []:
+        if isinstance(r, dict) and r.get("ticker") == ticker:
+            out += [(x, r.get("stance_after")) for x in _leaf_strings(r)]
+    d = _read_form(os.path.join(run_dir, "forms", "tier2", f"{voice}.json"))
+    stance = next((r.get("stance") for r in (d or {}).get("decisions") or [] if isinstance(r, dict) and r.get("ticker") == ticker), None)
+    for key in ("answers", "decisions"):
+        for r in (d or {}).get(key) or []:
+            if isinstance(r, dict) and r.get("ticker") == ticker:
+                out += [(x, stance) for x in _leaf_strings(r)]
+    return out
+
+
+def _slate_quotes(form, decision, run_dir, errs):
+    """P2 (conductor 2026-11-04, the VLTO/EW finding): every `why_agreed` and `wrong_if` piece is `voice: "quote"` (an optional
+    '(confirm)' tag is allowed); the voice must be a SUPPORT seat on that ticket in decision.json; and, when the run dir is
+    given, the quote must be verbatim from something that voice filed for the ticker, and not from a form where their
+    stance was not SUPPORT (an abstainer's or opposer's line is never 'why the room agreed')."""
+    names = (decision or {}).get("names") or {}
+    for i, x in enumerate(form.get("tickets") or []):
+        if not isinstance(x, dict):
+            continue
+        t = x.get("ticker")
+        sup = set((((names.get(t) or {}).get("seats")) or {}).get("support") or [])
+        for fld in ("why_agreed", "wrong_if"):
+            txt = x.get(fld)
+            if not isinstance(txt, str) or not txt.strip():
+                continue
+            for piece in txt.split(" | "):
+                w = f"tickets[{i}] {t} {fld}"
+                m = _QUOTE_PIECE.match(piece)
+                if not m:
+                    errs.append(f'{w}: each piece must read  voice: "verbatim quote"  (pieces joined by " | "); got {piece[:60]!r}')
+                    continue
+                voice, quote = m.group(1), m.group(2)
+                if voice not in sup:
+                    errs.append(f"{w}: {voice} is not a SUPPORT seat on {t} in decision.json {sorted(sup)} - only supporters are quoted as why the room agreed")
+                    continue
+                if run_dir is None:
+                    continue
+                ents = _filed_entries(run_dir, voice, t)
+                parts = [p for p in re.split(r"\s*(?:…|\.\.\.)\s*", quote) if p.strip()]
+                hit = [(tx, st) for tx, st in ents if all(_norm(p) in _norm(tx) for p in parts)]
+                if not hit:
+                    errs.append(f"{w}: the {voice} quote {quote[:50]!r}... is NOT verbatim from anything {voice} filed for {t}")
+                elif all(st not in (None, "SUPPORT") for _, st in hit):
+                    errs.append(f"{w}: the {voice} quote is from a form where {voice}'s stance was {hit[0][1]}, not SUPPORT - not why the room agreed")
 
 
 # ---------------------------------------------------------------------------
@@ -841,26 +924,31 @@ def _read_form(path):
         return None
 
 
+def _dig(row, field):
+    v = row
+    for part in (["case", field[5:]] if field.startswith("case.") else field.split(".")):
+        v = v.get(part) if isinstance(v, dict) else None
+    return v
+
+
 def filed_text(run_dir, voice, form, ticker, field):
     """The text `voice` actually FILED in `form`/`field` for `ticker`, or None. R42: the only source a committee
     clause may quote. 'ratify' reads the hold-round re-ratification first (it replaces the first for held tickets)."""
     if form not in FILED_FIELDS or field not in FILED_FIELDS[form]:
         return None
     paths = {"vote": ["forms/r2/%s.json"], "ratify": ["forms/ratify2/%s.json", "forms/ratify/%s.json"],
-             "adopt": ["forms/adopt/%s.json"]}[form]
+             "adopt": ["forms/adopt/%s.json"], "cross": ["forms/cross/%s.json"], "tier2": ["forms/tier2/%s.json"]}[form]
+    lists = {"vote": ("votes",), "cross": ("rulings",), "tier2": ("answers", "decisions")}.get(form, ("tickets",))
     for rel in paths:
         d = _read_form(os.path.join(run_dir, rel % voice))
         if not isinstance(d, dict):
             continue
-        rows = d.get("votes") if form == "vote" else d.get("tickets")
-        row = next((r for r in rows or [] if isinstance(r, dict) and r.get("ticker") == ticker), None)
-        if row is None:
-            continue
-        v = row
-        for part in (["case", field[5:]] if field.startswith("case.") else [field]):
-            v = v.get(part) if isinstance(v, dict) else None
-        if isinstance(v, str) and v.strip():
-            return v
+        for key in lists:
+            for row in d.get(key) or []:
+                if isinstance(row, dict) and row.get("ticker") == ticker:
+                    v = _dig(row, field)
+                    if isinstance(v, str) and v.strip():
+                        return v
     return None
 
 
@@ -885,11 +973,29 @@ def _clause_errors(c, where, ticker, run_dir, allowed_forms, banned=()):
     return errs
 
 
+def amend_also(run_dir, ticker):
+    """P2: every AMEND answer's text for `ticker`, in decider order, attached by CODE verbatim as 'Also (voice): ...'.
+    -> (also, overflow): `also` fits ALSO_MAX_CHARS in total; whatever does not fit goes to `overflow`, which the position
+    step prints as a minority note, so no amendment is ever dropped and the Chair no longer merges anything."""
+    also, overflow, used = [], [], 0
+    for v in DECIDERS:
+        d = _read_form(os.path.join(run_dir, "forms", "adopt", f"{v}.json"))
+        row = next((x for x in (d or {}).get("tickets") or [] if isinstance(x, dict) and x.get("ticker") == ticker), None) if isinstance(d, dict) else None
+        if row and row.get("answer") == "AMEND" and isinstance(row.get("text"), str) and row["text"].strip():
+            txt = " ".join(row["text"].split())
+            if used + len(txt) <= ALSO_MAX_CHARS:
+                also.append({"voice": v, "text": txt}); used += len(txt)
+            else:
+                overflow.append({"voice": v, "text": txt})
+    return also, overflow
+
+
 def validate_rationale(form, stage, eligible, run_dir):
     """R42: the Chair's ONE committee rationale per slated ticket (AGREED / CONTESTED). Every clause is a VERBATIM quote of
-    what a decider filed, with its source; the registrar re-reads the filed form and rejects a clause that is not in it.
-    stage 'draft' quotes the votes and ratifications; stage 'final' may also quote an AMEND (form 'adopt') and must
-    account for every amendment: MERGED into a named clause, or NOT_MERGED (the code then prints it as a minority note)."""
+    what a decider filed (vote, ratify, cross ruling or tier-2 answer/decision), with its source; the registrar re-reads
+    the filed form and rejects a clause that is not in it. A DISSENTer's words never become committee text.
+    stage 'draft' is the Chair's work. stage 'final' is written by CODE (pma_pipeline.py rationale-final): the draft's
+    clauses plus `also` = the AMEND texts verbatim; the Chair merges nothing, so there is no MERGED/NOT_MERGED ladder."""
     errs, flags = [], []
     for req in ("voice", "date", "stage", "tickets"):
         if req not in form:
@@ -900,7 +1006,7 @@ def validate_rationale(form, stage, eligible, run_dir):
         errs.append(f"stage: this form must say stage {stage!r}")
     rows = form.get("tickets") if isinstance(form.get("tickets"), list) else []
     seen = set()
-    allowed = ("vote", "ratify") if stage == "draft" else ("vote", "ratify", "adopt")
+    allowed = ("vote", "ratify", "cross", "tier2")
     for i, r in enumerate(rows):
         w = f"tickets[{i}]"
         t = r.get("ticker") if isinstance(r, dict) else None
@@ -909,15 +1015,13 @@ def validate_rationale(form, stage, eligible, run_dir):
         if t in seen:
             errs.append(f"{w}: duplicate ticker {t}")
         seen.add(t)
-        adopt = {}
+        dissent = set()
         for v in DECIDERS:
             d = _read_form(os.path.join(run_dir, "forms", "adopt", f"{v}.json"))
             row = next((x for x in (d or {}).get("tickets") or [] if isinstance(x, dict) and x.get("ticker") == t), None) if isinstance(d, dict) else None
-            if row:
-                adopt[v] = row
-        dissent = {v for v, x in adopt.items() if x.get("answer") == "DISSENT"}
-        amenders = {v for v, x in adopt.items() if x.get("answer") == "AMEND"}
-        banned = {(v, "adopt") for v in dissent}
+            if row and row.get("answer") == "DISSENT":
+                dissent.add(v)
+        banned = {(v, f) for v in dissent for f in allowed + ("adopt",)}
         why, wc = r.get("why"), r.get("would_change", [])
         if not isinstance(why, list) or not 1 <= len(why) <= CLAUSES_MAX:
             errs.append(f"{w} {t}: why must be 1-{CLAUSES_MAX} clauses"); why = why if isinstance(why, list) else []
@@ -927,31 +1031,15 @@ def validate_rationale(form, stage, eligible, run_dir):
             errs += _clause_errors(c, f"{w} {t} why[{j}]", t, run_dir, allowed, banned)
         for j, c in enumerate(wc):
             errs += _clause_errors(c, f"{w} {t} would_change[{j}]", t, run_dir, allowed, banned)
+        if "amendments" in r:
+            errs.append(f"{w} {t}: no `amendments` ladder any more - AMEND texts are attached by code as `also`")
         if stage == "draft":
-            if "amendments" in r:
-                errs.append(f"{w} {t}: a draft carries no amendments")
+            if "also" in r or "also_overflow" in r:
+                errs.append(f"{w} {t}: a draft carries no `also` - the code attaches the AMEND texts")
             continue
-        am = r.get("amendments")
-        if not isinstance(am, list):
-            errs.append(f"{w} {t}: amendments: list of {{voice, status: MERGED|NOT_MERGED, clause}} - one per AMEND answer, none silently dropped"); am = []
-        listed = [a.get("voice") for a in am if isinstance(a, dict)]
-        if sorted(listed) != sorted(amenders):
-            errs.append(f"{w} {t}: amendments must account for exactly the voices that AMENDed {sorted(amenders)}, got {sorted(listed)} - no silent drops")
-        for a in am:
-            if not isinstance(a, dict) or a.get("status") not in ("MERGED", "NOT_MERGED"):
-                errs.append(f"{w} {t}: each amendment is {{voice, status: MERGED|NOT_MERGED, clause}}"); continue
-            if a["status"] == "MERGED":
-                k = a.get("clause")
-                ok = (isinstance(k, int) and not isinstance(k, bool) and 0 <= k < len(why) and isinstance(why[k], dict)
-                      and (why[k].get("source") or {}).get("voice") == a.get("voice") and (why[k].get("source") or {}).get("form") == "adopt")
-                if not ok:
-                    errs.append(f"{w} {t}: {a.get('voice')} is MERGED but why[{k}] is not a quote of their amendment")
-            elif a.get("clause") is not None:
-                errs.append(f"{w} {t}: {a.get('voice')} is NOT_MERGED, so clause must be null")
-        merged = {a.get("voice") for a in am if isinstance(a, dict) and a.get("status") == "MERGED"}
-        for j, c in enumerate(why + wc):
-            if isinstance(c, dict) and (c.get("source") or {}).get("form") == "adopt" and (c["source"].get("voice") not in merged):
-                errs.append(f"{w} {t}: a clause quotes {c['source'].get('voice')}'s amendment but it is not listed MERGED")
+        want_also, want_over = amend_also(run_dir, t)
+        if r.get("also") != want_also or (r.get("also_overflow") or []) != want_over:
+            errs.append(f"{w} {t}: `also` / `also_overflow` must be exactly the code-attached AMEND texts - run pma_pipeline.py rationale-final")
     missing, extra = set(eligible) - seen, seen - set(eligible)
     if missing:
         errs.append(f"no committee rationale for slated tickets {sorted(missing)}")
@@ -1225,7 +1313,8 @@ def cmd_validate(a):
             return 1
     side = {}
     for flag, what, need in (("claims", "claims board", kind == "cross"), ("pairs", "pairs", kind == "tier2"),
-                             ("funnel", "funnel", kind == "tier2"), ("decision", "decision", False)):
+                             ("funnel", "funnel", kind == "tier2"), ("decision", "decision", False),
+                             ("plan", "slate plan", False)):
         path = getattr(a, flag, None)
         if need and not path:
             print(json.dumps({"result": "REJECT", "errors": [f"--{flag} {flag}.json is required to validate a {kind} form"]}))
@@ -1251,7 +1340,7 @@ def cmd_validate(a):
     elif kind == "floor":
         errs, flags = validate_floor_message(form, dset, contested)
     elif kind == "slate":
-        errs, flags = validate_slate(form, dset, side.get("decision"))
+        errs, flags = validate_slate(form, dset, side.get("decision"), getattr(a, "run_dir", None), side.get("plan"))
     elif kind == "cross":
         errs, flags = validate_cross(form, side["claims"], partial=bool(getattr(a, "of", None) and a.of > 1))
     elif kind == "tier2":
@@ -1563,6 +1652,7 @@ def main():
     s.add_argument("--pairs", default=None, help="pairs.json (required for --kind tier2)")
     s.add_argument("--funnel", default=None, help="funnel.json (required for --kind tier2)")
     s.add_argument("--decision", default=None, help="decision.json (--kind slate, R40): verdict + trigger + market_kill must match")
+    s.add_argument("--plan", default=None, help="slate_plan.json (--kind slate): the code-made cap cut; the slate's tickers must equal its keep list")
     s.add_argument("--slate", default=None, help="slate.json (required for --kind ratify|qa)")
     s.add_argument("--board", default=None, help="board.json (optional for --kind floor: proves the name is contested)")
     s.add_argument("--candidates", default=None); s.add_argument("--phase4", default=None)

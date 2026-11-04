@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Slate -- the Chair's draft of the committee's agreed best (R34, R36 round 4)",
  "x_version": "2.0.0",
- "x_purpose": "At most 15 tickets across ADVANCE and WATCH (a ceiling, not a target; never padded). Each ticket carries its entry trigger, where it is wrong, horizon, why the room agrees and who dissents and why. The Chair uses ONLY what the seats said in their case forms and floor messages; it adds no view and never judges the quality of a reason. ADVANCE = the committee wants to act on the trigger. WATCH = it wants the name but is waiting on a condition (rendered WATCH; machine verdict HOLD-FOR-CONDITIONS so every downstream reader is unchanged). R40 (PM 2026-11-02): the verdict and the ONE trigger on each ticket are FIXED BY CODE in decision.json (pma_pipeline.py decide-timing); the Chair writes why_agreed and dissent in the seats' words and may not change either. One slate-wide market_kill line (the modal market_void from tier 2) rides with the slate.",
+ "x_purpose": "At most 25 tickets across ADVANCE and WATCH (a ceiling, not a target; never padded). Each ticket carries its entry trigger, where it is wrong, horizon, why the room agrees and who dissents and why. The Chair uses ONLY what the seats said in their case forms and floor messages; it adds no view and never judges the quality of a reason. ADVANCE = the committee wants to act on the trigger. WATCH = it wants the name but is waiting on a condition (rendered WATCH; machine verdict HOLD-FOR-CONDITIONS so every downstream reader is unchanged). R40 (PM 2026-11-02): the verdict and the ONE trigger on each ticket are FIXED BY CODE in decision.json (pma_pipeline.py decide-timing); the Chair writes why_agreed and dissent in the seats' words and may not change either. One slate-wide market_kill line (the modal market_void from tier 2) rides with the slate.",
  "type": "object",
  "required": [
   "date",
@@ -28,7 +28,7 @@
   },
   "tickets": {
    "type": "array",
-   "maxItems": 15,
+   "maxItems": 25,
    "items": {
     "type": "object",
     "required": [
@@ -189,11 +189,11 @@
   }
  },
  "x_registrar_extra_checks": [
-  "len(tickets) <= 15 => else REJECT (R34)",
+  "len(tickets) <= 25 => else REJECT (R34; cap 15 -> 25, PM 2026-11-04)",
   "every ticker in phase4 deliberation_set; no duplicates",
   "dissent voices are deciders",
   "why_agreed / wrong_if using a bracket as a disqualifier => REJECT (R1)",
   "with --decision decision.json: every ticket's verdict == decision verdict and trigger == decision trigger (word, tf) => else REJECT (R40)",
-  "with --decision: a ticket for a name decision.json did not slate (support < 4) => REJECT; a slated name missing from the slate is allowed only over the 15 cap, listed in slate_excluded.json"
+  "with --decision: a ticket for a name decision.json did not slate (support < 4) => REJECT; a slated name missing from the slate is allowed only over the 25 cap, listed in slate_excluded.json"
  ]
 }

@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Committee rationale -- the Chair's verbatim-quoted draft / final (R42)",
  "x_version": "1.0.0",
- "x_purpose": "ONE rationale per AGREED/CONTESTED ticket made only of sourced verbatim clauses. Draft stage, then final after the deciders answer ADOPT/AMEND/DISSENT; each amendment is marked MERGED or NOT_MERGED by the Chair. Minority notes are attached by code, not written here.",
+ "x_purpose": "ONE rationale per AGREED/CONTESTED ticket made only of sourced verbatim clauses (vote, ratify, cross or tier2 forms). The Chair writes the DRAFT; the FINAL is written by code (pma_pipeline.py rationale-final): the draft plus every AMEND text attached verbatim as `also`. Minority notes are attached by code, not written here.",
  "type": "object",
  "required": [
   "date",
@@ -100,26 +100,31 @@
        }
       }
      },
-     "amendments": {
+     "also": {
       "type": "array",
       "items": {
        "type": "object",
        "required": [
         "voice",
-        "status"
+        "text"
        ],
        "properties": {
         "voice": {
          "type": "string"
         },
-        "status": {
-         "enum": [
-          "MERGED",
-          "NOT_MERGED"
-         ]
+        "text": {
+         "type": "string"
         }
        }
-      }
+      },
+      "x_note": "final stage only, written by CODE: every AMEND text verbatim"
+     },
+     "also_overflow": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      },
+      "x_note": "AMEND texts over the per-ticket byte cap; printed as minority notes"
      }
     }
    }

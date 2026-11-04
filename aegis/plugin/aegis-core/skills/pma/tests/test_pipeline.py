@@ -1888,10 +1888,10 @@ def test_deliberation_forms_are_validated_on_arrival(td):
     sl = {"date": "2026-11-01", "chair": "chair", "tickets": [ticket("GNW"), ticket("BBY", "WATCH")]}
     rc, log = val(sl, "sl_ok", "--kind", "slate", "--phase4", p4)
     check("a two-ticket slate is accepted", rc == 0, log[-300:])
-    big = dict(sl, tickets=[dict(ticket("GNW"), ticker=f"T{i:02d}") for i in range(16)])
-    p4big = os.path.join(td, "df_p4big.json"); json.dump({"deliberation_set": [f"T{i:02d}" for i in range(20)], "ranked": [], "dropped": []}, open(p4big, "w"))
+    big = dict(sl, tickets=[dict(ticket("GNW"), ticker=f"T{i:02d}") for i in range(26)])
+    p4big = os.path.join(td, "df_p4big.json"); json.dump({"deliberation_set": [f"T{i:02d}" for i in range(30)], "ranked": [], "dropped": []}, open(p4big, "w"))
     rc, log = val(big, "sl_16", "--kind", "slate", "--phase4", p4big)
-    check("a 16-ticket slate is REJECTED (R34 cap 15)", rc != 0 and "15" in log, log[-300:])
+    check("a 26-ticket slate is REJECTED (R34 cap 25, PM 2026-11-04)", rc != 0 and "25" in log, log[-300:])
     rc, log = val(dict(big, tickets=big["tickets"][:15]), "sl_15", "--kind", "slate", "--phase4", p4big)
     check("a 15-ticket slate is accepted", rc == 0, log[-300:])
     rc, log = val(dict(sl, tickets=[ticket("ZZZZ")]), "sl_out", "--kind", "slate", "--phase4", p4)
@@ -2192,7 +2192,7 @@ def test_run_map_carries_the_seven_deciders_and_the_new_rounds(td):
           and "SLATE_MIN_SUPPORT = 4" in src and 'TIMING_TIE = "WATCH"' in src)
     check("the vote packet reads the Crown file and only Steenbarger's challenge", "--crown" in S["VOTE"]["packet"] and "--rogers" not in S["VOTE"]["packet"] and "--lynch" not in S["VOTE"]["packet"])
     check("every model round is checkpointed", all(S[n].get("checkpoint_after") for n in ("NOMINATE", "CHALLENGE", "VOTE", "CROSS", "TIER2", "SLATE", "RATIFY", "QA")))
-    check("parameters carry the caps", M["parameters"]["shortlist_cap"] == 6 and M["parameters"]["slate_cap"] == 15 and M["parameters"]["floor_messages_per_seat_per_name"] == 2)
+    check("parameters carry the caps", M["parameters"]["shortlist_cap"] == 6 and M["parameters"]["slate_cap"] == 25 and M["parameters"]["floor_messages_per_seat_per_name"] == 2)
     reg = open(REG).read()
     check("registrar and pipeline agree on the deciders", all(v in reg for v in DEC) and 'QA_SEAT = "steenbarger"' in reg)
 
@@ -3392,6 +3392,82 @@ def test_a_rerun_has_its_own_identity_and_cannot_publish_live(td):
     check("RUN.yaml states the rerun rules (no live levels, scorecard log, inbox skipped)", "RERUN MODE" in ry and "INBOX-CLEAN is skipped" in ry and "scorecard_log.jsonl or scorecard/<date>.md" in ry)
 
 
+def test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also(td):
+    """P2 (conductor 2026-11-04): slate cap 25 with a code-made cut; why_agreed / wrong_if quotes must be a SUPPORT seat's
+    verbatim words; cross and tier2 words are quotable; AMEND texts are attached verbatim by CODE (no MERGED ladder);
+    market_kill never carries a stray number."""
+    sys.path.insert(0, TOOLS)
+    import importlib, registrar, pma_pipeline
+    importlib.reload(registrar); importlib.reload(pma_pipeline)
+    check("SLATE_CAP is 25", registrar.SLATE_CAP == 25)
+    sch = json.load(open(os.path.join(HERE, "..", "contracts", "slate.schema.json")))
+    check("slate.schema maxItems is 25", sch["properties"]["tickets"]["maxItems"] == 25)
+    ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
+    check("RUN.yaml slate_cap is 25 and the SLATE step runs the code cut", "slate_cap: 25" in ry and "pma_pipeline.py slate-plan --decision decision.json --cap 25" in ry)
+    # --- market_kill parse
+    check("a range like '4-5 weeks' is never a level or a symbol", pma_pipeline._parse_void("Index distribution days reach 4-5 inside 4-5 weeks (C2): market gate fails, no buys (C1).") == (None, None, None))
+    sym, wd, lv = pma_pipeline._parse_void("SPY close_below 750")
+    check("a real market void still parses to symbol / word / level", (sym, wd, lv) == ("SPY", "close_below", 750.0), str((sym, wd, lv)))
+    # --- slate-plan
+    d = os.path.join(td, "p2"); os.makedirs(d)
+    def nm(t, prop, sup, act): return {"ticker": t, "proposal": prop, "counts": {"support": sup, "act_now": act}}
+    names = {"AAA": nm("AAA", "WATCH", 5, 2), "BBB": nm("BBB", "ADVANCE", 5, 3), "CCC": nm("CCC", "WATCH", 7, 1), "DDD": nm("DDD", "ADVANCE", 5, 3),
+             "EEE": nm("EEE", "NOT_SLATED", 2, 0), "FFF": nm("FFF", "WATCH", 4, 0)}
+    json.dump({"date": "2026-11-04", "names": names}, open(os.path.join(d, "decision.json"), "w"))
+    rc, o = run([PIPE, "slate-plan", "--decision", os.path.join(d, "decision.json"), "--cap", "3", "--out", os.path.join(d, "slate_plan.json"), "--excluded", os.path.join(d, "slate_excluded.json")])
+    P = json.load(open(os.path.join(d, "slate_plan.json"))); X = json.load(open(os.path.join(d, "slate_excluded.json")))
+    check("the cut keeps the most SUPPORT, then ACT_NOW, then ADVANCE first, then A-Z", [r["ticker"] for r in P["keep"]] == ["CCC", "BBB", "DDD"], o + str(P["keep"]))
+    check("the rest are excluded with a reason and a rank; NOT_SLATED is never a candidate", [r["ticker"] for r in X["excluded"]] == ["AAA", "FFF"] and all("over the cap of 3" in r["reason"] for r in X["excluded"]))
+    errs = []
+    form = {"tickets": [{"ticker": t} for t in ("CCC", "BBB", "AAA")]}
+    registrar.validate_slate(form, None, None, None, P)  # must not raise
+    e2, _ = registrar.validate_slate({"date": "2026-11-04", "chair": "chair", "tickets": [{"ticker": t} for t in ("CCC", "BBB", "AAA")]}, None, None, None, P)
+    check("a slate that differs from the code-made plan is refused, naming both sides", any("differ from slate_plan.json" in x and "'DDD'" in x and "'AAA'" in x for x in e2), str(e2)[:300])
+    # --- verbatim slate quotes
+    rd = os.path.join(d, "run"); 
+    for sub in ("forms/r2", "forms/cross", "forms/tier2", "forms/adopt", "forms/ratify"): os.makedirs(os.path.join(rd, sub))
+    json.dump({"voice": "oneil", "votes": [{"ticker": "ZZZ", "stance": "OPPOSE", "reason": "Market gate fails so I stay OPPOSE on this name"}]}, open(os.path.join(rd, "forms/r2/oneil.json"), "w"))
+    json.dump({"voice": "seow", "votes": [{"ticker": "ZZZ", "stance": "SUPPORT", "reason": "structure_shift ABOVE_STRUCTURE at the high, cmf 0.34"}]}, open(os.path.join(rd, "forms/r2/seow.json"), "w"))
+    json.dump({"voice": "livermore", "rulings": [{"ticker": "ZZZ", "claim_id": "c1", "ruling": "CONFIRM", "stance_after": "SUPPORT", "evidence": "C5 met: W 9>21 HH/HL under the 20-wk high"}]}, open(os.path.join(rd, "forms/cross/livermore.json"), "w"))
+    dec = {"names": {"ZZZ": {"seats": {"support": ["seow", "livermore"]}}}}
+    def q(wa, wi="seow: \"cmf 0.34\""):
+        e = []; registrar._slate_quotes({"tickets": [{"ticker": "ZZZ", "why_agreed": wa, "wrong_if": wi}]}, dec, rd, e); return e
+    check("a verbatim supporter quote (with a '(confirm)' tag) passes", q('seow: "structure_shift ABOVE_STRUCTURE at the high" | livermore (confirm): "C5 met: W 9>21 HH/HL"') == [], str(q('seow: "structure_shift ABOVE_STRUCTURE at the high" | livermore (confirm): "C5 met: W 9>21 HH/HL"')))
+    check("a quote from a seat that is NOT a SUPPORT seat is refused", any("not a SUPPORT seat" in x for x in q('oneil: "Market gate fails so I stay OPPOSE"')))
+    check("a paraphrase is refused as not verbatim", any("NOT verbatim" in x for x in q('seow: "the structure looks great"')))
+    check("a piece that is not  voice: \"quote\"  is refused", any("must read" in x for x in q("seow says it is strong")))
+    dec["names"]["ZZZ"]["seats"]["support"].append("oneil")
+    check("an opposer's line is refused even if the seat later counted as SUPPORT", any("not SUPPORT" in x and "OPPOSE" in x for x in q('oneil: "Market gate fails so I stay OPPOSE"')), str(q('oneil: "Market gate fails so I stay OPPOSE"')))
+    # --- rationale: cross + tier2 sources; AMEND attached by code
+    json.dump({"voice": "wyckoff", "decisions": [{"ticker": "ZZZ", "stance": "SUPPORT", "reason": "Spring held on rising volume"}]}, open(os.path.join(rd, "forms/tier2/wyckoff.json"), "w"))
+    clause = lambda txt, v, f, fld: {"text": txt, "source": {"voice": v, "form": f, "field": fld}}
+    draft = {"voice": "chair", "date": "2026-11-04", "stage": "draft", "tickets": [{"ticker": "ZZZ", "why": [
+        clause("C5 met: W 9>21 HH/HL", "livermore", "cross", "evidence"), clause("Spring held on rising volume", "wyckoff", "tier2", "reason"),
+        clause("structure_shift ABOVE_STRUCTURE at the high", "seow", "vote", "reason")], "would_change": []}]}
+    e, _ = registrar.validate_rationale(draft, "draft", ["ZZZ"], rd)
+    check("a rationale may quote cross and tier2 words", e == [], str(e))
+    bad = json.loads(json.dumps(draft)); bad["tickets"][0]["why"][0]["text"] = "an invented claim"
+    e, _ = registrar.validate_rationale(bad, "draft", ["ZZZ"], rd)
+    check("a cross quote that is not verbatim is refused", any("NOT a verbatim quote" in x for x in e))
+    amend = lambda v, t: {"voice": v, "date": "2026-11-04", "tickets": [{"ticker": "ZZZ", "answer": "AMEND", "text": t}]}
+    json.dump(amend("seow", "Add that cmf is above 0.3"), open(os.path.join(rd, "forms/adopt/seow.json"), "w"))
+    json.dump(amend("raschke", "x" * 880), open(os.path.join(rd, "forms/adopt/raschke.json"), "w"))
+    json.dump(draft, open(os.path.join(rd, "rationale_draft.json"), "w"))
+    rc, o = run([PIPE, "rationale-final", "--draft", os.path.join(rd, "rationale_draft.json"), "--run-dir", rd, "--out", os.path.join(rd, "rationale_final.json")])
+    F = json.load(open(os.path.join(rd, "rationale_final.json")))
+    t0 = F["tickets"][0]
+    check("rationale-final attaches the AMEND text verbatim as `also` and sends what does not fit to the overflow", rc == 0 and t0["also"] == [{"voice": "seow", "text": "Add that cmf is above 0.3"}] and [x["voice"] for x in t0["also_overflow"]] == ["raschke"], o + str(t0)[:300])
+    e, _ = registrar.validate_rationale(F, "final", ["ZZZ"], rd)
+    check("the code-written final validates; a hand-edited `also` does not", e == [], str(e))
+    F["tickets"][0]["also"] = [{"voice": "seow", "text": "something else"}]
+    e, _ = registrar.validate_rationale(F, "final", ["ZZZ"], rd)
+    check("a final whose `also` is not the code-attached AMEND texts is refused", any("code-attached" in x for x in e))
+    import importlib as _il, pma_cards
+    _il.reload(pma_cards)
+    blk = pma_cards._committee_block({"committee_conviction": 4, "rationale_stage": "final", "why": [{"text": "x", "voice": "seow"}], "also": [{"voice": "seow", "text": "Add that cmf is above 0.3"}], "what_would_change_it": [], "minority_notes": []}, True)
+    check("the Cards print 'Also (voice): ...'", "Also (seow):" in blk and "Add that cmf is above 0.3" in blk, blk)
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3460,7 +3536,8 @@ def main():
                    test_the_strongest_names_are_voted_in_the_momentum_lane,
                    test_a_buy_line_far_under_the_close_is_never_the_trigger,
                    test_committee_position_counts_the_median_and_never_invents_a_rationale,
-                   test_a_rerun_has_its_own_identity_and_cannot_publish_live]:
+                   test_a_rerun_has_its_own_identity_and_cannot_publish_live,
+                   test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)
