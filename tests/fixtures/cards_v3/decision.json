@@ -1,0 +1,1010 @@
+{
+ "_schema": {
+  "shape": "decision",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-04T00:41:16Z"
+ },
+ "schema": "decision.v1",
+ "date": "2026-11-04",
+ "rules": {
+  "min_support": 4,
+  "tie": "WATCH",
+  "advance": "ACT_NOW > WAIT among SUPPORT",
+  "trigger": "modal (word, tf) of the winning timing camp"
+ },
+ "survivors": [
+  "ROKU",
+  "AJG",
+  "DIS",
+  "HOG",
+  "EW",
+  "VLTO",
+  "TTEK",
+  "SWK",
+  "BRK-B",
+  "MDT",
+  "SN",
+  "FA",
+  "TMO",
+  "V",
+  "HNGE",
+  "GEN",
+  "CART"
+ ],
+ "names": {
+  "ROKU": {
+   "ticker": "ROKU",
+   "counts": {
+    "support": 7,
+    "oppose": 0,
+    "abstain": 0,
+    "act_now": 7,
+    "wait": 0
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [],
+    "act_now": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": []
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day.",
+    "seats": [
+     "oneil",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 7,
+    "plain_from": "oneil"
+   },
+   "why": "7 SUPPORT of 7; ACT_NOW 7 vs WAIT 0",
+   "horizon_sessions": 20
+  },
+  "AJG": {
+   "ticker": "AJG",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 2,
+    "wait": 4
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "raschke"
+    ],
+    "wait": [
+     "livermore",
+     "elder-lens",
+     "seow",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+    "seats": [
+     "livermore",
+     "wyckoff"
+    ],
+    "of_camp": 4,
+    "plain_from": "wyckoff"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 2 vs WAIT 4",
+   "horizon_sessions": 15
+  },
+  "DIS": {
+   "ticker": "DIS",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 6,
+    "wait": 0
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "minervini"
+    ],
+    "abstain": [],
+    "act_now": [
+     "oneil",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": []
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy a completed 1-hour close above yesterday's high, on volume at least 1.4x normal for the time of day.",
+    "seats": [
+     "oneil",
+     "livermore",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "oneil"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 6 vs WAIT 0",
+   "horizon_sessions": 10
+  },
+  "HOG": {
+   "ticker": "HOG",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 2,
+    "wait": 4
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "livermore",
+     "seow"
+    ],
+    "wait": [
+     "minervini",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke"
+    ],
+    "of_camp": 4,
+    "plain_from": "elder-lens"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 2 vs WAIT 4",
+   "horizon_sessions": 15
+  },
+  "EW": {
+   "ticker": "EW",
+   "counts": {
+    "support": 6,
+    "oppose": 0,
+    "abstain": 1,
+    "act_now": 5,
+    "wait": 1
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [
+     "oneil"
+    ],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke"
+    ],
+    "wait": [
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke"
+    ],
+    "of_camp": 5,
+    "plain_from": "elder-lens"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 5 vs WAIT 1",
+   "horizon_sessions": 15
+  },
+  "VLTO": {
+   "ticker": "VLTO",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 2,
+    "wait": 4
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "livermore",
+     "seow"
+    ],
+    "wait": [
+     "minervini",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke"
+    ],
+    "of_camp": 4,
+    "plain_from": "elder-lens"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 2 vs WAIT 4",
+   "horizon_sessions": 15
+  },
+  "TTEK": {
+   "ticker": "TTEK",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 2,
+    "wait": 4
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "livermore",
+     "seow"
+    ],
+    "wait": [
+     "minervini",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke"
+    ],
+    "of_camp": 4,
+    "plain_from": "elder-lens"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 2 vs WAIT 4",
+   "horizon_sessions": 15
+  },
+  "SWK": {
+   "ticker": "SWK",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 0,
+    "wait": 6
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [],
+    "wait": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a light-volume pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+    "seats": [
+     "livermore",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "wyckoff"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 0 vs WAIT 6",
+   "horizon_sessions": 15
+  },
+  "BRK-B": {
+   "ticker": "BRK-B",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 6,
+    "wait": 0
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": []
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "elder-lens"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 6 vs WAIT 0",
+   "horizon_sessions": 10
+  },
+  "MDT": {
+   "ticker": "MDT",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 4,
+    "wait": 2
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "seow",
+     "raschke"
+    ],
+    "wait": [
+     "elder-lens",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, the new high after a quiet reaction",
+    "seats": [
+     "livermore",
+     "raschke"
+    ],
+    "of_camp": 4,
+    "plain_from": "livermore"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 4 vs WAIT 2",
+   "horizon_sessions": 15
+  },
+  "SN": {
+   "ticker": "SN",
+   "counts": {
+    "support": 7,
+    "oppose": 0,
+    "abstain": 0,
+    "act_now": 1,
+    "wait": 6
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [],
+    "act_now": [
+     "livermore"
+    ],
+    "wait": [
+     "oneil",
+     "minervini",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+    "seats": [
+     "minervini",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "wyckoff"
+   },
+   "why": "7 SUPPORT of 7; ACT_NOW 1 vs WAIT 6",
+   "horizon_sessions": 20
+  },
+  "FA": {
+   "ticker": "FA",
+   "counts": {
+    "support": 5,
+    "oppose": 0,
+    "abstain": 2,
+    "act_now": 3,
+    "wait": 2
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [
+     "oneil",
+     "seow"
+    ],
+    "act_now": [
+     "minervini",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": [
+     "livermore",
+     "elder-lens"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the range top (pivot_high), the jump across the creek",
+    "seats": [
+     "minervini",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 3,
+    "plain_from": "wyckoff"
+   },
+   "why": "5 SUPPORT of 7; ACT_NOW 3 vs WAIT 2",
+   "horizon_sessions": 15
+  },
+  "TMO": {
+   "ticker": "TMO",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 6,
+    "wait": 0
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": []
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, follow-through off the light-volume back-up",
+    "seats": [
+     "livermore",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "wyckoff"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 6 vs WAIT 0",
+   "horizon_sessions": 10
+  },
+  "V": {
+   "ticker": "V",
+   "counts": {
+    "support": 7,
+    "oppose": 0,
+    "abstain": 0,
+    "act_now": 1,
+    "wait": 6
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [],
+    "act_now": [
+     "livermore"
+    ],
+    "wait": [
+     "oneil",
+     "minervini",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": true,
+   "question": "ADD",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Held: keep. Add only on a daily close above yesterday's high on 1.4x volume, within 5pct of the pivot.",
+    "seats": [
+     "oneil",
+     "seow"
+    ],
+    "of_camp": 6,
+    "plain_from": "oneil"
+   },
+   "why": "7 SUPPORT of 7; ACT_NOW 1 vs WAIT 6",
+   "horizon_sessions": 20,
+   "hold_line": {
+    "plain": "A close under ma_50",
+    "seats": [
+     "minervini"
+    ]
+   }
+  },
+  "HNGE": {
+   "ticker": "HNGE",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 4,
+    "wait": 2
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "livermore",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": [
+     "minervini",
+     "elder-lens"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, follow-through after the first pullback",
+    "seats": [
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 4,
+    "plain_from": "wyckoff"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 4 vs WAIT 2",
+   "horizon_sessions": 10
+  },
+  "GEN": {
+   "ticker": "GEN",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 1,
+    "wait": 5
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "seow"
+    ],
+    "wait": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pull-in to the Creek (structure_shift_ref), an hourly close above the prior day's high",
+    "seats": [
+     "livermore",
+     "wyckoff"
+    ],
+    "of_camp": 5,
+    "plain_from": "wyckoff"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 1 vs WAIT 5",
+   "horizon_sessions": 15
+  },
+  "CART": {
+   "ticker": "CART",
+   "counts": {
+    "support": 5,
+    "oppose": 1,
+    "abstain": 1,
+    "act_now": 1,
+    "wait": 4
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [
+     "seow"
+    ],
+    "act_now": [
+     "wyckoff"
+    ],
+    "wait": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "raschke"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+",
+    "seats": [
+     "elder-lens",
+     "raschke"
+    ],
+    "of_camp": 4,
+    "plain_from": "elder-lens"
+   },
+   "why": "5 SUPPORT of 7; ACT_NOW 1 vs WAIT 4",
+   "horizon_sessions": 15
+  }
+ },
+ "market_kill": {
+  "plain": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).",
+  "symbol": null,
+  "word": null,
+  "level": 5.0,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 4
+ },
+ "market_kill_note": null,
+ "ignored_forms": [],
+ "measurement": {
+  "act_now_vs_wait": {
+   "ROKU": {
+    "act_now": 7,
+    "wait": 0
+   },
+   "AJG": {
+    "act_now": 2,
+    "wait": 4
+   },
+   "DIS": {
+    "act_now": 6,
+    "wait": 0
+   },
+   "HOG": {
+    "act_now": 2,
+    "wait": 4
+   },
+   "EW": {
+    "act_now": 5,
+    "wait": 1
+   },
+   "VLTO": {
+    "act_now": 2,
+    "wait": 4
+   },
+   "TTEK": {
+    "act_now": 2,
+    "wait": 4
+   },
+   "SWK": {
+    "act_now": 0,
+    "wait": 6
+   },
+   "BRK-B": {
+    "act_now": 6,
+    "wait": 0
+   },
+   "MDT": {
+    "act_now": 4,
+    "wait": 2
+   },
+   "SN": {
+    "act_now": 1,
+    "wait": 6
+   },
+   "FA": {
+    "act_now": 3,
+    "wait": 2
+   },
+   "TMO": {
+    "act_now": 6,
+    "wait": 0
+   },
+   "V": {
+    "act_now": 1,
+    "wait": 6
+   },
+   "HNGE": {
+    "act_now": 4,
+    "wait": 2
+   },
+   "GEN": {
+    "act_now": 1,
+    "wait": 5
+   },
+   "CART": {
+    "act_now": 1,
+    "wait": 4
+   }
+  },
+  "deciders_present": [
+   "oneil",
+   "minervini",
+   "livermore",
+   "elder-lens",
+   "seow",
+   "raschke",
+   "wyckoff"
+  ],
+  "deciders_absent": [],
+  "advance": 8,
+  "watch": 9,
+  "not_slated": 0
+ }
+}
