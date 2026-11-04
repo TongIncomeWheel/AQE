@@ -398,6 +398,7 @@ def test_the_unr_switch_off_stops_every_unr_state(monkeypatch):
     assert not any(s.startswith("UNR") for s in (off["fired"].get("HPE") or [])), off["fired"]
 
 
-def test_the_unr_switch_defaults_to_on():
+def test_the_alert_switches_default_to_committee_and_held_only():
+    """PM 2026-11-04: defaults live in code so the HF poller and the GitHub backstop cannot disagree."""
     from src.alerts import config as C
-    assert C.CONDITION_UNR_ENABLED is True
+    assert C.CONDITION_UNR_ENABLED is False and C.CONDITION_DEFAULTS_ENABLED is False

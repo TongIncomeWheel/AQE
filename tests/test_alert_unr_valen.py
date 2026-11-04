@@ -21,6 +21,15 @@ from src.alerts import live_unr as LU
 _ET = ZoneInfo("America/New_York")
 
 
+@pytest.fixture(autouse=True)
+def _switches_on(monkeypatch):
+    """These tests exercise the features the PM switched OFF by default on 2026-11-04 (AQE-default cards / U&R alerts);
+    the defaults themselves are pinned in test_alert_condition_cycle.py."""
+    from src.alerts import config as _C
+    monkeypatch.setattr(_C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(_C, "CONDITION_UNR_ENABLED", True)
+
+
 def _history(n=160, a=40.0, b=100.0, end=date(2026, 10, 6), vols=None):
     c = np.geomspace(a, b, n)
     return [{"date": str(end - timedelta(days=n - 1 - i)), "open": c[i] * 0.998,

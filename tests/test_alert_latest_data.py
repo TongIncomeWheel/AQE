@@ -4,6 +4,7 @@ stale exports never become cards; the digest says which PMA and AQE it is built 
 
 from __future__ import annotations
 
+import pytest
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -14,6 +15,15 @@ from src.alerts import pma_levels as PMA
 
 _ET = ZoneInfo("America/New_York")
 MON = datetime(2026, 10, 12, 10, 5, tzinfo=_ET)          # Monday 2026-10-12
+
+
+@pytest.fixture(autouse=True)
+def _switches_on(monkeypatch):
+    """These tests exercise the features the PM switched OFF by default on 2026-11-04 (AQE-default cards / U&R alerts);
+    the defaults themselves are pinned in test_alert_condition_cycle.py."""
+    from src.alerts import config as _C
+    monkeypatch.setattr(_C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(_C, "CONDITION_UNR_ENABLED", True)
 
 
 def _cond():
