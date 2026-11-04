@@ -1,9 +1,76 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-11-04T07:19:19+08:00",
+  "generated_at": "2026-11-04T13:11:00+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
-  "oldest_leg": "2026-11-02",
+  "oldest_leg": "2026-11-03",
+  "as_of": "2026-11-03",
+  "expected_session": "2026-11-03",
+  "data_legs": [
+    {
+      "leg": "breadth_whole_market",
+      "as_of": null,
+      "expected": "2026-11-03",
+      "reason": "SOURCE_DOWN",
+      "detail": "no whole-market panel by any path"
+    },
+    {
+      "leg": "heartbeat_rsp_spy",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": "FMP daily bars"
+    },
+    {
+      "leg": "vix_level",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "dispersion_vixeq",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "dspx",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "vix3m",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "vix9d",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "implied_correlation_cor1m",
+      "as_of": "2026-11-03",
+      "expected": "2026-11-03",
+      "reason": "CURRENT",
+      "detail": ""
+    },
+    {
+      "leg": "positioning_cot",
+      "as_of": "2026-10-27",
+      "expected": "2026-11-03",
+      "reason": "PUBLISHER_CADENCE",
+      "detail": "latest published weekly CFTC release; next release 2026-11-06"
+    }
+  ],
   "what_this_is": "One read assembled from four already-independent systems — Crown (regime/positioning/volatility), the Macro Weather x Crown scenario read, SRM sector grades and Thematic Rotation. Nothing here is a new gate or a new score beyond one thing: whether a sector's or theme's current grade agrees with what the leading scenario implies for it.",
   "sector_read": [
     {
@@ -252,10 +319,10 @@
       "coherence_reason": "grade is TURNING, not a directional read to test (inherited from parent sector XLI)"
     }
   ],
-  "read_me_first": "A broad market, with volatility around normal. Leading scenario: DOLLAR_SQUEEZE. Two stories fit the tape about equally. 3 sectors currently disagree with that story, 5 agree.",
+  "read_me_first": "A broad market, with volatility around normal. Best fit: a dollar squeeze draining everything else. Leading scenario: DOLLAR_SQUEEZE. Two stories fit the tape about equally. 3 sectors currently disagree with that story, 5 agree.",
   "crown": {
-    "headline": "A broad market, with volatility around normal.",
-    "regime_words": "broadening · normal_rising",
+    "headline": "A broad market, with volatility around normal. Best fit: a dollar squeeze draining everything else.",
+    "regime_words": "broadening · normal",
     "because": [
       "The average stock is keeping up with the index — the rally is broad.",
       "Single stocks are moving about as much as the index. The index itself is not quiet, with VIX at 20.8, higher than 82% of days in the past two years.",
@@ -267,12 +334,13 @@
     ],
     "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 1 of its conditions are not met. Size at 1.00x your normal risk.",
     "watch_for": [
-      "If soybeans trades above 1,214.52 (0.1% away), trend funds start buying.",
-      "If the Nasdaq trades above 28,457.74 (0.1% away), trend funds start buying.",
-      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
+      "If small caps trades above 2,832.86 (0.3% away), trend funds start buying.",
+      "If the Nasdaq trades above 28,457.64 (0.5% away), trend funds start buying.",
+      "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get.",
+      "This reading would strengthen if UUP flat (roc5 -0.38%, roc20 0.38%) reversed."
     ],
     "caveats": [],
-    "as_of": "2026-11-04T06:54:21+08:00",
+    "as_of": "2026-11-04T13:10:10+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
@@ -315,7 +383,7 @@
         "missing_conditions": [
           "COPPER_GOLD flat (roc5 -0.36%, roc20 2.36%)",
           "TLT flat (roc5 -0.64%, roc20 4.96%)",
-          "CTA rates bias -0.44"
+          "CTA rates bias -0.43"
         ],
         "unavailable": [],
         "can_lead": true
@@ -364,11 +432,11 @@
         "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
         "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
         "evidence": [
-          "CTA sector spread 0.89"
+          "CTA sector spread 0.88"
         ],
         "missing_conditions": [
           "implied correlation 16.39 (71% pctl)",
-          "dispersion NORMAL (spread 23.52)",
+          "dispersion NORMAL (spread 21.97)",
           "VIX 20.83"
         ],
         "unavailable": [],
@@ -381,7 +449,7 @@
         "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
         "expression": "Real assets, energy, short duration. Multiple compression risk.",
         "evidence": [
-          "CTA energy bias +0.15"
+          "CTA energy bias +0.13"
         ],
         "missing_conditions": [
           "USO flat (roc5 -3.48%, roc20 9.15%)",
@@ -399,8 +467,8 @@
         "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
         "expression": "Cyclicals, financials, small caps, energy. Short duration.",
         "evidence": [
-          "CTA energy bias +0.15",
-          "CTA rates bias -0.44"
+          "CTA energy bias +0.13",
+          "CTA rates bias -0.43"
         ],
         "missing_conditions": [
           "CPER down (roc5 -3.85%, roc20 -3.8%)",
@@ -421,8 +489,8 @@
     "Coherence is a category (AGREES/DISAGREES/UNTESTED), never a probability — same rule as the scenario scores it is built from."
   ],
   "what_changed": {
-    "available": false,
+    "available": true,
     "changes": [],
-    "note": "No previous pack to compare against."
+    "note": "Nothing that changes a decision moved."
   }
 }
