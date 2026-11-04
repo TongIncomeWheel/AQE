@@ -1275,11 +1275,30 @@ def _merge_funnel_form(a):
     return 0
 
 
+# P2 (conductor 2026-11-04): the byte cap is per FORM, so with a 25-ticket slate every ticket-keyed form outgrows 24KB (a
+# 12-ticket rationale_final was 28KB). The essay-leak guard is the PER-FIELD character caps (each already enforced); the form
+# cap now scales with the number of tickets, per kind, and the 24KB floor still applies to everything else.
+FORM_BYTES_PER_TICKET = {"slate": 2600, "ratify": 1300, "adopt": 800, "rationale": 8000}
+
+
+def form_byte_cap(kind, raw):
+    cap = MAX_FORM_BYTES
+    per = FORM_BYTES_PER_TICKET.get(kind)
+    if per:
+        try:
+            n = len((json.loads(raw) or {}).get("tickets") or [])
+        except (ValueError, AttributeError):
+            n = 0
+        cap = max(cap, per * n + 4096)
+    return cap
+
+
 def cmd_validate(a):
     raw = open(a.file, "rb").read()
-    if len(raw) > MAX_FORM_BYTES:
+    cap = form_byte_cap(getattr(a, "kind", None), raw)
+    if len(raw) > cap:
         print(json.dumps({"result": "REJECT", "errors":
-              [f"form is {len(raw)}B > {MAX_FORM_BYTES}B cap — essay leak; forms not essays"]}))
+              [f"form is {len(raw)}B > {cap}B cap — essay leak; forms not essays"]}))
         return 1
     try:
         form = json.loads(raw)
