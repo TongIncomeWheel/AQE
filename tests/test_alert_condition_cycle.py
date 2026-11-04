@@ -500,3 +500,34 @@ def test_the_deal_pinned_alert_card_says_so(monkeypatch):
     from src.alerts import emailer as E
     subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
     assert "DEAL-PINNED" in subject and "no buy trigger" in plain and "Fox will acquire Roku" in plain
+
+
+def test_a_name_that_left_the_aqe_list_today_is_flagged_on_its_alert_card():
+    from src.alerts import emailer as E
+    from src.data import list_churn as LC
+    export = {"list_churn": {"status": "ok", "removed": [{"ticker": "TMO", "reasons": ["momentum score 63.2 is under the Longlist floor of 65", "Elder impulse 7.0 is under the Elder-list floor of 8"]}]}}
+    left = LC.leavers_by_ticker(export)
+    assert set(left) == {"TMO"} and "63.2" in left["TMO"]
+    card = E._with_left_list({"headline": "TMO $500 · ADVANCE", "lines": ["x"]}, {"ticker": "TMO", "left_list": left["TMO"]})
+    assert card["headline"].endswith("LEFT THE AQE LIST TODAY") and card["lines"][0].startswith("Left the AQE list today: momentum score 63.2")
+    assert card["lines"][1] == "x"
+    clean = E._with_left_list({"headline": "AAA $10 · X", "lines": ["x"]}, {"ticker": "AAA"})
+    assert clean == {"headline": "AAA $10 · X", "lines": ["x"]}
+    assert LC.leavers_by_ticker({}) == {} and LC.leavers_by_ticker({"list_churn": {"status": "no_previous"}}) == {}
+
+
+def test_the_cycle_stamps_left_list_on_a_committee_row_for_a_name_that_left(monkeypatch):
+    """End to end through run_condition_cycle: HPE is a committee row (from pma_doc) and is in the export's churn leavers -> its row carries left_list."""
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "PMA_CONDITIONS_LIVE", False)
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    quotes = {"HPE": {"price": 64.2, "prev_close": 61.0, "day_high": 64.5, "day_low": 61.9, "open": 62.0}, "SPY": {"price": 500.5, "prev_close": 499.0}}
+    export = {"date": "2026-10-02", "daily_list": [], "held_positions": [], "lens_ranking": {"ranked": []},
+              "list_churn": {"status": "ok", "removed": [{"ticker": "HPE", "reasons": ["momentum score 61.0 is under the Longlist floor of 65"]}]}}
+    CC.run_condition_cycle(_pma_doc_with_conditions(), quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02", export=export)
+    ticker, row, ev, states, live = sent[0][0][0]
+    assert ticker == "HPE" and "61.0" in row["left_list"]
+    from src.alerts import emailer as E
+    card = E.build_condition_card(ticker, row, ev, states, live)
+    assert "LEFT THE AQE LIST TODAY" in card["headline"] and card["lines"][0].startswith("Left the AQE list today:")

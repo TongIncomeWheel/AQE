@@ -12,13 +12,13 @@ def test_a_leaver_is_explained_by_the_gate_it_failed():
     # BRZE on 4 Nov: SC_MOM 68.4, Elder 7.0 (Longlist yes, Elder list no). Next day the score fades under 65.
     r = LC.explain_drop("BRZE", {"sc_momentum_raw": 63.2, "elder_score": 7.0}, _row("BRZE", 68.4, 7.0))
     assert r["status"] == "BELOW_GATES" and r["sc_momentum_raw"] == 63.2
-    assert any("63.2" in x and "Longlist" in x for x in r["reasons"]) and any("Elder-list floor 8" in x for x in r["reasons"])
+    assert any("63.2" in x and "Longlist" in x for x in r["reasons"]) and any("Elder-list floor of 8" in x for x in r["reasons"])
     assert r["was"] == ["on_longlist"] and r["prev_sc_momentum"] == 68.4
 
 
 def test_elder_alone_failing_says_so_and_a_missing_score_row_is_not_scored():
     r = LC.explain_drop("X", {"sc_momentum_raw": 80.0, "elder_score": 6.0}, _row("X", 80.0, 8.0))
-    assert r["status"] == "BELOW_GATES" and all("SC_MOM" not in x for x in r["reasons"])
+    assert r["status"] == "BELOW_GATES" and all("momentum score" not in x for x in r["reasons"])
     n = LC.explain_drop("GONE", None, _row("GONE"))
     assert n["status"] == "NOT_SCORED" and "not in today's scores" in n["reasons"][0]
 

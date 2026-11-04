@@ -234,6 +234,14 @@ _ms = D.get("ma_scan")
 ma_banner = ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no M&amp;A scan result, so no name can be called free of a pending deal.</p>' if not isinstance(_ms, dict) else
              f'<p class="flag"><b>M&amp;A scan {E(str(_ms.get("scan_status")))}.</b> {E(str(_ms.get("n_failed")))} of {E(str(_ms.get("n_scanned")))} names could not be checked for a pending merger or buyout'
              f'{(": " + E(str(_ms.get("reason")))) if _ms.get("reason") else ""}. Names marked &ldquo;M&amp;A not checked&rdquo; are unchecked, not clean.</p>' if _ms.get("scan_status") != "ok" else "")
+_lc = D.get("list_churn")
+_left_book = []
+if isinstance(_lc, dict) and _lc.get("status") == "ok":
+    _book = set(LV) | set(HELD)             # the committee book (3-session levels rows) plus the names held
+    _left_book = [r for r in _lc.get("removed") or [] if r.get("ticker") in _book]
+left_banner = ("" if not isinstance(_lc, dict) else
+               (f'<p class="flag"><b>List changes were not worked out today.</b> {E(str(_lc.get("reason") or _lc.get("error") or ""))}</p>' if _lc.get("status") not in ("ok",) else
+                (('<p class="flag"><b>Left the AQE list today, still on your book or the committee book:</b> ' + "; ".join(f"<b>{E(r['ticker'])}</b> ({E('; '.join(r.get('reasons') or []))})" for r in _left_book) + ".</p>") if _left_book else "")))
 top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DATE.day} {RUN_DATE:%b %Y} &middot; to the PM{(' &middot; rerun ' + RERUN + ', not live') if RERUN else ''} &middot; {n_adv} triggers</div>
 <h1>{h1}</h1>
 <p class="ask">{ask}</p>
@@ -249,7 +257,8 @@ top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DA
 {reason_dealers}
 {reason_money}
 </div>
-{ma_banner}'''
+{ma_banner}
+{left_banner}'''
 top = f'<header id="top">{top}</header>'
 
 # refreshed-after-committee detail (post-committee facts, labelled)

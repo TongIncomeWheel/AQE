@@ -105,6 +105,15 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 if r.get("ticker") in _byt else r for r in rows]
     except Exception:  # noqa: BLE001
         pass
+    # Conductor/PM 2026-11-05: a name on the committee book or in the alert universe that LEFT the AQE list today (it failed both list gates) is
+    # flagged on its card; the card says it is still watched here but AQE's own scores no longer list it. No claim when the export has no churn block.
+    try:
+        from src.data.list_churn import leavers_by_ticker as _leavers
+        _left = _leavers(export)
+        if _left:
+            rows = [dict(r, left_list=_left[r["ticker"]]) if r.get("ticker") in _left else r for r in rows]
+    except Exception:  # noqa: BLE001
+        pass
     summary["defaults"] = len(defaults)
     held_events = held_events or []
     mk = (meta or {}).get("market_kill") or {}

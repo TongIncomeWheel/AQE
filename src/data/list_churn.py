@@ -43,16 +43,16 @@ def explain_drop(ticker: str, score_row, prev_row: dict | None = None) -> dict:
     elder = _num(g("elder_score"))
     reasons = []
     if raw is None:
-        reasons.append("SC_MOM is blank today")
+        reasons.append("the momentum score is blank today")
     elif raw < LL_MIN_SC:
-        reasons.append(f"SC_MOM {raw:.1f} is under the Longlist floor {LL_MIN_SC}")
+        reasons.append(f"momentum score {raw:.1f} is under the Longlist floor of {LL_MIN_SC}")
     if elder is None:
-        reasons.append("Elder is blank today")
+        reasons.append("the Elder impulse is blank today")
     else:
         if round(elder, 1) < LL_MIN_ELDER:
-            reasons.append(f"Elder {elder:.1f} is under the Longlist floor {LL_MIN_ELDER}")
+            reasons.append(f"Elder impulse {elder:.1f} is under the Longlist floor of {LL_MIN_ELDER}")
         if round(elder) < ELDER_LIST_MIN:
-            reasons.append(f"Elder {elder:.1f} is under the Elder-list floor {ELDER_LIST_MIN}")
+            reasons.append(f"Elder impulse {elder:.1f} is under the Elder-list floor of {ELDER_LIST_MIN}")
     if not reasons:        # clears a gate on today's score yet is absent: say so, never invent a reason
         return {**base, "status": "CLEARS_GATES_BUT_ABSENT", "sc_momentum_raw": raw, "elder": elder,
                 "reasons": ["clears a list gate on today's score but is not in the list: check the export build (a real fault, not a rule)"]}
@@ -70,7 +70,7 @@ def compute(prev_export: dict | None, daily_list: list[dict], sc_by_tk: dict, to
     removed = [explain_drop(t, (sc_by_tk or {}).get(t), prev[t]) for t in sorted(set(prev) - set(now))]
     return {"status": "ok", "date": today_iso, "prev_date": prev_export.get("date"), "n_prev": len(prev), "n_now": len(now),
             "n_added": len(added), "n_removed": len(removed), "added": added, "removed": removed,
-            "gates": {"longlist": f"SC_MOM >= {LL_MIN_SC} and Elder >= {LL_MIN_ELDER}", "elder_list": f"Elder >= {ELDER_LIST_MIN}"}}
+            "gates": {"longlist": f"momentum score at least {LL_MIN_SC} and Elder impulse at least {LL_MIN_ELDER}", "elder_list": f"Elder impulse at least {ELDER_LIST_MIN}"}}
 
 
 def line(churn: dict) -> str:
@@ -92,6 +92,14 @@ def detail_lines(churn: dict, limit: int = 60) -> list[str]:
     if len(churn["removed"]) > limit:
         out.append(f"    ... and {len(churn['removed']) - limit} more leavers (all are in export['list_churn']['removed'])")
     return out
+
+
+def leavers_by_ticker(export: dict | None) -> dict:
+    """{ticker: plain sentence} for every name that left `daily_list` today; {} when the churn block is absent / not ok (no claim either way)."""
+    ch = (export or {}).get("list_churn")
+    if not isinstance(ch, dict) or ch.get("status") != "ok":
+        return {}
+    return {r["ticker"]: "; ".join(r.get("reasons") or ["reason not recorded"]) for r in ch.get("removed") or [] if r.get("ticker")}
 
 
 def load_previous(today_iso: str, candidates: list[Path | str]) -> dict | None:

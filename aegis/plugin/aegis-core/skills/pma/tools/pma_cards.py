@@ -681,6 +681,21 @@ def _ma_banner(D):
     return ""
 
 
+def _left_banner(D, book):
+    """Conductor/PM 2026-11-05: a name on the committee book (or held) that left the AQE list today is said so on the page, with the gate that removed it.
+    No churn block (an older export) = no claim; a churn block that could not be worked out says so."""
+    lc = (D or {}).get("list_churn")
+    if not isinstance(lc, dict):
+        return ""
+    if lc.get("status") != "ok":
+        return f'<p class="flag"><b>List changes were not worked out today.</b> {E(str(lc.get("reason") or lc.get("error") or ""))}</p>'
+    gone = [r for r in lc.get("removed") or [] if r.get("ticker") in book]
+    if not gone:
+        return ""
+    return ('<p class="flag"><b>Left the AQE list today, still on your book or the committee book:</b> '
+            + "; ".join(f"<b>{E(r['ticker'])}</b> ({E('; '.join(r.get('reasons') or []))})" for r in gone) + ".</p>")
+
+
 def _wind_gauges(v):
     """PM 2026-10-23 (Valen's 'Market as of now' panel): simple bars for the direction of the wind. Built ONLY
     from the breadth numbers AQE computes on its full curated panel (aqe_valen_dashboard.json breadth[]). The
@@ -1313,6 +1328,11 @@ def cmd_render(a):
     for h in D.get("held_positions") or []:
         rows.setdefault(h["ticker"], h)
     held = {h["ticker"]: h for h in D.get("held_positions") or []}
+    try:                                                   # the committee book = pma_levels.json beside cards.json, plus what is held
+        _lv = load(os.path.join(os.path.dirname(os.path.abspath(a.cards)), "pma_levels.json"), {}) or {}
+        _BOOK = {r.get("ticker") for r in _lv.get("rows") or []} | set(held)
+    except Exception:  # noqa: BLE001
+        _BOOK = set(held)
     CD = load(a.cards); BR = (load(a.brackets, {}) or {}).get("brackets") or {}
     BS = (load(a.broker_stops, {}) or {}).get("positions") or {}
     P4 = load(a.phase4); lane = {r["ticker"]: r["lane"] for r in P4["ranked"]}
@@ -1369,7 +1389,7 @@ def cmd_render(a):
     o.append("</div>")
     o.append('<section class="card"><div class="eyebrow">Where money is moving</div><div class="tbl"><table><thead><tr><th>Group</th><th>Read</th><th>What it means</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{E(x["group"])}</b></td><td>{E(x["read"])}</td><td>{E(x["meaning"])}</td></tr>' for x in T["money"]) + "</tbody></table></div></section>")
-    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D))
+    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D) + _left_banner(D, _BOOK))
     o.append('<section class="card"><div class="eyebrow">What it means for your book</div><div class="tbl"><table><thead><tr><th>Name</th><th>Position</th><th>Broker stop</th><th>Committee read</th><th>Why</th></tr></thead><tbody>')
     for b in T["book"]:
         t = b["ticker"]; h = held.get(t) or {}; s = BS.get(t) or {}

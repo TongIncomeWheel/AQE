@@ -1673,7 +1673,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         card = _build_full_card(ticker, row, eval_result, fired_states, live)
     else:
         card = _build_compact_card(ticker, row, eval_result, fired_states, live)
-    return _with_ma_flag(_with_lane(card, row), row)
+    return _with_left_list(_with_ma_flag(_with_lane(card, row), row), row)
 
 
 def _with_lane(card: dict, row: dict) -> dict:
@@ -1682,6 +1682,16 @@ def _with_lane(card: dict, row: dict) -> dict:
     if lab and not row.get("watch_only"):
         card["headline"] = f"{card['headline']} · {lab} lane"
         card["lines"] = [f"{lab} lane: {row.get('lane_note') or 'generic line'}."] + list(card.get("lines") or [])
+    return card
+
+
+def _with_left_list(card: dict, row: dict) -> dict:
+    """Conductor/PM 2026-11-05: a name that left the AQE list today (both list gates failed) says so on its alert card. It is still watched here
+    because it is on the committee book / alert universe, but AQE's own scores no longer put it on the list."""
+    why = str((row or {}).get("left_list") or "").strip()
+    if why:
+        card["headline"] = f"{card['headline']} · ⚪ LEFT THE AQE LIST TODAY"
+        card["lines"] = [f"Left the AQE list today: {why}. Still watched because it is on the committee book or the alert list."] + list(card.get("lines") or [])
     return card
 
 
