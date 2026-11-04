@@ -33,13 +33,16 @@ spread, not momentum, so flow / energy / structure mean little, and the committe
 3. Alert cards (every digest card): headline "· 🔴 M&A PENDING (being acquired)" and a first line with the matched sentence.
 4. The brief and the conductor's v3 lists tables read the same export field (their render is the conductor's; the field is there).
 
-## 4. Proposed committee rule (PM decides; NOT built)
-| Option | What happens to a `PENDING_TARGET` | Cost |
-|---|---|---|
-| **A. Flag only** (shipped) | Seats see it, the card shows it; the committee may still ADVANCE it | A seat can still vote a deal-pinned stock a momentum buy |
-| **B. Flag + explicit M&A line (recommended)** | A `PENDING_TARGET` can only be slated if the rationale carries an explicit "M&A: ..." clause (verbatim from a seat's filed form); otherwise code caps it at HOLD-FOR-CONDITIONS | Small: one check in the slate step |
-| **C. Auto-exclude** | `PENDING_TARGET` is removed from the slate; shown only as a flagged PASS row | A deal-arb idea can never be a pick, even deliberately |
-I recommend **B**: it keeps the PM's discretion and makes the committee say what it is buying (the spread), not a momentum story.
+## 4. Committee rule: SIGNED by the PM 2026-11-04 (ruling R44), built
+* A slated ticket with `ma_status == PENDING_TARGET` is **excluded from ADVANCE by code** in `ratify-count` (not a voice judgment): status
+  `DEAL_PINNED`, verdict `PASS`, whatever the vote; WATCH is excluded too ("never a buy card"). It carries the M&A line and the verdict it
+  would have had, and is not eligible for the committee rationale.
+* Cards: own small section **"Deal-pinned, not a momentum pick"** with the M&A line; never a buy card; the lists tables show the red pill.
+* Alerts: **no buy trigger is armed** for it, committee row or AQE-list row alike: one label-only card "DEAL-PINNED, no buy trigger". A HELD
+  position keeps its stop / exit cards.
+* `PENDING_ACQUIRER` and `PENDING_UNCLEAR` are flag-only (pill, line), no exclusion.
+* Safety: if the export carries no `ma_status` (older export) or is missing, the exclusion is NOT applied and `ratify-count` prints that
+  loudly; a missing scan never reads as a clean name.
 
 ## 5. Dry-run on the 4 Nov export
 Run by `.github/workflows/ma-flag-dryrun.yml` (needs the FMP secret; the sandbox has no key). To be appended here with every flagged row

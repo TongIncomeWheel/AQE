@@ -1160,6 +1160,9 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
         now = (f" Spot is {spot:.2f}." if spot is not None else "")
         return (f"{cleared}, then fell back under{tail}.{now} "
                 f"Still watched: it re-qualifies on the next hourly close{back}.")
+    if primary == "CHASED" and row.get("deal_pinned"):
+        return ("Pending takeover: this stock trades on the deal spread, not on momentum. Off the buy list by rule; "
+                "no buy trigger is armed for it. The line below is the deal AQE found.")
     if primary == "CHASED" and row.get("watch_only"):
         lvl = _lvl(shared.get("chase") or {})
         where = f" (its last pivot, {lvl:.2f})" if lvl is not None else ""
@@ -1182,6 +1185,8 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
 
 def _state_label(primary: str, row: dict, eval_result: dict, live: dict) -> tuple[str, str]:
     label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
+    if primary == "CHASED" and row.get("deal_pinned"):
+        return ("🔴 DEAL-PINNED — pending acquisition, no buy trigger", "#b3261e")
     if primary == "CHASED" and row.get("watch_only"):
         # PM 2026-11-04: no stretch claim until the continuation lane drives the label; say only what is true.
         return ("⚪ AQE LIST — through its entry line, no buy trigger", "#888888")
@@ -1416,6 +1421,8 @@ _CLASS_LABEL = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD FOR CONDITION
 
 
 def _who(row: dict) -> str:
+    if row.get("deal_pinned"):
+        return "Deal-pinned (pending takeover), no buy trigger"
     if row.get("aqe_list"):
         return "AQE list, not a committee pick"
     if row.get("aqe_default"):
@@ -1640,6 +1647,8 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
     if primary == "EXIT_LINE_HELD":
         ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
         lines.append(ex.get("plain") or "held position through its exit line")
+    elif primary == "CHASED" and row.get("deal_pinned"):
+        lines.append("Deal-pinned: no buy trigger is armed for this name")
     elif primary == "CHASED" and row.get("watch_only"):
         lines.append("Through its entry line; AQE list name, no buy trigger")
     elif primary == "CHASED":

@@ -3814,10 +3814,46 @@ def test_cards_theme_basket_table_and_extension_bracket_line(td):
           PC._ext_bracket_html(None) == "" and "no continuation window" in PC._ext_bracket_html({"available": False, "reason": "no continuation window"}))
 
 
+def test_ratify_count_excludes_a_pending_takeover_target_from_advance(td):
+    """R44 (PM 2026-11-04): ma_status PENDING_TARGET in the export -> status DEAL_PINNED, verdict PASS, never ADVANCE/WATCH; no ma_status in the
+    export = not applied, said loudly; the Cards print the name in its own section from the export, not as a buy card."""
+    d, p4 = _committee_fixture(td, "ratifyma")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    slate = os.path.join(d, "slate_ma.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    for v in DEC:
+        _ratify(d, "ratifyma", v, {"GNW": "AGREE", "BBY": "AGREE"})
+    exp = os.path.join(d, "export_ma.json")
+    json.dump({"daily_list": [{"ticker": "GNW", "ma_status": "PENDING_TARGET", "ma_note": "Acme will acquire Gnw (2026-06-15)", "gics_sector_name": "Tech", "entry": 10.0},
+                              {"ticker": "BBY", "ma_status": "PENDING_TARGET", "ma_note": "x", "entry": 20.0}]}, open(exp, "w"))
+    out = os.path.join(d, "cons_ma.json")
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyma"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-01", "--export", exp, "--out", out, "--record", os.path.join(d, "rec_ma.json")])
+    check("ratify-count with an export exits clean", rc == 0, log[-300:])
+    if rc != 0: return
+    C = {c["ticker"]: c for c in json.load(open(out))}
+    check("a pending-takeover target slated ADVANCE or WATCH becomes DEAL_PINNED / PASS and carries its M&A line",
+          all((C[t]["status"], C[t]["verdict"]) == ("DEAL_PINNED", "PASS") for t in ("GNW", "BBY")) and C["GNW"]["deal_pinned"]["ma_note"].startswith("Acme will acquire"), str(C["GNW"])[:300])
+    json.dump({"daily_list": [{"ticker": "GNW", "entry": 10.0}]}, open(exp, "w"))                 # an older export with no ma_status
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyma"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-01", "--export", exp, "--out", out, "--record", os.path.join(d, "rec_ma.json")])
+    C2 = {c["ticker"]: c for c in json.load(open(out))}
+    check("no ma_status in the export: the rule is NOT applied and the run says so", rc == 0 and C2["GNW"]["status"] == "AGREED" and "R44) NOT applied" in log, log[-300:])
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards as PC
+    importlib.reload(PC)
+    pinned = [C["GNW"]]
+    h = PC._deal_pinned_section(pinned, {"GNW": {"ticker": "GNW", "ma_status": "PENDING_TARGET", "ma_note": "Acme will acquire Gnw (2026-06-15)", "gics_sector_name": "Tech", "entry": 10.0}})
+    check("the Cards print a Deal-pinned section with the M&A line and no buy card", "Deal-pinned, not a momentum pick" in h and "Acme will acquire" in h and "never a buy card" in h and PC._deal_pinned_section([], {}) == "", h[:200])
+    gaps = PC._validate_text({"cards": {}, "holds": {}, "passes": {}}, [C["GNW"]])
+    check("a deal-pinned name needs no entry in the words file", not any("GNW" in g for g in gaps), str(gaps)[:300])
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

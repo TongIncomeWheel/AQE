@@ -150,6 +150,26 @@ def build_watch_only_conditions(rec: dict) -> dict | None:
     }
 
 
+def apply_deal_pinned(rows: list[dict], export: dict | None) -> list[dict]:
+    """R44 (PM 2026-11-04): a name with ma_status PENDING_TARGET never has a buy trigger armed. Any committee ADVANCE / HOLD-FOR-CONDITIONS row
+    or AQE-default row for such a name is replaced by a LABEL-ONLY row (no buy word; one card saying it is deal-pinned). HELD rows are left
+    alone: a position keeps its exit and stop cards. Rows with no ma_status in the export are untouched (no claim either way)."""
+    byt = {r.get("ticker"): r for r in ((export or {}).get("daily_list") or [])}
+    out = []
+    for r in rows:
+        rec = byt.get(r.get("ticker"))
+        if rec and rec.get("ma_status") == "PENDING_TARGET" and r.get("class") != "HELD":
+            cond = build_watch_only_conditions(rec)
+            if cond:
+                nr = {k: v for k, v in r.items() if k not in ("conditions", "levels", "lane", "lane_label", "lane_note")}
+                nr.update(conditions=cond, deal_pinned=True, watch_only=True, aqe_default=bool(r.get("aqe_default")))
+                nr["ma_status"], nr["ma_note"] = rec.get("ma_status"), rec.get("ma_note")
+                out.append(nr)
+                continue
+        out.append(r)
+    return out
+
+
 def _as_row(rec: dict, klass: str, conditions: dict, stop_override: float | None = None) -> dict:
     buy = conditions["shared"]["buy"]
     line = _n(buy[0]["level"]) if buy else None

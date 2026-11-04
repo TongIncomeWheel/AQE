@@ -2097,6 +2097,22 @@ def cmd_ratify_count(a):
         raise SystemExit(f"ratify-count: only {n} decider(s) ratified ({present}) -- fewer than 4 is no committee; halt and declare")
     thr = math.ceil(n / 2)
     LV1 = lanes_v1_on(); LV1_MODE = _run_yaml_param("lanes_v1_threshold", "proportional"); _LM = _lanes_mod() if LV1 else None
+    # R44 (PM 2026-11-04): a name with a PENDING M&A TARGET status can never be ADVANCE (or WATCH): it trades on the deal spread, not momentum.
+    # Decided here, in code, from the export's ma_status, not by a voice. No export / no ma_status in it = NOT applied, and said loudly.
+    exp_path = getattr(a, "export", None) or "aqe_daily_export.json"
+    ma_rows, ma_applied, ma_why = {}, False, None
+    if os.path.exists(exp_path):
+        try:
+            _ex = json.load(open(exp_path, encoding="utf-8"))
+            ma_rows = {r["ticker"]: r for r in (_ex.get("daily_list") or []) + (_ex.get("held_positions") or []) if r.get("ticker")}
+            ma_applied = any("ma_status" in r for r in ma_rows.values())
+            ma_why = None if ma_applied else "the export carries no ma_status field (older export)"
+        except Exception as _e:  # noqa: BLE001
+            ma_why = f"export unreadable: {_e.__class__.__name__}"
+    else:
+        ma_why = f"no export at {exp_path}"
+    if not ma_applied:
+        print(f"WARNING ratify-count: M&A exclusion (R44) NOT applied -- {ma_why}. A pending-takeover name could be ADVANCE.")
     board = load(a.board, needs=["names"]) if a.board and os.path.exists(a.board) else None
     bnames = {x["ticker"]: x for x in (board or {}).get("names", [])}
     out, record = [], []
@@ -2115,6 +2131,10 @@ def cmd_ratify_count(a):
             status = lane_info["status"]
         verdict = ("PASS" if status == "DROPPED"
                    else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
+        _ma = ma_rows.get(t) or {}
+        deal_pinned = ma_applied and _ma.get("ma_status") == "PENDING_TARGET"
+        if deal_pinned:
+            status, verdict = "DEAL_PINNED", "PASS"
         conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
         out.append({"ticker": t, "verdict": verdict, "status": status, "slate_verdict": x["verdict"],
                     "ordering_score": conviction, "conviction": conviction,
@@ -2132,7 +2152,9 @@ def cmd_ratify_count(a):
                     "trigger": x.get("trigger"),
                     "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
                     "dissent": x.get("dissent") or [],
-                    "gaps": [f"no ratification from {v}" for v in missing]})
+                    "gaps": [f"no ratification from {v}" for v in missing],
+                    **({"deal_pinned": {"rule": "R44", "ma_status": _ma.get("ma_status"), "ma_note": _ma.get("ma_note"), "ma_evidence": _ma.get("ma_evidence"),
+                                        "excluded_from": x["verdict"], "objections_if_counted": n_obj}} if deal_pinned else {})})
     for t in ds:
         if t in answers:
             continue
@@ -3508,6 +3530,7 @@ if __name__ == "__main__":
     s.add_argument("--messages", default=None, help="forms/floor (for the record)"); s.add_argument("--messages2", default=None, help="forms/floor2 (hold round, for the record)")
     s.add_argument("--cross", default=None, help="forms/cross (R38 tier 1, for the record)"); s.add_argument("--tier2", default=None, help="forms/tier2 (R38 tier 2, for the record)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
+    s.add_argument("--export", default="aqe_daily_export.json", help="R44: the AQE export; a name with ma_status PENDING_TARGET is excluded from ADVANCE")
     s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
     s = sub.add_parser("committee-position", help="R42: the body's conviction (median of the deciders' 1-5, ties to the lower), the ONE committee rationale and the minority notes -> committee_position.json")
     s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ratifications", default="forms/ratify")

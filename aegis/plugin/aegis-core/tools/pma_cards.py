@@ -439,8 +439,8 @@ def _validate_text(T, cons, legacy=False):
     gaps = [k for k in REQUIRED_TOP if k not in T]
     adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"]
     hol = [c["ticker"] for c in cons if c["verdict"] == "HOLD-FOR-CONDITIONS"]
-    pas = [c["ticker"] for c in cons if c["verdict"] == "PASS"]
-    voted = set(adv + hol + pas)
+    pas = [c["ticker"] for c in cons if c["verdict"] == "PASS" and c.get("status") != "DEAL_PINNED"]   # R44: deal-pinned names print from the export, no words file entry needed
+    voted = set(adv + hol + pas + [c["ticker"] for c in cons if c.get("status") == "DEAL_PINNED"])
     for t in adv:
         c = (T.get("cards") or {}).get(t) or {}
         miss = [k for k in ("case", "readiness", "readiness_tone") if not c.get(k)]
@@ -618,6 +618,26 @@ def _ext_bracket_html(eb):
             f'Targets if the stock runs past its nearby resistance: {E(_num(t1.get("price")))} (1.272 of its last leg) and {E(_num(t2.get("price")))} (1.618), '
             f'with the stop at {E(_num(eb.get("stop")))}, {E(_num(t2.get("r")))}R to the second target. '
             f'A second, labelled bracket that ignores nearby resistance, so a far target makes the reward easy to show; it {gates} the three bracket checks.</dd></div>')
+
+
+def _deal_pinned_section(pinned, rows):
+    """R44 (PM 2026-11-04): names with a pending takeover (ma_status PENDING_TARGET) are excluded from ADVANCE by code and listed here,
+    in their own small section, with the M&A line. Never a buy card. Empty list -> no section."""
+    if not pinned:
+        return ""
+    body = []
+    for c in sorted(pinned, key=lambda c: c["ticker"]):
+        r = rows.get(c["ticker"]) or {}
+        dp = c.get("deal_pinned") or {}
+        note = dp.get("ma_note") or r.get("ma_note") or "pending acquisition (no detail served)"
+        was = {"ADVANCE": "ADVANCE", "WATCH": "WATCH"}.get(c.get("slate_verdict"), "the slate")
+        body.append(f'<tr><td><b>{E(c["ticker"])}</b>{_ma_pill(r)}</td><td>{E(str(r.get("gics_sector_name") or "—"))}</td>'
+                    f'<td class="num">{E(_num(r.get("entry")))}</td><td>{E(str(note))}</td><td>The committee had it as {E(was)}; excluded by rule.</td></tr>')
+    return ('<section class="card"><div class="eyebrow">Deal-pinned, not a momentum pick · off the buy list by rule (R44)</div>'
+            '<p class="cond">A stock with a pending takeover trades on the deal spread, not on momentum, so flow, energy and structure mean little. '
+            'These names are never a buy card and no buy trigger is armed for them; the line below is what AQE found.</p>'
+            '<div class="tbl"><table><thead><tr><th>Ticker</th><th>Sector</th><th>Last close</th><th>The deal</th><th>Committee</th></tr></thead><tbody>'
+            + "".join(body) + '</tbody></table></div></section>')
 
 
 def _ma_pill(row):
@@ -1333,7 +1353,7 @@ def cmd_render(a):
          f"<style>{CSS}</style></head><body><div class=\"wrap\">"]
     o.append(f'<div class="head"><div><div class="eyebrow">{E(T["session_label"])}</div><h1>Committee Cards</h1></div><div>'
              f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
-             f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
+             f'<span class="pill p-n">{len([c for c in by["PASS"] if c.get("status") != "DEAL_PINNED"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
              + (f'<span class="pill p-warn">{n_no_ladder} of {len(adv)} ADVANCE: reward does not justify the risk at this entry</span>' if n_no_ladder else "") + '</div></div>')
     o.append(_freshness_html(V, _MARKER, _REFRESHED))
     bl = T["bottom_line"]
@@ -1399,8 +1419,9 @@ def cmd_render(a):
                  f'{_ma_line(r)}<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'
-             + "".join(f'<tr><td><b>{c["ticker"]}</b>{_ma_pill(rows.get(c["ticker"]))}</td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted(by["PASS"], key=lambda c: c["ticker"]))
+             + "".join(f'<tr><td><b>{c["ticker"]}</b>{_ma_pill(rows.get(c["ticker"]))}</td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted([c for c in by["PASS"] if c.get("status") != "DEAL_PINNED"], key=lambda c: c["ticker"]))
              + "</tbody></table></div></section>")
+    o.append(_deal_pinned_section([c for c in by["PASS"] if c.get("status") == "DEAL_PINNED"], rows))
     # R26 (PM 2026-10-23): "our objective is to NOT miss strong momentum picks". Code-rendered from
     # phase4.json, never from words: the strongest Longlist/Elder names no voice nominated, and the R25
     # reserved reclaim seats. Flagged, not voted -- nothing here is a committee call.

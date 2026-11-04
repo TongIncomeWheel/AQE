@@ -481,3 +481,22 @@ def test_brief_list_names_fire_on_their_lanes_own_trigger(monkeypatch):
     monkeypatch.setattr(C, "CONDITION_LANE_TRIGGERS", False)
     off = {r["ticker"]: r for r in D.synthesize_rows(export, None)}
     assert "lane" not in off["CONT"] and off["CONT"]["conditions"]["shared"]["buy"][0]["level"] == 100.4
+
+
+def test_the_deal_pinned_alert_card_says_so(monkeypatch):
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    export = {"daily_list": [{"ticker": "ROKU", "rank": 1, "entry": 160.0, "atr_14d": 3.0, "last_pivot_high": {"price": 158.0}, "on_longlist": True,
+                              "ma_status": "PENDING_TARGET", "ma_note": "Fox will acquire Roku (2026-06-15)", "bracket": {"valid": False, "atr_fallback_stop": 157.0}}],
+              "held_positions": [], "lens_ranking": {"ranked": []}}
+    quotes = {"ROKU": {"price": 161.0, "prev_close": 160.0, "day_high": 162.0, "day_low": 159.5, "open": 160.0}, "SPY": {"price": 500.0, "prev_close": 499.0}}
+    s = CC.run_condition_cycle(None, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02", export=export)
+    assert s["fired"].get("ROKU") == ["CHASED"] and sent
+    ticker, row, ev, states, live = sent[0][0][0]
+    assert row["deal_pinned"] is True and ev["buy_met"] is False
+    from src.alerts import emailer as E
+    subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
+    assert "DEAL-PINNED" in subject and "no buy trigger" in plain and "Fox will acquire Roku" in plain

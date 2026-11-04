@@ -68,3 +68,19 @@ def test_the_alert_card_carries_the_flag():
     assert clean["headline"] == card["headline"]
     unk = E._with_ma_flag(dict(card), {"ma_status": "UNKNOWN"})
     assert "not checked" in unk["lines"][-1]
+
+
+def test_a_pending_target_never_arms_a_buy_trigger(monkeypatch):
+    """R44 (PM 2026-11-04): ma_status PENDING_TARGET -> label-only row for committee and AQE-list names alike; HELD is left alone."""
+    from src.alerts import condition_defaults as D
+    export = {"daily_list": [{"ticker": "ROKU", "entry": 160.0, "atr_14d": 3.0, "last_pivot_high": {"price": 158.0}, "ma_status": "PENDING_TARGET",
+                              "ma_note": "Fox will acquire Roku (2026-06-15)"},
+                             {"ticker": "OK", "entry": 50.0, "ma_status": "NONE"}]}
+    buy = {"shared": {"buy": [{"w": "h1_close_above", "level": 161.0}], "confirm": []}, "exits": [], "analysts": []}
+    rows = [{"ticker": "ROKU", "class": "ADVANCE", "conditions": buy}, {"ticker": "OK", "class": "ADVANCE", "conditions": buy},
+            {"ticker": "ROKU", "class": "HELD", "conditions": buy}]
+    out = D.apply_deal_pinned(rows, export)
+    assert out[0]["deal_pinned"] is True and out[0]["conditions"]["shared"]["buy"] == [] and out[0]["conditions"]["shared"]["no_shared_buy"] is True
+    assert out[1] is rows[1]                                   # a clean name is untouched
+    assert out[2] is rows[2]                                   # a held position keeps its own cards
+    assert D.apply_deal_pinned(rows, {"daily_list": [{"ticker": "ROKU", "entry": 160.0}]})[0] is rows[0]   # no ma_status in the export: no claim
