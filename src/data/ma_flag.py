@@ -37,13 +37,19 @@ NEWS_LIMIT = 100
 _PENDING = [
     r"\bdefinitive (?:merger |acquisition |purchase )?agreement\b", r"\bmerger agreement\b", r"\bagreement and plan of merger\b",
     r"\bpending (?:merger|acquisition|transaction|takeover|buyout|deal|combination)\b",
-    r"\b(?:will|to|agreed to|agrees to|has agreed to) (?:acquire|buy|be acquired|be bought|be purchased|be taken private)\b",
-    r"\bto be acquired\b", r"\bacquired by\b", r"\btender offer\b", r"\btake-?private\b", r"\bgoing private\b", r"\bbuyout\b",
+    r"\b(?:will|agreed to|agrees to|has agreed to|announces? (?:an? )?(?:agreement|plan)s? to|signs? (?:an? )?(?:agreement|deal) to) (?:acquire|buy|be acquired|be bought|be purchased|be taken private)\b",
+    r"\bto acquire\b(?=\s+[A-Z])",   # a headline "X to Acquire Y"; never the lowercase advice "to buy"
+    r"\b(?:to|will|being) be (?:acquired|bought|purchased|taken private)\b", r"\b(?:to be|will be|being|is being) acquired by\b",
+    r"\btender offer\b", r"\btake-?private\b", r"\bgoing private\b", r"\bbuyout\b",
     r"\bproposed (?:merger|acquisition|combination)\b", r"\bmerger with\b", r"\bper share in cash\b", r"\ball-cash (?:deal|transaction)\b",
     r"\b(?:shareholders|stockholders) approve[sd]? (?:the )?(?:merger|acquisition|deal)\b", r"\bregulatory (?:approval|review)s? (?:of|for) the (?:merger|acquisition|deal)\b",
 ]
 _DONE = re.compile(r"\b(?:completes?|completed|closes?|closed|finali[sz]es?|consummates?) (?:its |the |their )?(?:acquisition|merger|purchase|take-?private|transaction)\b", re.I)
 _PENDING_RE = [re.compile(p, re.I) for p in _PENDING]
+# Not a deal: fund-holding filings ("13,785 Shares in X Acquired by Y Planning LLC", "$TFC Shares Acquired by ...") and advice pieces ("Stocks to Buy").
+_NOISE = re.compile(r"(?:\bshares?\b[^.]{0,80}\b(?:acquired|acquires|bought|purchased|sold)\b|\$[A-Z]{1,5}\b[^.]{0,60}\bacquired by\b|\b(?:stake|position|holdings?)\b[^.]{0,40}\b(?:acquired|raised|boosted|trimmed)\b|\bstocks? to buy\b|\bto buy (?:now|in 20\d\d|for\b|right now)|\brating upgrade\b|\bupgraded to buy\b|\bis it (?:too late|time|finally time) to buy\b)", re.I)
+# R44 excludes a name from ADVANCE, so PENDING_TARGET needs strong deal language, not a loose phrase; otherwise the flag stays PENDING_UNCLEAR.
+_STRICT = re.compile(r"definitive (?:merger |acquisition |purchase )?agreement|merger agreement|agreement and plan of merger|pending (?:merger|acquisition|transaction|takeover|buyout|combination)|tender offer|take-?private|going private|per share in cash|all-cash|proposed (?:merger|acquisition)|merger with|(?:to|will|being) be acquired|(?:to be|will be|being|is being) acquired by|in light of the pending", re.I)
 _SUFFIX = re.compile(r"\b(?:inc|corp|corporation|co|company|ltd|plc|holdings?|group|the|class [a-c]|lp|llc|n\.?v\.?|s\.?a\.?)\b\.?,?", re.I)
 
 
@@ -70,7 +76,7 @@ def _role(text: str, name: str) -> str | None:
     for nm in _name_variants(name):
         n = re.escape(nm)
         target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|merger with|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
-                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|acquired by|to be bought|going private|take-?private|merger with)",
+                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|is being acquired|to be bought|going private|take-?private|merger with)",
                   rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
         acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]
         t = t or any(re.search(p, text, re.I) for p in target)
@@ -92,6 +98,8 @@ def classify(ticker: str, company_name: str | None, items: list[dict], today: da
         title, text = str(it.get("title") or ""), str(it.get("text") or "")
         blob = f"{title}. {text}"
         d = str(it.get("publishedDate") or "")[:10]
+        if _NOISE.search(blob) and not _STRICT.search(blob):
+            continue                                        # a fund-holding filing or an advice piece is not deal news
         if _DONE.search(blob):
             done.append(d)                                  # a completion headline is evidence on its own, even with no pending term
             continue
@@ -112,6 +120,8 @@ def classify(ticker: str, company_name: str | None, items: list[dict], today: da
     own_pending = any(re.search(r"in light of the pending (?:transaction|merger|acquisition)|definitive agreement under which .{0,40} will acquire", h["blob"], re.I) for h in hits)
     if roles.count("TARGET") > roles.count("ACQUIRER") or (own_pending and "ACQUIRER" not in roles):
         status = "PENDING_TARGET"
+        if not any(h["role"] == "TARGET" and _STRICT.search(h["blob"]) for h in hits) and not own_pending:
+            status = "PENDING_UNCLEAR"                     # loose language never deal-pins a name
     elif roles.count("ACQUIRER") > roles.count("TARGET"):
         status = "PENDING_ACQUIRER"
     else:

@@ -132,3 +132,23 @@ def test_a_real_cash_offer_and_stock_merger_on_lci_reads_as_a_target():
               "text": "Patrick reaffirmed its agreement to combine with LCI Industries (NYSE: LCII) in an all-stock merger"}]
     assert M.classify("LCII", "LCI Industries, Inc.", items)["ma_status"] == "PENDING_TARGET"
     assert M.classify("PATK", "Patrick Industries, Inc.", items[1:])["ma_status"].startswith("PENDING")       # flagged; role unclear is fine (flag-only)
+
+
+def test_dry_run_noise_of_4_nov_never_flags_and_loose_language_never_deal_pins():
+    """The 4 Nov dry-run flagged 202 of 261 names (62 PENDING_TARGET): fund-holding filings and 'stocks to buy' advice. None of these is a deal."""
+    from datetime import date
+    noise = [("WM", "Waste Management", "Is It Too Late to Buy Waste Management Inc (WM) After 4.2% Rally?"),
+             ("SF", "Stifel Financial", "199,915 Shares in Stifel Financial Corporation $SF Acquired by Argent Capital Management LLC."),
+             ("TFC", "Truist Financial", "13,413 Shares in Truist Financial Corporation $TFC Acquired by Archer Investment Corp."),
+             ("WEC", "WEC Energy", "$WEC Shares Acquired by International Assets Investment Management LLC."),
+             ("TMO", "Thermo Fisher", "All You Need to Know About Thermo Fisher (TMO) Rating Upgrade to Buy."),
+             ("TEL", "TE Connectivity", "3 Electronics Components Stocks to Buy as Industry Prospects Brighten."),
+             ("VRT", "Vertiv", "Is It Time to Buy the Dip?")]
+    for tk, nm, title in noise:
+        r = M.classify(tk, nm, [{"publishedDate": "2026-10-20", "title": title, "text": "", "url": "u"}], today=date(2026, 11, 4))
+        assert r["ma_status"] == "NONE", (tk, r["ma_status"])
+    # loose language alone ("Merger with" in a results headline of a third party) is at most UNCLEAR, never a target
+    loose = {"publishedDate": "2026-10-20", "title": "Wendy's Surges 14% on Trian-Led $1.4B Take-Private Offer; McDonald's Edges Higher, Yum Brands Stays Put.", "text": "", "url": "u"}
+    assert M.classify("YUM", "Yum Brands", [loose], today=date(2026, 11, 4))["ma_status"] != "PENDING_TARGET"
+    real = {"publishedDate": "2026-11-02", "title": "As Roku's Merger With Fox Clears More Hurdles, Streaming Provider Delivers Strong Q3 Results.", "text": "", "url": "u"}
+    assert M.classify("ROKU", "Roku, Inc.", [real], today=date(2026, 11, 4))["ma_status"] == "PENDING_TARGET"
