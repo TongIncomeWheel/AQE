@@ -1160,6 +1160,14 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
         now = (f" Spot is {spot:.2f}." if spot is not None else "")
         return (f"{cleared}, then fell back under{tail}.{now} "
                 f"Still watched: it re-qualifies on the next hourly close{back}.")
+    if primary == "CHASED" and row.get("deal_pinned"):
+        return ("Pending takeover: this stock trades on the deal spread, not on momentum. Off the buy list by rule; "
+                "no buy trigger is armed for it. The line below is the deal AQE found.")
+    if primary == "CHASED" and row.get("watch_only"):
+        lvl = _lvl(shared.get("chase") or {})
+        where = f" (its last pivot, {lvl:.2f})" if lvl is not None else ""
+        return (f"On the AQE list, already through its entry line{where}: there is no line above the close to buy a break of. "
+                "Watch only; there is no buy trigger for this name.")
     if primary == "CHASED":
         lvl = _lvl(shared.get("chase") or {})
         where = f" {lvl:.2f}" if lvl is not None else ""
@@ -1177,6 +1185,11 @@ def _card_summary(primary: str, row: dict, eval_result: dict,
 
 def _state_label(primary: str, row: dict, eval_result: dict, live: dict) -> tuple[str, str]:
     label, color = _CONDITION_STATE_LABEL.get(primary, (primary, "#777"))
+    if primary == "CHASED" and row.get("deal_pinned"):
+        return ("🔴 DEAL-PINNED — pending acquisition, no buy trigger", "#b3261e")
+    if primary == "CHASED" and row.get("watch_only"):
+        # PM 2026-11-04: no stretch claim until the continuation lane drives the label; say only what is true.
+        return ("⚪ AQE LIST — through its entry line, no buy trigger", "#888888")
     spot, entry = live.get("price"), _effective_entry(row)
     if primary == "FAILED_PUSH" and spot is not None and entry is not None and spot >= entry:
         return ("🟠 CONFIRMATION LOST — price still above the line", "#d9a441")
@@ -1408,6 +1421,8 @@ _CLASS_LABEL = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD FOR CONDITION
 
 
 def _who(row: dict) -> str:
+    if row.get("deal_pinned"):
+        return "Deal-pinned (pending takeover), no buy trigger"
     if row.get("aqe_list"):
         return "AQE list, not a committee pick"
     if row.get("aqe_default"):
@@ -1632,6 +1647,10 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
     if primary == "EXIT_LINE_HELD":
         ex = eval_result.get("exit_hit") or eval_result.get("exit_warn") or {}
         lines.append(ex.get("plain") or "held position through its exit line")
+    elif primary == "CHASED" and row.get("deal_pinned"):
+        lines.append("Deal-pinned: no buy trigger is armed for this name")
+    elif primary == "CHASED" and row.get("watch_only"):
+        lines.append("Through its entry line; AQE list name, no buy trigger")
     elif primary == "CHASED":
         from .condition_evaluator import entry_level as _lvl
         cl = _lvl(((row.get("conditions") or {}).get("shared") or {}).get("chase") or {})
@@ -1651,8 +1670,33 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
     """Dispatch on config.CONDITION_CARD_STYLE ("compact" default / "full")."""
     from . import config as C
     if (C.CONDITION_CARD_STYLE or "compact") == "full":
-        return _build_full_card(ticker, row, eval_result, fired_states, live)
-    return _build_compact_card(ticker, row, eval_result, fired_states, live)
+        card = _build_full_card(ticker, row, eval_result, fired_states, live)
+    else:
+        card = _build_compact_card(ticker, row, eval_result, fired_states, live)
+    return _with_ma_flag(_with_lane(card, row), row)
+
+
+def _with_lane(card: dict, row: dict) -> dict:
+    """PM 2026-11-04: an AQE-list card names the lane whose trigger it is (or says it fell back to the generic line)."""
+    lab = (row or {}).get("lane_label")
+    if lab and not row.get("watch_only"):
+        card["headline"] = f"{card['headline']} · {lab} lane"
+        card["lines"] = [f"{lab} lane: {row.get('lane_note') or 'generic line'}."] + list(card.get("lines") or [])
+    return card
+
+
+def _with_ma_flag(card: dict, row: dict) -> dict:
+    """PM 2026-11-04: a name with a pending merger / acquisition / buyout is flagged on every alert card. The headline carries the
+    flag and the first line says what was found; a name the scan could not check says so instead of reading as clean."""
+    st = str((row or {}).get("ma_status") or "")
+    if st.startswith("PENDING"):
+        role = {"PENDING_TARGET": "being acquired", "PENDING_ACQUIRER": "the buyer"}.get(st, "pending deal")
+        card["headline"] = f"{card['headline']} · 🔴 M&A PENDING ({role})"
+        note = str(row.get("ma_note") or "").strip()
+        card["lines"] = [f"M&A PENDING: {note}" + (" A deal-pinned stock trades on the deal spread, not momentum." if st == "PENDING_TARGET" else "")] + list(card.get("lines") or [])
+    elif st == "UNKNOWN":
+        card["lines"] = list(card.get("lines") or []) + ["M&A: not checked (scan did not run for this name)"]
+    return card
 
 
 def _build_full_card(ticker: str, row: dict, eval_result: dict,
@@ -1910,7 +1954,7 @@ def build_condition_digest(cards: list[tuple], now_et,
     built = [build_condition_card(*c) for c in full]
     counts: dict[str, int] = {}
     for _t, _r, _e, states, _l in cards:
-        key = _DIGEST_SHORT.get(states[0], states[0])
+        key = "NO TRIGGER" if (states[0] == "CHASED" and _r.get("watch_only")) else _DIGEST_SHORT.get(states[0], states[0])
         counts[key] = counts.get(key, 0) + 1
     # Held-position events ride the SAME mail, after the condition cards.
     built += [build_held_card(ev) for ev in held_events]

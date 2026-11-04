@@ -196,7 +196,7 @@ p{margin:0}
 .gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 18px;margin-top:8px}.gauge{font-size:.85rem}.gh{display:flex;justify-content:space-between}.gh b{font-family:var(--f-mono)}.bar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;margin:4px 0}.bar span{display:block;height:100%;background:var(--accent)}.gl{display:flex;justify-content:space-between;color:var(--mute);font-size:.78rem}.gn{color:var(--mute);font-size:.72rem}
 .light{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}.why{margin:6px 0 10px}
 .pill{display:inline-block;font-family:var(--f-mono);font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.03em;white-space:nowrap;margin-left:6px;max-width:100%;overflow-wrap:anywhere}@media (max-width:640px){.pill{white-space:normal;border-radius:10px}}
-.p-up,.p-ok{background:var(--up-soft);color:var(--up)}.p-down,.p-bad{background:var(--down-soft);color:var(--down)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-n{background:var(--accent-soft);color:var(--accent)}
+.p-up,.p-ok{background:var(--up-soft);color:var(--up)}.p-down,.p-bad{background:var(--down-soft);color:var(--down)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-n{background:var(--accent-soft);color:var(--accent)}.p-ma{background:#b3261e;color:#fff}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .bottom{border:2px solid var(--accent)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -439,8 +439,8 @@ def _validate_text(T, cons, legacy=False):
     gaps = [k for k in REQUIRED_TOP if k not in T]
     adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"]
     hol = [c["ticker"] for c in cons if c["verdict"] == "HOLD-FOR-CONDITIONS"]
-    pas = [c["ticker"] for c in cons if c["verdict"] == "PASS"]
-    voted = set(adv + hol + pas)
+    pas = [c["ticker"] for c in cons if c["verdict"] == "PASS" and c.get("status") != "DEAL_PINNED"]   # R44: deal-pinned names print from the export, no words file entry needed
+    voted = set(adv + hol + pas + [c["ticker"] for c in cons if c.get("status") == "DEAL_PINNED"])
     for t in adv:
         c = (T.get("cards") or {}).get(t) or {}
         miss = [k for k in ("case", "readiness", "readiness_tone") if not c.get(k)]
@@ -571,6 +571,116 @@ def _void_cell(mk):
             f'{E(verb)}</details></dd></div>')
 
 
+GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
+
+
+def _theme_basket_table(D):
+    """PM 2026-11-04 ('essential, thin is fine, baskets are a proxy'): AQE's curated theme baskets with their grade, week and month
+    return, rotation and strongest members. Built from the export alone (thematic_baskets + each daily_list row's rs_spy_20d)."""
+    tb = (D or {}).get("thematic_baskets") or {}
+    head = ('<section class="card"><div class="eyebrow">7b · Theme baskets · grade, week, month, rotation, strongest members · '
+            'AQE\'s own 35 hand-picked baskets, a proxy for themes, not the whole market</div>')
+    if not isinstance(tb, dict) or not tb:
+        return head + '<p class="cond">The export carries no theme baskets &mdash; declared gap, nothing invented.</p></section>'
+    rows_by = {r.get("ticker"): r for r in (D.get("daily_list") or []) if isinstance(r, dict)}
+    def key(kv):
+        b = kv[1]
+        return (GRADE_ORDER.get(str(b.get("grade")), 9), -(b.get("roc20") if isinstance(b.get("roc20"), (int, float)) else -999))
+    body = []
+    for name, b in sorted(tb.items(), key=key):
+        mem = [rows_by[t] for t in (b.get("constituents_used") or []) if t in rows_by and isinstance(rows_by[t].get("rs_spy_20d"), (int, float))]
+        mem = sorted(mem, key=lambda r: -r["rs_spy_20d"])[:3]
+        strongest = ", ".join(f'{E(r["ticker"])} ({r["rs_spy_20d"]:+.0f}%)' for r in mem) or "&mdash; (none on today's list)"
+        rot = " · ".join(x for x in (str(b.get("rrg_quadrant") or "").title(), str(b.get("rrg_direction") or "").lower()) if x) or "&mdash;"
+        g = str(b.get("grade") or "—")
+        pill = {"DEPLOY": "p-up", "HOLD": "p-n", "TURNING": "p-warn", "WATCH": "p-n", "AVOID": "p-down"}.get(g, "p-n")
+        body.append(f'<tr><td>{E(name.replace("_", " "))}</td><td><span class="pill {pill}">{E(g.title())}</span></td>'
+                    f'<td class="num {"pos" if (b.get("roc5") or 0) >= 0 else "neg"}">{_num(b.get("roc5"), "{:+.1f}%")}</td>'
+                    f'<td class="num {"pos" if (b.get("roc20") or 0) >= 0 else "neg"}">{_num(b.get("roc20"), "{:+.1f}%")}</td>'
+                    f'<td>{E(rot)}</td><td>{strongest}</td></tr>')
+    return (head + '<div class="tbl"><table><thead><tr><th>Basket</th><th>Grade</th><th>1 week</th><th>1 month</th><th>Rotation</th>'
+            '<th>Strongest members (20-day strength vs SPY)</th></tr></thead><tbody>' + "".join(body) + '</tbody></table></div>'
+            '<p class="cond">Grade is AQE&rsquo;s own read of the basket (Deploy = leading, Avoid = lagging and falling). Members shown are those on '
+            'today&rsquo;s scored list. A name in no basket simply is not here; baskets are a proxy for themes, not a map of the market.</p></section>')
+
+
+def _ext_bracket_html(eb):
+    """PM 2026-11-04: the labelled extension bracket beside the structural bracket on each ADVANCE card, one plain line. Empty when the
+    export has none (older export) or it could not be built (then it says why in one short line)."""
+    if not isinstance(eb, dict):
+        return ""
+    if not eb.get("available"):
+        return f'<div class="full"><dt>If it runs into open air</dt><dd>Not available: {E(str(eb.get("reason") or "no reason given"))}.</dd></div>'
+    t = {x.get("tp"): x for x in eb.get("targets") or []}
+    t1, t2 = t.get("TP1") or {}, t.get("TP2") or {}
+    gates = "clears" if eb.get("passed") else "does not clear"
+    return ('<div class="full"><dt>If it runs into open air</dt><dd>'
+            f'Targets if the stock runs past its nearby resistance: {E(_num(t1.get("price")))} (1.272 of its last leg) and {E(_num(t2.get("price")))} (1.618), '
+            f'with the stop at {E(_num(eb.get("stop")))}, {E(_num(t2.get("r")))}R to the second target. '
+            f'A second, labelled bracket that ignores nearby resistance, so a far target makes the reward easy to show; it {gates} the three bracket checks.</dd></div>')
+
+
+def _deal_pinned_section(pinned, rows):
+    """R44 (PM 2026-11-04): names with a pending takeover (ma_status PENDING_TARGET) are excluded from ADVANCE by code and listed here,
+    in their own small section, with the M&A line. Never a buy card. Empty list -> no section."""
+    if not pinned:
+        return ""
+    body = []
+    for c in sorted(pinned, key=lambda c: c["ticker"]):
+        r = rows.get(c["ticker"]) or {}
+        dp = c.get("deal_pinned") or {}
+        note = dp.get("ma_note") or r.get("ma_note") or "pending acquisition (no detail served)"
+        was = {"ADVANCE": "ADVANCE", "WATCH": "WATCH"}.get(c.get("slate_verdict"), "the slate")
+        body.append(f'<tr><td><b>{E(c["ticker"])}</b>{_ma_pill(r)}</td><td>{E(str(r.get("gics_sector_name") or "—"))}</td>'
+                    f'<td class="num">{E(_num(r.get("entry")))}</td><td>{E(str(note))}</td><td>The committee had it as {E(was)}; excluded by rule.</td></tr>')
+    return ('<section class="card"><div class="eyebrow">Deal-pinned, not a momentum pick · off the buy list by rule (R44)</div>'
+            '<p class="cond">A stock with a pending takeover trades on the deal spread, not on momentum, so flow, energy and structure mean little. '
+            'These names are never a buy card and no buy trigger is armed for them; the line below is what AQE found.</p>'
+            '<div class="tbl"><table><thead><tr><th>Ticker</th><th>Sector</th><th>Last close</th><th>The deal</th><th>Committee</th></tr></thead><tbody>'
+            + "".join(body) + '</tbody></table></div></section>')
+
+
+def _ma_pill(row):
+    """PM 2026-11-04: a name with a pending merger / acquisition / buyout carries a red pill wherever it is picked. UNKNOWN (the scan
+    failed for this ticker) is NOT shown as a clean name: it gets a grey 'M&A not checked' pill."""
+    st = str((row or {}).get("ma_status") or "")
+    if st == "PENDING_TARGET":
+        txt = "M&A PENDING · being acquired"
+    elif st == "PENDING_ACQUIRER":
+        txt = "M&A PENDING · the buyer"
+    elif st == "PENDING_UNCLEAR":
+        txt = "M&A PENDING"
+    elif st == "UNKNOWN":
+        return '<span class="pill p-n" title="The M&amp;A scan did not run for this name">M&amp;A not checked</span>'
+    else:
+        return ""
+    return f'<span class="pill p-ma" title="{E(str(row.get("ma_note") or ""))}">{E(txt)}</span>'
+
+
+def _ma_line(row):
+    """The sentence under a pending-deal name: what was found, and why it matters. Empty for a clean name."""
+    st = str((row or {}).get("ma_status") or "")
+    if not st.startswith("PENDING"):
+        return ""
+    why = {"PENDING_TARGET": " A stock with a pending takeover trades on the deal spread, not on momentum, so flow, energy and structure mean little here.",
+           "PENDING_ACQUIRER": " This company is the buyer; the deal can move its stock, but it is not pinned to a price.",
+           "PENDING_UNCLEAR": " The role in the deal could not be read from the news; check the headline."}.get(st, "")
+    return f'<p class="flag"><b>M&amp;A PENDING.</b> {E(str(row.get("ma_note") or ""))}{E(why)}</p>'
+
+
+def _ma_banner(D):
+    """A failed or partial M&A scan is loud on the page: a clean-looking name might simply be unchecked."""
+    sc = (D or {}).get("ma_scan")
+    if not isinstance(sc, dict):
+        return ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no M&amp;A scan result, so no name can be called '
+                'free of a pending deal.</p>')
+    if sc.get("scan_status") != "ok":
+        return (f'<p class="flag"><b>M&amp;A scan {E(str(sc.get("scan_status")))}.</b> {E(str(sc.get("n_failed")))} of {E(str(sc.get("n_scanned")))} '
+                f'names could not be checked for a pending merger or buyout{(": " + E(str(sc.get("reason")))) if sc.get("reason") else ""}. '
+                'Names marked &ldquo;M&amp;A not checked&rdquo; are unchecked, not clean.</p>')
+    return ""
+
+
 def _wind_gauges(v):
     """PM 2026-10-23 (Valen's 'Market as of now' panel): simple bars for the direction of the wind. Built ONLY
     from the breadth numbers AQE computes on its full curated panel (aqe_valen_dashboard.json breadth[]). The
@@ -683,7 +793,7 @@ def _top20_panel(D, cons):
             verdict_cell = f'<span class="pill {vc}">{E(v)}</span>' + (f' <span class="cond">{E(c["status"])}</span>' if c.get("status") else "")
         else:
             verdict_cell, who = '<span class="cond">not in the room</span>', "&mdash;"
-        body.append(f'<tr><td class="num">{E(str(r["rank"]))}</td><td><b>{E(r["ticker"])}</b></td><td>{E(str(r.get("gics_sector_name") or "—"))}</td>'
+        body.append(f'<tr><td class="num">{E(str(r["rank"]))}</td><td><b>{E(r["ticker"])}</b>{_ma_pill(r)}</td><td>{E(str(r.get("gics_sector_name") or "—"))}</td>'
                     f'<td><span class="pill {pill}" title="{E(words)}">{E(label)}</span></td><td>{verdict_cell}</td><td>{who}</td></tr>')
     note = "" if len(rows) == TOP_N else f' Only {len(rows)} ranked names are in today\'s export.'
     return (head + '<div class="tbl"><table><thead><tr><th>Rank</th><th>Ticker</th><th>Sector</th><th>Sector state</th><th>Committee verdict</th><th>Voted for it (blind vote)</th></tr></thead><tbody>'
@@ -939,6 +1049,7 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
              + '</tbody></table></div><p class="cond"><b>How the order is set.</b> Each theme is ranked by its <b>thrust</b>: this week\'s return minus this month\'s return. '
                'A theme down 8% this week but 32% over the month has a big thrust, because it is falling much less sharply than before, not because it is rising. '
                '<b>State</b> says it plainly: Rising (up on both), Turning up (up this week, still down on the month), Still falling but slower, or Falling faster.</p></section>')
+    o.append(_theme_basket_table(D_))
     o.append(_group_turns(D_, verdicts or {}, say))
     hs = collections.Counter()
     for r in rows.values():
@@ -1151,7 +1262,8 @@ def _detect_lens_panel(D, cons):
         if not c:
             return "&mdash;"
         return E(c.get("verdict", "")) + (f" &middot; {E(c['status'])}" if c.get("status") else "") + " (in the room)"
-    rows = "".join(f'<tr><td class="num">{E(str(x.get("rank", i)))}</td><td><b>{E(str(x.get("ticker")))}</b></td>'
+    _byt = {r.get("ticker"): r for r in (D.get("daily_list") or []) if isinstance(r, dict)}
+    rows = "".join(f'<tr><td class="num">{E(str(x.get("rank", i)))}</td><td><b>{E(str(x.get("ticker")))}</b>{_ma_pill(_byt.get(x.get("ticker")))}</td>'
                    f'<td class="num">{E(str(x.get("positive", "")))}</td><td class="num">{E(str(x.get("warnings", "")))}</td><td>{marker(x.get("ticker"))}</td></tr>'
                    for i, x in enumerate(ranked, 1))
     return (head + '<div class="tbl"><table><thead><tr><th>#</th><th>Ticker</th><th>Strong lenses</th><th>Warnings</th><th>Committee</th></tr></thead><tbody>'
@@ -1241,7 +1353,7 @@ def cmd_render(a):
          f"<style>{CSS}</style></head><body><div class=\"wrap\">"]
     o.append(f'<div class="head"><div><div class="eyebrow">{E(T["session_label"])}</div><h1>Committee Cards</h1></div><div>'
              f'<span class="pill p-up">{len(by["ADVANCE"])} ADVANCE</span><span class="pill p-warn">{len(by["HOLD-FOR-CONDITIONS"])} HOLD &middot; WATCH</span>'
-             f'<span class="pill p-n">{len(by["PASS"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
+             f'<span class="pill p-n">{len([c for c in by["PASS"] if c.get("status") != "DEAL_PINNED"])} PASS</span>{_status_pills(cons)}<span class="pill p-down">{E(T["stance_pill"])}</span>'
              + (f'<span class="pill p-warn">{n_no_ladder} of {len(adv)} ADVANCE: reward does not justify the risk at this entry</span>' if n_no_ladder else "") + '</div></div>')
     o.append(_freshness_html(V, _MARKER, _REFRESHED))
     bl = T["bottom_line"]
@@ -1257,7 +1369,7 @@ def cmd_render(a):
     o.append("</div>")
     o.append('<section class="card"><div class="eyebrow">Where money is moving</div><div class="tbl"><table><thead><tr><th>Group</th><th>Read</th><th>What it means</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{E(x["group"])}</b></td><td>{E(x["read"])}</td><td>{E(x["meaning"])}</td></tr>' for x in T["money"]) + "</tbody></table></div></section>")
-    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>')
+    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D))
     o.append('<section class="card"><div class="eyebrow">What it means for your book</div><div class="tbl"><table><thead><tr><th>Name</th><th>Position</th><th>Broker stop</th><th>Committee read</th><th>Why</th></tr></thead><tbody>')
     for b in T["book"]:
         t = b["ticker"]; h = held.get(t) or {}; s = BS.get(t) or {}
@@ -1289,12 +1401,12 @@ def cmd_render(a):
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
         void = _void_cell(SL.get("market_kill")) if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
-                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
+                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}{_ma_pill(r)}</div>'
                  f'<span class="pill {("p-warn" if not bracket["targets"] else TONE.get(w["readiness_tone"], "p-n"))}">{E("Reward does not justify the risk at this entry" if not bracket["targets"] else w["readiness"])}</span></header>'
-                 f'<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
+                 f'{_ma_line(r)}<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
-                 f'{void}{_bracket_html(bracket)}'
+                 f'{void}{_bracket_html(bracket)}{_ext_bracket_html(r.get("extension_bracket"))}'
                  f'<div class="full"><dt>Valen</dt><dd>{valen}</dd></div>'
                  f'<div class="full"><dt>Sector</dt><dd>{E(w.get("sector_note") or str(r.get("gics_sector_name") or ""))}</dd></div></dl></article>')
     o.append("</div>")
@@ -1303,12 +1415,13 @@ def cmd_render(a):
     o.append('<section class="card"><div class="eyebrow">HOLD for conditions · nothing to do until the condition prints · AQE rank shown</div><div class="holds">')
     for c in sorted(by["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"]):
         t = c["ticker"]; card = CD["hold"].get(t) or {}; r = rows.get(t) or {}
-        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span><span class="num">#{r.get("rank", "—")}</span></div>'
-                 f'<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
+        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{_ma_pill(r)}<span class="num">#{r.get("rank", "—")}</span></div>'
+                 f'{_ma_line(r)}<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'
-             + "".join(f'<tr><td><b>{c["ticker"]}</b></td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted(by["PASS"], key=lambda c: c["ticker"]))
+             + "".join(f'<tr><td><b>{c["ticker"]}</b>{_ma_pill(rows.get(c["ticker"]))}</td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted([c for c in by["PASS"] if c.get("status") != "DEAL_PINNED"], key=lambda c: c["ticker"]))
              + "</tbody></table></div></section>")
+    o.append(_deal_pinned_section([c for c in by["PASS"] if c.get("status") == "DEAL_PINNED"], rows))
     # R26 (PM 2026-10-23): "our objective is to NOT miss strong momentum picks". Code-rendered from
     # phase4.json, never from words: the strongest Longlist/Elder names no voice nominated, and the R25
     # reserved reclaim seats. Flagged, not voted -- nothing here is a committee call.

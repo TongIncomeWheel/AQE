@@ -167,6 +167,9 @@ CONDITION_UNR_ENABLED = _b("CONDITION_UNR_ENABLED", False)
 # or the older "longlist" / "elder" (whole lists).
 CONDITION_DEFAULT_SOURCES = os.environ.get("CONDITION_DEFAULT_SOURCES", "brief_lists")
 # Sizes of the brief's three lists (aegis/output/pma/test_cards/v3/lists_vs_committee.py N_ELDER / N_AQE / N_LENS).
+# Lane triggers (PM 2026-11-04): a brief-list name fires on ITS lane's one trigger (continuation pivot / base pivot / 20-day reclaim)
+# instead of the generic line. Falls back to the generic line, labelled, when the lane's line is not usable. Env override allowed.
+CONDITION_LANE_TRIGGERS = _b("CONDITION_LANE_TRIGGERS", True)
 BRIEF_LIST_ELDER_N = int(_f("BRIEF_LIST_ELDER_N", 15))
 BRIEF_LIST_AQE_N = int(_f("BRIEF_LIST_AQE_N", 20))
 BRIEF_LIST_LENS_N = int(_f("BRIEF_LIST_LENS_N", 15))

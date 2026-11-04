@@ -3699,10 +3699,163 @@ def test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check(td):
     check("a step over its own budget is named", any("STEP OVER BUDGET: VOTE" in x for x in f), str(f)[:300])
 
 
+def test_lanes_v1_assigns_by_code_and_leads_decide(td):
+    """R43 (PROPOSED, behind lanes_v1: off): lane by code, lead seats decide, advisor objections are shown and never counted."""
+    sys.path.insert(0, TOOLS)
+    import lanes_v1 as L
+    base = {"entry": 100.0, "hi_20d": 101.0, "ma_20": 95.0, "ma_20_slope_5d_pct": 1.0, "ma_50": 90.0}
+    assert L.assign_lane(dict(base, pct_from_pivot=12.0, continuation_pivot=99.0, continuation_state="BUY_ZONE"))[0] == L.CONTINUATION
+    assert L.assign_lane(dict(base, pct_from_pivot=12.0))[0] == L.UNLANED                      # extended, no pause high: every seat counts
+    assert L.assign_lane(dict(base, pct_from_pivot=2.0))[0] == L.BREAKOUT
+    assert L.assign_lane(dict(base, pct_from_pivot=-1.0, nr7_flag=True))[0] == L.BREAKOUT       # coiling under the pivot
+    assert L.assign_lane(dict(base, pct_from_pivot=-6.0, hi_20d=120.0))[0] == L.PULLBACK        # holds a rising 20-day, not coiling
+    assert L.assign_lane(dict(base, pct_from_pivot=-6.0, hi_20d=120.0, ma_20=105.0, ma_50=104.0, unr_status="NO"))[0] == L.UNLANED
+    # lead sets are inside the seven deciders; the continuation leads are the PM's signed set
+    assert all(set(v) <= set(L.DECIDERS) for v in L.LEADS.values())
+    assert set(L.LEADS[L.CONTINUATION]) == {"livermore", "seow", "elder-lens", "raschke"} and L.PM_SIGNED[L.CONTINUATION] is True
+    assert set(L.advisors(L.CONTINUATION)) == {"oneil", "minervini", "wyckoff"}
+    # advisors object: shown, never counted
+    r = L.lane_status(L.CONTINUATION, ["oneil", "minervini", "wyckoff"], 7, list(L.DECIDERS), 4)
+    assert r["status"] == "AGREED" and r["counted_objectors"] == [] and r["advisor_objectors"] == ["minervini", "oneil", "wyckoff"]
+    # leads object: proportional drops at 2 of 4, absolute needs the room's 4
+    r = L.lane_status(L.CONTINUATION, ["livermore", "seow"], 7, list(L.DECIDERS), 4)
+    assert r["status"] == "DROPPED" and r["threshold"] == 2
+    assert L.lane_status(L.CONTINUATION, ["livermore", "seow"], 7, list(L.DECIDERS), 4, "absolute")["status"] == "CONTESTED"
+    # UNLANED is exactly today's rule
+    assert L.lane_status(L.UNLANED, ["oneil", "minervini", "wyckoff", "seow"], 7, list(L.DECIDERS), 4)["status"] == "DROPPED"
+    # the switch ships OFF and the ruling is recorded as proposed
+    ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
+    rl = open(os.path.join(HERE, "..", "RULINGS.yaml"), encoding="utf-8").read()
+    check("lanes_v1 ships off", "lanes_v1: off" in ry and "id: R43" in rl and "status: approved" in rl.split("id: R43")[1])
+
+
+def test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged(td):
+    """R43 (PM-approved 2026-11-04, switch lanes_v1): ON -> lead seats' objections decide, advisors' are printed with counted=false;
+    the threshold is half of the leads (proportional). OFF (default) -> exactly the R34 count. UNLANED -> R34."""
+    d, p4 = _committee_fixture(td, "ratifyv1")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    P = json.load(open(p4))
+    laned = {"GNW": "MOMENTUM_CONTINUATION", "BBY": "MOMENTUM_BREAKOUT", "LNG": "MOMENTUM_CONTINUATION", "MFG": "UNLANED"}
+    for r in P["ranked"]:
+        if r["ticker"] in laned: r["lane"] = laned[r["ticker"]]
+    p4v = os.path.join(d, "phase4_v1.json"); json.dump(P, open(p4v, "w"))
+    slate = os.path.join(d, "slate_v1.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY"), _ticket("LNG"), _ticket("MFG")]}, open(slate, "w"))
+    obj = {"GNW": {"oneil", "minervini", "wyckoff"},                 # all three ADVISORS on a continuation ticket
+           "BBY": {"elder-lens", "seow", "raschke"},                 # all three ADVISORS on a breakout ticket
+           "LNG": {"livermore", "seow"},                             # two of the four continuation LEADS
+           "MFG": {"oneil", "minervini", "wyckoff", "seow"}}         # UNLANED: today's rule, 4 of 7
+    for v in DEC:
+        _ratify(d, "ratifyv1", v, {t: ("OBJECT" if v in obj[t] else "AGREE") for t in obj})
+    def count(on):
+        out = os.path.join(d, f"cons_{on}.json")
+        if on: os.environ["AEGIS_LANES_V1"] = "on"
+        else: os.environ["AEGIS_LANES_V1"] = "off"
+        try:
+            rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyv1"), "--board", board,
+                           "--phase4", p4v, "--date", "2026-11-01", "--out", out, "--record", os.path.join(d, f"rec_{on}.json")])
+        finally:
+            os.environ.pop("AEGIS_LANES_V1", None)
+        check(f"ratify-count lanes_v1={'on' if on else 'off'} exits clean", rc == 0, log[-300:])
+        return {c["ticker"]: c for c in json.load(open(out))} if rc == 0 else {}
+    off = count(False); on = count(True)
+    if not off or not on: return
+    check("OFF: three objections on GNW is CONTESTED, four on MFG DROPPED, two on LNG CONTESTED (R34 as before)",
+          (off["GNW"]["status"], off["MFG"]["status"], off["LNG"]["status"]) == ("CONTESTED", "DROPPED", "CONTESTED") and "lanes_v1" not in off["GNW"], str({k: v["status"] for k, v in off.items()}))
+    check("ON: advisors-only objections leave GNW and BBY AGREED and print them uncounted",
+          on["GNW"]["status"] == "AGREED" and on["BBY"]["status"] == "AGREED"
+          and all(o["counted"] is False for o in on["GNW"]["objections"]) and sorted(on["GNW"]["lanes_v1"]["advisor_objectors"]) == ["minervini", "oneil", "wyckoff"], str(on["GNW"]))
+    check("ON: two of four continuation leads DROP LNG (threshold 2)", on["LNG"]["status"] == "DROPPED" and on["LNG"]["drop_threshold"] == 2 and on["LNG"]["verdict"] == "PASS", str(on["LNG"]))
+    check("ON: an UNLANED ticket is counted exactly as before", on["MFG"]["status"] == "DROPPED" and on["MFG"]["drop_threshold"] == 4 and "lanes_v1" not in on["MFG"] or on["MFG"].get("lanes_v1", {}).get("lane") == "UNLANED")
+
+
+def test_lanes_v1_switch_prompt_and_rank_lane(td):
+    """R43: the switch defaults OFF (door-based label); ON the rank lane is the code-assigned lane and the vote prompt names the leads and each yardstick."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_pipeline as PP
+    importlib.reload(PP)
+    os.environ.pop("AEGIS_LANES_V1", None)
+    check("lanes_v1 is OFF by default and the lane is the door label", PP.lanes_v1_on() is False and PP._lane_for({"pct_from_pivot": 2.0}, ["STRENGTH"])[0] == "MOMENTUM")
+    os.environ["AEGIS_LANES_V1"] = "on"
+    try:
+        check("ON: the lane comes from the AQE row", PP._lane_for({"pct_from_pivot": 12.0, "continuation_pivot": 99.0}, [])[0] == "MOMENTUM_CONTINUATION"
+              and PP._lane_for({"pct_from_pivot": 2.0}, ["STRENGTH"])[0] == "MOMENTUM_BREAKOUT")
+        txt = "\n".join(PP._lanes_mod().prompt_lines())
+        check("ON: the prompt names the leads, the advisors and the continuation yardstick",
+              "MOMENTUM_CONTINUATION: leads livermore, seow, elder-lens, raschke; advisors oneil, minervini, wyckoff" in txt
+              and "CONTINUATION PIVOT" in txt and "WARNING you state, not a veto" in txt, txt[:400])
+    finally:
+        os.environ.pop("AEGIS_LANES_V1", None)
+
+
+def test_cards_theme_basket_table_and_extension_bracket_line(td):
+    """PM 2026-11-04: theme baskets in the sector-strength section (grade, week, month, rotation, strongest members) and the labelled
+    extension bracket on each ADVANCE card; both from the export alone, nothing invented when it is absent."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards as PC
+    importlib.reload(PC)
+    D = {"thematic_baskets": {"Semis": {"grade": "DEPLOY", "roc5": 3.2, "roc20": 9.1, "rrg_quadrant": "LEADING", "rrg_direction": "HOLDING",
+                                         "constituents_used": ["AAA", "BBB", "CCC", "DDD"]},
+                              "Travel_Leisure": {"grade": "AVOID", "roc5": -2.0, "roc20": -6.0, "rrg_quadrant": "LAGGING", "rrg_direction": "EXITING",
+                                                 "constituents_used": ["EEE"]}},
+         "daily_list": [{"ticker": "AAA", "rs_spy_20d": 20.0}, {"ticker": "BBB", "rs_spy_20d": 35.0}, {"ticker": "CCC", "rs_spy_20d": 5.0},
+                        {"ticker": "DDD", "rs_spy_20d": 50.0}]}
+    h = PC._theme_basket_table(D)
+    check("the basket table lists grade, week, month and rotation, best grade first",
+          "Semis" in h and "+3.2%" in h and "+9.1%" in h and "Leading" in h and h.index("Semis") < h.index("Travel Leisure"), h[:300])
+    check("strongest members are the top three by 20-day strength, best first, and a basket with none on today's list says so",
+          h.index("DDD") < h.index("BBB") < h.index("AAA") and "CCC" not in h.split("Semis")[1].split("Travel")[0] and "none on today" in h)
+    check("no baskets in the export is a declared gap, not a blank", "declared gap" in PC._theme_basket_table({}))
+    import re as _re
+    check("the M&A banner carries no raw field name for the plainness gate", not _re.search(r"\b[a-z]+_[a-z_]+\b", _re.sub(r"<[^>]+>", " ", PC._ma_banner({}) + PC._ma_banner({"ma_scan": {"scan_status": "failed", "n_failed": 1, "n_scanned": 1}}))))
+    eb = {"available": True, "passed": True, "stop": 108.0, "targets": [{"tp": "TP1", "price": 118.0, "r": 2.0}, {"tp": "TP2", "price": 126.5, "r": 3.4}]}
+    x = PC._ext_bracket_html(eb)
+    check("the extension line is plain, labelled, and names both targets", "runs into open air" in x and "118" in x and "126.5" in x and "1.272" in x and "1.618" in x and "ignores nearby resistance" in x, x)
+    check("an older export (no extension_bracket) adds nothing; an unavailable one says why",
+          PC._ext_bracket_html(None) == "" and "no continuation window" in PC._ext_bracket_html({"available": False, "reason": "no continuation window"}))
+
+
+def test_ratify_count_excludes_a_pending_takeover_target_from_advance(td):
+    """R44 (PM 2026-11-04): ma_status PENDING_TARGET in the export -> status DEAL_PINNED, verdict PASS, never ADVANCE/WATCH; no ma_status in the
+    export = not applied, said loudly; the Cards print the name in its own section from the export, not as a buy card."""
+    d, p4 = _committee_fixture(td, "ratifyma")
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-01", "--out", board])
+    slate = os.path.join(d, "slate_ma.json")
+    json.dump({"date": "2026-11-01", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    for v in DEC:
+        _ratify(d, "ratifyma", v, {"GNW": "AGREE", "BBY": "AGREE"})
+    exp = os.path.join(d, "export_ma.json")
+    json.dump({"daily_list": [{"ticker": "GNW", "ma_status": "PENDING_TARGET", "ma_note": "Acme will acquire Gnw (2026-06-15)", "gics_sector_name": "Tech", "entry": 10.0},
+                              {"ticker": "BBY", "ma_status": "PENDING_TARGET", "ma_note": "x", "entry": 20.0}]}, open(exp, "w"))
+    out = os.path.join(d, "cons_ma.json")
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyma"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-01", "--export", exp, "--out", out, "--record", os.path.join(d, "rec_ma.json")])
+    check("ratify-count with an export exits clean", rc == 0, log[-300:])
+    if rc != 0: return
+    C = {c["ticker"]: c for c in json.load(open(out))}
+    check("a pending-takeover target slated ADVANCE or WATCH becomes DEAL_PINNED / PASS and carries its M&A line",
+          all((C[t]["status"], C[t]["verdict"]) == ("DEAL_PINNED", "PASS") for t in ("GNW", "BBY")) and C["GNW"]["deal_pinned"]["ma_note"].startswith("Acme will acquire"), str(C["GNW"])[:300])
+    json.dump({"daily_list": [{"ticker": "GNW", "entry": 10.0}]}, open(exp, "w"))                 # an older export with no ma_status
+    rc, log = run([PIPE, "ratify-count", "--slate", slate, "--ratifications", os.path.join(d, "forms", "ratifyma"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-01", "--export", exp, "--out", out, "--record", os.path.join(d, "rec_ma.json")])
+    C2 = {c["ticker"]: c for c in json.load(open(out))}
+    check("no ma_status in the export: the rule is NOT applied and the run says so", rc == 0 and C2["GNW"]["status"] == "AGREED" and "R44) NOT applied" in log, log[-300:])
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards as PC
+    importlib.reload(PC)
+    pinned = [C["GNW"]]
+    h = PC._deal_pinned_section(pinned, {"GNW": {"ticker": "GNW", "ma_status": "PENDING_TARGET", "ma_note": "Acme will acquire Gnw (2026-06-15)", "gics_sector_name": "Tech", "entry": 10.0}})
+    check("the Cards print a Deal-pinned section with the M&A line and no buy card", "Deal-pinned, not a momentum pick" in h and "Acme will acquire" in h and "never a buy card" in h and PC._deal_pinned_section([], {}) == "", h[:200])
+    gaps = PC._validate_text({"cards": {}, "holds": {}, "passes": {}}, [C["GNW"]])
+    check("a deal-pinned name needs no entry in the words file", not any("GNW" in g for g in gaps), str(gaps)[:300])
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

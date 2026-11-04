@@ -55,6 +55,9 @@ parameters:
   tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
   mtf_frames: [W, D, H1]        # R39
   committee_position: on        # R42 SWITCH: `off` = the conductor skips RATIONALE, ADOPT, RATIONALE-FINAL and POSITION for this run, ticks each `degraded` with the note 'R42 switched off', and writes that line at the top of run_notes.md. The Cards then print no committee block (no committee_position.json); verdicts and the conviction-free count are unaffected. No code change needed.
+  cards_renderer: v3            # PM 2026-11-04 (choice B): v3 = pma_cards_v3.py is the daily Cards. SAFETY NET in pma_cards_publish.py: if v3 errors, or the plain-words gate fails on its page / the words file, v2 (pma_cards.py render) publishes instead and the run says CARDS FALLBACK in run_notes.md, cards_renderer.json and the DONE push. Never silent, never a blank page. Set v2 to switch back.
+  lanes_v1_threshold: proportional   # R43 (PM-approved 2026-11-04): DROP at ceil(leads/2) lead objections; `absolute` = the room's own 4, among leads only (measured in docs/LANES_V1_SPEC.md)
+  lanes_v1: off                # R43 SWITCH (PM-approved 2026-11-04, switched OFF): `off` = today's rule (lane is a label, all seven count). `on` = THREE lanes assigned by code (MOMENTUM_BREAKOUT / MOMENTUM_CONTINUATION / PULLBACK), lead seats decide, advisor objections are shown not counted. Inert until the PM signs R43 and the conductor wires ratify-count to tools/lanes_v1.py. Spec: docs/LANES_V1_SPEC.md
   r42_respawns: 1               # R42 cost cap: a seat or Chair form that fails validation is respawned ONCE (= `respawns`); a second failure stops that step at a declared gap (tick `degraded`) - never a third spawn, never all seven seats again
 
 # ---------------------------------------------------------------------------- durability
@@ -557,7 +560,7 @@ steps:
 
   - name: DECIDE
     kind: tool
-    command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --cross forms/cross --tier2 forms/tier2 --messages2 forms/floor2 --phase4 phase4.json --date <date> --out consensus.json --record committee_record.json"
+    command: "pma_pipeline.py ratify-count --slate slate.json --ratifications forms/ratify --ratifications2 forms/ratify2 --qa forms/qa/steenbarger.json --board board.json --cross forms/cross --tier2 forms/tier2 --messages2 forms/floor2 --phase4 phase4.json --date <date> --export aqe_daily_export.json --out consensus.json --record committee_record.json"
     then: "pma_pipeline.py record-verdicts --consensus consensus.json --candidates candidate_set.json --phase4 phase4.json --ledger verdict_ledger.json --date <date>"
     reads: [slate.json, forms/ratify/*.json, forms/ratify2/*.json, forms/qa/steenbarger.json, board.json, forms/cross/*.json, forms/tier2/*.json]
     produces: [consensus.json, committee_record.json, verdict_ledger.json]
@@ -774,10 +777,13 @@ steps:
 
   - name: REPORT
     kind: tool
-    command: "pma_cards.py render --text cards_text.json --position committee_position.json --out pma_cards_<date>.html"
+    command: "pma_cards_publish.py --date <date> --run-dir . --out pma_cards_<date>.html     # runs v3, gates it, falls back to `pma_cards.py render --text cards_text.json --position committee_position.json` LOUDLY (CARDS FALLBACK) on error or gate failure"
+    # v3 needs in the run dir (the publish tool checks and names any that is missing): cards_text.json consensus.json committee_position.json pma_levels.json cards.json
+    # decision.json phase4.json aqe_daily_export.json aqe_valen_dashboard.json aqe_crown_macro.json aqe_last_run.json scorecard.md (+ run_manifest.json); and from the repo checkout
+    # aegis/output/valen_dashboard.json + crown_macro.json (the nightly's local files WITH series; --refresh-dir overrides). tests/test_cards_v3.py, test_cards_publish.
     reads: [cards_text.json, consensus.json, aqe_daily_export.json, cards.json, brackets.json, broker_stops.json, phase4.json, aqe_valen_dashboard.json, aqe_crown_macro.json, scorecard.md]
     produces: [pma_cards_<date>.html]
-    barrier: "pma_cards.py exits 0 -- it REFUSES (exit 2) a words file missing any ADVANCE card, HOLD line or PASS line"
+    barrier: "pma_cards_publish.py exits 0 = a page was written (v3, or v2 after a LOUD fallback); exit 2 = no page (v2 also refused a words file missing any ADVANCE card, HOLD line or PASS line)"
     on_fail: "fix cards_text.json at WRITE, max 2 loops; the markdown brief still lands"
     rulings: [R23]
     must_also: >

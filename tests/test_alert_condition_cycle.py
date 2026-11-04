@@ -409,3 +409,94 @@ def test_the_code_defaults_are_the_brief_lists_with_defaults_on_and_unr_off():
     from src.alerts import config as C
     assert C.CONDITION_DEFAULTS_ENABLED is True and C.CONDITION_UNR_ENABLED is False
     assert C.CONDITION_DEFAULT_SOURCES == "brief_lists" and (C.BRIEF_LIST_ELDER_N, C.BRIEF_LIST_AQE_N, C.BRIEF_LIST_LENS_N) == (15, 20, 15)
+
+
+def test_brief_list_names_are_never_dropped_for_distance_or_a_missing_line(monkeypatch):
+    """PM 2026-11-04: ALL the brief-list names are on the alerts. A name 3% under its line is armed (cap dropped for this
+    source only); a name already through its pivot with no line above is WATCH-ONLY: one EXTENDED card that says there is
+    no entry line, and it can never read buy-met."""
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+
+    def rec(t, rank, pivot, close):
+        return {"ticker": t, "rank": rank, "entry": close, "atr_14d": 2.0, "last_pivot_high": {"price": pivot},
+                "prior_bar_high": close - 1.0, "on_longlist": True, "on_elder": False,
+                "bracket": {"valid": False, "atr_fallback_stop": close - 2.0}}
+    export = {"daily_list": [rec("FAR", 1, 63.0, 61.0), rec("THRU", 2, 58.0, 61.0)], "held_positions": [], "lens_ranking": {"ranked": []}}
+    quotes = {"FAR": {"price": 61.2, "prev_close": 61.0, "day_high": 61.5, "day_low": 60.8, "open": 61.0},
+              "THRU": {"price": 61.4, "prev_close": 61.0, "day_high": 61.8, "day_low": 60.9, "open": 61.0},
+              "SPY": {"price": 500.5, "prev_close": 499.0}}
+    summary = CC.run_condition_cycle(None, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02", export=export)
+    assert summary["defaults"] == 2                                              # FAR (3.3% under its line) and THRU both watched
+    assert "FAR" not in summary["fired"]                                         # armed, nothing to say yet
+    assert summary["fired"]["THRU"] == ["CHASED"]
+    ticker, row, ev, states, live = [c for c in sent[0][0] if c[0] == "THRU"][0]
+    assert row["watch_only"] is True and ev["buy_met"] is False
+    from src.alerts import emailer as E
+    subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
+    assert "AQE list, not a committee pick" in subject and "through its entry line" in plain and "no buy trigger" in plain
+    assert "extended" not in plain.lower() and "extended" not in subject.lower()      # PM 2026-11-04: no stretch claim
+    # the distance cap is unchanged for every other source
+    from src.alerts import condition_defaults as D
+    assert D.build_default_conditions(rec("FAR", 1, 63.0, 61.0)) is None
+    assert D.build_default_conditions(rec("FAR", 1, 63.0, 61.0), apply_distance_cap=False) is not None
+
+
+def test_brief_list_names_fire_on_their_lanes_own_trigger(monkeypatch):
+    """PM 2026-11-04: continuation = break of the pause high, breakout = base pivot, pullback = reclaim of the 20-day; a lane line that
+    is not above the close falls back to the generic line and says so; the continuation stop is the extension bracket's."""
+    from src.alerts import config as C, condition_defaults as D
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    monkeypatch.setattr(C, "CONDITION_LANE_TRIGGERS", True)
+
+    def rec(t, rank, **k):
+        base = {"ticker": t, "rank": rank, "entry": 100.0, "atr_14d": 2.0, "prior_bar_high": 100.4, "ma_20": 95.0, "ma_20_slope_5d_pct": 1.0, "ma_50": 90.0,
+                "hi_20d": 101.0, "last_pivot_high": {"price": 99.0}, "on_longlist": True, "on_elder": False,
+                "bracket": {"valid": False, "atr_fallback_stop": 98.0}}
+        base.update(k); return base
+    export = {"daily_list": [
+        rec("CONT", 1, pct_from_pivot=12.0, continuation_pivot=103.5, continuation_state="BELOW",
+            extension_bracket={"available": True, "stop": 96.5, "targets": []}),
+        rec("BRK", 2, pct_from_pivot=-3.0, last_pivot_high={"price": 102.0}, nr7_flag=True, hi_20d=101.5),
+        rec("PUL", 3, pct_from_pivot=-6.0, hi_20d=120.0, ma_20=101.0, ma_20_slope_5d_pct=1.0, unr_status="SETUP", last_pivot_high={"price": 99.0}),
+        rec("BEHIND", 4, pct_from_pivot=12.0, continuation_pivot=99.0, continuation_state="EXTENDED")],
+        "held_positions": [], "lens_ranking": {"ranked": []}}
+    rows = {r["ticker"]: r for r in D.synthesize_rows(export, None)}
+    assert rows["CONT"]["lane"] == "MOMENTUM_CONTINUATION" and rows["CONT"]["conditions"]["shared"]["buy"][0]["level"] == 103.5
+    assert "pause" in rows["CONT"]["conditions"]["shared"]["buy"][0]["plain"] and rows["CONT"]["levels"]["stop"] == 96.5       # the extension bracket's stop
+    assert rows["BRK"]["lane"] == "MOMENTUM_BREAKOUT" and rows["BRK"]["conditions"]["shared"]["buy"][0]["level"] == 102.0
+    assert rows["PUL"]["lane"] == "PULLBACK" and rows["PUL"]["conditions"]["shared"]["buy"][0]["level"] == 101.0
+    assert "20-day" in rows["PUL"]["conditions"]["shared"]["buy"][0]["plain"]
+    # the pause high is behind price: generic line (prior bar high), and the card says it fell back
+    assert rows["BEHIND"]["lane"] == "MOMENTUM_CONTINUATION" and rows["BEHIND"]["conditions"]["shared"]["buy"][0]["level"] == 100.4
+    assert "generic" in rows["BEHIND"]["lane_note"]
+    from src.alerts import emailer as E
+    card = E._with_lane({"headline": "CONT $100 · X", "lines": []}, rows["CONT"])
+    assert card["headline"].endswith("Continuation lane") and card["lines"][0].startswith("Continuation lane:")
+    # switch off -> today's generic line for everyone
+    monkeypatch.setattr(C, "CONDITION_LANE_TRIGGERS", False)
+    off = {r["ticker"]: r for r in D.synthesize_rows(export, None)}
+    assert "lane" not in off["CONT"] and off["CONT"]["conditions"]["shared"]["buy"][0]["level"] == 100.4
+
+
+def test_the_deal_pinned_alert_card_says_so(monkeypatch):
+    from src.alerts import config as C
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    sent = []
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: sent.append(a))
+    export = {"daily_list": [{"ticker": "ROKU", "rank": 1, "entry": 160.0, "atr_14d": 3.0, "last_pivot_high": {"price": 158.0}, "on_longlist": True,
+                              "ma_status": "PENDING_TARGET", "ma_note": "Fox will acquire Roku (2026-06-15)", "bracket": {"valid": False, "atr_fallback_stop": 157.0}}],
+              "held_positions": [], "lens_ranking": {"ranked": []}}
+    quotes = {"ROKU": {"price": 161.0, "prev_close": 160.0, "day_high": 162.0, "day_low": 159.5, "open": 160.0}, "SPY": {"price": 500.0, "prev_close": 499.0}}
+    s = CC.run_condition_cycle(None, quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02", export=export)
+    assert s["fired"].get("ROKU") == ["CHASED"] and sent
+    ticker, row, ev, states, live = sent[0][0][0]
+    assert row["deal_pinned"] is True and ev["buy_met"] is False
+    from src.alerts import emailer as E
+    subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
+    assert "DEAL-PINNED" in subject and "no buy trigger" in plain and "Fox will acquire Roku" in plain

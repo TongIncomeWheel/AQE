@@ -924,3 +924,42 @@ rulings:
       Why. What would change it. Minority note. The earlier R34 `conviction` figure is renamed `ordering_score` (the old name
       stays as a deprecated alias). The conviction is a readout, never a gate on a verdict and never sizing.
     check: tests.test_committee_position_counts_the_median_and_never_invents_a_rationale
+
+  - id: R43
+    title: Three lanes assigned by code - lead seats decide, advisors are heard (APPROVED, switched off)
+    status: approved
+    date: 2026-11-04
+    binds_at: [RANK, VOTE, RATIFY, REPORT]
+    pm_words: >
+      "Momentum and pullback; continuation is a subset of momentum." Voice leads for continuation: yes (Livermore, Seow, Elder,
+      Raschke lead; O'Neil and Minervini advise). Relayed by the conductor, 2026-11-04.
+    rule: >
+      PM APPROVED 2026-11-04 (leads: breakout oneil/minervini/livermore/wyckoff, pullback seow/elder-lens/raschke/wyckoff, wyckoff an advisor on
+      continuation, proportional counting: DROP at 2 of 4 leads). Stays behind parameters.lanes_v1 (off) until the first rerun with the lead seats
+      seeing the continuation fields is dry-run and the PM says enable. Every ticket gets one lane from AQE fields by code (tools/lanes_v1.py
+      assign_lane): MOMENTUM_BREAKOUT (at or under the base pivot, inside the 5% chase line), MOMENTUM_CONTINUATION (past the base
+      pivot by more than 5% with a continuation pause high), PULLBACK (under the pivot, reclaim day or holding a rising average),
+      else UNLANED (every seat counts, as today). In a laned ticket the lead seats' OBJECT answers decide AGREED / CONTESTED /
+      DROPPED; an advisor's objection is printed on the ticket and never counted. Lead sets: continuation signed by the PM;
+      breakout and pullback proposed. Two threshold modes are measured in docs/LANES_V1_SPEC.md; the PM picks one. Switching it
+      on also requires the lead seats' packets to carry the continuation fields and the lane instruction (spec s4).
+    check: tests.test_lanes_v1_assigns_by_code_and_leads_decide
+
+  - id: R44
+    title: A name with a pending takeover is deal-pinned - never ADVANCE, no buy trigger
+    status: active
+    date: 2026-11-04
+    binds_at: [RATIFY, REPORT, ALERTS]
+    pm_words: >
+      "Names with a PENDING M&A TARGET status are EXCLUDED from ADVANCE" (PM, relayed by the conductor 2026-11-04), after ROKU - the only
+      'agreed outright' ADVANCE on 4 Nov - turned out to have a definitive agreement for Fox to acquire it (announced 15 Jun 2026).
+    rule: >
+      ratify-count reads the export's ma_status (src/data/ma_flag.py). A slated ticket whose ma_status is PENDING_TARGET gets status
+      DEAL_PINNED and verdict PASS whatever the vote (it cannot be ADVANCE or HOLD-FOR-CONDITIONS), carrying the M&A line (ma_note,
+      ma_evidence) and the verdict it would have had. It is not eligible for the committee rationale. The Cards print it in its own small
+      section 'Deal-pinned, not a momentum pick' and never as a buy card. The alerts arm NO buy trigger for it (committee or AQE-list
+      row alike): one label-only card 'DEAL-PINNED - pending acquisition, no buy trigger'. A HELD position keeps its stop and exit cards.
+      PENDING_ACQUIRER is flag-only (pill and line, no exclusion). If the export carries no ma_status (older export) or no export is
+      found, the exclusion is NOT applied and ratify-count prints that loudly - a missing scan never reads as a clean name.
+    check: tests.test_ratify_count_excludes_a_pending_takeover_target_from_advance
+

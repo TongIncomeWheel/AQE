@@ -40,7 +40,8 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "div_state","div_bear_count","knn_prob","atr_caution","runner_setup","runner_conviction_label",
     "premove_setup","mover_subtype","pin_bar_state","inside_bar","lens","lens_positive","lens_warnings",
     "source","held","in_ledger","on_longlist","on_elder","thematic_basket","thematic_grade","thematic_rrg_quadrant",
-    "vol_30d_ann","gics_gate","bracket",
+    "vol_30d_ann","gics_gate","bracket","ma_status","ma_note",
+    "continuation_pivot","continuation_low","pct_from_continuation_pivot","continuation_state","extension_bracket",
     "ma_100","premove_conviction","runner_conviction","sc_m_gate_detail","sc_p_gate_detail",
     "squeeze_breakout_state","was_squeezed","squeeze_breakout_volume_confirmed","squeeze_breakout_date",
     "elder_context","knn_threshold_clear","pin_bar_level",
@@ -785,6 +786,42 @@ def _slate_cap_from_run_yaml(default=25):
 
 
 SLATE_CAP = _slate_cap_from_run_yaml()   # R34: PM 2026-11-04 = 25, read from RUN.yaml parameters.slate_cap
+
+
+def _run_yaml_param(name, default):
+    """One RUN.yaml `parameters:` value (string), read the same way slate_cap is: the run map is the single source."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    for rel in ("..", "../skills/pma", "../../pma", "../../../skills/pma", "../../skills/pma", "../pma"):
+        p = os.path.join(here, rel, "RUN.yaml")
+        if os.path.exists(p):
+            try:
+                m = re.search(rf"^\s*{re.escape(name)}:\s*([A-Za-z0-9_\-]+)", open(p, encoding="utf-8").read(), re.M)
+                if m:
+                    return m.group(1)
+            except OSError:
+                pass
+    return default
+
+
+def lanes_v1_on():
+    """R43 switch (parameters.lanes_v1). OFF = today's rule exactly. Env AEGIS_LANES_V1=on|off overrides for a dry-run."""
+    v = os.environ.get("AEGIS_LANES_V1") or _run_yaml_param("lanes_v1", "off")
+    return str(v).lower() == "on"
+
+
+def _lanes_mod():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("lanes_v1", os.path.join(os.path.dirname(os.path.abspath(__file__)), "lanes_v1.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m
+
+
+def _lane_for(rec, doors):
+    """-> (lane, why). v1: by code from the AQE row; off: the door-based label, as before."""
+    if lanes_v1_on():
+        lane, why = _lanes_mod().assign_lane(rec or {})
+        return lane, why
+    return _lane(doors), None
 FLOOR_MSG_CAP = 2              # R36: two floor messages per decider per name
 # ---- LEGACY LABELS (R32). All seven deciders count on every name; the lane tag is a reading aid. ----
 # These two lists are read ONLY by the superseded `consensus` blind tally (kept so the 2026-09-06
@@ -1254,7 +1291,8 @@ def cmd_rank(a):
     no_door = [tk for tk in tal if tk in uni and tk not in admitted]
     def row(tk):
         t = tal.get(tk, {}); r = uni.get(tk, {})
-        return {"ticker": tk, "doors": doors[tk], "lane": _lane(doors[tk]), "seats": t.get("count", 0), "sumc": t.get("sumc", 0),
+        _ln, _why = _lane_for(r, doors[tk])
+        return {"ticker": tk, "doors": doors[tk], "lane": _ln, **({"lane_why": _why} if _why else {}), "seats": t.get("count", 0), "sumc": t.get("sumc", 0),
                 "aqe_rank": r.get("rank"), "srm": srm.get(r.get("gics_sector_name"), {}).get("entry_gate"),
                 "sc_m": r.get("sc_momentum"), "elder_5d": r.get("elder_5d"), "elder_pattern": r.get("elder_pattern"),
                 "lens_strong": _lens_strong_count(r)}
@@ -1321,7 +1359,7 @@ def cmd_rank(a):
                  "dropped": dropped})
     by_door = collections.Counter(d for tk in admitted for d in doors[tk])
     never_nominated = sum(1 for tk in admitted if tal.get(tk, {}).get("count", 0) == 0)
-    lanes = collections.Counter(_lane(doors[tk]) for tk in admitted)
+    lanes = collections.Counter(_lane_for(uni.get(tk, {}), doors[tk])[0] for tk in admitted)
     assert not no_door, f"R16 VIOLATED: nominations cut by machinery: {no_door}"
     print(f"receipt: R16 floor {len(floor)} = {len([t for t in floor if t in tal])} of {len(tal)} nominated (0 cut) "
           f"+ {len([t for t in floor if t in held and t not in tal])} held "
@@ -1649,6 +1687,8 @@ def cmd_r2digest(a):
          "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists) or UNR_SEAT (Valen reclaim day) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
          "R27 (binding; R14's momentum point, R32 counting): on a MOMENTUM-lane name extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy. Your vote counts whatever the lane; say your case BOTH ways in the case form (R36).",
          ""]
+    if lanes_v1_on():
+        L[-1:-1] = _lanes_mod().prompt_lines()
     if a.macro:
         for mf in a.macro:
             if os.path.exists(mf):
@@ -2056,6 +2096,23 @@ def cmd_ratify_count(a):
     if n < 4:
         raise SystemExit(f"ratify-count: only {n} decider(s) ratified ({present}) -- fewer than 4 is no committee; halt and declare")
     thr = math.ceil(n / 2)
+    LV1 = lanes_v1_on(); LV1_MODE = _run_yaml_param("lanes_v1_threshold", "proportional"); _LM = _lanes_mod() if LV1 else None
+    # R44 (PM 2026-11-04): a name with a PENDING M&A TARGET status can never be ADVANCE (or WATCH): it trades on the deal spread, not momentum.
+    # Decided here, in code, from the export's ma_status, not by a voice. No export / no ma_status in it = NOT applied, and said loudly.
+    exp_path = getattr(a, "export", None) or "aqe_daily_export.json"
+    ma_rows, ma_applied, ma_why = {}, False, None
+    if os.path.exists(exp_path):
+        try:
+            _ex = json.load(open(exp_path, encoding="utf-8"))
+            ma_rows = {r["ticker"]: r for r in (_ex.get("daily_list") or []) + (_ex.get("held_positions") or []) if r.get("ticker")}
+            ma_applied = any("ma_status" in r for r in ma_rows.values())
+            ma_why = None if ma_applied else "the export carries no ma_status field (older export)"
+        except Exception as _e:  # noqa: BLE001
+            ma_why = f"export unreadable: {_e.__class__.__name__}"
+    else:
+        ma_why = f"no export at {exp_path}"
+    if not ma_applied:
+        print(f"WARNING ratify-count: M&A exclusion (R44) NOT applied -- {ma_why}. A pending-takeover name could be ADVANCE.")
     board = load(a.board, needs=["names"]) if a.board and os.path.exists(a.board) else None
     bnames = {x["ticker"]: x for x in (board or {}).get("names", [])}
     out, record = [], []
@@ -2067,8 +2124,17 @@ def cmd_ratify_count(a):
         agreers = sorted(v for v, r in rows.items() if r.get("answer") == "AGREE")
         n_obj = len(objectors)
         status = "AGREED" if n_obj == 0 else ("DROPPED" if n_obj >= thr else "CONTESTED")
+        lane_info = None
+        if LV1:
+            # R43 (lanes_v1 ON): lead seats decide; an advisor's objection is printed, never counted.
+            lane_info = _LM.lane_status(lanes.get(t, "PULLBACK"), objectors, n, present, thr, LV1_MODE)
+            status = lane_info["status"]
         verdict = ("PASS" if status == "DROPPED"
                    else {"ADVANCE": "ADVANCE", "WATCH": "HOLD-FOR-CONDITIONS"}[x["verdict"]])
+        _ma = ma_rows.get(t) or {}
+        deal_pinned = ma_applied and _ma.get("ma_status") == "PENDING_TARGET"
+        if deal_pinned:
+            status, verdict = "DEAL_PINNED", "PASS"
         conviction = 5 if (status == "AGREED" and not reservers) else 4 if status == "AGREED" else 3 if status == "CONTESTED" else 2
         out.append({"ticker": t, "verdict": verdict, "status": status, "slate_verdict": x["verdict"],
                     "ordering_score": conviction, "conviction": conviction,
@@ -2076,14 +2142,19 @@ def cmd_ratify_count(a):
                     "lane": lanes.get(t, "PULLBACK"),
                     "split": {"support": agreers + reservers, "oppose": objectors, "abstain": []},
                     "advisory": {"support": [], "oppose": [], "abstain": []},
-                    "objections": [{"voice": v, "objection": rows[v].get("objection"), "would_clear": rows[v].get("would_clear")} for v in objectors],
+                    "objections": [{"voice": v, "objection": rows[v].get("objection"), "would_clear": rows[v].get("would_clear"),
+                                    **({"counted": v in lane_info["counted_objectors"]} if lane_info else {})} for v in objectors],
+                    **({"lanes_v1": {"lane": lanes.get(t), "leads_present": lane_info["leads_present"], "counted_objectors": lane_info["counted_objectors"],
+                                     "advisor_objectors": lane_info["advisor_objectors"], "threshold": lane_info["threshold"], "mode": LV1_MODE}} if lane_info else {}),
                     "reservations": [{"voice": v, "reservation": rows[v].get("reservation")} for v in reservers],
-                    "held": t in held, "n_deciders": n, "drop_threshold": thr,
+                    "held": t in held, "n_deciders": n, "drop_threshold": (lane_info["threshold"] if lane_info else thr),
                     "entry_trigger": x.get("entry_trigger"), "wrong_if": x.get("wrong_if"),
                     "trigger": x.get("trigger"),
                     "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
                     "dissent": x.get("dissent") or [],
-                    "gaps": [f"no ratification from {v}" for v in missing]})
+                    "gaps": [f"no ratification from {v}" for v in missing],
+                    **({"deal_pinned": {"rule": "R44", "ma_status": _ma.get("ma_status"), "ma_note": _ma.get("ma_note"), "ma_evidence": _ma.get("ma_evidence"),
+                                        "excluded_from": x["verdict"], "objections_if_counted": n_obj}} if deal_pinned else {})})
     for t in ds:
         if t in answers:
             continue
@@ -3459,6 +3530,7 @@ if __name__ == "__main__":
     s.add_argument("--messages", default=None, help="forms/floor (for the record)"); s.add_argument("--messages2", default=None, help="forms/floor2 (hold round, for the record)")
     s.add_argument("--cross", default=None, help="forms/cross (R38 tier 1, for the record)"); s.add_argument("--tier2", default=None, help="forms/tier2 (R38 tier 2, for the record)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
+    s.add_argument("--export", default="aqe_daily_export.json", help="R44: the AQE export; a name with ma_status PENDING_TARGET is excluded from ADVANCE")
     s.add_argument("--out", default="consensus.json"); s.add_argument("--record", default="committee_record.json")
     s = sub.add_parser("committee-position", help="R42: the body's conviction (median of the deciders' 1-5, ties to the lower), the ONE committee rationale and the minority notes -> committee_position.json")
     s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ratifications", default="forms/ratify")

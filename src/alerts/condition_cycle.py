@@ -93,6 +93,18 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     except Exception:  # noqa: BLE001 -- defaults must never take the committee rows down
         defaults = []
     rows = rows + defaults
+    try:
+        rows = DEF.apply_deal_pinned(rows, export)            # R44: no buy trigger for a pending-takeover target
+    except Exception:  # noqa: BLE001
+        pass
+    # PM 2026-11-04: stamp the export's M&A flag on every row (committee rows come from pma_levels, which has none) so every
+    # alert card carries it. A missing export or ticker leaves the row unstamped (no claim either way).
+    try:
+        _byt = {r.get("ticker"): r for r in ((export or {}).get("daily_list") or []) + ((export or {}).get("held_positions") or [])}
+        rows = [dict(r, **{k: _byt[r["ticker"]][k] for k in ("ma_status", "ma_note") if k in _byt.get(r.get("ticker"), {})})
+                if r.get("ticker") in _byt else r for r in rows]
+    except Exception:  # noqa: BLE001
+        pass
     summary["defaults"] = len(defaults)
     held_events = held_events or []
     mk = (meta or {}).get("market_kill") or {}
