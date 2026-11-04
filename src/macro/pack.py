@@ -236,6 +236,10 @@ def build_pack(crown: dict | None, scenarios_read: dict | None,
         "pack_status": pack_status,
         "crown_status": crown.get("crown_status", "UNAVAILABLE"),
         "oldest_leg": (crown.get("freshness") or {}).get("oldest_leg"),
+        # A6 (2026-11-04): the file says how current it is, inside itself (it used to carry only generated_at)
+        "as_of": (crown.get("freshness") or {}).get("oldest_leg"),
+        "expected_session": (crown.get("freshness") or {}).get("expected_session"),
+        "data_legs": (crown.get("freshness") or {}).get("legs_table"),
         "what_this_is": (
             "One read assembled from four already-independent systems — "
             "Crown (regime/positioning/volatility), the Macro Weather x Crown "

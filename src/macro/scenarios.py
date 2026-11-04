@@ -376,6 +376,14 @@ def run_scenarios(client=None, crown: dict | None = None,
     out["weather_missing"] = missing
     out["generated_at"] = datetime.now(ZoneInfo("Asia/Singapore")).isoformat(
         timespec="seconds")
+    # A6 (2026-11-04): as_of inside the file - the Crown's oldest leg (the scenarios are only as current as that) and the
+    # weather instruments' newest bar - beside the session it should carry
+    try:
+        from src.data.sessions import last_completed_session
+        out["expected_session"] = str(last_completed_session())
+    except Exception:  # noqa: BLE001
+        out["expected_session"] = None
+    out["as_of"] = ((crown or {}).get("freshness") or {}).get("oldest_leg")
     if missing:
         out.setdefault("degraded", []).append(
             "macro instruments unavailable: " + ", ".join(missing))
