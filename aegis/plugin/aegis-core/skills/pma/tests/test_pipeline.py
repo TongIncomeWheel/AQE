@@ -3726,7 +3726,7 @@ def test_lanes_v1_assigns_by_code_and_leads_decide(td):
     # the switch ships OFF and the ruling is recorded as proposed
     ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
     rl = open(os.path.join(HERE, "..", "RULINGS.yaml"), encoding="utf-8").read()
-    check("lanes_v1 ships off", "lanes_v1: off" in ry and "id: R43" in rl and "status: proposed" in rl.split("id: R43")[1])
+    check("lanes_v1 ships off", "lanes_v1: off" in ry and "id: R43" in rl and "status: approved" in rl.split("id: R43")[1])
 
 
 def test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged(td):
@@ -3789,10 +3789,35 @@ def test_lanes_v1_switch_prompt_and_rank_lane(td):
         os.environ.pop("AEGIS_LANES_V1", None)
 
 
+def test_cards_theme_basket_table_and_extension_bracket_line(td):
+    """PM 2026-11-04: theme baskets in the sector-strength section (grade, week, month, rotation, strongest members) and the labelled
+    extension bracket on each ADVANCE card; both from the export alone, nothing invented when it is absent."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards as PC
+    importlib.reload(PC)
+    D = {"thematic_baskets": {"Semis": {"grade": "DEPLOY", "roc5": 3.2, "roc20": 9.1, "rrg_quadrant": "LEADING", "rrg_direction": "HOLDING",
+                                         "constituents_used": ["AAA", "BBB", "CCC", "DDD"]},
+                              "Travel_Leisure": {"grade": "AVOID", "roc5": -2.0, "roc20": -6.0, "rrg_quadrant": "LAGGING", "rrg_direction": "EXITING",
+                                                 "constituents_used": ["EEE"]}},
+         "daily_list": [{"ticker": "AAA", "rs_spy_20d": 20.0}, {"ticker": "BBB", "rs_spy_20d": 35.0}, {"ticker": "CCC", "rs_spy_20d": 5.0},
+                        {"ticker": "DDD", "rs_spy_20d": 50.0}]}
+    h = PC._theme_basket_table(D)
+    check("the basket table lists grade, week, month and rotation, best grade first",
+          "Semis" in h and "+3.2%" in h and "+9.1%" in h and "Leading" in h and h.index("Semis") < h.index("Travel Leisure"), h[:300])
+    check("strongest members are the top three by 20-day strength, best first, and a basket with none on today's list says so",
+          h.index("DDD") < h.index("BBB") < h.index("AAA") and "CCC" not in h.split("Semis")[1].split("Travel")[0] and "none on today" in h)
+    check("no baskets in the export is a declared gap, not a blank", "declared gap" in PC._theme_basket_table({}))
+    eb = {"available": True, "passed": True, "stop": 108.0, "targets": [{"tp": "TP1", "price": 118.0, "r": 2.0}, {"tp": "TP2", "price": 126.5, "r": 3.4}]}
+    x = PC._ext_bracket_html(eb)
+    check("the extension line is plain, labelled, and names both targets", "runs into open air" in x and "118" in x and "126.5" in x and "1.272" in x and "1.618" in x and "ignores nearby resistance" in x, x)
+    check("an older export (no extension_bracket) adds nothing; an unavailable one says why",
+          PC._ext_bracket_html(None) == "" and "no continuation window" in PC._ext_bracket_html({"available": False, "reason": "no continuation window"}))
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

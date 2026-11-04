@@ -926,15 +926,17 @@ rulings:
     check: tests.test_committee_position_counts_the_median_and_never_invents_a_rationale
 
   - id: R43
-    title: Three lanes assigned by code - lead seats decide, advisors are heard (PROPOSED)
-    status: proposed
+    title: Three lanes assigned by code - lead seats decide, advisors are heard (APPROVED, switched off)
+    status: approved
     date: 2026-11-04
     binds_at: [RANK, VOTE, RATIFY, REPORT]
     pm_words: >
       "Momentum and pullback; continuation is a subset of momentum." Voice leads for continuation: yes (Livermore, Seow, Elder,
       Raschke lead; O'Neil and Minervini advise). Relayed by the conductor, 2026-11-04.
     rule: >
-      PROPOSAL, behind parameters.lanes_v1 (off). Every ticket gets one lane from AQE fields by code (tools/lanes_v1.py
+      PM APPROVED 2026-11-04 (leads: breakout oneil/minervini/livermore/wyckoff, pullback seow/elder-lens/raschke/wyckoff, wyckoff an advisor on
+      continuation, proportional counting: DROP at 2 of 4 leads). Stays behind parameters.lanes_v1 (off) until the first rerun with the lead seats
+      seeing the continuation fields is dry-run and the PM says enable. Every ticket gets one lane from AQE fields by code (tools/lanes_v1.py
       assign_lane): MOMENTUM_BREAKOUT (at or under the base pivot, inside the 5% chase line), MOMENTUM_CONTINUATION (past the base
       pivot by more than 5% with a continuation pause high), PULLBACK (under the pivot, reclaim day or holding a rising average),
       else UNLANED (every seat counts, as today). In a laned ticket the lead seats' OBJECT answers decide AGREED / CONTESTED /

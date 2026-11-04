@@ -571,6 +571,55 @@ def _void_cell(mk):
             f'{E(verb)}</details></dd></div>')
 
 
+GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
+
+
+def _theme_basket_table(D):
+    """PM 2026-11-04 ('essential, thin is fine, baskets are a proxy'): AQE's curated theme baskets with their grade, week and month
+    return, rotation and strongest members. Built from the export alone (thematic_baskets + each daily_list row's rs_spy_20d)."""
+    tb = (D or {}).get("thematic_baskets") or {}
+    head = ('<section class="card"><div class="eyebrow">7b · Theme baskets · grade, week, month, rotation, strongest members · '
+            'AQE\'s own 35 hand-picked baskets, a proxy for themes, not the whole market</div>')
+    if not isinstance(tb, dict) or not tb:
+        return head + '<p class="cond">The export carries no theme baskets &mdash; declared gap, nothing invented.</p></section>'
+    rows_by = {r.get("ticker"): r for r in (D.get("daily_list") or []) if isinstance(r, dict)}
+    def key(kv):
+        b = kv[1]
+        return (GRADE_ORDER.get(str(b.get("grade")), 9), -(b.get("roc20") if isinstance(b.get("roc20"), (int, float)) else -999))
+    body = []
+    for name, b in sorted(tb.items(), key=key):
+        mem = [rows_by[t] for t in (b.get("constituents_used") or []) if t in rows_by and isinstance(rows_by[t].get("rs_spy_20d"), (int, float))]
+        mem = sorted(mem, key=lambda r: -r["rs_spy_20d"])[:3]
+        strongest = ", ".join(f'{E(r["ticker"])} ({r["rs_spy_20d"]:+.0f}%)' for r in mem) or "&mdash; (none on today's list)"
+        rot = " · ".join(x for x in (str(b.get("rrg_quadrant") or "").title(), str(b.get("rrg_direction") or "").lower()) if x) or "&mdash;"
+        g = str(b.get("grade") or "—")
+        pill = {"DEPLOY": "p-up", "HOLD": "p-n", "TURNING": "p-warn", "WATCH": "p-n", "AVOID": "p-down"}.get(g, "p-n")
+        body.append(f'<tr><td>{E(name.replace("_", " "))}</td><td><span class="pill {pill}">{E(g.title())}</span></td>'
+                    f'<td class="num {"pos" if (b.get("roc5") or 0) >= 0 else "neg"}">{_num(b.get("roc5"), "{:+.1f}%")}</td>'
+                    f'<td class="num {"pos" if (b.get("roc20") or 0) >= 0 else "neg"}">{_num(b.get("roc20"), "{:+.1f}%")}</td>'
+                    f'<td>{E(rot)}</td><td>{strongest}</td></tr>')
+    return (head + '<div class="tbl"><table><thead><tr><th>Basket</th><th>Grade</th><th>1 week</th><th>1 month</th><th>Rotation</th>'
+            '<th>Strongest members (20-day strength vs SPY)</th></tr></thead><tbody>' + "".join(body) + '</tbody></table></div>'
+            '<p class="cond">Grade is AQE&rsquo;s own read of the basket (Deploy = leading, Avoid = lagging and falling). Members shown are those on '
+            'today&rsquo;s scored list. A name in no basket simply is not here; baskets are a proxy for themes, not a map of the market.</p></section>')
+
+
+def _ext_bracket_html(eb):
+    """PM 2026-11-04: the labelled extension bracket beside the structural bracket on each ADVANCE card, one plain line. Empty when the
+    export has none (older export) or it could not be built (then it says why in one short line)."""
+    if not isinstance(eb, dict):
+        return ""
+    if not eb.get("available"):
+        return f'<div class="full"><dt>If it runs into open air</dt><dd>Not available: {E(str(eb.get("reason") or "no reason given"))}.</dd></div>'
+    t = {x.get("tp"): x for x in eb.get("targets") or []}
+    t1, t2 = t.get("TP1") or {}, t.get("TP2") or {}
+    gates = "clears" if eb.get("passed") else "does not clear"
+    return ('<div class="full"><dt>If it runs into open air</dt><dd>'
+            f'Targets if the stock runs past its nearby resistance: {E(_num(t1.get("price")))} (1.272 of its last leg) and {E(_num(t2.get("price")))} (1.618), '
+            f'with the stop at {E(_num(eb.get("stop")))}, {E(_num(t2.get("r")))}R to the second target. '
+            f'A second, labelled bracket that ignores nearby resistance, so a far target makes the reward easy to show; it {gates} the three bracket checks.</dd></div>')
+
+
 def _ma_pill(row):
     """PM 2026-11-04: a name with a pending merger / acquisition / buyout carries a red pill wherever it is picked. UNKNOWN (the scan
     failed for this ticker) is NOT shown as a clean name: it gets a grey 'M&A not checked' pill."""
@@ -980,6 +1029,7 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
              + '</tbody></table></div><p class="cond"><b>How the order is set.</b> Each theme is ranked by its <b>thrust</b>: this week\'s return minus this month\'s return. '
                'A theme down 8% this week but 32% over the month has a big thrust, because it is falling much less sharply than before, not because it is rising. '
                '<b>State</b> says it plainly: Rising (up on both), Turning up (up this week, still down on the month), Still falling but slower, or Falling faster.</p></section>')
+    o.append(_theme_basket_table(D_))
     o.append(_group_turns(D_, verdicts or {}, say))
     hs = collections.Counter()
     for r in rows.values():
@@ -1336,7 +1386,7 @@ def cmd_render(a):
                  f'{_ma_line(r)}<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
-                 f'{void}{_bracket_html(bracket)}'
+                 f'{void}{_bracket_html(bracket)}{_ext_bracket_html(r.get("extension_bracket"))}'
                  f'<div class="full"><dt>Valen</dt><dd>{valen}</dd></div>'
                  f'<div class="full"><dt>Sector</dt><dd>{E(w.get("sector_note") or str(r.get("gics_sector_name") or ""))}</dd></div></dl></article>')
     o.append("</div>")
