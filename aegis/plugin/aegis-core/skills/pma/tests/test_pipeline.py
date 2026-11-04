@@ -3852,10 +3852,33 @@ def test_ratify_count_excludes_a_pending_takeover_target_from_advance(td):
     check("a deal-pinned name needs no entry in the words file", not any("GNW" in g for g in gaps), str(gaps)[:300])
 
 
+def test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminate(td=None):
+    """aegis-writing exists with its credit, is read by cio-voice / brief-writer / chair / the WRITE step,
+    and its five eval cases tell slop from a fix (fidelity and uncertainty are hard gates)."""
+    import json, importlib.util, pathlib
+    pma = pathlib.Path(HERE).parent
+    core = pma.parent.parent  # aegis-core
+    sk = (core / "skills" / "aegis-writing" / "SKILL.md").read_text()
+    assert "name: aegis-writing" in sk and "MIT" in sk and "David Wang" in sk
+    for p in ("skills/cio-voice/SKILL.md", "agents/brief-writer.md", "agents/chair.md"):
+        assert "aegis-writing" in (core / p).read_text(), p
+    assert "skills/aegis-writing/SKILL.md" in (pma / "RUN.yaml").read_text()
+    spec = importlib.util.spec_from_file_location("aw_evals", core / "skills" / "aegis-writing" / "evals" / "run_evals.py")
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    cases = m.load()
+    assert len(cases) == 5
+    assert m.selfcheck() == [], m.selfcheck()
+    for c in cases.values():  # the hard gates are real: dropping the hedge or the figure fails them
+        assert c["gates"]["fidelity"], c["id"]
+    roku = cases["roku_why_wall"]
+    assert not m.grade(roku, roku["good"].replace("not closed", "closed"))["hard_gates_ok"]
+    assert not m.grade(cases["direction_word_wrong"], "3.37% below its 20-day average.")["hard_gates_ok"]
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_the_aegis_writing_standard_is_installed_wired_and_its_evals_discriminate, test_ratify_count_excludes_a_pending_takeover_target_from_advance, test_cards_theme_basket_table_and_extension_bracket_line, test_lanes_v1_switch_prompt_and_rank_lane, test_ratify_count_with_lanes_v1_on_counts_leads_only_and_off_is_unchanged, test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

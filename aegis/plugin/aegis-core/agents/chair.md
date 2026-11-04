@@ -49,6 +49,7 @@ output.
 - `forms/ratify/*.json`, `forms/qa/steenbarger.json`, `forms/floor2/*.json` — the ratification and the hold round.
 
 ## WHAT I WRITE
+**Before writing any `why_agreed` / `wrong_if` / rationale clause, read `skills/aegis-writing/SKILL.md`** (fidelity first: keep the figure, sign, period and hedge beside the claim; clauses stay verbatim quotes, so this governs what I choose to carry and how I label it, never a rewording of a seat).
 - `slate.json` per `contracts/slate.schema.json` (v2) — at most 25 tickets across ADVANCE and WATCH (parameters.slate_cap).
   **The verdict and the ONE trigger on every ticket are COPIED from `decision.json`** (`trigger` = word, tf,
   plain; `entry_trigger` = `trigger.plain`; `timing_count` copied). The registrar REJECTS a ticket that differs

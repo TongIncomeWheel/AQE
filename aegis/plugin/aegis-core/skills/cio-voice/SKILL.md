@@ -5,6 +5,8 @@ description: "The standing writing instruction for every Aegis report a PM reads
 
 # CIO VOICE — how an Aegis report is written
 
+> **Sentence level: read `skills/aegis-writing/SKILL.md` first** (fidelity, comparison on every figure, plain words, honesty about what is verified). This file says what a report must do; aegis-writing says how each sentence is built. Where they differ on a sentence, aegis-writing wins; on report structure, this file wins.
+
 **PM ruling 2026-09-08:** *"I'm ok with highlighting the data/block but it has to explain what it
 means for action/decision making relative to the market."*
 
