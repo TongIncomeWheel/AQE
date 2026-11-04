@@ -1606,6 +1606,26 @@ SCORE_TREE = [
       "exchange holidays not -- an approximation, not an exact "
       "trading-session count)", "src/data/drive_sync.py:_v21_record_fields",
       "np.busday_count(last_pivot_high.date, today)"),
+    R("continuation_pivot", "", "leaf", "usd", "",
+      "Second pivot reading (data only; pivot_high unchanged): high of the most recent tight 3-10 bar window "
+      "(range <= 2.5 ATR, with an inside bar or NR7) that ended within the last 5 bars",
+      "src/engines/continuation.py:continuation_pivot", "max(high) over the qualifying window"),
+    R("continuation_low", "continuation_pivot", "leaf", "usd", "",
+      "Lowest low of the continuation window", "src/engines/continuation.py:continuation_pivot",
+      "min(low) over the qualifying window"),
+    R("continuation_bars", "continuation_pivot", "leaf", "score", "",
+      "Length of the continuation window in daily bars (3-10)", "src/engines/continuation.py:continuation_pivot",
+      "window length"),
+    R("pct_from_continuation_pivot", "continuation_pivot", "leaf", "pct", "",
+      "Entry's distance from the continuation pivot (negative = coiling under it)",
+      "src/data/drive_sync.py:_v21_record_fields", "(entry/continuation_pivot-1)*100"),
+    R("continuation_state", "pct_from_continuation_pivot", "leaf", "label", "BELOW|BUY_ZONE|EXTENDED",
+      "BELOW (<0%) / BUY_ZONE (0-5%) / EXTENDED (>5%) against the continuation pivot",
+      "src/engines/continuation.py:state_vs_pivot", "banded pct_from_continuation_pivot"),
+    R("extension_bracket", "", "leaf", "usd", "",
+      "A labelled SECOND bracket beside `bracket` (never replacing it): TP1/TP2 = 1.272/1.618 extension of the last "
+      "impulse, stop = lower of the continuation low and 1 ATR under entry, same three gates",
+      "src/engines/continuation.py:extension_bracket", "stop=min(continuation_low, entry-atr_14d); TP1=swing_low+1.272*(swing_high-swing_low); TP2=swing_low+1.618*(swing_high-swing_low)"),
 ]
 
 for _r in SCORE_TREE:

@@ -142,3 +142,39 @@ def test_default_tickers_feeds_the_quote_fetch():
     ex = _export(_rec("LL1", 100.0, lph=103.0, longlist=True))
     assert D.default_tickers(ex, None) == {"LL1"}
 
+
+
+# ---- PM 2026-11-04: the alert universe is the brief's three lists, not the whole Longlist + Elder -------------------
+def _export_with_lists():
+    def row(t, rank, elder=0, on_elder=False, on_longlist=True, line=100.5, close=100.0):
+        return {"ticker": t, "rank": rank, "elder": elder, "on_elder": on_elder, "on_longlist": on_longlist, "entry": close,
+                "last_pivot_high": {"price": line}, "atr_14d": 2.0, "bracket": {"valid": False, "atr_fallback_stop": 98.0}}
+    dl = [row(f"A{i:02d}", i) for i in range(1, 31)]                              # AQE rank 1..30 (top 20 -> A01..A20)
+    dl += [row("EL1", 99, elder=9, on_elder=True), row("OFF", 98, on_longlist=True)]   # Elder-only; a Longlist name on no brief list
+    dl += [row("LN1", 97, on_longlist=False)]                                   # lens-only
+    lens = {"ranked": [{"ticker": "LN1"}, {"ticker": "A25"}]}
+    return {"daily_list": dl, "lens_ranking": lens, "held_positions": []}
+
+
+def test_brief_list_names_use_the_briefs_definitions_and_sizes():
+    from src.alerts import condition_defaults as D
+    names = D.brief_list_names(_export_with_lists())
+    assert {f"A{i:02d}" for i in range(1, 21)} <= set(names) and "A21" not in names     # AQE top 20
+    assert names["EL1"] == ["Elder"] and names["LN1"] == ["Detect lens"] and names["A25"] == ["Detect lens"]
+    assert "OFF" not in names                                                       # on the Longlist only, not on a brief list
+
+
+def test_default_universe_is_the_brief_lists_and_labelled_not_a_committee_pick(monkeypatch):
+    from src.alerts import condition_defaults as D, config as C
+    monkeypatch.setattr(C, "CONDITION_DEFAULTS_ENABLED", True)
+    monkeypatch.setattr(C, "CONDITION_DEFAULT_SOURCES", "brief_lists")
+    rows = D.synthesize_rows(_export_with_lists(), None)
+    tk = {r["ticker"] for r in rows}
+    assert "OFF" not in tk and "EL1" in tk and "LN1" in tk and "A01" in tk
+    assert all(r["class"] == "AQE_LIST" and r.get("aqe_list") and r["on_lists"] for r in rows)
+
+
+def test_the_card_says_aqe_list_not_a_committee_pick():
+    from src.alerts import emailer as E
+    assert E._who({"aqe_default": True, "aqe_list": True}) == "AQE list, not a committee pick"
+    assert E._who({"aqe_default": True}) == "AQE default criteria"

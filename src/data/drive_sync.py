@@ -131,6 +131,25 @@ _FIELD_GLOSSARY = {
     "pct_from_pivot": "(entry / pivot_high − 1) × 100. O'Neil's own read: 0-5% is the buy "
                       "zone, 5-10% is a late buy carrying a warning, over 10% is a "
                       "rejection (C17).",
+    "continuation_pivot": "Second pivot reading (data only; pivot_high is unchanged). The high of the "
+                          "most recent tight window of 3-10 daily bars (total range <= 2.5 ATR, with an "
+                          "inside bar or NR7 in it) that ended within the last 5 bars. For a name trending "
+                          "to new highs pivot_high lags; this is where it last coiled. Null when there is no "
+                          "such window. continuation_low / continuation_bars describe that window.",
+    "continuation_low": "Lowest low of the continuation window (the base the extension bracket's stop is "
+                        "taken from).",
+    "continuation_bars": "Length of the continuation window, in daily bars (3-10).",
+    "pct_from_continuation_pivot": "(entry / continuation_pivot − 1) × 100. Negative = coiling under the "
+                                   "pivot (the break has not happened).",
+    "continuation_state": "BELOW (<0%: coiling under, the break has not happened) / BUY_ZONE (0-5%) / "
+                          "EXTENDED (>5%) against continuation_pivot. A reading, never a gate.",
+    "extension_bracket": "A SECOND bracket beside `bracket`, never replacing it: TP1/TP2 = 1.272/1.618 "
+                         "extension of the last impulse (fib_swing_low→fib_swing_high); stop = the lower of "
+                         "the continuation window's low and one ATR under entry; the same three gates "
+                         "(stop ≥ 1 ATR, R:R to TP2 ≥ 2, risk% ≤ regime ceiling) in `gates`, `passed` = all "
+                         "three. It ignores real nearby resistance and a far target clears R:R by "
+                         "construction, so it is 'what the bracket looks like if nearby levels are ignored', "
+                         "not a better bracket. {available:false, reason} when it cannot be built.",
     "extension_atr_20": "(entry − ma_20) / atr_14d — how far price sits above/below its "
                         "own 20-day average, in ATR units. A common 'how extended is "
                         "this' read across the technical seats, independent of price "
@@ -238,7 +257,10 @@ _FIELD_GLOSSARY = {
                "20-bar avg) + vol_validated (ratio ≥ 1.2) — a level DEFENDED on high volume "
                "is a stronger level; the stop's own read is stop_date + stop_vol_ratio + "
                "stop_vol_validated (present when the stop is swing-based). Data only — the "
-               "3 gates are unchanged.",
+               "3 gates are unchanged. rejected_by_gate (2026-11-04) = which gate turned the "
+               "structural stop candidates down: {n_candidates, fail_atr_floor, fail_rr_min, "
+               "fail_regime_ceiling, passed_all, tp2_reach_atr (TP2 distance in daily ranges), "
+               "tp2_too_near (TP2 closer than 2 ranges, so no stop can pass)}.",
     "structure_shift": "BOS/CHoCH read vs the CONFIRMED anchors (data only, never a "
                        "gate): BULLISH_BOS = COB close is above the last CONFIRMED pivot "
                        "high AND still within 2% of it — a break that JUST HAPPENED; "
@@ -820,6 +842,12 @@ _FIELD_SCHEMA = {
     "pivot_high":        _fs("reference", "usd", "n/a"),
     "pct_from_pivot":    _fs("signal", "pct", "n/a"),
     "extension_atr_20":  _fs("signal", "ratio", "n/a"),
+    "continuation_pivot": _fs("reference", "usd", "n/a"),
+    "continuation_low":  _fs("reference", "usd", "n/a"),
+    "continuation_bars": _fs("reference", "score", "n/a"),
+    "pct_from_continuation_pivot": _fs("signal", "pct", "n/a"),
+    "continuation_state": _fs("signal", "label", "n/a"),
+    "extension_bracket": _fs("stop", "usd", "below_entry"),
     "elder_hi7_streak":  _fs("signal", "score", "n/a"),
     "next_earnings_date": _fs("reference", "date", "n/a"),
     "days_to_earnings":  _fs("reference", "decimal", "n/a"),
@@ -1113,7 +1141,7 @@ def _compute_v21_lookups(sm: dict) -> dict:
     """
     out = {"day_vol": {}, "rs": {}, "sma": {}, "ma": {}, "corr": {},
            "vol30": {}, "beta252": {}, "pattern": {}, "candle": {},
-           "last_close": {},
+           "last_close": {}, "tail_hl": {},
            "spy_roc_20d": None, "spy_ret_63d": None,
            # 2026-09-05 voice packet spec additions (docs/specs/
            # aqe_voice_packet_spec_2026-09-05.md §2): 52-week range, 6/12-month
@@ -1171,6 +1199,8 @@ def _compute_v21_lookups(sm: dict) -> dict:
             vol = g["volume"].to_numpy(dtype=float)
             if len(cl):
                 out["last_close"][tk] = round(float(cl[-1]), 2)
+                # last 40 daily highs/lows for the continuation pivot (src/engines/continuation.py)
+                out["tail_hl"][tk] = (g["high"].to_numpy(dtype=float)[-40:], g["low"].to_numpy(dtype=float)[-40:])
             # vol_30d_ann = std of daily log returns over last 30 sessions, annualised
             if len(cl) >= 31:
                 logret = np.diff(np.log(cl[-31:]))
@@ -1431,6 +1461,8 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
         "ret_6m": None, "ret_12m": None, "rs_rank_pct": None,
         "cci_20": None, "pivot_high": None, "pct_from_pivot": None,
         "extension_atr_20": None,
+        "continuation_pivot": None, "continuation_low": None, "continuation_bars": None,
+        "pct_from_continuation_pivot": None, "continuation_state": None, "extension_bracket": None,
         # elder_hi7_streak is deliberately NOT defaulted here: every call site
         # sets it in the row's own dict literal BEFORE spreading in this
         # function's return value (same reason elder_5d isn't defaulted here
@@ -1625,7 +1657,7 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
             "price", "price_source", "stop", "stop_type", "stop_atr_dist",
             "stop_date", "risk", "risk_pct", "targets", "rr",
             "rr_tp1", "rr_tp2", "rr_tp3", "atr_fallback_stop",
-            "valid", "invalid_reason")}
+            "valid", "invalid_reason", "rejected_by_gate")}
 
         # ── Structure shift (BOS/CHoCH) — TV-analysis Phase 5 ─────────────
         # COB close vs the CONFIRMED anchors: above the nearest CONFIRMED pivot
@@ -1713,6 +1745,25 @@ def _v21_record_fields(tk: str, d: dict, lk: dict, sm: dict,
                 and fields["atr_14d"] and _is_num(_entry_px)):
             fields["extension_atr_20"] = round(
                 (_entry_px - fields["ma_20"]) / fields["atr_14d"], 2)
+
+        # ── Continuation pivot + extension bracket (2026-11-04) -- DATA ONLY, beside pivot_high / bracket ──
+        try:
+            from src.engines import continuation as _K
+            _hl = (lk.get("tail_hl") or {}).get(tk)
+            _cont = _K.continuation_pivot(_hl[0], _hl[1], fields.get("atr_14d")) if _hl else None
+            if _cont:
+                fields["continuation_pivot"] = _cont["pivot"]
+                fields["continuation_low"] = _cont["low"]
+                fields["continuation_bars"] = _cont["bars"]
+                if _is_num(_entry_px) and _cont["pivot"] > 0:
+                    fields["pct_from_continuation_pivot"] = round(100.0 * (_entry_px / _cont["pivot"] - 1.0), 2)
+                    fields["continuation_state"] = _K.state_vs_pivot(fields["pct_from_continuation_pivot"])
+            fields["extension_bracket"] = _K.extension_bracket(
+                _entry_px, fields.get("atr_14d"), fields.get("fib_swing_low"), fields.get("fib_swing_high"),
+                _cont, regime_level)
+        except Exception as _ke:  # noqa: BLE001 -- additive; never blocks the export
+            fields["extension_bracket"] = {"label": "extension bracket (beside the structural bracket; not a gate)",
+                                           "available": False, "reason": f"error: {type(_ke).__name__}"}
 
         # ── Health score (hold-decision, held_positions only) ─────────────
         # Readiness (rd_*) is HIDDEN from the AIC feed — the engine still runs

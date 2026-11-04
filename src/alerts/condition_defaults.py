@@ -31,7 +31,8 @@ from __future__ import annotations
 
 from . import config as C
 
-DEFAULT_CLASS = {"longlist": "AQE_LONGLIST", "elder": "AQE_ELDER"}
+DEFAULT_CLASS = {"longlist": "AQE_LONGLIST", "elder": "AQE_ELDER", "brief_lists": "AQE_LIST"}
+LIST_LABEL = "AQE list, not a committee pick"
 _SUFFIX = " (AQE default)"
 
 
@@ -45,6 +46,25 @@ def _n(v):
 
 def _sources() -> set[str]:
     return {s.strip().lower() for s in (C.CONDITION_DEFAULT_SOURCES or "").split(",") if s.strip()}
+
+
+def brief_list_names(export: dict | None) -> dict[str, list[str]]:
+    """{ticker: [list names it is on]} for the brief's three lists, in the SAME definitions as section 5b of the brief
+    (aegis/output/pma/test_cards/v3/lists_vs_committee.py): Elder top N = on_elder by Elder score then AQE rank; AQE top N
+    = by the export `rank`; Detect-lens top N = lens_ranking.ranked in its stored order. Read from the export; no new data."""
+    dl = (export or {}).get("daily_list") or []
+    rank = lambda r: r.get("rank") if isinstance(r.get("rank"), int) else 10 ** 6
+    elder = sorted([r for r in dl if r.get("on_elder")], key=lambda r: (-(r.get("elder") or 0), rank(r)))
+    aqe = sorted([r for r in dl if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])
+    known = {r.get("ticker") for r in dl}
+    lens = [x["ticker"] for x in ((export or {}).get("lens_ranking") or {}).get("ranked") or [] if x.get("ticker") in known]
+    out: dict[str, list[str]] = {}
+    for name, rows in (("Elder", [r["ticker"] for r in elder[:C.BRIEF_LIST_ELDER_N]]),
+                       ("AQE", [r["ticker"] for r in aqe[:C.BRIEF_LIST_AQE_N]]),
+                       ("Detect lens", lens[:C.BRIEF_LIST_LENS_N])):
+        for tk in rows:
+            out.setdefault(tk, []).append(name)
+    return out
 
 
 def breakout_line(rec: dict) -> float | None:
@@ -110,6 +130,8 @@ def _as_row(rec: dict, klass: str, conditions: dict) -> dict:
     line = _n(conditions["shared"]["buy"][0]["level"])
     row = {"ticker": rec["ticker"], "class": klass, "atr_14d": rec.get("atr_14d"),
            "conditions": conditions, "aqe_default": True}
+    if klass == DEFAULT_CLASS["brief_lists"]:
+        row["aqe_list"] = True
     levels = _levels_block(rec, line) if line is not None else None
     if levels:
         row["levels"] = levels
@@ -157,19 +179,24 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
             out.append(row)
             covered.add(tk)
 
-    # 2. Longlist / Elder names outside the committee book
+    # 2. names outside the committee book: the brief's three lists (default) and/or the older whole Longlist / Elder
     want = _sources()
     pma_tickers = {r.get("ticker") for r in latest}
+    on_lists = brief_list_names(export) if "brief_lists" in want else {}
     for tk, rec in by_ticker.items():
         if tk in covered or tk in pma_tickers or tk in held or rec.get("held"):
             continue
-        src = ("longlist" if rec.get("on_longlist") and "longlist" in want
+        src = ("brief_lists" if tk in on_lists
+               else "longlist" if rec.get("on_longlist") and "longlist" in want
                else "elder" if rec.get("on_elder") and "elder" in want else None)
         if not src:
             continue
         cond = build_default_conditions(rec)
         if cond:
-            out.append(_as_row(rec, DEFAULT_CLASS[src], cond))
+            row = _as_row(rec, DEFAULT_CLASS[src], cond)
+            if src == "brief_lists":
+                row["on_lists"] = on_lists[tk]
+            out.append(row)
             covered.add(tk)
         if len(out) >= C.CONDITION_MAX_WATCHED:
             break

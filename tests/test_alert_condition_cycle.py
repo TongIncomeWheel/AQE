@@ -376,3 +376,36 @@ def test_just_broke_sends_a_digest_even_with_no_cards(monkeypatch):
                            run_date="2026-10-02",
                            meta={"market_kill": {"status": "ACTIVE", "broken": True, "just_broke": True}})
     assert len(sent) == 1
+
+
+def _unr_cycle(monkeypatch, enabled):
+    """HPE sits well below its buy line (no buy state fires); U&R says ARMED and the VWAP trigger says TRIGGERED."""
+    from src.alerts import config as C, live_unr as LU, live_measures as LM
+    monkeypatch.setattr(C, "CONDITION_UNR_ENABLED", enabled)
+    monkeypatch.setattr(LU, "evaluate", lambda *a, **k: {"status": "ARMED", "armed": [], "levels": [], "stop": 61.0, "volume": {}})
+    monkeypatch.setattr(LM, "vwap_trigger", lambda bars: {"state": "TRIGGERED"})
+    monkeypatch.setattr(CC, "_maybe_email_digest", lambda *a, **k: None)
+    quotes = {"HPE": {"price": 58.0, "prev_close": 57.0, "day_high": 58.5, "day_low": 57.5, "open": 57.6},
+              "SPY": {"price": 500.5, "prev_close": 499.0}}
+    return CC.run_condition_cycle(_pma_doc_with_conditions(), quotes, datetime(2026, 10, 2, 11, 0, tzinfo=_ET), run_date="2026-10-02")
+
+
+def test_the_unr_switch_off_stops_every_unr_state(monkeypatch):
+    """PM 2026-11-04: ONE setting (CONDITION_UNR_ENABLED) turns the whole U&R lifecycle off; default on = today's behaviour."""
+    on = _unr_cycle(monkeypatch, True)
+    assert "UNR_TRIGGER" in (on["fired"].get("HPE") or []), on["fired"]
+    off = _unr_cycle(monkeypatch, False)
+    assert not any(s.startswith("UNR") for s in (off["fired"].get("HPE") or [])), off["fired"]
+
+
+def test_the_unr_switch_defaults_to_off():
+    """PM 2026-11-04: defaults live in code so the HF poller and the GitHub backstop cannot disagree."""
+    from src.alerts import config as C
+    assert C.CONDITION_UNR_ENABLED is False
+
+
+def test_the_code_defaults_are_the_brief_lists_with_defaults_on_and_unr_off():
+    import importlib
+    from src.alerts import config as C
+    assert C.CONDITION_DEFAULTS_ENABLED is True and C.CONDITION_UNR_ENABLED is False
+    assert C.CONDITION_DEFAULT_SOURCES == "brief_lists" and (C.BRIEF_LIST_ELDER_N, C.BRIEF_LIST_AQE_N, C.BRIEF_LIST_LENS_N) == (15, 20, 15)
