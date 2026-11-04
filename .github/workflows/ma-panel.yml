@@ -42,5 +42,4 @@ jobs:
           GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
           GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MA_REFRESH_BUDGET_S: ${{ format('{0}', inputs.budget_minutes) }}
         run: python -m scripts.ma_panel_run --budget-minutes "${{ inputs.budget_minutes }}"
