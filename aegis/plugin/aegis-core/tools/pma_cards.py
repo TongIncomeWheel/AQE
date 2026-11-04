@@ -24,6 +24,7 @@ import collections
 import html
 import json
 import os
+import re
 import sys
 
 E = html.escape
@@ -220,6 +221,7 @@ dt{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.05em;text-transfor
 .hh{display:flex;align-items:center;gap:4px}.hh .num{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--mute)}
 .tk2{font-family:var(--f-disp);font-weight:800;font-size:1.05rem}.cond{color:var(--mute)}
 .flag{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
+.reason p{margin:.25rem 0;font-size:.95rem}.bracket dd{font-family:var(--f-mono);font-size:.86rem}
 .committee{border-left:3px solid var(--up);background:var(--up-soft,var(--warn-soft));padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;font-size:.9rem}
 .committee .minority{margin-top:4px;color:var(--ink-2,inherit)}
 .read{display:flex;flex-direction:column;gap:10px;max-width:72ch}
@@ -230,7 +232,127 @@ REQUIRED_TOP = ["session_label", "stance_pill", "bottom_line", "market", "money"
                 "cards", "holds", "passes", "plan", "caveats"]
 
 
-def _validate_text(T, cons):
+
+# ---------------------------------------------------------------------------------------------------------------
+# B1/B2 (PM 2026-11-04): every ADVANCE card carries a code-rendered BRACKET - entry, stop, risk, each target in R, RR to TP2, 1R in
+# dollars - and a level under 1.0R is never presented as a target. "The first target is ultra stupid once you consider RR"
+# (ROKU: stop 157.90, buy line 161.26, first level 161.26 = 0R). bracket_engine.py stays the source of the LEVELS; this is the
+# selection and presentation rule at the cards layer: >= 1R = TP1/TP2/TP3; closer levels = "nearby resistance (x.xR)".
+MIN_TARGET_R = 1.0
+
+
+def _one_r_usd():
+    """The fixed 1R in dollars (config/aegis_fund.md one_r_usd, PM 2026-10-27), or None if unset."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    for rel in ("../../../config/aegis_fund.md", "../config/aegis_fund.md", "../../config/aegis_fund.md"):
+        p = os.path.join(here, rel)
+        if os.path.exists(p):
+            try:
+                m = re.search(r"^one_r_usd:\s*(\d+(?:\.\d+)?)", open(p, encoding="utf-8").read(), re.M)
+                if m:
+                    return float(m.group(1))
+            except OSError:
+                pass
+    return None
+
+
+def bracket_view(entry, entry_src, stop, stop_type, levels, one_r=None):
+    """Pure. -> the card's bracket: entry | stop | risk | targets in R | nearby | RR to TP2 | 1R shares. Never raises."""
+    out = {"entry": entry, "entry_src": entry_src, "stop": stop, "stop_type": stop_type, "risk": None, "risk_pct": None,
+           "targets": [], "nearby": [], "rr_tp2": None, "one_r_usd": one_r, "shares": None, "note": None}
+    try:
+        if not (isinstance(entry, (int, float)) and isinstance(stop, (int, float))) or stop >= entry:
+            out["note"] = "no valid stop under the entry - no bracket, no R multiples"
+            return out
+        risk = entry - stop
+        out["risk"], out["risk_pct"] = round(risk, 2), round(100 * risk / entry, 2)
+        rows = sorted({round(float(p), 2) for p in levels if isinstance(p, (int, float))})
+        for p in rows:
+            r = (p - entry) / risk
+            if r >= MIN_TARGET_R:
+                out["targets"].append({"n": len(out["targets"]) + 1, "price": p, "r": round(r, 2)})
+            else:
+                out["nearby"].append({"price": p, "r": round(r, 2)})
+        out["targets"] = out["targets"][:3]
+        if len(out["targets"]) >= 2:
+            out["rr_tp2"] = out["targets"][1]["r"]
+        if len(out["targets"]) < 2:
+            out["note"] = (f"Only {len(out['targets'])} level reaches 1R above the entry - no usable target ladder; "
+                           f"treat the nearby levels as resistance to trade through, not as targets")
+        if one_r:
+            out["shares"] = int(one_r // risk)
+    except Exception as e:  # noqa: BLE001
+        out["note"] = f"bracket could not be built: {e.__class__.__name__}"
+    return out
+
+
+def _bracket_html(b):
+    if b.get("risk") is None:
+        return f'<div class="full bracket"><dt>Bracket</dt><dd class="neg">{E(b.get("note") or "n/a")}</dd></div>'
+    tp = " &nbsp;·&nbsp; ".join(f'TP{x["n"]} <b>{x["price"]:.2f}</b> ({x["r"]:.1f}R)' for x in b["targets"]) or "no target reaches 1R"
+    near = (" · ".join(f'{x["price"]:.2f} ({x["r"]:.1f}R)' for x in b["nearby"]) or "")
+    one = (f'1R ${b["one_r_usd"]:,.0f} = {b["shares"]} shares' if b.get("shares") is not None else "1R $ not set")
+    rr = f'{b["rr_tp2"]:.1f}R' if b.get("rr_tp2") is not None else "n/a"
+    st = str(b.get("stop_type") or "").replace("_", " ")
+    return (f'<div class="full bracket"><dt>Bracket</dt><dd>'
+            f'Entry <b>{b["entry"]:.2f}</b> ({E(b["entry_src"])}) &nbsp;·&nbsp; Stop <b>{b["stop"]:.2f}</b> ({E(st)}) &nbsp;·&nbsp; '
+            f'Risk <b>{b["risk"]:.2f}</b>/share ({b["risk_pct"]:.1f}%) &nbsp;·&nbsp; {tp} &nbsp;·&nbsp; RR to TP2 <b>{rr}</b> &nbsp;·&nbsp; {E(one)}'
+            + (f'<br><span class="cond">Nearby resistance, not targets: {E(near)}</span>' if near else "")
+            + (f'<br><span class="neg">{E(b["note"])}</span>' if b.get("note") else "") + '</dd></div>')
+
+
+# B3 (PM 2026-11-04): ONE voice, plain English. The reason block is three sentences for a trader - why the room agrees it is a buy,
+# the one thing that would make it wrong, what to wait for. The audit trail (verbatim quotes) stays in the slate; this text is plain.
+REASON_KEYS = ("agree", "wrong_if", "wait_for")
+REASON_MAX_CHARS = 240
+REASON_MAX_NUMBERS = 4
+JARGON = ("ema", "sma", "atr", "macd", "rsi", "cci", "adx", "vwap", "obv", "pvp", "poc", "vah", "val", "bos", "choch", "dsl", "mfi", "cmf",
+          "support seats", "oppose", "abstain", "voted", "votes", "vote", "unanimous", "analysts agree", "quorum", "conviction")
+_RAW_FIELD = re.compile(r"\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b|\b[a-z_]+\.[a-z_]+\b")
+_TALLY = re.compile(r"\b\d+\s*(?:of|/|out of)\s*\d+\b", re.I)
+_NUMBER = re.compile(r"(?<![A-Za-z_])-?\d+(?:[.,]\d+)?%?")
+
+
+def validate_reason(reason):
+    """-> list of problems (empty = plain). FAIL, not WARN: raw field names, vote tallies, jargon, more than 4 numbers, or not three
+    one-sentence parts."""
+    errs = []
+    if not isinstance(reason, dict) or any(not isinstance(reason.get(k), str) or not reason[k].strip() for k in REASON_KEYS):
+        return [f"reason must be {{agree, wrong_if, wait_for}}, one plain sentence each"]
+    nums = 0
+    for k in REASON_KEYS:
+        t = reason[k].strip()
+        if len(t) > REASON_MAX_CHARS:
+            errs.append(f"reason.{k}: {len(t)} chars > {REASON_MAX_CHARS} - one sentence")
+        if len(re.findall(r"[.!?](?=\s+[A-Z])", t)) > 0:
+            errs.append(f"reason.{k}: more than one sentence")
+        m = _RAW_FIELD.findall(t)
+        if m:
+            errs.append(f"reason.{k}: raw field name(s) {sorted(set(m))[:3]} - say it in plain words")
+        if _TALLY.search(t):
+            errs.append(f"reason.{k}: a vote tally ({_TALLY.search(t).group(0)!r}) - the card never counts votes")
+        low = " " + re.sub(r"[^a-z ]", " ", t.lower()) + " "
+        bad = [j for j in JARGON if f" {j} " in low]
+        if bad:
+            errs.append(f"reason.{k}: jargon {bad[:3]}")
+        nums += len(_NUMBER.findall(t))
+    if nums > REASON_MAX_NUMBERS:
+        errs.append(f"reason: {nums} numbers > {REASON_MAX_NUMBERS} - keep only the ones that matter")
+    return errs
+
+
+_ONE_R = None
+
+
+def _reason_html(w):
+    r = w.get("reason")
+    if isinstance(r, dict) and all(r.get(k) for k in REASON_KEYS):
+        return ('<div class="reason"><p><b>Why it is a buy:</b> ' + E(r["agree"]) + '</p><p><b>What would make it wrong:</b> ' + E(r["wrong_if"]) +
+                '</p><p><b>What to wait for:</b> ' + E(r["wait_for"]) + '</p></div>')
+    return f'<p class="why">{E(w.get("why", ""))}</p>'          # legacy text only (--allow-legacy-text)
+
+
+def _validate_text(T, cons, legacy=False):
     gaps = [k for k in REQUIRED_TOP if k not in T]
     adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"]
     hol = [c["ticker"] for c in cons if c["verdict"] == "HOLD-FOR-CONDITIONS"]
@@ -238,9 +360,13 @@ def _validate_text(T, cons):
     voted = set(adv + hol + pas)
     for t in adv:
         c = (T.get("cards") or {}).get(t) or {}
-        miss = [k for k in ("case", "why", "readiness", "readiness_tone") if not c.get(k)]
+        miss = [k for k in ("case", "readiness", "readiness_tone") if not c.get(k)]
+        if not c.get("reason") and not (legacy and c.get("why")):
+            miss.append("reason")
         if miss:
             gaps.append(f"cards.{t} missing {miss}")
+        if c.get("reason"):
+            gaps += [f"cards.{t}.{e}" for e in validate_reason(c["reason"])]
     gaps += [f"holds.{t}" for t in hol if not (T.get("holds") or {}).get(t)]
     gaps += [f"passes.{t}" for t in pas if not (T.get("passes") or {}).get(t)]
     for sec in ("cards", "holds", "passes"):
@@ -885,8 +1011,10 @@ def _valen_management_html(V, held):
     return "".join(out)
 
 def cmd_render(a):
+    global _ONE_R
+    _ONE_R = _one_r_usd()
     T = load(a.text); cons = load(a.consensus)
-    gaps = _validate_text(T, cons)
+    gaps = _validate_text(T, cons, legacy=bool(getattr(a, "allow_legacy_text", False)))
     if a.valen and os.path.exists(a.valen):
         gaps += [f"weather.{k}" for k in WEATHER_KEYS if not (T.get("weather") or {}).get(k)]
     if gaps:
@@ -959,17 +1087,27 @@ def cmd_render(a):
         br = (BR.get(t) or {}).get("stop") or {}
         stop = (f'{br.get("price")} ({str(br.get("type", "")).replace("_", " ")}, {br.get("stop_pct")}%)' if br.get("price") else
                 (f'{BS[t]["stop"]} broker stop' if t in BS else "—"))
-        tp = ((BR.get(t) or {}).get("tp_ladder") or [{}])[0].get("price")
+        _b = BR.get(t) or {}
+        _trig = next((x for x in (card.get("triggers") or []) if x.get("kind") == "close_above" and isinstance(x.get("level"), (int, float))), None)
+        _ref = (_b.get("price") or {}).get("value") if isinstance(_b.get("price"), dict) else None
+        _ref = _ref if isinstance(_ref, (int, float)) else (r.get("entry") if t not in held else held[t].get("live_px"))
+        _entry, _esrc = ((_trig["level"], "buy line") if _trig else (_ref, "last close"))
+        _stop = (_b.get("stop") or {}).get("price") if isinstance(_b.get("stop"), dict) else None
+        if _stop is None and t in BS:
+            _stop = BS[t].get("stop")
+        bracket = bracket_view(_entry, _esrc, _stop, ((_b.get("stop") or {}).get("type") if _b.get("stop") else "broker stop"),
+                               [x.get("price") for x in (_b.get("tp_ladder") or [])], _ONE_R)
+        tp = None
         setups = [f'{x.get("setup")} {x.get("status")}' for x in _house_setups(r)]
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
         void = f'<div class="full"><dt>Void if</dt><dd>{E(MK)}</dd></div>' if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
                  f'<span class="pill {TONE.get(w["readiness_tone"], "p-n")}">{E(w["readiness"])}</span></header>'
-                 f'<p class="case"><b>{E(w["case"])}</b></p><p class="why">{E(w["why"])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
+                 f'<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
-                 f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Stop (render-only)</dt><dd>{E(stop)}</dd></div>'
-                 f'{void}<div><dt>First target</dt><dd>{E(str(tp)) if tp else "—"}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
+                 f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
+                 f'{void}{_bracket_html(bracket)}'
                  f'<div class="full"><dt>Valen</dt><dd>{valen}</dd></div>'
                  f'<div class="full"><dt>Sector</dt><dd>{E(w.get("sector_note") or str(r.get("gics_sector_name") or ""))}</dd></div></dl></article>')
     o.append("</div>")
@@ -1042,6 +1180,7 @@ def main():
     s.add_argument("--valen", default="aqe_valen_dashboard.json"); s.add_argument("--crown", default="aqe_crown_macro.json"); s.add_argument("--scorecard", default="scorecard.md")
     s.add_argument("--slate", default="slate.json", help="R40: the slate's market_kill line prints on the bottom line and on every ADVANCE card")
     s.add_argument("--position", default=None, help="R42: committee_position.json - each slated ticket shows 'Committee: Conviction n/5. Why ... What would change it ... Minority note ...'. Absent = no committee block (runs before 2026-11-04)")
+    s.add_argument("--allow-legacy-text", dest="allow_legacy_text", action="store_true", help="accept the old `why` wall instead of the plain 3-part `reason` (re-rendering an old run only)")
     s.add_argument("--out", required=True); s.set_defaults(fn=cmd_render)
     a = ap.parse_args(); a.fn(a)
 

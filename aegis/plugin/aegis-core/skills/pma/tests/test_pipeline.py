@@ -1645,7 +1645,7 @@ def test_card_report_layout_is_fixed_and_refuses_gaps(td):
             "--out", os.path.join(td, "r.html")]
     rc, log = run(args)
     check("a words file missing an ADVANCE card is REFUSED", rc == 2 and "cards.AAA" in log, log[-300:])
-    words["cards"]["AAA"] = {"case": "c", "why": "w", "readiness": "Ready now", "readiness_tone": "ok"}
+    words["cards"]["AAA"] = {"case": "c", "why": "w", "reason": {"agree": "A leader in a strong group breaking out on heavy buying.", "wrong_if": "It closes back under the breakout.", "wait_for": "An hourly close above the buy line."}, "readiness": "Ready now", "readiness_tone": "ok"}
     json.dump(words, open(tw, "w"))
     rc, log = run(args)
     check("a complete words file renders", rc == 0, log[-300:])
@@ -2363,7 +2363,7 @@ def test_the_cards_show_the_slate_status_objections_and_the_detect_lens_top_10(t
     words = {"session_label": "s", "stance_pill": "NEUTRAL", "bottom_line": {"headline": "h", "paragraph": "p", "stats": [{"value": "1", "label": "l"}] * 4},
              "market": {"what_happened": [{"lead": "a", "text": "b"}], "weather": [{"lead": "c", "text": "d"}]},
              "money": [{"group": "g", "read": "r", "meaning": "m"}], "book": [], "changed": ["c"],
-             "cards": {"AAA": {"case": "c", "why": "w", "readiness": "Ready now", "readiness_tone": "ok"}}, "holds": {"BBB": "waits"}, "passes": {"CCC": "no"}, "plan": ["p"], "caveats": ["c"]}
+             "cards": {"AAA": {"case": "c", "why": "w", "reason": {"agree": "A leader in a strong group breaking out on heavy buying.", "wrong_if": "It closes back under the breakout.", "wait_for": "An hourly close above the buy line."}, "readiness": "Ready now", "readiness_tone": "ok"}}, "holds": {"BBB": "waits"}, "passes": {"CCC": "no"}, "plan": ["p"], "caveats": ["c"]}
     tw = os.path.join(d, "words.json"); json.dump(words, open(tw, "w"))
     out = os.path.join(d, "r.html")
     rc, log = run([CARDS, "render", "--text", tw, "--consensus", os.path.join(d, "consensus.json"), "--export", os.path.join(d, "export.json"),
@@ -3545,6 +3545,35 @@ def test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat(td):
           "removed from the rationale" in open(PIPE).read() and "no 'what would change it' is left" in open(PIPE).read())
 
 
+def test_cards_bracket_first_target_rule_and_plain_reason(td):
+    """PM 2026-11-04 ("the first target is ultra stupid once you consider RR"): every ADVANCE card carries a code-rendered bracket;
+    only levels at 1R or more are targets, closer ones are listed as nearby resistance; the reason block is one plain voice."""
+    sys.path.insert(0, TOOLS)
+    import importlib, pma_cards
+    importlib.reload(pma_cards)
+    # ROKU, 3 Nov: stop 157.90, levels 161.26 / 164.31 / 168.20
+    b = pma_cards.bracket_view(160.36, "last close", 157.90, "aqe_atr_fallback", [161.26, 164.31, 168.20], 620)
+    check("a level at 0.37R is NOT a target: it is nearby resistance", [x["price"] for x in b["nearby"]] == [161.26] and b["nearby"][0]["r"] == 0.37, str(b))
+    check("TP1/TP2 are the levels at or above 1R, each with its own R", [(x["n"], x["price"], x["r"]) for x in b["targets"]] == [(1, 164.31, 1.61), (2, 168.2, 3.19)], str(b["targets"]))
+    check("RR to TP2 is TP2's own R, risk is entry - stop, 1R in dollars gives shares", b["rr_tp2"] == 3.19 and b["risk"] == 2.46 and b["shares"] == 252, str(b))
+    b = pma_cards.bracket_view(161.26, "buy line", 157.90, "aqe_atr_fallback", [161.26, 164.31, 168.20], 620)
+    check("entered at the buy line only ONE level reaches 1R, and the card says so instead of inventing a ladder", len(b["targets"]) == 1 and b["rr_tp2"] is None and "Only 1 level" in (b["note"] or ""), str(b))
+    check("no valid stop is said plainly, not rendered as numbers", "no valid stop" in pma_cards.bracket_view(100, "last close", None, None, [110], 620)["note"])
+    html = pma_cards._bracket_html(pma_cards.bracket_view(160.36, "last close", 157.90, "aqe_atr_fallback", [161.26, 164.31, 168.20], 620))
+    check("the bracket HTML shows entry, stop, risk, TP in R, RR to TP2, 1R and the nearby line", all(x in html for x in ("Entry", "Stop", "Risk", "TP1", "(1.6R)", "RR to TP2", "1R $620", "Nearby resistance, not targets")), html[:400])
+    ok = {"agree": "A leader in a strong group is breaking out on heavy buying.", "wrong_if": "It closes back under 158.99.", "wait_for": "An hourly close above 161.26."}
+    check("a plain three-part reason passes", pma_cards.validate_reason(ok) == [])
+    bad = dict(ok, agree="4 of 7 analysts SUPPORT; bar_high 161.26, high_52w_close 160.36, ATR 2.4 and EMA21 vwap 5 6 7 8.")
+    errs = pma_cards.validate_reason(bad)
+    check("raw field names, vote tallies, jargon and a number pile-up are each refused", all(any(k in e for e in errs) for k in ("raw field", "vote tally", "jargon", "numbers")), str(errs))
+    check("a missing part or a two-sentence part is refused", pma_cards.validate_reason({"agree": "x."}) != [] and any("more than one sentence" in e for e in pma_cards.validate_reason(dict(ok, agree="It breaks out. It leads the group."))))
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("chk_cards", os.path.join(HERE, "..", "..", "daily-check", "check.py")); ck = _iu.module_from_spec(sp); sp.loader.exec_module(ck)
+    f = os.path.join(td, "ct.json"); json.dump({"cards": {"AAA": {"reason": bad}, "BBB": {"reason": ok}, "CCC": {"why": "old wall"}}}, open(f, "w"))
+    fails, notes = ck.check_cards_text(f)
+    check("check.py cards FAILs the bad reason and the missing one, passes the good one", any("cards.AAA" in x for x in fails) and any("cards.CCC: no `reason`" in x for x in fails) and not any("cards.BBB" in x for x in fails), str(fails)[:300])
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
@@ -3617,7 +3646,8 @@ def main():
                    test_p2_cap_25_code_made_cut_verbatim_slate_quotes_and_amend_also,
                    test_form_cap_scales_with_tickets_and_trigger_ties_are_stated,
                    test_rationale_final_drops_clauses_sourced_from_a_dissenting_seat,
-                   test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table]:
+                   test_the_handoff_gate_fails_a_stale_breadth_we_caused_and_a_missing_legs_table,
+                   test_cards_bracket_first_target_rule_and_plain_reason]:
             print(fn.__name__.replace("test_", "").replace("_", " ") + ":")
             try:
                 fn(td)
