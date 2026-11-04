@@ -119,3 +119,16 @@ def test_the_export_stamp_flags_roku_and_keeps_a_failed_scan_loud(tmp_path, monk
     exp3 = {"date": "2026-11-04", "daily_list": [{"ticker": "ROKU"}], "held_positions": []}
     DS._attach_ma_flags(exp3, client=object())            # a client that cannot scan at all: still UNKNOWN, never NONE
     assert exp3["daily_list"][0]["ma_status"] == "UNKNOWN" and exp3["ma_scan"]["scan_status"] == "failed"
+
+
+def test_a_real_cash_offer_and_stock_merger_on_lci_reads_as_a_target():
+    """Real FMP news (4 Nov): LCI Industries agreed an all-stock merger with Patrick and received a cash proposal from Monomoy; the release calls
+    the company 'LCI', not 'LCI Industries' - the role is read around the short alias too."""
+    items = [{"publishedDate": "2026-10-30 07:30:00", "url": "u1",
+              "title": "LCI Board Determines That the Unsolicited, Non-Binding Proposal From Monomoy Capital Partners Does Not Constitute a Superior Proposal",
+              "text": "LCI Industries (NYSE: LCII) (“LCI”), today announced that its Board of Directors has unanimously determined that the unsolicited, non-binding proposal "
+                      "received from Monomoy Capital Partners to acquire LCI for $101 per share in cash does not constitute a superior proposal"},
+             {"publishedDate": "2026-10-28 06:03:00", "url": "u2", "title": "Patrick Industries, Inc. Reaffirms Merger Agreement with LCI Industries",
+              "text": "Patrick reaffirmed its agreement to combine with LCI Industries (NYSE: LCII) in an all-stock merger"}]
+    assert M.classify("LCII", "LCI Industries, Inc.", items)["ma_status"] == "PENDING_TARGET"
+    assert M.classify("PATK", "Patrick Industries, Inc.", items[1:])["ma_status"].startswith("PENDING")       # flagged; role unclear is fine (flag-only)

@@ -55,19 +55,26 @@ def short_name(company_name: str | None, ticker: str) -> str:
     return " ".join(words[:2]) if words else ticker
 
 
+def _name_variants(name: str) -> list[str]:
+    """'LCI Industries' -> ['LCI Industries', 'LCI']: releases refer to their company by its short alias ("LCI"), not its full name."""
+    out = [name] if name else []
+    first = (name or "").split()[0] if name else ""
+    if first and first != name and len(first) >= 3 and first.lower() not in {"the", "new", "first", "united", "american", "global", "general", "national", "international"}:
+        out.append(first)
+    return out
+
+
 def _role(text: str, name: str) -> str | None:
-    """'TARGET' / 'ACQUIRER' / 'BOTH' / None from one headline+summary, judged around this company's own short name."""
-    if not name:
-        return None
-    n = re.escape(name)
-    target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|merger with|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
-              rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|acquired by|to be bought|going private|take-?private|merger with)",
-              rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
-    acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]
-    t = any(re.search(p, text, re.I) for p in target)
-    a = any(re.search(p, text, re.I) for p in acq)
-    # "FOX will acquire Roku" matches the target pattern for Roku and the acquirer pattern for nobody named Roku; a company whose
-    # name sits before 'to acquire' is the buyer.
+    """'TARGET' / 'ACQUIRER' / 'BOTH' / None from one headline+summary, judged around this company's own short name (or its first-word alias)."""
+    t = a = False
+    for nm in _name_variants(name):
+        n = re.escape(nm)
+        target = [rf"(?:acquire[sd]?|acquisition of|buy(?:ing)?|purchase of|merger with|takeover of|take[- ]private)\s+(?:the\s+)?(?:\w+\s+){{0,2}}{n}\b",
+                  rf"\b{n}\b[^.]{{0,70}}(?:to be acquired|will be acquired|agreed to be acquired|be acquired by|acquired by|to be bought|going private|take-?private|merger with)",
+                  rf"(?:acquisition|merger|deal)[^.]{{0,40}}\b{n}\b[^.]{{0,20}}(?:pending|announced)"]
+        acq = [rf"\b{n}\b[^.]{{0,40}}(?:to acquire|will acquire|agrees? to (?:acquire|buy)|agreed to (?:acquire|buy)|planned acquisition of|pending acquisition of|acquisition of)"]
+        t = t or any(re.search(p, text, re.I) for p in target)
+        a = a or any(re.search(p, text, re.I) for p in acq)
     if t and not a:
         return "TARGET"
     if a and not t:
