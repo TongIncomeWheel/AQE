@@ -3667,10 +3667,27 @@ def test_committee_words_fold_into_the_audit_trail_and_freshness_falls_back_to_t
           and pma_cards.plain_prose("RSI") == "RSI")
 
 
+def test_a_missing_or_stale_net_highs_read_never_prints_a_direction(td):
+    """PM 2026-11-04: stale breadth rendered 'Worsening' (null read as false). Missing/stale must read 'Not read'."""
+    sys.path.insert(0, TOOLS)
+    import pma_cards as PC
+    def row(**k):
+        return {"breadth": [dict({"label": "Net High/Net Low (8d vs 20d)"}, **k)]}
+    for name, r in (("stale", row(status="STALE", value=None, display=None, reason="OUR_BUDGET")),
+                    ("unavailable", row(status="UNAVAILABLE", value=None)),
+                    ("null value", row(status="OK", value=None))):
+        h = PC._wind_gauges(r)
+        check(f"a {name} net-highs read says Not read, no direction", "Not read" in h and "Worsening" not in h and "Improving" not in h, h[:300])
+    ok = PC._wind_gauges(row(status="OK", value=False, display="-3 vs -5"))
+    check("a real False still reads Worsening", "Worsening" in ok)
+    ok2 = PC._wind_gauges(row(status="OK", value=True, display="2 vs 1"))
+    check("a real True still reads Improving", "Improving" in ok2)
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

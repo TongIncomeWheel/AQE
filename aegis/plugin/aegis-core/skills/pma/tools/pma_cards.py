@@ -597,7 +597,12 @@ def _wind_gauges(v):
             g.append(bar(lbl, 100 * r / (1 + r), f"{r:g} up for every 1 down", "1.0 = even",
                          "a big day = a stock up or down 4% or more"))
     nh = b.get("Net High/Net Low (8d vs 20d)")
-    if nh:
+    if nh and (nh.get("status") not in (None, "OK") or not isinstance(nh.get("value"), bool)):
+        # A missing or stale read is NOT a direction (null was rendering as 'Worsening'): say so, with the reason.
+        why = str(nh.get("reason") or nh.get("status") or "no value served")
+        g.append('<div class="gauge"><div class="gh"><span>Net new highs, 8-day vs 20-day average</span><b>Not read</b></div>'
+                 f'<div class="gl"><span>{E(why)}</span></div></div>')
+    elif nh:
         g.append(f'<div class="gauge"><div class="gh"><span>Net new highs, 8-day vs 20-day average</span><b class="{"pos" if nh.get("value") else "neg"}">'
                  f'{"Improving" if nh.get("value") else "Worsening"}</b></div><div class="gl"><span>{E(str(nh.get("display") or ""))}</span></div>'
                  + ('<div class="gn">still negative means more new lows than highs, but fewer than before</div>'
