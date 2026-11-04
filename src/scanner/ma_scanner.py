@@ -208,6 +208,15 @@ def build_ma_panel(
 
     panel = panel.sort_values(["ticker", "date"]).reset_index(drop=True)
 
+    # The population is TODAY's >$2B screen. Names that fell out of it (delisted, acquired, below the floor) never get a new bar,
+    # sat in the panel forever and were read at their last stale close by every breadth count; on 4 Nov 537 of 4,316 tickers (12%)
+    # were such ghosts, which made a fully refreshed panel read 87% current. Prune them (reported, never silent).
+    keep = set(tickers)
+    ghosts = panel.loc[~panel["ticker"].isin(keep), "ticker"].nunique()
+    if ghosts:
+        print(f"  [MA Scanner] pruned {ghosts} ticker(s) no longer in today's universe (delisted / below the floor)")
+        panel = panel[panel["ticker"].isin(keep)].reset_index(drop=True)
+
     cutoff = pd.Timestamp(from_date)
     panel = panel[panel["date"] >= cutoff].reset_index(drop=True)
 
