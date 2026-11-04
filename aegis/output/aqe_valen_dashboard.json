@@ -1,28 +1,30 @@
 {
   "date": "2026-11-04",
-  "exported_at": "2026-11-04 13:11:00 SGT",
+  "exported_at": "2026-11-04 13:21:00 SGT",
   "basis": "eod",
-  "status": "DEGRADED",
+  "status": "OK",
   "read_me_first": {
-    "headline": "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
+    "headline": "Stance: RISK OFF. SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
     "because": [
       "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
       "SPY sits -1.62 ATRs above its 50-day line (not stretched). QQQ sits -3.03 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.98 \u2014 neither calm nor stressed.",
       "Real leadership this week: Payments, Biotech, Solar Renewables \u2014 strong on both the weekly and monthly read."
     ],
-    "so_what": null,
-    "watch_for": [],
-    "caveats": [
-      "DATA NOT CURRENT (expected session 2026-11-03): breadth_whole_market as of 2026-11-03 [OUR_BUDGET]. Readings that depend on them are older than today's close.",
-      "The one-word stance is not shown: it depends on whole-market breadth (how many stocks are above their 40-day line, how many moved 25%+ this month) that AQE does not yet compute across the full market \u2014 whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    "so_what": "Breadth is against the tape \u2014 build the watchlist, do not push new entries.",
+    "watch_for": [
+      "Stocks above their 40-day line clears 50.0 (now 50.3)",
+      "Monthly big risers (25%+) clears 350 (now 65)",
+      "5-day up/down 4% count clears 1.0 (now 0.45)",
+      "5-day up/down 4% count falls under 0.7 (now 0.45)"
     ],
-    "as_of": "2026-11-04T05:10:39Z",
+    "caveats": [],
+    "as_of": "2026-11-04T05:20:39Z",
     "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
   },
   "stance": {
-    "word": "\u2014",
-    "status": "DEGRADED",
-    "reason": "whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    "word": "RISK OFF",
+    "status": "OK",
+    "reason": null
   },
   "trend": [
     {
@@ -68,94 +70,94 @@
       "label": "Today's count green",
       "section": "checklist",
       "kind": "bool",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": true,
+      "reason": null
     },
     {
       "label": "5-day count (1.00+ to pass)",
       "section": "checklist",
       "kind": "ratio_led",
-      "status": "STALE",
-      "value": null,
-      "flag": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 0.45,
+      "flag": false,
+      "reason": null
     },
     {
       "label": "Monthly big risers (25%+ up-count)",
       "section": "checklist",
       "kind": "count",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 65,
+      "reason": null
     },
     {
       "label": "Net High/Net Low (8d vs 20d)",
       "section": "checklist",
       "kind": "bool",
-      "status": "STALE",
-      "value": null,
-      "display": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": true,
+      "display": "33.25 vs 17.85",
+      "reason": null
     },
     {
       "label": "T2108 \u2014 stocks above their 40-day line",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 50.3,
+      "reason": null
     },
     {
       "label": "Stocks above their 20-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%",
+      "status": "OK",
+      "value": 53.7,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Stocks above their 50-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%",
+      "status": "OK",
+      "value": 45.2,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Stocks above their 200-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%",
+      "status": "OK",
+      "value": 54.0,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Quarterly big risers (25%+ up-count, 3 months)",
       "section": "instrument",
       "kind": "count",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 119,
+      "reason": null
     },
     {
       "label": "5-day up/down 4% count",
       "section": "instrument",
       "kind": "mover_ratio",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 0.45,
+      "reason": null
     },
     {
       "label": "10-day up/down 4% count",
       "section": "instrument",
       "kind": "mover_ratio",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-03 vs last completed session 2026-11-03; 1679/4314 tickers (39%) carry the 2026-11-03 bar, need 95%"
+      "status": "OK",
+      "value": 1.12,
+      "reason": null
     }
   ],
   "gex": {
@@ -222,9 +224,9 @@
     {
       "label": "Stance",
       "kind": "word",
-      "now": null,
-      "5d_ago": null,
-      "1mo_ago": null
+      "now": "RISK_OFF",
+      "5d_ago": "NEUTRAL",
+      "1mo_ago": "RISK_OFF"
     },
     {
       "label": "Trend regime",
@@ -243,9 +245,9 @@
     {
       "label": "T2108",
       "kind": "number",
-      "now": null,
-      "5d_ago": null,
-      "1mo_ago": null
+      "now": 50.3,
+      "5d_ago": 57.8,
+      "1mo_ago": 31.9
     },
     {
       "label": "SPY ATRs above 50-day",
