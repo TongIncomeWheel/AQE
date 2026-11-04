@@ -672,7 +672,7 @@ def _ma_banner(D):
     """A failed or partial M&A scan is loud on the page: a clean-looking name might simply be unchecked."""
     sc = (D or {}).get("ma_scan")
     if not isinstance(sc, dict):
-        return ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no ma_scan block, so no name can be called '
+        return ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no M&amp;A scan result, so no name can be called '
                 'free of a pending deal.</p>')
     if sc.get("scan_status") != "ok":
         return (f'<p class="flag"><b>M&amp;A scan {E(str(sc.get("scan_status")))}.</b> {E(str(sc.get("n_failed")))} of {E(str(sc.get("n_scanned")))} '

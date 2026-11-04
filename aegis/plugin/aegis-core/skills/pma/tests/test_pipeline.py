@@ -3807,6 +3807,8 @@ def test_cards_theme_basket_table_and_extension_bracket_line(td):
     check("strongest members are the top three by 20-day strength, best first, and a basket with none on today's list says so",
           h.index("DDD") < h.index("BBB") < h.index("AAA") and "CCC" not in h.split("Semis")[1].split("Travel")[0] and "none on today" in h)
     check("no baskets in the export is a declared gap, not a blank", "declared gap" in PC._theme_basket_table({}))
+    import re as _re
+    check("the M&A banner carries no raw field name for the plainness gate", not _re.search(r"\b[a-z]+_[a-z_]+\b", _re.sub(r"<[^>]+>", " ", PC._ma_banner({}) + PC._ma_banner({"ma_scan": {"scan_status": "failed", "n_failed": 1, "n_scanned": 1}}))))
     eb = {"available": True, "passed": True, "stop": 108.0, "targets": [{"tp": "TP1", "price": 118.0, "r": 2.0}, {"tp": "TP2", "price": 126.5, "r": 3.4}]}
     x = PC._ext_bracket_html(eb)
     check("the extension line is plain, labelled, and names both targets", "runs into open air" in x and "118" in x and "126.5" in x and "1.272" in x and "1.618" in x and "ignores nearby resistance" in x, x)
