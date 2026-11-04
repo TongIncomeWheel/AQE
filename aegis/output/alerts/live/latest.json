@@ -1,10 +1,10 @@
 {
  "schema": "aqe_alert_notice.v1",
- "seq": 1,
+ "seq": 2,
  "session_date": "2026-11-04",
- "cycle_at_utc": "2026-11-04T15:07:31+00:00",
- "cycle_at_sgt": "2026-11-04 23:07 SGT",
- "cycle_at_et": "10:07 ET",
+ "cycle_at_utc": "2026-11-04T15:39:04+00:00",
+ "cycle_at_sgt": "2026-11-04 23:39 SGT",
+ "cycle_at_et": "10:39 ET",
  "source": "hf",
  "data": {
   "pma_run": "2026-11-04",
@@ -23,55 +23,406 @@
  "actionable": true,
  "items": [
   {
-   "ticker": "MP",
-   "class": "HELD",
-   "held": true,
+   "ticker": "AJG",
+   "class": "HOLD_FOR_CONDITIONS",
+   "held": false,
    "states": [
-    "near_stops"
+    "CONDITION_MET"
    ],
-   "severity": "RISK",
-   "headline": "MP @ 37.17 \u00b7 \ud83d\udfe0 NEAR YOUR STOP \u2014 HELD POSITION",
-   "action": "Near your broker stop: check it",
-   "price": 37.17,
-   "day_pct": -1.74,
-   "entry": null,
-   "stop": 36.66,
-   "stop_type": "broker",
-   "target": null,
-   "risk_per_share": null,
-   "conditions": null,
-   "unr": null,
+   "severity": "ACT",
+   "headline": "AJG $281.60 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 281.6,
+   "day_pct": null,
+   "entry": 278.83,
+   "stop": 266.08,
+   "stop_type": "aqe_atr_fallback",
+   "target": 281.53,
+   "risk_per_share": 12.75,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "Committee (HOLD FOR CONDITIONS)"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 276.07,
+    "level": null
+   },
    "lines": [
-    "Spot 37.17 \u00b7 -1.7% on the day",
-    "Your stop: 36.66 \u2014 spot is 1.4% above it",
-    "Price is close to your broker stop at 36.66. Your broker stop is the order in force unless the committee's own exit is nearer. Review your stop placement now."
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "Committee (HOLD FOR CONDITIONS): all met \u2713",
+    "\u2713 hourly close above 278.83 (price 281.60, 1.0% above)",
+    "\u2713 volume at least 1.2\u00d7 normal (now 1.4\u00d7)",
+    "Exit line: closes below 271.27",
+    "Committee trade: entry 278.83 \u00b7 stop 266.08 \u00b7 risk 4.6% (12.75/share) \u00b7 1R $2,250 = 176 shares \u00b7 target 288.54 (0.8\u00d7 the risk)"
    ],
    "suppressed_by_market_kill": false
   },
   {
-   "ticker": "V",
-   "class": "HELD",
-   "held": true,
+   "ticker": "DIS",
+   "class": "ADVANCE",
+   "held": false,
    "states": [
-    "near_stops"
+    "CONDITION_MET"
    ],
-   "severity": "RISK",
-   "headline": "V @ 427.97 \u00b7 \ud83d\udfe0 NEAR YOUR STOP \u2014 HELD POSITION",
-   "action": "Near your broker stop: check it",
-   "price": 427.97,
-   "day_pct": 1.8,
-   "entry": null,
-   "stop": 414.45,
-   "stop_type": "broker",
-   "target": null,
-   "risk_per_share": null,
-   "conditions": null,
-   "unr": null,
+   "severity": "ACT",
+   "headline": "DIS $119.03 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 119.025,
+   "day_pct": null,
+   "entry": 114.46,
+   "stop": 112.15,
+   "stop_type": "aqe_atr_fallback",
+   "target": 118.08,
+   "risk_per_share": 2.31,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "Committee (ADVANCE)"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 116.3,
+    "level": null
+   },
    "lines": [
-    "Spot 427.97 \u00b7 +1.8% on the day",
-    "Your stop: 414.45 \u2014 spot is 3.3% above it",
-    "Committee exit: 418.27 \u2014 spot is 2.3% above it",
-    "Price is close to your broker stop at 414.45 and the committee's exit at 418.27. Your broker stop is the order in force unless the committee's own exit is nearer. Review your stop placement now."
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "Committee (ADVANCE): all met \u2713",
+    "\u2713 hourly close above 114.46 (price 119.03, 4.0% above)",
+    "\u2713 volume at least 1.2\u00d7 normal (now 2.2\u00d7)",
+    "Exit line: closes below 113.38",
+    "Committee trade: entry 114.46 \u00b7 stop 112.15 \u00b7 risk 2.0% (2.31/share) \u00b7 1R $2,250 = 974 shares \u00b7 target 118.08 (1.6\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "KIM",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "KIM $25.48 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 25.475,
+   "day_pct": null,
+   "entry": 25.17,
+   "stop": 24.58,
+   "stop_type": "committee",
+   "target": 25.9,
+   "risk_per_share": 0.59,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 25.32,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 25.17 (price 25.48, 1.2% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.6\u00d7)",
+    "AQE trade: entry 25.17 \u00b7 stop 24.58 \u00b7 risk 2.3% (0.59/share) \u00b7 1R $2,250 = 3,813 shares \u00b7 target 26.45 (2.2\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "LYV",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "LYV $182.52 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 182.52,
+   "day_pct": null,
+   "entry": 181.09,
+   "stop": 174.91,
+   "stop_type": "committee",
+   "target": 187.2,
+   "risk_per_share": 6.18,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 181.0,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 181.09 (price 182.52, 0.8% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.8\u00d7)",
+    "AQE trade: entry 181.09 \u00b7 stop 174.91 \u00b7 risk 3.4% (6.18/share) \u00b7 1R $2,250 = 364 shares \u00b7 target 189.25 (1.3\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "NDAQ",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "NDAQ $109.32 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 109.32,
+   "day_pct": null,
+   "entry": 108.69,
+   "stop": 104.71,
+   "stop_type": "committee",
+   "target": 113.86,
+   "risk_per_share": 3.98,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 107.3,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 108.69 (price 109.32, 0.6% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.1\u00d7)",
+    "AQE trade: entry 108.69 \u00b7 stop 104.71 \u00b7 risk 3.7% (3.98/share) \u00b7 1R $2,250 = 565 shares \u00b7 target 113.86 (1.3\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "OUT",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "OUT $32.72 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 32.72,
+   "day_pct": null,
+   "entry": 32.51,
+   "stop": 31.63,
+   "stop_type": "committee",
+   "target": 33.22,
+   "risk_per_share": 0.88,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "ARMED",
+    "stop": 32.55,
+    "level": 32.71
+   },
+   "lines": [
+    "U&R: setup forming \u2014 entry signal comes when a 15-min candle closes above VWAP (32.75)",
+    "U&R trade: entry if it triggers \u2248 32.75 \u00b7 stop 32.55 (today's low) \u00b7 risk 0.6% (0.20/share) \u00b7 1R $2,250 = 11,249 shares",
+    "Dipped below the rising trendline (32.71) today and is back above it \u2713",
+    "Volume confirms \u2713",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 32.51 (price 32.72, 0.6% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.2\u00d7)",
+    "AQE trade: entry 32.51 \u00b7 stop 31.63 \u00b7 risk 2.7% (0.88/share) \u00b7 1R $2,250 = 2,556 shares \u00b7 target 33.94 (1.6\u00d7 the risk)",
+    "Nearby levels: 9-day average 31.75 \u00b7 21-day average 30.93 \u00b7 rising trendline 32.71"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "RYAN",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "RYAN $46.87 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 46.87,
+   "day_pct": null,
+   "entry": 45.9,
+   "stop": 44.09,
+   "stop_type": "committee",
+   "target": 48.21,
+   "risk_per_share": 1.81,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 46.45,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 45.90 (price 46.87, 2.1% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.1\u00d7)",
+    "AQE trade: entry 45.90 \u00b7 stop 44.09 \u00b7 risk 3.9% (1.81/share) \u00b7 1R $2,250 = 1,243 shares \u00b7 target 50.85 (2.7\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "SN",
+   "class": "HOLD_FOR_CONDITIONS",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "SN $216.66 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 216.66,
+   "day_pct": null,
+   "entry": 215.09,
+   "stop": 203.46,
+   "stop_type": "aqe_atr_fallback",
+   "target": 216.11,
+   "risk_per_share": 11.63,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "Committee (HOLD FOR CONDITIONS)"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 213.0,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "Committee (HOLD FOR CONDITIONS): all met \u2713",
+    "\u2713 hourly close above 215.09 (price 216.66, 0.7% above)",
+    "\u2713 volume at least 1.2\u00d7 normal (now 2.9\u00d7)",
+    "Exit line: closes below 200.39",
+    "Committee trade: entry 215.09 \u00b7 stop 203.46 \u00b7 risk 5.4% (11.63/share) \u00b7 1R $2,250 = 193 shares \u00b7 target 232.19 (1.5\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "SNY",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "SNY $46.80 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 46.795,
+   "day_pct": null,
+   "entry": 45.59,
+   "stop": 44.43,
+   "stop_type": "committee",
+   "target": 45.67,
+   "risk_per_share": 1.16,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 46.46,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 45.59 (price 46.80, 2.6% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 1.5\u00d7)",
+    "AQE trade: entry 45.59 \u00b7 stop 44.43 \u00b7 risk 2.5% (1.16/share) \u00b7 1R $2,250 = 1,939 shares \u00b7 target 46.89 (1.1\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "SWK",
+   "class": "HOLD_FOR_CONDITIONS",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "SWK $118.22 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 118.22,
+   "day_pct": null,
+   "entry": 107.13,
+   "stop": 101.7,
+   "stop_type": "aqe_atr_fallback",
+   "target": 107.67,
+   "risk_per_share": 5.43,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "Committee (HOLD FOR CONDITIONS)"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 110.04,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "Committee (HOLD FOR CONDITIONS): all met \u2713",
+    "\u2713 hourly close above 107.13 (price 118.22, 10.4% above)",
+    "\u2713 volume at least 1.2\u00d7 normal (now 7.7\u00d7)",
+    "Exit line: closes below 101.09",
+    "Committee trade: entry 107.13 \u00b7 stop 101.70 \u00b7 risk 5.1% (5.43/share) \u00b7 1R $2,250 = 414 shares \u00b7 target 107.67 (0.1\u00d7 the risk)"
+   ],
+   "suppressed_by_market_kill": false
+  },
+  {
+   "ticker": "YOU",
+   "class": "AQE_DEFAULT",
+   "held": false,
+   "states": [
+    "CONDITION_MET"
+   ],
+   "severity": "ACT",
+   "headline": "YOU $61.53 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET \u00b7 AQE list, not a committee pick",
+   "action": "Buy trigger hit: queue the Tiger preview on your word",
+   "price": 61.53,
+   "day_pct": null,
+   "entry": 48.65,
+   "stop": 45.0,
+   "stop_type": "committee",
+   "target": 57.79,
+   "risk_per_share": 3.65,
+   "conditions": {
+    "met": 2,
+    "of": 2,
+    "who": "AQE list, not a committee pick"
+   },
+   "unr": {
+    "status": "NOT_MET",
+    "stop": 51.3,
+    "level": null
+   },
+   "lines": [
+    "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+    "AQE list, not a committee pick: all met \u2713",
+    "\u2713 hourly close above 48.65 (price 61.53, 26.5% above)",
+    "\u2713 volume at least 1\u00d7 normal (now 10.1\u00d7)",
+    "AQE trade: entry 48.65 \u00b7 stop 45.00 \u00b7 risk 7.5% (3.65/share) \u00b7 1R $2,250 = 616 shares \u00b7 target 58.81 (2.8\u00d7 the risk)"
    ],
    "suppressed_by_market_kill": false
   }
@@ -81,11 +432,11 @@
  "quiet_line": null,
  "email": {
   "sent": true,
-  "subject": "[AQE] 10:06 ET conditions \u00b7 2 cards \u00b7 HELD 2 \u00b7 PMA 11-04 \u00b7 AQE 11-04"
+  "subject": "[AQE] 10:38 ET conditions \u00b7 11 cards \u00b7 BUY MET 11 \u00b7 PMA 11-04 \u00b7 AQE 11-04"
  },
  "engine": {
   "checked": 89,
-  "new_triggers": 100,
+  "new_triggers": 7,
   "pma_fresh": true,
   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
  }
