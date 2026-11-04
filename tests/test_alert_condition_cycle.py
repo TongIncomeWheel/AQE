@@ -437,7 +437,8 @@ def test_brief_list_names_are_never_dropped_for_distance_or_a_missing_line(monke
     assert row["watch_only"] is True and ev["buy_met"] is False
     from src.alerts import emailer as E
     subject, plain, _ = E.build_condition_state_body(ticker, row, ev, states, live)
-    assert "AQE list, not a committee pick" in subject and "no entry line" in plain and "no buy trigger" in plain
+    assert "AQE list, not a committee pick" in subject and "through its entry line" in plain and "no buy trigger" in plain
+    assert "extended" not in plain.lower() and "extended" not in subject.lower()      # PM 2026-11-04: no stretch claim
     # the distance cap is unchanged for every other source
     from src.alerts import condition_defaults as D
     assert D.build_default_conditions(rec("FAR", 1, 63.0, 61.0)) is None

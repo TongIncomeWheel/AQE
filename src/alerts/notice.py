@@ -81,6 +81,8 @@ def _item_from_card(card: tuple, market_broken: bool) -> dict:
     primary = next((s for s in ("UNR_FAILED", "UNR_TRIGGER", "CONDITION_MET", "EXIT_LINE_HELD",
                                 "FAILED_PUSH", "CHASED") if s in states), states[0])
     sev, action = _ACTION.get(primary, ("INFO", primary.replace("_", " ").title()))
+    if primary == "CHASED" and row.get("watch_only"):
+        sev, action = "INFO", "AQE list name through its entry line: no buy trigger"
     held = row.get("class") == "HELD"
     if held and sev == "ACT":
         sev, action = "INFO", "Held name met its add condition: your call"
