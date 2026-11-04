@@ -1,6 +1,119 @@
 [
  {
   "schema": "aqe_alert_notice.v1",
+  "seq": 3,
+  "session_date": "2026-11-04",
+  "cycle_at_utc": "2026-11-04T16:10:35+00:00",
+  "cycle_at_sgt": "2026-11-05 00:10 SGT",
+  "cycle_at_et": "11:10 ET",
+  "source": "hf",
+  "data": {
+   "pma_run": "2026-11-04",
+   "pma_session": "2026-11-04",
+   "pma_missing": null,
+   "aqe_date": "2026-11-04",
+   "aqe_covers": "2026-11-03",
+   "aqe_current": true
+  },
+  "market": {
+   "status": "UNWATCHABLE",
+   "state": null,
+   "broken": false,
+   "just_broke": false
+  },
+  "actionable": true,
+  "items": [
+   {
+    "ticker": "FA",
+    "class": "ADVANCE",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "FA $22.82 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 22.8198,
+    "day_pct": null,
+    "entry": 22.37,
+    "stop": 21.01,
+    "stop_type": "aqe_atr_fallback",
+    "target": 22.78,
+    "risk_per_share": 1.36,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (ADVANCE)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 22.11,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Committee (ADVANCE): all met \u2713",
+     "\u2713 hourly close above 22.37 (price 22.82, 2.0% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 1.3\u00d7)",
+     "Exit line: closes below 21.35",
+     "Committee trade: entry 22.37 \u00b7 stop 21.01 \u00b7 risk 6.1% (1.36/share) \u00b7 1R $2,250 = 1,654 shares \u00b7 target 22.37 (0.0\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   },
+   {
+    "ticker": "GEN",
+    "class": "HOLD_FOR_CONDITIONS",
+    "held": false,
+    "states": [
+     "CONDITION_MET"
+    ],
+    "severity": "ACT",
+    "headline": "GEN $30.84 \u00b7 \ud83d\udfe2 BUY CONDITIONS MET",
+    "action": "Buy trigger hit: queue the Tiger preview on your word",
+    "price": 30.835,
+    "day_pct": null,
+    "entry": 30.11,
+    "stop": 28.63,
+    "stop_type": "aqe_atr_fallback",
+    "target": 31.5,
+    "risk_per_share": 1.48,
+    "conditions": {
+     "met": 2,
+     "of": 2,
+     "who": "Committee (HOLD FOR CONDITIONS)"
+    },
+    "unr": {
+     "status": "NOT_MET",
+     "stop": 30.0,
+     "level": null
+    },
+    "lines": [
+     "U&R: \u2717 none \u2014 no shallow dip under a support level in the last 3 sessions",
+     "Committee (HOLD FOR CONDITIONS): all met \u2713",
+     "\u2713 hourly close above 30.11 (price 30.84, 2.4% above)",
+     "\u2713 volume at least 1.2\u00d7 normal (now 1.2\u00d7)",
+     "Exit line: closes below 28.12",
+     "Committee trade: entry 30.11 \u00b7 stop 28.63 \u00b7 risk 4.9% (1.48/share) \u00b7 1R $2,250 = 1,520 shares \u00b7 target 31.50 (0.9\u00d7 the risk)"
+    ],
+    "suppressed_by_market_kill": false
+   }
+  ],
+  "setups_forming": [],
+  "suppressed": 0,
+  "quiet_line": null,
+  "email": {
+   "sent": true,
+   "subject": "[AQE] 11:10 ET conditions \u00b7 2 cards \u00b7 BUY MET 2 \u00b7 PMA 11-04 \u00b7 AQE 11-04"
+  },
+  "engine": {
+   "checked": 89,
+   "new_triggers": 9,
+   "pma_fresh": true,
+   "reason": "legacy intraday digest retired \u2014 triggers logged, condition cards are the email"
+  }
+ },
+ {
+  "schema": "aqe_alert_notice.v1",
   "seq": 2,
   "session_date": "2026-11-04",
   "cycle_at_utc": "2026-11-04T15:39:04+00:00",
