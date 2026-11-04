@@ -3699,10 +3699,40 @@ def test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check(td):
     check("a step over its own budget is named", any("STEP OVER BUDGET: VOTE" in x for x in f), str(f)[:300])
 
 
+def test_lanes_v1_assigns_by_code_and_leads_decide(td):
+    """R43 (PROPOSED, behind lanes_v1: off): lane by code, lead seats decide, advisor objections are shown and never counted."""
+    sys.path.insert(0, TOOLS)
+    import lanes_v1 as L
+    base = {"entry": 100.0, "hi_20d": 101.0, "ma_20": 95.0, "ma_20_slope_5d_pct": 1.0, "ma_50": 90.0}
+    assert L.assign_lane(dict(base, pct_from_pivot=12.0, continuation_pivot=99.0, continuation_state="BUY_ZONE"))[0] == L.CONTINUATION
+    assert L.assign_lane(dict(base, pct_from_pivot=12.0))[0] == L.UNLANED                      # extended, no pause high: every seat counts
+    assert L.assign_lane(dict(base, pct_from_pivot=2.0))[0] == L.BREAKOUT
+    assert L.assign_lane(dict(base, pct_from_pivot=-1.0, nr7_flag=True))[0] == L.BREAKOUT       # coiling under the pivot
+    assert L.assign_lane(dict(base, pct_from_pivot=-6.0, hi_20d=120.0))[0] == L.PULLBACK        # holds a rising 20-day, not coiling
+    assert L.assign_lane(dict(base, pct_from_pivot=-6.0, hi_20d=120.0, ma_20=105.0, ma_50=104.0, unr_status="NO"))[0] == L.UNLANED
+    # lead sets are inside the seven deciders; the continuation leads are the PM's signed set
+    assert all(set(v) <= set(L.DECIDERS) for v in L.LEADS.values())
+    assert set(L.LEADS[L.CONTINUATION]) == {"livermore", "seow", "elder-lens", "raschke"} and L.PM_SIGNED[L.CONTINUATION] is True
+    assert set(L.advisors(L.CONTINUATION)) == {"oneil", "minervini", "wyckoff"}
+    # advisors object: shown, never counted
+    r = L.lane_status(L.CONTINUATION, ["oneil", "minervini", "wyckoff"], 7, list(L.DECIDERS), 4)
+    assert r["status"] == "AGREED" and r["counted_objectors"] == [] and r["advisor_objectors"] == ["minervini", "oneil", "wyckoff"]
+    # leads object: proportional drops at 2 of 4, absolute needs the room's 4
+    r = L.lane_status(L.CONTINUATION, ["livermore", "seow"], 7, list(L.DECIDERS), 4)
+    assert r["status"] == "DROPPED" and r["threshold"] == 2
+    assert L.lane_status(L.CONTINUATION, ["livermore", "seow"], 7, list(L.DECIDERS), 4, "absolute")["status"] == "CONTESTED"
+    # UNLANED is exactly today's rule
+    assert L.lane_status(L.UNLANED, ["oneil", "minervini", "wyckoff", "seow"], 7, list(L.DECIDERS), 4)["status"] == "DROPPED"
+    # the switch ships OFF and the ruling is recorded as proposed
+    ry = open(os.path.join(HERE, "..", "RUN.yaml"), encoding="utf-8").read()
+    rl = open(os.path.join(HERE, "..", "RULINGS.yaml"), encoding="utf-8").read()
+    check("lanes_v1 ships off", "lanes_v1: off" in ry and "id: R43" in rl and "status: proposed" in rl.split("id: R43")[1])
+
+
 def main():
     print("AEGIS PMA regression suite -- fixtures are the real 2026-09-06 committee outputs\n")
     with tempfile.TemporaryDirectory() as td:
-        for fn in [test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
+        for fn in [test_lanes_v1_assigns_by_code_and_leads_decide, test_seat_reported_tokens_and_step_budgets_count_in_the_spend_check, test_a_missing_or_stale_net_highs_read_never_prints_a_direction, test_consensus_reproduces_the_real_run, test_consensus_refuses_a_shape_it_cannot_read,
                    test_r2digest_renders_every_challenge_document, test_r2digest_refuses_an_unreadable_challenge_doc,
                    test_rank_is_stable_and_sector_blind, test_purity_check_runs_without_being_patched,
                    test_load_declares_its_shape, test_registrar_meter_records_cost,

@@ -55,6 +55,7 @@ parameters:
   tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
   mtf_frames: [W, D, H1]        # R39
   committee_position: on        # R42 SWITCH: `off` = the conductor skips RATIONALE, ADOPT, RATIONALE-FINAL and POSITION for this run, ticks each `degraded` with the note 'R42 switched off', and writes that line at the top of run_notes.md. The Cards then print no committee block (no committee_position.json); verdicts and the conviction-free count are unaffected. No code change needed.
+  lanes_v1: off                # R43 SWITCH (PROPOSED, not signed): `off` = today's rule (lane is a label, all seven count). `on` = THREE lanes assigned by code (MOMENTUM_BREAKOUT / MOMENTUM_CONTINUATION / PULLBACK), lead seats decide, advisor objections are shown not counted. Inert until the PM signs R43 and the conductor wires ratify-count to tools/lanes_v1.py. Spec: docs/LANES_V1_SPEC.md
   r42_respawns: 1               # R42 cost cap: a seat or Chair form that fails validation is respawned ONCE (= `respawns`); a second failure stops that step at a declared gap (tick `degraded`) - never a third spawn, never all seven seats again
 
 # ---------------------------------------------------------------------------- durability

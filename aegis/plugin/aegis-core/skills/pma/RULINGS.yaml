@@ -924,3 +924,22 @@ rulings:
       Why. What would change it. Minority note. The earlier R34 `conviction` figure is renamed `ordering_score` (the old name
       stays as a deprecated alias). The conviction is a readout, never a gate on a verdict and never sizing.
     check: tests.test_committee_position_counts_the_median_and_never_invents_a_rationale
+
+  - id: R43
+    title: Three lanes assigned by code - lead seats decide, advisors are heard (PROPOSED)
+    status: proposed
+    date: 2026-11-04
+    binds_at: [RANK, VOTE, RATIFY, REPORT]
+    pm_words: >
+      "Momentum and pullback; continuation is a subset of momentum." Voice leads for continuation: yes (Livermore, Seow, Elder,
+      Raschke lead; O'Neil and Minervini advise). Relayed by the conductor, 2026-11-04.
+    rule: >
+      PROPOSAL, behind parameters.lanes_v1 (off). Every ticket gets one lane from AQE fields by code (tools/lanes_v1.py
+      assign_lane): MOMENTUM_BREAKOUT (at or under the base pivot, inside the 5% chase line), MOMENTUM_CONTINUATION (past the base
+      pivot by more than 5% with a continuation pause high), PULLBACK (under the pivot, reclaim day or holding a rising average),
+      else UNLANED (every seat counts, as today). In a laned ticket the lead seats' OBJECT answers decide AGREED / CONTESTED /
+      DROPPED; an advisor's objection is printed on the ticket and never counted. Lead sets: continuation signed by the PM;
+      breakout and pullback proposed. Two threshold modes are measured in docs/LANES_V1_SPEC.md; the PM picks one. Switching it
+      on also requires the lead seats' packets to carry the continuation fields and the lane instruction (spec s4).
+    check: tests.test_lanes_v1_assigns_by_code_and_leads_decide
+
