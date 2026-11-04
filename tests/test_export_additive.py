@@ -87,6 +87,8 @@ def test_top_level_keys_are_additive_only():
         "held_stops",
         # which keys each held row gained from the full record (PM 2026-11-03)
         "held_positions_completion",
+        # the M&A scan result and the pending names (PM 2026-11-04), stamped by _attach_ma_flags
+        "ma_scan", "ma_pending",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
@@ -130,6 +132,8 @@ def test_v21_record_fields_is_additive_only():
         "setups",
         # U&R last-day column, stamped by setups_daily.attach_setup_grades
         "unr_status", "unr_note", "unr_as_of", "unr_level",
+        # M&A flag (PM 2026-11-04), stamped by _attach_ma_flags on every daily_list / held row
+        "ma_status", "ma_note", "ma_evidence",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (
