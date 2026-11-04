@@ -1,0 +1,28 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-04",
+ "round": 2,
+ "tickets": [
+  {"ticker": "HOG", "answer": "OBJECT", "conviction": 2, "reservation": null,
+   "objection": "reclaim:ma_20 buys a pullback to an average with no volume test; day_vol 1.39 is short of the R4 1.40 bar and ABOVE_STRUCTURE with coil warn gives no pivot (R3). The hold round added no volume clause.",
+   "would_clear": "Require the trigger to print on volume at least 1.4x normal for the time of day (C16)."},
+  {"ticker": "EW", "answer": "OBJECT", "conviction": 3, "reservation": null,
+   "objection": "h1_close_above:bar_high carries no volume test; C16 requires the breakout bar itself to print on +40% volume, and day_vol 1.59 on the prior day does not confirm today's trigger bar. Coil -- leaves the base uncounted (R3).",
+   "would_clear": "Add to the trigger: on volume at least 1.4x normal for the time of day (C16)."},
+  {"ticker": "VLTO", "answer": "OBJECT", "conviction": 2, "reservation": null,
+   "objection": "reclaim:ma_20 has no volume test; day_vol 1.25 fails C16 (R4) and coil -- gives no countable base (R3). Leadership (rank 2, rs_leadership LEADER) is real; the volume is not.",
+   "would_clear": "Require the hourly reclaim to print on volume at least 1.4x normal for the time of day (C16)."},
+  {"ticker": "TTEK", "answer": "OBJECT", "conviction": 1, "reservation": null,
+   "objection": "reclaim:ma_20 has no volume test; day_vol 1.14 fails C16 (R4) and ABOVE_STRUCTURE with coil warn leaves no base or pivot (R3).",
+   "would_clear": "Require the hourly reclaim to print on volume at least 1.4x normal for the time of day (C16)."},
+  {"ticker": "MDT", "answer": "OBJECT", "conviction": 1, "reservation": null,
+   "objection": "ADVANCE on day_vol 0.24, a quarter of normal volume and the clearest C16 rejection in the room (R4); the trigger h1_close_above:bar_high still carries no volume test.",
+   "would_clear": "Add to the trigger: on volume at least 1.4x normal for the time of day (C16), timing WAIT until it prints."},
+  {"ticker": "SN", "answer": "OBJECT", "conviction": 3, "reservation": null,
+   "objection": "The trigger buys above yesterday's high, but pct_from_pivot 5.09 is already past the C17 5% line; an entry above the prior high chases further past the pivot.",
+   "would_clear": "Set the trigger level at pivot_high (h1_close_above:pivot_high), never more than 5% past it (C17)."},
+  {"ticker": "HNGE", "answer": "OBJECT", "conviction": 1, "reservation": null,
+   "objection": "entry 116.84 against ma_200 67.78 is more than 70% above the 200-day: a C24 climax reading, sold into, never bought (R7). ADVANCE ACT_NOW buys it; no base under it (ABOVE_STRUCTURE, coil warn, R3).",
+   "would_clear": "A base forming with price back under 70% above ma_200, then a pivot breakout on volume at least 1.4x normal (C16)."}
+ ]
+}
