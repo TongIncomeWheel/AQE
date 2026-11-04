@@ -2974,6 +2974,16 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["daily_list"] = _daily_list
     export["lens_ranking"] = build_lens_ranking(_daily_list)  # Part 1
 
+    # ---- List size and churn (conductor/PM 2026-11-05): who entered and who left `daily_list` since the previous export, and the gate that removed
+    # each leaver. Measurement only (the Longlist / Elder gates are unchanged); never blocks the export. `export["list_churn"]` + a "List churn:" stdout
+    # line the run marker reads.
+    try:
+        from src.data import list_churn as _lc
+        _lc.attach(export, _sc_by_tk, [OUTPUT_DIR / EXPORT_FILENAME, PROJECT_ROOT / "aegis" / "output" / EXPORT_FILENAME])
+    except Exception as _exc:  # noqa: BLE001
+        export["list_churn"] = {"status": "error", "error": f"{_exc.__class__.__name__}: {str(_exc)[:160]}", "added": [], "removed": []}
+        print(f"  [WARN] list churn not computed: {_exc}")
+
     # ---- AIC quick-start index (2026-09-01, PM ruling) — a materialized VIEW
     # over daily_list's own on_longlist/on_elder flags, not a new list with its
     # own trimming logic. candidate_set.json and shortlist.json both read as

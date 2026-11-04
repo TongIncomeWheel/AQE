@@ -89,6 +89,8 @@ def test_top_level_keys_are_additive_only():
         "held_positions_completion",
         # the M&A scan result and the pending names (PM 2026-11-04), stamped by _attach_ma_flags
         "ma_scan", "ma_pending",
+        # who entered / left daily_list since the previous export, and why (conductor/PM 2026-11-05)
+        "list_churn",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (

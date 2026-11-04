@@ -392,6 +392,7 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "packets_status": _packets_status(proc.stdout),
             "committee_data_status": _committee_data_status(proc.stdout),
             "macro_legs": _line_status(proc.stdout, "Macro legs:", "unknown -- Step 6i printed no legs line"),
+            "list_churn": _line_status(proc.stdout, "List churn:", "unknown -- Step 8 printed no list churn line"),
             "ma_panel_refresh": _line_status(proc.stdout, "MA panel refresh", "unknown -- Step 6h-1 produced no recognizable output"),
             "artifacts_published": _artifacts_published(proc.stdout),
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",

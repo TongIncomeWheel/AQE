@@ -291,3 +291,20 @@ def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):
     assert marker["artifacts_published"] == {
         "total": 11, "written": 11, "failed": [], "absent": [],
     }
+
+
+def test_the_run_marker_carries_the_list_size_and_churn_line(_wired, monkeypatch):
+    now = datetime(2026, 11, 5, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-11-05")
+    stdout = ("[daily] Step 8: Drive export...\n"
+              "  List churn: 260 -> 395 names vs 2026-11-04 (+158 / -23) | added: AAL, ABBV | left: BRZE, TMO\n")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0, stdout=stdout))
+    marker = J._run_pipeline_and_record(now)
+    assert marker["list_churn"].startswith("List churn: 260 -> 395") and "left: BRZE, TMO" in marker["list_churn"]
+
+
+def test_a_run_that_never_printed_the_churn_line_says_unknown_not_silent(_wired, monkeypatch):
+    now = datetime(2026, 11, 5, 10, 30, tzinfo=SGT)
+    _write_export(_wired, "2026-11-05")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0, stdout="nothing relevant\n"))
+    assert J._run_pipeline_and_record(now)["list_churn"].startswith("unknown")
