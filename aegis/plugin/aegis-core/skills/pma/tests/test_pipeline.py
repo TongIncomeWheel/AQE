@@ -3591,7 +3591,7 @@ def test_freshness_line_and_withheld_stance_print_on_the_cards(td):
           line.startswith("FRESHNESS | expected 2026-11-03") and "breadth 2026-11-03 [OUR_BUDGET]" in line and "dispersion 2026-11-02 [PUBLISHER_LAG]" in line
           and "COT 2026-10-27 [PUBLISHER_CADENCE] (latest published; next release 2026-11-06)" in line, line)
     html = pma_cards._freshness_html({"data_freshness": {"line": line}})
-    check("it renders as a flag line on the page", "FRESHNESS | expected 2026-11-03" in html and 'class="flag freshness"' in html)
+    check("it renders as a flag line on the page", "expected 2026-11-03" in html and "FRESHNESS" in html and 'class="flag freshness"' in html)
     check("a missing Valen file or legs table is a declared gap, not silence", "no Valen file and no run marker" in pma_cards._freshness_html({}) and "cannot be dated" in pma_cards._freshness_html({"x": 1}))
     check("a withheld stance says WITHHELD with the reason", pma_cards._stance_word({"stance": {"stance": None, "reason": "breadth STALE"}}).startswith("WITHHELD - breadth STALE")
           and pma_cards._stance_word({"stance": {"word": "NEUTRAL"}}) == "NEUTRAL")
@@ -3647,9 +3647,22 @@ def test_committee_words_fold_into_the_audit_trail_and_freshness_falls_back_to_t
     check("the gate FAILs C-codes, W/D/H1, ADX and %K/%D outside a <details>, and ignores the audit trail", len(f) == 1 and all(x in f[0] for x in ("C5", "W/D/H1", "ADX", "%K/%D")) and "C16" not in f[0], str(f))
     check("the gate passes a page whose jargon is only inside the audit trail", ck.check_cards_html(ok)[0] == [])
     line = pma_cards._freshness_html({}, {"macro_legs": "Macro legs: expected session 2026-11-03 | breadth 2026-11-03 STALE | volatility 2026-11-02"}, None)
-    check("with no legs table the FRESHNESS line comes from the run marker, never a silent gap", "expected session 2026-11-03" in line and "from the run marker" in line and "declared gap" not in line, line)
-    line2 = pma_cards._freshness_html({"data_freshness": {"line": "FRESHNESS | old"}}, None, {"data_freshness": {"line": "FRESHNESS | new", "expected_session": "2026-11-03"}})
-    check("when main's refreshed weather is newer the page says so in plain words", "As the committee saw it at run time; refreshed after: see aegis/output/aqe_crown_macro.json" in line2, line2)
+    check("with no legs table the FRESHNESS line comes from the run marker, never a silent gap", "expected session 2026-11-03" in line and "from the run marker" in line and "declared gap" not in line and "NOW (" not in line, line)
+    line2 = pma_cards._freshness_html({"data_freshness": {"line": "FRESHNESS | old"}}, None, {"exported_at": "2026-11-04 13:11 SGT", "data_freshness": {"line": "FRESHNESS | new", "expected_session": "2026-11-03", "legs_table": [{"leg": "vix_level", "as_of": "2026-11-03", "reason": "CURRENT"}]}})
+    check("with refreshed weather the ONE line carries both halves: AT RUN TIME and NOW (refreshed, after the committee)",
+          "AT RUN TIME:" in line2 and "NOW (refreshed" in line2 and "after the committee" in line2, line2)
+    line3 = pma_cards._freshness_html({}, {"macro_legs": "Macro legs: expected session 2026-11-03 | breadth 2026-11-03 STALE"},
+                                      {"exported_at": "2026-11-04 13:11 SGT", "data_freshness": {"expected_session": "2026-11-03", "legs_table": [
+                                          {"leg": "positioning_cot", "as_of": "2026-10-27", "reason": "PUBLISHER_CADENCE", "detail": "x; next release 2026-11-06"},
+                                          {"leg": "vix_level", "as_of": "2026-11-03", "reason": "CURRENT"}]}})
+    check("the NOW half names what is still not current, with COT as latest published and its next release",
+          "all current except positioning_cot 2026-10-27 [PUBLISHER_CADENCE] (latest published; next release 2026-11-06)" in line3 and "breadth 2026-11-03 STALE" in line3, line3)
+    mk = {"plain": "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend (C1, C2).", "seats": ["oneil"]}
+    check("the visible Void-if has no canon codes and no seat names; the verbatim line is in the audit trail",
+          pma_cards._plain_void(mk) == "Index under distribution: 4+ distribution days in 5 weeks, or no confirmed uptrend."
+          and "(C1, C2)" in pma_cards._void_cell(mk) and "(oneil)" in pma_cards._void_cell(mk) and "<details" in pma_cards._void_cell(mk)
+          and "C1" not in re.sub(r"<details.*?</details>", "", pma_cards._void_cell(mk), flags=re.S), pma_cards._void_cell(mk))
+    check("the leg names read as plain words", pma_cards.plain_words("crown_oldest_leg and positioning_cot") == "the oldest macro input and positioning (COT report)")
     check("indicator names in prose become plain words; a bare ticker cell is left alone", pma_cards.plain_prose("momentum (RSI) is not confirming; 5-day VWAP rising; 2.4 ATR above") == "momentum is not confirming; 5-day volume-weighted price rising; 2.4 daily ranges above"
           and pma_cards.plain_prose("RSI") == "RSI")
 

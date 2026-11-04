@@ -266,6 +266,10 @@ PLAIN_WORDS = {
     "BULLISH_BOS": "a bullish break of structure", "BEARISH_CHOCH": "a bearish change of character", "BULLISH_CHOCH": "a bullish change of character",
     "BROADENING_CARRY": "broadening", "CORRECTION_REENTRY": "correction re-entry", "PAST_PIVOT": "past the pivot", "RISK_OFF": "risk-off",
     "RISK_ON": "risk-on", "DOLLAR_SQUEEZE": "dollar squeeze", "GROWTH_SCARE": "growth scare",
+    "crown_oldest_leg": "the oldest macro input", "positioning_cot": "positioning (COT report)", "breadth_whole_market": "whole-market breadth",
+    "heartbeat_rsp_spy": "market breadth heartbeat", "vix_level": "VIX level", "dispersion_vixeq": "stock-volatility spread",
+    "implied_correlation_cor1m": "implied correlation", "PUBLISHER_CADENCE": "latest published release", "PUBLISHER_LAG": "publisher not yet posted",
+    "OUR_BUDGET": "we ran out of time", "SOURCE_DOWN": "source unavailable",
 }
 _PLAIN_TOKEN = re.compile(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b")
 _PLAIN_FALLBACK: set = set()
@@ -540,6 +544,31 @@ def _market_kill_text(mk):
     who = ", ".join(mk.get("seats") or [])
     plain = re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", str(mk["plain"]), flags=re.I)
     return plain + (f" ({who})" if who else "")
+
+
+_VOICES = ("oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff")
+
+
+def _plain_void(mk):
+    """The VISIBLE market-kill line (PM 2026-11-04): the slate's words without canon codes '(C1, C2)' and without seat names
+    '(oneil)'; the verbatim line (codes, seats) stays in the audit trail. Never composed here, only stripped."""
+    if not isinstance(mk, dict) or not mk.get("plain"):
+        return ""
+    t = re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", str(mk["plain"]), flags=re.I)
+    t = re.sub(r"\s*\(\s*C\d+(?:\s*[,/]\s*C\d+)*\s*\)", "", t)
+    t = re.sub(r"\s*\(\s*(?:" + "|".join(_VOICES) + r")(?:\s*,\s*(?:" + "|".join(_VOICES) + r"))*\s*\)", "", t)
+    t = re.sub(r"\bC\d{1,2}\b", "", t)
+    t = re.sub(r"\s{2,}", " ", t).strip(" ,;:")
+    return t.rstrip(".") + "."
+
+
+def _void_cell(mk):
+    plain = _plain_void(mk)
+    if not plain:
+        return ""
+    verb = _market_kill_text(mk)
+    return (f'<div class="full"><dt>Void if</dt><dd>{E(plain)}<details class="audit"><summary>Audit trail: the verbatim line</summary>'
+            f'{E(verb)}</details></dd></div>')
 
 
 def _wind_gauges(v):
@@ -916,28 +945,49 @@ def _weather_part1(v, crown, W, rows, dl=None, D_=None, verdicts=None):
              + (". <b>None is TRIGGERED or READY.</b>" if not ready else "") + "</p></section>")
     return "\n".join(o)
 
+def _now_summary(refreshed):
+    """The NOW half, from the refreshed Valen file's legs table: 'all current' or 'all current except <leg date reason>'."""
+    df = (refreshed or {}).get("data_freshness") or {}
+    rows = df.get("legs_table") or []
+    if not rows:
+        return None
+    off = [r for r in rows if r.get("reason") != "CURRENT"]
+    when = str((refreshed or {}).get("exported_at") or (refreshed or {}).get("date") or "")
+    if not off:
+        body = f"all current for the {df.get('expected_session')} close"
+    else:
+        def one(r):
+            extra = ""
+            if r.get("reason") == "PUBLISHER_CADENCE" and "next release" in (r.get("detail") or ""):
+                extra = " (latest published; next release " + r["detail"].split("next release ")[-1] + ")"
+            return f"{r['leg']} {r.get('as_of')} [{r.get('reason')}]{extra}"
+        body = f"all current except " + "; ".join(one(r) for r in off)
+    return f"NOW (refreshed {when}, after the committee): {body}"
+
+
 def _freshness_html(v, marker=None, refreshed=None):
-    """One line on every card page: expected session and each macro leg's date with its reason code (PM 2026-11-04). Source order:
-    the Valen file's legs table; else the run's aqe_last_run.json 'Macro legs:' marker line (it carries the same facts); only if
-    neither exists is it a declared gap. When the committee copy is older than main's refreshed weather, say so in plain words."""
+    """One line on every card page: expected session and each macro leg's date with its reason code (PM 2026-11-04). It carries BOTH
+    halves when main has refreshed weather: 'AT RUN TIME: <what the committee saw>' and 'NOW (refreshed ..., after the committee):
+    all current except ...'. At-run-time comes from the run's Valen legs table, else the run marker's 'Macro legs:' line; only if
+    neither exists is it a declared gap."""
     line = ((v or {}).get("data_freshness") or {}).get("line")
-    note = ""
-    if refreshed is not None:
-        r_line = (refreshed.get("data_freshness") or {}).get("line")
-        r_exp = (refreshed.get("data_freshness") or {}).get("expected_session")
-        if r_line and r_line != line:
-            note = (' <span class="cond">As the committee saw it at run time; refreshed after: see aegis/output/aqe_crown_macro.json'
-                    f' (expected {E(str(r_exp))}).</span>')
-    if not line and marker:
+    at_run = None
+    if line:
+        at_run = line.replace("FRESHNESS | ", "", 1)
+    elif marker:
         ml = str(marker.get("macro_legs") or "")
         if ml and not ml.startswith("unknown"):
-            body = ml.replace("Macro legs:", "").strip()
-            return f'<div class="flag freshness"><b>FRESHNESS</b> | {E(body)} | from the run marker (as the committee saw it at run time){note}</div>'
-    if not line:
-        if not v:
-            return '<div class="flag freshness"><b>FRESHNESS</b> | no Valen file and no run marker - no macro leg can be dated (declared gap)</div>'
-        return '<div class="flag freshness"><b>FRESHNESS</b> | this Valen file carries no legs table and the run marker has none - the macro legs cannot be dated (declared gap)</div>'
-    return f'<div class="flag freshness">{E(line)}{note}</div>'
+            at_run = ml.replace("Macro legs:", "").strip() + " (from the run marker)"
+    now = _now_summary(refreshed) if refreshed is not None else None
+    if at_run and now:
+        return f'<div class="flag freshness"><b>FRESHNESS</b> | <b>AT RUN TIME:</b> {E(at_run)} | <b>{E(now)}</b></div>'
+    if at_run:
+        return f'<div class="flag freshness"><b>FRESHNESS</b> | {E(at_run)}</div>'
+    if now:
+        return f'<div class="flag freshness"><b>FRESHNESS</b> | at run time: not recorded in this run | <b>{E(now)}</b></div>'
+    if not v and not marker:
+        return '<div class="flag freshness"><b>FRESHNESS</b> | no Valen file and no run marker - no macro leg can be dated (declared gap)</div>'
+    return '<div class="flag freshness"><b>FRESHNESS</b> | this Valen file carries no legs table and the run marker has none - the macro legs cannot be dated (declared gap)</div>'
 
 
 def _stance_word(v):
@@ -1065,9 +1115,9 @@ def _contest_html(c):
                 f'<details class="audit"><summary>Audit trail: the objections (verbatim)</summary><ul>{items}</ul></details></div>')
     res = c.get("reservations") or []
     if st == "AGREED" and res:
-        return ('<p class="cond">Agreed, with ' + f"{len(res)} reservation{'s' if len(res) != 1 else ''}" +
+        return ('<div class="cond">Agreed, with ' + f"{len(res)} reservation{'s' if len(res) != 1 else ''}" +
                 '<details class="audit"><summary>Audit trail: the reservations (verbatim)</summary>' + "; ".join(
-            f"<b>{E(str(r.get('voice', '')))}</b> &mdash; {E(str(r.get('reservation') or ''))}" for r in res) + "</details></p>")
+            f"<b>{E(str(r.get('voice', '')))}</b> &mdash; {E(str(r.get('reservation') or ''))}" for r in res) + "</details></div>")
     if st == "AGREED":
         return '<p class="cond">Agreed &middot; no objections</p>'
     return ""
@@ -1159,7 +1209,8 @@ def cmd_render(a):
     POS = (PS or {}).get("tickets") or {}
     MK = _market_kill_text(SL.get("market_kill")) if isinstance(SL, dict) else ""
     if MK:
-        mk_line = f'<p class="flag"><b>Market kill (R40):</b> void every new trigger if {E(MK)}.</p>'
+        mk_line = (f'<div class="flag"><b>Void every new trigger if:</b> {E(_plain_void(SL.get("market_kill")))}'
+                   f'<details class="audit"><summary>Audit trail: the verbatim line</summary>{E(MK)}</details></div>')
     elif isinstance(SL, dict) and "market_kill" in SL:
         mk_line = '<p class="cond">Market kill (R40): none -- no seat named a market condition.</p>'
     else:
@@ -1231,7 +1282,7 @@ def cmd_render(a):
         tp = None
         setups = [f'{x.get("setup")} {x.get("status")}' for x in _house_setups(r)]
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
-        void = f'<div class="full"><dt>Void if</dt><dd>{E(MK)}</dd></div>' if MK else ""
+        void = _void_cell(SL.get("market_kill")) if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
                  f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}</div>'
                  f'<span class="pill {("p-warn" if not bracket["targets"] else TONE.get(w["readiness_tone"], "p-n"))}">{E("Reward does not justify the risk at this entry" if not bracket["targets"] else w["readiness"])}</span></header>'
