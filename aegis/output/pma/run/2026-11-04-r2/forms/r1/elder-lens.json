@@ -1,0 +1,120 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-04",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "EQH",
+   "reason": "Permission event on the last bar: elder_5d [9, 9, 4, 3, 9], colour BLUE giving way to GREEN, pattern CORRECTION_REENTRY - a dip-and-reclaim with weekly_trend_direction UP, price_ema_slope 0.1817 rising, force_index_ema_13 242194.21 bullish zone, entry 55.24 under channel_upper 58.51.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_50"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 9.0; impulse_colour_last_bar GREEN (not RED) - buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [9, 9, 4, 3, 9]: 3 then 9 on last bar = permission event; impulse_colour_prior_bar BLUE -> GREEN; elder_pattern CORRECTION_REENTRY", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.1817; force_index_ema_13 242194.21; entry 55.24 below channel_upper 58.51; mp_state FADING so R8 not met", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "channel_upper", "mp_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_50 52.92 (value zone; ma_20 53.8); dollar risk is the PM's", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition quality: 4,3 dip then 9 with colour change; force_index_ema_2 2784181.81 positive so R3 pullback timer not firing", "verdict": "pass", "fields": ["elder_5d", "force_index_ema_2"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 9 > prior 3 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED, weekly_trend_direction leaves UP, or a daily close under ma_50 52.92."
+  },
+  {
+   "ticker": "CRBG",
+   "reason": "Permission event on the last bar: elder_5d [9, 9, 4, 5, 9], colour BLUE giving way to GREEN, pattern CORRECTION_REENTRY, weekly_trend_direction UP, price_ema_slope 0.121 rising, force_index_ema_13 537715.96 bullish zone, entry 35.74 under channel_upper 37.73.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_50"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 9.0; impulse_colour_last_bar GREEN (not RED)", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [9, 9, 4, 5, 9]: 5 then 9 on last bar = permission event; impulse_colour_prior_bar BLUE -> GREEN; elder_pattern CORRECTION_REENTRY", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.121; force_index_ema_13 537715.96; entry 35.74 below channel_upper 37.73; mp_state FADING so R8 not met", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "channel_upper", "mp_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_50 34.26 (ma_20 34.77)", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "4,5 dip then 9 with colour change; force_index_ema_2 3985820.57 positive (R3 not firing)", "verdict": "pass", "fields": ["elder_5d", "force_index_ema_2"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 9 > prior 5 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED, weekly_trend_direction leaves UP, or a daily close under ma_50 34.26."
+  },
+  {
+   "ticker": "EW",
+   "reason": "R8 dip-and-reclaim: elder_pattern CORRECTION_REENTRY with mp_state STRONG, elder_5d [10, 10, 7, 7, 10] and colour BLUE giving way to GREEN; weekly_trend_direction UP, price_ema_slope 0.6673, force_index_ema_13 3917397.47 bullish, entry 95.19 under channel_upper 96.12. R8 incomplete.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_20"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [10, 10, 7, 7, 10] has no <=6 bar; but elder_pattern CORRECTION_REENTRY + mp_state STRONG (R8) and impulse_colour_prior_bar BLUE -> GREEN", "verdict": "partial", "fields": ["elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.6673; force_index_ema_13 3917397.47; entry 95.19 below channel_upper 96.12", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "channel_upper"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_20 88.96 (ma_50 88.31); entry near the upper wall, so the pullback buy sits lower", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50", "channel_upper"]},
+    {"step": 5, "canon_ref": ["C4", "C22", "C20"], "observed": "dip to 7,7 inside not-red then 10 with colour change; mp 84.0; force_index_ema_2 11016793.25 positive", "verdict": "pass", "fields": ["elder_5d", "mp", "force_index_ema_2"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 10 > prior 7 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED, mp_state leaves STRONG with a single-bar elder_5d drop, or a daily close under ma_20 88.96."
+  },
+  {
+   "ticker": "ROKU",
+   "reason": "Red giving way, Elder's best long: impulse_colour_prior_bar RED -> impulse_colour_last_bar GREEN, elder_5d [3, 4, 0, 0, 8] (two certain-red bars then 8). weekly_trend_direction UP, price_ema_slope 0.6364, force_index_ema_13 2431150.95 bullish. elder_pattern INTERRUPTED fails the trend leg per card.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_50"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 8.0; impulse_colour_last_bar GREEN - the red ban lifted on this bar", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C3"], "observed": "elder_5d [3, 4, 0, 0, 8]: 0 then 8 = permission event; impulse_colour_prior_bar RED -> GREEN (R2)", "verdict": "pass", "fields": ["elder_5d", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "elder_pattern INTERRUPTED (card: trend leg failed) although weekly_trend_direction UP, price_ema_slope 0.6364, entry 160.36 below channel_upper 166.64", "verdict": "fail", "fields": ["elder_pattern", "weekly_trend_direction", "price_ema_slope", "entry", "channel_upper"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_50 155.15 (ma_20 155.64)", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "clean red-vanishing transition; mp_state BUILDING, mp 48.0; force_index_ema_13 2431150.95 positive", "verdict": "partial", "fields": ["elder_5d", "mp_state", "mp", "force_index_ema_13"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 8 > prior 0 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar returns to RED, weekly_trend_direction leaves UP, or a daily close under ma_50 155.15."
+  },
+  {
+   "ticker": "MDT",
+   "reason": "R8 dip-and-reclaim: elder_pattern CORRECTION_REENTRY with mp_state STRONG (mp 87.0), elder_5d [6, 9, 7, 10, 10]; weekly_trend_direction UP, price_ema_slope 0.5304, force_index_ema_13 9193853.47 bullish, entry 98.88 under channel_upper 100.55. No colour change - R8 incomplete.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_20"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [6, 9, 7, 10, 10]: no <=6 then >=7 on last bar; R8 fires (CORRECTION_REENTRY + STRONG); impulse_colour_prior_bar GREEN, no colour change", "verdict": "partial", "fields": ["elder_5d", "elder_pattern", "mp_state", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.5304; force_index_ema_13 9193853.47; entry 98.88 below channel_upper 100.55", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "channel_upper"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_20 93.94 (ma_50 91.94)", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50"]},
+    {"step": 5, "canon_ref": ["C4", "C20", "C22"], "observed": "dip to 7 then 10,10 - tail is turning into a plateau (summer, C20); force_index_ema_2 3720813.96 positive", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 10 = prior 10 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED, a single-bar drop in elder_5d with mp_state leaving STRONG, or a daily close under ma_20 93.94."
+  },
+  {
+   "ticker": "TMO",
+   "reason": "Red giving way: impulse_colour_prior_bar RED -> impulse_colour_last_bar GREEN, elder_5d [10, 10, 7, 2, 7] (2 then 7 = permission event); weekly_trend_direction UP, price_ema_slope 1.542, force_index_ema_13 2029060.31 bullish. elder_pattern INTERRUPTED and mp_state FADING weigh on it.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "channel_upper", "entry", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar GREEN - red ban lifted on this bar", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C3"], "observed": "elder_5d [10, 10, 7, 2, 7]: 2 then 7 = permission event; impulse_colour_prior_bar RED -> GREEN (R2)", "verdict": "pass", "fields": ["elder_5d", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "elder_pattern INTERRUPTED (card: trend leg failed) though weekly_trend_direction UP, price_ema_slope 1.542, entry 698.34 below channel_upper 743.49", "verdict": "fail", "fields": ["elder_pattern", "weekly_trend_direction", "price_ema_slope", "entry", "channel_upper"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C10"], "observed": "no bracket on my packet; own invalidation = close under ma_20 681.87 (ma_50 657.11)", "verdict": "partial", "fields": ["entry", "ma_20", "ma_50"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition is real but shallow (7 is the floor of not-red); mp_state FADING, mp 66.0", "verdict": "partial", "fields": ["elder_5d", "mp_state", "mp"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "elder_5d last 7 > prior 2 - no single-bar drop", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar returns to RED, weekly_trend_direction leaves UP, or a daily close under ma_20 681.87."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "TIGHTEN", "line": "Single-bar drop: elder_5d [6, 9, 7, 10, 7] (10 -> 7) with impulse_colour_prior_bar GREEN -> impulse_colour_last_bar BLUE - green going away, Elder's profit-taking signal (R7, C4); weekly_trend_direction UP still, so raise the stop, never lower it (C18)."},
+  {"ticker": "MP", "verdict": "EXIT-CASE", "line": "Censor: impulse_colour_last_bar RED and impulse_colour_prior_bar RED, elder 2.0, elder_5d [7, 9, 2, 2, 2], force_index_ema_13 -1821692.78, price_ema_slope -0.3646, weekly_trend_direction DOWN - every screen against the long; buying is forbidden and the trend is down (R1, R6)."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on many rows (e.g. KBR, FLR, V, WCN); for those names the CORRECTION_REENTRY/INTERRUPTED read (R8, step 3) could not be taken and was not inferred from elder_5d."},
+  {"field": "elder_context", "impact": "only elder_context.volume.up_bar_vol_ratio ships; no pullback-volume-contraction or failure-to-extend read, so R8 stays incomplete for EW and MDT."}
+ ],
+ "declarations": [
+  "Ledger memory: no voice_memory render block was injected into this run; no standing lesson applies.",
+  "Out-of-menu fields read for R9/R11 disclosure only (ma_20, ma_50, choch_state, structure_shift, held): every nominee has choch_state BULLISH; transition names DLR, FLR, PRM, CTRE, HDB, CZR, JAN, PAYO stood aside on choch_state BEARISH and/or weekly_trend_direction DOWN (R6, R11).",
+  "Stood aside: SYK (permission event, but force_index_ema_13 -1128901.73 bearish zone, R4); TEVA, YMM, TEL (permission events with elder_pattern INTERRUPTED and no red to vanish); KBR (elder_5d [7, 7, 7, 6, 7] with no colour change); BAM and VSXY (R8 but plateau tails, C20 summer).",
+  "R3 (force_index_ema_2 < 0 with price_ema_slope > 0) fires on many BLUE pullback names (e.g. DUK, IBM, AMGN, WMT); not raised as nominations because step 2's permission event is absent on them.",
+  "Censor duty: no name in the packet has elder <= 1; MP (held) prints impulse_colour_last_bar RED with elder 2.0 - a long there is forbidden.",
+  "No bracket fields are on my packet; each invalidation level above is my own from the value-zone averages (R10) and is information for the PM, not a gate."
+ ],
+ "shortfall_reason": null
+}

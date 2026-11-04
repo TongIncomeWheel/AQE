@@ -1,0 +1,247 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-04",
+ "declarations": [
+  "No refutation pairs were routed to me (answer_pairs empty), so answers is [].",
+  "Menu: elder, elder_5d, elder_pattern, mp, mp_state; elder figures are quoted from my own blind vote; the packet's W/D/H1 grid supplies the weekly tide (C21). Force index, channel and impulse colour fields are not in this packet - unread, not assumed.",
+  "Market void: my method has no market-wide kill line (C7 regime is per name), so market_void is null. No bracket field is the basis of any decision (R1).",
+  "Part 2 of 2: answers [] - no refutation pairs were routed to me.",
+  "Elder figures quoted from my own blind vote; W/D/H1 from the packet grid. Force index, channel and impulse colour fields unread in this packet. market_void null: my method carries no market-wide kill line. No bracket field is the basis of any decision (R1)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "ROKU",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7 or more"
+   },
+   "wrong_if": "Impulse returns to red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "Red gave way on the last bar: elder_5d [3, 4, 0, 0, 8] (C3, C4). Weekly tide first (C21): W ema_order 9>21, close_vs_ema9 above. D last_bar green. INTERRUPTED pattern is a weight; force series unseen."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "pulls back under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 7, 10, 10, 7]: green fading on the last bar is Elder's profit-taking bar, not a buy (C4). W hh_hl_3 HH/HL, 9>21, mp 93.0 STRONG - permission on; buy the pullback into value (C10). D last_bar red, H1 close_vs_ema9 below."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [0, 3, 3, 9, 9]: a certain-red bar gave way and the not-red read held (C4). W ema_order 9>21 above EMA9; D hh_hl_3 HH/HL; mp 82.0 STRONG. Transition one session old, still fresh."
+  },
+  {
+   "ticker": "HOG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "C24 (unsourced): elder_5d [10, 10, 10, 10, 10] is a plateau - summer, not Elder's buying season (C20). W 9>21, D HH/HL, mp 93.0. Permission on; entry only on a return to value (C10)."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1), mp_state leaving STRONG on a single-bar drop, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "R8 fires: CORRECTION_REENTRY with mp_state STRONG (mp 84.0); elder_5d [10, 10, 7, 7, 10] dip-and-reprint. W hh_hl_3 HH/HL, 9>21. R8 incomplete: pullback volume unseen."
+  },
+  {
+   "ticker": "VLTO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [6, 6, 10, 10, 10]: transition three bars old, now a plateau (summer, C20). W HH/HL 9>21, mp 97.0 STRONG. H1 hh_hl_3 LH/LL. Buy the pullback into value, not the top (C10)."
+  },
+  {
+   "ticker": "TTEK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 10, 10, 10, 7]: green going away on the last bar (C4) - a booking bar, not an entry. W HH/HL 9>21, mp 97.0 STRONG; H1 close_vs_ema9 below. Entry on the value reclaim (C10)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 10, 7, 10, 7]: last-bar drop, green going away (C4). W HH/HL 9>21, mp 97.0 STRONG; D last_bar red, H1 LH/LL at 14% of the day's range. Pullback entry only (C10)."
+  },
+  {
+   "ticker": "BRK-B",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [6, 6, 6, 9, 10]: ambiguous base gave way two bars ago, rising since (C4). W HH/HL 9>21 and D HH/HL; mp 97.0 STRONG. The 6s were ambiguous, not certain red."
+  },
+  {
+   "ticker": "MDT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "once volume returns to normal, a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1), a single-bar drop with mp_state leaving STRONG, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "R8 fires: CORRECTION_REENTRY, mp_state STRONG (mp 87.0); elder_5d [6, 9, 7, 10, 10]. W HH/HL 9>21. day_vol 0.24 is a drastic shrinkage (C23) - volume must return first."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 10, 10, 10, 7]: green going away on the last bar (C4). W HH/HL 9>21; D last_bar red; mp 83.0 FADING. Permission on; buy the value reclaim, not here (C10)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 7, 10, 10, 7]: last-bar drop is profit-taking (C4). W HH/HL 9>21, mp 93.0 STRONG; D last_bar red, H1 close_vs_ema9 below. Pullback entry only (C10)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [10, 10, 7, 2, 7]: red gave way on the last bar - the C4 permission event. W HH/HL 9>21; D last_bar green. INTERRUPTED pattern and mp 66.0 FADING make it a shallow transition."
+  },
+  {
+   "ticker": "V",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "held: no add now; add only after a pullback under the 20-day average and an hourly close back above it"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "Held, TIGHTEN (R7): elder_5d [6, 9, 9, 10, 7] single-bar drop - green going away (C4). W 9>21, D above EMA9; H1 LH/LL. Raise the stop, never lower it (C18)."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [10, 10, 7, 7, 7]: green faded, holding not-red - a pullback in progress, no transition yet (C3, C4). W HH/HL 9>21, mp 89.0 STRONG; H1 LH/LL. Buy the value reclaim (C10)."
+  },
+  {
+   "ticker": "GEN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [6, 10, 10, 10, 10]: transition four bars old, plateau since (summer, C20). W ema_order 9>21 above EMA9, mp 77.0 STRONG; H1 close_vs_ema9 below. Entry on value (C10)."
+  },
+  {
+   "ticker": "CART",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "a pullback under the 20-day average, then an hourly close back above it while elder holds 7+"
+   },
+   "wrong_if": "Impulse red (elder_le:1) or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 7, 7, 7, 7]: flat not-red, no transition. W HH/HL 9>21, D HH/HL, mp 92.0 FADING. H1 at 100% of the day's range - not a pullback. Permission on; entry on a value reclaim (C10)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of2.json",
+   "bytes": 5438,
+   "sha256": "f664011315b6"
+  },
+  {
+   "file": "elder-lens.part2of2.json",
+   "bytes": 4657,
+   "sha256": "6202db37d0d1"
+  }
+ ]
+}
