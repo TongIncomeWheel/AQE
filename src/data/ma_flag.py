@@ -136,19 +136,20 @@ def company_name(client, ticker: str) -> str | None:
         return None
 
 
-def load_cache(path: Path = CACHE_PATH) -> dict:
+def load_cache(path: Path | None = None) -> dict:
     try:
-        d = json.loads(Path(path).read_text(encoding="utf-8"))
+        d = json.loads(Path(path or CACHE_PATH).read_text(encoding="utf-8"))
         return d if isinstance(d, dict) else {}
     except Exception:  # noqa: BLE001
         return {}
 
 
-def refresh(tickers, client, today: date | None = None, cache_path: Path = CACHE_PATH, names: dict | None = None) -> dict:
+def refresh(tickers, client, today: date | None = None, cache_path: Path | None = None, names: dict | None = None) -> dict:
     """Scan every ticker once per day (cache per ticker per day). Returns the artifact:
     {asof, window_days, scan_status: ok|partial|failed, n_scanned, n_failed, n_flagged, failed[], tickers{tk: flag}}.
     A ticker whose fetch failed carries ma_status UNKNOWN; if more than 10% fail the scan is `partial` (loud in data_quality)."""
     today = today or date.today()
+    cache_path = cache_path or CACHE_PATH                # resolved at CALL time so a test (or a relocated data dir) can redirect it
     cache = load_cache(cache_path)
     done = cache.get("tickers") or {} if cache.get("asof") == today.isoformat() else {}
     out, failed = {}, []

@@ -84,3 +84,38 @@ def test_a_pending_target_never_arms_a_buy_trigger(monkeypatch):
     assert out[1] is rows[1]                                   # a clean name is untouched
     assert out[2] is rows[2]                                   # a held position keeps its own cards
     assert D.apply_deal_pinned(rows, {"daily_list": [{"ticker": "ROKU", "entry": 160.0}]})[0] is rows[0]   # no ma_status in the export: no claim
+
+
+def test_the_export_stamp_flags_roku_and_keeps_a_failed_scan_loud(tmp_path, monkeypatch):
+    """The success path of drive_sync._attach_ma_flags with a fake FMP client (news for ROKU says pending), and the failure path."""
+    from src.data import drive_sync as DS, ma_flag as M2
+    monkeypatch.setattr(M2, "CACHE_PATH", tmp_path / "ma.json")
+    news = {"ROKU": [ROKU_OWN, NOISE], "AAPL": []}
+
+    class Fake:
+        class config:
+            api_key = "k"
+
+        def _get_json(self, url, params):
+            if url.endswith("/profile"):
+                return [{"companyName": "Roku, Inc."}]
+            return news[params["symbols"]]
+    exp = {"date": "2026-11-04", "daily_list": [{"ticker": "ROKU"}, {"ticker": "AAPL"}], "held_positions": []}
+    DS._attach_ma_flags(exp, client=Fake())
+    by = {r["ticker"]: r for r in exp["daily_list"]}
+    assert by["ROKU"]["ma_status"] == "PENDING_TARGET" and "FOX will acquire Roku" in by["ROKU"]["ma_note"] and by["AAPL"]["ma_status"] == "NONE"
+    assert exp["ma_pending"] == ["ROKU"] and exp["ma_scan"]["scan_status"] == "ok" and exp["ma_scan"]["n_flagged"] == 1
+
+    class Down:
+        class config:
+            api_key = "k"
+
+        def _get_json(self, url, params):
+            raise RuntimeError("http 500")
+    monkeypatch.setattr(M2, "CACHE_PATH", tmp_path / "ma2.json")
+    exp2 = {"date": "2026-11-04", "daily_list": [{"ticker": "ROKU"}, {"ticker": "AAPL"}], "held_positions": []}
+    DS._attach_ma_flags(exp2, client=Down())
+    assert all(r["ma_status"] == "UNKNOWN" for r in exp2["daily_list"]) and exp2["ma_scan"]["scan_status"] == "failed" and exp2["ma_pending"] == []
+    exp3 = {"date": "2026-11-04", "daily_list": [{"ticker": "ROKU"}], "held_positions": []}
+    DS._attach_ma_flags(exp3, client=object())            # a client that cannot scan at all: still UNKNOWN, never NONE
+    assert exp3["daily_list"][0]["ma_status"] == "UNKNOWN" and exp3["ma_scan"]["scan_status"] == "failed"

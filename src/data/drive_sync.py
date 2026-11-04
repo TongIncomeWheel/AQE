@@ -3122,24 +3122,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                 f"'{_rec.get('ticker', '?')}' missing fields: {_missing}"
             )
 
-    # ---- M&A flag (PM 2026-11-04): any name with a pending merger / acquisition / buyout is flagged on its row, so the committee,
-    # the cards, the lists and the alerts all see the same field. A failed scan is LOUD: every row reads UNKNOWN (never NONE) and
-    # `ma_scan` / `data_quality.ma_scan` say why. Never blocks the export.
-    _ma_rows = (export.get("daily_list") or []) + (export.get("held_positions") or [])
-    try:
-        from src.data import ma_flag as _MA
-        from src.data.fmp_client import FMPClient as _FMP
-        _ma_art = _MA.refresh({r.get("ticker") for r in _ma_rows if r.get("ticker")}, _FMP(),
-                              today=date.fromisoformat(str(export.get("date"))[:10]))
-    except Exception as _mae:  # noqa: BLE001
-        _ma_art = {"scan_status": "failed", "asof": None, "n_scanned": 0, "n_failed": len(_ma_rows), "n_flagged": 0,
-                   "failed": [], "tickers": {}, "reason": f"{_mae.__class__.__name__}: {str(_mae)[:120]}"}
-    _unknown = {"ma_status": "UNKNOWN", "ma_note": "M&A scan did not run for this ticker", "ma_evidence": None}
-    for _r in _ma_rows:
-        _f = (_ma_art.get("tickers") or {}).get(_r.get("ticker")) or _unknown
-        _r["ma_status"], _r["ma_note"], _r["ma_evidence"] = _f["ma_status"], _f["ma_note"], _f.get("ma_evidence")
-    export["ma_scan"] = {k: _ma_art.get(k) for k in ("scan_status", "asof", "window_days", "n_scanned", "n_failed", "n_flagged", "failed", "reason")}
-    export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
+    _attach_ma_flags(export)
 
     # ---- Data-quality guard — VALUE-level, not just key-level (2026-07-15 ruling).
     # _REQUIRED_FIELDS above only checks a key exists; a NaN engine result (e.g.
@@ -3230,6 +3213,29 @@ _HARD_REQUIRED_NONNULL = [
     "sc_momentum", "flow", "energy", "structure", "mp", "elder",
     "entry", "atr_14d", "bracket",
 ]
+
+
+def _attach_ma_flags(export: dict, client=None) -> None:
+    """M&A flag (PM 2026-11-04): any name with a pending merger / acquisition / buyout is flagged on its row, so the committee, the cards,
+    the lists and the alerts all see the same field. A failed scan is LOUD: every row reads UNKNOWN (never NONE) and `ma_scan` /
+    `data_quality.ma_scan` say why. Never blocks the export. `client` is injectable for tests."""
+    _ma_rows = (export.get("daily_list") or []) + (export.get("held_positions") or [])
+    try:
+        from src.data import ma_flag as _MA
+        if client is None:
+            from src.data.fmp_client import FMPClient as _FMP
+            client = _FMP()
+        _ma_art = _MA.refresh({r.get("ticker") for r in _ma_rows if r.get("ticker")}, client,
+                              today=date.fromisoformat(str(export.get("date"))[:10]))
+    except Exception as _mae:  # noqa: BLE001
+        _ma_art = {"scan_status": "failed", "asof": None, "n_scanned": 0, "n_failed": len(_ma_rows), "n_flagged": 0,
+                   "failed": [], "tickers": {}, "reason": f"{_mae.__class__.__name__}: {str(_mae)[:120]}"}
+    _unknown = {"ma_status": "UNKNOWN", "ma_note": "M&A scan did not run for this ticker", "ma_evidence": None}
+    for _r in _ma_rows:
+        _f = (_ma_art.get("tickers") or {}).get(_r.get("ticker")) or _unknown
+        _r["ma_status"], _r["ma_note"], _r["ma_evidence"] = _f["ma_status"], _f["ma_note"], _f.get("ma_evidence")
+    export["ma_scan"] = {k: _ma_art.get(k) for k in ("scan_status", "asof", "window_days", "n_scanned", "n_failed", "n_flagged", "failed", "reason")}
+    export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
 
 
 def _compute_data_quality(daily_list: list[dict], held_positions: list[dict]) -> dict:
