@@ -585,6 +585,34 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
     return fails, notes, report
 
 
+def check_cards_text(path):
+    """B3 (PM 2026-11-04): the Cards' reason block is ONE plain voice - three one-sentence parts, no raw field names, no vote
+    tallies, no jargon, at most 4 numbers. FAIL, not WARN. The rules live in pma_cards.validate_reason (one source); the render
+    refuses the same text, this is the gate that proves it before publish."""
+    import importlib.util as _iu
+    fails, notes = [], []
+    T = _load(path, "cards_text.json", fails)
+    if T is None:
+        return fails, notes
+    here = os.path.dirname(os.path.abspath(__file__))
+    mod = None
+    for rel in ("../pma/tools/pma_cards.py", "../../tools/pma_cards.py", "../../skills/pma/tools/pma_cards.py"):
+        p = os.path.join(here, rel)
+        if os.path.exists(p):
+            spec = _iu.spec_from_file_location("pma_cards_gate", p); mod = _iu.module_from_spec(spec); spec.loader.exec_module(mod); break
+    if mod is None:
+        return ["pma_cards.py (the reason validator) not found - the cards text cannot be gated"], notes
+    n = 0
+    for t, c in (T.get("cards") or {}).items():
+        n += 1
+        if not c.get("reason"):
+            fails.append(f"cards.{t}: no `reason` block (agree / wrong_if / wait_for)")
+            continue
+        fails += [f"cards.{t}.{e}" for e in mod.validate_reason(c["reason"])]
+    notes.append(f"cards text: {n} ADVANCE card(s) checked for the plain one-voice reason")
+    return fails, notes
+
+
 def check_macro_legs(VA, FT):
     """Every macro leg with its REASON CODE (PM 2026-11-04). FAIL: OUR_BUDGET / SOURCE_DOWN (we are slow or the source is down: the
     committee would vote on stale weather), a missing table (a leg that cannot be audited is not passed), and ANY leg behind two
@@ -786,6 +814,8 @@ def main(argv=None):
     d_.add_argument("--voice-contract", default=DEFAULT_VOICE_CONTRACT, help="voice_coverage.json; 'none' disables the per-voice coverage check (tests only)")
     d_.add_argument("--journal-dir", default=None, help="default: <output-dir>/../data/journal")
     d_.add_argument("--broker-stops", default=None, help="GATHER's broker_stops.json, cross-checked against the journal")
+    ct = sub.add_parser("cards", help="B3: the Cards' plain one-voice reason block (FAIL on raw field names, tallies, jargon, > 4 numbers)")
+    ct.add_argument("--text", default="cards_text.json")
     cv = sub.add_parser("coverage", help="per-voice data coverage; run BEFORE the vote with --phase4 so name-level blanks are scoped to the room")
     cv.add_argument("--packets-dir", required=True); cv.add_argument("--export", required=True)
     cv.add_argument("--phase4", default=None, help="phase4.json: scope name-level blanks to its deliberation_set")
@@ -803,6 +833,8 @@ def main(argv=None):
         vc = getattr(a, "voice_contract", DEFAULT_VOICE_CONTRACT)
         f, n = check_data(a.output_dir, a.run_yaml, getattr(a, "journal_dir", None),
                           getattr(a, "broker_stops", None), None if str(vc).lower() == "none" else vc); rc |= _report("DATA HANDOFF", f, n)
+    if a.cmd == "cards":
+        f, n = check_cards_text(a.text); rc |= _report("CARDS TEXT", f, n)
     if a.cmd == "coverage":
         fails, ex = [], None
         ex = _load(a.export, "export", fails)

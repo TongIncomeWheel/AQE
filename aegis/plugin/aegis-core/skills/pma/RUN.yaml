@@ -716,7 +716,7 @@ steps:
     produces: [pma_brief_<date>.md, cards_text.json]
     cards_text: >
       R23: the writer ALSO writes cards_text.json -- WORDS ONLY, schema in agents/brief-writer.md
-      (bottom line, market reads, money, book, changed, one case+why+readiness per ADVANCE, one line per
+      (bottom line, market reads, money, book, changed, one case+`reason`{agree,wrong_if,wait_for}+readiness per ADVANCE, one line per
       HOLD and PASS, plan, caveats). Every number on the card report comes from the run files, not this file.
       The trigger levels in cards.json are tool-built at CONDITIONS; WRITE never hand-builds triggers.
     sections: ["0 verdicts", "0A executive consensus", "0B what these were picked on + momentum fit",
@@ -739,6 +739,7 @@ steps:
   - name: CHECK
     kind: tool
     command: "pma_pipeline.py gate --brief pma_brief_<date>.md --consensus consensus.json --verdict-ledger verdict_ledger.json --date <date>"
+    then: "check.py cards --text cards_text.json   # B3 (PM 2026-11-04): FAIL on raw field names, vote tallies, jargon or more than 4 numbers in an ADVANCE card's `reason`"
     barrier: "0 FAIL"
     on_fail: "fix at the owning stage, max 2 loops, residuals declared in the footer"
     meter: "--tool-only"

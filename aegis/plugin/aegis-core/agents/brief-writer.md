@@ -68,6 +68,8 @@ these, it is appendix material and moves to the back.
 
 ## THE CARD REPORT — cards_text.json (R23, PM 2026-10-23). WRITE THIS FIRST.
 
+**THE REASON BLOCK IS ONE PLAIN VOICE (PM 2026-11-04: "talking all sorts of prose... random words that don't explain why the committee agrees it's a buy, in one voice").** Every ADVANCE card carries `reason` = three one-sentence parts for a trader: `agree`, `wrong_if`, `wait_for`. HARD RULES (`check.py cards` and the renderer REFUSE the file otherwise): no raw field names (nothing like bar_high, high_52w_close, structure_shift_ref, pvp_vah), no vote tallies or who voted what, no indicator jargon (EMA, ATR, VWAP, MACD, RSI, CCI, ADX, OBV...), at most 4 numbers across the three sentences, each part at most 240 characters. The verbatim-quote discipline lives in the SLATE (the audit trail); here you convert it to plain English. The bracket (entry, stop, risk, targets in R, RR to TP2, 1R in dollars) is drawn by code from the run files: never write a stop, target or R multiple in the reason.
+
 The PM's primary read is the **Committee Cards** report. Its LAYOUT is fixed in code
 (`tools/pma_cards.py render`); I supply only the WORDS, in `cards_text.json`, to this exact schema.
 Every number on the page (levels, stops, targets, positions, Valen readings) is filled by the tool from
@@ -86,7 +88,9 @@ the run files — I never type a level into this file except inside a sentence t
  "book": [{"ticker": "V", "read_pill": "KEEP · ADD ON TRIGGER", "tone": "up|down|warn|n", "why": "one line"}],  // every held name
  "book_flag": "optional one-line concentration warning or null",
  "changed": ["New ADVANCE: ...", "Still ADVANCE: ...", "Downgraded: ...", "Left the room: ..."],
- "cards": {"TICKER": {"case": "one bold line", "why": "2-3 sentences: winning argument with figures; the losing argument; what must stay true",
+ "cards": {"TICKER": {"case": "one bold line", "reason": {"agree": "ONE plain sentence: why the committee agrees it is a buy (the one or two reasons the supporters share)",
+                                                          "wrong_if": "ONE plain sentence: the one thing that would make it wrong",
+                                                          "wait_for": "ONE plain sentence: what to wait for before acting"},
                       "readiness": "Ready now|Ready on trigger|Ready on a dip|Needs reset",
                       "readiness_tone": "ok|warn|bad", "sector_note": "sector + help/headwind + earnings date"}},  // EVERY ADVANCE
  "common_risk": "one line: the shared risk across the ADVANCE list",

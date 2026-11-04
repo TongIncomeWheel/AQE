@@ -136,7 +136,7 @@ def _render_dir(td, name, valen=None, slate=None, held=False):
     words = {"session_label": "s", "stance_pill": "NEUTRAL", "bottom_line": {"headline": "h", "paragraph": "p", "stats": [{"value": "1", "label": "l"}] * 4},
              "market": {"what_happened": [{"lead": "a", "text": "b"}], "weather": [{"lead": "c", "text": "d"}]},
              "money": [{"group": "g", "read": "r", "meaning": "m"}], "book": [], "changed": ["c"],
-             "cards": {"AAA": {"case": "c", "why": "w", "readiness": "Ready now", "readiness_tone": "ok"}},
+             "cards": {"AAA": {"case": "c", "why": "w", "reason": {"agree": "A leader in a strong group breaking out on heavy buying.", "wrong_if": "It closes back under the breakout.", "wait_for": "An hourly close above the buy line."}, "readiness": "Ready now", "readiness_tone": "ok"}},
              "holds": {"BBB": "waits"}, "passes": {"CCC": "no"}, "plan": ["p"], "caveats": ["c"]}
     vpath = os.path.join(d, "nov.json")
     if valen is not None:
