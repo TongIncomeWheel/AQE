@@ -1,0 +1,26 @@
+name: M&A flag dry-run (scan the export's tickers, print the flagged list)
+
+# PM 2026-11-04: any name with a pending merger / acquisition / buyout must be flagged wherever it is picked. This runs the same scan the
+# nightly will run (src/data/ma_flag.py) over the committed export's tickers and prints every flagged row with its matched sentence and
+# link, so the flags can be audited. Writes nothing to the repo.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Scan
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python -m scripts.ma_flag_run aegis/output/aqe_daily_export.json
