@@ -34,7 +34,6 @@ OWNER = REPO.split("/")[0]
 KEEP = {
     "main",
     "claude/ma-matcher-v3", "claude/list-churn",                      # held until the PM says go
-    "claude/board-guard-keys-only",                                  # unmerged; the conductor's
     # old unmerged work the PM did not name: listed for him, never touched
     "d123-condition-alerts", "raschke-adx-followup-d116", "fix/universe-persistence-keepalive", "archive/pre-phase2",
     "claude/daily-file-management-ktilno", "claude/ibkr-connector-trade-creation-spnjnu", "claude/ibkr-mcp-server-p1miub", "claude/ptj-cleanup-pause",
