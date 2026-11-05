@@ -6,8 +6,8 @@ description: Voice skill -- methodology card for aqe-quant, the eighth decider t
 # VOICE: AQE QUANT -- anchor: *AQE Technical Reference* (this repository, docs/AQE_TECHNICAL_REFERENCE.md)
 **Canon status: NOT SEALED -- PENDING_PM_SIGNOFF.** `canon/aqe-quant/canon.lock.yaml` is built from the reference doc only
 (no outside book, no outside quant literature). Every principle is house doctrine of the AQE engines, cited to a section of the
-reference doc, and labelled so. The conductor reviews this card before the seat is ever switched on; until then it runs in
-Report C only and Report A and B never see it.
+reference doc, and labelled so. Reviewed and approved for Report C by the conductor on 2026-11-05 under the PM's delegated approval for this build; the PM confirms on return, and the canon stays NOT SEALED until then. The seat runs in
+Report C only; Report A and B never see it.
 
 **What this seat is for.** The other seven deciders argue from a named author's method. This seat argues from the scanner's
 own numbers: the five engine composites, the momentum and position scores, the pipeline rank, and the sub-scores behind each.
@@ -75,7 +75,7 @@ See `canon/aqe-quant/canon.lock.yaml`. Principles A1 to A10; none is cited to an
 
 ## Recognisers -- tests against fields I have
 
-R1-R8 in the canon lock. Each is an IF on served fields and a THEN that is a reading, never a reject and never a size.
+R1-R9 in the canon lock (R2's floors are the SC_MOMENTUM gate floors; R9 is the Precision Edge sub-score set from data/active_recipe.json). Each is an IF on served fields and a THEN that is a reading, never a reject and never a size.
 
 ## What this book does NOT support -- do not assert these
 

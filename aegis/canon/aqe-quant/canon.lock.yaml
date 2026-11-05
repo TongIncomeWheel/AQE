@@ -111,12 +111,16 @@ recognisers:
 - id: R2
   if: flow >= 60 AND energy >= 60 AND structure >= 55 AND mp >= 55
   then: 'support is broad across all four engines: the strongest form of the case for, to be stated with
-    the four values'
+    the four values (thresholds are the SC_MOMENTUM gate floors: Flow 60, Energy 60, Structure 55, MP
+    55 -- AQE Technical Reference, section ''2. Composite scores'', SC_MOMENTUM gate; not invented here)'
   fields:
   - flow
   - energy
   - structure
   - mp
+  cite:
+  - code: AQETR
+    section: 2. Composite scores -- SC_MOMENTUM gate floors
 - id: R3
   if: exactly one of flow, energy, structure, mp is in the upper half
   then: 'narrow support: argue it as narrow and name the one engine carrying the headline and the sub-score
@@ -157,9 +161,28 @@ recognisers:
   fields:
   - subcomponents.pipe.pipe_tier
   - mp_accel_state
+- id: R9
+  if: 'at least two of: subcomponents.mp.roc_zscore >= 1.94, subcomponents.pipe.pr_rsi_score >= 20, subcomponents.mp.rel_mom_score
+    >= 18'
+  then: 'Precision Edge sub-scores confirm the momentum read: a reading in the case for, never a reject
+    when fewer pass. The recipe''s fourth filter (k39_value >= 50) is not on this menu and is counted
+    as unread, not as a failure'
+  fields:
+  - subcomponents.mp.roc_zscore
+  - subcomponents.pipe.pr_rsi_score
+  - subcomponents.mp.rel_mom_score
+  cite:
+  - code: AQE-RECIPE
+    path: data/active_recipe.json
+    section: precision.subcomp_filters
 methods: []
 counts:
   principles: 10
   unsourced: 0
-  recognisers: 8
+  recognisers: 9
   methods: 0
+review:
+  by: conductor
+  date: '2026-11-05'
+  basis: PM delegated approval for the B/C build; PM to confirm on return
+  status: NOT SEALED until the PM confirms
