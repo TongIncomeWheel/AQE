@@ -786,7 +786,7 @@ def test_every_nominator_is_served_the_momentum_floor(td):
         # R16 (2026-09-24) added NOMINATED: the floor is a door of its own and the other seven are
         # ADDITIONS. The set is asserted whole so a door can never be dropped or renamed silently.
         check("the doors are declared on the record, NOMINATED among them",
-              set(P["doors_rule"]) == {"NOMINATED", "HELD", "SEATS", "SOLO", "ELDER+LENS", "LENS", "STRENGTH", "PM_LENS", "AQE_LEADER"}, str(set(P["doors_rule"])))
+              set(P["doors_rule"]) == {"NOMINATED", "HELD", "SEATS", "SOLO", "ELDER+LENS", "LENS", "STRENGTH", "PM_LENS", "AQE_LEADER", "SWING_PIVOT"}, str(set(P["doors_rule"])))
         check("R16: NOMINATED is declared UNCONDITIONAL", "UNCONDITIONALLY" in P["doors_rule"]["NOMINATED"])
         check("R17: every door says it only flags, never seats",
               all("FLAG ONLY" in P["doors_rule"][d]
@@ -934,6 +934,46 @@ def test_up_to_three_reserved_seats_for_a_valen_reclaim(td):
     rc, log = run([PIPE, "rank", "--tally", tal, "--candidates", cs, "--export", ex, "--pm-lens", "",
                    "--unr-seats", "0", "--out", out])
     check("R25: --unr-seats 0 turns it off", rc == 0 and json.load(open(out))["unr_seats"] == [], log[-300:])
+
+
+def test_swing_pivot_door_seats_names_at_their_swing_high_additively(td):
+    """SWING_PIVOT (PM 2026-11-05): the export's swing_pivot true (weekly+daily HH/HL, daily close within 1 ATR of the latest daily swing
+    high) seats up to --swing-seats (default 6) un-nominated names by AQE rank, MOMENTUM lane, ADDITIVE after the floor / R25 / R27. A name
+    inside the band and a name outside it (swing_pivot false / unreadable) are told apart by the export flag, never by the door itself."""
+    tal, cs, ex, out = _r16_fixture(td, n_nominated=10, tag="swp_")
+    E = json.load(open(ex))
+    names = {r["ticker"]: r for r in E["daily_list"]}
+    for tk in ("N03", "M20", "M15", "M40", "M60", "M70", "M80", "M85"):
+        names[tk].update({"swing_pivot": True, "swing_atr_dist": 0.4})        # inside the band
+    names["M12"].update({"swing_pivot": False, "swing_atr_dist": 2.6})          # outside the band (extended)
+    names["M13"].update({"swing_pivot": None, "swing_atr_dist": None})          # unreadable: never a silent seat
+    open(ex, "w").write(json.dumps(E))
+    base = [PIPE, "rank", "--tally", tal, "--candidates", cs, "--export", ex, "--pm-lens", "", "--strong-seats", "0", "--unr-seats", "0", "--out", out]
+    rc, log = run(base)
+    check("rank exits clean with swing_pivot rows", rc == 0, log[-400:])
+    if rc != 0: return
+    P = json.load(open(out))
+    seated = [x["ticker"] for x in P["swing_seats"]]
+    check("SWING_PIVOT: default 6 seats, best AQE ranks first, nominated N03 never counted", seated == ["M15", "M20", "M40", "M60", "M70", "M80"], str(seated))
+    check("SWING_PIVOT: the pool counts the 7 un-nominated qualifiers", P["swing_seat_pool"] == 7, str(P["swing_seat_pool"]))
+    check("SWING_PIVOT: a name outside the band or unreadable never takes a seat", not ({"M12", "M13", "M85"} & set(seated)), str(seated))
+    check("SWING_PIVOT: seated names are in the room and voted", set(seated) <= set(P["deliberation_set"]))
+    lanes = {r["ticker"]: r["lane"] for r in P["ranked"]}
+    check("SWING_PIVOT: MOMENTUM lane", all(lanes[t] == "MOMENTUM" for t in seated), str({t: lanes[t] for t in seated}))
+    check("SWING_PIVOT: the door is on the record", all("SWING_PIVOT" in next(r for r in P["ranked"] if r["ticker"] == t)["doors"] for t in seated))
+    check("SWING_PIVOT: ADDITIVE -- every nomination is still seated", {"N%02d" % i for i in range(10)} <= set(P["deliberation_set"]))
+    check("SWING_PIVOT: the room is exactly the floor plus the 6 swing seats", len(P["deliberation_set"]) == 10 + 6, str(len(P["deliberation_set"])))
+    rc, log = run(base + ["--swing-seats", "2"])
+    check("SWING_PIVOT: --swing-seats N bounds it", rc == 0 and [x["ticker"] for x in json.load(open(out))["swing_seats"]] == ["M15", "M20"], log[-300:])
+    rc, log = run(base + ["--swing-seats", "0"])
+    P0 = json.load(open(out))
+    check("SWING_PIVOT: --swing-seats 0 turns it off and the room is the floor", rc == 0 and P0["swing_seats"] == [] and len(P0["deliberation_set"]) == 10, log[-300:])
+    # with the R27 strength seats ON, a name already seated for strength is not counted twice
+    rc, log = run([PIPE, "rank", "--tally", tal, "--candidates", cs, "--export", ex, "--pm-lens", "", "--unr-seats", "0", "--out", out])
+    P2 = json.load(open(out))
+    strong = {x["ticker"] for x in P2["strong_seats"]}
+    check("SWING_PIVOT: no name is seated twice (strength seats first)", rc == 0 and not (strong & {x["ticker"] for x in P2["swing_seats"]})
+          and len(P2["deliberation_set"]) == len(set(P2["deliberation_set"])), str(P2["deliberation_set"]))
 
 
 def test_the_doors_can_never_displace_a_nomination(td):
@@ -3971,6 +4011,7 @@ def main():
                    test_the_figure_audit_reads_field_equals_value,
                    test_a_too_late_line_is_never_below_the_buy_line,
                    test_up_to_three_reserved_seats_for_a_valen_reclaim,
+                   test_swing_pivot_door_seats_names_at_their_swing_high_additively,
                    test_the_flag_list_leads_with_the_strongest_names,
                    test_the_strongest_names_are_voted_in_the_momentum_lane,
                    test_a_buy_line_far_under_the_close_is_never_the_trigger,

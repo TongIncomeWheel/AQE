@@ -2967,6 +2967,16 @@ def build_export(shortlist: dict | None = None) -> dict:
     except Exception as _exc:  # noqa: BLE001
         export["unr_summary"] = {"error": str(_exc)}
 
+    # ---- Momentum AT THE PIVOT (PM 2026-11-05): swing_pivot / swing_atr_dist on every row, from the same panel and the same swing code as
+    # the Cards' strip. Data only; rank seats from it behind --swing-seats. Loud on failure, never an empty column.
+    try:
+        from src.valen.swing_pivot import attach_swing_pivot as _attach_swing
+        export["swing_pivot_status"] = _attach_swing(list(_dl.values()), export.get("held_positions") or [], run_date=export.get("date") or None)
+    except Exception as _exc:  # noqa: BLE001 -- additive, never breaks the export
+        export["swing_pivot_status"] = {"status": "error", "reason": str(_exc), "stamped": 0}
+    if export["swing_pivot_status"].get("status") != "live":
+        print(f"  [WARN] swing_pivot not computed: {export['swing_pivot_status'].get('reason')}")
+
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
