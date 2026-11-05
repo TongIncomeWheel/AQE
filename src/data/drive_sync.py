@@ -2977,6 +2977,12 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["swing_pivot_status"].get("status") != "live":
         print(f"  [WARN] swing_pivot not computed: {export['swing_pivot_status'].get('reason')}")
 
+    # ---- Engine sub-components, VALUE level (PM 2026-11-05, Report C). `subcomponents` is already a _REQUIRED_FIELDS key; a key check
+    # passes on a block of nothing but nulls, which would hand the AQE-quant seat an empty page that reads as "no signal". Loud, never raises.
+    export["subcomponents_status"] = _subcomponents_status(list(_dl.values()))
+    if export["subcomponents_status"].get("status") != "live":
+        print(f"  [WARN] subcomponents degraded: {export['subcomponents_status'].get('reason')}")
+
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
@@ -3017,6 +3023,7 @@ def build_export(shortlist: dict | None = None) -> dict:
                              and not r.get("on_longlist") and not r.get("on_elder")),
         "qs_status": export.get("qs_status", "not_run"),
         "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
+        "subcomponents_status": (export.get("subcomponents_status") or {}).get("status", "not_run"),
         "unr_met_count": len((export.get("unr_summary") or {}).get("met") or []),
         "unr_setup_count": len((export.get("unr_summary") or {}).get("setup") or []),
         "setups_triggered_or_ready": sum(
@@ -3246,6 +3253,39 @@ def _attach_ma_flags(export: dict, client=None) -> None:
         _r["ma_status"], _r["ma_note"], _r["ma_evidence"] = _f["ma_status"], _f["ma_note"], _f.get("ma_evidence")
     export["ma_scan"] = {k: _ma_art.get(k) for k in ("scan_status", "asof", "window_days", "n_scanned", "n_failed", "n_flagged", "failed", "reason")}
     export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
+
+
+def _subcomponents_status(rows: list[dict]) -> dict:
+    """Value-level check on the nested engine `subcomponents` block of every daily_list row.
+
+    live      -- every row carries the block and no row's block is entirely null.
+    degraded  -- some rows lack it or carry only nulls (named, capped at 25).
+    error     -- no row carries a usable block at all, or the check itself failed.
+    Never raises: a Report C input must be loud, it must not take the nightly export down."""
+    try:
+        missing, all_null = [], []
+        for r in rows or []:
+            sc = (r or {}).get("subcomponents")
+            if not isinstance(sc, dict):
+                missing.append((r or {}).get("ticker"))
+                continue
+            vals = [v for eng in sc.values() if isinstance(eng, dict) for v in eng.values()]
+            if not vals or all(v is None for v in vals):
+                all_null.append(r.get("ticker"))
+        n = len(rows or [])
+        bad = len(missing) + len(all_null)
+        if n == 0:
+            return {"status": "error", "reason": "no daily_list rows", "rows": 0, "missing": 0, "all_null": 0}
+        if bad == n:
+            return {"status": "error", "reason": "no row carries a usable subcomponents block", "rows": n,
+                    "missing": len(missing), "all_null": len(all_null)}
+        if bad:
+            return {"status": "degraded", "reason": f"{bad} of {n} rows lack a usable subcomponents block",
+                    "rows": n, "missing": len(missing), "all_null": len(all_null),
+                    "tickers": sorted(str(t) for t in (missing + all_null))[:25]}
+        return {"status": "live", "rows": n, "missing": 0, "all_null": 0}
+    except Exception as exc:  # noqa: BLE001
+        return {"status": "error", "reason": f"check failed: {exc}", "rows": 0, "missing": 0, "all_null": 0}
 
 
 def _compute_data_quality(daily_list: list[dict], held_positions: list[dict]) -> dict:
