@@ -13,10 +13,10 @@
   "nothing observed intraday feeds back into a committee vote (R1)"
  ],
  "counts": {
-  "ADVANCE": 17,
+  "ADVANCE": 20,
   "HELD": 1,
   "HOLD_FOR_CONDITIONS": 4,
-  "WATCH": 8,
+  "WATCH": 25,
   "carried": 10
  },
  "rows": [
@@ -11923,6 +11923,894 @@
    "age_sessions": 2,
    "carried": true,
    "last_session_live": true
+  },
+  {
+   "ticker": "ADP",
+   "class": "ADVANCE",
+   "lane": "MOMENTUM",
+   "conviction": 3,
+   "held": false,
+   "mark": null,
+   "levels": {
+    "ref_close": 303.54,
+    "stop": 296.16,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.43,
+    "tp": [
+     309.4,
+     323.94,
+     342.43
+    ],
+    "rr_to_tp2": 2.76,
+    "gates_clear": false,
+    "sized": false
+   },
+   "triggers": [
+    {
+     "id": "2026-11-05-r3:ADP-buy0",
+     "kind": "close_above",
+     "level": 309.4,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "ADP: an hourly candle closes above 309.4 (4 analysts' shared buy line) on volume at least 1.4x normal. Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "2026-11-05-r3:ADP-touch",
+     "kind": "trade_above",
+     "level": 309.4,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "ADP traded through 309.4: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "2026-11-05-r3:ADP-dead",
+     "kind": "close_below",
+     "level": 296.16,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "ADP closed under 296.16, the highest exit line the supporters filed: the case is weakened."
+    }
+   ],
+   "confirms": "Buy an hourly close above the pivot high, on volume 1.4x normal for the hour; no buy past pivot +5%.",
+   "kills": "oneil: \"A close 8% under pivot_high, or back under ma_50\" | minervini: \"Daily close under ma_20 289.52\" | wyckoff: \"a close under base_low_20d\"",
+   "conditions": {
+    "shared": {
+     "buy": [
+      {
+       "w": "h1_close_above",
+       "level": 309.4,
+       "x": null,
+       "seats": [
+        "livermore",
+        "minervini",
+        "oneil",
+        "raschke"
+       ],
+       "plain": "an hourly candle closes above pivot_high 309.4",
+       "when": "1H"
+      }
+     ],
+     "confirm": [
+      {
+       "w": "vol_x_ge",
+       "level": null,
+       "x": 1.4,
+       "seats": [],
+       "plain": "volume at least 1.4x normal for the time of day",
+       "when": "LIVE"
+      }
+     ],
+     "no_shared_buy": false,
+     "wait_zone": {
+      "lo": 289.52,
+      "hi": 309.4,
+      "members": [
+       "ma_20",
+       "pivot_high"
+      ]
+     },
+     "chase": {
+      "word": "close_above:pivot_high+1atr",
+      "w": "close_above",
+      "when": "EOD",
+      "levels": [
+       316.78
+      ],
+      "x": null,
+      "plain": "closes above pivot_high+1atr 316.78"
+     }
+    },
+    "exits": [
+     {
+      "w": "close_below",
+      "value": 296.16,
+      "seats": [
+       "livermore"
+      ],
+      "plain": "closes below 296.16"
+     },
+     {
+      "w": "close_below",
+      "value": 295.15,
+      "seats": [
+       "raschke"
+      ],
+      "plain": "closes below 295.15"
+     },
+     {
+      "w": "close_below",
+      "value": 289.52,
+      "seats": [
+       "minervini"
+      ],
+      "plain": "closes below 289.52"
+     },
+     {
+      "w": "close_below",
+      "value": 284.648,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 284.648"
+     },
+     {
+      "w": "close_below",
+      "value": 282.14,
+      "seats": [
+       "elder-lens"
+      ],
+      "plain": "closes below 282.14"
+     },
+     {
+      "w": "close_below",
+      "value": 278.29,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 278.29"
+     },
+     {
+      "w": "close_below",
+      "value": 263.45,
+      "seats": [
+       "seow",
+       "wyckoff"
+      ],
+      "plain": "closes below 263.45"
+     },
+     {
+      "w": "close_below",
+      "value": 255.96,
+      "seats": [
+       "seow"
+      ],
+      "plain": "closes below 255.96"
+     }
+    ],
+    "analysts": []
+   },
+   "committee_status": "CONTESTED",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger h1_close_above:pivot_high buys in front of price; Elder buys the pullback into value under a rising average (C10, C6). Permission event is real (elder_5d [2, 4, 9, 6, 10], CORRECTION_REENTRY) but mp_state FADING leaves R8 partial.",
+     "would_clear": "Trigger in_zone:ma_20 on D with elder >=7 at the close."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger read on H1. In my position system the buy signal is a break of the resistance line on the daily candle, the mirror of the close-below-support exit (C26, C14); the armed name sits dist_to_20bar_high_pct 1.89 under 309.4, not yet broken.",
+     "would_clear": "Trigger read on D: close_above:pivot_high (a daily close over the resistance line), then a buy stop one tick over the next prior-day high (C27)."
+    }
+   ],
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "PK",
+   "class": "ADVANCE",
+   "lane": "MOMENTUM",
+   "conviction": 3,
+   "held": false,
+   "mark": null,
+   "levels": {
+    "ref_close": 16.96,
+    "stop": 16.52,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.59,
+    "tp": [
+     17.14,
+     17.75,
+     18.54
+    ],
+    "rr_to_tp2": 1.8,
+    "gates_clear": false,
+    "sized": false
+   },
+   "triggers": [
+    {
+     "id": "2026-11-05-r3:PK-buy0",
+     "kind": "close_above",
+     "level": 17.14,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PK: an hourly candle closes above 17.14 (4 analysts' shared buy line) on volume at least 1.4x normal. Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "2026-11-05-r3:PK-touch",
+     "kind": "trade_above",
+     "level": 17.14,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PK traded through 17.14: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "2026-11-05-r3:PK-dead",
+     "kind": "close_below",
+     "level": 16.52,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PK closed under 16.52, the highest exit line the supporters filed: the case is weakened."
+    }
+   ],
+   "confirms": "Buy an hourly close above the pivot high, on volume 1.4x normal for the hour; no buy past pivot +5%.",
+   "kills": "oneil: \"A close 8% under pivot_high or under ma_50\" | minervini: \"Daily close under ma_20 16.23\" | wyckoff: \"a close under base_low_20d\"",
+   "conditions": {
+    "shared": {
+     "buy": [
+      {
+       "w": "h1_close_above",
+       "level": 17.14,
+       "x": null,
+       "seats": [
+        "livermore",
+        "minervini",
+        "oneil",
+        "raschke"
+       ],
+       "plain": "an hourly candle closes above pivot_high 17.14",
+       "when": "1H"
+      }
+     ],
+     "confirm": [
+      {
+       "w": "vol_x_ge",
+       "level": null,
+       "x": 1.4,
+       "seats": [],
+       "plain": "volume at least 1.4x normal for the time of day",
+       "when": "LIVE"
+      }
+     ],
+     "no_shared_buy": false,
+     "wait_zone": {
+      "lo": 17.14,
+      "hi": 17.14,
+      "members": [
+       "pivot_high"
+      ]
+     },
+     "chase": {
+      "word": "close_above:pivot_high+1atr",
+      "w": "close_above",
+      "when": "EOD",
+      "levels": [
+       17.58
+      ],
+      "x": null,
+      "plain": "closes above pivot_high+1atr 17.58"
+     }
+    },
+    "exits": [
+     {
+      "w": "close_below",
+      "value": 16.52,
+      "seats": [
+       "livermore",
+       "raschke"
+      ],
+      "plain": "closes below 16.52"
+     },
+     {
+      "w": "close_below",
+      "value": 16.23,
+      "seats": [
+       "minervini"
+      ],
+      "plain": "closes below 16.23"
+     },
+     {
+      "w": "close_below",
+      "value": 15.79,
+      "seats": [
+       "elder-lens"
+      ],
+      "plain": "closes below 15.79"
+     },
+     {
+      "w": "close_below",
+      "value": 15.7688,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 15.7688"
+     },
+     {
+      "w": "close_below",
+      "value": 15.69,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 15.69"
+     },
+     {
+      "w": "close_below",
+      "value": 14.88,
+      "seats": [
+       "seow",
+       "seow",
+       "wyckoff"
+      ],
+      "plain": "closes below 14.88"
+     }
+    ],
+    "analysts": []
+   },
+   "committee_status": "CONTESTED",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger h1_close_above:pivot_high chases: H1 sits at 99% of the day's range and Elder's buy rests in value, not at the high (C10). elder_5d [7, 7, 7, 6, 7] is the weakest permission event; mp_state STRONG.",
+     "would_clear": "Trigger in_zone:ma_20 on D with elder >=7 at the close."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger read on H1. My buy signal is a daily-candle break of the resistance line (C26, mirror of C14); D close 16.96 is dist_to_20bar_high_pct 1.05 under 17.14 (RANGE), armed not fired. An hourly close is not my signal.",
+     "would_clear": "Trigger read on D: close_above:pivot_high, then a buy stop one tick over the next prior-day high (C27)."
+    }
+   ],
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "SONY",
+   "class": "ADVANCE",
+   "lane": "PULLBACK",
+   "conviction": 3,
+   "held": false,
+   "mark": null,
+   "levels": {
+    "ref_close": 25.95,
+    "stop": 25.45,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 1.93,
+    "tp": [
+     26.31,
+     27.14,
+     28.19
+    ],
+    "rr_to_tp2": 2.38,
+    "gates_clear": true,
+    "sized": false
+   },
+   "triggers": [
+    {
+     "id": "2026-11-05-r3:SONY-buy0",
+     "kind": "close_above",
+     "level": 26.31,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "SONY: an hourly candle closes above 26.31 (4 analysts' shared buy line) on volume at least 1.4x normal. Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "2026-11-05-r3:SONY-touch",
+     "kind": "trade_above",
+     "level": 26.31,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "SONY traded through 26.31: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "2026-11-05-r3:SONY-dead",
+     "kind": "close_below",
+     "level": 25.45,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "SONY closed under 25.45, the highest exit line the supporters filed: the case is weakened."
+    }
+   ],
+   "confirms": "Buy an hourly close above the pivot high, on volume 1.4x normal for the hour; no buy past pivot +5%.",
+   "kills": "oneil: \"A close 8% under pivot_high or under ma_50\" | minervini: \"Daily close under ma_20 25.12\" | wyckoff: \"a close under base_low_20d\"",
+   "conditions": {
+    "shared": {
+     "buy": [
+      {
+       "w": "h1_close_above",
+       "level": 26.31,
+       "x": null,
+       "seats": [
+        "livermore",
+        "minervini",
+        "oneil",
+        "raschke"
+       ],
+       "plain": "an hourly candle closes above pivot_high 26.31",
+       "when": "1H"
+      }
+     ],
+     "confirm": [
+      {
+       "w": "vol_x_ge",
+       "level": null,
+       "x": 1.4,
+       "seats": [],
+       "plain": "volume at least 1.4x normal for the time of day",
+       "when": "LIVE"
+      }
+     ],
+     "no_shared_buy": false,
+     "wait_zone": {
+      "lo": 25.12,
+      "hi": 26.31,
+      "members": [
+       "ma_20",
+       "pivot_high"
+      ]
+     },
+     "chase": {
+      "word": "close_above:pivot_high+1atr",
+      "w": "close_above",
+      "when": "EOD",
+      "levels": [
+       26.81
+      ],
+      "x": null,
+      "plain": "closes above pivot_high+1atr 26.81"
+     }
+    },
+    "exits": [
+     {
+      "w": "close_below",
+      "value": 25.45,
+      "seats": [
+       "livermore"
+      ],
+      "plain": "closes below 25.45"
+     },
+     {
+      "w": "close_below",
+      "value": 25.25,
+      "seats": [
+       "raschke"
+      ],
+      "plain": "closes below 25.25"
+     },
+     {
+      "w": "close_below",
+      "value": 25.12,
+      "seats": [
+       "minervini"
+      ],
+      "plain": "closes below 25.12"
+     },
+     {
+      "w": "close_below",
+      "value": 24.36,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 24.36"
+     },
+     {
+      "w": "close_below",
+      "value": 24.2052,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 24.2052"
+     },
+     {
+      "w": "close_below",
+      "value": 23.35,
+      "seats": [
+       "seow",
+       "wyckoff"
+      ],
+      "plain": "closes below 23.35"
+     },
+     {
+      "w": "close_below",
+      "value": 23.27,
+      "seats": [
+       "seow"
+      ],
+      "plain": "closes below 23.27"
+     }
+    ],
+    "analysts": []
+   },
+   "committee_status": "CONTESTED",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "elder_pattern INTERRUPTED fails my trend leg (step 3): elder_5d [6, 5, 6, 3, 7] lifts the ban on one bar only, in transitional ground where Elder takes nothing (C22). A breakout trigger on top of a failed trend leg is not a set-up (C9).",
+     "would_clear": "A second close with elder >=7 and elder_pattern turning CORRECTION_REENTRY."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger read on H1. My buy signal is a daily-candle break of the resistance line (C26); D close 25.95 is dist_to_20bar_high_pct 1.37 under 26.31 (RANGE), and the TIF proxy is INTERRUPTED, a caution.",
+     "would_clear": "Trigger read on D: close_above:pivot_high, then a buy stop one tick over the next prior-day high (C27)."
+    }
+   ],
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "NCNO",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (5 objections)",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "No permission event: elder_5d [7, 7, 7, 7, 10], prior bar already >=7, a C24 (unsourced) plateau read only (C4); the Impulse System forbids, it does not propose (C1). Trigger h1_close_above:pivot_high buys in front of price and reads the lower frame, not value (C10, C21).",
+     "would_clear": "A dip to elder <=6 and a reclaim to >=7, bought in_zone:ma_20 on D."
+    },
+    {
+     "voice": "livermore",
+     "objection": "h1_close_above:pivot_high lets an hourly poke through pivot_high 23.5 count while W is 2.7% under last_swing_high 24.09, the major Pivotal Point not cleared (C17, C19); an hourly push can fail inside the day.",
+     "would_clear": "Make the trigger a daily close above pivot_high 23.5 (close_above:pivot_high, tf D), as seow and wyckoff also filed."
+    },
+    {
+     "voice": "oneil",
+     "objection": "h1_close_above:pivot_high shows no day's volume and 'expanding volume' is not a test: the pivot clear must print on day_vol >= 1.40 (C16), day_vol 1.24 today. lens.leadership warn, rank behind SONY and GDDY (C9), group Recovering (R9).",
+     "would_clear": "close_above:pivot_high 23.5 on D, on day_vol >= 1.40, with the group confirming (R9)."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger read on H1. My resistance-line break is read on the daily candle (C26, mirror of C14); an hourly poke over 23.5 that closes back under is no signal. Now RANGE, pct_from_pivot -0.26: armed, not fired.",
+     "would_clear": "Trigger close_above:pivot_high on D (a daily close over 23.5), then a buy stop one tick over the next prior-day high (C27)."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "h1_close_above:pivot_high is a lower-frame poke that can be an upthrust (C5) while W is 2.7% under last_swing_high 24.09, not clear of supply (C16); my method needs the daily bar to prove the break.",
+     "would_clear": "Trigger close_above:pivot_high on D: a daily close over 23.5 on a wide bar closing in its top third, day_vol 1.0 or more (R3)."
+    }
+   ],
+   "note": "Supplemental pass 2026-11-05-r3: dropped by the committee (5 objections). On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "BMY",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (5 objections)",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger trade_above:bar_high buys in front of price at D close 64.19, 0.1% under the 20-day high; Elder bids in value under a rising average (C10). Permission event is real, elder_5d [5, 9, 9, 6, 10] (C4), but mp 52.0 BUILDING leaves R8 unmet. Hold round showed no evidence my method weighs.",
+     "would_clear": "Trigger in_zone:ma_50 on D with elder >=7 at the close."
+    },
+    {
+     "voice": "livermore",
+     "objection": "trade_above:bar_high treats a daily poke as trend resumption while W close_vs_swing_high_pct is -6.48: the major reaction is not over, and a daily new high inside it is the minor swing my method filters out (C5, C21).",
+     "would_clear": "Tie the trigger to a weekly close above last_swing_high 68.64 (close_above:last_swing_high, tf W)."
+    },
+    {
+     "voice": "minervini",
+     "objection": "Trend Template criterion 8 fails: rs_rank_pct 66.14 under the 70 floor (C3, C11). The gate fails before entry; trade_above:bar_high is anticipation off a daily move while W close_vs_swing_high_pct -6.48. No new RS evidence in the hold round.",
+     "would_clear": "rs_rank_pct printing at or above 70 with the rest of the Trend Template intact."
+    },
+    {
+     "voice": "oneil",
+     "objection": "trade_above:bar_high is a buy over yesterday's high, not a base pivot, with no volume test: D break on day_vol 1.14, under 1.40 (C16); W close_vs_swing_high_pct -6.48, no new high (C7); structure 55.8 (R3); rank 350, group laggard (C9).",
+     "would_clear": "A weekly close above last_swing_high 68.64 on day_vol >= 1.40, out of a base with structure in the strong range."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "trade_above:bar_high buys inside the range: D close 64.19 is over last_swing_high 63.59 but still inside value, and a break counts only once it holds outside value (C5, C11, C18); the weekly close above last_swing_high 68.64 is my first target, not an entry (C14, C15).",
+     "would_clear": "Trigger close_above:pvp_vah on D: a daily close above the value-area high on day_vol 1.0 or more that does not re-enter value."
+    }
+   ],
+   "note": "Supplemental pass 2026-11-05-r3: dropped by the committee (5 objections). On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "CRBG",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (4 objections)",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger h1_close_above:bar_high buys strength in front of price and carries no volume condition; Elder bids under the average (C10) and checks volume does not contract at the fresh high (C23). elder_5d [9, 4, 5, 9, 9] permission held (C3, C4); mp 54.0 BUILDING leaves R8 unmet.",
+     "would_clear": "Trigger in_zone:ma_20 on D with elder >=7 at the close."
+    },
+    {
+     "voice": "minervini",
+     "objection": "The break over last_swing_high 35.64 printed on day_vol 1.08, not expanding volume, and the trigger h1_close_above:bar_high as written carries no volume condition; the volume signature must confirm the breakout or the setup is not valid (C5, C6).",
+     "would_clear": "The hourly close above bar_high required on above-average volume, no chase past 5% over 35.64."
+    },
+    {
+     "voice": "oneil",
+     "objection": "h1_close_above:bar_high carries no volume condition; the break printed on day_vol 1.08, under 1.40, a hard rejection not a softer buy (C16). D close_vs_swing_high_pct 1.68 is within 5% of 35.64 (C17 passes). rank 323, 3rd in Financials (C9).",
+     "would_clear": "Trigger requires a follow-through new high on day_vol >= 1.40 while still within 5% of the 35.64 pivot."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "The structure is right (at the test, last_swing_high 35.64 where the Creek meets the value-area high, C7), but h1_close_above:bar_high carries no volume leg; my trigger is a sign-of-strength bar on relatively high volume (C12, R6).",
+     "would_clear": "Add vol_x_ge:1.2 to the trigger: the 1-hour close above bar_high on 1.2x volume or more."
+    }
+   ],
+   "note": "Supplemental pass 2026-11-05-r3: dropped by the committee (4 objections). On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "TAK",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (6 objections)",
+   "committee_objections": [
+    {
+     "voice": "livermore",
+     "objection": "in_zone:ma_20 buys the pullback itself, which C5 forbids. The hold round named no evidence my method weighs: D is 0.8% under last_swing_high 21.22, and my entry is the new high that ends the normal reaction, not the dip into it.",
+     "would_clear": "Make the trigger an hourly close above the daily pivot high 21.22 (h1_close_above:pivot_high, tf H1)."
+    },
+    {
+     "voice": "minervini",
+     "objection": "The Trend Template runs first and is all-or-nothing (C3): criterion 2 (ma_150 over ma_200) failed in my round-1 read and nothing served re-tests it. The hold round brought no new template evidence; a pullback buy in_zone:ma_20 is not a trade on my method.",
+     "would_clear": "A served ma_150 above ma_200 passing all eight criteria; then close_above:pivot_high on D at 21.22 on expanding volume, no chase past 5% (C5, C6)."
+    },
+    {
+     "voice": "oneil",
+     "objection": "Trigger in_zone:ma_20 buys a pullback in the sympathy name behind LLY (rank 286, C9), W close_vs_swing_high_pct 10.26 past its swing high, over the 10% line (C17), on day_vol 0.99 (C16). The hold round served no new evidence.",
+     "would_clear": "close_above:pivot_high on D out of a new base of 5+ weeks (C18), on day_vol >= 1.40, no buy past pivot +5%."
+    },
+    {
+     "voice": "raschke",
+     "objection": "Trigger in_zone:ma_20 buys on arrival at the average with no turn back up. A first-pullback retracement (C2, C7) is entered on the reversal out of the pullback at a pre-planned price (C22); W close_vs_swing_high_pct 10.26 is an extended leg I cannot classify yet.",
+     "would_clear": "Trigger rewritten as trade_above:bar_high on D, taken on the bar after a pullback bar into ma_20 that holds a higher low."
+    },
+    {
+     "voice": "seow",
+     "objection": "in_zone:ma_20 is not my entry. TAK is a position-system case: structure_shift ABOVE_STRUCTURE plus sector_rrg_quadrant LEADING (two buy sources, C26), ret_63d 23.74, rs_rank_pct 80.12. A 20-day zone touch is a swing buy only with all five set-up conditions on one bar (C3, R1).",
+     "would_clear": "Trigger trade_above:bar_high on D: a buy stop one tick over yesterday's high, trailed to each new prior-day high (C27)."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "in_zone:ma_20 buys a zone touch at the close with no follow-through, and ma_20 is not structure; W is 10.3% over last_swing_high 19.1, away from value, so my entry is the test of the broken Creek, entered on a sign of strength (C3, C7, C12, C15).",
+     "would_clear": "Trigger in_zone:structure_shift_ref on D, WAIT, then a 1-hour close above the zone bar's high (buy stop, follow-through required)."
+    }
+   ],
+   "note": "Supplemental pass 2026-11-05-r3: dropped by the committee (6 objections). On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "LTH",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "KR",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "EL",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by timing",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by timing. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "M",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "ORLY",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "BOX",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "SJM",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "AFL",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "LLY",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "CFG",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by the earlier steps",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by the earlier steps. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "GDDY",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "PAYX",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
+  },
+  {
+   "ticker": "ABNB",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated: cut by claims",
+   "committee_objections": [],
+   "note": "Supplemental pass 2026-11-05-r3: not slated: cut by claims. On the swing-pivot list; watched under AQE default criteria. Not a committee pick.",
+   "origin_run": "2026-11-05-r3",
+   "age_sessions": 0,
+   "supplemental": true,
+   "supplemental_label": "supplemental committee pass"
   }
  ],
  "window": {
@@ -12038,5 +12926,40 @@
    "oneil"
   ],
   "origin_run": "2026-11-05"
+ },
+ "supplement": {
+  "origin_run": "2026-11-05-r3",
+  "label": "supplemental committee pass",
+  "added": [
+   "ADP",
+   "PK",
+   "SONY",
+   "NCNO",
+   "BMY",
+   "CRBG",
+   "TAK",
+   "LTH",
+   "KR",
+   "EL",
+   "M",
+   "ORLY",
+   "BOX",
+   "SJM",
+   "AFL",
+   "LLY",
+   "CFG",
+   "GDDY",
+   "PAYX",
+   "ABNB"
+  ],
+  "already_published_kept_as_is": [
+   {
+    "ticker": "V",
+    "published_class": "HELD",
+    "supplemental_class": "HOLD_FOR_CONDITIONS",
+    "same_shared_buy_line": true
+   }
+  ],
+  "rule": "additive: published rows, stops, trigger ids and market_kill are untouched; added rows are stamped origin_run + supplemental and their trigger ids carry the origin"
  }
 }
