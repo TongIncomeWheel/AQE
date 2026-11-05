@@ -1,0 +1,103 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-05",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "KO",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Wrong-if is the ma_50 / 8% line; on my method the reading is proven wrong by a daily close back under structure_shift_ref (failed breakout, C11), which comes first.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ABBV",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if should read a daily close back under pvp_vah (back inside value, C11) as the first failure, ahead of the ma_50 / 8% line.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "CAH",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if should name a daily close back under structure_shift_ref (failed breakout, C11) before the ma_50 / 8% line.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "GLBE",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ABOVE_STRUCTURE, ext_atr20 2.15: price is away from value (R2, C3, C15). An hourly close above bar_high buys the extension, not the test; the trigger is not the one my method uses.",
+   "would_clear": "Trigger in_zone:structure_shift_ref (D) first, then the buy stop above the sign-of-strength bar there; verdict WATCH until the test prints."
+  },
+  {
+   "ticker": "MFC",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if should name a daily close back under structure_shift_ref (failed breakout at the Creek, C11) ahead of the ma_50 / 8% line.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "CCEP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "H1 pos_in_day_range_pct 54.7 and H1 last_bar red: supply met the break, no sign-of-strength bar yet (C12). Acting now on yesterday's high skips the bar my trigger requires.",
+   "would_clear": "Trigger read only after a sign-of-strength bar (clv_ge:0.67 with vol_x_ge:1.2), buy stop above that bar's high; verdict WATCH until it prints."
+  },
+  {
+   "ticker": "BBY",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Value position is unseen in my packet, so this is a yes once price holds outside the old range (C5); wrong-if as written matches mine in substance.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "DG",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if should name a daily close back under structure_shift_ref (failed breakout, C11) before the ma_50 / 8% line.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "BALL",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "C5's hold-outside-the-range leg is still open; wrong-if should read a daily close under pvp_vah (back into value, upthrust after the fact) before the ma_50 / 8% line.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "USFD",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ABOVE_STRUCTURE, ext_atr20 2.55, dist_to_20bar_high_pct 1.58: trend away from value (R2, C3, C15). An hourly close above bar_high chases; the trigger is not the one my method uses.",
+   "would_clear": "Trigger in_zone:structure_shift_ref (D) first, then a sign-of-strength bar there; verdict WATCH until the test prints."
+  },
+  {
+   "ticker": "KDP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ABOVE_STRUCTURE, ext_atr20 2.28, H1 LH/LL: the corrective wave may be starting. An hourly close above pivot_high buys the high again instead of the test of the broken Creek (R2, C3).",
+   "would_clear": "Trigger in_zone:structure_shift_ref (D), then a sign-of-strength bar there."
+  },
+  {
+   "ticker": "WCN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ABOVE_STRUCTURE, ext_atr20 4.14: far from value on every frame (R2, C15). An hourly close above bar_high is a chase entry, not the test; the trigger is not the one my method uses.",
+   "would_clear": "Trigger in_zone:structure_shift_ref (D) first, then a sign-of-strength bar there; verdict WATCH until the test prints."
+  }
+ ]
+}
