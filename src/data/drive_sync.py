@@ -2983,6 +2983,29 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["subcomponents_status"].get("status") != "live":
         print(f"  [WARN] subcomponents degraded: {export['subcomponents_status'].get('reason')}")
 
+    # ---- Report B universe rows (PM 2026-11-05): every scored universe name as a full daily_list-shaped record, before any score gate.
+    # Written to its own file by export_to_drive; the main export carries only the status. Loud, additive, never blocks the export.
+    _UNIVERSE_ROWS.clear()
+    try:
+        _u_passes = []
+        _loc = locals()
+        if _loc.get("_attach_elder"):
+            _u_passes.append(("elder_context", lambda r: (_loc["_attach_elder"](r), {"status": "ok"})[1]))
+        if _loc.get("_stamp_vol_validation"):
+            _u_passes.append(("volume_validation", lambda r: (_loc["_stamp_vol_validation"](r), {"status": "ok"})[1]))
+        _u_passes.append(("setups", lambda r: _attach_setups(r, [])))
+        _u_passes.append(("swing_pivot", lambda r: _attach_swing(r, [], run_date=export.get("date") or None)))
+        if _wl_record is not None and _sc_by_tk:
+            _u_rows, _u_status = _build_universe_rows(_sc_by_tk, _wl_record, _u_passes)
+        else:
+            _u_rows, _u_status = [], {"status": "error", "reason": "scores_daily missing: no universe rows", "rows": 0, "skipped": [], "passes": {}}
+    except Exception as _exc:  # noqa: BLE001
+        _u_rows, _u_status = [], {"status": "error", "reason": str(_exc), "rows": 0, "skipped": [], "passes": {}}
+    export["universe_rows_status"] = _u_status
+    _UNIVERSE_ROWS.update({"rows": _u_rows, "status": _u_status})
+    if _u_status.get("status") != "live":
+        print(f"  [WARN] universe rows {_u_status.get('status')}: {_u_status.get('reason')}")
+
     _daily_list = sorted(_dl.values(), key=lambda r: (r.get("sc_momentum") or 0), reverse=True)
     for _i, _r in enumerate(_daily_list, 1):
         _r["rank"] = _i
@@ -3024,6 +3047,8 @@ def build_export(shortlist: dict | None = None) -> dict:
         "qs_status": export.get("qs_status", "not_run"),
         "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
         "subcomponents_status": (export.get("subcomponents_status") or {}).get("status", "not_run"),
+        "universe_rows_status": (export.get("universe_rows_status") or {}).get("status", "not_run"),
+        "universe_rows_count": (export.get("universe_rows_status") or {}).get("rows", 0),
         "unr_met_count": len((export.get("unr_summary") or {}).get("met") or []),
         "unr_setup_count": len((export.get("unr_summary") or {}).get("setup") or []),
         "setups_triggered_or_ready": sum(
@@ -3255,6 +3280,43 @@ def _attach_ma_flags(export: dict, client=None) -> None:
     export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
 
 
+UNIVERSE_ROWS_FILENAME = "aqe_universe_rows.json"
+UNIVERSE_ROWS_MAX_BYTES = 40 * 1024 * 1024     # size guard: a file past this is refused, loudly, never truncated
+_UNIVERSE_ROWS: dict = {}                      # set by build_export, written by export_to_drive (same run, same process)
+
+
+def _build_universe_rows(sc_by_tk, wl_record, passes, order_key="_sc"):
+    """Report B (PM 2026-11-05): a full record for EVERY scored universe name, with the same field set as a daily_list row, BEFORE any
+    score gate. `wl_record` is build_export's own record builder (so levels, brackets, DETECT, sector and engines cannot disagree with
+    daily_list); `passes` are the same completion passes the list rows get, each run on the whole set. A name that cannot be built is
+    NAMED, a pass that fails is NAMED in `passes`; nothing is silently thinner. Never raises: the nightly export must not depend on it."""
+    status = {"status": "live", "rows": 0, "skipped": [], "passes": {}}
+    rows = []
+    try:
+        order = sorted(sc_by_tk.items(), key=lambda kv: -float(kv[1].get(order_key, 0) or 0))
+        for i, (tk, wr) in enumerate(order, 1):
+            try:
+                rows.append(wl_record(wr, i, "universe"))
+            except Exception as exc:  # noqa: BLE001
+                status["skipped"].append(f"{tk}: {exc}")
+        for name, fn in passes:
+            try:
+                res = fn(rows)
+                status["passes"][name] = res if isinstance(res, dict) else {"status": "ok"}
+            except Exception as exc:  # noqa: BLE001
+                status["passes"][name] = {"status": "error", "reason": str(exc)}
+        bad = [n for n, v in status["passes"].items() if (v or {}).get("status") not in ("ok", "live")]
+        status["rows"] = len(rows)
+        status["skipped"] = status["skipped"][:25]
+        if not rows:
+            status.update(status="error", reason="no universe rows built")
+        elif bad or status["skipped"]:
+            status.update(status="degraded", reason=f"passes failed: {bad}; names skipped: {len(status['skipped'])}")
+    except Exception as exc:  # noqa: BLE001
+        status.update(status="error", reason=f"universe rows failed: {exc}", rows=len(rows))
+    return rows, status
+
+
 def _subcomponents_status(rows: list[dict]) -> dict:
     """Value-level check on the nested engine `subcomponents` block of every daily_list row.
 
@@ -3430,6 +3492,30 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     drive_results.append({"file": EXPORT_FILENAME, "target": "AQE", **r})
     if r.get("ok"):
         written.append(f"gdrive:{EXPORT_FILENAME}")
+
+    # ---- Report B universe rows -> its own file (PM 2026-11-05). Size-guarded; a refusal is recorded, never a truncated file. ----
+    try:
+        _ur = dict(_UNIVERSE_ROWS)
+        if _ur.get("rows"):
+            _doc = {"schema": "aqe_universe_rows.v1", "date": date_str, "exported_at": export.get("exported_at", ""),
+                    "rule": "mcap >= $2B, 10-day avg volume >= 1.5M, US primary listing; every scored name, before any score gate",
+                    "count": len(_ur["rows"]), "status": _ur["status"], "rows": _ur["rows"]}
+            _body = json.dumps(_doc, separators=(",", ":"), default=str)
+            if len(_body.encode("utf-8")) > UNIVERSE_ROWS_MAX_BYTES:
+                drive_results.append({"file": UNIVERSE_ROWS_FILENAME, "target": "UniverseRows", "ok": False,
+                                      "reason": f"REFUSED: {len(_body)} bytes exceeds the {UNIVERSE_ROWS_MAX_BYTES} byte guard"})
+                print(f"  [WARN] universe rows REFUSED: over the size guard ({len(_body)} bytes)")
+            else:
+                _ul = OUTPUT_DIR / UNIVERSE_ROWS_FILENAME
+                _ul.write_text(_body, encoding="utf-8")
+                written.append(str(_ul))
+                ru = _upload_file(UNIVERSE_ROWS_FILENAME, _body)
+                drive_results.append({"file": UNIVERSE_ROWS_FILENAME, "target": "UniverseRows", **ru})
+        else:
+            drive_results.append({"file": UNIVERSE_ROWS_FILENAME, "target": "UniverseRows", "ok": False,
+                                  "reason": (_ur.get("status") or {}).get("reason", "no universe rows")})
+    except Exception as exc:                                                    # noqa: BLE001
+        drive_results.append({"file": UNIVERSE_ROWS_FILENAME, "ok": False, "reason": str(exc)})
 
     # ---- Sector RAG map → dedicated Drive subfolder (Schema v1.0 §6) ----
     # Best-effort; never affects the primary AQE export status.

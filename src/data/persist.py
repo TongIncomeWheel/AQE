@@ -83,6 +83,7 @@ def _members() -> list[tuple]:
         # daily export; persisted so a recycle doesn't leave it stale until
         # the next full run.
         "aqe_macro_pack.json",
+        "aqe_universe_rows.json",
         # VALEN Dashboard's read (docs/AQE_VALEN_DASHBOARD_PROPOSAL.md) — same
         # reason as Crown above: persisted so a recycle doesn't leave the page
         # without one until the next full run.
