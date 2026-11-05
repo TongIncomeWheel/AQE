@@ -17,6 +17,7 @@ Secrets:
 
 from __future__ import annotations
 
+import re
 import os
 import smtplib
 import ssl
@@ -2033,6 +2034,20 @@ def _bucket(c: tuple) -> str:
     return "watch"
 
 
+_FIELD_WORDS = {"pivot_high": "the pivot high", "bar_high": "yesterday's high", "bar_low": "yesterday's low", "prior_bar_high": "yesterday's high",
+                "high_52w_close": "the 52-week closing high", "high_52w": "the 52-week high", "ma_20": "the 20-day average", "ma_50": "the 50-day average",
+                "hi_20d": "the 20-day high", "structure_shift_ref": "the structure break level", "base_low_20d": "the 20-day base low"}
+
+
+def _plainify_words(text: str) -> str:
+    """Raw field names out of committee condition text (the plain-words rule applies to the email too): known names to words, any other
+    underscore token to lower-case words."""
+    def sub(m):
+        t = m.group(0)
+        return _FIELD_WORDS.get(t, t.lower().replace("_", " "))
+    return re.sub(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b", sub, text)
+
+
 def _fired_text(c: tuple) -> str:
     """What printed, in the committee's/the card's own words (the same source as the card's buy line)."""
     _t, row, ev, states, live = c
@@ -2041,6 +2056,8 @@ def _fired_text(c: tuple) -> str:
     buy = (((row.get("conditions") or {}).get("shared") or {}).get("buy") or [{}])[0]
     plain = buy.get("plain")
     vol = [g for g in (((row.get("conditions") or {}).get("shared") or {}).get("confirm") or []) if g.get("w") == "vol_x_ge"]
+    if plain:
+        plain = _plainify_words(plain)
     return (plain or "buy line met") + (f", on at least {max(g['x'] for g in vol):g}x normal volume" if vol and vol[0].get("x") else "")
 
 

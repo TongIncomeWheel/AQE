@@ -87,6 +87,13 @@ def test_act_now_table_comes_first_and_is_ordered_a_then_b_then_c_then_d():
     assert html.index("ACT NOW") < html.index("BUY $") and "Price 100.50" in html
 
 
+def test_a_committee_condition_with_a_raw_field_name_reaches_the_act_now_row_in_words():
+    row = _row("BUY")
+    row["conditions"]["shared"]["buy"][0]["plain"] = "an hourly candle closes above pivot_high 100"
+    _s, plain, html = E.build_condition_digest([("BUY", row, _ev(), ["CONDITION_MET"], _live())], NOW)
+    assert "closes above the pivot high 100" in plain and not re.findall(r"\b[a-z]+_[a-z_]+\b", re.sub(r"<[^>]+>", " ", html) + plain)
+
+
 def test_the_act_now_rows_carry_price_move_trigger_stop_reward_and_the_1r_line():
     cards = [("BUY", _row("BUY"), _ev(), ["CONDITION_MET"], _live(price=100.5, prev=98.2))]
     _s, plain, _h = E.build_condition_digest(cards, NOW)
