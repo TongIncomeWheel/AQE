@@ -805,7 +805,7 @@ steps:
   - name: PUBLISH
     kind: tool
     checkpoint_after: true        # the LAST push: the manifest with every step ticked reaches main for the 18:00 gate
-    produces: [publish_receipt.json, remote:aegis/output/pma/pma_levels.json, remote:aegis/output/pma/levels/<date>.json, remote:aegis/output/pma/scorecard_log.jsonl]
+    produces: [publish_receipt.json, remote:aegis/output/pma/pma_levels.json, remote:aegis/output/pma/levels/<date>.json, remote:aegis/output/pma/scorecard_log.jsonl, remote:aegis/output/pma/card_fields.json]
     rulings: [R10, R20]
     push_levels: >
       R20: push pma_levels.json to TongIncomeWheel/AQE branch main at BOTH
@@ -822,6 +822,10 @@ steps:
       Mismatch -> re-push, then re-verify; never tick PUBLISH on an unverified file. The durable fix is a
       byte-exact git push (tools/git_sync.py), which needs TongIncomeWheel/AQE added to the session's
       authorised repositories -- a PM action.
+    push_card_fields: >
+      PM 2026-11-05 ("the AQE alerts have the same messages and clarity"): push card_fields.json (written by pma_cards_v3.py beside the Cards page: the ten card fields
+      exactly as printed) to aegis/output/pma/card_fields.json in the SAME commit as pma_levels.json. The alert emails quote these fields, so the wording cannot diverge from the
+      Cards. Absent or for another date = the alert says `not available: card fields were not published for this run`, never an invented line.
     push_scorecard: >
       D122.1: push scorecard_log.jsonl to aegis/output/pma/scorecard_log.jsonl and scorecard.md to
       aegis/output/pma/scorecard/<date>.md in the same commit as the levels (scorecard.json, ~150KB, is too large to transcribe through the connector and is rebuildable from the ledger and closes). Same path rule (stay under

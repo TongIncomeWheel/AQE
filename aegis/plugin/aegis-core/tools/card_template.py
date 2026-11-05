@@ -68,7 +68,7 @@ _TALLY = re.compile(r"\b\d+\s+(?:of|/)\s*\d+\b|\b(?:\d+|one|two|three|four|five|
 
 
 _SEAT_VOICE = re.compile(r"\b(?:my|mine|I|I'm|I'd|I've|me|we|our)\b", re.I)                         # a seat speaking in the first person
-_SEAT_NAME = re.compile(r"\bElder\b(?!\s+(?:score|impulse|reading|pattern|run))|\bChair\b")           # 'Elder adds on the pullback' names the seat; 'the Elder score' does not
+_SEAT_NAME = re.compile(r"\bElder\b(?!\s+(?:score|impulse|reading|pattern|run))|\bChair\b|\bRefuter\b")           # 'Elder adds on the pullback' names the seat; 'the Elder score' does not
 
 
 def _sentence_ok(s, max_len):
@@ -371,6 +371,8 @@ def _bracket(c):
             parts.append("nearby resistance, not targets: " + ", ".join(f"{tp:g}" for _, tp in near))
     if isinstance(levels.get("rr2"), (int, float)):
         parts.append(f"reward to the second target {levels['rr2']:g}R")
+    if levels.get("risk_atr") is None and isinstance(entry, (int, float)) and isinstance(row.get("atr_14d"), (int, float)) and row["atr_14d"] > 0 and entry > levels["stop"]:
+        levels["risk_atr"] = round((entry - levels["stop"]) / row["atr_14d"], 2)          # the levels row carries no ATR; the export row does
     parts.append((f"risk {levels['risk_atr']:g} daily range" + ("" if levels["risk_atr"] == 1 else "s")) if isinstance(levels.get("risk_atr"), (int, float)) else "risk in daily ranges not available (no average daily range served)")
     return ", ".join(parts) + "." + (f" Levels source: {src}." if src else "") + " " + unr
 
@@ -468,6 +470,7 @@ TEMPLATE_CSS = """
 def render_card(c: dict, esc, head_html: str = "") -> str:
     """The card as html. `esc` is html.escape. `head_html` is the ticker + pills row built by the caller."""
     fields = build_fields(c)
+    c["_fields"] = fields                      # the same ten texts go to the alerts (card_fields.json), so the wording cannot diverge
     rows = []
     for f in fields:
         tag = f' <span class="src">[{esc(f["tag"])}]</span>' if f.get("tag") else ""

@@ -106,6 +106,14 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     except Exception:  # noqa: BLE001
         pass
     summary["defaults"] = len(defaults)
+    # PM 2026-11-05: the ten card fields exactly as printed on the Cards, published beside pma_levels.json; each alert card quotes them.
+    try:
+        from . import pma_levels as _PL
+        _cf, _why = _PL.load_card_fields((pma_doc or {}).get("run_date"))
+        summary["card_fields"] = f"{len(_cf)} cards" if _cf else f"absent: {_why}"
+        rows = [dict(r, card_fields=_cf[r["ticker"]]) if r.get("ticker") in _cf else r for r in rows]
+    except Exception as _exc:  # noqa: BLE001 -- the cards say 'not available', the cycle goes on
+        summary["card_fields"] = f"error: {type(_exc).__name__}"
     held_events = held_events or []
     mk = (meta or {}).get("market_kill") or {}
     market_broken, just_broke = bool(mk.get("broken")), bool(mk.get("just_broke"))
@@ -155,6 +163,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
     # Every row that changed state this cycle becomes one card in a single
     # digest sent after the loop.
     cards: list[tuple] = []
+    near: list[dict] = []        # PM 2026-11-05: names within 0.5 ATR UNDER their buy line (about to trigger); they ride the digest, they never send one
 
     for row in rows:
         ticker = row.get("ticker")
@@ -171,6 +180,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
 
             live = {
                 "price": _num(quote.get("price")),
+                "prev_close": _num(quote.get("prev_close")),
                 "day_high": _num(quote.get("day_high")),
                 "day_low": _num(quote.get("day_low")),
                 "open": _num(quote.get("open")),
@@ -232,6 +242,12 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
+            try:
+                nr = _near_buy_line(ticker, row, eval_result, live)
+                if nr and not (market_broken and row.get("class") != "HELD"):
+                    near.append(nr)
+            except Exception:  # noqa: BLE001 -- a convenience line, never the cycle
+                pass
             eval_result["unr_armed"] = (_cfg.CONDITION_UNR_ENABLED and live["unr"]["status"] == "ARMED")
             eval_result["unr_trigger"] = (eval_result["unr_armed"]
                                           and live["vwap_trigger"].get("state") == "TRIGGERED")
@@ -283,6 +299,7 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             summary["errors"] += 1
             continue
 
+    meta = dict(meta or {}, near_trigger=near)
     if any_fired:
         CS.save_condition_state(state)
     summary["ledger_sync_end"] = CL.sync_with_drive(run_date)
@@ -309,6 +326,29 @@ def _notice_inputs(cards: list[tuple], held_events: list[dict] | None, meta: dic
     full = [c for c in cards if c not in setup_rows]
     return {"cards": full, "setup_rows": setup_rows, "held_events": list(held_events or []),
             "meta": meta, "email": email}
+
+
+NEAR_BUY_ATR = 0.5     # PM 2026-11-05: "price within 0.5 ATR of its buy line (about to trigger)"
+
+
+def _near_buy_line(ticker: str, row: dict, eval_result: dict, live: dict) -> dict | None:
+    """A committee / AQE-default name whose buy is NOT met and whose price sits under the shared buy line by 0.5 ATR or less. None otherwise."""
+    if row.get("deal_pinned") or row.get("watch_only") or row.get("class") == "HELD" or eval_result.get("buy_met"):
+        return None
+    buy = (((row.get("conditions") or {}).get("shared") or {}).get("buy") or [])
+    if not buy:
+        return None
+    from .condition_evaluator import entry_level
+    line = entry_level(buy[0])
+    price, atr = live.get("price"), live.get("atr")
+    if line is None or price is None or not atr or atr <= 0 or price >= line:
+        return None
+    dist = (line - price) / atr
+    if dist > NEAR_BUY_ATR:
+        return None
+    from . import emailer as _EM
+    return {"ticker": ticker, "line": line, "price": price, "prev_close": live.get("prev_close"), "atr": atr, "dist_atr": round(dist, 2),
+            "trade": _EM._committee_trade_line(row)}
 
 
 def _num(v) -> float | None:

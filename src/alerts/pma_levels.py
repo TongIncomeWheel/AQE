@@ -169,6 +169,24 @@ def _load_parts(today: str) -> tuple[dict | None, str | None]:
     return doc, None
 
 
+CARD_FIELDS_PATH = "aegis/output/pma/card_fields.json"
+
+
+def load_card_fields(run_date: str | None = None) -> tuple[dict, str | None]:
+    """The ten card fields exactly as printed on the Cards (PM 2026-11-05), published beside pma_levels.json. -> ({ticker: {tag, fields:[...]}}, reason).
+    Empty dict with a reason when absent, unreadable or for another session; never raises."""
+    txt = _read_repo_text(CARD_FIELDS_PATH)
+    if txt is None:
+        return {}, "card_fields.json not found"
+    try:
+        doc = json.loads(txt)
+    except Exception as exc:  # noqa: BLE001
+        return {}, f"card_fields.json unreadable: {exc}"
+    if run_date and str(doc.get("date") or "")[:10] != str(run_date)[:10]:
+        return {}, f"card_fields.json is for {doc.get('date')}, not {run_date}"
+    return (doc.get("cards") or {}), None
+
+
 def is_fresh(doc: dict, now_et: datetime) -> bool:
     """True iff the file's own `session` is today's New York date. A file
     from any other session (the committee hasn't run yet, or the fetch

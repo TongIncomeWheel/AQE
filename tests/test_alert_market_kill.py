@@ -103,7 +103,7 @@ def test_broken_market_is_a_card_not_a_header_or_subject_prefix():
                             "just_broke": True, "detail": "SPY at 749"}}
     now = datetime(2026, 11, 2, 16, 20, tzinfo=ET)
     subject, plain, html = EM.build_condition_digest([], now, [], meta)
-    assert "MARKET BROKEN" not in subject and "MARKET 1" in subject and "1 card" in subject
+    assert "MARKET BROKEN" not in subject and subject.count("MARKET") == 1 and "ACT NOW 0" in subject
     assert "MARKET CONDITION BROKEN" in plain and "take no new triggers" in plain and "take no new triggers" in html
     assert not hasattr(EM, "_market_line")
     # the next cycle (still broken, not just_broke) carries no market text at all

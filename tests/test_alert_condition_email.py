@@ -350,7 +350,7 @@ def test_digest_stacks_every_card_under_one_subject_and_one_footer():
     cards = [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live()),
              ("DELL", row2, _eval_result(buy_met=False), ["FAILED_PUSH"], _live())]
     subject, plain, html = E.build_condition_digest(cards, now)
-    assert subject == "[AQE] 14:30 ET conditions · 2 cards · BUY MET 1 · BACK UNDER 1"
+    assert subject == "[AQE] 14:30 ET · ACT NOW 1 · near trigger 0 · held 0 · failed 1"
     assert "HPE ·" in plain and "DELL ·" in plain
     assert plain.count("Information only.") == 1
     assert html.count("Information only.") == 1
@@ -407,7 +407,7 @@ def _held_pma_near_stop():
 
 def test_held_near_stop_card_shows_spot_stop_distance_and_committee_exit():
     card = E.build_held_card(_held_pma_near_stop())
-    assert card["headline"] == "ANET @ 199.10 · 🟠 NEAR YOUR STOP — HELD POSITION"
+    assert card["headline"] == "ANET @ 199.10 · -1.2% vs last close 201.52 · 🟠 NEAR YOUR STOP — HELD POSITION"
     text = "\n".join(card["lines"])
     assert "Spot 199.10 · -1.2% on the day" in text
     assert "Your stop: 197.05 — spot is 1.0% above it" in text
@@ -435,14 +435,14 @@ def test_digest_carries_held_events_in_the_same_single_mail():
     subj, plain, html = E.build_condition_digest(
         [("HPE", _row(), _eval_result(), ["CONDITION_MET"], _live())], _NOW,
         held_events=[_held_pma_near_stop()])
-    assert "2 cards" in subj and "BUY MET 1" in subj and "HELD 1" in subj
+    assert "ACT NOW 1" in subj and "held 1" in subj
     assert "HPE" in plain and "ANET @ 199.10" in plain
     assert "ANET" in html
 
 
 def test_digest_with_only_held_events_still_builds():
     subj, plain, _ = E.build_condition_digest([], _NOW, held_events=[_held_pma_near_stop()])
-    assert "1 card" in subj and "HELD 1" in subj and "NEAR YOUR STOP" in plain
+    assert "ACT NOW 0" in subj and "held 1" in subj and "NEAR YOUR STOP" in plain
 
 
 def test_send_with_no_cards_and_no_held_events_is_a_noop():

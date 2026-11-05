@@ -452,3 +452,30 @@ def test_the_supplemental_pass_trend_frames_come_from_mtf_supplement_json_and_ne
     h, _o = _render_stdout(run)
     assert "Weekly: higher highs and higher lows" in _field(h, extra, "frames")
     assert "should never win" not in h
+
+
+def test_the_cards_write_card_fields_json_for_the_alerts_and_the_alert_side_reads_it(run, tmp_path):
+    h, _o = _render_stdout(run)
+    doc = json.loads((run / "card_fields.json").read_text())
+    assert doc["schema"] == "card_fields.v1" and doc["date"]
+    ids = [f["id"] for f in next(iter(doc["cards"].values()))["fields"]]
+    assert ids == ["lane", "why", "contested", "sector", "triggers", "bracket", "verdict", "wrong_if", "event", "frames"]
+    t = next(iter(doc["cards"]))
+    card = h.split(f'<div class="card tmpl" data-t="{t}">')[1].split('<div class="card', 1)[0]
+    for f in doc["cards"][t]["fields"]:
+        assert text(__import__("html").escape(f["text"])).strip() in text(card)                    # the alert quotes exactly what the page printed
+    # the alert-side loader: absent / wrong date / good
+    from src.alerts import pma_levels as PL
+    import src.alerts.pma_levels as mod
+    orig = mod._read_repo_text
+    try:
+        mod._read_repo_text = lambda rel: (run / "card_fields.json").read_text()
+        cards, why = PL.load_card_fields(doc["date"])
+        assert why is None and t in cards
+        cards, why = PL.load_card_fields("1999-01-01")
+        assert cards == {} and "is for" in why
+        mod._read_repo_text = lambda rel: None
+        cards, why = PL.load_card_fields(doc["date"])
+        assert cards == {} and "not found" in why
+    finally:
+        mod._read_repo_text = orig

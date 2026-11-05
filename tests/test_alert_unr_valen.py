@@ -266,7 +266,7 @@ def _live(trigger=None, status="ARMED", reclaimed=False, spot=849.0):
 
 def test_setup_forming_card_says_what_to_wait_for_in_plain_english():
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_ARMED"], _live())
-    assert c["headline"] == "CAT $849.00 · 🟡 U&R SETUP FORMING"
+    assert c["headline"] == "CAT $849.00 · vs last close: not available (no previous close in the quote feed) · 🟡 U&R SETUP FORMING"
     assert c["lines"][0] == ("U&R: setup forming — entry signal comes when a 15-min candle "
                              "closes above VWAP (865.28)")
     assert c["lines"][1] == ("U&R trade: entry if it triggers ≈ 865.28 · stop 846.20 (today's low) · "
@@ -284,7 +284,7 @@ def test_entry_signal_card_leads_with_what_triggered_the_stop_and_the_risk():
     trig = {"state": "TRIGGERED", "vwap": 848.5, "last_close": 849.5, "was_below": True,
             "at": "10:15", "entry": 849.5}
     c = E.build_condition_card("CAT", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))
-    assert c["headline"] == "CAT $849.00 · 🟢 U&R ENTRY SIGNAL"
+    assert c["headline"] == "CAT $849.00 · vs last close: not available (no previous close in the quote feed) · 🟢 U&R ENTRY SIGNAL"
     assert c["lines"][0] == ("U&R: ✓ ENTRY SIGNAL — a 15-min candle closed above VWAP at 10:15 "
                              "(price 849.50)")
     assert c["lines"][1] == ("U&R trade: entry 849.50 · stop 846.20 (today's low) · "
@@ -315,7 +315,7 @@ def test_failed_card_leads_with_one_plain_sentence_then_the_committee_state():
     ev = _evr()
     ev["unr_stop"] = 846.2
     c = E.build_condition_card("CAT", _row(), ev, ["UNR_FAILED"], _live())
-    assert c["headline"] == "CAT $849.00 · 🟠 U&R FAILED"
+    assert c["headline"] == "CAT $849.00 · vs last close: not available (no previous close in the quote feed) · 🟠 U&R FAILED"
     assert c["lines"][0] == ("U&R: 🟠 failed — price 849.00 fell under the stop (846.20) "
                              "set at the entry signal")
     assert any(l.startswith("AQE default criteria:") for l in c["lines"][1:])
@@ -324,7 +324,7 @@ def test_failed_card_leads_with_one_plain_sentence_then_the_committee_state():
 def test_a_buy_card_leads_with_the_state_and_one_u_and_r_line():
     c = E.build_condition_card("CAT", _row(), _evr(("TRUE", "FALSE")), ["CONDITION_MET"],
                                _live(status="NOT_MET"))
-    assert c["headline"] == "CAT $849.00 · 🟢 BUY CONDITIONS MET · AQE default criteria"
+    assert c["headline"] == "CAT $849.00 · vs last close: not available (no previous close in the quote feed) · 🟢 BUY CONDITIONS MET · AQE default criteria"
     assert c["lines"][0] == ("U&R: ✗ none — no shallow dip under a support level "
                              "in the last 3 sessions")
     assert "AQE default criteria: 1 of 2 met" in c["lines"]
@@ -370,12 +370,12 @@ def test_setups_forming_collapse_to_plain_one_line_rows_and_entry_signals_lead()
             "at": "10:15", "entry": 849.5}
     cards = cands + [("DOG", _row(), _evr(), ["UNR_TRIGGER"], _live(trig))]
     subj, plain, html = E.build_condition_digest(cards, datetime(2026, 10, 8, 9, 47, tzinfo=_ET))
-    assert "17 cards" in subj and "U&R SETUP 16" in subj and "U&R ENTRY 1" in subj
-    assert plain.index("DOG $849.00 · 🟢 U&R ENTRY SIGNAL") < plain.index("U&R setups forming (16)")
+    assert "ACT NOW 1" in subj and "near trigger 0" in subj
+    assert plain.index("DOG $849.00 · ") < plain.index("Watching, no action (16)")
     assert plain.count("🟡 T") == 16
-    assert ("🟡 T0 $849.00 — dipped below the 21-day average (851.40), still under it; "
+    assert ("🟡 T0 $849.00 · vs last close: not available (no previous close in the quote feed) — dipped below the 21-day average (851.40), still under it; "
             "entry ≈ 865.28 · stop 846.20 · risk 2.2% · AQE default criteria: 1 of 2 met") in plain
-    assert "U&R setups forming (16)" in html
+    assert "Watching, no action (16)" in html
 
 
 def test_a_setup_that_also_has_a_buy_state_stays_a_full_card():
@@ -393,7 +393,7 @@ def test_digest_subject_counts_the_new_states():
                                                           "at": "10:15", "entry": 2.0})),
          ("EEL", _row(), _evr(), ["UNR_FAILED"], _live())],
         datetime(2026, 10, 7, 11, 0, tzinfo=_ET))
-    assert "U&R SETUP 1" in subj and "U&R ENTRY 1" in subj and "U&R FAILED 1" in subj
+    assert "ACT NOW 1" in subj and "failed 1" in subj
 
 
 # ------------------------------- entry price, stop and risk (1R) on every card

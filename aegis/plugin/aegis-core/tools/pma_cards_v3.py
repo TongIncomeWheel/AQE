@@ -51,6 +51,7 @@ BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
 RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
 _CL = _opt("cards_lines.json", None)           # WRITER-authored lines 2 and 3 (PM 2026-11-05): {TICKER: {"why": one sentence, "contested": one sentence}}
 CL = ((_CL or {}).get("cards") if isinstance(_CL, dict) and isinstance((_CL or {}).get("cards"), dict) else _CL) or {}
+CARD_FIELDS = {}                                # ticker -> the ten fields as printed; written to card_fields.json for the alert side
 LINE_FALLBACK = []                              # (ticker, field, problems): a writer line that broke the gate; the extraction line was printed instead
 ON_LISTS = CT.brief_lists(D["daily_list"], (D.get("lens_ranking") or {}).get("ranked"))
 SLATE_T = {x["ticker"]: x for x in (_opt("slate.json", {}) or {}).get("tickets") or []}
@@ -780,6 +781,8 @@ def _tmpl_from(c):
     head = f'<div class="row"><span class="tk">{E(t)}</span>{ma_pill(ROWS.get(t))}{mom_pill(t)}</div>'
     h = CT.render_card(c, E, head)
     LINE_FALLBACK.extend((t, f, p) for f, p in c.get("_fallback") or [])
+    CARD_FIELDS[t] = {"tag": next((f["tag"] for f in c.get("_fields") or [] if f.get("tag")), None),
+                      "fields": [{"id": f["id"], "label": f["label"], "text": f["text"]} for f in c.get("_fields") or []]}
     errs = CT.validate_card(h)
     if errs:
         raise SystemExit(f"card template broken for {t}: {errs}")
@@ -1206,6 +1209,8 @@ page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div></body></html>"""
 OUT.write_text(page)
+json.dump({"schema": "card_fields.v1", "date": str(D["date"])[:10], "note": "the ten card fields exactly as printed on the Cards (PM 2026-11-05); the alert emails quote these",
+           "cards": CARD_FIELDS}, open(OUT.parent / "card_fields.json", "w"), indent=1)
 for _t, _f, _p in LINE_FALLBACK:
     print(f"CARDS LINES FALLBACK: {_t} ({_f}): {'; '.join(_p)}")
 print(f"cards lines: {sum(1 for t in CL if CL.get(t))} writer ticker(s) read from cards_lines.json" + ("" if _CL is not None else " (file absent: extraction lines used)"))

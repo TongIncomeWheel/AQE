@@ -60,12 +60,12 @@ def _card(states, status="ARMED", spot=864.99, vol="FALSE", trigger=None):
 
 
 def test_headline_names_the_u_and_r_state_or_the_buy_state():
-    assert _card(["UNR_ARMED"])["headline"] == "CAT $864.99 · 🟡 U&R SETUP FORMING"
+    assert _card(["UNR_ARMED"])["headline"] == "CAT $864.99 · vs last close: not available (no previous close in the quote feed) · 🟡 U&R SETUP FORMING"
     trig = {"state": "TRIGGERED", "vwap": 865.28, "last_close": 866.0, "was_below": True,
             "at": "10:15", "entry": 866.0}
-    assert _card(["UNR_TRIGGER"], trigger=trig)["headline"] == "CAT $864.99 · 🟢 U&R ENTRY SIGNAL"
+    assert _card(["UNR_TRIGGER"], trigger=trig)["headline"] == "CAT $864.99 · vs last close: not available (no previous close in the quote feed) · 🟢 U&R ENTRY SIGNAL"
     assert _card(["CONDITION_MET"], status="NOT_MET")["headline"] == (
-        "CAT $864.99 · 🟢 BUY CONDITIONS MET · AQE default criteria")
+        "CAT $864.99 · vs last close: not available (no previous close in the quote feed) · 🟢 BUY CONDITIONS MET · AQE default criteria")
 
 
 def test_a_buy_card_says_u_and_r_first_whatever_its_state():
