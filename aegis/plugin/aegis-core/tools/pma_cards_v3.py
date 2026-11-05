@@ -27,6 +27,7 @@ SGT, ET = ZoneInfo("Asia/Singapore"), ZoneInfo("America/New_York")
 J = lambda n: json.load(open(RUN / n))
 E = html.escape
 import pma_cards as _PC
+import card_extras as CX
 ONE_R = int(_PC._one_r_usd() or 620)         # fund file one_r_usd (PM 2026-10-27), same figure as the real page
 
 T = J("cards_text.json"); CONS = J("consensus.json"); POS = J("committee_position.json")["tickets"]
@@ -37,6 +38,7 @@ DEC = J("decision.json"); D = J("aqe_daily_export.json"); P4 = J("phase4.json")
 SCMD = (RUN / "scorecard.md").read_text()
 RV = json.load(open(REF / "valen_dashboard.json")); RC = json.load(open(REF / "crown_macro.json"))
 ROWS = {r["ticker"]: r for r in D["daily_list"]}
+MTF = (json.load(open(RUN / "mtf.json")).get("names") or {}) if (RUN / "mtf.json").exists() else {}
 for h in D.get("held_positions") or []:
     ROWS.setdefault(h["ticker"], h)
 HELD = {h["ticker"]: h for h in D["held_positions"]}
@@ -121,6 +123,13 @@ def ma_line(r):
            "PENDING_ACQUIRER": " This company is the buyer; the deal can move its stock, but it is not pinned to a price.",
            "PENDING_UNCLEAR": " The role in the deal could not be read from the news; check the headline."}.get(st, "")
     return f'<p class="flag"><b>M&amp;A PENDING.</b> {E(str(r.get("ma_note") or ""))}{E(why)}</p>'
+def mom_pill(t):
+    """PM 2026-11-05: the code-built momentum setup flag from mtf.json (weekly and daily HH/HL, daily close within 2% of the latest daily swing high). Information only."""
+    f, why = CX.momentum(MTF.get(t))
+    return f'<span class="pill good" title="{E(why)}">Momentum setup</span>' if f else ""
+def extras(t):
+    """The weekly / daily / hourly strip and the one-line U&R tag, both from the files; nothing is claimed when mtf.json has no row."""
+    return CX.strip_html(MTF.get(t), E) + f'<p class="unr">{E(CX.unr_tag(ROWS.get(t)))}</p>'
 def ext_line(r):
     """The labelled extension bracket, one plain line ('targets if the stock runs into open air'); empty on an older export."""
     eb = (r or {}).get("extension_bracket")
@@ -184,7 +193,7 @@ sc_lines = [l for l in SCMD.splitlines() if l.startswith("| 20")]
 last_run_row = [c.strip() for c in sc_lines[-1].strip("|").split("|")]          # yesterday's one-session row
 y_spy, y_list, y_beat = last_run_row[3], last_run_row[4], last_run_row[5]
 mk = DEC["market_kill"]
-mk_plain = re.sub(r"\s*\(\s*C\d+(?:\s*,\s*C\d+)*\s*\)", "", re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", mk["plain"], flags=re.I)).strip().rstrip(".")
+mk_plain = re.sub(r"\s*\(\s*C\d+(?:\s*,\s*(?:C\d+|gate [A-Z_ ]+))*\s*\)", "", re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", mk["plain"], flags=re.I)).strip().rstrip(".")
 now_sgt = datetime.now(SGT)
 WORD = {i: w for i, w in enumerate("No One Two Three Four Five Six Seven Eight Nine Ten".split())}
 nword = lambda n: WORD.get(n, str(n))
@@ -234,6 +243,8 @@ _ms = D.get("ma_scan")
 ma_banner = ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no M&amp;A scan result, so no name can be called free of a pending deal.</p>' if not isinstance(_ms, dict) else
              f'<p class="flag"><b>M&amp;A scan {E(str(_ms.get("scan_status")))}.</b> {E(str(_ms.get("n_failed")))} of {E(str(_ms.get("n_scanned")))} names could not be checked for a pending merger or buyout'
              f'{(": " + E(str(_ms.get("reason")))) if _ms.get("reason") else ""}. Names marked &ldquo;M&amp;A not checked&rdquo; are unchecked, not clean.</p>' if _ms.get("scan_status") != "ok" else "")
+_msum = CX.momentum_summary(MTF, [c["ticker"] for c in CONS if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")])
+mom_banner = f'<p class="flag"><b>Momentum setup.</b> {E(_msum["text"])}</p>' if _msum else ""
 top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DATE.day} {RUN_DATE:%b %Y} &middot; to the PM{(' &middot; rerun ' + RERUN + ', not live') if RERUN else ''} &middot; {n_adv} triggers</div>
 <h1>{h1}</h1>
 <p class="ask">{ask}</p>
@@ -249,7 +260,8 @@ top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DA
 {reason_dealers}
 {reason_money}
 </div>
-{ma_banner}'''
+{ma_banner}
+{mom_banner}'''
 top = f'<header id="top">{top}</header>'
 
 # refreshed-after-committee detail (post-committee facts, labelled)
@@ -739,18 +751,18 @@ def tcard(r):
     kv = [("Buy line, hourly close", buy), ("Stop", f"{f2(r['stop'])}"), ("Risk", f"{r['risk']:.2f} ({r['risk_pct']:.1f}%)"),
           (f"1R ${ONE_R}", f"{r['shares']} shares"), ("Target 1", f"{f2(r['ladder'][0][1])} &middot; {r['ladder'][0][0]}R"),
           ("Target 2", f"{f2(r['ladder'][1][1])} &middot; {r['ladder'][1][0]}R"), ("Dead if daily close under", f2(r["dead"]) if r["dead"] is not None else "&mdash;"), ("Last close", f"{r['last']}")]
-    return (f'<div class="card tcard"><div class="row"><span class="tk">{r["t"]}</span>{tag}{ma_pill(ROWS.get(r["t"]))}<span class="tag">conviction {r["conv"]}/5 &middot; {E(r["sector"])}, gate {g.get("entry_gate","")}'
+    return (f'<div class="card tcard"><div class="row"><span class="tk">{r["t"]}</span>{tag}{ma_pill(ROWS.get(r["t"]))}{mom_pill(r["t"])}<span class="tag">conviction {r["conv"]}/5 &middot; {E(r["sector"])}, gate {g.get("entry_gate","")}'
             + (f" &middot; {E(rep.group(1)).rstrip('.')}" if rep else "") + '</span></div>'
             + '<div class="kv">' + "".join(f"<div><span class='lab'>{a}</span><b>{b}</b></div>" for a, b in kv) + "</div>"
-            + ma_line(ROWS.get(r["t"])) + f'<p><b>Wait for:</b> {E(w["reason"]["wait_for"])}</p><p><b>Why:</b> {E(w["reason"]["agree"])}</p><p><b>Wrong if:</b> {E(w["reason"]["wrong_if"])}</p>' + ext_line(ROWS.get(r["t"])) + '</div>')
+            + extras(r["t"]) + ma_line(ROWS.get(r["t"])) + f'<p><b>Wait for:</b> {E(w["reason"]["wait_for"])}</p><p><b>Why:</b> {E(w["reason"]["agree"])}</p><p><b>Wrong if:</b> {E(w["reason"]["wrong_if"])}</p>' + ext_line(ROWS.get(r["t"])) + '</div>')
 
 def thin_li(r):
     w = r["w"]; tag = pill("Agreed", "good") if r["status"] == "AGREED" else pill("Contested", "watch")
     near = ", ".join(f"{f2(tp)} ({mins(f'{rv}')}R)" for rv, tp in r["near"])
     why = (f"only target 1 reaches 1R: {f2(r['ladder'][0][1])} at {r['ladder'][0][0]}R" if r["ladder"] else "no level reaches 1R")
-    return (f'<li><div class="row"><span class="tk">{r["t"]}</span>{tag}{ma_pill(ROWS.get(r["t"]))}<span class="tag">buy line {f2(r["entry"])}' + (f" on {r['vol']}x volume" if r["vol"] else "")
+    return (f'<li><div class="row"><span class="tk">{r["t"]}</span>{tag}{ma_pill(ROWS.get(r["t"]))}{mom_pill(r["t"])}<span class="tag">buy line {f2(r["entry"])}' + (f" on {r['vol']}x volume" if r["vol"] else "")
             + f' &middot; stop {f2(r["stop"])} &middot; 1R ${ONE_R} = {r["shares"]} shares</span></div>'
-            + f'<p><b>{why[0].upper()+why[1:]}.</b> Nearer levels are resistance to trade through, not targets: {near}.</p></li>')
+            + f'<p><b>{why[0].upper()+why[1:]}.</b> Nearer levels are resistance to trade through, not targets: {near}.</p>' + extras(r["t"]) + '</li>')
 
 _secs = collections.Counter(trade[t]["sector"] for t in ADV if trade[t].get("sector"))
 _top2 = _secs.most_common(2)
@@ -770,9 +782,9 @@ def hold_row(t):
     wa = next((x for x in tr if x["kind"] == "trade_below" and "wait area" in x["action"]), None)
     zone = re.search(r"wait area ([\d.]+-[\d.]+)", wa["action"]).group(1).rstrip(".").replace("-", " to ") if wa else ("held: add question only" if t in HELD else "&mdash;")
     dead = next((f"daily close under {x['level']}" for x in tr if x["kind"] == "close_below"), cd.get("kills", "&mdash;"))
-    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead)]
+    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead), extras(t)]
 hold_card = card(f"{len(holds)} names wait for a condition first; nothing to do until it prints.",
-    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if"], [hold_row(c["ticker"]) for c in holds]),
+    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R"], [hold_row(c["ticker"]) for c in holds]),
     "For a held name the line is an add question only.",
     ("Why each one waits", "<ul class='plainlist'>" + "".join(f"<li><b>{c['ticker']}</b>: {E(plain(T['holds'][c['ticker']]))}</li>" for c in holds) + "</ul>"))
 
@@ -1084,6 +1096,7 @@ details p,details li{font-size:13px;color:var(--text-2)}
 .ph{display:none}
 .pill.ma{background:#b3261e;color:#fff}
 .pill.out{background:transparent;border:1px dashed var(--line);color:var(--text-2)}
+.mtf,.unr{font-size:13px;color:var(--text-2);margin:6px 0}
 code{font-size:13px;background:var(--soft);padding:1px 4px;border-radius:4px}
 table.lst td:last-child{min-width:220px}
 table.lst td:nth-child(n+6):nth-child(-n+8){white-space:nowrap}

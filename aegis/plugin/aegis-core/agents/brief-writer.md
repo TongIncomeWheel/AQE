@@ -183,6 +183,9 @@ Then one line for the candidate set as a group. That is §1. No paragraphs.
 **§7 CARDS — one compact card per ADVANCE and HOLD; PASS names get one line each.**
 Card = a 6-row table (bracket · tape · structure · effort · fundamentals · QS) + **two one-liners**: the consensus case FOR, and the strongest case AGAINST — both written as the committee's view, no seat named. Then the condition line. Then the context line (macro/sector: help, headwind, no read). Nothing else.
 
+**§7A U&R COMPASS (PM 2026-11-05) — `unr_table.md`, pasted VERBATIM under the heading "§7A U&R COMPASS (code-built from the AQE export; information only, not a gate, not a vote input)".**
+Built by code (`card_extras.py unr-table`) from the export's `unr_status` / `unr_level`: the support line is shown as data, never as a condition, and a last close more than 5% above the line reads "no useful U&R reference". Do not retype, reorder or add a verdict to it. Every card also carries a one-line U&R tag built by the same code.
+
 **§9A — WHAT TO DO WITH WHAT I OWN. MANDATORY (PM ruling 2026-09-08).**
 One row per held name, no exceptions, even when the answer is "nothing".
 | Name | Qty | Entry | Mark | Unrealised | ACTION | Trigger that changes it | Stop today | Why (one line) |

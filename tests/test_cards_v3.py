@@ -160,3 +160,103 @@ def test_a_market_kill_line_with_a_gate_note_in_brackets_passes_the_plain_words_
     ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
     fails, _ = ck.check_cards_html(str(run / "out.html"))
     assert fails == [], fails
+
+
+def _frame(cls, d_pct=None, order="9>21"):
+    return {"served": True, "swing_class": cls, "ema_order": order, "swing": {"close_vs_swing_high_pct": d_pct}}
+
+
+def _mtf_doc(flag_names):
+    names = {}
+    for t in ("ROKU", "SN", "V", "BRK-B", "DIS", "TMO", "EW", "HNGE", "AJG", "GEN", "SWK", "FA"):
+        hit = t in flag_names
+        names[t] = {"served": True, "W": _frame("HH/HL", 1.0), "D": _frame("HH/HL" if hit else "LH but HL", 0.4 if hit else -6.2, "9>21" if hit else "9<21"),
+                    "H1": _frame("LH/LL", -1.1, "9<21"), "momentum": {"flag": hit, "reasons": ["ok" if hit else "daily swing is LH but HL, not HH/HL"]}}
+    names["DIS"] = {"served": False, "reason": "only 14 hr bars; EMA21 needs 21"}
+    return {"schema": "mtf.v1", "date": "2026-11-04", "names": names}
+
+
+def test_every_card_shows_the_weekly_daily_hourly_strip_the_momentum_flag_and_a_one_line_unr_tag(run):
+    (run / "mtf.json").write_text(json.dumps(_mtf_doc({"BRK-B"})))
+    def exp(o):
+        for r in o["daily_list"]:
+            if r["ticker"] == "BRK-B":
+                r.update(unr_status="MET", unr_level=round(r["entry"] / 1.08, 2))     # 8% under the last close: no useful reference
+            if r["ticker"] == "TMO":
+                r.update(unr_status="MET", unr_level=round(r["entry"] / 1.02, 2))     # 2% under: a usable reference
+            if r["ticker"] == "EW":
+                r.update(unr_status="NO", unr_level=None)
+    edit(run, "aqe_daily_export.json", exp)
+    h = render(run)
+    t = text(h)
+    assert "Weekly: higher highs and higher lows; fast average above slow; 1.0% above the last swing high." in t
+    assert "Daily: lower highs but higher lows; fast average below slow; 6.2% under the last swing high." in t
+    assert "Hourly: lower highs and lower lows" in t
+    assert "Trend frames: not served (only 14 hr bars; EMA21 needs 21)" in t                      # DIS: declared, not neutral
+    assert 'class="unr"' in h
+    assert t.count("Momentum setup") >= 2                                                        # the banner title and BRK-B's pill
+    assert "1 of 11 slate names show the momentum setup" in t        # DIS has no readable flag (not served), so it is not counted either way
+    assert ": BRK-B. Information only: not a gate, not a vote." in t
+    assert "no useful U&amp;R reference" in t and "U&amp;R: reclaim day. Support line" in t and "U&amp;R: none." in t
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("chk_x", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    fails, _ = ck.check_cards_html(str(run / "out.html"))
+    assert fails == [], fails
+
+
+def test_no_mtf_file_means_no_strip_claim_and_no_momentum_line(run):
+    t = text(render(run))
+    assert "Trend frames" not in t.replace("Trend frames and U&R", "") and "show the momentum setup" not in t
+
+
+def test_card_extras_unr_rules_and_brief_table():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("cx", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "card_extras.py")
+    cx = importlib.util.module_from_spec(spec); spec.loader.exec_module(cx)
+    row = lambda st, lvl, close: {"unr_status": st, "unr_level": lvl, "entry": close}
+    assert "no useful U&R reference" in cx.unr_tag(row("MET", 41.77, 44.93))                    # GLBE +7.6%
+    assert "no useful U&R reference" in cx.unr_tag(row("MET", 131.24, 141.64))                  # DG +7.9%
+    assert "+2.5% from it" in cx.unr_tag(row("MET", 287.53, 294.83)) and "no useful" not in cx.unr_tag(row("MET", 287.53, 294.83))  # ABBV
+    assert cx.unr_tag(row("NO", None, 95.8)).startswith("U&R: none.") and cx.unr_tag(row("NA", None, 1)).startswith("U&R: not checked")
+    assert cx.unr_tag({"ticker": "X"}) == "U&R: not in this export." and cx.unr_tag(row("SETUP", 10, 9.5)).startswith("U&R: setup forming")
+    md = cx.unr_table_md({"KO": row("NO", None, 95.8), "GLBE": row("MET", 41.77, 44.93), "ABBV": row("MET", 287.53, 294.83)},
+                         [("KO", "ADVANCE (AGREED)"), ("GLBE", "ADVANCE (CONTESTED)"), ("ABBV", "ADVANCE (CONTESTED)"), ("ZZ", "HELD")], "4 Nov")
+    assert "| GLBE | ADVANCE (CONTESTED) | MET | 41.77 | 44.93 | +7.6% | no useful U&R reference |" in md
+    assert "| ABBV | ADVANCE (CONTESTED) | MET | 287.53 | 294.83 | +2.5% | line is near enough to use |" in md
+    assert "| ZZ | HELD | not in export |" in md and "No useful U&R reference (close more than 5% above the line): GLBE." in md
+    assert "Read: 2 of 4 names are on a U&R reclaim day." in md
+
+
+def test_the_v2_fallback_page_has_the_same_strip_flag_and_unr_line():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pc_v2b", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "pma_cards.py")
+    pc = importlib.util.module_from_spec(spec); spec.loader.exec_module(pc)
+    pc._MTF = _mtf_doc({"BRK-B"})["names"]
+    h = pc._extras("BRK-B", {"unr_status": "NO", "unr_level": None, "entry": 100.0})
+    assert "Weekly: higher highs and higher lows; fast average above slow; 1.0% above the last swing high." in h and 'class="unr"' in h and "U&amp;R: none." in h
+    assert "Momentum setup" in pc._mom_pill("BRK-B") and pc._mom_pill("TMO") == ""
+    assert "1 of 11 slate names show the momentum setup" in pc._mom_banner([{"ticker": t, "status": "CONTESTED"} for t in pc._MTF] + [{"ticker": "PASSY", "status": "NOT_SLATED"}])
+    pc._MTF = {}
+    assert pc._extras("KO", {"ticker": "KO"}).startswith('<p class="unr">U&amp;R: not in this export.') and pc._mom_banner([{"ticker": "KO"}]) == ""
+
+
+def test_the_unr_table_command_builds_the_brief_table_from_the_export_and_is_wired_into_the_run_map(run):
+    tool = ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "card_extras.py"
+    def exp(o):
+        for r in o["daily_list"]:
+            if r["ticker"] == "TMO":
+                r.update(unr_status="MET", unr_level=round(r["entry"] / 1.02, 2))
+            if r["ticker"] == "BRK-B":
+                r.update(unr_status="MET", unr_level=round(r["entry"] / 1.08, 2))
+    edit(run, "aqe_daily_export.json", exp)
+    out = run / "unr_table.md"
+    r = subprocess.run([sys.executable, str(tool), "unr-table", "--export", str(run / "aqe_daily_export.json"), "--consensus", str(run / "consensus.json"),
+                        "--date", "4 Nov", "--out", str(out)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    md = out.read_text()
+    assert md.startswith("U&R = a daily support level") and "| TMO | ADVANCE (CONTESTED) | MET |" in md and "no useful U&R reference" in md
+    assert "| ROKU | ADVANCE (AGREED) |" in md
+    runmap = (ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "RUN.yaml").read_text()
+    assert "card_extras.py unr-table" in runmap and "produces: [brackets.json, repeat_marks.json, unr_table.md]" in runmap
+    assert "unr_table.md" in (ROOT / "aegis" / "plugin" / "aegis-core" / "agents" / "brief-writer.md").read_text()

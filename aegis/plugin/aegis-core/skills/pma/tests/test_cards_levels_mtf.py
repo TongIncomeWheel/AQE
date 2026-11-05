@@ -351,7 +351,8 @@ def test_mtf_build_grid_and_declared_gaps(td):
     D = u["D"]
     check("D: close 259, EMA9 255, EMA21 249 (linear steady state)",
           (D["close"], D["ema9"], D["ema21"]) == (259.0, 255.0, 249.0), str((D["close"], D["ema9"], D["ema21"])))
-    check("D: above EMA9, 9>21, green, HH/HL", (D["close_vs_ema9"], D["ema_order"], D["last_bar"], D["hh_hl_3"]) == ("above", "9>21", "green", "HH/HL"), str(D))
+    check("D: above EMA9, 9>21, green; a straight line has no swing pivots, so the swing class is None (PM 2026-11-05: replaces hh_hl_3)",
+          (D["close_vs_ema9"], D["ema_order"], D["last_bar"], D["swing_class"], "hh_hl_3" in D) == ("above", "9>21", "green", None, False), str(D))
     check("D: distance to the 20-day high is the half-spread (259.5 high vs 259 close)", D["dist_to_20bar_high_pct"] == round(0.5 / 259.5 * 100, 2), str(D["dist_to_20bar_high_pct"]))
     W = u["W"]
     check("W: weekly bars built from 160 sessions (32 weeks), last week complete on a Monday run",
@@ -360,7 +361,7 @@ def test_mtf_build_grid_and_declared_gaps(td):
     check("H1: 35 hourly bars, close at the top of the day's range", H["bars"] == 35 and H["pos_in_day_range_pct"] == round((134 - 127.7) / (134.3 - 127.7) * 100, 1), str(H))
     check("D close matches the export's close", D.get("close_matches_export") is True)
     check("the name summary joins the three frames in plain words",
-          u["summary"].startswith("W: above EMA9, 9>21, HH/HL") and " | D: " in u["summary"] and " | H1: " in u["summary"], u["summary"])
+          u["summary"].startswith("W: above EMA9, 9>21, no clear swing structure") and " | D: " in u["summary"] and " | H1: " in u["summary"], u["summary"])
     check("a frame summary names its distance to the 20-bar high", "% under 20-day high" in u["summary"], u["summary"])
     s = g["names"]["SHH"]
     check("< 21 hourly bars: H1 NOT SERVED while W and D are served",
