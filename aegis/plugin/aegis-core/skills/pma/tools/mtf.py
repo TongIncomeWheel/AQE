@@ -36,8 +36,13 @@ volume, so no reading changes; the native `1hour` pull is preferred and this rol
 Per frame (W = weekly bars built from the daily by ISO week; D = daily; H1 = 1-hour):
   close, ema9, ema21 (EMA over closes, alpha 2/(n+1), seeded with the SMA of the first n closes; needs >= 21
   bars, else the frame is served: false with the reason), ema_order "9>21" / "9<21" / "9=21", close_vs_ema9
-  "above" / "below", last_bar "green" / "red" / "flat", hh_hl_3 over the last 3 completed bars "HH/HL" /
-  "LH/LL" / "mixed", dist_to_20bar_high_pct (how far the close sits under the highest high of the last 20 bars),
+  "above" / "below", last_bar "green" / "red" / "flat", the SWING STRUCTURE (PM 2026-11-05, replaces hh_hl_3): strict fractal
+  pivots, 3 bars each side on the daily and hourly, 2 on the weekly with the open week left out; class = the last swing high
+  and swing low against the previous ones: "HH/HL", "LH/LL", or a mixed read that names the leg ("HH but LL", "LH but HL");
+  the last / previous swing high and low with their dates; close_vs_swing_high_pct (positive = the close is ABOVE the last
+  swing high); dist_to_20bar_high_pct (how far the close sits under the highest high of the last 20 bars of THIS frame: 20
+  weeks on W, 20 sessions on D, 20 hours on H1, so W and D agree only when the 20-week high was made inside the last 20
+  sessions, which is true for a stock at its highs; `high_20bar_date` says when),
   and on H1 pos_in_day_range_pct (the last close inside the last session's H1 high-low, 0 = low, 100 = high).
 
 Every served frame also carries `summary`: its reading WITHOUT the W / D / H1 label (the packet, the claims board
@@ -163,19 +168,64 @@ def rollup_hourly(m15):
     return out, dropped
 
 
-def _hh_hl(bars):
-    if len(bars) < 3:
-        return None
-    a, b, c = bars[-3:]
-    if a["high"] < b["high"] < c["high"] and a["low"] < b["low"] < c["low"]:
-        return "HH/HL"
-    if a["high"] > b["high"] > c["high"] and a["low"] > b["low"] > c["low"]:
-        return "LH/LL"
-    return "mixed"
+SWING_K = {"W": 2, "D": 3, "H1": 3}          # bars each side of a strict fractal pivot (PM 2026-11-05)
+MOMENTUM_NEAR_PCT = 2.0                      # the momentum flag: daily close within this % of the latest daily swing high
+
+
+def pivots(bars, k):
+    """Strict fractal pivots, CONFIRMED ones only: bar i is a swing high if its high is greater than the highs of the k bars
+    before AND the k bars after it (a swing low: its low is below the lows of both sides). Ties are not pivots. Returns
+    (swing_high_indexes, swing_low_indexes)."""
+    hs, ls = [], []
+    for i in range(k, len(bars) - k):
+        h, l = bars[i]["high"], bars[i]["low"]
+        side = list(range(i - k, i)) + list(range(i + 1, i + k + 1))
+        if all(h > bars[j]["high"] for j in side):
+            hs.append(i)
+        if all(l < bars[j]["low"] for j in side):
+            ls.append(i)
+    return hs, ls
+
+
+def swing_structure(bars, tf, completed=None):
+    """The swing structure of one frame. `completed` = the bars pivots may be read from (the weekly frame leaves out the open week);
+    `bars` supplies the latest close. Never invents: fewer than two swing highs or two swing lows = class None with the reason."""
+    k = SWING_K[tf]
+    src = completed if completed is not None else bars
+    hs, ls = pivots(src, k)
+    close = bars[-1]["close"]
+    pt = lambda idx, key: ({"price": round(src[idx][key], 4), "date": src[idx]["date"][:10]} if idx is not None else None)
+    lsh = hs[-1] if hs else None
+    out = {"rule": f"strict fractal, {k} bars each side" + (", the open week left out" if completed is not None and len(completed) < len(bars) else ""),
+           "last_swing_high": pt(lsh, "high"), "prev_swing_high": pt(hs[-2] if len(hs) > 1 else None, "high"),
+           "last_swing_low": pt(ls[-1] if ls else None, "low"), "prev_swing_low": pt(ls[-2] if len(ls) > 1 else None, "low"),
+           "close_vs_swing_high_pct": (round((close / src[lsh]["high"] - 1) * 100, 2) if lsh is not None and src[lsh]["high"] > 0 else None)}
+    if len(hs) < 2 or len(ls) < 2:
+        out.update(cls=None, reason=f"{len(hs)} swing high(s) and {len(ls)} swing low(s) in {len(src)} bars; two of each are needed")
+        return out
+    hi = "HH" if src[hs[-1]]["high"] > src[hs[-2]]["high"] else ("LH" if src[hs[-1]]["high"] < src[hs[-2]]["high"] else "EH")
+    lo = "HL" if src[ls[-1]]["low"] > src[ls[-2]]["low"] else ("LL" if src[ls[-1]]["low"] < src[ls[-2]]["low"] else "EL")
+    out["cls"] = "HH/HL" if (hi, lo) == ("HH", "HL") else ("LH/LL" if (hi, lo) == ("LH", "LL") else f"{hi} but {lo}")
+    out["high_leg"], out["low_leg"] = hi, lo
+    return out
+
+
+SWING_WORDS = {"HH": "higher highs", "LH": "lower highs", "EH": "equal highs", "HL": "higher lows", "LL": "lower lows", "EL": "equal lows"}
+
+
+def swing_plain(cls):
+    """'HH/HL' -> 'higher highs and higher lows'; 'HH but LL' -> 'higher highs but lower lows'."""
+    if not cls:
+        return "no clear swing structure"
+    if "/" in cls:
+        a, b = cls.split("/")
+        return f"{SWING_WORDS[a]} and {SWING_WORDS[b]}"
+    a, b = cls.split(" but ")
+    return f"{SWING_WORDS[a]} but {SWING_WORDS[b]}"
 
 
 def frame(bars, tf, completed=None):
-    """One frame of the grid. `completed` = the bars hh_hl_3 may read (default: all of them)."""
+    """One frame of the grid. `completed` = the bars the swing pivots may be read from (default: all of them)."""
     if len(bars) < MIN_BARS:
         return {"served": False, "bars": len(bars),
                 "reason": f"only {len(bars)} {UNIT[tf]} bars; EMA21 needs {MIN_BARS}"}
@@ -188,9 +238,12 @@ def frame(bars, tf, completed=None):
          "ema_order": "9>21" if e9 > e21 else ("9<21" if e9 < e21 else "9=21"),
          "close_vs_ema9": "above" if last["close"] >= e9 else "below",
          "last_bar": "green" if last["close"] > last["open"] else ("red" if last["close"] < last["open"] else "flat"),
-         "hh_hl_3": _hh_hl(completed if completed is not None else bars),
          "high_20bar": round(hi20, 4),
+         "high_20bar_date": max((b for b in bars[-HIGH_LOOKBACK:] if b["high"] == hi20), key=lambda b: b["date"])["date"][:10],
          "dist_to_20bar_high_pct": round((hi20 - last["close"]) / hi20 * 100, 2) if hi20 > 0 else None}
+    sw = swing_structure(bars, tf, completed)
+    f["swing_class"] = sw.get("cls")
+    f["swing"] = sw
     if tf == "H1":
         day = last["date"][:10]
         sess = [b for b in bars if b["date"][:10] == day]
@@ -207,7 +260,11 @@ def frame_text(tf, f):
     d = f.get("dist_to_20bar_high_pct")
     hi = "at the 20-" + UNIT[tf] + " high" if d is not None and d <= 0 else (
         f"{d:.1f}% under 20-{UNIT[tf]} high" if d is not None else "no 20-bar high")
-    parts = [f"{f['close_vs_ema9']} EMA9", f["ema_order"], f.get("hh_hl_3") or "fewer than 3 bars", hi]
+    sw = f.get("swing") or {}
+    d_sw = sw.get("close_vs_swing_high_pct")
+    sw_txt = (f"swing {f['swing_class']}" if f.get("swing_class") else "no clear swing structure") + (
+        "" if d_sw is None else (f", {abs(d_sw):.1f}% above the last swing high" if d_sw > 0 else (f", {abs(d_sw):.1f}% under the last swing high" if d_sw < 0 else ", at the last swing high")))
+    parts = [f"{f['close_vs_ema9']} EMA9", f["ema_order"], sw_txt, hi]
     if tf == "H1" and f.get("pos_in_day_range_pct") is not None:
         parts.append(f"{f['pos_in_day_range_pct']:.0f}% of the day's range")
     if f.get("partial_last_bar"):
@@ -225,6 +282,26 @@ def _not_served(reason):
     return {"served": False, "complete": False, "gaps": list(FRAMES), "reason": reason,
             **{tf: {"served": False, "reason": reason, "summary": f"NOT SERVED ({reason})"} for tf in FRAMES},
             "summary": f"MTF NOT SERVED: {reason}"}
+
+
+def momentum_flag(row):
+    """PM 2026-11-05: a code-built flag, INFORMATION ONLY (not a gate, not a vote input, R1): the WEEKLY and DAILY swing structure are both
+    HH/HL and the daily close is within MOMENTUM_NEAR_PCT of the latest daily swing high (above or below). Always says which test failed."""
+    W, D = row.get("W") or {}, row.get("D") or {}
+    if not (W.get("served") and D.get("served")):
+        return {"flag": False, "reasons": ["weekly or daily frame not served"]}
+    why = []
+    if W.get("swing_class") != "HH/HL":
+        why.append(f"weekly swing is {W.get('swing_class') or 'not readable'}, not HH/HL")
+    if D.get("swing_class") != "HH/HL":
+        why.append(f"daily swing is {D.get('swing_class') or 'not readable'}, not HH/HL")
+    d = (D.get("swing") or {}).get("close_vs_swing_high_pct")
+    if d is None:
+        why.append("no daily swing high to measure against")
+    elif abs(d) > MOMENTUM_NEAR_PCT:
+        why.append(f"daily close is {abs(d):.1f}% {'above' if d > 0 else 'under'} the latest daily swing high, more than {MOMENTUM_NEAR_PCT:g}% away")
+    return {"flag": not why, "reasons": why or [f"weekly and daily HH/HL, daily close {abs(d):.1f}% from the latest daily swing high"],
+            "rule": f"weekly HH/HL and daily HH/HL and the daily close within {MOMENTUM_NEAR_PCT:g}% of the latest daily swing high"}
 
 
 def build_name(t, doc, run_date, export_close=None):
@@ -270,6 +347,7 @@ def build_name(t, doc, run_date, export_close=None):
         c = row["D"]["close"]
         row["D"]["export_close"] = export_close
         row["D"]["close_matches_export"] = abs(c / export_close - 1) <= CLOSE_TOL
+    row["momentum"] = momentum_flag(row)
     missing = [tf for tf in FRAMES if not row[tf].get("served")]
     # PM 2026-11-03: a name missing one timeframe SHOWS the others, the missing one labelled as a gap -- it is
     # served if any frame is; `complete` says all three are, `gaps` names the ones that are not. A frame with no
@@ -336,6 +414,14 @@ def cmd_build(a):
     _write_grid_out(a, room, names, extra={"bars_files_not_in_room": extra})
 
 
+def swing_counts(names):
+    """How many room names are HH/HL on each frame, and on weekly + daily (+ hourly): the PM's headline numbers."""
+    def hh(r, tf): return (r.get(tf) or {}).get("swing_class") == "HH/HL"
+    ok = [r for r in names.values() if r.get("served")]
+    return {"n": len(ok), "weekly_hh_hl": sum(hh(r, "W") for r in ok), "daily_hh_hl": sum(hh(r, "D") for r in ok), "hourly_hh_hl": sum(hh(r, "H1") for r in ok),
+            "weekly_and_daily": sum(hh(r, "W") and hh(r, "D") for r in ok), "all_three": sum(hh(r, "W") and hh(r, "D") and hh(r, "H1") for r in ok)}
+
+
 def _write_grid_out(a, room, names, extra=None):
     extra = extra or {}
     mism = sorted(t for t, r in names.items() if r.get("D", {}).get("close_matches_export") is False)
@@ -349,7 +435,11 @@ def _write_grid_out(a, room, names, extra=None):
                            "partial_names": sorted(t for t, r in names.items() if r["served"] and not r.get("complete")),
                            "not_served": sum(1 for r in names.values() if not r["served"]),
                            "not_served_names": sorted(t for t, r in names.items() if not r["served"]),
-                           "close_mismatch_vs_export": mism, **extra}}
+                           "close_mismatch_vs_export": mism,
+                           "swing_counts": swing_counts(names),
+                           "momentum_flagged": sorted(t for t, r in names.items() if (r.get("momentum") or {}).get("flag")),
+                           "momentum_rule": f"weekly HH/HL and daily HH/HL and the daily close within {MOMENTUM_NEAR_PCT:g}% of the latest daily swing high (information only)",
+                           **extra}}
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1)
     m = out["measurement"]

@@ -656,8 +656,8 @@ steps:
     kind: tool
     command: "pma_pipeline.py brackets --consensus consensus.json --phase4 phase4.json --export <export> --date <date> --out brackets.json"
     reads: [consensus.json, phase4.json, aqe_daily_export.json]
-    then: "pma_pipeline.py repeatmarks --ledger verdict_ledger.json --consensus consensus.json --brackets brackets.json --date <date> --out repeat_marks.json"
-    produces: [brackets.json, repeat_marks.json]
+    then: "pma_pipeline.py repeatmarks --ledger verdict_ledger.json --consensus consensus.json --brackets brackets.json --date <date> --out repeat_marks.json ; card_extras.py unr-table --export <export> --consensus consensus.json --date <date> --out unr_table.md"
+    produces: [brackets.json, repeat_marks.json, unr_table.md]
     rulings: [R1, R19]
     must_also: >
       PM ruling 2026-09-25: queue levels for every ADVANCE and HOLD-FOR-CONDITIONS name. This gives
@@ -703,7 +703,7 @@ steps:
     kind: model
     spawns: 1
     seats: [brief-writer]
-    reads: [consensus.json, phase4.json, tally.json, pm_lens.json, repeat_watch.json,
+    reads: [consensus.json, phase4.json, tally.json, pm_lens.json, repeat_watch.json, unr_table.md,
             purity_check.json, forms/**, skills/cio-voice/SKILL.md, skills/aegis-writing/SKILL.md,
             aegis-voices/skills/weather-crown/SKILL.md, aegis-voices/skills/weather-valen/SKILL.md]
     spawn_as: >-
@@ -725,7 +725,7 @@ steps:
       The trigger levels in cards.json are tool-built at CONDITIONS; WRITE never hand-builds triggers.
     sections: ["0 verdicts", "0A executive consensus", "0B what these were picked on + momentum fit",
                "1 macro", "1A valen", "2 sectors", "3 held book", "4 repeat watch", "5 QS", "6 PM lens",
-               "7 cards", "8 near misses", "9A what to do with what I own", "9B what to trade today",
+               "7 cards", "7A U&R compass", "8 near misses", "9A what to do with what I own", "9B what to trade today",
                "9C the day's plan", "A vote record"]
     the_five_questions:
       1: "market shape / regime / macro -> S1"

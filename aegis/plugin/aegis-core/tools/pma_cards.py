@@ -27,6 +27,11 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import card_extras as _CX            # PM 2026-11-05: the trend-frame strip, the momentum flag and the U&R line (code-built, information only)
+
+_MTF = {}                            # mtf.json names, set by cmd_render; empty = no strip claim
+
 E = html.escape
 
 
@@ -220,6 +225,7 @@ dt{font-family:var(--f-mono);font-size:.64rem;letter-spacing:.05em;text-transfor
 .hold{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;font-size:.86rem}
 .hh{display:flex;align-items:center;gap:4px}.hh .num{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--mute)}
 .tk2{font-family:var(--f-disp);font-weight:800;font-size:1.05rem}.cond{color:var(--mute)}
+.mtf,.unr{font-size:.82rem;color:var(--text-2);margin:6px 0}
 .flag{border-left:3px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
 .reason p{margin:.25rem 0;font-size:.95rem}\n.audit{margin-top:4px;font-size:.82rem;color:var(--mute)}.audit summary{cursor:pointer}.bracket dd{font-family:var(--f-mono);font-size:.86rem}
 .committee{border-left:3px solid var(--up);background:var(--up-soft,var(--warn-soft));padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0;font-size:.9rem}
@@ -666,6 +672,21 @@ def _ma_line(row):
            "PENDING_ACQUIRER": " This company is the buyer; the deal can move its stock, but it is not pinned to a price.",
            "PENDING_UNCLEAR": " The role in the deal could not be read from the news; check the headline."}.get(st, "")
     return f'<p class="flag"><b>M&amp;A PENDING.</b> {E(str(row.get("ma_note") or ""))}{E(why)}</p>'
+
+
+def _mom_pill(t):
+    f, why = _CX.momentum(_MTF.get(t))
+    return f'<span class="pill p-up" title="{E(why)}">Momentum setup</span>' if f else ""
+
+
+def _extras(t, row):
+    """The weekly / daily / hourly strip (only when mtf.json has the name) and the one-line U&R tag."""
+    return _CX.strip_html(_MTF.get(t), E) + f'<p class="unr">{E(_CX.unr_tag(row))}</p>'
+
+
+def _mom_banner(cons):
+    m = _CX.momentum_summary(_MTF, [c["ticker"] for c in cons if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")])
+    return f'<p class="flag"><b>Momentum setup.</b> {E(m["text"])}</p>' if m else ""
 
 
 def _ma_banner(D):
@@ -1309,6 +1330,8 @@ def cmd_render(a):
         for g in gaps:
             print("  -", g)
         sys.exit(2)
+    global _MTF
+    _MTF = ((load(a.mtf, {}) or {}).get("names") or {}) if getattr(a, "mtf", None) and os.path.exists(a.mtf) else {}
     D = load(a.export); rows = {r["ticker"]: r for r in D["daily_list"]}
     for h in D.get("held_positions") or []:
         rows.setdefault(h["ticker"], h)
@@ -1369,7 +1392,7 @@ def cmd_render(a):
     o.append("</div>")
     o.append('<section class="card"><div class="eyebrow">Where money is moving</div><div class="tbl"><table><thead><tr><th>Group</th><th>Read</th><th>What it means</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{E(x["group"])}</b></td><td>{E(x["read"])}</td><td>{E(x["meaning"])}</td></tr>' for x in T["money"]) + "</tbody></table></div></section>")
-    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D))
+    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D) + _mom_banner(cons))
     o.append('<section class="card"><div class="eyebrow">What it means for your book</div><div class="tbl"><table><thead><tr><th>Name</th><th>Position</th><th>Broker stop</th><th>Committee read</th><th>Why</th></tr></thead><tbody>')
     for b in T["book"]:
         t = b["ticker"]; h = held.get(t) or {}; s = BS.get(t) or {}
@@ -1401,9 +1424,9 @@ def cmd_render(a):
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
         void = _void_cell(SL.get("market_kill")) if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
-                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}{_ma_pill(r)}</div>'
+                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}{_ma_pill(r)}{_mom_pill(t)}</div>'
                  f'<span class="pill {("p-warn" if not bracket["targets"] else TONE.get(w["readiness_tone"], "p-n"))}">{E("Reward does not justify the risk at this entry" if not bracket["targets"] else w["readiness"])}</span></header>'
-                 f'{_ma_line(r)}<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
+                 f'{_extras(t, r)}{_ma_line(r)}<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
                  f'{void}{_bracket_html(bracket)}{_ext_bracket_html(r.get("extension_bracket"))}'
@@ -1415,8 +1438,8 @@ def cmd_render(a):
     o.append('<section class="card"><div class="eyebrow">HOLD for conditions · nothing to do until the condition prints · AQE rank shown</div><div class="holds">')
     for c in sorted(by["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"]):
         t = c["ticker"]; card = CD["hold"].get(t) or {}; r = rows.get(t) or {}
-        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{_ma_pill(r)}<span class="num">#{r.get("rank", "—")}</span></div>'
-                 f'{_ma_line(r)}<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
+        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{_ma_pill(r)}{_mom_pill(t)}<span class="num">#{r.get("rank", "—")}</span></div>'
+                 f'{_extras(t, r)}{_ma_line(r)}<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{c["ticker"]}</b>{_ma_pill(rows.get(c["ticker"]))}</td><td>{_dropped_prefix(c)}{E(T["passes"][c["ticker"]])}</td></tr>' for c in sorted([c for c in by["PASS"] if c.get("status") != "DEAL_PINNED"], key=lambda c: c["ticker"]))
@@ -1486,6 +1509,7 @@ def main():
     s.add_argument("--last-run", dest="last_run", default="aqe_last_run.json", help="the run marker: its 'Macro legs:' line dates the FRESHNESS header when the Valen file has no legs table")
     s.add_argument("--refreshed-valen", dest="refreshed_valen", default=None, help="main's refreshed aqe_valen_dashboard.json: if newer than the committee copy the page says so")
     s.add_argument("--allow-legacy-text", dest="allow_legacy_text", action="store_true", help="accept the old `why` wall instead of the plain 3-part `reason` (re-rendering an old run only)")
+    s.add_argument("--mtf", default="mtf.json", help="mtf.json: the weekly / daily / hourly strip on each card and the momentum flag (absent = no claim)")
     s.add_argument("--out", required=True); s.set_defaults(fn=cmd_render)
     a = ap.parse_args(); a.fn(a)
 
