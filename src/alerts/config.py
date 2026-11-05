@@ -173,6 +173,7 @@ CONDITION_LANE_TRIGGERS = _b("CONDITION_LANE_TRIGGERS", True)
 BRIEF_LIST_ELDER_N = int(_f("BRIEF_LIST_ELDER_N", 15))
 BRIEF_LIST_AQE_N = int(_f("BRIEF_LIST_AQE_N", 20))
 BRIEF_LIST_LENS_N = int(_f("BRIEF_LIST_LENS_N", 15))
+BRIEF_LIST_SWING_N = int(_f("BRIEF_LIST_SWING_N", 20))      # PM 2026-11-05: the 4th brief list, momentum AT the pivot (export swing_pivot true)
 # WATCH is the committee's "not yet" bucket -- off unless the PM flips it.
 CONDITION_DEFAULTS_INCLUDE_WATCH = _b("CONDITION_DEFAULTS_INCLUDE_WATCH", False)
 CONDITION_DEFAULT_VOL_X = _f("CONDITION_DEFAULT_VOL_X", 1.0)

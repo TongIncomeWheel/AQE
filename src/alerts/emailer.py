@@ -1420,14 +1420,25 @@ _CLASS_LABEL = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD FOR CONDITION
                 "HELD": "HELD", "WATCH": "WATCH"}
 
 
+def _supp_tag(row: dict) -> str:
+    """' · supplemental committee pass: dropped by the committee (4 objections)' on a row from a same-date supplemental pass (PM 2026-11-05)."""
+    if not row.get("supplemental"):
+        return ""
+    tag = f" · {row.get('supplemental_label') or 'supplemental committee pass'}"
+    if str(row.get("committee_status") or "").upper() == "CONTESTED":
+        n = len(row.get("committee_objections") or [])
+        tag += f", contested ({n} objection{'s' if n != 1 else ''})"        # never readable as an agreed pick (conductor 2026-11-05)
+    return tag + (f": {row['committee_result']}" if row.get("committee_result") else "")
+
+
 def _who(row: dict) -> str:
     if row.get("deal_pinned"):
         return "Deal-pinned (pending takeover), no buy trigger"
     if row.get("aqe_list"):
-        return "AQE list, not a committee pick"
+        return "AQE list, not a committee pick" + _supp_tag(row)
     if row.get("aqe_default"):
-        return "AQE default criteria"
-    return f"Committee ({_CLASS_LABEL.get(row.get('class'), row.get('class') or 'book')})"
+        return "AQE default criteria" + _supp_tag(row)
+    return f"Committee ({_CLASS_LABEL.get(row.get('class'), row.get('class') or 'book')})" + _supp_tag(row)
 
 
 def _short_word(entry: dict) -> str:
@@ -1632,6 +1643,7 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
     else:
         head, color = _state_label(primary, row, eval_result, live)
         head += (" · AQE list, not a committee pick" if row.get("aqe_list") else " · AQE default criteria") if row.get("aqe_default") else ""
+        head += _supp_tag(row)
 
     lines = [_unr_status_line(unr, live, fired_states, eval_result)]
     if armed and "UNR_FAILED" not in fired_states:
@@ -1717,6 +1729,7 @@ def _build_full_card(ticker: str, row: dict, eval_result: dict,
         # Said on every such card: these are AQE's own default criteria
         # (condition_defaults.py), not committee words.
         headline += " · AQE list, not a committee pick" if row.get("aqe_list") else " · AQE default criteria"
+    headline += _supp_tag(row)
 
     lines: list[str] = []
     spot_line = _spot_line(row, live)

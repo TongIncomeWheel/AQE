@@ -530,6 +530,167 @@ def cmd_emit(a):
           + (f"; not yet structured (AQE skips): {' '.join(skipped)}" if skipped else ""))
 
 
+# ------------------------------------------------------------------------------ supplemental pass (PM 2026-11-05)
+# A supplemental committee pass (run 2026-11-05-r3) happens AFTER the live run, on the SAME date. emit cannot take it: apply_window is
+# "today wins, one row per ticker", so a second same-date emit would supersede or retire the live rows. merge-supplement adds the
+# pass ADDITIVELY and changes nothing that is already published.
+import re
+
+SUPP_LABEL = "supplemental committee pass"
+
+
+def parse_conditions_md(text):
+    """{ticker: {verdict, lane, buy:{word,level,seats}, confirm:[x...], wait:(lo,hi,members), chase_level, exits:[(value,[seats])]}} read from a run's
+    conditions.md. Copied, never composed: a number that is not in the text is not invented (None)."""
+    out = {}
+    for blk in re.split(r"(?m)^### ", text)[1:]:
+        m = re.match(r"([A-Z0-9.\-]+) · (ADVANCE|HOLD-FOR-CONDITIONS) · (\w+)", blk)
+        if not m:
+            continue
+        t, v, lane = m.groups()
+        d = {"verdict": v, "lane": lane, "buy": None, "confirm": [], "wait": None, "chase_level": None, "exits": []}
+        sb = re.search(r"\*\*Shared by the supporters:\*\* an hourly candle closes above (\w+) ([0-9.]+) \((\d+): ([^)]*)\)", blk)
+        if sb:
+            d["buy"] = {"ref": sb.group(1), "level": float(sb.group(2)), "n": int(sb.group(3)), "seats": [x.strip() for x in sb.group(4).split(",")]}
+        cf = re.search(r"\*\*Confirmed by:\*\* ([^\n]*)", blk)
+        if cf:
+            d["confirm"] = [float(x) for x in re.findall(r"volume at least ([0-9.]+)x normal", cf.group(1))]
+        wz = re.search(r"\*\*Wait-for area:\*\* ([0-9.]+)–([0-9.]+) \(([^)]*)\)", blk)
+        if wz:
+            d["wait"] = (float(wz.group(1)), float(wz.group(2)), [x.strip() for x in wz.group(3).split(",")])
+        ch = re.search(r"\*\*Too late past:\*\* closes above (\S+) ([0-9.]+)", blk)
+        if ch:
+            d["chase_level"] = (ch.group(1), float(ch.group(2)))
+        ex = re.search(r"\*\*Exit lines, highest first:\*\* ([^\n]*)", blk)
+        if ex:
+            d["exits"] = [(float(a), [x.strip() for x in b.split(",")]) for a, b in re.findall(r"([0-9.]+) \(([^)]*)\)", ex.group(1))]
+        out[t] = d
+    return out
+
+
+def _cut_reasons(summary_text):
+    """{ticker: reason} for names cut before the slate, from the supplement summary's 'Cut by ...' lines."""
+    out = {}
+    for m in re.finditer(r"Cut by ([a-z ]+?)(?: \(\d+\))?: ([^\n]*?)(?:\.\s|\.$|$)", summary_text or "", re.M):
+        for t in re.findall(r"[A-Z][A-Z0-9.\-]*", m.group(2)):
+            out[t] = m.group(1).strip()
+    return out
+
+
+def _supp_conditions(cd):
+    sh = {"buy": [], "confirm": [], "no_shared_buy": cd["buy"] is None, "wait_zone": None, "chase": None}
+    if cd["buy"]:
+        b = cd["buy"]
+        sh["buy"] = [{"w": "h1_close_above", "level": b["level"], "x": None, "seats": b["seats"],
+                      "plain": f"an hourly candle closes above {b['ref']} {b['level']:g}", "when": "1H"}]
+    for x in cd["confirm"]:
+        sh["confirm"].append({"w": "vol_x_ge", "level": None, "x": x, "seats": [],
+                              "plain": f"volume at least {x:g}x normal for the time of day", "when": "LIVE"})
+    if cd["wait"]:
+        sh["wait_zone"] = {"lo": cd["wait"][0], "hi": cd["wait"][1], "members": cd["wait"][2]}
+    if cd["chase_level"]:
+        ref, lv = cd["chase_level"]
+        sh["chase"] = {"word": f"close_above:{ref}", "w": "close_above", "when": "EOD", "levels": [lv], "x": None,
+                       "plain": f"closes above {ref} {lv:g}"}
+    return {"shared": sh,
+            "exits": [{"w": "close_below", "value": v, "seats": s, "plain": f"closes below {v:g}"} for v, s in cd["exits"]],
+            "analysts": []}                      # per-seat detail is in conditions.md; an empty list is never counted as lit
+
+
+def supplement_rows(cons, brackets, cond_md, export_rows, origin_run, cut_reasons=None):
+    """-> (advance_rows, watch_rows, notes). ADVANCE/HOLD rows need a parsed shared line; a verdict without one is refused, not guessed."""
+    adv, watch, notes = [], [], []
+    by = {c["ticker"]: c for c in cons}
+    for t, c in by.items():
+        v = c["verdict"]
+        cd = cond_md.get(t)
+        if v in ("ADVANCE", "HOLD-FOR-CONDITIONS") and cd:
+            cls = "ADVANCE" if v == "ADVANCE" else "HOLD_FOR_CONDITIONS"
+            conds = _supp_conditions(cd)
+            trig, i = [], 0
+            if cd["buy"]:
+                x = {"id": f"{t}-buy0", "kind": "close_above", "level": cd["buy"]["level"], "basis": "15m", "priority": "ACTION",
+                     "action": (f"{t}: an hourly candle closes above {cd['buy']['level']:g} ({cd['buy']['n']} analysts' shared buy line)"
+                                + (f" on volume at least {max(cd['confirm']):g}x normal" if cd["confirm"] else "") + ". Your decision.")}
+                if cd["confirm"]:
+                    x["volume_min_x"] = max(cd["confirm"])
+                trig += [x, {"id": f"{t}-touch", "kind": "trade_above", "level": cd["buy"]["level"], "basis": "15m", "priority": "WARN",
+                             "action": f"{t} traded through {cd['buy']['level']:g}: the buy line is in play, not met until an hourly close confirms."}]
+            if cd["exits"]:
+                top = cd["exits"][0][0]
+                trig.append({"id": f"{t}-dead", "kind": "close_below", "level": top, "basis": "daily", "priority": "WARN",
+                             "action": f"{t} closed under {top:g}, the highest exit line the supporters filed: the case is weakened."})
+            row = {"ticker": t, "class": cls, "lane": c.get("lane"), "conviction": c.get("ordering_score"), "held": bool(c.get("held")),
+                   "mark": None, "levels": _levels((brackets or {}).get(t)), "triggers": trig,
+                   "confirms": c.get("entry_trigger"), "kills": c.get("wrong_if"), "conditions": conds,
+                   "committee_status": c.get("status"),
+                   "committee_objections": [{"voice": o.get("voice"), "objection": o.get("objection"), "would_clear": o.get("would_clear")}
+                                            for o in c.get("objections") or []]}
+            adv.append(row)
+        elif v in ("ADVANCE", "HOLD-FOR-CONDITIONS"):
+            notes.append(f"{t}: {v} but conditions.md has no parseable shared line -- not loaded")
+        else:
+            st = c.get("status")
+            why = (f"dropped by the committee ({len(c.get('objections') or [])} objections)" if st == "DROPPED"
+                   else f"not slated: cut by {(cut_reasons or {}).get(t) or 'the earlier steps'}")
+            watch.append({"ticker": t, "class": "WATCH", "triggers": [], "brief_watch": True, "lane": c.get("lane"),
+                          "committee_status": st, "committee_result": why,
+                          "committee_objections": [{"voice": o.get("voice"), "objection": o.get("objection"), "would_clear": o.get("would_clear")}
+                                                   for o in c.get("objections") or []],
+                          "note": f"Supplemental pass {origin_run}: {why}. On the swing-pivot list; watched under AQE default criteria. Not a committee pick."})
+    return adv, watch, notes
+
+
+def merge_supplement(base, adv, watch, origin_run, label=SUPP_LABEL):
+    """Additive merge into the published doc. A ticker already published KEEPS its row untouched (its supplemental twin is recorded, not
+    applied, unless it adds a different shared buy line); every added row and trigger id is stamped with the supplemental origin."""
+    doc = json.loads(json.dumps(base))
+    have = {r["ticker"]: r for r in doc["rows"]}
+    added, kept = [], []
+    for r in adv + watch:
+        t = r["ticker"]
+        r = json.loads(json.dumps(r))
+        if t in have:
+            old = have[t]
+            ob = [g.get("level") for g in ((old.get("conditions") or {}).get("shared") or {}).get("buy") or []]
+            nb = [g.get("level") for g in ((r.get("conditions") or {}).get("shared") or {}).get("buy") or []]
+            kept.append({"ticker": t, "published_class": old.get("class"), "supplemental_class": r["class"],
+                         "same_shared_buy_line": sorted(ob) == sorted(nb) if nb else None})
+            continue
+        r.update(origin_run=origin_run, age_sessions=0, supplemental=True, supplemental_label=label)
+        for x in r["triggers"]:
+            if ":" not in x["id"]:
+                x["id"] = f"{origin_run}:{x['id']}"
+        doc["rows"].append(r)
+        added.append(t)
+    doc["counts"] = {**{k: sum(1 for r in doc["rows"] if r["class"] == k) for k in sorted(CLASSES)},
+                     "carried": (doc.get("counts") or {}).get("carried", 0)}
+    doc["supplement"] = {"origin_run": origin_run, "label": label, "added": added, "already_published_kept_as_is": kept,
+                         "rule": "additive: published rows, stops, trigger ids and market_kill are untouched; added rows are stamped "
+                                 "origin_run + supplemental and their trigger ids carry the origin"}
+    return doc
+
+
+def cmd_merge_supplement(a):
+    base = _load(a.base)
+    cons = _load(a.consensus)
+    br = _load(a.brackets, {}).get("brackets", {})
+    cond_md = parse_conditions_md(open(a.conditions_md).read())
+    summ = open(a.summary).read() if a.summary and os.path.exists(a.summary) else ""
+    adv, watch, notes = supplement_rows(cons, br, cond_md, None, a.origin_run, _cut_reasons(summ))
+    doc = merge_supplement(base, adv, watch, a.origin_run)
+    errs = validate(json.loads(json.dumps(doc)))
+    for n in notes:
+        print("NOTE:", n)
+    if errs:
+        print("REFUSED: pma_levels.json not written\n  - " + "\n  - ".join(errs))
+        sys.exit(2)
+    with open(a.out, "w") as f:
+        json.dump(doc, f, indent=1)
+    print(f"wrote {a.out}: +{len(doc['supplement']['added'])} supplemental rows {doc['supplement']['added']}; "
+          f"kept as published: {[k['ticker'] for k in doc['supplement']['already_published_kept_as_is']]}; counts {doc['counts']}")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -561,6 +722,11 @@ def main(argv=None):
                         "{symbol, word, level, plain, seats, origin_run}; null is declared with market_kill_note")
     e.add_argument("--out", default="pma_levels.json")
     e.set_defaults(fn=cmd_emit)
+    m = sub.add_parser("merge-supplement", help="add a SAME-DATE supplemental committee pass to the published file, additively (refuses on a broken contract)")
+    m.add_argument("--base", default="pma_levels.json"); m.add_argument("--consensus", required=True); m.add_argument("--brackets", required=True)
+    m.add_argument("--conditions-md", required=True); m.add_argument("--summary", default=None); m.add_argument("--origin-run", required=True)
+    m.add_argument("--out", default="pma_levels.json")
+    m.set_defaults(fn=cmd_merge_supplement)
     a = ap.parse_args(argv)
     a.fn(a)
 
