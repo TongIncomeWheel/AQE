@@ -260,3 +260,27 @@ def test_the_unr_table_command_builds_the_brief_table_from_the_export_and_is_wir
     runmap = (ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "RUN.yaml").read_text()
     assert "card_extras.py unr-table" in runmap and "produces: [brackets.json, repeat_marks.json, unr_table.md]" in runmap
     assert "unr_table.md" in (ROOT / "aegis" / "plugin" / "aegis-core" / "agents" / "brief-writer.md").read_text()
+
+
+def test_an_older_mtf_grid_without_swing_fields_says_so_instead_of_claiming_no_structure(run):
+    old = _mtf_doc(set())
+    for r in old["names"].values():
+        for tf in ("W", "D", "H1"):
+            if r.get("served") and isinstance(r.get(tf), dict):
+                r[tf].pop("swing_class", None); r[tf].pop("swing", None)
+        r.pop("momentum", None)
+    (run / "mtf.json").write_text(json.dumps(old))
+    t = text(render(run))
+    assert "swing structure not computed in this grid (older mtf.json)" in t
+    assert "show the momentum setup" not in t                       # no flag in an older grid = no count
+    assert "no clear swing structure" not in t
+
+
+def test_the_unr_table_covers_the_slate_and_the_book_not_every_name_the_room_looked_at(run):
+    tool = ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "card_extras.py"
+    out = run / "unr2.md"
+    r = subprocess.run([sys.executable, str(tool), "unr-table", "--export", str(run / "aqe_daily_export.json"), "--consensus", str(run / "consensus.json"), "--out", str(out)],
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    md = out.read_text()
+    assert "| ROKU |" in md and "| OHI |" not in md and "NOT_SLATED" not in md

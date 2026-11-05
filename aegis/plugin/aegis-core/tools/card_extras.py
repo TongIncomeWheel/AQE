@@ -37,7 +37,7 @@ def frame_plain(tf, f):
     name = FRAME_NAME[tf]
     if not isinstance(f, dict) or not f.get("served"):
         return f"{name}: not served"
-    parts = [swing_plain(f.get("swing_class"))]
+    parts = [swing_plain(f.get("swing_class")) if "swing_class" in f else "swing structure not computed in this grid (older mtf.json)"]
     parts.append({"9>21": "fast average above slow", "9<21": "fast average below slow", "9=21": "fast and slow averages level"}.get(f.get("ema_order"), "averages not read"))
     d = (f.get("swing") or {}).get("close_vs_swing_high_pct")
     if d is not None:
@@ -143,6 +143,8 @@ def cmd_unr_table(a):
     try:
         cons = json.load(open(a.consensus))
         for c in cons:
+            if c.get("status") == "NOT_SLATED":
+                continue                     # the table is for the slate (and the book), not for every name the room looked at
             lab = f"{c.get('verdict')}" + (f" ({c.get('status')})" if c.get("status") else "")
             order.append((c["ticker"], lab))
     except (OSError, ValueError) as e:
