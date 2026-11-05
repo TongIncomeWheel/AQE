@@ -1935,8 +1935,10 @@ def test_reports_b_and_c_run_as_their_own_non_live_runs(td):
     check("it declares what it reuses from report A and what it does not rerun", "weather" in str((m.get("reuse_from_report_a") or {}).get("does_not_rerun")))
     r = reg(["--manifest", man + "x", "init", "--date", "2026-11-06", "--report", "C"], None)
     check("--report C without AEGIS_REPORT=C is refused (the roster would be wrong)", r.returncode == 2 and "AEGIS_REPORT" in r.stderr, r.stderr)
+    r = reg(["--manifest", man, "status"], "A")
+    check("reading a C manifest under an explicit A roster is refused loudly", r.returncode != 0 and "REFUSED" in (r.stderr + r.stdout), r.stdout + r.stderr)
     r = reg(["--manifest", man, "status"], None)
-    check("reading a C manifest under the A roster is refused loudly", r.returncode != 0 and "REFUSED" in (r.stderr + r.stdout), r.stdout + r.stderr)
+    check("with no setting the manifest decides: a C manifest reads as report C", r.returncode == 0, r.stdout + r.stderr)
     r = reg(["--manifest", man, "status"], "C")
     check("and read normally under C", r.returncode == 0, r.stdout + r.stderr)
     r = reg(["--manifest", man + "b", "init", "--date", "2026-11-06", "--report", "B"], "B")
@@ -2044,6 +2046,33 @@ def test_report_b_and_c_cards_are_the_compact_page_with_no_levels(td):
     res = ck.check_cards_html(f)
     fails = res[0] if isinstance(res, tuple) else res
     check("it passes the plain-words gate", not fails, str(fails)[:300])
+
+
+def test_a_bare_command_takes_its_report_from_the_run_manifest(td):
+    """Conductor dry run 2026-11-05: a seat that runs a printed validate command WITHOUT AEGIS_REPORT must still get the Report C roster. The
+    environment wins; otherwise the run's own manifest says `report`. The nomination schema also accepts the aqe-quant canon ids (A1-A10)."""
+    d = os.path.join(td, "bare_c"); os.makedirs(d, exist_ok=True)
+    json.dump({"run_id": "pma-2026-11-06-C", "date": "2026-11-06", "report": "C", "steps": {}, "seats": {}, "degradations": [], "flags": [],
+               "rerun": {"suffix": "C", "of": "pma-2026-11-06", "run_dir": "aegis/output/pma/run/2026-11-06-C", "publishes_live": False}},
+              open(os.path.join(d, "run_manifest.json"), "w"))
+    env = dict(os.environ); env.pop("AEGIS_REPORT", None)
+    names = ["AAA"]
+    cs = os.path.join(d, "cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
+    b = _r1_ballot("aqe-quant", "2026-11-06", names); b["nominations"][0]["fields_cited"] = ["structure", "subcomponents.flow.cmf"]
+    b["nominations"][0]["checklist_trace"][0]["canon_ref"] = ["A3"]
+    f = os.path.join(d, "ballot.json"); open(f, "w").write(json.dumps(b))
+    r = subprocess.run([sys.executable, REG, "validate", "--file", f, "--round", "1", "--candidates", cs], capture_output=True, text=True, env=env, cwd=d)
+    check("bare validate in a report C run dir accepts the aqe-quant seat", r.returncode == 0 and "not a decider" not in r.stdout + r.stderr, (r.stdout + r.stderr)[-300:])
+    d2 = os.path.join(td, "bare_a"); os.makedirs(d2, exist_ok=True)
+    f2, cs2 = os.path.join(d2, "ballot.json"), os.path.join(d2, "cs.json")
+    shutil.copy(f, f2); shutil.copy(cs, cs2)
+    r = subprocess.run([sys.executable, REG, "validate", "--file", f2, "--round", "1", "--candidates", cs2], capture_output=True, text=True, env=env, cwd=d2)
+    check("with no manifest the same command is Report A and refuses the eighth seat", r.returncode != 0 and "not a decider" in r.stdout + r.stderr, (r.stdout + r.stderr)[-300:])
+    sch = json.load(open(os.path.join(HERE, "..", "..", "..", "contracts", "nomination.schema.json")))
+    pat = json.dumps(sch)
+    import re as _re
+    m = _re.search(r'"pattern": "(\^\(\[CA\][^"]*)"', pat.replace("\\\\", "\\"))
+    check("the nomination schema accepts canon ids A1-A10 as well as C1-C24", "[CA][0-9]{1,2}" in pat, pat[:200])
 
 
 def test_shortlist_cap_is_six(td):
@@ -4220,7 +4249,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

@@ -649,7 +649,7 @@ def cmd_lock(a):
         for f in ("id", "text", "status"):
             if f not in p:
                 die(f"principle {p.get('id','?')} missing '{f}'")
-        if not re.fullmatch(r"C[0-9]{1,2}", p["id"]):
+        if not re.fullmatch(r"[CA][0-9]{1,2}", p["id"]):
             die(f"principle id '{p['id']}' must match C1..C99 — the voice cites these ids in checklist_trace")
         if p["id"] in seen:
             die(f"duplicate principle id {p['id']}")
