@@ -1,0 +1,406 @@
+{
+ "date": "2026-11-05",
+ "chair": "chair",
+ "board_sha256": "476f50d8dc95823e3d23c03c32c098d192a6abfee63ee3620458c054d39e4637",
+ "tickets": [
+  {
+   "ticker": "KO",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 7,
+    "wait": 0,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 2.01, structure 81.1 BULLISH_BOS at from_52w_hi -0.03% (new high, C7), day_vol 1.61 clears 1.40 (C16)\" | minervini: \"Template pass: entry 95.8 > ma20 92.5 > ma50 89.7 > ma100 87.19 > ma200 82.5, from_52w_hi -0.03, rs_rank_pct 76.39 (low end of leadership)\"",
+   "dissent": [],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "ABBV",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy when a 1-hour candle closes above yesterday's high, the breakout continuing on volume.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when a 1-hour candle closes above yesterday's high, the breakout continuing on volume."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 6,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Closest to the book: rs LEADER downday 1.21, leadership/resistance/structure/sector lenses strong, coil ok\" | minervini: \"Template pass on served fields: entry 294.83 > ma20 284.93 > ma50 270.78 > ma100 260.16 > ma200 238.22, from_52w_hi -0.02, rs_rank_pct 88.92\"",
+   "dissent": [
+    {
+     "voice": "elder-lens",
+     "why": "elder_5d [9, 10, 7, 2, 7]: ban lifted on the last bar (C3), but elder_pattern INTERRUPTED (trend leg failed, C9) and mp_state FADING, R8 unmet. W 9>21 permits (C21). A fragment until a second not-red bar"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "CAH",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 6,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"The best base read in the room: coil strong, leadership/structure/resistance/sector lenses strong\" | minervini: \"Template pass: entry 261.93 > ma20 249.81 > ma50 239.16 > ma100 235.68 > ma200 222.82, from_52w_hi 0.0, rs_rank_pct 86.51\"",
+   "dissent": [
+    {
+     "voice": "elder-lens",
+     "why": "elder_5d [2, 3, 7, 4, 10]: ban lifted on the last bar (C3), but elder_pattern INTERRUPTED (C9) and mp_state FADING, R8 unmet. W 9>21 permits (C21). Choppy; needs confirmation"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "GLBE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 6,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, structure 86.3 ABOVE_STRUCTURE at from_52w_hi 0.0% (new high, C7), day_vol 1.54 clears 1.40 (C16), sector lens strong\" | minervini: \"Template pass: entry 44.93 > ma20 41.04 > ma50 39.65 > ma100 38.75 > ma200 35.72, from_52w_hi 0.0, rs_rank_pct 89.16\"",
+   "dissent": [
+    {
+     "voice": "wyckoff",
+     "why": "TREND, W HH/HL, H1 pos_in_day_range_pct 99.6; but ABOVE_STRUCTURE, ext_atr20 2.15, Creek distance unseen. HOLD-FOR-CONDITIONS (R2): the test sets the entry"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "MFC",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 6,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 0.86, structure 86.3 BULLISH_BOS at from_52w_hi 0.0% (new high, C7), day_vol 1.63 clears 1.40 (C16)\" | minervini: \"Template pass on served fields: entry 45.99 > ma20 44.27 > ma50 43.73 > ma100 43.15 > ma200 40.1, from_52w_hi 0.0, rs_rank_pct 70.36 (at my floor)\"",
+   "dissent": [
+    {
+     "voice": "elder-lens",
+     "why": "elder_5d [6, 6, 6, 5, 9]: ban lifted on the last bar (C3), but elder_pattern INTERRUPTED (C9) and mp_state BUILDING, R8 unmet. W 9>21 permits (C21). Needs a second not-red bar"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "CCEP",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 1.96, structure 84.2 BULLISH_BOS, coil ok, leadership/resistance/sector lenses strong, from_52w_hi 0.0%\" | minervini: \"Template pass: entry 115.84 > ma20 110.49 > ma50 106.35 > ma100 105.83 > ma200 101.02, from_52w_hi 0.0, rs_rank_pct 77.11\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Second beverage name to KO; volume only at the 1.40 floor (C9 sympathy risk). Grid: D dist_to_20bar_high_pct 0.92, H1 at 54.7% of range, last H1 bar red. Wait for volume at the breakout to prove it leads"
+    },
+    {
+     "voice": "minervini",
+     "why": "Template pass, rs_spy_20d 16.19 ahead of KO; but H1 last_bar red at pos_in_day_range_pct 54.7 shows no follow-through yet (C6). Wait for the conviction bar. Same beverage bet as KO"
+    },
+    {
+     "voice": "wyckoff",
+     "why": "BULLISH_BOS at the Creek but H1 pos_in_day_range_pct 54.7 and H1 last_bar red: a mid-bar close, supply met the break (C12 not met). Wait for the sign-of-strength bar"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:minervini",
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "BBY",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"Daily close back below pivot_high, or a pullback on rising volume (C6)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template pass: entry 101.36 > ma20 94.3 > ma50 91.02 > ma100 86.77 > ma200 75.68, from_52w_hi 0.0, rs_rank_pct 96.14\" | livermore: \"Textbook C5/C16: new high (from_52w_hi 0.0%), structure 80.0 BULLISH_BOS, mp 75.0 STRONG/ACCELERATING, full rising stack, day_vol 1.31\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "R4: day_vol 1.31 is under 1.40 - a breakout under +40% volume is a hard rejection, not a weaker buy (C16). div BEARISH/2 adds a distribution caution at from_52w_hi 0.0% (C25)"
+    }
+   ],
+   "sources": [
+    "r2:minervini",
+    "r2:livermore",
+    "tier2:minervini",
+    "r2:oneil"
+   ]
+  },
+  {
+   "ticker": "DG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: an hourly close above yesterday's high, follow-through on the break bar (C12).",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: an hourly close above yesterday's high, follow-through on the break bar (C12)."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"L: rs LEADER downday 1.94, sector lens strong\" | livermore: \"C5 eligible: structure 80.0 BULLISH_BOS, 0.2% under 20-day high, mp 87.0 STRONG/ACCELERATING, day_vol 1.68\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Trend Template not confirmed at the long end: ma100 123.87 sits under ma200 125.57 (ma100 is my declared stand-in for the unserved 150-day), so criteria 2-3 fail on the proxy"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil",
+    "r2:minervini"
+   ]
+  },
+  {
+   "ticker": "BALL",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 5,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 2.1, structure 84.2 BULLISH_BOS, day_vol 1.6 clears 1.40 (C16), from_52w_hi -1.01%\" | livermore: \"Near its high (from_52w_hi -1.01%), structure 84.2 BULLISH_BOS, weekly HH/HL, day_vol 1.6\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Template fails: rs_rank_pct 68.25 is under my RS floor (criterion 8 on the declared proxy), and the stack is flat - ma50 61.27 under ma100 61.75, ma200 61.06 - so criterion 4 is not met. A break over 66.12 from a flat stack is a base resolving, not a confirmed stage 2 (C2)"
+    },
+    {
+     "voice": "oneil",
+     "why": "Leader, BOS, volume cleared 1.40, but C12's prior +30% uptrend is not shown and base is unconfirmed. Grid: W HH/HL, D dist_to_20bar_high_pct 1.07, H1 at 97.4%. Wait for the high to be retaken on volume"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil",
+    "r2:minervini"
+   ]
+  },
+  {
+   "ticker": "USFD",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 1.23, leadership/resistance/sector lenses strong, coil ok, structure 72.6 ABOVE_STRUCTURE at from_52w_hi -0.91%\" | livermore: \"Near its high (from_52w_hi -0.91%), structure 72.6 ABOVE_STRUCTURE, mp 77.0 STRONG/ACCELERATING, price above every average, day_vol 2.41\"",
+   "dissent": [
+    {
+     "voice": "livermore",
+     "why": "Uptrend on all frames (9>21) but D dist_to_20bar_high_pct 1.58 with mixed swings: the new high is not printed yet, and I never buy the pullback (C5)"
+    },
+    {
+     "voice": "wyckoff",
+     "why": "TREND away from value: ABOVE_STRUCTURE, ext_atr20 2.55; D close 109.93 vs ema9 104.0346, dist_to_20bar_high_pct 1.58. Do not chase (R2, C3, C15); join at the test"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil",
+    "tier2:livermore",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "KDP",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for an hourly close above the last pivot high, ending the hourly reaction.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above the last pivot high, ending the hourly reaction."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER downday 2.09, structure 74.7 ABOVE_STRUCTURE at from_52w_hi -0.08%, day_vol 1.75 clears 1.40 (C16), averages stacked up (ma50 32.68 over ma200 30.12)\" | livermore: \"At its high (from_52w_hi -0.08%), weekly HH/HL, structure 74.7 ABOVE_STRUCTURE, full rising stack, day_vol 1.75, mp 97.0 (flat-at-high, R13)\"",
+   "dissent": [],
+   "sources": [
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil"
+   ]
+  },
+  {
+   "ticker": "WCN",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "timing_count": {
+    "support": 4,
+    "act_now": 3,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 3
+   },
+   "wrong_if": "oneil: \"Close under ma_50 on heavy volume (R8), or 8% below cost (C20)\"",
+   "horizon_sessions": 30,
+   "why_agreed": "oneil: \"rs LEADER downday 2.62, structure 89.5 ABOVE_STRUCTURE at from_52w_hi 0.0% (new high, C7), day_vol 2.11 decisive (C16), sector lens strong\" | livermore: \"New high (from_52w_hi 0.0%), weekly, daily and hourly HH/HL, structure 89.5 ABOVE_STRUCTURE, mp 100.0 STRONG, day_vol 2.11\"",
+   "dissent": [
+    {
+     "voice": "wyckoff",
+     "why": "Imbalance up on every frame (W, D, H1 HH/HL) but ABOVE_STRUCTURE, ext_atr20 4.14: D close 191.81 vs ema21 175.8941. Far from value; no chase (R2, C15)"
+    }
+   ],
+   "sources": [
+    "r2:oneil",
+    "r2:livermore",
+    "tier2:oneil",
+    "tier2:wyckoff"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ]
+ }
+}
