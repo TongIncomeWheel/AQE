@@ -1,0 +1,112 @@
+{
+ "voice": "seow",
+ "date": "2026-11-05",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HRB",
+   "reason": "Position system fired: fresh break of resistance (structure_shift BULLISH_BOS, pct_from_pivot 1.33) with fund flow (cmf 0.37, elder_pattern ACCELERATION), rs_rank_pct 97.59, sector LEADING. No swing set-up (cci_20 187.87). Buy stop over bar_high 55.49; support 42.96.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "rs_rank_pct", "ret_63d", "sector_rrg_quadrant", "bar_high", "base_low_20d", "fib_swing_low", "cci_20", "elder_context.volume.avg_vol_20d"],
+   "conviction": 5,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 1756690, entry 55.47", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 20.72 vs index_pct_change_63d -0.23; rs_rank_pct 97.59; sector_rrg_quadrant LEADING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift BULLISH_BOS, structure_shift_ref 54.74, pct_from_pivot 1.33", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.37, elder_pattern ACCELERATION, elder_5d [6, 10, 10, 10, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "bar_high 55.49; fib_swing_low 38.89, base_low_20d 42.96 -> support 42.96; bar_close 55.47 > bar_open 53.49", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close"]}
+   ],
+   "falsifier": "A close below the support line 42.96 (max of fib_swing_low 38.89, base_low_20d 42.96), or elder_pattern leaving ACCELERATION/SUSTAINED; a close back under structure_shift_ref 54.74 voids the fresh break."
+  },
+  {
+   "ticker": "HOG",
+   "reason": "Position system fired: price above structure (structure_shift ABOVE_STRUCTURE, pct_from_pivot 19.85) on strong fund flow (cmf 0.58, elder_pattern SUSTAINED), ret_63d 34.59, rs_rank_pct 89.88, sector LEADING. Extension is not a fault here. Buy stop over bar_high 34.71; support 26.48.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "ret_63d", "rs_rank_pct", "sector_rrg_quadrant", "bar_high", "fib_swing_low", "base_low_20d", "sma_distance_pct"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2369854, entry 34.59", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 34.59 vs index_pct_change_63d -0.23; rs_rank_pct 89.88; sector_rrg_quadrant LEADING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift ABOVE_STRUCTURE, pivot_high 28.86, pct_from_pivot 19.85", "verdict": "pass", "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.58, elder_pattern SUSTAINED, elder_5d [10, 10, 10, 10, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "bar_high 34.71; fib_swing_low 26.48, base_low_20d 26.48 -> support 26.48; bar_close 34.59 > bar_open 34.0; sma_distance_pct 25.56", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close", "sma_distance_pct"]}
+   ],
+   "falsifier": "A close below the support line 26.48, or elder_pattern leaving SUSTAINED, or a red bar (bar_close < bar_open) after this up-run with the sell placed next session under that bar's low."
+  },
+  {
+   "ticker": "ABT",
+   "reason": "Position system fired: above structure (structure_shift ABOVE_STRUCTURE, pct_from_pivot 8.61) with strong fund flow (cmf 0.51, elder_pattern SUSTAINED), rs_rank_pct 84.7, ret_63d 6.99, sector LEADING, deep liquidity. Buy stop over bar_high 116.22; support 97.2.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "rs_rank_pct", "ret_63d", "sector_rrg_quadrant", "bar_high", "fib_swing_low", "base_low_20d", "elder_context.volume.avg_vol_20d"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 9816381, entry 115.51", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 6.99 vs index_pct_change_63d -0.23; rs_rank_pct 84.7; sector_rrg_quadrant LEADING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift ABOVE_STRUCTURE, pivot_high 106.35, pct_from_pivot 8.61", "verdict": "pass", "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.51, subcomponents.flow.mfi 86.42, elder_pattern SUSTAINED, elder_5d [9, 9, 10, 10, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "subcomponents.flow.mfi", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "bar_high 116.22; fib_swing_low 87.64, base_low_20d 97.2 -> support 97.2; bar_close 115.51 > bar_open 112.65", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close"]}
+   ],
+   "falsifier": "A close below the support line 97.2, or elder_pattern leaving SUSTAINED; a close back under pivot_high 106.35 means the break failed."
+  },
+  {
+   "ticker": "TGT",
+   "reason": "Position system fired: above structure (structure_shift ABOVE_STRUCTURE, pct_from_pivot 2.22, close to the break) with fund flow (cmf 0.24, elder_pattern ACCELERATION), ret_63d 10.89, rs_rank_pct 79.76, sector LEADING. Buy stop over bar_high 163.37; support 146.21.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "ret_63d", "rs_rank_pct", "sector_rrg_quadrant", "bar_high", "fib_swing_low", "base_low_20d", "bracket.stop"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 3892416, entry 163.1", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 10.89 vs index_pct_change_63d -0.23; rs_rank_pct 79.76; sector_rrg_quadrant LEADING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift ABOVE_STRUCTURE, pivot_high 159.56, pct_from_pivot 2.22", "verdict": "pass", "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.24, elder_pattern ACCELERATION, elder_5d [3, 5, 9, 9, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "bar_high 163.37; fib_swing_low 146.21, base_low_20d 145.32 -> support 146.21; bracket.stop 156.69; bar_close 163.1 > bar_open 158.0", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bracket.stop", "bar_open", "bar_close"]}
+   ],
+   "falsifier": "A close below the support line 146.21, or elder_pattern leaving ACCELERATION/SUSTAINED; a close back under pivot_high 159.56 fails the break."
+  },
+  {
+   "ticker": "PRU",
+   "reason": "Position system fired: above structure (structure_shift ABOVE_STRUCTURE, pct_from_pivot 7.13) with fund flow (cmf 0.26, elder_pattern ACCELERATION), rs_rank_pct 80.48, sector LEADING; ret_63d 4.22 beats the index but is modest. Buy stop over bar_high 127.79; support 111.04.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "rs_rank_pct", "ret_63d", "sector_rrg_quadrant", "bar_high", "fib_swing_low", "base_low_20d"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 1856842, entry 126.63", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 4.22 vs index_pct_change_63d -0.23; rs_rank_pct 80.48; sector_rrg_quadrant LEADING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift ABOVE_STRUCTURE, pivot_high 118.2, pct_from_pivot 7.13", "verdict": "pass", "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.26, elder_pattern ACCELERATION, elder_5d [8, 6, 9, 9, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "bar_high 127.79; fib_swing_low 110.61, base_low_20d 111.04 -> support 111.04; bar_close 126.63 > bar_open 123.0", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close"]}
+   ],
+   "falsifier": "A close below the support line 111.04, or elder_pattern leaving ACCELERATION/SUSTAINED; a close back under pivot_high 118.2 fails the break."
+  },
+  {
+   "ticker": "VLTO",
+   "reason": "Position system fired: above structure (structure_shift ABOVE_STRUCTURE, pct_from_pivot 19.92) with fund flow (cmf 0.33, elder_pattern ACCELERATION), ret_63d 19.38, rs_rank_pct 85.3, sector IMPROVING. Caution: last bar red (bar_close 117.02 < bar_open 118.19). Buy stop over bar_high 118.41.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "subcomponents.flow.cmf", "elder_pattern", "ret_63d", "rs_rank_pct", "sector_rrg_quadrant", "bar_open", "bar_close", "bar_high", "base_low_20d"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2043479, entry 117.02", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C6", "C23", "C24"], "observed": "ret_63d 19.38 vs index_pct_change_63d -0.23; rs_rank_pct 85.3; sector_rrg_quadrant IMPROVING", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift ABOVE_STRUCTURE, pivot_high 97.58, pct_from_pivot 19.92", "verdict": "pass", "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.33, elder_pattern ACCELERATION, elder_5d [6, 10, 10, 10, 10]", "verdict": "pass", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29"], "observed": "bar_high 118.41; fib_swing_low 93.55, base_low_20d 94.18 -> support 94.18; bar_close 117.02 < bar_open 118.19 (red bar)", "verdict": "partial", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close"]}
+   ],
+   "falsifier": "The buy stop over bar_high 118.41 not taken while the next bar also closes red, or a close below the support line 94.18, or elder_pattern leaving ACCELERATION/SUSTAINED."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "TIGHTEN", "line": "Above structure (structure_shift ABOVE_STRUCTURE), bar_close 436.57 well over support 394.0 (fib_swing_low 394.0, base_low_20d 370.37), but TIF proxy is elder_pattern CORRECTION_REENTRY and cmf is null; trail the sell under bar_low 423.28 (C14)."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "No MP row in my packet, so I cannot walk the checklist; I see no sanctioned exit signal (close below support or red candle) and record the missing row as a data gap rather than invent a read."}
+ ],
+ "data_gaps": [
+  {"field": "MP (entire packet row)", "impact": "Held name MP has no row in packets/seow.tsv; the support line, candle colour and fund-flow proxies could not be read, so the held review is unverified."},
+  {"field": "subcomponents.flow.cmf", "impact": "Null on held V and on several position-system candidates (e.g. IBN, GM, NDAQ); the fund-flow (COM proxy) step could not be confirmed for them, and those names were not nominated on a partial walk."}
+ ],
+ "declarations": [
+  "Position-system objects (resistance line, arrows, COM, TIF, candle colour) are read through the declared proxies on my card: structure_shift/pct_from_pivot, sector_rrg_quadrant, max(fib_swing_low, base_low_20d), subcomponents.flow.cmf, elder_pattern/elder_5d, bar_close vs bar_open.",
+  "Swing system walked across the packet: no row carried cci_20 below -100 with all five set-up conditions on one bar, so no swing nomination.",
+  "No ledger memory block was supplied in this run; no standing lesson applied.",
+  "R1: bracket fields were read as context only and did not decide any nomination or conviction."
+ ],
+ "shortfall_reason": null
+}

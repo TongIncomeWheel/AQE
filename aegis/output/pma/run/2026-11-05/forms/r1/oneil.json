@@ -1,0 +1,80 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-05",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "SIRI",
+   "reason": "Group leader (rank 1, XLC, Recovering sector), structure 100 above structure, breakout volume day_vol 2.25 clears the 1.40 test; base tightness unconfirmed (lens.coil warn), pivot distance unserved, sma_distance_pct 20.65 says late. Valid only into a confirmed uptrend (DELEGATED).",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "lens", "day_vol", "sector_trend_state", "sma_distance_pct", "ma_50", "ma_200", "bracket.price", "bracket.valid", "bracket.atr_fallback_stop", "rs_down_day_20d"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership LEADER, rank 1, gics_sector XLC, rs_down_day_20d 1.84; rs_spy_20d 30.05 reported only (20d, wrong horizon)", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_down_day_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18"], "observed": "base_measure structure composite (substitute): structure 100, structure_shift ABOVE_STRUCTURE, lens coil warn, lens structure ok, resistance ok; C19 stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "volume_measure day_vol vs 20d (substitute): day_vol 2.25, at/above 1.40; handle dry-up (C15) not served", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot distance UNSERVED on my menu; sma_distance_pct 20.65 (context, extended); bracket.price 33.4 vs ma_200 26.39 well under the 70% climax line", "verdict": "partial", "fields": ["sma_distance_pct", "bracket.price", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False (information only, R1); bracket.atr_fallback_stop 32.5; my line is a 7-8% stop below cost; eight-week rule flagged; no adds past +5% over pivot", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "bracket.price"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "sector_trend_state Recovering From Weakness, lens sector ok (not a Lone Ranger read); div_state NONE; bracket.price 33.4 well above ma_50 27.68", "verdict": "pass", "fields": ["sector_trend_state", "lens", "div_state", "ma_50"]},
+    {"step": 7, "canon_ref": ["C23", "C4", "C6", "C8", "C11"], "observed": "declared: fundamentals NOT_AVAILABLE (C, A, S, I), base_stage NOT_AVAILABLE, market_gate DELEGATED; ranked 1 of 3 on leadership", "verdict": "partial", "fields": ["sc_momentum", "structure"]}
+   ],
+   "falsifier": "A close back below ma_50 27.68 on heavy volume, or a loss of 7-8% from cost (C20), or the index under distribution (market gate void). Engine stop absent: bracket.valid False, bracket.atr_fallback_stop 32.5 for the PM's bracketing step."
+  },
+  {
+   "ticker": "BSY",
+   "reason": "Top-ranked name in its group (rank 4, XLK, Recovering sector, lens sector strong), structure 96.8 above structure, breakout volume day_vol 2.07 clears 1.40; coil ok not strong, pivot distance unserved, sma_distance_pct 23.59 extended. Valid only into a confirmed uptrend (DELEGATED).",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "lens", "day_vol", "sector_trend_state", "sma_distance_pct", "ma_50", "ma_200", "bracket.price", "bracket.valid", "bracket.atr_fallback_stop", "rs_down_day_20d"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership LEADER, rank 4 (best XLK rank in packet), gics_sector XLK, rs_down_day_20d 1.49; rs_spy_20d 25.49 reported only", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_down_day_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18"], "observed": "base_measure structure composite (substitute): structure 96.8, structure_shift ABOVE_STRUCTURE, lens coil ok, structure ok, resistance strong; C19 stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "volume_measure day_vol vs 20d (substitute): day_vol 2.07, at/above 1.40; C15 dry-up not served", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot distance UNSERVED on my menu; sma_distance_pct 23.59 (context, extended); bracket.price 43.64 vs ma_200 34.4 under the 70% climax line", "verdict": "partial", "fields": ["sma_distance_pct", "bracket.price", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False (information only, R1); bracket.atr_fallback_stop 42.27; my line is a 7-8% stop below cost; eight-week rule flagged", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "bracket.price"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "sector_trend_state Recovering From Weakness, lens sector strong (group confirms); div_state NONE; bracket.price 43.64 above ma_50 35.31", "verdict": "pass", "fields": ["sector_trend_state", "lens", "div_state", "ma_50"]},
+    {"step": 7, "canon_ref": ["C23", "C4", "C6", "C8", "C11"], "observed": "declared: fundamentals NOT_AVAILABLE (C, A, S, I), base_stage NOT_AVAILABLE, market_gate DELEGATED; ranked 2 of 3", "verdict": "partial", "fields": ["sc_momentum", "structure"]}
+   ],
+   "falsifier": "A close below ma_50 35.31 on heavy volume, a 7-8% loss from cost (C20), or index distribution voiding the market gate. Engine stop absent: bracket.valid False, bracket.atr_fallback_stop 42.27 for the PM's bracketing step."
+  },
+  {
+   "ticker": "BILL",
+   "reason": "Third of the XLK top three (rank 20), structure 96.8 above structure, day_vol 1.77 clears 1.40, least extended of my three (sma_distance_pct 10.03), group confirms (lens sector strong); div_state BEARISH warns buying may be thinning. Valid only into a confirmed uptrend (DELEGATED).",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "lens", "day_vol", "sector_trend_state", "sma_distance_pct", "ma_50", "ma_200", "bracket.price", "bracket.valid", "bracket.atr_fallback_stop", "div_state", "div_bear_count"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership LEADER, rank 20 (third XLK rank in packet after BSY, GEN), rs_down_day_20d 1.2; rs_spy_20d 19.23 reported only", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_down_day_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18"], "observed": "base_measure structure composite (substitute): structure 96.8, structure_shift ABOVE_STRUCTURE, lens coil ok, resistance strong; C19 stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "volume_measure day_vol vs 20d (substitute): day_vol 1.77, at/above 1.40", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot distance UNSERVED on my menu; sma_distance_pct 10.03 (context); bracket.price 51.87 vs ma_200 42.59 under the 70% climax line", "verdict": "partial", "fields": ["sma_distance_pct", "bracket.price", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False (information only, R1); bracket.atr_fallback_stop 49.99; my line is a 7-8% stop below cost; eight-week rule flagged", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "bracket.price"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "sector_trend_state Recovering From Weakness, lens sector strong; div_state BEARISH, div_bear_count 1 (distribution caution)", "verdict": "partial", "fields": ["sector_trend_state", "lens", "div_state", "div_bear_count"]},
+    {"step": 7, "canon_ref": ["C23", "C4", "C6", "C8", "C11"], "observed": "declared: fundamentals NOT_AVAILABLE (C, A, S, I), base_stage NOT_AVAILABLE, market_gate DELEGATED; ranked 3 of 3", "verdict": "partial", "fields": ["sc_momentum", "structure"]}
+   ],
+   "falsifier": "A close below ma_50 47.14 on heavy volume, a 7-8% loss from cost (C20), more oscillators joining the bearish divergence, or index distribution. Engine stop absent: bracket.valid False, bracket.atr_fallback_stop 49.99 for the PM's bracketing step."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "KEEP", "line": "10-week line intact: bracket.price 436.57 above ma_50 384.21, day_vol 1.48 on an up read, rs_leadership LEADER, structure_shift ABOVE_STRUCTURE; no R8 sell. Sector Momentum Fading, so no add (C21); 7-8% cost stop (C20) stands."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "No row for MP in my packet, so no sell test (R8 ma_50, C25 distribution) could be run or fire; declared as a data gap, not a judgment. Hold under the standing 7-8% cost stop (C20) until the row is served."}
+ ],
+ "data_gaps": [
+  {"field": "MP (held row)", "impact": "Held name MP is absent from the packet; its 10-week-line and distribution sell tests could not be run."},
+  {"field": "bq.bq_base_dur", "impact": "Base duration absent; the C12 7-8 week base length cannot be checked even by substitute."},
+  {"field": "bq.bq_range_tight", "impact": "Base tightness absent; only lens.coil remains as a tightness substitute."},
+  {"field": "rvol", "impact": "Absent; day_vol alone carries the R4 volume test."}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE - C (C4, C5), A (C6), S (C8), I (C11) not tested; never inferred from price or volume",
+  "base_stage: NOT_AVAILABLE - C19 cannot be enforced",
+  "market_gate: DELEGATED - every nomination valid only into a confirmed uptrend; void if the index is under distribution (C1, C2, C3)",
+  "rs_measure: rs_leadership (substitute - no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure: structure composite (substitute)",
+  "pivot: pivot distance not on my menu (R5 field note) - stated UNSERVED, sma_distance_pct used as context only",
+  "ledger memory: none injected this run; no standing lesson applies",
+  "shortlist note: most leaders with day_vol at/above 1.40 sit in sectors reading Momentum Fading - Hold, Don't Add, or lack a lens coil read; per C23 I concentrate on the Recovering-group leaders only"
+ ],
+ "shortfall_reason": "Three names, not six: my checklist requires the group's top-3 leader, a measurable base read, volume at/above 1.40 and a confirming group; most other leaders sit in Momentum Fading sectors (Lone Ranger risk, C25) or have no lens coil read (no base, R3). Padding would breach C23."
+}

@@ -1,0 +1,114 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-05",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "CCL",
+   "reason": "Leader in a two-name cruise group (Key Price pair with NCLH): structure 100.0, structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG). Extended, sma_distance_pct 24.73, so danger signal is set before entry. rank 5.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "rank", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 100.0; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 24.73 (extended from 50-day, not a proximity-to-high read)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.07; mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING); bracket.valid False, bracket.atr_fallback_stop 30.25", "verdict": "partial", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 5; gics_sector XLY; second cruise name NCLH rank 9 also mp_state 3; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; not held, so any add is only after a profitable first lot at a higher price", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated as 1x atr_14d 1.07 single-day reaction from day high, my translation not 6 pts; fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 1.07 or more from the day's high (my translation of the C7 danger signal), or a close below bracket.atr_fallback_stop 30.25 (engine bracket invalid, so this is my own reference level); also NCLH failing to hold its trend (C14)."
+  },
+  {
+   "ticker": "NCLH",
+   "reason": "The confirming second name for the cruise group (C14 Key Price): structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG) and mp_accel_state 1 (ACCELERATING), rank 9; structure 80.0, sma_distance_pct 20.51.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "rank", "gics_sector", "sector_trend_state", "bracket.stop", "bracket.stop_type", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 80.0; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 20.51", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.8; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid True, bracket.stop 17.44, bracket.stop_type 3 (ma100)", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 9; gics_sector XLY pairs with CCL rank 5; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only at higher prices after a profitable first lot", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated as 1x atr_14d 0.8 single-day reaction from day high, my translation; fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 0.8 or more from the day's high (translated C7 danger signal), or a close below bracket.stop 17.44 (ma100); CCL breaking trend would also void the group read."
+  },
+  {
+   "ticker": "RYAN",
+   "reason": "Top leader in the insurance-broker group: structure 100.0, structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG) and mp_accel_state 1 (ACCELERATING), rank 3; AJG is the confirming second name. sma_distance_pct 17.17.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "rank", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 100.0; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 17.17", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.66; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 45.88", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 3; gics_sector XLF; second broker AJG rank 12 structure_shift 1; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only on strength after a profitable first lot", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated as 1x atr_14d 1.66 from day high, my translation; fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 1.66 or more from the day's high (translated C7), or a close below bracket.atr_fallback_stop 45.88 (engine bracket invalid; my own reference level)."
+  },
+  {
+   "ticker": "AJG",
+   "reason": "Second name confirming the broker group behind RYAN (C14): structure 89.5, structure_shift 1 (ABOVE_STRUCTURE), mp_accel_state 1 (ACCELERATING), rank 12. mp_state 2 (FADING) keeps it the follower, not the leader.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "rank", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 89.5; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 15.77", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C8", "C18"], "observed": "atr_14d 8.02; mp_state 2 (FADING), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 280.36", "verdict": "partial", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 12; gics_sector XLF pairs with RYAN rank 3; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated as 1x atr_14d 8.02 from day high, my translation; fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 8.02 or more from the day's high (translated C7), or a close below bracket.atr_fallback_stop 280.36 (my own reference level, engine bracket invalid)."
+  },
+  {
+   "ticker": "KIM",
+   "reason": "Real estate leader with the least extension of my set: structure 86.3, structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING), rank 7, sma_distance_pct 11.88; CWK confirms the group.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "rank", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 86.3; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 11.88", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.46; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 25.42", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 7; gics_sector XLRE; CWK rank 14 also mp_state 3 ACCELERATING; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated as 1x atr_14d 0.46 from day high, my translation; fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 0.46 or more from the day's high (translated C7), or a close below bracket.atr_fallback_stop 25.42 (my own reference level, engine bracket invalid)."
+  },
+  {
+   "ticker": "CWK",
+   "reason": "Confirming second real estate name behind KIM (C14): structure 91.6, structure_shift 1 (ABOVE_STRUCTURE), mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING), rank 14, day_vol 1.84 participation; sma_distance_pct 19.27.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "day_vol", "rank", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 91.6; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 19.27", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.63; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 14.3", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 14; gics_sector XLRE pairs with KIM rank 7; sector_trend_state 2 (Momentum Fading)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold 1x atr_14d 0.63 from day high, my translation; day_vol 1.84 read as partial proxy only, fill_difficulty NOT_SERVED; no tips", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 0.63 or more from the day's high (translated C7), or a close below bracket.atr_fallback_stop 14.3 (my own reference level, engine bracket invalid)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "KEEP", "line": "Trend intact: structure 76.8, structure_shift 1 (ABOVE_STRUCTURE), mp_state 2 (FADING) with mp_accel_state 1 (ACCELERATING) reads as a normal reaction (C8), no danger signal; translated danger signal is 1x atr_14d 8.24 from a day high. No adds unless it goes higher (C6)."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "MP has no row in my packet, so I cannot walk my checklist or see a danger signal. KEEP by default only, not a judgment; declared as a data gap for the orchestrator to source."}
+ ],
+ "data_gaps": [
+  {"field": "ticker (MP row)", "impact": "Held name MP is absent from the packet; no structure, structure_shift, mp_state, atr_14d or bracket to review it with, so its held_review is a default KEEP, not a walked verdict."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS/FAIL per name from structure/structure_shift + sma_distance_pct (C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x atr_14d single-day reaction from the day's high), not the literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11)",
+  "ledger_memory: no voice_memory block was injected this run, so no standing lesson applies",
+  "concentration: three leading groups, two names each (cruise, insurance brokers, real estate), by design (C12, R7)"
+ ],
+ "shortfall_reason": null
+}

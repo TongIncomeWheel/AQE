@@ -1,0 +1,109 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-05",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "REG",
+   "reason": "BREAKOUT family (C2/C12): structure_shift BULLISH_BOS close above a confirmed pivot while still near its average (sma_distance_pct 4.29), day_vol 1.33 above-normal participation, mp_accel_state ACCELERATING. Structural stop at bracket.stop 75.35 (swing_low_3), close to entry 76.84.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 74.7, sma_distance_pct 4.29", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "range-contraction breakout proxy: atr_14d 1.24, atr_caution False, day_vol 1.33; no NR4/NR7 count available", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; bar_range_history NOT_SERVED; mp_state FADING, mp_accel_state ACCELERATING used as trend proxy", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 75.35, bracket.stop_type swing_low_3, bracket.valid True, bracket.risk_pct 1.94, entry 76.84", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "entry"]}
+   ],
+   "falsifier": "A close back below bracket.stop 75.35 (the swing_low_3 extreme) - the breakout has failed and the structure is no longer intact."
+  },
+  {
+   "ticker": "BRX",
+   "reason": "BREAKOUT family (C2/C12): structure_shift BULLISH_BOS with structure 78.9, mp_state STRONG and mp_accel_state ACCELERATING, day_vol 1.31. Mechanical swing stop sits tight under price: bracket.stop 29.65 (swing_low_3) vs entry 30.23 - a near double-stop location (C20).",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "mp_state", "mp_accel_state", "rank", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 78.9, sma_distance_pct 7.02, rank 58", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.55, atr_caution False, day_vol 1.31; no per-bar range series for NR4/NR7", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; mp_state STRONG, mp_accel_state ACCELERATING as declared substitute; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 29.65, bracket.stop_type swing_low_3, bracket.valid True, bracket.risk_pct 1.92, entry 30.23", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "entry"]}
+   ],
+   "falsifier": "A close below bracket.stop 29.65 (swing_low_3) - the break above the pivot has failed."
+  },
+  {
+   "ticker": "KO",
+   "reason": "BREAKOUT family (C2): structure_shift BULLISH_BOS, structure 81.1, mp_state STRONG with mp_accel_state ACCELERATING, day_vol 1.61 expansion on the break. Engine bracket.valid False; my own structural invalidation is a close back under bracket.atr_fallback_stop 94.1, one ATR under entry 95.8.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 81.1, sma_distance_pct 6.8", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 1.7, atr_caution False, day_vol 1.61; no NR4/NR7 count available", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; mp_state STRONG, mp_accel_state ACCELERATING as substitute; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 94.1, entry 95.8 - own level named", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "entry"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 94.1 - price has fallen back through the broken pivot and the breakout is a failure."
+  },
+  {
+   "ticker": "MFC",
+   "reason": "BREAKOUT family (C2/C12): structure_shift BULLISH_BOS from a modest base (sma_distance_pct 5.17), structure 86.3, day_vol 1.63 participation on the break, mp_state BUILDING and ACCELERATING, rank 47. Advisory caution: elder_pattern INTERRUPTED. bracket.valid False - own level named below.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "rank", "elder_pattern", "entry", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 86.3, sma_distance_pct 5.17, rank 47", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.77, atr_caution False, day_vol 1.63; no per-bar range series", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; mp_state BUILDING, mp_accel_state ACCELERATING substitute; elder_pattern INTERRUPTED (advisory)", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; entry 45.99; own level = one atr_14d 0.77 under entry", "verdict": "partial", "fields": ["bracket.valid", "entry", "atr_14d"]}
+   ],
+   "falsifier": "A close more than one atr_14d 0.77 under entry 45.99, back inside the prior range - the break of structure has failed."
+  },
+  {
+   "ticker": "JAN",
+   "reason": "BREAKOUT family (C2/C12): structure_shift BULLISH_BOS taken right off the average (sma_distance_pct 1.63) on expansion participation day_vol 2.29, mp_accel_state ACCELERATING; elder_pattern ACCELERATION and div_state BULLISH as advisory support. Structure 56.8 is middling - conviction reflects it.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 56.8, sma_distance_pct 1.63", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.97, atr_caution False, day_vol 2.29 - range expansion off a quiet base; no NR4/NR7 count", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; mp_state BUILDING, mp_accel_state ACCELERATING substitute; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; bracket.atr_fallback_stop 29.09, entry 30.07 - own level named", "verdict": "partial", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "entry"]}
+   ],
+   "falsifier": "A close below bracket.atr_fallback_stop 29.09 - the breakout bar is fully retraced and the range-expansion was false."
+  },
+  {
+   "ticker": "CCEP",
+   "reason": "BREAKOUT family (C2): structure_shift BULLISH_BOS, structure 84.2, mp_state STRONG and mp_accel_state ACCELERATING, day_vol 1.4 on the break. More extended than the others (sma_distance_pct 8.92), so conviction held lower. bracket.valid False - own level named below.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "entry", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BULLISH_BOS, structure 84.2, sma_distance_pct 8.92", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 2.71, atr_caution False, day_vol 1.4; no per-bar range series", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "adx NOT_SERVED; mp_state STRONG, mp_accel_state ACCELERATING substitute; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; entry 115.84; own level = one atr_14d 2.71 under entry", "verdict": "partial", "fields": ["bracket.valid", "entry", "atr_14d"]}
+   ],
+   "falsifier": "A close more than one atr_14d 2.71 under entry 115.84, back below the broken pivot - the breakout has failed."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "TIGHTEN", "line": "ABOVE_STRUCTURE, structure 76.8, but sma_distance_pct 13.63 extended with held_book.unreal_usd 885.77 open profit and mp_state FADING: C19 windfall protection - lock in the gain, trail stop tight (bracket.valid False; own level bracket.atr_fallback_stop 428.33)."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "No packet row for MP - checklist cannot be walked; no evidence for a change, declared as a data gap for the orchestrator to source."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Menu field absent from every packet row; the range-contraction (C12/C13) read relies only on atr_14d/atr_caution/day_vol proxies."},
+  {"field": "MP (held row)", "impact": "Held name MP has no row in the packet; held review could not walk the checklist or check for a C19 windfall flag."}
+ ],
+ "declarations": [
+  {"setup_type": "breakout (C2) on all six nominations; no test, retracement or climax called"},
+  {"adx": "NOT_SERVED (C7, C8) - mp_state/mp_accel_state used as proxy, never claimed as ADX>30"},
+  {"stochastic_kd": "NOT_SERVED (C6)"},
+  {"n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)"},
+  {"bar_range_history": "NOT_SERVED (C12, C13)"},
+  {"market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ledger_lessons": "No ledger memory block was injected this round; no standing lesson applied."}
+ ],
+ "shortfall_reason": null
+}
