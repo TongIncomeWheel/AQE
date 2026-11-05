@@ -407,6 +407,7 @@ def publish_outputs(files: dict[str, str | bytes], stamp: str | None = None) -> 
 # wrong-file held book once already (see the PTJ note in CLAUDE.md).
 DAILY_ARTIFACTS = (
     "aqe_daily_export.json",      # the committee's read
+    "aqe_universe_rows.json",     # Report B: every scored universe name as a full row, before any score gate
     "aqe_crown_macro.json",       # Crown reading copy, plain English first
     "crown_macro.json",           # Crown runtime record, carries the series
     "macro_scenarios.json",       # the Crown x Macro Weather merge point
