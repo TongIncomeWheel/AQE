@@ -1,0 +1,188 @@
+voice: aqe-quant
+pm_signed: null
+extract_sha:
+  aqe_technical_reference: a26a200742d17ed34d5c68295a638d4e1a899e4ccbc65673c837154edf5fdd7c
+diff_sha: a26a200742d17ed34d5c68295a638d4e1a899e4ccbc65673c837154edf5fdd7c
+sources:
+- key: aqe_technical_reference
+  title: AQE Technical Reference
+  author: Aegis Quant Engine build
+  year: 2026
+  code: AQETR
+  weight: foundational
+  kind: internal_spec
+  path: docs/AQE_TECHNICAL_REFERENCE.md
+pm_spot_check:
+  sampled: 0
+  confirmed: 0
+  by: null
+  note: PENDING_PM_SIGNOFF -- house doctrine built from the reference doc only; conductor reviews before
+    the seat is switched on
+principles:
+- id: A1
+  text: A composite is a reading, not a verdict. The five engine composites, the momentum score and the
+    pipeline rank are uncapped points; the pass or fail of each engine floor is carried separately as
+    a true or false flag with a per-engine breakdown. A high score with a failed gate is therefore a real
+    combination to name, not to average away.
+  status: house
+  cite:
+  - code: AQETR
+    section: 2. Composite scores
+- id: A2
+  text: 'Momentum is built from four engines with different weights: flow and energy count most, structure
+    and persistence next. The headline therefore says how much and the sub-components say why; a headline
+    that cannot be decomposed into its sub-scores is not a reason.'
+  status: house
+  cite:
+  - code: AQETR
+    section: 2. Composite scores
+- id: A3
+  text: 'Support is broad when several engines agree at once. One engine carrying the composite is a narrow
+    case, and a narrow case is argued as narrow: the name is only as strong as its one strong engine.'
+  status: house
+  cite:
+  - code: AQETR
+    section: 2. Composite scores
+- id: A4
+  text: Flow measures whether money is flowing in and how clean the volume is. Its sub-scores separate
+    accumulation, volume trend, up-volume skew and candle cleanliness from the extension adjustment, which
+    is a penalty for climax and a bonus for a confirmed breakout.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.1 Flow v1.3
+- id: A5
+  text: Energy measures position in the recent range, coil, wear and range expansion. The exhaustion sub-score
+    runs backwards, ten meaning untouched, and is inactive until the run is fifteen bars old; a ten on
+    a young run is silence, not a clean bill. The very top of the range is deliberately scored below the
+    zone beneath it.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.2 Energy v1.3.1
+- id: A6
+  text: Structure measures strength against the market, whether that strength is accelerating, base quality,
+    weekly trend, room to the recent high and distance to earnings. Relative strength is raw in percentage
+    points and scored in points; the two are never compared with each other.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.3 Structure v1.5.0
+- id: A7
+  text: Momentum persistence measures the size of the move against the stock's own history, trend strength
+    with buyers on top, relative momentum and trend alignment. Its state label FADING is a default for
+    anything not higher than three bars ago, including flat at a high level, and is not a decay signal.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.4 Momentum Persistence (MP) v1.2
+- id: A8
+  text: The pipeline rank is a first-pass screen of trend plus path quality. A trend reached by steady
+    days is worth more than the same trend reached by one violent stretch; the tier label decides only
+    who advances to full scoring.
+  status: house
+  cite:
+  - code: AQETR
+    section: 3. Pipeline Rank v1.0
+- id: A9
+  text: Base quality and the weekly confirmation feed the longer-hold position gate only. A tight, dry,
+    converged base is the signature of a name that is early rather than extended, and does not apply to
+    a name already running.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.6 Base Quality (BQ)
+- id: A10
+  text: Elder impulse is a short-term agreement check between trend and momentum on a zero to ten scale.
+    High means both rising; it is a permission-style read that the momentum gate consumes, not a reason
+    to buy on its own.
+  status: house
+  cite:
+  - code: AQETR
+    section: 1.5 Elder Impulse
+recognisers:
+- id: R1
+  if: sc_m_gates == false
+  then: name the engines in sc_m_gate_detail that failed and carry the name forward with that stated;
+    the gate failing is a reading the committee weighs, never a reject
+  fields:
+  - sc_m_gates
+  - sc_m_gate_detail
+- id: R2
+  if: flow >= 60 AND energy >= 60 AND structure >= 55 AND mp >= 55
+  then: 'support is broad across all four engines: the strongest form of the case for, to be stated with
+    the four values (thresholds are the SC_MOMENTUM gate floors: Flow 60, Energy 60, Structure 55, MP
+    55 -- AQE Technical Reference, section ''2. Composite scores'', SC_MOMENTUM gate; not invented here)'
+  fields:
+  - flow
+  - energy
+  - structure
+  - mp
+  cite:
+  - code: AQETR
+    section: 2. Composite scores -- SC_MOMENTUM gate floors
+- id: R3
+  if: exactly one of flow, energy, structure, mp is in the upper half
+  then: 'narrow support: argue it as narrow and name the one engine carrying the headline and the sub-score
+    behind it'
+  fields:
+  - flow
+  - energy
+  - structure
+  - mp
+- id: R4
+  if: subcomponents.energy.en_trend_bars >= 15 AND subcomponents.energy.exhaustion_score < 10
+  then: 'the exhaustion test is live and has found wear: name the sub-score, treat as a caution on the
+    run'
+  fields:
+  - subcomponents.energy.en_trend_bars
+  - subcomponents.energy.exhaustion_score
+- id: R5
+  if: subcomponents.structure.rs_vs_spy > 0 AND subcomponents.structure.rs_accel > 0
+  then: 'strength against the market and improving: the case for on relative strength'
+  fields:
+  - subcomponents.structure.rs_vs_spy
+  - subcomponents.structure.rs_accel
+- id: R6
+  if: subcomponents.structure.rs_vs_spy > 0 AND subcomponents.structure.rs_accel < 0
+  then: 'beating the market while the lead shrinks: a caution, not a reject'
+  fields:
+  - subcomponents.structure.rs_vs_spy
+  - subcomponents.structure.rs_accel
+- id: R7
+  if: subcomponents.flow.ext_score < 0
+  then: 'the extension adjustment is a penalty: climax or stretched-bar risk, to be named in the case
+    against'
+  fields:
+  - subcomponents.flow.ext_score
+- id: R8
+  if: subcomponents.pipe.pipe_tier in ('A-TIER','B-STRONG') AND mp_accel_state == 'ACCELERATING'
+  then: 'a clean-path name whose momentum is still gathering pace: the case for on path quality and acceleration'
+  fields:
+  - subcomponents.pipe.pipe_tier
+  - mp_accel_state
+- id: R9
+  if: 'at least two of: subcomponents.mp.roc_zscore >= 1.94, subcomponents.pipe.pr_rsi_score >= 20, subcomponents.mp.rel_mom_score
+    >= 18'
+  then: 'Precision Edge sub-scores confirm the momentum read: a reading in the case for, never a reject
+    when fewer pass. The recipe''s fourth filter (k39_value >= 50) is not on this menu and is counted
+    as unread, not as a failure'
+  fields:
+  - subcomponents.mp.roc_zscore
+  - subcomponents.pipe.pr_rsi_score
+  - subcomponents.mp.rel_mom_score
+  cite:
+  - code: AQE-RECIPE
+    path: data/active_recipe.json
+    section: precision.subcomp_filters
+methods: []
+counts:
+  principles: 10
+  unsourced: 0
+  recognisers: 9
+  methods: 0
+review:
+  by: conductor
+  date: '2026-11-05'
+  basis: PM delegated approval for the B/C build; PM to confirm on return
+  status: NOT SEALED until the PM confirms

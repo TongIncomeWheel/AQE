@@ -30,7 +30,7 @@ Subcommands:
                     instead of silently omitting it or being invented from memory.
 Run from a working dir holding the day's artifacts. Every subcommand prints its output path + a one-line receipt.
 """
-import json, re, sys, os, io, csv, random, statistics, argparse, collections, datetime, subprocess
+import json, re, sys, os, io, csv, random, statistics, argparse, collections, datetime, subprocess, shutil
 
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}  # display/sizing only since 2026-09-07; NOT in any ranking key
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
@@ -66,6 +66,11 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # _slice. "qs" is undocumented in aegis/contracts/*.schema.json despite being live in the daily
     # export -- schema drift, flagged separately, not blocking.
     "qs", "on_qs"]
+
+# Report C only (PM 2026-11-05): the AQE-quant seat reads the gate booleans and the pipeline rank, which the A trim has never carried.
+# Added under the C flag alone so a Report A candidate set stays byte-identical.
+if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C":
+    CONSUMED = CONSUMED + [f for f in ("sc_m_gates", "sc_p_gates", "pipe_rank") if f not in CONSUMED]
 
 # ---------------------------------------------------------------- THE MOMENTUM FLOOR
 # PM ruling 2026-09-22 (D120). "We're looking for PMA to look for coil, strength, insti
@@ -632,6 +637,16 @@ def cmd_packets(a):
                              f"served one -- REFUSING. This is the 2026-09-16 defect; it does not "
                              f"get to happen twice.")
 
+    # ---- REPORT C: the plain AQE glossary rides with EVERY seat's packet (PM 2026-11-05). All eight seats read the same page, so a
+    # reason that cites an AQE field can be checked against the same words. A missing glossary stops a C run -- an AQE-quant seat
+    # without it would be guessing what the fields mean.
+    if REPORT == "C":
+        _gl = os.path.join(os.path.dirname(os.path.abspath(a.menus)), "aqe_glossary.md")
+        if not os.path.exists(_gl):
+            raise SystemExit(f"packets: report C needs {_gl} (python3 tools/aqe_glossary.py) -- REFUSING to build packets without it")
+        shutil.copy2(_gl, os.path.join(a.outdir, "aqe_glossary.md"))
+        print(f"  aqe_glossary.md: copied into the packets for all {len(nominators)} seats (report C)")
+
     # ---- THE MACRO PACKETS. Crown gets its OWN ARTIFACT, not a slice of the equity export. -------
     # DEFECT FOUND 2026-09-25, and it was the conductor's, not AQE's. Both macro packets were built
     # from the same seven export blocks, so crown.json and druckenmiller.json came out BYTE-IDENTICAL
@@ -762,7 +777,16 @@ MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
 # Detect-lens is an independent top-10 LIST read off lens_ranking.ranked, not a voice. Weis and Thorp
 # are benched; Rogers, Lynch, Crown and Druckenmiller stood down. `board` / `ratify-count` count the
 # DECIDERS and nobody else, loudly ignoring any other ballot.
-DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+# THREE REPORTS (PM 2026-11-05): A = today's committee (these seven); B = the same seven on the whole AQE universe; C = the same seven PLUS an eighth
+# voice, the AQE quant seat, argues from the AQE composites and sub-components. The roster follows the report the run is for (env AEGIS_REPORT,
+# set by RUN.yaml `report`); with no setting it is A, exactly as before. Every count below takes n from the deciders PRESENT, so the drop rule is
+# ceil(n/2) (4 of 7, 4 of 8).
+BASE_DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QUANT_SEAT = "aqe-quant"
+REPORT = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
+if REPORT not in ("A", "B", "C"):
+    raise SystemExit(f"AEGIS_REPORT must be A, B or C, got {REPORT!r}")
+DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])
 QA_SEAT = "steenbarger"
 BENCH_SEATS = ["weis", "thorp"]
 STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
@@ -2533,7 +2557,7 @@ def cmd_slate_cut(a):
 # Nothing in this block judges a reason; the Chair runs these tools and adds nothing.
 # =====================================================================================================
 METHOD_FAMILY = {"oneil": "breakout", "minervini": "breakout", "livermore": "pivotal", "elder-lens": "impulse",
-                 "seow": "position", "raschke": "swing", "wyckoff": "structure"}
+                 "seow": "position", "raschke": "swing", "wyckoff": "structure", "aqe-quant": "quant"}
 CLAIMS_PER_CAMP = 2            # R38: the two highest-conviction SUPPORT cases and the two highest-conviction OPPOSE cases
 CLAIM_REVIEWERS = 2            # R38: each claim is ruled on by two reviewers of a different method family
 SLATE_MIN_SUPPORT = 4          # R38/R40: fewer than 4 SUPPORT at tier 2 = not slated
@@ -3227,6 +3251,7 @@ def cmd_record_verdicts(a):
             "ref_price_source": ref_src,
             "bracket": bracket,
             "record_source": "live",
+            "report": REPORT,     # A | B | C (PM 2026-11-05): which of the three daily reports locked this row
             # R35 (2026-11-01): a slated ticket is graded at the horizon the agreeing seats stated (ratify-count
             # carries it onto the row); a never-slated name keeps the run default. Per-voice horizons are in
             # committee_record.json for the 20-run review.
@@ -3260,6 +3285,7 @@ def cmd_record_verdicts(a):
                 "ref_price_source": ref_src,
                 "bracket": (row or {}).get("bracket"),
                 "record_source": "live",
+                "report": REPORT,
                 "fixed_horizon": {"horizon_sessions": a.horizon_sessions, "status": "pending"},
                 "event_based": {"status": "not_applicable", "note": "NEAR-MISS was cut by the deliberation cap before any vote -- no committee verdict exists to event-grade."}
             })
@@ -3446,7 +3472,7 @@ def cmd_gate(a):
         chk(c["ticker"] in ft, "QX1", f"{c['ticker']} appears in the verdict table")
     # QX2: no roll-call language in the body. Seat names and vote-count words belong in Appendix A only.
     seats = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp", "weis", "wyckoff",
-             "lynch", "detect-lens", "rogers", "steenbarger"]
+             "lynch", "detect-lens", "rogers", "steenbarger", "aqe-quant"]
     low = body.lower()
     leaked = [w for w in seats if re.search(r"\b" + re.escape(w) + r"\b", low)]
     chk(not leaked, "QX2", f"no seat names in the body (found: {leaked or 'none'})")

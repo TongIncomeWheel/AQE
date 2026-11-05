@@ -149,6 +149,14 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
                 notes.append(f"step {s}: degraded -- " + "; ".join(str(x) for x in (st[s].get("degradations") or st[s].get("notes") or [])[:2]))
         if M.get("date") and date and M["date"] != date:
             fails.append(f"run_manifest.json is for {M['date']}, not {date}")
+        rep_ = (M.get("report") or "A")
+        env_rep = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
+        if rep_ != env_rep:
+            fails.append(f"manifest is report {rep_} but AEGIS_REPORT={env_rep}: the roster this check counts would be wrong")
+        if rep_ in ("B", "C"):
+            if not M.get("rerun") or (M.get("rerun") or {}).get("publishes_live") is not False:
+                fails.append(f"report {rep_} must be a non-live run (rerun block with publishes_live false): it publishes no levels and is not watched by alerts")
+            notes.append(f"REPORT {rep_}: scored only; no levels published; reuses report A's weather, macro, market kill and held review")
         rr = M.get("rerun")
         if rr:
             # RERUN (PM 2026-11-03): not live. The run dir must be the r<N> dir, and its publish receipt may list only
@@ -276,10 +284,17 @@ def _deciders(run_yaml):
         M = preflight_run.mini_yaml(open(run_yaml, encoding="utf-8").read())
         d = (M.get("parameters") or {}).get("deciders")
         if isinstance(d, list) and d:
-            return [str(x) for x in d]
+            return _with_report_seat([str(x) for x in d])
     except Exception:
         pass
-    return ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+    return _with_report_seat(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"])
+
+
+def _with_report_seat(roster):
+    """Three reports (PM 2026-11-05): a C run (env AEGIS_REPORT=C) adds the AQE quant seat as an eighth decider; A and B are the seven."""
+    if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C" and "aqe-quant" not in roster:
+        return list(roster) + ["aqe-quant"]
+    return list(roster)
 
 
 # NYSE full-day closures (the close a journal can be missing for without being stale).
