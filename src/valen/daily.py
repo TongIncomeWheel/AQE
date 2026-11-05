@@ -347,6 +347,8 @@ def write_artifacts(artifact: dict) -> dict:
         "gex": card.gex_block(artifact),
         "crown_cockpit": card.crown_cockpit_block(artifact),
         "history": card.history_rows(artifact),
+        # the committee gate audits every macro leg's reason code from THIS published copy (2026-11-05: it was stripped here and the gate failed)
+        "data_freshness": {k: (artifact.get("data_freshness") or {}).get(k) for k in ("expected_session", "legs_table", "behind", "blocking")},
         "neighbourhood": card.neighbourhood_lines(artifact),
         "theme_leaders": card.theme_leaders_table(artifact),
         "rotation": card.rotation_table(artifact),

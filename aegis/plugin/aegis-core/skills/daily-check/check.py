@@ -23,6 +23,7 @@ import argparse
 import datetime as _dt
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -669,14 +670,38 @@ def check_cards_text(path):
     return fails, notes
 
 
-def check_macro_legs(VA, FT):
+def _legs_from_marker(line):
+    """'Macro legs: expected session 2026-11-04 | breadth_whole_market 2026-11-04 CURRENT | dspx 2026-11-03 PUBLISHER_LAG | ... BEHIND: ...' -> legs rows."""
+    out = []
+    if not isinstance(line, str) or "Macro legs:" not in line:
+        return out
+    m = re.search(r"expected session (\d{4}-\d{2}-\d{2})", line)
+    exp = m.group(1) if m else None
+    for part in line.split("|"):
+        mm = re.match(r"\s*([a-z0-9_]+) (\d{4}-\d{2}-\d{2}|None) ([A-Z_]+)\s*$", part)
+        if mm:
+            out.append({"leg": mm.group(1), "as_of": None if mm.group(2) == "None" else mm.group(2), "expected": exp, "reason": mm.group(3),
+                        "detail": "read from the run marker's Macro legs line"})
+    return out
+
+
+def check_macro_legs(VA, FT, fallbacks=None):
     """Every macro leg with its REASON CODE (PM 2026-11-04). FAIL: OUR_BUDGET / SOURCE_DOWN (we are slow or the source is down: the
     committee would vote on stale weather), a missing table (a leg that cannot be audited is not passed), and ANY leg behind two
-    nights running whatever the reason. WARN with the code: PUBLISHER_LAG; PUBLISHER_CADENCE is a plain note."""
+    nights running whatever the reason. WARN with the code: PUBLISHER_LAG; PUBLISHER_CADENCE is a plain note.
+    2026-11-05: the PUBLISHED valen copy is a stripped committee copy; when it carries no table the legs are read from `fallbacks`, a list of
+    (label, legs-rows) in order of trust (the full valen_dashboard.json, the crown artifact's data_legs, the run marker's line). The gate still FAILS
+    when NONE of them carries a table, and every fallback leg goes through the same reason-code rules."""
     fails, notes = [], []
     legs = ((VA or {}).get("data_freshness") or {}).get("legs_table")
     if VA is not None and not legs:
-        fails.append("aqe_valen_dashboard carries no data_freshness.legs_table -- the macro legs cannot be audited (reason codes missing)")
+        for label, rows in (fallbacks or []):
+            if rows:
+                legs = rows
+                notes.append(f"macro legs read from {label} (the published valen copy carries no legs table)")
+                break
+        else:
+            fails.append("aqe_valen_dashboard carries no data_freshness.legs_table, and neither valen_dashboard.json, the crown artifact nor the run marker carries one -- the macro legs cannot be audited (reason codes missing)")
     for r in legs or []:
         rc = r.get("reason")
         if rc in ("OUR_BUDGET", "SOURCE_DOWN"):
@@ -818,7 +843,15 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
             notes.append(f"Crown status {CR.get('status')} (degraded input declared, not a block)")
         if not (CR.get("the_call") and CR.get("read_me_first")):
             fails.append("aqe_crown_macro lacks the_call / read_me_first -- the vote packet's weather line would be blank")
-    mf, mn = check_macro_legs(VA, _load(os.path.join(od, "feed_timing.json"), "feed_timing.json", []))
+    _fb = []
+    try:
+        _full = _load(os.path.join(od, "valen_dashboard.json"), "valen_dashboard.json", [])
+        _fb.append(("valen_dashboard.json", ((_full or {}).get("data_freshness") or {}).get("legs_table")))
+        _fb.append(("aqe_crown_macro.json data_legs", ((CR or {}).get("data_legs") or {}).get("legs")))
+        _fb.append(("the run marker's Macro legs line", _legs_from_marker((LR or {}).get("macro_legs"))))
+    except Exception:  # noqa: BLE001 - a fallback that cannot be read is simply not a fallback
+        pass
+    mf, mn = check_macro_legs(VA, _load(os.path.join(od, "feed_timing.json"), "feed_timing.json", []), _fb)
     fails += mf; notes += mn
     if VA is not None:
         va_as_of = (VA.get("read_me_first") or {}).get("as_of") or VA.get("as_of")
