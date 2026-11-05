@@ -717,7 +717,13 @@ steps:
       report (who said what, in plain words). Any trade_above entry in cards.json uses yesterday's INTRADAY
       high (bar_high), never yesterday's close or high_52w (a closing high) -- LEVELS refuses a line pinned
       to the close.
-    produces: [pma_brief_<date>.md, cards_text.json]
+    produces: [pma_brief_<date>.md, cards_text.json, cards_lines.json]
+    cards_lines: >
+      PM 2026-11-05: the writer ALSO writes cards_lines.json in the SAME pass as cards_text.json -- lines 2 and 3 of the fixed ten-field card for EVERY name that gets
+      a card: {TICKER: {"why": ONE sentence, at most 200 chars; "contested": ONE sentence, at most 240 chars}} in the COMMITTEE's voice (why it made the list / why it was
+      contested or rejected + what would clear it). No seat name, no first person, no vote tally, no field name or code, at most 2 numbers per sentence. Schema and
+      examples in agents/brief-writer.md. check.py cards --lines gates it; a line that breaks the gate is NOT printed (the renderer falls back to the extraction
+      line and run_notes gets CARDS LINES FALLBACK: <ticker>).
     cards_text: >
       R23: the writer ALSO writes cards_text.json -- WORDS ONLY, schema in agents/brief-writer.md
       (bottom line, market reads, money, book, changed, one case+`reason`{agree,wrong_if,wait_for}+readiness per ADVANCE, one line per
@@ -743,7 +749,7 @@ steps:
   - name: CHECK
     kind: tool
     command: "pma_pipeline.py gate --brief pma_brief_<date>.md --consensus consensus.json --verdict-ledger verdict_ledger.json --date <date>"
-    then: "check.py cards --text cards_text.json --html pma_cards_<date>.html   # B3 + the rendered page carries no raw field name; (PM 2026-11-04): FAIL on raw field names, vote tallies, jargon or more than 4 numbers in an ADVANCE card's `reason`"
+    then: "check.py cards --text cards_text.json --lines cards_lines.json --html pma_cards_<date>.html   # B3 + the rendered page carries no raw field name; (PM 2026-11-04): FAIL on raw field names, vote tallies, jargon or more than 4 numbers in an ADVANCE card's `reason`"
     barrier: "0 FAIL"
     on_fail: "fix at the owning stage, max 2 loops, residuals declared in the footer"
     meter: "--tool-only"
@@ -779,6 +785,7 @@ steps:
   - name: REPORT
     kind: tool
     command: "pma_cards_publish.py --date <date> --run-dir . --out pma_cards_<date>.html     # runs v3, gates it, falls back to `pma_cards.py render --text cards_text.json --position committee_position.json` LOUDLY (CARDS FALLBACK) on error or gate failure"
+    # v3 reads cards_lines.json when present (PM 2026-11-05, the writer's lines 2 and 3; absent = extraction lines, declared in run_notes)
     # v3 needs in the run dir (the publish tool checks and names any that is missing): cards_text.json consensus.json committee_position.json pma_levels.json cards.json
     # decision.json phase4.json aqe_daily_export.json aqe_valen_dashboard.json aqe_crown_macro.json aqe_last_run.json scorecard.md (+ run_manifest.json); and from the repo checkout
     # aegis/output/valen_dashboard.json + crown_macro.json (the nightly's local files WITH series; --refresh-dir overrides). tests/test_cards_v3.py, test_cards_publish.

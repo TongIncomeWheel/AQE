@@ -165,4 +165,99 @@ def test_a_mark_of_none_is_not_a_tag_a_passed_name_has_no_timing_and_an_unclean_
     assert CT.build_fields(d)[6]["text"] == "Pass. Timing: not applicable, the committee passed on it."
     d["cons"]["objections"] = [{"voice": "oneil", "objection": "ticket reclaim:ma_20 vs H1 (C4)", "would_clear": "A daily close above the pivot high, then a buy stop."}]
     t = CT.build_fields(d)[2]["text"]
-    assert t.startswith("Rejected: the filed objection does not read clean in plain words") and "What would clear it: A daily close above the pivot high" in t
+    assert t == "not available: no committee line in plain words is on file for this rejected name"
+
+
+# ------------------------------------------------------------------ WRITER lines (cards_lines.json), PM 2026-11-05
+GOOD_WHY = "A market leader breaking to a new high on heavy buying, the strongest of its group."
+GOOD_CONTESTED = "Contested: the buy trigger is read on the hourly chart, not the daily close; it clears on a daily close above the pivot high."
+
+
+def test_the_writers_lines_are_preferred_over_the_extraction_route():
+    c = _ctx("contested")
+    c["lines"] = {"why": GOOD_WHY, "contested": GOOD_CONTESTED.replace("; it", ", and it")}
+    f = {x["id"]: x["text"] for x in CT.build_fields(c)}
+    assert f["why"] == GOOD_WHY and f["contested"].startswith("Contested: the buy trigger is read on the hourly chart")
+    assert c["_src"] == {"why": "writer", "contested": "writer"} and "_fallback" not in c
+
+
+@pytest.mark.parametrize("bad,problem", [
+    ("Livermore thinks it is a leader breaking out.", "names a seat"),
+    ("I would buy the leader on the break.", "first-person seat voice"),
+    ("Five of seven analysts back the leader on the break.", "vote tally"),
+    ("The leader breaks above bar_high on heavy buying.", "field name or code"),
+    ("A leader breaking out (C9) on heavy buying.", "field name or code"),
+    ("A leader up 12%, 5.4 daily ranges above 96.56 and 94.1 under the line.", "numbers"),
+    ("A market leader breaking out. It is the strongest of its group.", "more than one sentence"),
+    ("x" * 210 + ".", "over the 200 cap"),
+])
+def test_a_writer_line_that_breaks_the_gate_is_never_printed_the_extraction_line_stands(bad, problem):
+    assert any(problem in e for e in CT.gate_line(bad, "why")), CT.gate_line(bad, "why")
+    c = _ctx("contested")
+    c["lines"] = {"why": bad, "contested": GOOD_CONTESTED}
+    f = {x["id"]: x["text"] for x in CT.build_fields(c)}
+    assert f["why"] == "A fresh break to a new high on heavy volume, led by the strongest name in its group."          # the verbatim extraction line
+    assert c["_fallback"][0][0] == "why" and c["_fallback"][0][1]
+    assert f["contested"] == GOOD_CONTESTED                                                                           # the good line still prints
+
+
+def test_the_good_lines_pass_the_gate_and_an_empty_line_does_not():
+    assert CT.gate_line(GOOD_WHY, "why") == [] and CT.gate_line(GOOD_CONTESTED, "contested") == []
+    assert CT.gate_line("", "why") == ["empty"]
+
+
+def test_no_placeholder_sentence_is_ever_card_content():
+    for kind in KINDS:
+        for f in CT.build_fields(_ctx(kind)):
+            assert "does not read clean" not in f["text"] and "reads clean" not in f["text"], (kind, f["id"], f["text"])
+    c = _ctx("dropped")
+    c["pos"] = None
+    c["cons"]["objections"] = [{"voice": "oneil", "objection": "ticket reclaim:ma_20 vs H1 (C4)", "would_clear": "A daily close above the pivot high, then a buy stop."}]
+    t = CT.build_fields(c)[2]["text"]
+    assert t == "not available: no committee line in plain words is on file for this rejected name"
+
+
+def test_grammar_one_daily_range_is_singular():
+    c = _ctx("contested")
+    c["lv"]["levels"]["risk_atr"] = 1.0
+    assert "risk 1 daily range," in CT.build_fields(c)[5]["text"] or "risk 1 daily range." in CT.build_fields(c)[5]["text"]
+    c["lv"]["levels"]["risk_atr"] = 1.5
+    assert "risk 1.5 daily ranges" in CT.build_fields(c)[5]["text"]
+
+
+def test_a_name_with_no_levels_row_takes_the_export_bracket_and_says_where_it_came_from():
+    c = _ctx("aqe_list")
+    c["row"]["bracket"] = {"valid": True, "stop": 98.0, "targets": [{"price": 106.0}, {"price": 112.0}, {"price": 120.0}]}
+    t = CT.build_fields(c)[5]["text"]
+    assert "stop 98" in t and "targets 112 (2.3R)" not in t and "Levels source: AQE export bracket." in t
+    c["row"]["bracket"] = {"valid": False, "atr_fallback_stop": 101.0, "targets": [{"price": 108.0}], "invalid_reason": "no structural support passes the gates"}
+    t2 = CT.build_fields(c)[5]["text"]
+    assert "stop 101" in t2 and "no structural stop passed the gates" in t2
+    c["row"]["bracket"] = {"valid": False, "invalid_reason": "no structural support passes the gates"}
+    assert CT.build_fields(c)[5]["text"].startswith("not available: no structural support passes the gates")
+
+
+def test_check_py_gates_the_lines_file(tmp_path):
+    import json
+    cs = importlib.util.spec_from_file_location("chk_lines", ROOT / "aegis/plugin/aegis-core/skills/daily-check/check.py")
+    ck = importlib.util.module_from_spec(cs); cs.loader.exec_module(ck)
+    good = {"KO": {"why": GOOD_WHY, "contested": GOOD_CONTESTED}}
+    p = tmp_path / "cards_lines.json"
+    p.write_text(json.dumps(good))
+    assert ck.check_cards_lines(str(p))[0] == []
+    p.write_text(json.dumps({"KO": {"why": "Livermore likes it (C9).", "contested": GOOD_CONTESTED}, "DG": {"why": GOOD_WHY}}))
+    fails = ck.check_cards_lines(str(p))[0]
+    assert any("KO.why" in f and "names a seat" in f for f in fails) and any("DG.contested: missing" in f for f in fails)
+    f, notes = ck.check_cards_lines(str(tmp_path / "absent.json"))
+    assert f == [] and "not found" in notes[0]                                           # absent = declared, not a silent pass
+
+
+def test_a_supplemental_advance_row_uses_its_own_committee_levels_and_every_exit_line_falls_back_to_a_stop():
+    c = _ctx("supplemental")
+    c["br"] = {"stop": {"price": 90.0}, "tp_ladder": [{"price": 105.0}, {"price": 110.0}], "risk_atr": 3.0, "rr_to_tp2": 1.0, "price": {"value": 104.0}, "source": "AQE list (AQE)"}
+    t = CT.build_fields(c)[5]["text"]
+    assert "stop 100" in t and "stop 90" not in t                       # the supplemental pass's own levels, not the brief-list bracket
+    d = _ctx("dropped")
+    d["lv"] = None; d["br"] = None
+    d["row"]["bracket"] = {"valid": True, "stop": 98.5, "targets": [{"price": 108.0}]}
+    assert CT.build_fields(d)[7]["text"] == "No committee exit line; the AQE stop is 98.5."

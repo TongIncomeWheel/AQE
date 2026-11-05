@@ -42,10 +42,16 @@ ROWS = {r["ticker"]: r for r in D["daily_list"]}
 MTF = (json.load(open(RUN / "mtf.json")).get("names") or {}) if (RUN / "mtf.json").exists() else {}
 for h in D.get("held_positions") or []:
     ROWS.setdefault(h["ticker"], h)
+if (RUN / "mtf_supplement.json").exists():          # PM 2026-11-05: the supplemental pass's own trend-frame grid (same schema as mtf.json); never overrides a room name
+    for _t, _m in ((json.load(open(RUN / "mtf_supplement.json")).get("names")) or {}).items():
+        MTF.setdefault(_t, _m)
 HELD = {h["ticker"]: h for h in D["held_positions"]}
 _opt = lambda n, dflt: json.load(open(RUN / n)) if (RUN / n).exists() else dflt          # run files the fixture / an older run may lack: the card says "not available", never invents
 BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
 RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
+_CL = _opt("cards_lines.json", None)           # WRITER-authored lines 2 and 3 (PM 2026-11-05): {TICKER: {"why": one sentence, "contested": one sentence}}
+CL = ((_CL or {}).get("cards") if isinstance(_CL, dict) and isinstance((_CL or {}).get("cards"), dict) else _CL) or {}
+LINE_FALLBACK = []                              # (ticker, field, problems): a writer line that broke the gate; the extraction line was printed instead
 ON_LISTS = CT.brief_lists(D["daily_list"], (D.get("lens_ranking") or {}).get("ranked"))
 SLATE_T = {x["ticker"]: x for x in (_opt("slate.json", {}) or {}).get("tickets") or []}
 SRM = {s["sector"]: s for s in D["srm"]}
@@ -763,13 +769,17 @@ def tmpl_ctx(t):
             "mark": (RMK.get(t) or {}).get("mark"), "mark_plain": (RMK.get(t) or {}).get("mark_plain"),
             "lane": (CONS_BY.get(t) or {}).get("lane") or lvr.get("lane"), "slate_ticket": SLATE_T.get(t),
             "market_kill": (mk_plain.split(": ", 1)[1] if ": " in mk_plain else mk_plain) if mk_plain else None,
-            "on_lists": ON_LISTS.get(t), "supplemental": bool(lvr.get("supplemental")), "committee_result": lvr.get("committee_result"), "cut_reason": cut or None}
+            "on_lists": ON_LISTS.get(t), "lines": CL.get(t), "supplemental": bool(lvr.get("supplemental")), "committee_result": lvr.get("committee_result"), "cut_reason": cut or None}
 
 def tmpl_card(t):
     """The fixed template card for one name; a whole-template check runs on every card (a dropped field stops the render, so the safety net falls back loudly)."""
-    c = tmpl_ctx(t)
+    return _tmpl_from(tmpl_ctx(t))
+
+def _tmpl_from(c):
+    t = c["ticker"]
     head = f'<div class="row"><span class="tk">{E(t)}</span>{ma_pill(ROWS.get(t))}{mom_pill(t)}</div>'
     h = CT.render_card(c, E, head)
+    LINE_FALLBACK.extend((t, f, p) for f, p in c.get("_fallback") or [])
     errs = CT.validate_card(h)
     if errs:
         raise SystemExit(f"card template broken for {t}: {errs}")
@@ -794,6 +804,35 @@ def tcard(r):
     h = tmpl_card(r["t"])
     assert h.endswith("</div>")
     return h[:-6] + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
+
+def supp_ctx(t):
+    """A supplemental-pass name (PM 2026-11-05): the room did not vote it in THIS run, so everything comes from its live levels row
+    (origin_run <date>-r3), the brackets file / its export bracket, and the writer's lines."""
+    row = ROWS.get(t) or {}
+    lvr = LV[t]
+    cls = lvr.get("class")
+    verdict = {"ADVANCE": "ADVANCE", "HOLD_FOR_CONDITIONS": "HOLD-FOR-CONDITIONS"}.get(cls, "PASS")
+    res = str(lvr.get("committee_result") or "")
+    cons = {"ticker": t, "verdict": verdict, "status": lvr.get("committee_status"), "lane": lvr.get("lane"),
+            "objections": lvr.get("committee_objections") or []}
+    return {"ticker": t, "cons": cons, "pos": None, "lv": lvr, "br": BRK.get(t), "row": row, "srm": SRM.get(row.get("gics_sector_name")),
+            "mtf": MTF.get(t), "cx": CX, "held": t in HELD, "mark": None, "mark_plain": None, "lane": lvr.get("lane"), "slate_ticket": None,
+            "no_timing_reason": "the supplemental pass has no timing read on file",
+            "market_kill": (mk_plain.split(": ", 1)[1] if ": " in mk_plain else mk_plain) if mk_plain else None,
+            "on_lists": ON_LISTS.get(t), "lines": CL.get(t), "supplemental": True, "committee_result": res or None,
+            "cut_reason": res[len("not slated: "):] if res.startswith("not slated: ") else None}
+
+SUPP = sorted([t for t, r in LV.items() if r.get("supplemental") and t not in CONS_BY],
+              key=lambda t: ({"ADVANCE": 0, "HOLD_FOR_CONDITIONS": 1}.get(LV[t].get("class"), 2), t))
+supp_section = ""
+if SUPP:
+    _sorigin = next((LV[t].get("origin_run") for t in SUPP if LV[t].get("origin_run")), "")
+    _n_adv = sum(1 for t in SUPP if LV[t].get("class") == "ADVANCE")
+    supp_section = (f'<div class="card"><h3>Supplemental committee pass (contested): {len(SUPP)} more names sitting at their swing high</h3>'
+                    f'<p>A second committee pass, run after the live run (run {E(str(_sorigin))}), on names whose weekly and daily swings both make higher highs and higher lows '
+                    f'and whose last close is within one daily range of the daily swing high. {_n_adv} came out ADVANCE, contested: the room did not agree, so none is an agreed pick. '
+                    f'The levels are the live alert levels.</p></div><div class="stack">'
+                    + "".join(_tmpl_from(supp_ctx(t)) for t in SUPP) + "</div>")
 
 def thin_li(r):
     w = r["w"]; tag = pill("Agreed", "good") if r["status"] == "AGREED" else pill("Contested", "watch")
@@ -866,7 +905,7 @@ s5 = section("5 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE n
     chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
     + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>'
        + "".join(tmpl_card(r["t"]) for r in thin) if thin else "")
-    + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + strong_det, "tickers")
+    + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + supp_section + strong_det, "tickers")
 
 # ------------------------------------------------------------------ 5b THE THREE AQE LISTS AGAINST THE COMMITTEE (lists_vs_committee.py, code only)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -1167,4 +1206,7 @@ page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div></body></html>"""
 OUT.write_text(page)
+for _t, _f, _p in LINE_FALLBACK:
+    print(f"CARDS LINES FALLBACK: {_t} ({_f}): {'; '.join(_p)}")
+print(f"cards lines: {sum(1 for t in CL if CL.get(t))} writer ticker(s) read from cards_lines.json" + ("" if _CL is not None else " (file absent: extraction lines used)"))
 print("wrote", OUT, len(page), "bytes; usable", [r["t"] for r in usable], "thin", [r["t"] for r in thin])

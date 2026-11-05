@@ -67,3 +67,19 @@ def test_if_v2_also_fails_the_command_fails_loudly(run):
     r = subprocess.run([sys.executable, str(PUB), "--date", "2026-11-04", "--run-dir", str(run), "--renderer", "v3", "--v2-command", "false"],
                        capture_output=True, text=True, timeout=120)
     assert r.returncode == 2 and "CARDS FAILED" in r.stdout
+
+
+def test_a_writer_line_that_breaks_the_gate_is_named_in_run_notes_and_the_page_still_publishes(run):
+    cons = json.loads((run / "consensus.json").read_text())
+    t = next(c["ticker"] for c in cons if c["verdict"] == "ADVANCE")
+    (run / "cards_lines.json").write_text(json.dumps({t: {"why": "Livermore likes this leader (C9).", "contested": "No objection filed: the room agreed on the break."}}))
+    r, meta = publish(run)
+    assert r.returncode == 0 and meta["renderer_published"] == "v3" and meta["fallback"] is False
+    notes = (run / "run_notes.md").read_text()
+    assert f"CARDS LINES FALLBACK: {t} (why)" in notes and "names a seat" in notes
+
+
+def test_a_missing_lines_file_is_declared_in_run_notes(run):
+    r, meta = publish(run)
+    assert meta["renderer_published"] == "v3"
+    assert "CARDS LINES: " in (run / "run_notes.md").read_text() and "file absent" in (run / "run_notes.md").read_text()

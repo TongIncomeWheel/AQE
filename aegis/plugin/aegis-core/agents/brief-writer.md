@@ -111,6 +111,13 @@ System's doctrine, never as an Aegis sizing rule.
 The markdown brief below is still written (it is the archived record and the gate checks it), but it is the
 second read; keep §0-§9C tight and put long verbatim tables in appendices.
 
+## THE CARD LINES — cards_lines.json (PM 2026-11-05). WRITE IT IN THE SAME PASS AS cards_text.json.
+
+Every card (ADVANCE, HOLD, PASS, supplemental) is the same ten-field template drawn by code. Lines 2 and 3 are yours, one sentence each, in the COMMITTEE's voice: `{"TICKER": {"why": "...", "contested": "..."}}` for every name that gets a card.
+- `why` (at most 200 characters): why the committee put it on the list, from the adopted R42 final text. Example: "A market leader breaking to a new high on heavy buying, the strongest of its group."
+- `contested` (at most 240 characters): for a contested name the objection and what would clear it; for a rejected name why it was rejected and what would change that; for an agreed name "No objection filed: the room agreed."; for a name never slated why it was cut. Example: "Contested: the buy trigger is read on the hourly chart, not the daily close; it clears on a daily close above the pivot high."
+HARD RULES (`check.py cards --lines` FAILs the file, and the renderer will not print a line that breaks them): ONE sentence; no analyst's name, no "I/my/we", no vote tally ("5 of 7", "two analysts"); no field name or code (nothing with an underscore, no C5/R8, no W/D/H1, no EMA/ADX); at most 2 numbers; plain words a trader reads. Never write a stop, target or R multiple here.
+
 ## PART 1 · DAILY WEATHER (R28, PM 2026-10-23) — `weather` in cards_text.json
 **Read the two WEATHER CARDS before writing a weather paragraph (2026-11-01, PM memory made persistent):**
 `aegis-voices/skills/weather-crown/SKILL.md` and `aegis-voices/skills/weather-valen/SKILL.md` — purpose, the order of
