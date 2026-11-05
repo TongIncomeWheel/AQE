@@ -1673,8 +1673,28 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         near = _nearby_levels(unr, spot)
         if near:
             lines.append(near)
+    lines += _card_field_lines(row)
     return {"headline": f"{ticker}{px} · {head}{held}", "color": color,
             "summary": None, "lines": lines}
+
+
+_CARD_FIELD_SHOWN = ("lane", "why", "contested", "sector", "bracket", "verdict", "wrong_if", "event", "frames")
+
+
+def _card_field_lines(row: dict) -> list[str]:
+    """The Cards' own words for this name (PM 2026-11-05: same messages as the Cards): lane, why it made the list, contested/rejected, sector and
+    theme, bracket + U&R, verdict and timing, wrong-if, event risk, trend frames -- quoted from card_fields.json, never re-worded. The trigger
+    field is the card's live buy line above. Absent = one declared line."""
+    cf = (row or {}).get("card_fields")
+    if not cf or not cf.get("fields"):
+        return ["The committee's card: not available: the card fields were not published for this run."]
+    out = []
+    for f in cf["fields"]:
+        if f.get("id") not in _CARD_FIELD_SHOWN:
+            continue
+        tag = f" [{cf['tag']}]" if f.get("id") == "why" and cf.get("tag") else ""
+        out.append(f"{f['label']}{tag}: {f['text']}")
+    return out
 
 
 def build_condition_card(ticker: str, row: dict, eval_result: dict,
@@ -1685,7 +1705,7 @@ def build_condition_card(ticker: str, row: dict, eval_result: dict,
         card = _build_full_card(ticker, row, eval_result, fired_states, live)
     else:
         card = _build_compact_card(ticker, row, eval_result, fired_states, live)
-    return _with_ma_flag(_with_lane(card, row), row)
+    return _with_move(_with_ma_flag(_with_lane(card, row), row), live, row.get('atr_14d'))
 
 
 def _with_lane(card: dict, row: dict) -> dict:
@@ -1804,7 +1824,7 @@ def _card_html(card: dict) -> str:
                f"<i>{card['summary']}</i></div>" if card.get("summary") else "")
     return (f"<div style='border-left:4px solid {card['color']};padding:8px 12px;"
             f"background:#fafafa;border-radius:6px;color:#1a1a1a;margin-bottom:10px'>"
-            f"<b style='font-size:15px'>{card['headline']}</b>{summary}"
+            f"<b style='font-size:15px'>{card.get('headline_html') or card['headline']}</b>{summary}"
             + "".join(f"<div style='font-size:13px;margin-top:3px'>{s}</div>"
                       for s in card["lines"])
             + "</div>")
@@ -1860,6 +1880,7 @@ def build_held_card(ev: dict) -> dict:
     px = ev.get("live_px")
     at = f" @ {px:.2f}" if px is not None else ""
     headline = f"{ev.get('ticker')}{at} · {label}"
+    _hm = move_vs_close(px, _held_prev(ev), ev.get("atr"))
 
     lines: list[str] = []
     chg = ev.get("chg_pct")
@@ -1910,7 +1931,8 @@ def build_held_card(ev: dict) -> dict:
     action = (ev.get("action") or "").strip()
     if action and action != summary and k in ("near_stop", "exit_cross", "near_target"):
         lines.append(action)
-    return {"headline": headline, "color": color, "summary": summary, "lines": lines}
+    card = {"headline": headline, "color": color, "summary": summary, "lines": lines}
+    return _with_move(card, {"price": px, "prev_close": _held_prev(ev), "atr": ev.get("atr")}) if _hm else card
 
 
 def _data_line(meta: dict | None) -> str | None:
@@ -1948,60 +1970,241 @@ def build_market_card(mk: dict) -> dict:
             "color": "#d00", "summary": None, "lines": lines}
 
 
+# ---------------------------------------------------------------------------------------------- PM 2026-11-05
+# "make sure the AQE alerts have the same messages and clarity; highlight daily move vs last COB; actionable items at the top."
+def move_vs_close(price, prev_close, atr) -> dict | None:
+    """Today's move against the previous COMPLETED close, for a headline: sign, colour (green up / red down), BOLD when the move is more than
+    1 ATR. None when there is no price; a missing previous close SAYS so (never blank). Facts only."""
+    p, pc, a = _n_or(price, None), _n_or(prev_close, None), _n_or(atr, None)
+    if p is None:
+        return None
+    if pc is None or pc <= 0:
+        return {"pct": None, "prev": None, "big": False, "color": "#777777",
+                "text": "vs last close: not available (no previous close in the quote feed)"}
+    pct = (p / pc - 1.0) * 100.0
+    big = a is not None and a > 0 and abs(p - pc) > a
+    return {"pct": pct, "prev": pc, "big": big, "color": "#0a8a3a" if pct > 0 else ("#b3261e" if pct < 0 else "#777777"),
+            "text": f"{pct:+.1f}% vs last close {pc:.2f}"}
+
+
+def _held_prev(ev: dict):
+    """The previous close behind a held event: the quote's own prev_close, else derived from the event's change-on-the-day (prev = price / (1 + chg))."""
+    pc = _n_or(ev.get("prev_close"), None)
+    if pc:
+        return pc
+    px, chg = _n_or(ev.get("live_px"), None), _n_or(ev.get("chg_pct"), None)
+    return round(px / (1.0 + chg / 100.0), 4) if px and chg is not None and chg > -100 else None
+
+
+def _move_html(m: dict) -> str:
+    w = "700" if m.get("big") else "400"
+    return f"<span style='color:{m['color']};font-weight:{w}'>{m['text']}</span>"
+
+
+def _with_move(card: dict, live: dict | None, atr=None) -> dict:
+    """Insert the move vs last close right after the price in the card headline (plain + html)."""
+    live = live or {}
+    m = move_vs_close(live.get("price"), live.get("prev_close"), live.get("atr") if atr is None else atr)
+    if m is None:
+        return card
+    a, sep, b = card["headline"].partition(" \u00b7 ")
+    card["headline_plain"] = f"{a} \u00b7 {m['text']}" + (sep + b if sep else "")
+    card["headline"] = card["headline_plain"]
+    card["headline_html"] = f"{a} \u00b7 {_move_html(m)}" + (sep + b if sep else "")
+    card["move"] = m
+    return card
+
+
+_ACT_BUY = ("UNR_TRIGGER", "CONDITION_MET")
+_ACT_FAIL = ("UNR_FAILED", "FAILED_PUSH")
+
+
+def _bucket(c: tuple) -> str:
+    """'act' (a buy trigger fired this cycle), 'held' (a held name's exit line), 'failed', or 'watch' -- for the ACT NOW ordering."""
+    _t, row, _ev, states, _live = c
+    if row.get("deal_pinned") or row.get("watch_only"):
+        return "watch"
+    if row.get("class") == "HELD" or "EXIT_LINE_HELD" in states:
+        return "held"
+    if any(x in _ACT_BUY for x in states):
+        return "act"
+    if any(x in _ACT_FAIL for x in states):
+        return "failed"
+    return "watch"
+
+
+def _fired_text(c: tuple) -> str:
+    """What printed, in the committee's/the card's own words (the same source as the card's buy line)."""
+    _t, row, ev, states, live = c
+    if "UNR_TRIGGER" in states:
+        return "15-minute candle closed above VWAP after a dip under daily support (U&R entry)"
+    buy = (((row.get("conditions") or {}).get("shared") or {}).get("buy") or [{}])[0]
+    plain = buy.get("plain")
+    vol = [g for g in (((row.get("conditions") or {}).get("shared") or {}).get("confirm") or []) if g.get("w") == "vol_x_ge"]
+    return (plain or "buy line met") + (f", on at least {max(g['x'] for g in vol):g}x normal volume" if vol and vol[0].get("x") else "")
+
+
+def _trade_cell(c: tuple) -> str:
+    """Stop, reward-to-risk and the 1R share line, from the SAME functions the card uses."""
+    _t, row, _ev, states, live = c
+    if "UNR_TRIGGER" in states:
+        return (_unr_trade_line(live.get("unr") or {}, live) or "stop: not available (no day low yet)")
+    return _committee_trade_line(row)
+
+
+def _price_move_plain(live: dict, atr) -> str:
+    m = move_vs_close(live.get("price"), live.get("prev_close"), atr if atr is not None else live.get("atr"))
+    px = _n_or(live.get("price"), None)
+    return (f"Price {px:.2f}" if px is not None else "Price not available") + (f" \u00b7 {m['text']}" if m else "")
+
+
+def _price_move_html(live: dict, atr) -> str:
+    m = move_vs_close(live.get("price"), live.get("prev_close"), atr if atr is not None else live.get("atr"))
+    px = _n_or(live.get("price"), None)
+    return (f"Price {px:.2f}" if px is not None else "Price not available") + (f" \u00b7 {_move_html(m)}" if m else "")
+
+
+def build_act_now(cards: list[tuple], held_events: list[dict], near: list[dict]) -> dict:
+    """The ACT NOW block (PM 2026-11-05), in this order: (a) a buy trigger fired this cycle, (b) price within 0.5 ATR of its buy line,
+    (c) held-position events, (d) setups failed / confirmation lost. Each entry: {section, ticker, price_move_plain/html, what, extra}."""
+    rows: list[dict] = []
+    for c in cards:
+        if _bucket(c) == "act":
+            rows.append({"section": "a", "label": "Buy trigger fired", "ticker": c[0], "pm_plain": _price_move_plain(c[4], None),
+                         "pm_html": _price_move_html(c[4], None), "what": _fired_text(c), "extra": _trade_cell(c)})
+    for nr in near:
+        live = {"price": nr.get("price"), "prev_close": nr.get("prev_close"), "atr": nr.get("atr")}
+        rows.append({"section": "b", "label": "Near its buy line", "ticker": nr["ticker"], "pm_plain": _price_move_plain(live, nr.get("atr")),
+                     "pm_html": _price_move_html(live, nr.get("atr")),
+                     "what": f"buy line {nr['line']:.2f}, price is {nr['dist_atr']:.2f} ATR under it", "extra": nr.get("trade") or ""})
+    for ev in held_events:
+        k = _held_kind(ev)
+        px = ev.get("live_px")
+        live = {"price": px, "prev_close": _held_prev(ev), "atr": ev.get("atr")}
+        rows.append({"section": "c", "label": "Held position", "ticker": ev.get("ticker"), "pm_plain": _price_move_plain(live, None),
+                     "pm_html": _price_move_html(live, None), "what": _HELD_HEAD[k][0], "extra": ""})
+    for c in cards:
+        b = _bucket(c)
+        if b == "held":
+            rows.append({"section": "c", "label": "Held position", "ticker": c[0], "pm_plain": _price_move_plain(c[4], None),
+                         "pm_html": _price_move_html(c[4], None),
+                         "what": (c[2].get("exit_hit") or c[2].get("exit_warn") or {}).get("plain") or "through its exit line", "extra": ""})
+        elif b == "failed":
+            label, _col = _state_label(c[3][0], c[1], c[2], c[4])
+            rows.append({"section": "d", "label": "Failed / confirmation lost", "ticker": c[0], "pm_plain": _price_move_plain(c[4], None),
+                         "pm_html": _price_move_html(c[4], None), "what": label, "extra": ""})
+    counts = {k: sum(1 for r in rows if r["section"] == k) for k in "abcd"}
+    return {"rows": rows, "counts": counts}
+
+
+def _act_plain(act: dict) -> str:
+    if not act["rows"]:
+        return ""
+    out = ["ACT NOW"]
+    for r in act["rows"]:
+        out.append(f"- [{r['label']}] {r['ticker']} \u00b7 {r['pm_plain']} \u00b7 {r['what']}" + (f" \u00b7 {r['extra']}" if r.get("extra") else ""))
+    return "\n".join(out)
+
+
+def _act_html(act: dict) -> str:
+    if not act["rows"]:
+        return ""
+    body = "".join(
+        f"<tr><td style='padding:3px 8px;font-weight:700'>{r['ticker']}</td><td style='padding:3px 8px'>{r['label']}</td>"
+        f"<td style='padding:3px 8px'>{r['pm_html']}</td><td style='padding:3px 8px'>{r['what']}</td>"
+        f"<td style='padding:3px 8px'>{r.get('extra') or ''}</td></tr>" for r in act["rows"])
+    return ("<div style='border:2px solid #0a8a3a;border-radius:6px;margin-bottom:12px;background:#f4fbf6'>"
+            "<div style='font-weight:700;font-size:15px;padding:6px 10px'>ACT NOW</div>"
+            "<table style='border-collapse:collapse;font-size:13px;width:100%'><tr style='text-align:left;color:#555'>"
+            "<th style='padding:3px 8px'>Name</th><th style='padding:3px 8px'>Why now</th><th style='padding:3px 8px'>Price, move vs last close</th>"
+            "<th style='padding:3px 8px'>What printed</th><th style='padding:3px 8px'>Stop, reward, risk</th></tr>" + body + "</table></div>")
+
+
+def _watch_line(c: tuple) -> str:
+    """One plain line for a name that is only being watched (setup forming, extended, no trigger) with its move vs last close."""
+    t, row, ev, states, live = c
+    if states == ["UNR_ARMED"]:
+        base = _candidate_row(c)
+        m = move_vs_close(live.get("price"), live.get("prev_close"), live.get("atr"))
+        return base.replace(" \u2014 ", f" \u00b7 {m['text']} \u2014 ", 1) if m else base
+    label, _col = _state_label(states[0], row, ev, live)
+    m = move_vs_close(live.get("price"), live.get("prev_close"), live.get("atr"))
+    px = _n_or(live.get("price"), None)
+    return f"{t}{f' ${px:.2f}' if px is not None else ''}{(' \u00b7 ' + m['text']) if m else ''} \u2014 {label}{_who_tail(row)}"
+
+
+def _who_tail(row: dict) -> str:
+    w = _who(row) if (row.get("aqe_default") or row.get("supplemental")) else ""
+    return f" \u00b7 {w}" if w else ""
+
+
 def build_condition_digest(cards: list[tuple], now_et,
                            held_events: list[dict] | None = None,
                            meta: dict | None = None) -> tuple[str, str, str]:
     """ONE email per 15-min cycle (PM 2026-10-03: no per-ticker alerts).
-    `cards` = [(ticker, row, eval_result, fired_states, live), ...] — every
-    name whose state changed this cycle, each rendered as its own card
-    under one subject and one footer."""
+    `cards` = [(ticker, row, eval_result, fired_states, live), ...] -- every
+    name whose state changed this cycle.
+
+    Layout (PM 2026-11-05, "actionable items at the top"): the ACT NOW table first -- (a) buy trigger fired this cycle, (b) price within 0.5 ATR
+    of its buy line, (c) held-position events, (d) setups failed / confirmation lost -- then the full cards in that same order, then "Watching,
+    no action": one line per name (setups forming, extended, brief-list and rejected names) with its move vs last close. Every headline carries
+    today's move vs the previous completed close."""
     from . import config as C
     held_events = held_events or []
+    near = (meta or {}).get("near_trigger") or []
     compact = (C.CONDITION_CARD_STYLE or "compact") != "full"
     # A name that is ONLY a U&R candidate (no trigger, no buy/exit state) is one
     # line, not a card -- 16 candidates at the open must not be 16 cards.
-    rows = [c for c in cards if compact and c[3] == ["UNR_ARMED"]]
-    full = [c for c in cards if c not in rows]
+    armed_rows = [c for c in cards if compact and c[3] == ["UNR_ARMED"]]
+    rest = [c for c in cards if c not in armed_rows]
+    full = [c for c in rest if _bucket(c) != "watch"]
+    watch_other = [c for c in rest if _bucket(c) == "watch"]
     rank = {"UNR_TRIGGER": 0, "UNR_FAILED": 1}
-    full.sort(key=lambda c: min(rank.get(x, 2) for x in c[3]))
-    built = [build_condition_card(*c) for c in full]
+    order = {"act": 0, "held": 1, "failed": 2}
+    full.sort(key=lambda c: (order[_bucket(c)], min(rank.get(x, 2) for x in c[3])))
+    act = build_act_now(cards, held_events, near)
+    built_a = [build_condition_card(*c) for c in full if _bucket(c) == "act"]
+    # Held-position events ride the SAME mail (PM 2026-10-06), in the held section right after the buys.
+    built_c = [build_condition_card(*c) for c in full if _bucket(c) == "held"] + [build_held_card(ev) for ev in held_events]
+    built_d = [build_condition_card(*c) for c in full if _bucket(c) == "failed"]
+    built = built_a + built_c + built_d
     counts: dict[str, int] = {}
     for _t, _r, _e, states, _l in cards:
         key = "NO TRIGGER" if (states[0] == "CHASED" and _r.get("watch_only")) else _DIGEST_SHORT.get(states[0], states[0])
         counts[key] = counts.get(key, 0) + 1
-    # Held-position events ride the SAME mail, after the condition cards.
-    built += [build_held_card(ev) for ev in held_events]
     if held_events:
         counts["HELD"] = len(held_events)
     mk = (meta or {}).get("market_kill") or {}
     if mk.get("just_broke"):
         built.insert(0, build_market_card(mk))
         counts["MARKET"] = 1
-    tally = " · ".join(f"{k} {v}" for k, v in counts.items())
     stamp = now_et.strftime("%H:%M ET")
     n = len(cards) + len(held_events) + (1 if mk.get("just_broke") else 0)
-    subject = f"[AQE] {stamp} conditions · {n} card{'s' if n != 1 else ''} · {tally}"
-    header = f"{stamp} · {n} name{'s' if n != 1 else ''} changed state this cycle"
+    ca = act["counts"]
+    subject = (f"[AQE] {stamp} \u00b7 ACT NOW {ca['a']} \u00b7 near trigger {ca['b']} \u00b7 held {ca['c']}"
+               + (f" \u00b7 failed {ca['d']}" if ca["d"] else "") + (" \u00b7 MARKET" if mk.get("just_broke") else ""))
+    header = f"{stamp} \u00b7 {n} name{'s' if n != 1 else ''} changed state this cycle"
     data_line = _data_line(meta)
     if meta and meta.get("pma_run") and meta.get("aqe_date"):
-        subject += f" · PMA {meta['pma_run'][5:]} · AQE {meta['aqe_date'][5:]}"
+        subject += f" \u00b7 PMA {meta['pma_run'][5:]} \u00b7 AQE {meta['aqe_date'][5:]}"
 
-    row_text = [_candidate_row(c) for c in rows]
-    rows_head = (f"U&R setups forming ({len(rows)}) — entry signal = a 15-min candle closing above VWAP"
-                 if rows else "")
+    watch = armed_rows + watch_other
+    row_text = [_watch_line(c) for c in watch]
+    rows_head = (f"Watching, no action ({len(watch)}) \u2014 U&R entry signal = a 15-min candle closing above VWAP" if watch else "")
     head_block = header + (f"\n{data_line}" if data_line else "")
-    plain = (head_block + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
-             + (("\n\n" if built else "") + rows_head + "\n" + "\n".join(f"- {t}" for t in row_text)
-                if rows else "")
+    act_plain = _act_plain(act)
+    plain = (head_block + ("\n\n" + act_plain if act_plain else "") + "\n\n" + "\n\n".join(_card_plain(c) for c in built)
+             + (("\n\n" if built else "") + rows_head + "\n" + "\n".join(f"- {t}" for t in row_text) if watch else "")
              + f"\n\n{_DISCLAIMER}")
     html = (f"<div style='font-size:12px;color:#666;margin-bottom:8px'>{header}"
             + (f"<br>{data_line}".replace("\n", "<br>") if data_line else "") + "</div>"
+            + _act_html(act)
             + "".join(_card_html(c) for c in built)
             + ((f"<div style='border-left:4px solid #b8860b;padding:8px 12px;background:#fafafa;"
                 f"border-radius:6px;color:#1a1a1a;margin-bottom:10px'><b style='font-size:14px'>"
                 f"{rows_head}</b>"
                 + "".join(f"<div style='font-size:13px;margin-top:3px'>{t}</div>" for t in row_text)
-                + "</div>") if rows else "")
+                + "</div>") if watch else "")
             + f"<div style='font-size:11px;color:#999;margin-top:4px'>{_DISCLAIMER}</div>")
     return subject, plain, html
 
