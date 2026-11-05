@@ -32,6 +32,31 @@ Run from a working dir holding the day's artifacts. Every subcommand prints its 
 """
 import json, re, sys, os, io, csv, random, statistics, argparse, collections, datetime, subprocess, shutil
 
+# ---- Which report is this run? (PM 2026-11-05) The environment wins; otherwise the run's own manifest says (`report`), so a seat that runs a
+# printed command bare still gets the right roster. Looked for in the working directory, then beside any file named on the command line.
+def _resolve_report_from_manifest(argv=None):
+    if (os.environ.get("AEGIS_REPORT") or "").strip():
+        return
+    cands, argv = [], list(argv if argv is not None else sys.argv[1:])
+    for i, x in enumerate(argv):
+        if x == "--manifest" and i + 1 < len(argv):
+            cands.append(argv[i + 1])
+    cands.append("run_manifest.json")
+    for x in argv:
+        if isinstance(x, str) and os.path.exists(x):
+            d = x if os.path.isdir(x) else os.path.dirname(os.path.abspath(x))
+            cands += [os.path.join(d, "run_manifest.json"), os.path.join(os.path.dirname(d), "run_manifest.json")]
+    for c in cands:
+        try:
+            if os.path.isfile(c):
+                rep = str((json.load(open(c)) or {}).get("report") or "").strip().upper()
+                if rep in ("B", "C"):
+                    os.environ["AEGIS_REPORT"] = rep
+                return
+        except Exception:
+            continue
+_resolve_report_from_manifest()
+
 SRM_RANK = {"PASS": 3, "CAUTION": 2, "WATCH": 1, "BLOCKED": 0}  # display/sizing only since 2026-09-07; NOT in any ranking key
 CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_state","mp_accel_state",
     "elder","elder_5d","elder_pattern","entry","beta_30d","day_vol","rs_spy_20d","rs_leadership",
