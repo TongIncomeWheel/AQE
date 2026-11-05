@@ -36,6 +36,9 @@ PAIRS: list[tuple[Path, Path]] = [
     # 2026-11-03: src/pipeline/committee_data.py builds the weekly / daily / 1-hour grid in the nightly job.
     (CORE / "skills/pma/tools/mtf.py",
      AEGIS / "skills/premarket-analysis/tools/mtf.py"),
+    # 2026-11-05: src/valen/swing_pivot.py reads the ATR band edges (ATR_NEAR) from card_extras.py in the nightly export build.
+    (CORE / "skills/pma/tools/card_extras.py",
+     AEGIS / "skills/premarket-analysis/tools/card_extras.py"),
     (CORE / "skills/pma/contracts/voice_menus.json",
      AEGIS / "skills/premarket-analysis/contracts/voice_menus.json"),
 ]

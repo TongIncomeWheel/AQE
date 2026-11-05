@@ -857,7 +857,7 @@ def _lane(doors):
     # R27 (PM 2026-10-23): "it is completely stupid that we apply pullback lens onto a momentum book,
     # the 2 lanes should still stay". A name seated for its strength is a MOMENTUM-lane name. A reserved
     # U&R seat takes the ordinary rule -- a leader's reclaim (ACN) opens STRENGTH and is MOMENTUM.
-    if "STRONG_SEAT" in doors:
+    if "STRONG_SEAT" in doors or "SWING_PIVOT" in doors:      # SWING_PIVOT: momentum AT the pivot (PM 2026-11-05), the same book as the strength seats
         return "MOMENTUM"
     return "MOMENTUM" if any(d in MOMENTUM_DOORS for d in doors) else "PULLBACK"
 
@@ -1297,9 +1297,21 @@ def cmd_rank(a):
     for tk in strong_seated:
         doors[tk].append("STRONG_SEAT")
     admitted = admitted + strong_seated
-    rest_pool = watch_pool[len(strong_seated):]
+    # ================ SWING_PIVOT -- MOMENTUM AT THE PIVOT (PM 2026-11-05) ================
+    # PM: "BOTH" -- a standing door for the names sitting on their latest daily swing high in a weekly AND daily HH/HL uptrend (the coiling
+    # picture: strength that has not yet run). The export carries swing_pivot (data only, computed in the nightly from the price panel with
+    # mtf.py's own swing code; the 1-ATR edge lives in card_extras.py). At most --swing-seats of them (default 6), by AQE rank like R25, are
+    # SEATED and voted, MOMENTUM lane. ADDITIVE: they come after the nomination floor, the held book, the R25 U&R seats and the R27 strength
+    # seats, so they can never displace one of those; a name already in the room is not counted again. 0 turns it off.
+    swing_pool = sorted([tk for tk, r in exp_rows.items() if tk in uni and tk not in admitted and r.get("swing_pivot") is True],
+                        key=lambda tk: (uni[tk].get("rank") or 9999, tk))
+    swing_seated = swing_pool[:max(0, getattr(a, "swing_seats", 6))]
+    for tk in swing_seated:
+        doors[tk].append("SWING_PIVOT")
+    admitted = admitted + swing_seated
+    rest_pool = [tk for tk in watch_pool[len(strong_seated):] if tk not in swing_seated]
     flagged = rest_pool[:n_flag]
-    rest_doors = [tk for tk in door_only if tk not in flagged and tk not in strong_seated]
+    rest_doors = [tk for tk in door_only if tk not in flagged and tk not in strong_seated and tk not in swing_seated]
     dropped = [f"{tk}({'+'.join(doors[tk])} rank{uni[tk].get('rank')})" for tk in rest_doors]
 
     # R16's invariant, unchanged and still asserted: a nomination is IMPOSSIBLE to cut, because the
@@ -1329,6 +1341,14 @@ def cmd_rank(a):
                                    "on_elder": bool(exp_rows.get(tk, {}).get("on_elder"))} for tk in strong_seated],
                  "strong_seat_rule": ("R27 (PM 2026-10-23): the top --strong-seats Longlist/Elder names not otherwise in "
                                       "the room, by 20-day strength vs SPY, are seated and voted in the MOMENTUM lane."),
+                 "swing_seats": [{"ticker": tk, "aqe_rank": uni[tk].get("rank"), "swing_atr_dist": exp_rows[tk].get("swing_atr_dist"),
+                                  "swing_high": exp_rows[tk].get("swing_high"), "swing_high_date": exp_rows[tk].get("swing_high_date"),
+                                  "on_longlist": bool(exp_rows[tk].get("on_longlist")), "on_elder": bool(exp_rows[tk].get("on_elder"))}
+                                 for tk in swing_seated],
+                 "swing_seat_pool": len(swing_pool),
+                 "swing_seat_rule": ("SWING_PIVOT (PM 2026-11-05): up to --swing-seats names with the export's swing_pivot true (weekly and daily HH/HL, "
+                                     "daily close within 1 ATR of the latest daily swing high), not otherwise in the room, by AQE rank. Voted, MOMENTUM lane, "
+                                     "ADDITIVE after the floor, the held book, R25 and R27."),
                  "unr_seat_rule": ("R25 (PM 2026-10-23): up to --unr-seats names with AQE unr_status MET on the "
                                    "Longlist or Elder list, not otherwise in the room, by AQE rank. Voted like any "
                                    "name, PULLBACK lane (whole room)."),
@@ -1362,6 +1382,7 @@ def cmd_rank(a):
                                 "ELDER+LENS": f"elder>=7 on each of last {a.elder_bars} bars AND >=3/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
                                 "LENS": f">={a.lens_min}/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
                                 "STRENGTH": f"rs_spy_20d in top {int(a.strength_decile*100)}% of today's list (>= {rs_top}) OR mp>=75 AND mp_accel_state ACCELERATING (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+                                "SWING_PIVOT": "PM 2026-11-05: export swing_pivot true (weekly AND daily HH/HL, daily close within 1 ATR of the latest daily swing high). SEATED and voted, MOMENTUM lane, up to --swing-seats (default 6) by AQE rank, ADDITIVE after the floor, the held book, R25 and R27.",
                                 "PM_LENS": f">={a.pm_lens_min} of the PM's 6 checks (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
                                 "AQE_LEADER": "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER (FLAG ONLY -- R17: surfaces to the PM, never seats a name; mp_state not consulted -- R13)"},
                  "lanes_rule": {"MOMENTUM": f"opened any of {list(MOMENTUM_DOORS)}; verdict from {STRENGTH_SEATS}",
@@ -1383,6 +1404,7 @@ def cmd_rank(a):
           f"+ {len([t for t in floor if t in held and t not in tal])} held "
           f"+ {len(unr_seated)} R25 U&R seats {unr_seated} (pool {len(unr_pool)}) "
           f"+ {len(strong_seated)} R27 strength seats {strong_seated} "
+          f"+ {len(swing_seated)} SWING_PIVOT seats {swing_seated} (pool {len(swing_pool)}) "
           f"-> {len(admitted)} IN THE ROOM (R17: the doors seat nobody else); "
           f"{len(door_only)} door-openers flagged for the PM as information, {len(flagged)} shown; "
           f"by door {dict(by_door)}; lanes {dict(lanes)}; "
@@ -1702,7 +1724,7 @@ def cmd_r2digest(a):
          "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | SOLO (1 nominator at conviction>=4 + a momentum door) | ELDER+LENS (elder>=7 x2 bars AND >=3 lenses strong) | LENS (>=4/6 lenses strong) | STRENGTH (top-decile 20d RS, or mp>=75 accelerating) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER). A name with no SEATS/SOLO door was nominated by nobody.",
          "LANES (PM ruling 2026-09-22 D120; R32 2026-10-30): every name carries lane=MOMENTUM or lane=PULLBACK as a LABEL -- how it reached the room. ALL seven deciders vote on ALL names and every ratification counts on every ticket (R32). No seat list decides a verdict.",
          "R13 (binding): mp_state FADING means 'momentum score not higher than 3 bars ago' -- a default label that includes flat-at-high. It is NOT a decay signal and is NEVER on its own a reason to oppose. Read mp, mp_accel_state and the returns.",
-         "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists) or UNR_SEAT (Valen reclaim day) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
+         "R25/R27 (binding): a name with door STRONG_SEAT (among today's strongest on AQE's lists), UNR_SEAT (Valen reclaim day) or SWING_PIVOT (weekly and daily higher highs and higher lows, sitting within one daily range of its latest daily swing high) was seated by rule -- NO voice nominated it. That is not a reason to oppose. Apply YOUR method to it: is the momentum real, where would you enter, where would you be wrong. Do not PASS it only because it does not match your own scan's setup shape -- the PM wants the committee's verdict on the strongest names, not a re-run of each seat's screen.",
          "R27 (binding; R14's momentum point, R32 counting): on a MOMENTUM-lane name extension above the 20-day average, distance past a pivot, a non-LEADER tag or an INTERRUPTED pattern is a WEIGHT, never a veto. A momentum-lane name is judged on strength, institutional money, coil and momentum -- the book this lane exists to buy. Your vote counts whatever the lane; say your case BOTH ways in the case form (R36).",
          ""]
     if lanes_v1_on():
@@ -3494,7 +3516,7 @@ if __name__ == "__main__":
     s.add_argument("--export", required=True); s.add_argument("--date", required=True)
     s.add_argument("--dyncap", default=None, help="optional journal dynCap file; absent means levels are produced and sizing is refused")
     s.add_argument("--out", default="brackets.json")
-    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=10, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--strong-seats", type=int, default=10, help="R27 (PM 2026-10-23): the strongest Longlist/Elder names not nominated are seated and voted, MOMENTUM lane. 0 = flag only (R17/R26)."); s.add_argument("--unr-seats", type=int, default=3, help="R25 (PM 2026-10-23): reserved seats for Valen U&R MET names on the Longlist/Elder list that no seat nominated. 0 turns it off."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
+    s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=10, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--strong-seats", type=int, default=10, help="R27 (PM 2026-10-23): the strongest Longlist/Elder names not nominated are seated and voted, MOMENTUM lane. 0 = flag only (R17/R26)."); s.add_argument("--swing-seats", type=int, default=6, help="SWING_PIVOT (PM 2026-11-05): reserved seats for names AT their daily swing high in a weekly+daily HH/HL uptrend (export swing_pivot true) that no seat nominated, MOMENTUM lane, additive after the floor/R25/R27. 0 turns it off."); s.add_argument("--unr-seats", type=int, default=3, help="R25 (PM 2026-10-23): reserved seats for Valen U&R MET names on the Longlist/Elder list that no seat nominated. 0 turns it off."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
     s = sub.add_parser("round2packets")
     s.add_argument("--candidates", default="candidate_set.json")
     s.add_argument("--menus", required=True)
