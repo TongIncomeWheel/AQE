@@ -2051,7 +2051,16 @@ def cmd_board(a):
            "uncontested_oppose": [n["ticker"] for n in names if not n["contested"] and n["split"]["oppose"] and not n["split"]["support"]],
            "challenged": sorted(challenged), "names": names,
            "floor_rule": f"two messages per decider per contested name (floor-check counts); the Chair posts, never votes"}
-    assert "verdict" not in json.dumps(out), "board must never carry a verdict"
+    def _keys(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                yield str(k)
+                yield from _keys(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from _keys(v)
+    # the guard is about FIELDS: a seat's free text may say the word 'verdict' (2026-11-05, livermore's case text)
+    assert not any("verdict" in k.lower() for k in _keys(out)), "board must never carry a verdict"
     save(a.out, out)
     print(f"board: {len(ds)} names, {len(present)} deciders present{(' (absent: ' + ', '.join(absent) + ')') if absent else ''}; "
           f"CONTESTED {len(out['contested'])}: {' '.join(out['contested']) or 'none'}; "
