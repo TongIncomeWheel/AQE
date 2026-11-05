@@ -56,7 +56,12 @@ R1_REASON_MAX = 300
 # ---- THE REDESIGN (PM 2026-10-30; RULINGS R31-R36). Duplicated from pma_pipeline.py on purpose: the
 # registrar is copied on its own into run dirs (the tick tests do exactly that) and must not import
 # the pipeline. tests.test_roster_is_seven_deciders_plus_qa asserts the two copies agree.
-DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+BASE_DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QUANT_SEAT = "aqe-quant"
+REPORT = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
+if REPORT not in ("A", "B", "C"):
+    raise SystemExit(f"AEGIS_REPORT must be A, B or C, got {REPORT!r}")
+DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])      # three reports (PM 2026-11-05): C adds the AQE quant seat
 QA_SEAT = "steenbarger"
 R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
 SHORTLIST_CAP = 6              # R33

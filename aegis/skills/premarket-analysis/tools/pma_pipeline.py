@@ -762,7 +762,16 @@ MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
 # Detect-lens is an independent top-10 LIST read off lens_ranking.ranked, not a voice. Weis and Thorp
 # are benched; Rogers, Lynch, Crown and Druckenmiller stood down. `board` / `ratify-count` count the
 # DECIDERS and nobody else, loudly ignoring any other ballot.
-DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+# THREE REPORTS (PM 2026-11-05): A = today's committee (these seven); B = the same seven on the whole AQE universe; C = the same seven PLUS an eighth
+# voice, the AQE quant seat, argues from the AQE composites and sub-components. The roster follows the report the run is for (env AEGIS_REPORT,
+# set by RUN.yaml `report`); with no setting it is A, exactly as before. Every count below takes n from the deciders PRESENT, so the drop rule is
+# ceil(n/2) (4 of 7, 4 of 8).
+BASE_DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+QUANT_SEAT = "aqe-quant"
+REPORT = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
+if REPORT not in ("A", "B", "C"):
+    raise SystemExit(f"AEGIS_REPORT must be A, B or C, got {REPORT!r}")
+DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])
 QA_SEAT = "steenbarger"
 BENCH_SEATS = ["weis", "thorp"]
 STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
@@ -2533,7 +2542,7 @@ def cmd_slate_cut(a):
 # Nothing in this block judges a reason; the Chair runs these tools and adds nothing.
 # =====================================================================================================
 METHOD_FAMILY = {"oneil": "breakout", "minervini": "breakout", "livermore": "pivotal", "elder-lens": "impulse",
-                 "seow": "position", "raschke": "swing", "wyckoff": "structure"}
+                 "seow": "position", "raschke": "swing", "wyckoff": "structure", "aqe-quant": "quant"}
 CLAIMS_PER_CAMP = 2            # R38: the two highest-conviction SUPPORT cases and the two highest-conviction OPPOSE cases
 CLAIM_REVIEWERS = 2            # R38: each claim is ruled on by two reviewers of a different method family
 SLATE_MIN_SUPPORT = 4          # R38/R40: fewer than 4 SUPPORT at tier 2 = not slated
@@ -3446,7 +3455,7 @@ def cmd_gate(a):
         chk(c["ticker"] in ft, "QX1", f"{c['ticker']} appears in the verdict table")
     # QX2: no roll-call language in the body. Seat names and vote-count words belong in Appendix A only.
     seats = ["elder-lens", "livermore", "minervini", "oneil", "raschke", "seow", "thorp", "weis", "wyckoff",
-             "lynch", "detect-lens", "rogers", "steenbarger"]
+             "lynch", "detect-lens", "rogers", "steenbarger", "aqe-quant"]
     low = body.lower()
     leaked = [w for w in seats if re.search(r"\b" + re.escape(w) + r"\b", low)]
     chk(not leaked, "QX2", f"no seat names in the body (found: {leaked or 'none'})")

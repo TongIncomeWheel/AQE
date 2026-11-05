@@ -276,10 +276,17 @@ def _deciders(run_yaml):
         M = preflight_run.mini_yaml(open(run_yaml, encoding="utf-8").read())
         d = (M.get("parameters") or {}).get("deciders")
         if isinstance(d, list) and d:
-            return [str(x) for x in d]
+            return _with_report_seat([str(x) for x in d])
     except Exception:
         pass
-    return ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+    return _with_report_seat(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"])
+
+
+def _with_report_seat(roster):
+    """Three reports (PM 2026-11-05): a C run (env AEGIS_REPORT=C) adds the AQE quant seat as an eighth decider; A and B are the seven."""
+    if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C" and "aqe-quant" not in roster:
+        return list(roster) + ["aqe-quant"]
+    return list(roster)
 
 
 # NYSE full-day closures (the close a journal can be missing for without being stale).

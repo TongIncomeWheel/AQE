@@ -11,7 +11,7 @@ run actually produced. If a change moves a verdict, this fails and tells you whi
 
 Zero external dependencies. Exits 0 on pass, 1 on any failure.
 """
-import json, os, re, shutil, subprocess, sys, tempfile
+import importlib, json, os, re, shutil, subprocess, sys, tempfile, importlib.util
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIX = os.path.join(HERE, "fixtures")
@@ -1801,7 +1801,7 @@ def test_roster_is_seven_deciders_plus_qa(td):
     """R31 (PM 2026-10-30). Seven deciders, Steenbarger as QA, Detect-lens a list not a voice, Weis and
     Thorp benched, Rogers / Lynch / Crown / Druckenmiller stood down. The constants are the roster the
     code counts; RUN.yaml's seats must agree with them (checked once the run map carries the new rounds)."""
-    deciders = _const_list("DECIDERS")
+    deciders = _const_list("BASE_DECIDERS")
     check("DECIDERS is exactly the seven the PM named",
           sorted(deciders or []) == sorted(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]),
           str(deciders))
@@ -1814,6 +1814,40 @@ def test_roster_is_seven_deciders_plus_qa(td):
     check("R31..R36 are on the record", all(f"id: R{n}" in rul for n in range(31, 37)))
     check("R14, R22 and R30 are marked superseded, never deleted",
           all(f"id: {r}" in rul for r in ("R14", "R22", "R30")) and rul.count("status: superseded") >= 3)
+
+
+def test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat(td):
+    """Three reports (PM 2026-11-05): A and B are the seven; C is the seven plus the AQE quant seat as an EIGHTH DECIDER. The pipeline, the registrar
+    and the chain check read the same report; with no setting a run is A, exactly as before. The drop rule takes n from the deciders present."""
+    def roster(report, mod):
+        env = dict(os.environ)
+        env.pop("AEGIS_REPORT", None)
+        if report:
+            env["AEGIS_REPORT"] = report
+        d = os.path.join(HERE, "..", "tools") if False else os.path.dirname(PIPE)
+        r = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {d!r}); import {mod} as m; print(','.join(m.DECIDERS))"],
+                           capture_output=True, text=True, env=env)
+        return r.stdout.strip().split(","), r.returncode, r.stderr
+    seven = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+    for mod in ("pma_pipeline", "registrar"):
+        for rep in (None, "A", "B"):
+            check(f"{mod}: report {rep or 'unset'} is the seven", roster(rep, mod)[0] == seven, str(roster(rep, mod)))
+        got, rc, err = roster("C", mod)
+        check(f"{mod}: report C is the seven plus aqe-quant (eighth decider)", got == seven + ["aqe-quant"], str(got) + err[-200:])
+        _g, rc, err = roster("Z", mod)
+        check(f"{mod}: an unknown report is refused loudly", rc != 0 and "AEGIS_REPORT must be A, B or C" in err, err[-200:])
+    spec = importlib.util.spec_from_file_location("check_roster", os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    os.environ.pop("AEGIS_REPORT", None)
+    check("check.py: the chain check roster is the seven for A", ck._with_report_seat(seven) == seven)
+    os.environ["AEGIS_REPORT"] = "C"
+    try:
+        check("check.py: and the eight for C", ck._with_report_seat(seven) == seven + ["aqe-quant"])
+    finally:
+        os.environ.pop("AEGIS_REPORT", None)
+    import math
+    check("the drop rule is ceil(n/2): 4 of 7 in A and B, 4 of 8 in C", [math.ceil(n / 2) for n in (7, 8)] == [4, 4])
+    check("the eighth seat is in its own method family, so claims route across families", "\"aqe-quant\": \"quant\"" in _pipeline_source())
 
 
 def _r1_ballot(voice, date, names):
@@ -2760,7 +2794,7 @@ def test_all_seven_deciders_count_on_every_name(td):
     tally (the only reader of STRENGTH_SEATS) seow is therefore advisory on a MOMENTUM-lane name -- the
     opposite of R30, which the PM reversed the same day. Both rebuilt canons still stand."""
     check("seow is not in STRENGTH_SEATS", "seow" not in (_const_list("STRENGTH_SEATS") or ["seow"]))
-    check("detect-lens is not a decider", "detect-lens" not in (_const_list("DECIDERS") or ["detect-lens"]))
+    check("detect-lens is not a decider", "detect-lens" not in (_const_list("BASE_DECIDERS") or ["detect-lens"]))
     V = json.load(open(fx("round2_votes.json")))
     tk = V[0]["votes"][0]["ticker"]
     p4 = os.path.join(td, "p4_r32.json")
@@ -4020,7 +4054,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
