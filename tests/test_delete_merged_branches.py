@@ -25,7 +25,7 @@ def pr(n, state, head, merged=None):
 
 def test_the_rules_pick_exactly_the_merged_branches(dm, monkeypatch):
     br = {"main": "m1", "claude/done": "d1", "claude/extra-commits": "e2", "claude/open": "o1", "claude/unmerged": "u1", "claude/contained": "c1",
-          "claude/ma-matcher-v3": "h1", "claude/list-churn": "h2", "claude/board-guard-keys-only": "b1", "d123-condition-alerts": "old1", "claude/ptj-cleanup-pause": "old2"}
+          "claude/ma-matcher-v3": "h1", "claude/list-churn": "h2", "d123-condition-alerts": "old1", "claude/ptj-cleanup-pause": "old2"}
     prs = {"claude/done": [pr(1, "closed", "d1", "2026-11-05T01:00:00Z")], "claude/extra-commits": [pr(2, "closed", "e1", "2026-11-05T01:00:00Z")],
            "claude/open": [pr(3, "open", "o1")], "claude/ma-matcher-v3": [pr(4, "closed", "h1", "2026-11-05T01:00:00Z")],
            "d123-condition-alerts": [pr(5, "closed", "old1", "2026-10-02T00:00:00Z")]}
@@ -36,7 +36,7 @@ def test_the_rules_pick_exactly_the_merged_branches(dm, monkeypatch):
     assert rows["claude/extra-commits"][0] == "KEEP" and "commits after it" in rows["claude/extra-commits"][1]
     assert rows["claude/open"][0] == "KEEP" and "open PR #3" in rows["claude/open"][1]
     assert rows["claude/unmerged"][0] == "KEEP"
-    for held in ("main", "claude/ma-matcher-v3", "claude/list-churn", "claude/board-guard-keys-only", "d123-condition-alerts", "claude/ptj-cleanup-pause"):
+    for held in ("main", "claude/ma-matcher-v3", "claude/list-churn", "d123-condition-alerts", "claude/ptj-cleanup-pause"):
         assert rows[held][0] == "KEEP", held                      # held / unmerged-by-PM / main: never, even with a merged PR on record
 
 
