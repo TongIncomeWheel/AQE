@@ -1,0 +1,47 @@
+{
+ "voice": "seow",
+ "date": "2026-11-05",
+ "round": 2,
+ "tickets": [
+  {
+   "ticker": "BBY",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "DG",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if is not my exit: position system exits on a daily close below the support line max(fib_swing_low, base_low_20d), or next session under a red bar's low (C14, C29), not ma_50 or 8% below cost. ma100 vs ma200 is not my instrument (C1); it does not gate me.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "USFD",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Wrong-if is not my exit: position system exits on a daily close below max(fib_swing_low, base_low_20d) (C14, C29), not ma_50 or 8% below cost. D dist_to_20bar_high_pct 1.58: buy stop trails until a break (C27). Thin 63-day edge; flow unserved.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "WCN",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "Wrong-if is not my exit: position system exits on a daily close below the support line max(fib_swing_low, base_low_20d) (C14, C29), not ma_50 or 8% below cost. Print the horizon the deciders filed; 20 or 30 both sit in my position band (C22).",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "KDP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger h1_close_above:pivot_high with WAIT is not my entry: the position-system buy signal is live (D last_bar green, W hh_hl_3 HH/HL, D dist_to_20bar_high_pct 1.42) and C27 enters on a buy stop over yesterday's high, not a wait for the pivot.",
+   "would_clear": "Trigger trade_above:bar_high (buy stop one tick over yesterday's high, trailed daily, C27)."
+  }
+ ]
+}
