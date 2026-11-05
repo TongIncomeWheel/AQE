@@ -91,6 +91,22 @@ rerun:
     (4) INBOX-CLEAN is skipped: tick it `degraded` with the note 'skipped: rerun'.
     (5) The desk message starts 'PMA RERUN <date>-r2 DONE' and says it is not live.
 
+report:
+  how: "export AEGIS_REPORT=<A|B|C>; registrar.py --manifest run_manifest.json init --date <date> --report <B|C>   # run_id pma-<date>-<B|C>, run dir aegis/output/pma/run/<date>-<B|C>"
+  rules: >
+    THREE DAILY REPORTS (PM 2026-11-05), to measure which method beats the market. A = the committee as it runs today (the default; with
+    AEGIS_REPORT unset a run is A, byte for byte as before). B = the same seven seats, each with its own method, on the whole daily screened
+    AQE universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) BEFORE any AQE score gate. C = the same seven seats plus an
+    eighth decider, aqe-quant, who must argue from AQE's composites and sub-components (every SUPPORT / OPPOSE names at least two, the
+    registrar rejects otherwise; the plain glossary rides with every seat's packet). (1) B and C are NOT LIVE: they run as the non-live
+    rerun kind (publishes_live false), write no levels, are not read by the alerts, and are scored only. (2) They do NOT rerun weather,
+    macro, sector or the held-book sections: they reuse A's outputs for the same date (data pull, packets base, market kill, macro
+    context, held review) and carry only their ticker section and a scorecard line on their page (tools/pma_cards_report.py). (3) The AEGIS_REPORT
+    setting must match the manifest or every registrar command and check.py chain refuses to run. (4) The drop rule is ceil(n/2) of the
+    deciders present: 4 of 7 in A and B, 4 of 8 in C. (5) Verdict-ledger rows carry `report`. tools/report_compare.py grades each
+    report's picks against SPY and the equal-weight list at 5 and 20 sessions and measures overlap; A's Cards print one line per report
+    (report_lines.json) and the brief carries the section.
+
 checkpoint:
   tool: "skills/pma/tools/git_sync.py -m 'pma <date> checkpoint after <STEP>' --dest aegis/output/pma/run/<date> --paths run_manifest.json forms/ board.json claims_board.json funnel.json pairs.json decision.json slate.json slate_excluded.json floor_check.json consensus.json committee_record.json slate_plan.json rationale_draft.json rationale_final.json committee_position.json publish_receipt.json pma_cards_<date>.html pma_brief_<date>.md run_notes.md"
   path_rule: >

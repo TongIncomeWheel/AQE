@@ -149,6 +149,14 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
                 notes.append(f"step {s}: degraded -- " + "; ".join(str(x) for x in (st[s].get("degradations") or st[s].get("notes") or [])[:2]))
         if M.get("date") and date and M["date"] != date:
             fails.append(f"run_manifest.json is for {M['date']}, not {date}")
+        rep_ = (M.get("report") or "A")
+        env_rep = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
+        if rep_ != env_rep:
+            fails.append(f"manifest is report {rep_} but AEGIS_REPORT={env_rep}: the roster this check counts would be wrong")
+        if rep_ in ("B", "C"):
+            if not M.get("rerun") or (M.get("rerun") or {}).get("publishes_live") is not False:
+                fails.append(f"report {rep_} must be a non-live run (rerun block with publishes_live false): it publishes no levels and is not watched by alerts")
+            notes.append(f"REPORT {rep_}: scored only; no levels published; reuses report A's weather, macro, market kill and held review")
         rr = M.get("rerun")
         if rr:
             # RERUN (PM 2026-11-03): not live. The run dir must be the r<N> dir, and its publish receipt may list only

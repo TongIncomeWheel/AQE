@@ -1912,6 +1912,130 @@ def test_the_aqe_quant_seat_must_cite_two_aqe_fields(td):
     check("two cited fields pass", not [e for e in reg.validate_round1(r1, None)[0] if "fields_cited" in e])
 
 
+def test_reports_b_and_c_run_as_their_own_non_live_runs(td):
+    """Three reports (PM 2026-11-05): B and C are separate runs -- run id pma-<date>-B / -C, run dir <date>-B / -C, never live (no levels, nothing
+    for the alerts to watch), tagged on the manifest and on every verdict-ledger row. A manifest refuses to run under another report's roster."""
+    def reg(args, report):
+        env = dict(os.environ); env.pop("AEGIS_REPORT", None)
+        if report: env["AEGIS_REPORT"] = report
+        return subprocess.run([sys.executable, REG] + args, capture_output=True, text=True, env=env)
+    man = os.path.join(td, "report_c_manifest.json")
+    r = reg(["--manifest", man, "init", "--date", "2026-11-06", "--report", "C"], "C")
+    m = json.load(open(man)) if os.path.exists(man) else {}
+    check("init --report C writes run_id pma-2026-11-06-C", r.returncode == 0 and m.get("run_id") == "pma-2026-11-06-C", r.stdout + r.stderr)
+    check("and run dir <date>-C, report tag, never live", (m.get("rerun") or {}).get("run_dir") == "aegis/output/pma/run/2026-11-06-C"
+          and m.get("report") == "C" and (m.get("rerun") or {}).get("publishes_live") is False, str(m))
+    check("it declares what it reuses from report A and what it does not rerun", "weather" in str((m.get("reuse_from_report_a") or {}).get("does_not_rerun")))
+    r = reg(["--manifest", man + "x", "init", "--date", "2026-11-06", "--report", "C"], None)
+    check("--report C without AEGIS_REPORT=C is refused (the roster would be wrong)", r.returncode == 2 and "AEGIS_REPORT" in r.stderr, r.stderr)
+    r = reg(["--manifest", man, "status"], None)
+    check("reading a C manifest under the A roster is refused loudly", r.returncode != 0 and "REFUSED" in (r.stderr + r.stdout), r.stdout + r.stderr)
+    r = reg(["--manifest", man, "status"], "C")
+    check("and read normally under C", r.returncode == 0, r.stdout + r.stderr)
+    r = reg(["--manifest", man + "b", "init", "--date", "2026-11-06", "--report", "B"], "B")
+    check("report B is pma-<date>-B", r.returncode == 0 and json.load(open(man + "b"))["run_id"] == "pma-2026-11-06-B", r.stdout + r.stderr)
+    r = reg(["--manifest", man + "a", "init", "--date", "2026-11-06"], None)
+    check("a plain init is report A, no tag, live", r.returncode == 0 and "report" not in json.load(open(man + "a")) and "rerun" not in json.load(open(man + "a")))
+    r = reg(["--manifest", man + "z", "init", "--date", "2026-11-06", "--report", "Z"], None)
+    check("an unknown report is refused", r.returncode != 0)
+    src = open(PIPE).read()
+    check("the verdict ledger tags every row with its report", src.count('"report": REPORT') >= 2)
+
+
+def test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched(td):
+    """Report C (PM 2026-11-05) dry build on a real export: an eighth packet for aqe-quant carrying composites and sub-components with values,
+    the same glossary beside every seat's packet, and no change at all to Report A (seven packets, no glossary, same candidate set)."""
+    ex = os.path.join(HERE, "..", "..", "..", "..", "..", "..", "tests", "fixtures", "cards_v3", "aqe_daily_export.json")
+    if not os.path.exists(ex):
+        return
+    menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
+    def build(report, tag):
+        env = dict(os.environ); env.pop("AEGIS_REPORT", None)
+        if report: env["AEGIS_REPORT"] = report
+        cs, out = os.path.join(td, f"{tag}_cs.json"), os.path.join(td, f"{tag}_pk")
+        a = subprocess.run([sys.executable, PIPE, "trim", "--export", ex, "--date", "2026-11-04", "--out", cs], capture_output=True, text=True, env=env)
+        b = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04", "--outdir", out],
+                           capture_output=True, text=True, env=env)
+        return a, b, cs, out
+    a, b, cs_c, out_c = build("C", "c")
+    check("report C builds packets", a.returncode == 0 and b.returncode == 0, (a.stderr + b.stderr)[-400:])
+    if b.returncode != 0:
+        return
+    tsvs = sorted(f for f in os.listdir(out_c) if f.endswith(".tsv"))
+    check("report C: eight packets, aqe-quant among them", len(tsvs) == 8 and "aqe-quant.tsv" in tsvs, str(tsvs))
+    check("report C: the glossary sits beside the packets", os.path.exists(os.path.join(out_c, "aqe_glossary.md")))
+    import csv
+    rows = list(csv.DictReader([l for l in open(os.path.join(out_c, "aqe-quant.tsv")) if not l.startswith("#")], delimiter="\t"))
+    cols = rows[0].keys() if rows else []
+    check("aqe-quant is served a sub-component and a gate column", "subcomponents.energy.exhaustion_score" in cols and "sc_m_gates" in cols, str(list(cols)[:12]))
+    filled = [r for r in rows if r.get("subcomponents.energy.exhaustion_score") not in (None, "")]
+    check("and they carry values, not a blank column", len(filled) > len(rows) * 0.8, f"{len(filled)}/{len(rows)}")
+    check("no PM-only QS field reaches the aqe-quant packet", not any(c == "qs" or c.startswith("qs.") for c in cols))
+    a2, b2, cs_a, out_a = build(None, "a")
+    tsvs_a = sorted(f for f in os.listdir(out_a) if f.endswith(".tsv"))
+    check("report A: seven packets, no aqe-quant, no glossary", len(tsvs_a) == 7 and "aqe-quant.tsv" not in tsvs_a
+          and not os.path.exists(os.path.join(out_a, "aqe_glossary.md")), str(tsvs_a))
+    ca, cc = json.load(open(cs_a)), json.load(open(cs_c))
+    drop = {"sc_m_gates", "sc_p_gates", "pipe_rank"}
+    ua = [{k: v for k, v in r.items()} for r in ca["universe"]]
+    uc = [{k: v for k, v in r.items() if k not in drop} for r in cc["universe"]]
+    check("report A candidate set is unchanged by the C additions (C only adds the three gate/rank fields)", ua == [{k: v for k, v in r.items() if k not in drop} for r in ca["universe"]] and
+          [{k: v for k, v in r.items() if k not in drop} for r in ca["universe"]] == uc)
+    for f in tsvs_a:
+        same = open(os.path.join(out_a, f), "rb").read() == open(os.path.join(out_c, f), "rb").read() if f != "aqe-quant.tsv" else True
+        check(f"the {f} packet is byte-identical between report A and report C" if same else f"{f} differs between A and C (shuffle is seeded by date, so it must not)", same)
+
+
+def test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap(td):
+    """Three reports (PM 2026-11-05): each report's picks graded against SPY and the equal-weight list at 5 and 20 sessions, plus overlap."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("report_compare_t", os.path.join(TOOLS, "report_compare.py"))
+    rc = importlib.util.module_from_spec(spec); spec.loader.exec_module(rc)
+    days = ["2026-11-0%d" % i for i in range(2, 10)] + ["2026-11-1%d" % i for i in range(0, 10)]
+    days = [d for d in days if d[-2:] not in ("07", "08", "14", "15")]
+    def series(daily):
+        out, px = {}, 100.0
+        for d in days:
+            out[d] = round(px, 4); px *= 1 + daily
+        return out
+    closes = {"SPY": series(0.001), "AAA": series(0.01), "BBB": series(-0.01), "CCC": series(0.002), "DDD": series(0.0)}
+    mk = lambda *vt: {"rows": [{"date": "2026-11-04", "ticker": t, "verdict": v} for t, v in vt]}
+    reports = {"A": mk(("AAA", "ADVANCE"), ("BBB", "PASS")), "B": mk(("AAA", "ADVANCE"), ("CCC", "HOLD-FOR-CONDITIONS")),
+               "C": mk(("BBB", "ADVANCE"))}
+    res = rc.grade(reports, closes, {"2026-11-04": ["AAA", "BBB", "CCC", "DDD"]}, days[-1], [5, 20])
+    a5 = res["reports"]["A"]["by_horizon"]["5"]
+    check("a PASS is not a pick; A has one graded pick at 5 sessions", a5["n"] == 1 and res["reports"]["A"]["picks"] == 1, str(a5))
+    check("the pick beat SPY and the equal-weight list", a5["vs_spy_mean"] > 0 and a5["vs_list_mean"] > 0, str(a5))
+    check("C's falling pick lost to SPY", res["reports"]["C"]["by_horizon"]["5"]["vs_spy_mean"] < 0)
+    h20 = res["reports"]["A"]["by_horizon"]["20"]
+    check("a horizon not yet reached is pending, never graded early", h20["n"] == 0 and h20["pending"] == 1, str(h20))
+    check("overlap A-B is one shared name of two", res["overlap"]["A-B"]["shared"] == 1 and res["overlap"]["A-B"]["union"] == 2, str(res["overlap"]))
+    check("overlap A-C is zero", res["overlap"]["A-C"]["shared"] == 0)
+    ln = rc.lines(res)
+    check("one plain line per report for A's Cards", set(ln) == {"A", "B", "C"} and ln["A"].startswith("Report A:") and "vs SPY" in ln["A"], str(ln))
+    check("the brief section names the overlap", "Overlap between reports" in rc.render_md(res))
+
+
+def test_report_b_and_c_cards_are_the_compact_page_with_no_levels(td):
+    """Report B/C cards (PM 2026-11-05): ticker section + scorecard line only, no levels, passes the same plain-words gate as Report A's page."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("cards_report_t", os.path.join(TOOLS, "pma_cards_report.py"))
+    cr = importlib.util.module_from_spec(spec); spec.loader.exec_module(cr)
+    cons = json.load(open(os.path.join(HERE, "fixtures", "consensus.json")))
+    page = cr.render("C", "2026-11-06", cons, {"C": "Report C: 5 sessions: 3 picks, +1.20% average, +0.80 vs SPY, +0.40 vs the full list"})
+    check("the page names the report and says it is not live", "Report C" in page and "not live" in page)
+    check("it carries the scorecard line", "+0.80 vs SPY" in page)
+    low = page.lower()
+    check("no level words: no stop, target, entry or bracket", not any(w in low for w in ("stop", "target", "entry", "bracket", "tp1", "tp2")))
+    check("none of Report A's sections", not any(w in page for w in ("Macro and weather", "Sector and theme", "Your book")))
+    spec = importlib.util.spec_from_file_location("check_cardsgate", os.path.join(HERE, "..", "..", "daily-check", "check.py"))
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    f = os.path.join(td, "cr.html"); open(f, "w").write(page)
+    res = ck.check_cards_html(f)
+    fails = res[0] if isinstance(res, tuple) else res
+    check("it passes the plain-words gate", not fails, str(fails)[:300])
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4086,7 +4210,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

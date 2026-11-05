@@ -166,7 +166,13 @@ def load_json(path, what):
 def load_manifest(path):
     if os.path.exists(path):
         with open(path) as f:
-            return json.load(f)
+            m = json.load(f)
+        # Three reports (PM 2026-11-05): a manifest knows which report it is (absent = A). Running it under another report's roster
+        # would count the wrong deciders into every threshold, so the mismatch is refused loudly, never silently run.
+        if isinstance(m, dict) and (m.get("report") or "A") != REPORT:
+            raise SystemExit(f"REFUSED: {path} is a report {m.get('report') or 'A'} run but AEGIS_REPORT={REPORT}. "
+                             f"Set AEGIS_REPORT={m.get('report') or 'A'} for this run (the roster and the drop rule depend on it).")
+        return m
     return None
 
 
@@ -1557,15 +1563,32 @@ def cmd_init(a):
     aegis/output/pma/run/<date>-<suffix>; the manifest says `rerun`, and git_sync / check.py chain hold it to that dir so it
     can never overwrite the live levels, the scorecard log or the original run's record."""
     suffix = getattr(a, "rerun", None)
+    report = (getattr(a, "report", None) or "A").strip().upper()
+    if report not in ("A", "B", "C"):
+        print(f"init: --report must be A, B or C, not {report!r}", file=sys.stderr)
+        return 2
+    if report != REPORT:
+        print(f"init: --report {report} but AEGIS_REPORT={REPORT} -- export AEGIS_REPORT={report} first so the roster matches", file=sys.stderr)
+        return 2
+    if report != "A":
+        if suffix:
+            print("init: --report B/C already names the run (<date>-B / <date>-C); do not combine it with --rerun", file=sys.stderr)
+            return 2
+        suffix = report          # Report B / C: distinct identity pma-<date>-B, run dir <date>-B, NEVER live (no levels, not watched by alerts)
     rid = f"pma-{a.date}" + (f"-{suffix}" if suffix else "")
     m = {"run_id": rid, "date": a.date, "created": _now(),
          "steps": {}, "seats": {}, "degradations": [], "flags": []}
     if suffix:
-        if not re.fullmatch(r"r[0-9]{1,2}", suffix):
+        if not re.fullmatch(r"r[0-9]{1,2}", suffix) and suffix != report:
             print(f"init: --rerun must look like r2, r3 ... not {suffix!r}", file=sys.stderr)
             return 2
         m["rerun"] = {"suffix": suffix, "of": f"pma-{a.date}", "run_dir": f"aegis/output/pma/run/{a.date}-{suffix}",
                       "publishes_live": False}
+    if report != "A":
+        m["report"] = report
+        m["reuse_from_report_a"] = {"run_dir": f"aegis/output/pma/run/{a.date}",
+                                    "reuses": ["data pull", "packets base", "market kill", "macro context", "held review"],
+                                    "does_not_rerun": ["weather", "macro", "sector", "held-book sections"]}
     save_manifest(a.manifest, m)
     print(f"scoreboard initialised: {a.manifest} run_id={rid}" + (" (RERUN: never publishes live)" if suffix else ""))
     return 0
@@ -1735,7 +1758,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--manifest", default="run_manifest.json")
     sub = p.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live")
+    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live"); s.add_argument("--report", default=None, help="A (default) | B | C: Report B/C run as pma-<date>-B/-C in run/<date>-B/-C, never live; AEGIS_REPORT must match")
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")

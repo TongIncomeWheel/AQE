@@ -49,6 +49,7 @@ HELD = {h["ticker"]: h for h in D["held_positions"]}
 _opt = lambda n, dflt: json.load(open(RUN / n)) if (RUN / n).exists() else dflt          # run files the fixture / an older run may lack: the card says "not available", never invents
 BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
 RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
+_RL = _opt("report_lines.json", None) or {}   # one plain line per report (A, B, C) from report_compare.py (PM 2026-11-05); absent until the first run of B/C
 _CL = _opt("cards_lines.json", None)           # WRITER-authored lines 2 and 3 (PM 2026-11-05): {TICKER: {"why": one sentence, "contested": one sentence}}
 CL = ((_CL or {}).get("cards") if isinstance(_CL, dict) and isinstance((_CL or {}).get("cards"), dict) else _CL) or {}
 CARD_FIELDS = {}                                # ticker -> the ten fields as printed; written to card_fields.json for the alert side
@@ -1106,7 +1107,8 @@ s8 = section("8 &middot; Read with care", ("This is a rerun on frozen votes" if 
              + (f", and {nword(_n_stale).lower()} data leg{' was' if _n_stale == 1 else 's were'} stale when the committee met." if _n_stale else ", and every data leg was current when the committee met."),
     f'<details class="big"><summary>{len(cav)} caveats on the run, the data, the book and the sizing</summary><ul class="plainlist">{"".join(f"<li>{E(x)}</li>" for x in cav)}</ul>'
     f'<p>{E(MARK["committee_data_status"])}. {E(MARK["ma_panel_refresh"])}.</p></details>'
-    f'<details class="big"><summary>{refresh_more[0]}</summary>{refresh_more[1]}</details>', "care")
+    f'<details class="big"><summary>{refresh_more[0]}</summary>{refresh_more[1]}</details>'
+    + (f'<details class="big"><summary>Which of the three reports is beating the market</summary><ul class="plainlist">{"".join(f"<li>{E(plain(_RL[k]))}</li>" for k in ("A", "B", "C") if _RL.get(k))}</ul></details>' if any(_RL.get(k) for k in ("A", "B", "C")) else ""), "care")
 
 # ------------------------------------------------------------------ page
 CSS = """
