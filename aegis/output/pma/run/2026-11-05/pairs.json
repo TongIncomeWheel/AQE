@@ -1,0 +1,179 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-05T00:44:08Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-05",
+ "survivors": [
+  "DG",
+  "ABBV",
+  "BBY",
+  "KO",
+  "MFC",
+  "CCEP",
+  "BALL",
+  "USFD",
+  "GLBE",
+  "CAH",
+  "WCN",
+  "KDP"
+ ],
+ "pairs": [
+  {
+   "pair_id": "DG-minervini-against~livermore",
+   "ticker": "DG",
+   "claim_id": "DG-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "Long stack out of order (ma100 123.87 under ma200 125.57), from_52w_hi -9.34: a stage being repaired, not a confirmed stage 2 (C2/C3).",
+   "refute_evidence": "C5 trend test reads the price, not the long-average order: W ema_order 9>21 at dist_to_20bar_high_pct 0.18, D 9>21 at 0.18, H1 HH/HL at 96.7% of range. Uptrend at its high, not a repair.",
+   "refute_tf": {
+    "W": "9>21, close 0.18% under 20-wk high: uptrend at its high",
+    "D": "9>21, last_bar green, 0.18% under 20-day high",
+    "H1": "HH/HL, pos_in_day_range_pct 96.7: no reaction"
+   }
+  },
+  {
+   "pair_id": "DG-minervini-against~elder-lens",
+   "ticker": "DG",
+   "claim_id": "DG-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Long stack out of order (ma100 123.87 under ma200 125.57), from_52w_hi -9.34: a stage being repaired, not a confirmed stage 2 (C2/C3).",
+   "refute_evidence": "My first screen is the weekly tide (C21): W ema_order 9>21, close_vs_ema9 above, so the long is permitted. Daily elder_5d [5, 5, 9, 2, 10] is red giving way (C3,C4). MA100/MA200 order is not an Elder test.",
+   "refute_tf": {
+    "W": "close above EMA9, ema_order 9>21: tide up, long permitted (C21)",
+    "D": "9>21, last_bar green, dist_to_20bar_high_pct 0.18; permission event on last bar",
+    "H1": "above EMA9, 9>21, HH/HL, pos_in_day_range_pct 96.7"
+   }
+  },
+  {
+   "pair_id": "BBY-oneil-against~livermore",
+   "ticker": "BBY",
+   "claim_id": "BBY-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Volume failed the 1.40 test (C16); bearish divergence at the high (C25).",
+   "refute_evidence": "Price is right (C2): W/D at dist_to_20bar_high_pct 0.13, 9>21, H1 HH/HL at 97.2% of range. A 1.40 volume test is not mine (fill_difficulty NOT_SERVED); divergence is advisory only.",
+   "refute_tf": {
+    "W": "9>21, 0.13% under 20-wk high: new high zone",
+    "D": "9>21, green, 0.13% under 20-day high",
+    "H1": "HH/HL, 97.2% of day's range: no reaction"
+   }
+  },
+  {
+   "pair_id": "CCEP-minervini-for~wyckoff",
+   "ticker": "CCEP",
+   "claim_id": "CCEP-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "wyckoff",
+   "claim_text": "Template pass at a new high with group-leading RS (rs_spy_20d 16.19) and a breakout over 114.55 (C3, C11).",
+   "refute_evidence": "My breakout test (C5, C12) needs a close in the top third: H1 pos_in_day_range_pct 54.7, H1 last_bar red, D dist_to_20bar_high_pct 0.92. Supply met the break; at the test, but not yet a sign-of-strength bar.",
+   "refute_tf": {
+    "W": "9>21, 0.9% under 20-wk high: trend context up",
+    "D": "green, 9>21, 0.9% under 20-day high: at the broken level",
+    "H1": "red last bar, 55% of the day's range: mid-bar close, no SOS"
+   }
+  },
+  {
+   "pair_id": "BALL-wyckoff-for~minervini",
+   "ticker": "BALL",
+   "claim_id": "BALL-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "minervini",
+   "claim_text": "Creek on the value edge, a wide bar closing at the high on rvol_20d 1.58, weekly HH/HL: a range exit with a defined test (C5, C7).",
+   "refute_evidence": "A range exit from a flat tide is stage 1 resolving, not a confirmed stage 2 (C2): weekly ema9 63.28 sits only ~2% over ema21 61.84. Creek and value edge are not my tests.",
+   "refute_tf": {
+    "W": "HH/HL, ema9 63.28 vs ema21 61.84: tide just turning",
+    "D": "close 67.38 over ema9 65.21, 1.07% under 20-day high",
+    "H1": "97.4% of range: strong bar, not my gate"
+   }
+  },
+  {
+   "pair_id": "BALL-minervini-against~elder-lens",
+   "ticker": "BALL",
+   "claim_id": "BALL-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Flat 50/100/200 stack, rs_rank_pct 68.25 below leadership, house Episodic pivot FAILED.",
+   "refute_evidence": "Weekly tide is up, not flat, on my screen: W ema_order 9>21, hh_hl_3 HH/HL (C21). Daily elder_5d [6, 10, 10, 5, 10] is a lift on the last bar (C4). rs_rank_pct and EP grades are not Elder tests.",
+   "refute_tf": {
+    "W": "close above EMA9, 9>21, HH/HL: tide up (C21)",
+    "D": "9>21, last_bar green, dist_to_20bar_high_pct 1.07; 5 then 10 lift",
+    "H1": "above EMA9, 9>21, mixed, pos_in_day_range_pct 97.4"
+   }
+  },
+  {
+   "pair_id": "BALL-minervini-against~seow",
+   "ticker": "BALL",
+   "claim_id": "BALL-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "Flat 50/100/200 stack, rs_rank_pct 68.25 below leadership, house Episodic pivot FAILED.",
+   "refute_evidence": "My system reads no 50/100/200 stack (C1). Its picture is a break on strength: W.hh_hl_3 HH/HL, ema_order 9>21 all frames, D.dist_to_20bar_high_pct 1.1, H1.pos_in_day_range_pct 97.4. rs_rank_pct 68.25 is middling, a caution, not a fail.",
+   "refute_tf": {
+    "W": "9>21 HH/HL, 1.1% under 20-wk high: weekly up",
+    "D": "above EMA9, 9>21, last_bar green, 1.1% under 20-day high",
+    "H1": "9>21 mixed, 97.4% of day's range"
+   }
+  },
+  {
+   "pair_id": "WCN-livermore-for~elder-lens",
+   "ticker": "WCN",
+   "claim_id": "WCN-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "elder-lens",
+   "claim_text": "Uptrend making new highs on every timeframe with heavy participation.",
+   "refute_evidence": "New highs on every frame are permission, not a trigger (C1). elder_5d [7, 7, 7, 7, 10] has no bar at or under 6, so no red giving way (C4); the colour of the 7s is unreadable from the score (C2).",
+   "refute_tf": {
+    "W": "close above EMA9, 9>21, HH/HL: tide up (C21)",
+    "D": "9>21, HH/HL, 0.4% under 20-day high: no pullback",
+    "H1": "above EMA9, 9>21, HH/HL, 87% of the day's range"
+   }
+  },
+  {
+   "pair_id": "WCN-seow-for~raschke",
+   "ticker": "WCN",
+   "claim_id": "WCN-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "raschke",
+   "claim_text": "All three timeframes making higher highs, adx 41.06, mp 100.0 STRONG.",
+   "refute_evidence": "HH/HL on all three frames (hh_hl_3 HH/HL W, D, H1) is a trend read, not a setup; adx is not on my menu. D dist_to_20bar_high_pct 0.43 far above base; H1 last_bar red at 87.1%. No test or first pullback to buy.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.43% under 20-wk high: extended trend",
+    "D": "HH/HL, 0.43% under 20-day high: no setup at the bar",
+    "H1": "HH/HL, last bar red, 87.1% of day's range: no trigger"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 9,
+  "by_author": {
+   "minervini": 5,
+   "oneil": 1,
+   "wyckoff": 1,
+   "livermore": 1,
+   "seow": 1
+  },
+  "by_refuter": {
+   "livermore": 2,
+   "elder-lens": 3,
+   "wyckoff": 1,
+   "minervini": 1,
+   "seow": 1,
+   "raschke": 1
+  }
+ }
+}
