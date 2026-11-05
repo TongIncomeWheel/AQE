@@ -184,7 +184,7 @@ sc_lines = [l for l in SCMD.splitlines() if l.startswith("| 20")]
 last_run_row = [c.strip() for c in sc_lines[-1].strip("|").split("|")]          # yesterday's one-session row
 y_spy, y_list, y_beat = last_run_row[3], last_run_row[4], last_run_row[5]
 mk = DEC["market_kill"]
-mk_plain = re.sub(r"\s*\(\s*C\d+(?:\s*,\s*C\d+)*\s*\)", "", re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", mk["plain"], flags=re.I)).strip().rstrip(".")
+mk_plain = re.sub(r"\s*\(\s*C\d+(?:\s*,\s*(?:C\d+|gate [A-Z_ ]+))*\s*\)", "", re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", mk["plain"], flags=re.I)).strip().rstrip(".")
 now_sgt = datetime.now(SGT)
 WORD = {i: w for i, w in enumerate("No One Two Three Four Five Six Seven Eight Nine Ten".split())}
 nword = lambda n: WORD.get(n, str(n))

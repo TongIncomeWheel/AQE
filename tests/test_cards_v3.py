@@ -146,3 +146,17 @@ def test_the_rendered_page_passes_the_plain_words_gate_with_the_new_sections(run
     render(run)
     fails, notes = ck.check_cards_html(str(run / "out.html"))
     assert fails == [], fails
+
+
+def test_a_market_kill_line_with_a_gate_note_in_brackets_passes_the_plain_words_gate(run):
+    """5 Nov: '(C2, gate DELEGATED)' on the market-kill line failed the plain-words gate and the page fell back to v2."""
+    def dec(o):
+        o["market_kill"]["plain"] = "Void every new trigger if SPY closes under 500 (C2, gate DELEGATED)."
+    edit(run, "decision.json", dec)
+    h = render(run)
+    assert "gate DELEGATED" not in h and "(C2" not in h
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("chk_mk", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    fails, _ = ck.check_cards_html(str(run / "out.html"))
+    assert fails == [], fails
