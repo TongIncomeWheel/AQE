@@ -225,6 +225,8 @@ def is_latest_run_row(doc: dict | None, row: dict) -> bool:
     if row.get("carried"):
         return False
     origin, run = row.get("origin_run"), (doc or {}).get("run_date")
+    if row.get("supplemental") and origin and run and str(origin).startswith(f"{run}-"):
+        return True        # a same-date supplemental committee pass (PM 2026-11-05): origin_run "<run_date>-r3" is the latest run too
     return origin is None or run is None or origin == run
 
 

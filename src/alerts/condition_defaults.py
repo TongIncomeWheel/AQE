@@ -49,7 +49,7 @@ def _sources() -> set[str]:
 
 
 def brief_list_names(export: dict | None) -> dict[str, list[str]]:
-    """{ticker: [list names it is on]} for the brief's three lists, in the SAME definitions as section 5b of the brief
+    """{ticker: [list names it is on]} for the brief's lists (Elder, AQE, Detect lens, Swing pivot), in the SAME definitions as section 5b of the brief
     (aegis/output/pma/test_cards/v3/lists_vs_committee.py): Elder top N = on_elder by Elder score then AQE rank; AQE top N
     = by the export `rank`; Detect-lens top N = lens_ranking.ranked in its stored order. Read from the export; no new data."""
     dl = (export or {}).get("daily_list") or []
@@ -58,10 +58,14 @@ def brief_list_names(export: dict | None) -> dict[str, list[str]]:
     aqe = sorted([r for r in dl if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])
     known = {r.get("ticker") for r in dl}
     lens = [x["ticker"] for x in ((export or {}).get("lens_ranking") or {}).get("ranked") or [] if x.get("ticker") in known]
+    # 4th list (PM 2026-11-05, "anything in the brief is bracketed and watched"): names AT their daily swing high in a weekly+daily HH/HL
+    # uptrend = the export's swing_pivot true (src/valen/swing_pivot.py), by AQE rank. Absent on an export built before the column existed.
+    swing = [r["ticker"] for r in aqe if r.get("swing_pivot") is True]
     out: dict[str, list[str]] = {}
     for name, rows in (("Elder", [r["ticker"] for r in elder[:C.BRIEF_LIST_ELDER_N]]),
                        ("AQE", [r["ticker"] for r in aqe[:C.BRIEF_LIST_AQE_N]]),
-                       ("Detect lens", lens[:C.BRIEF_LIST_LENS_N])):
+                       ("Detect lens", lens[:C.BRIEF_LIST_LENS_N]),
+                       ("Swing pivot", swing[:C.BRIEF_LIST_SWING_N])):
         for tk in rows:
             out.setdefault(tk, []).append(name)
     return out
@@ -228,8 +232,13 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
 
     # 2. names outside the committee book: the brief's three lists (default) and/or the older whole Longlist / Elder
     want = _sources()
-    pma_tickers = {r.get("ticker") for r in latest}
+    # A supplemental pass's committee-dropped / unslated names are brief-list watch names (PM 2026-11-05): "anything in the brief is
+    # bracketed and watched". They are WATCH rows in the levels file (information only there); here they are watched under AQE defaults.
+    bw = {r.get("ticker"): r for r in latest if r.get("class") == "WATCH" and r.get("brief_watch") and r.get("ticker")}
+    pma_tickers = {r.get("ticker") for r in latest if r.get("ticker") not in bw}
     on_lists = brief_list_names(export) if "brief_lists" in want else {}
+    for _tk in bw:
+        on_lists.setdefault(_tk, []).append("Swing pivot")
     for tk, rec in by_ticker.items():
         if tk in covered or tk in pma_tickers or tk in held or rec.get("held"):
             continue
@@ -253,6 +262,9 @@ def synthesize_rows(export: dict | None, pma_doc: dict | None) -> list[dict]:
             row = _as_row(rec, DEFAULT_CLASS[src], cond, (lt or {}).get("stop") if (lt and lt.get("line") is not None) else None)
             if src == "brief_lists":
                 row["on_lists"] = on_lists[tk]
+                if tk in bw:
+                    row.update(supplemental=True, supplemental_label=bw[tk].get("supplemental_label"), origin_run=bw[tk].get("origin_run"),
+                               committee_result=bw[tk].get("committee_result"), committee_objections=bw[tk].get("committee_objections"))
                 if lt:
                     row["lane"], row["lane_label"] = lt["lane"], lt["label"]
                     row["lane_note"] = ("trigger is this lane's own line" if lt.get("line") is not None
