@@ -241,11 +241,39 @@ def build(a):
                      "atr_14d": atr, "triggers": trig,
                      "keep_case": card.get("for"), "release_case": card.get("against")})
 
+    def _watch_levels(t):
+        """The brief name's render-only bracket (pma_pipeline brackets, PM 2026-11-05), labelled by source; a name with no valid bracket says why."""
+        b = br.get(t)
+        if not b:
+            return {}
+        lv = _levels(b) or {}
+        if b.get("invalid_reason") or not lv:
+            return {"levels": None, "levels_source": b.get("source"), "levels_invalid_reason": b.get("invalid_reason") or "no bracket could be built"}
+        lv["risk_atr"] = b.get("risk_atr")
+        return {"levels": lv, "levels_source": b.get("source")}
+
     for i in p4.get("informational") or []:
         rows.append({"ticker": i["ticker"], "class": "WATCH", "doors": i.get("doors"), "lane": i.get("lane"),
                      "aqe_rank": i.get("aqe_rank"), "mp": i.get("mp"), "pct_from_pivot": i.get("pct_from_pivot"),
                      "triggers": [],
-                     "note": "R17: information only -- no analyst nominated it, no verdict, no levels. Digest only."})
+                     "note": "R17: information only -- no analyst nominated it, no verdict, no levels. Digest only.",
+                     **_watch_levels(i["ticker"])})
+    # PM 2026-11-05: "anything in the brief is bracketed and watched" -- the committee's rejected names (verdict PASS) are brief names too.
+    # WATCH rows (information only here), flagged brief_watch so the alert loop watches them under AQE default criteria, with the
+    # committee's own objections carried verbatim for the card.
+    have = {r["ticker"] for r in rows}
+    for c in cons:
+        if c["verdict"] != "PASS" or c["ticker"] in have:
+            continue
+        st = c.get("status")
+        why = (f"dropped by the committee ({len(c.get('objections') or [])} objections)" if st == "DROPPED"
+               else "not slated" if st == "NOT_SLATED" else f"passed by the committee ({str(st or 'no status').lower().replace('_', ' ')})")
+        rows.append({"ticker": c["ticker"], "class": "WATCH", "triggers": [], "brief_watch": True, "lane": c.get("lane"),
+                     "committee_status": st, "committee_result": why,
+                     "committee_objections": [{"voice": o.get("voice"), "objection": o.get("objection"), "would_clear": o.get("would_clear")}
+                                              for o in c.get("objections") or []],
+                     "note": f"Brief name the committee rejected: {why}. Watched under AQE default criteria, not a committee pick.",
+                     **_watch_levels(c["ticker"])})
 
     guard = _pinned_to_close(rows, uni)
     cond_schema = None

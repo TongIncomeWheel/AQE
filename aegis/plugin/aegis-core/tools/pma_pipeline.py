@@ -1024,6 +1024,25 @@ def _bracket_calc_path():
                      "tools/. REFUSING to emit levels that were not computed by it.")
 
 
+BRIEF_N = {"Elder": 15, "AQE": 20, "Detect lens": 15, "Swing pivot": 20}      # the brief's lists (section 5b); same definitions as src/alerts/condition_defaults.brief_list_names
+
+
+def _brief_list_names(D):
+    """{ticker: [list names]} for the brief's lists, read from the export alone."""
+    dl = D.get("daily_list") or []
+    rank = lambda r: r.get("rank") if isinstance(r.get("rank"), int) else 10 ** 6
+    elder = sorted([r for r in dl if r.get("on_elder")], key=lambda r: (-(r.get("elder") or 0), rank(r)))
+    aqe = sorted([r for r in dl if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])
+    known = {r.get("ticker") for r in dl}
+    lens = [x["ticker"] for x in (D.get("lens_ranking") or {}).get("ranked") or [] if x.get("ticker") in known]
+    swing = [r["ticker"] for r in aqe if r.get("swing_pivot") is True]
+    out = {}
+    for name, tks in (("Elder", [r["ticker"] for r in elder]), ("AQE", [r["ticker"] for r in aqe]), ("Detect lens", lens), ("Swing pivot", swing)):
+        for tk in tks[:BRIEF_N[name]]:
+            out.setdefault(tk, []).append(name)
+    return out
+
+
 def cmd_brackets(a):
     """BRACKET — queue levels for every ADVANCE and HOLD-FOR-CONDITIONS name, after the vote.
 
@@ -1064,8 +1083,19 @@ def cmd_brackets(a):
     want = {"ADVANCE", "HOLD-FOR-CONDITIONS"}
     verdicts = {c["ticker"]: c for c in (C if isinstance(C, list) else C.get("names", []))}
     targets = [t for t in P["deliberation_set"] if verdicts.get(t, {}).get("verdict") in want]
+    # PM 2026-11-05 ("anything in the brief is bracketed and watched"): every name LISTED in the brief also gets a render-only bracket --
+    # the committee's PASS names (in the room, rejected) and the brief lists (Elder 15, AQE 20, Detect lens 15, Swing pivot 20). Labelled by
+    # source; a name with no valid bracket says why (invalid_reason), never a silent blank. Still R1: after the vote, information only.
+    extra_src = {}
+    if not getattr(a, "no_brief_extras", False):
+        for t in P["deliberation_set"]:
+            if t not in targets and t not in held and verdicts.get(t, {}).get("verdict") == "PASS":
+                extra_src[t] = "committee PASS (" + str(verdicts[t].get("status") or "PASS").lower().replace("_", " ") + ")"
+        for t, names in _brief_list_names(D).items():
+            if t not in targets and t not in held:
+                extra_src.setdefault(t, "AQE list (" + ", ".join(names) + ")")
     out, skipped, failed = {}, {}, {}
-    for tk in targets:
+    for tk in targets + [t for t in extra_src if t not in targets]:
         if tk in held:
             skipped[tk] = ("HELD — a position the PM already owns is not bracketed; that is the "
                            "trailing-stop path, not an entry queue")
@@ -1080,8 +1110,8 @@ def cmd_brackets(a):
             continue
         inp = {"ticker": tk, "date": a.date,
                "price": {"value": float(px), "source": "aqe_export"},
-               "authority": ("COMMITTEE_ADVANCE" if verdicts[tk]["verdict"] == "ADVANCE"
-                             else "COMMITTEE_HOLD_FOR_CONDITIONS"),
+               "authority": ("AQE_REFERENCE" if tk in extra_src else
+                             "COMMITTEE_ADVANCE" if verdicts[tk]["verdict"] == "ADVANCE" else "COMMITTEE_HOLD_FOR_CONDITIONS"),
                "tier": "aqe", "aqe_record": r, "history_20d": None, "intraday_bars": None,
                "regime": regime, "regime_stop_pct_ceiling": ceiling,
                "dyncap": dyncap or {"value": None, "one_r": None},
@@ -1098,9 +1128,14 @@ def cmd_brackets(a):
         except Exception as e:                      # a bad row must never take the run down
             failed[tk] = f"{type(e).__name__}: {e}"[:300]
             continue
-        b["verdict"] = verdicts[tk]["verdict"]
-        b["lane"] = verdicts[tk].get("lane")
+        b["verdict"] = (verdicts.get(tk) or {}).get("verdict")
+        b["lane"] = (verdicts.get(tk) or {}).get("lane")
         b["sized"] = bool(b.get("size"))
+        b["source"] = extra_src.get(tk) or "committee " + str(b["verdict"] or "").lower().replace("-", " ")
+        atr = r.get("atr_14d")
+        stp = (b.get("stop") or {}).get("price")
+        b["risk_atr"] = round((float(px) - stp) / atr, 2) if isinstance(stp, (int, float)) and isinstance(atr, (int, float)) and atr > 0 else None
+        b["invalid_reason"] = None if stp is not None else (b.get("warning") or "no stop could be defined")
         out[tk] = b
     save(a.out, {"schema": "brackets.v1", "date": a.date,
                  "produced_by": "pma_pipeline.py brackets (PM ruling 2026-09-25)",
@@ -1110,19 +1145,26 @@ def cmd_brackets(a):
                                  "committee run, so a bracket without it returns LEVELS and refuses to SIZE. "
                                  "`sized` says which."),
                  "counts": {"requested": len(targets), "produced": len(out),
-                            "skipped": len(skipped), "failed": len(failed)},
+                            "skipped": len(skipped), "failed": len(failed),
+                            "brief_extras": len([t for t in out if t in extra_src]),
+                            "no_valid_bracket": sorted(t for t, b in out.items() if b.get("invalid_reason"))},
                  "brackets": out, "skipped": skipped, "failed": failed})
     # count off the shape bracket_calc actually returns: a stop dict with a price, and its own gate
     # flags. (The first cut of this receipt counted a `bracket_valid` key that does not exist and
     # reported 0 definable stops on a run where every one of them had computed -- fixed here.)
-    with_stop = sum(1 for b in out.values() if (b.get("stop") or {}).get("price") is not None)
-    gates_ok = sum(1 for b in out.values()
+    core = {t: b for t, b in out.items() if t not in extra_src}          # the ADVANCE/HOLD brackets; the brief extras are counted on their own line
+    with_stop = sum(1 for b in core.values() if (b.get("stop") or {}).get("price") is not None)
+    gates_ok = sum(1 for b in core.values()
                    if all((b.get("stop") or {}).get("flags", {}).get(k) for k in ("atr_ok", "rr_ok")))
-    print(f"receipt: brackets for {len(out)} of {len(targets)} ADVANCE/HOLD names "
+    n_adv = len([t for t in out if t not in extra_src])
+    print(f"receipt: brackets for {n_adv} of {len(targets)} ADVANCE/HOLD names "
           f"({with_stop} with a computed stop, {gates_ok} clearing the atr and reward gates, "
-          f"{sum(1 for b in out.values() if b.get('sized'))} sized); "
+          f"{sum(1 for b in core.values() if b.get('sized'))} sized); "
           f"{len(skipped)} skipped ({sum(1 for k in skipped if k in held)} held — not bracketed by design), "
           f"{len(failed)} failed. R1: render-only, attached after the vote.")
+    ex = [t for t in out if t in extra_src]
+    print(f"receipt: + {len(ex)} brief names bracketed (committee PASS and the brief lists), render-only; "
+          f"{len([t for t in ex if out[t].get('invalid_reason')])} without a valid bracket say why (invalid_reason)")
     if failed:
         print("WARNING bracket failures (declared, not silent):")
         for tk, why in sorted(failed.items()):
@@ -3515,6 +3557,7 @@ if __name__ == "__main__":
     s.add_argument("--consensus", default="consensus.json"); s.add_argument("--phase4", default="phase4.json")
     s.add_argument("--export", required=True); s.add_argument("--date", required=True)
     s.add_argument("--dyncap", default=None, help="optional journal dynCap file; absent means levels are produced and sizing is refused")
+    s.add_argument("--no-brief-extras", action="store_true", help="bracket only ADVANCE/HOLD names (the pre-2026-11-05 behaviour)")
     s.add_argument("--out", default="brackets.json")
     s = sub.add_parser("rank"); s.add_argument("--tally", default="tally.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--cap", type=int, default=30); s.add_argument("--pm-lens", default="pm_lens.json"); s.add_argument("--pm-lens-min", type=int, default=5); s.add_argument("--out", default="phase4.json"); s.add_argument("--elder-bars", type=int, default=2); s.add_argument("--lens-min", type=int, default=4); s.add_argument("--strength-decile", type=float, default=0.10); s.add_argument("--solo-min", type=int, default=4); s.add_argument("--strength-reserve", type=int, default=0, help="RETIRED by R16 (PM ruling 2026-09-24): accepted and ignored so old command lines still run."); s.add_argument("--door-budget", type=int, default=10, help="R16: the ADDITIVE allowance for machine finds on top of the nomination floor. Read off the verdict record: 29 unnominated admits over three runs produced 3 ADVANCE, so the doors earn ~1 useful name per run and 8 is generous."); s.add_argument("--strong-seats", type=int, default=10, help="R27 (PM 2026-10-23): the strongest Longlist/Elder names not nominated are seated and voted, MOMENTUM lane. 0 = flag only (R17/R26)."); s.add_argument("--swing-seats", type=int, default=6, help="SWING_PIVOT (PM 2026-11-05): reserved seats for names AT their daily swing high in a weekly+daily HH/HL uptrend (export swing_pivot true) that no seat nominated, MOMENTUM lane, additive after the floor/R25/R27. 0 turns it off."); s.add_argument("--unr-seats", type=int, default=3, help="R25 (PM 2026-10-23): reserved seats for Valen U&R MET names on the Longlist/Elder list that no seat nominated. 0 turns it off."); s.add_argument("--machine-add", type=int, default=None, help="R16: exact override for the additive door allowance. Default is --door-budget (8), bounded by --cap. --cap NEVER bounds the nomination floor.")
     s = sub.add_parser("round2packets")

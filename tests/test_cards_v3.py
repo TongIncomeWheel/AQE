@@ -214,7 +214,8 @@ def test_every_card_shows_the_weekly_daily_hourly_strip_the_momentum_flag_and_a_
 
 def test_no_mtf_file_means_no_strip_claim_and_no_momentum_line(run):
     t = text(render(run))
-    assert "Trend frames" not in t.replace("Trend frames and U&R", "") and "have weekly and daily higher highs" not in t
+    assert "Trend frames:" not in t and "have weekly and daily higher highs" not in t        # no strip claim; the template field says so instead
+    assert "not available: no trend-frame grid row for this name" in t
 
 
 def test_the_same_percent_distance_lands_in_different_atr_bands_and_the_edges_live_in_one_place():
@@ -310,3 +311,55 @@ def test_the_unr_table_covers_the_slate_and_the_book_not_every_name_the_room_loo
     assert r.returncode == 0, r.stderr
     md = out.read_text()
     assert "| ROKU |" in md and "| OHI |" not in md and "NOT_SLATED" not in md
+
+
+def test_the_swing_pivot_list_is_the_fourth_brief_list_and_absent_on_an_export_without_the_column(run):
+    base = text(render(run))
+    assert "Swing pivot top" not in base                                          # the fixture export predates the column: no list, no claim
+    def flag(o):
+        rows = sorted([r for r in o["daily_list"] if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])
+        for i, r in enumerate(rows):
+            r["swing_pivot"] = i in (0, 2, 4)
+    edit(run, "aqe_daily_export.json", flag)
+    t = text(render(run))
+    assert "Swing pivot top 3" in t and "never reached the room" in t
+    assert "Elder top 15" in t and "AQE top 20" in t and "Detect lens top 15" in t        # the three-list comparisons are untouched
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("chk_sw", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    fails, _ = ck.check_cards_html(str(run / "out.html"))
+    assert fails == [], fails
+
+
+def test_every_voted_name_gets_the_same_ten_field_card_and_the_page_passes_the_plain_words_gate(run):
+    import importlib.util
+    h = render(run)
+    cons = json.loads((run / "consensus.json").read_text())
+    cards = re.findall(r'<div class="card tmpl" data-t="([A-Za-z.\-]+)">', h)
+    assert {c["ticker"] for c in cons} <= set(cards)                      # ADVANCE, HOLD and every PASS name has its card
+    ids = re.findall(r'data-f="([a-z_]+)"', h)
+    assert len(ids) == 10 * len(cards)
+    for chunk in h.split('<div class="card tmpl" data-t="')[1:]:
+        assert re.findall(r'data-f="([a-z_]+)"', chunk.split('<div class="card', 1)[0]) == ["lane", "why", "contested", "sector", "triggers", "bracket", "verdict", "wrong_if", "event", "frames"]
+    body = re.sub(r"<details.*?</details>", "", h, flags=re.S)
+    for c in re.findall(r'<div class="card tmpl".*?(?=<div class="card|</section>)', body, flags=re.S):
+        low = re.sub(r"<[^>]+>", " ", c).lower()
+        assert not any(s in low for s in ("livermore", "minervini", "oneil", "raschke", "seow", "wyckoff", "elder-lens"))
+    spec = importlib.util.spec_from_file_location("chk_t", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    fails, _ = ck.check_cards_html(str(run / "out.html"))
+    assert fails == [], fails
+
+
+def test_a_missing_template_field_stops_the_render_so_the_safety_net_falls_back(run, monkeypatch):
+    import subprocess
+    tool = ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "card_template.py"
+    broken = run / "tools"
+    broken.mkdir()
+    for f in (TOOL.parent).glob("*.py"):
+        (broken / f.name).write_text(f.read_text())
+    src = (broken / "card_template.py").read_text().replace("_event(c), ", "")                    # a field builder dropped from the template
+    (broken / "card_template.py").write_text(src)
+    r = subprocess.run([sys.executable, str(broken / "pma_cards_v3.py"), "--run-dir", str(run), "--out", str(run / "x.html"), "--refresh-dir", str(run / "ref")],
+                       capture_output=True, text=True, timeout=300)
+    assert r.returncode != 0 or not (run / "x.html").exists()

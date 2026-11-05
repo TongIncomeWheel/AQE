@@ -1127,7 +1127,16 @@ def test_brackets_are_produced_for_advance_and_hold_and_never_for_held(td):
     check("an ADVANCE name is bracketed", T in B["brackets"])
     check("a HELD name is NEVER bracketed", "HLD" not in B["brackets"] and "HLD" in B["skipped"])
     check("the held skip says why, rather than vanishing", "HELD" in B["skipped"].get("HLD", ""))
-    check("a PASSED name is not bracketed at all", "PSS" not in B["brackets"] and "PSS" not in B["skipped"])
+    # PM 2026-11-05 ("anything in the brief is bracketed and watched"): a committee PASS name is a brief name, so it IS bracketed, render-only, labelled
+    # by its source; it is still never a queue entry (no ADVANCE/HOLD row, no authority) and a name with no valid bracket says why.
+    check("a PASSED name is bracketed as a brief name, labelled committee PASS, never as an ADVANCE",
+          "PSS" in B["brackets"] and B["brackets"]["PSS"]["source"].startswith("committee PASS") and B["brackets"]["PSS"]["authority"] == "AQE_REFERENCE"
+          and B["brackets"]["PSS"]["verdict"] == "PASS", str(B["brackets"].get("PSS", {}).get("source")))
+    check("every bracket carries risk_atr and invalid_reason (None when valid), never a silent blank",
+          all("risk_atr" in b and "invalid_reason" in b for b in B["brackets"].values()))
+    check("the ADVANCE/HOLD counts are unchanged by the brief names", B["counts"]["requested"] == 2 and B["counts"]["brief_extras"] >= 1, str(B["counts"]))
+    rc2, log2 = run([PIPE, "brackets", "--consensus", cons, "--phase4", p4, "--export", ex, "--date", "2026-09-25", "--no-brief-extras", "--out", out + ".off"])
+    check("--no-brief-extras restores the ADVANCE/HOLD-only behaviour", rc2 == 0 and "PSS" not in json.load(open(out + ".off"))["brackets"], log2[-300:])
     check("R1: the artifact declares itself render-only and post-vote",
           "render_only" in B and "after the vote" in B["render_only"].lower(), str(B.get("render_only"))[:120])
     check("a computed stop carries a price, not a hand-picked level",
@@ -1617,7 +1626,8 @@ def test_levels_roll_forward_three_sessions_and_today_wins(td):
     check("today wins: KK carries only today's row", len(by.get("KK", [])) == 1 and not by["KK"][0].get("carried"))
     check("a name absent today carries its NEWEST earlier view only (XX as HOLD from 09-28, not the 09-27 ADVANCE)",
           len(by.get("XX", [])) == 1 and by["XX"][0]["class"] == "HOLD_FOR_CONDITIONS" and by["XX"][0]["age_sessions"] == 1)
-    check("a name PASSED today is retired, with the reason", "YY" not in by and "PASSED" in retired.get("YY", ""))
+    check("a name PASSED today is retired, with the reason",
+          not [r for r in by.get("YY", []) if r["class"] != "WATCH"] and "PASSED" in retired.get("YY", ""))      # a WATCH brief row is information only (PM 2026-11-05)
     check("a carried row whose own kill line is already broken is retired", "ZZ" not in by and "broken" in retired.get("ZZ", ""))
     check("a HELD row from an earlier run is never carried", "HH" not in by)
     check("nothing older than the window survives", "WW" not in by)

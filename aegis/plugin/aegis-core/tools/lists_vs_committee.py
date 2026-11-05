@@ -20,6 +20,7 @@ PMA_CARDS = Path(__file__).resolve().parent / "pma_cards.py"
 
 # ------------------------------------------------------------------ list sizes (the PM's ask)
 N_ELDER, N_AQE, N_LENS = 15, 20, 15
+N_SWING = 20      # PM 2026-11-05: the 4th brief list, momentum AT the pivot (export swing_pivot true), by AQE rank
 
 # ------------------------------------------------------------------ tag thresholds
 # Committee lines: each one is quoted from a filed objection or a pass reason in this run (see COMMITTEE_LINES for the cite).
@@ -232,6 +233,10 @@ def build(run_dir):
         "lens": dict(title=f"Detect lens top {N_LENS}", sort="strong-lens count high to low, then fewer warnings, then momentum (AQE's stored order)",
                      n_on_list=len(lens), rows=[row_out(i, r, {}) for i, r in enumerate(lens[:N_LENS], 1)]),
     }
+    if any("swing_pivot" in r for r in D["daily_list"]):            # absent on an export built before the column existed: no list, no claim
+        swing = [r for r in aqe if r.get("swing_pivot") is True]
+        lists["swing"] = dict(title=f"Swing pivot top {N_SWING}", sort="AQE rank, 1 first: weekly and daily higher highs and higher lows, daily close within one daily range of the latest daily swing high",
+                              n_on_list=len(swing), rows=[row_out(i, r, {}) for i, r in enumerate(swing[:N_SWING], 1)])
     for k, L in lists.items():
         L["outcomes"] = {o: sum(1 for x in L["rows"] if x["outcome"] == o) for o in OUTCOMES}
         L["tags"] = {g: sum(1 for x in L["rows"] if x["tag"] == g) for g in TAGS}
