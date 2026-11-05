@@ -1,0 +1,93 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-05",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BALL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Leader, BOS, volume cleared 1.40, but C12's prior +30% uptrend is not shown and base is unconfirmed. Grid: W HH/HL, D dist_to_20bar_high_pct 1.07, H1 at 97.4%. Wait for the high to be retaken on volume."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Leader on decisive breakout volume (C16), the heaviest of the staples group. Grid: D dist_to_20bar_high_pct 1.58, H1 at 77.0% of range, 9>21 all frames. Base coil ok, not strong."
+  },
+  {
+   "ticker": "GLBE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "New high on breakout volume with group confirming (C7, C16). Grid: H1 dist_to_20bar_high_pct 0.02 at 99.6% of range, W HH/HL. Down-day leadership thin and base unread; held low conviction."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Best base read: strong coil and structure BOS, new high (C7, C12), volume cleared 1.40. Grid: D dist_to_20bar_high_pct 0.14, H1 HH/HL at 97.3%. Watch for a new high on lower volume (C25)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Leader at a new high on decisive volume (C16). Grid: W/D/H1 HH/HL, dist_to_20bar_high_pct 0.43, 9>21 all frames. Base flagged unconfirmed (coil warn)."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Third beverage name behind KO and CCEP (C9 sympathy risk); base unread. Grid: H1 LH/LL at 72.9% of range, D dist_to_20bar_high_pct 1.42. Wait for the hourly to turn and volume to confirm."
+  }
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I letters untested)",
+  "base_stage: NOT_AVAILABLE (C19)",
+  "market_gate: DELEGATED",
+  "rs_measure: rs_leadership (substitute, no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute, canon says 50-day)",
+  "base_measure: structure composite (substitute); pivot distance UNSERVED"
+ ]
+}

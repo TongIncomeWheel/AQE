@@ -1,0 +1,64 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-05",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BALL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high, proving the range exit holds."},
+   "wrong_if": "Daily close under pvp_vah (back into value: upthrust after the fact, C11); danger point under bar_low.",
+   "market_void": null,
+   "reason": "First exit from balance at the Creek on the value edge, rvol_20d 1.58 (C4, C7); W HH/HL with ema9 63.2767 over ema21 61.8392; H1 pos_in_day_range_pct 97.4. C5 hold-outside leg still open."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for a pullback into the broken Creek; then a sign-of-strength bar there."},
+   "wrong_if": "Daily close under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "TREND away from value: ABOVE_STRUCTURE, ext_atr20 2.55; D close 109.93 vs ema9 104.0346, dist_to_20bar_high_pct 1.58. Do not chase (R2, C3, C15); join at the test."
+  },
+  {
+   "ticker": "GLBE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for a pullback into the broken Creek; then a sign-of-strength bar there."},
+   "wrong_if": "Daily close under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "TREND, W HH/HL, H1 pos_in_day_range_pct 99.6; but ABOVE_STRUCTURE, ext_atr20 2.15, Creek distance unseen. HOLD-FOR-CONDITIONS (R2): the test sets the entry."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: an hourly close above yesterday's high (C12)."},
+   "wrong_if": "Daily close back under structure_shift_ref (failed breakout, C11).",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS at the Creek, close at the high on day_vol 1.44 (C5 shape); H1 HH/HL at pos_in_day_range_pct 97.3; W ema9 245.0977 over ema21 235.3377. At the test (C7)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for a pullback into the broken Creek; then a sign-of-strength bar there."},
+   "wrong_if": "Daily close under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "Imbalance up on every frame (W, D, H1 HH/HL) but ABOVE_STRUCTURE, ext_atr20 4.14: D close 191.81 vs ema21 175.8941. Far from value; no chase (R2, C15)."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Wait for a pullback into the broken Creek; then a sign-of-strength bar there."},
+   "wrong_if": "Daily close under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "W HH/HL, but ABOVE_STRUCTURE, ext_atr20 2.28, H1 LH/LL at pos_in_day_range_pct 72.9: the corrective wave may be starting. Wait for the test (R2, C3)."
+  }
+ ],
+ "declarations": [
+  "pvp_position, structure_shift_ref and bar_* values not in this tier-2 packet; levels cited by field name only. Bracket fields are never a reason (R1)."
+ ]
+}

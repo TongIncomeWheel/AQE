@@ -1,0 +1,97 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-05",
+ "answers": [
+  {
+   "pair_id": "BBY-oneil-against~livermore",
+   "ticker": "BBY",
+   "to": "livermore",
+   "text": "\"Price is right... 1.40 volume test is not mine.\" Price at the high is not my test; volume is. Grid: W/D dist_to_20bar_high_pct 0.13, H1 97.2% of range shows the price, not the participation. C16: under +40% above average is a hard rejection, not a weaker buy; day_vol 1.31 fails it. The grid serves no volume, so nothing here answers C16. Divergence I hold as caution only (C25). Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "DG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "L passes (rs LEADER), structure BOS, volume cleared 1.40. Grid: W/D dist_to_20bar_high_pct 0.18, H1 HH/HL at 96.7% of range, EMA 9>21 all frames. Base tightness unread (coil --)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Leader at a new high out of structure on 1.40-plus volume (C7, C16). Grid: D dist_to_20bar_high_pct 1.31, H1 dist_to_20bar_high_pct 0.16 HH/HL at 96.0%, 9>21 all frames. Handle (C14) unproven."
+  },
+  {
+   "ticker": "BBY",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "It runs to new highs on day_vol at or above 1.40 without me.",
+   "market_void": null,
+   "reason": "R4/C16: day_vol 1.31 under 1.40 is a hard rejection. Grid: W/D dist_to_20bar_high_pct 0.13 shows leadership at the high, but no volume confirmation. Bearish divergence a C25 caution."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Group lead name over CCEP and KDP on stronger volume (C9). Grid: D dist_to_20bar_high_pct 0.79, 9>21 all frames; D last bar red, H1 at 68.8% of range - the hourly close above bar_high is the proof."
+  },
+  {
+   "ticker": "MFC",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "New high out of strong structure on breakout volume (C7, C16). Grid: W/D dist_to_20bar_high_pct 0.11, H1 at 91.0% of range, 9>21 all frames. Softest down-day leadership of my supports."
+  },
+  {
+   "ticker": "CCEP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, on volume at least 1.4x time-of-day normal"
+   },
+   "wrong_if": "Close under ma_50 on heavy volume (R8), or 8% below cost (C20).",
+   "market_void": "Index under distribution: 4-5 distribution days in 4-5 weeks voids every buy (C2, gate DELEGATED)",
+   "reason": "Second beverage name to KO; volume only at the 1.40 floor (C9 sympathy risk). Grid: D dist_to_20bar_high_pct 0.92, H1 at 54.7% of range, last H1 bar red. Wait for volume at the breakout to prove it leads."
+  }
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I letters untested)",
+  "base_stage: NOT_AVAILABLE (C19)",
+  "market_gate: DELEGATED",
+  "rs_measure: rs_leadership (substitute, no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute, canon says 50-day)",
+  "base_measure: structure composite (substitute); pivot distance UNSERVED"
+ ]
+}

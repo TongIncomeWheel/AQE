@@ -1,0 +1,85 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-05",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BALL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "wrong_if": "elder_le:1 at a close (a red bar returns the ban, C3), or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [6, 10, 10, 5, 10]: ban lifted on the last bar (C3,C4), CORRECTION_REENTRY; mp_state FADING leaves R8 unmet on its letter. W 9>21 HH/HL (C21)."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "in_zone:entry",
+    "tf": "H1",
+    "plain": "Buy near yesterday's close, never a fill above the upper channel wall."
+   },
+   "wrong_if": "elder_le:1 at a close (a red bar returns the ban, C3), or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [6, 6, 10, 4, 10]: red gave way on the last bar (C3,C4); CORRECTION_REENTRY, mp_state STRONG (R8). W 9>21 (C21). Close to the upper wall, so buy at entry, not above (C11)."
+  },
+  {
+   "ticker": "GLBE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "wrong_if": "elder_le:1 at a close (a red bar returns the ban, C3), or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [10, 7, 10, 6, 10]: ambiguous 6 resolved to 10 on the last bar (C4); CORRECTION_REENTRY, mp_state STRONG (R8). W 9>21 HH/HL (C21)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for a second not-red bar, then a 1-hour close above yesterday's high."
+   },
+   "wrong_if": "elder_le:1 at a close (a red bar returns the ban, C3), or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [2, 3, 7, 4, 10]: ban lifted on the last bar (C3), but elder_pattern INTERRUPTED (C9) and mp_state FADING, R8 unmet. W 9>21 permits (C21). Choppy; needs confirmation."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "It runs from here, so the 7-to-10 lift was the signal I could not read.",
+   "market_void": null,
+   "reason": "elder_5d [7, 7, 7, 7, 10]: no bar at 6 or below, so no permission event (C4); no CORRECTION_REENTRY, so no R8. Not forbidden, not timed: stand aside (C22)."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high while elder stays at 7 or above."
+   },
+   "wrong_if": "elder_le:1 at a close (a red bar returns the ban, C3), or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "elder_5d [7, 10, 10, 5, 10]: ban lifted on the last bar (C3,C4), CORRECTION_REENTRY; mp_state FADING leaves R8 unmet. W 9>21 HH/HL (C21); H1 LH/LL is a weight."
+  }
+ ],
+ "declarations": [
+  "No refutations of my claims were paired to me (answer_pairs empty). Censor duty (C3): no survivor prints elder at or below 1 on the last bar.",
+  "impulse colour, force index, channel and weekly_trend_direction are not reprinted in this packet; the W grid 9>21 stands in as the C21 first screen."
+ ]
+}

@@ -1,0 +1,86 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-05",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BALL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Range break: a completed 1-hour close above yesterday's high"
+   },
+   "wrong_if": "close_below:bar_low - the trigger bar fully retraced; setup failed (C17)",
+   "market_void": null,
+   "reason": "BREAKOUT (C2): W HH/HL, D 9>21 1.1% under 20-day high, H1 at 97% of range. mp FADING/DECELERATING keeps it modest; act only on the H1 trigger."
+  },
+  {
+   "ticker": "USFD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First pullback turn: a completed 1-hour close above yesterday's high"
+   },
+   "wrong_if": "close_below:bar_low - the higher low failed (C17)",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2, Holy Grail shape, adx not served): D 9>21, 1.6% under 20-day high; H1 at 77% of range. Higher low bought on the turn over bar_high."
+  },
+  {
+   "ticker": "GLBE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First pullback turn: a completed 1-hour close above yesterday's high"
+   },
+   "wrong_if": "close_below:bar_low - the higher low failed (C17)",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2): W HH/HL, D 0.2% under 20-day high; H1 at 100% of the day's range. Higher low held; buy stop over bar_high."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Breakout: a completed 1-hour close above yesterday's high"
+   },
+   "wrong_if": "close_below:bar_low - the trigger bar fully retraced; setup failed (C17)",
+   "market_void": null,
+   "reason": "BREAKOUT (C2): D 0.1% under 20-day high, 9>21; H1 HH/HL at 97% of range. mp FADING/DECELERATING and elder INTERRUPTED advisory; trigger over bar_high."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "I am wrong to stand aside if it holds the trendline and closes over bar_high within 5 sessions",
+   "market_void": null,
+   "reason": "Grid is clean (W/D/H1 HH/HL, 0.4% under 20-day high) but sma_dist 16.56% with mp STRONG/DECELERATING: a shallow test far above its base, not one of my four setups cleanly (C2). Stand aside (C22)."
+  },
+  {
+   "ticker": "KDP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First pullback turn: a completed 1-hour close above yesterday's high"
+   },
+   "wrong_if": "close_below:bar_low - the higher low failed (C17)",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2): W HH/HL, D 9>21 1.4% under 20-day high; H1 LH/LL at 73% of range, so the turn must print over bar_high first."
+  }
+ ],
+ "declarations": [
+  "No refutation pairs name me as author; answers [] (packet answer_pairs empty).",
+  "adx: NOT_SERVED (C7,C8), mp_state proxy only | stochastic_kd: NOT_SERVED (C6) | n_day_extreme: sma_distance_pct + structure_shift substitute (C3/C4) | bar_range_history: NOT_SERVED (C12,C13) | market_breadth: OUT_OF_SERVED_SCOPE (C16).",
+  "R1: no stance here rests on a bracket. Trigger on every SUPPORT is a buy stop over yesterday's high read on H1 (C3/C12 stop-entry logic); stop by C17 under the trigger bar's low. Horizon 5 sessions (C18)."
+ ]
+}
