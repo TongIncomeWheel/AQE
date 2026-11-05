@@ -211,6 +211,41 @@ R1_TEXT = ("R1 VIOLATION — bracket is never a reject (PM ruling 2026-08-14 / 2
            "Re-file judging on signals; state the bracket/invalidation level as information only.")
 
 
+# ---- Report C (PM 2026-11-05): the AQE-quant seat must argue from AQE's own numbers. Every SUPPORT / OPPOSE it files names at least
+# two AQE composite or sub-component fields as reasons, and every nomination cites at least two in fields_cited. The set is the seat's
+# own menu (contracts/voice_menus.json "aqe-quant", minus the ticker); a test keeps this literal equal to that menu.
+QUANT_SEAT = "aqe-quant"
+QUANT_MIN_FIELDS = 2
+AQE_QUANT_FIELDS = ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "sc_p_gates", "sc_p_gate_detail", "pipe_rank", "flow", "energy", "structure", "mp", "elder", "mp_state", "mp_accel_state", "rs_rank_pct", "rs_spy_20d", "subcomponents.flow.flow_score", "subcomponents.flow.accum_score", "subcomponents.flow.volume_score", "subcomponents.flow.skew_score", "subcomponents.flow.ext_score", "subcomponents.flow.mfi", "subcomponents.flow.cmf", "subcomponents.flow.ha_quality_count", "subcomponents.energy.vp_position_score", "subcomponents.energy.price_action_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.exhaustion_score", "subcomponents.energy.atr_score", "subcomponents.energy.en_pos50", "subcomponents.energy.en_trend_bars", "subcomponents.structure.rs_spy_score", "subcomponents.structure.rs_accel_score", "subcomponents.structure.base_score", "subcomponents.structure.ms_pos_score", "subcomponents.structure.resist_score", "subcomponents.structure.wk_score", "subcomponents.structure.earn_score", "subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.structure.base_days", "subcomponents.structure.bd_mode", "subcomponents.mp.abs_mom_score", "subcomponents.mp.mp_adx_score", "subcomponents.mp.rel_mom_score", "subcomponents.mp.trend_score", "subcomponents.mp.roc_zscore", "subcomponents.mp.excess_return", "subcomponents.mp.adx_val", "subcomponents.mp.di_bullish", "subcomponents.bq.bq_range_tight", "subcomponents.bq.bq_vol_dry", "subcomponents.bq.bq_base_dur", "subcomponents.bq.bq_ema_conv", "subcomponents.bq.bq_base_days", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score", "subcomponents.pipe.momentum_composite", "subcomponents.pipe.pipe_tier"]
+
+def _quant_fields_in(text):
+    """Distinct AQE fields NAMED in a piece of text: written in backticks, or as a dotted sub-component path. A bare English word
+    such as flow or energy in prose does not count -- the seat must name the field."""
+    found = set()
+    if not isinstance(text, str):
+        return found
+    leaf = {f.rsplit(".", 1)[-1]: f for f in AQE_QUANT_FIELDS if "." in f}
+    for tok in re.findall(r"`([A-Za-z0-9_.]+)`|\b(subcomponents\.[a-z]+\.[a-z0-9_]+)\b", text):
+        t = tok[0] or tok[1]
+        if t in AQE_QUANT_FIELDS:
+            found.add(t)
+        elif t in leaf:
+            found.add(leaf[t])
+    return found
+
+def _quant_citation_errors(v, where):
+    """Round-2: reason + case.for + case.against must name >= QUANT_MIN_FIELDS AQE fields on a SUPPORT or OPPOSE."""
+    if v.get("vote") not in ("SUPPORT", "OPPOSE"):
+        return []
+    case = v.get("case") if isinstance(v.get("case"), dict) else {}
+    found = _quant_fields_in(" ".join(str(x) for x in (v.get("reason"), case.get("for"), case.get("against")) if x))
+    if len(found) < QUANT_MIN_FIELDS:
+        return [f"{where}: {v.get('vote')} cites {len(found)} AQE field(s) ({', '.join(sorted(found)) or 'none'}) -- the AQE-quant seat must name "
+                f"at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in backticks as its reasons "
+                f"(for example `structure` and `subcomponents.energy.exhaustion_score`). Re-file with the fields named."]
+    return []
+
+
 def validate_round1(form, universe):
     errs, flags = [], []
     for req in ("voice", "date", "nominations", "held_review"):
@@ -250,6 +285,11 @@ def validate_round1(form, universe):
         if not isinstance(c, int) or not (1 <= c <= 5):
             errs.append(f"{w}: conviction must be integer 1-5")
         _bounded(errs, n, "reason", R1_REASON_MAX, w)
+        if form.get("voice") == QUANT_SEAT:
+            cited = {f for f in (n.get("fields_cited") or []) if f in AQE_QUANT_FIELDS}
+            if len(cited) < QUANT_MIN_FIELDS:
+                errs.append(f"{w}: the AQE-quant seat must cite at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in "
+                            f"fields_cited ({len(cited)} found: {', '.join(sorted(cited)) or 'none'})")
         for step in (n.get("checklist_trace") or []):
             if isinstance(step, dict):
                 _bounded(errs, step, "observed", 200, f"{w}.trace")
@@ -325,6 +365,8 @@ def validate_round2(form, universe, deliberation_set, partial=False):
             continue
         if new_regime:
             errs.extend(_validate_case(v.get("case"), w + f" {t}"))
+        if form.get("voice") == QUANT_SEAT:
+            errs.extend(_quant_citation_errors(v, w + f" {t}"))
         if t in seen:
             errs.append(f"{w}: duplicate ticker {t}")
         seen.add(t)

@@ -1880,6 +1880,38 @@ def _r2_ballot(voice, date, tickers, case=True, **vote_over):
     return {"voice": voice, "date": date, "round": 2, "votes": votes}
 
 
+def test_the_aqe_quant_seat_must_cite_two_aqe_fields(td):
+    """Report C (PM 2026-11-05): every SUPPORT / OPPOSE from the aqe-quant seat names at least two AQE composite or sub-component fields
+    (in backticks) as its reasons; the registrar rejects otherwise. The literal in registrar.py equals the seat's menu. Other seats are untouched."""
+    import importlib.util
+    os.environ["AEGIS_REPORT"] = "C"
+    try:
+        spec = importlib.util.spec_from_file_location("reg_quant", REG); reg = importlib.util.module_from_spec(spec); spec.loader.exec_module(reg)
+    finally:
+        os.environ.pop("AEGIS_REPORT", None)
+    menu = json.load(open(os.path.join(HERE, "..", "contracts", "voice_menus.json")))["aqe-quant"]
+    check("the registrar's AQE field list equals the aqe-quant menu (minus ticker)", reg.AQE_QUANT_FIELDS == [m for m in menu if m != "ticker"])
+    V = lambda ballot: reg.validate_round2(ballot, None, None)[0]
+    ok = _r2_ballot("aqe-quant", "2026-11-06", ["AAA"], reason="`structure` is 82 and `subcomponents.energy.exhaustion_score` is 10 with the test live")
+    check("two named AQE fields pass", not [e for e in V(ok) if "AQE field" in e], str(V(ok)))
+    thin = _r2_ballot("aqe-quant", "2026-11-06", ["AAA"], reason="`structure` is strong")
+    check("one named field is rejected, naming how many were found", any("cites 1 AQE field" in e for e in V(thin)), str(V(thin)))
+    prose = _r2_ballot("aqe-quant", "2026-11-06", ["AAA"], reason="flow and energy and structure all look strong")
+    check("field words in plain prose do not count", any("cites 0 AQE field" in e for e in V(prose)), str(V(prose)))
+    leaf = _r2_ballot("aqe-quant", "2026-11-06", ["AAA"], reason="`rs_vs_spy` positive and `rs_accel` positive")
+    check("a backticked leaf name resolves to its sub-component", not [e for e in V(leaf) if "AQE field" in e], str(V(leaf)))
+    abst = _r2_ballot("aqe-quant", "2026-11-06", ["AAA"], vote="ABSTAIN", conviction=None, reason="no read")
+    check("an ABSTAIN needs no citations", not [e for e in V(abst) if "AQE field" in e])
+    other = _r2_ballot("oneil", "2026-11-06", ["AAA"], reason="structure is strong")
+    check("another seat is not held to the citation rule", not [e for e in reg.validate_round2(other, None, None)[0] if "AQE field" in e])
+    r1 = _r1_ballot("aqe-quant", "2026-11-06", ["AAA"])
+    r1["nominations"][0]["fields_cited"] = ["structure"]
+    errs = reg.validate_round1(r1, None)[0]
+    check("a nomination citing one AQE field is rejected", any("fields_cited" in e and "at least 2" in e for e in errs), str(errs))
+    r1["nominations"][0]["fields_cited"] = ["structure", "subcomponents.flow.accum_score"]
+    check("two cited fields pass", not [e for e in reg.validate_round1(r1, None)[0] if "fields_cited" in e])
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4054,7 +4086,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
