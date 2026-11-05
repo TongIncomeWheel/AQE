@@ -2979,7 +2979,11 @@ def build_export(shortlist: dict | None = None) -> dict:
 
     # ---- Engine sub-components, VALUE level (PM 2026-11-05, Report C). `subcomponents` is already a _REQUIRED_FIELDS key; a key check
     # passes on a block of nothing but nulls, which would hand the AQE-quant seat an empty page that reads as "no signal". Loud, never raises.
+    _fill = _fill_aqe_blocks(list(_dl.values()), _sc_by_tk)
     export["subcomponents_status"] = _subcomponents_status(list(_dl.values()))
+    export["subcomponents_status"]["filled_from_scores"] = _fill.get("filled", 0)
+    if _fill.get("error"):
+        export["subcomponents_status"]["fill_error"] = _fill["error"]
     if export["subcomponents_status"].get("status") != "live":
         print(f"  [WARN] subcomponents degraded: {export['subcomponents_status'].get('reason')}")
 
@@ -3253,6 +3257,34 @@ def _attach_ma_flags(export: dict, client=None) -> None:
         _r["ma_status"], _r["ma_note"], _r["ma_evidence"] = _f["ma_status"], _f["ma_note"], _f.get("ma_evidence")
     export["ma_scan"] = {k: _ma_art.get(k) for k in ("scan_status", "asof", "window_days", "n_scanned", "n_failed", "n_flagged", "failed", "reason")}
     export["ma_pending"] = sorted({r["ticker"] for r in _ma_rows if str(r.get("ma_status", "")).startswith("PENDING")})
+
+
+def _fill_aqe_blocks(rows, sc_by_tk) -> dict:
+    """Give every daily_list row the same `subcomponents` block and SC gate breakdown (conductor dry run 2026-11-05: 82 of 395 rows, the
+    recipe/longlist path, carried neither -- only the watchlist/elder path called the builders). Fills ONLY what a row lacks, from the same
+    scores_daily row and the same builders, so a filled row cannot disagree with one built the other way. Never raises."""
+    filled, absent = [], []
+    try:
+        for r in rows or []:
+            tk = (r or {}).get("ticker")
+            need_sub = not isinstance(r.get("subcomponents"), dict)
+            need_gate = r.get("sc_m_gate_detail") is None or r.get("sc_p_gate_detail") is None
+            if not (need_sub or need_gate):
+                continue
+            wr = (sc_by_tk or {}).get(tk)
+            if wr is None:
+                absent.append(tk)
+                continue
+            if need_sub:
+                r["subcomponents"] = _subcomponents(wr)
+            if need_gate:
+                for k, v in _held_sc_gates(wr).items():
+                    if r.get(k) is None:
+                        r[k] = v
+            filled.append(tk)
+    except Exception as exc:  # noqa: BLE001
+        return {"filled": len(filled), "absent": absent[:25], "error": str(exc)}
+    return {"filled": len(filled), "absent": absent[:25]}
 
 
 def _subcomponents_status(rows: list[dict]) -> dict:
