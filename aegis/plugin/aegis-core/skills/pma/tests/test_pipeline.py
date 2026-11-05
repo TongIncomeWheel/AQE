@@ -2075,6 +2075,53 @@ def test_a_bare_command_takes_its_report_from_the_run_manifest(td):
     check("the nomination schema accepts canon ids A1-A10 as well as C1-C24", "[CA][0-9]{1,2}" in pat, pat[:200])
 
 
+def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
+    """Report B (PM 2026-11-05): the seven seats read the screened universe, not AQE's lists. Each seat's packet carries only the 25 names its own
+    checklist screen chose (plus the held book); no candidate carries list membership; Report A's `trim` path is untouched."""
+    ex = os.path.join(HERE, "..", "..", "..", "..", "..", "..", "tests", "fixtures", "cards_v3", "aqe_daily_export.json")
+    if not os.path.exists(ex):
+        return
+    D = json.load(open(ex))
+    u = os.path.join(td, "u.json"); json.dump({"schema": "aqe_universe_rows.v1", "date": D["date"], "rows": D["daily_list"]}, open(u, "w"))
+    menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
+    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    cs, sets, out = os.path.join(td, "b_cs.json"), os.path.join(td, "b_sets.json"), os.path.join(td, "b_pk")
+    a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--out", cs, "--out-sets", sets],
+                       capture_output=True, text=True, env=env)
+    check("screens runs", a.returncode == 0, (a.stdout + a.stderr)[-400:])
+    if a.returncode != 0:
+        return
+    ss = json.load(open(sets))["seats"]
+    check("seven seats, 25 names each", sorted(ss) == sorted(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"])
+          and all(len(v) == 25 for v in ss.values()), str({k: len(v) for k, v in ss.items()}))
+    cand = json.load(open(cs))["universe"]
+    check("the candidate set is the union of the screens plus the held book, all plain universe rows",
+          {r["ticker"] for r in cand} >= {x["ticker"] for v in ss.values() for x in v}
+          and all(r.get("source") in ("universe", "held_book") and not r.get("on_longlist") and not r.get("on_elder") for r in cand),
+          str({r.get("source") for r in cand}))
+    b = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04",
+                        "--outdir", out, "--seat-sets", sets], capture_output=True, text=True, env=env)
+    check("packets build for Report B", b.returncode == 0, (b.stdout + b.stderr)[-400:])
+    if b.returncode != 0:
+        return
+    import csv
+    held = {h["ticker"] for h in D["held_positions"]}
+    for seat, picks in ss.items():
+        rows = list(csv.DictReader([l for l in open(os.path.join(out, seat + ".tsv")) if not l.startswith("#")], delimiter="\t"))
+        got = {r["ticker"] for r in rows}
+        want = {x["ticker"] for x in picks} | held
+        check(f"{seat}: its packet is exactly its own 25 plus the held book", got == want, f"{len(got)} vs {len(want)}")
+    check("Report B builds no aqe-quant packet and no C files", not os.path.exists(os.path.join(out, "aqe-quant.tsv")) and not os.path.exists(os.path.join(out, "aqe_indicators.tsv")))
+    e2 = dict(env); e2["AEGIS_REPORT"] = "B"
+    c = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04",
+                        "--outdir", out + "_x", "--seat-sets", os.path.join(td, "missing.json")], capture_output=True, text=True, env=e2)
+    check("a missing seat-sets file stops the build rather than serving everyone everything", c.returncode != 0)
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("seat_screens_t", os.path.join(TOOLS, "seat_screens.py")); sc = _iu.module_from_spec(sp); sp.loader.exec_module(sc)
+    check("a test whose field is missing is not passed, never guessed", sc.score("minervini", {"ticker": "X"})[0] == 0)
+    check("the screen is deterministic", sc.screen("oneil", D["daily_list"]) == sc.screen("oneil", list(D["daily_list"])))
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4249,7 +4296,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

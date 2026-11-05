@@ -244,7 +244,15 @@ def cmd_trim(a):
     """
     D = load(a.export, needs=["daily_list"])
     rows, by_t = [], {}
-    for r in D["daily_list"]:
+    _src_rows = D["daily_list"]
+    _ur = getattr(a, "universe_rows", None)
+    if _ur:
+        # REPORT B (PM 2026-11-05): the candidate set is the screened universe, not AQE's lists. Only the names the seven code screens
+        # chose (`keep`) are carried; every row is a plain universe row with no list membership, so no AQE door can reappear downstream.
+        _keep = set(getattr(a, "keep", None) or [])
+        _src_rows = [dict(r, source="universe", on_longlist=False, on_elder=False, in_ledger=False)
+                     for r in load(_ur, needs=["rows"])["rows"] if r.get("ticker") in _keep]
+    for r in _src_rows:
         row = {k: r.get(k) for k in CONSUMED}
         # 2026-09-06 fix, RESTORED 2026-11-01: `on_longlist` is the row's OWN flag. Deriving it from `source`
         # misreported false for any name whose primary source was elder_list/qs but which independently
@@ -301,6 +309,23 @@ def cmd_trim(a):
           f"({len(injected)} injected: {', '.join(injected) or 'none'}; "
           f"{len(already)} already in universe: {', '.join(already) or 'none'}); "
           f"AQE health verdict -> {health}")
+
+def cmd_screens(a):
+    """REPORT B (PM 2026-11-05): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json.
+    No AQE list, lens ranking or score gate is a door. Held names are carried whole by trim as always."""
+    import seat_screens
+    U = load(a.universe_rows, needs=["rows"])
+    rows = U["rows"]
+    if not rows:
+        raise SystemExit("screens: the universe rows file is empty -- REFUSING (a Report B run on no universe would be a silent empty report)")
+    res = seat_screens.all_screens(rows, a.top)
+    keep = sorted({x["ticker"] for v in res.values() for x in v})
+    save(a.out_sets, {"rule": f"per-seat code screens, top {a.top} of {len(rows)} universe rows (date {U.get('date')})",
+                      "universe_rows": len(rows), "universe_date": U.get("date"), "seats": res})
+    ns = argparse.Namespace(export=a.export, date=a.date, out=a.out, universe_rows=a.universe_rows, keep=keep)
+    cmd_trim(ns)
+    print("receipt: screens " + ", ".join(f"{s}={len(v)}" for s, v in res.items()) + f"; {len(keep)} distinct names; universe {len(rows)} rows")
+
 
 def _slice(row, menu):
     """Resolve a menu field against a universe row.
@@ -489,6 +514,12 @@ def cmd_packets(a):
     # R31 (PM 2026-10-30): packets are built for the seven DECIDERS only. A menu for any other seat
     # (archived cards, the QA seat, the retired macro pair) is left unserved -- never a stray universe file.
     nominators = [v for v in menus if v in DECIDERS]
+    seat_sets = None
+    if getattr(a, "seat_sets", None):
+        seat_sets = {k: [x["ticker"] if isinstance(x, dict) else x for x in v] for k, v in load(a.seat_sets, needs=["seats"])["seats"].items()}
+        _no_set = [v for v in nominators if v not in seat_sets]
+        if _no_set:
+            raise SystemExit(f"packets: --seat-sets has no screened names for {_no_set} -- REFUSING to serve a seat the whole set by default")
     macro_seats = list(getattr(a, "macro_seats", None) or [])   # R31: none by default; --macro-seats crown druckenmiller re-enables
 
     # --- THE HELD FLOOR IS ADDED TO EVERY MENU (PM ruling 2026-09-16) ------------------
@@ -619,7 +650,12 @@ def cmd_packets(a):
     for v in nominators:
         menu = menus[v]
         used_dicts = {f: codebooks[f][1] for f in menu if codebooks.get(f)}
-        rows = [{f: flat_cache[r["ticker"]].get(f) for f in menu} for r in universe]
+        _vu = universe
+        if seat_sets is not None:
+            # REPORT B: this seat reads only its own screened names (plus the held book, which is never held out)
+            _allowed = set(seat_sets.get(v) or [])
+            _vu = [r for r in universe if r["ticker"] in _allowed or r.get("held")]
+        rows = [{f: flat_cache[r["ticker"]].get(f) for f in menu} for r in _vu]
         d = [f for f in menu if all(r.get(f) is None for r in rows)]
         if d:
             dead[v] = d
@@ -3632,7 +3668,10 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
-    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)")
+    s = sub.add_parser("screens", help="REPORT B (PM 2026-11-05): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json; no AQE list is a door")
+    s.add_argument("--universe-rows", required=True); s.add_argument("--export", required=True, help="Report A's export: only the held book and the market blocks are read from it")
+    s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=25); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
     s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--consensus", default="consensus.json")
@@ -3725,7 +3764,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
