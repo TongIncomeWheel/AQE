@@ -1,0 +1,28 @@
+name: MTF universe scan (swing structure for every export name; prints, writes nothing)
+
+# Conductor/PM 2026-11-05: read-only. Same path as the nightly and the room rebuild (committee_data.build_grid) over all daily_list names.
+on:
+  workflow_dispatch:
+    inputs:
+      run_date:
+        description: run date (bars are cut at this date)
+        default: "2026-11-05"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Scan
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python -m scripts.mtf_universe_scan aegis/output/aqe_daily_export.json aegis/output/pma/run/2026-11-05/phase4.json "${{ inputs.run_date }}"
