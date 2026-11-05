@@ -1424,7 +1424,11 @@ def _supp_tag(row: dict) -> str:
     """' · supplemental committee pass: dropped by the committee (4 objections)' on a row from a same-date supplemental pass (PM 2026-11-05)."""
     if not row.get("supplemental"):
         return ""
-    return f" · {row.get('supplemental_label') or 'supplemental committee pass'}" + (f": {row['committee_result']}" if row.get("committee_result") else "")
+    tag = f" · {row.get('supplemental_label') or 'supplemental committee pass'}"
+    if str(row.get("committee_status") or "").upper() == "CONTESTED":
+        n = len(row.get("committee_objections") or [])
+        tag += f", contested ({n} objection{'s' if n != 1 else ''})"        # never readable as an agreed pick (conductor 2026-11-05)
+    return tag + (f": {row['committee_result']}" if row.get("committee_result") else "")
 
 
 def _who(row: dict) -> str:

@@ -117,6 +117,11 @@ def test_the_committee_line_evaluates_on_a_supplemental_row():
 def test_the_alert_labels_say_supplemental_committee_pass_and_why():
     adv = {"supplemental": True, "supplemental_label": "supplemental committee pass", "class": "ADVANCE"}
     assert EM._who(adv) == "Committee (ADVANCE) · supplemental committee pass"
+    con = dict(adv, committee_status="CONTESTED", committee_objections=[{}, {}])
+    assert EM._who(con) == "Committee (ADVANCE) · supplemental committee pass, contested (2 objections)"
+    doc, *_ = _merge()
+    adp = next(r for r in doc["rows"] if r["ticker"] == "ADP")
+    assert "contested (2 objections)" in EM._who(adp)                    # the real merged row says it, nobody reads it as agreed
     lst = {"aqe_list": True, "aqe_default": True, "supplemental": True, "supplemental_label": "supplemental committee pass",
            "committee_result": "dropped by the committee (5 objections)"}
     assert EM._who(lst) == "AQE list, not a committee pick · supplemental committee pass: dropped by the committee (5 objections)"
