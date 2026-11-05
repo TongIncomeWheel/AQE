@@ -28,6 +28,7 @@ J = lambda n: json.load(open(RUN / n))
 E = html.escape
 import pma_cards as _PC
 import card_extras as CX
+import card_template as CT          # PM 2026-11-05: ONE fixed ten-field template for every card
 ONE_R = int(_PC._one_r_usd() or 620)         # fund file one_r_usd (PM 2026-10-27), same figure as the real page
 
 T = J("cards_text.json"); CONS = J("consensus.json"); POS = J("committee_position.json")["tickets"]
@@ -42,6 +43,11 @@ MTF = (json.load(open(RUN / "mtf.json")).get("names") or {}) if (RUN / "mtf.json
 for h in D.get("held_positions") or []:
     ROWS.setdefault(h["ticker"], h)
 HELD = {h["ticker"]: h for h in D["held_positions"]}
+_opt = lambda n, dflt: json.load(open(RUN / n)) if (RUN / n).exists() else dflt          # run files the fixture / an older run may lack: the card says "not available", never invents
+BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
+RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
+ON_LISTS = CT.brief_lists(D["daily_list"], (D.get("lens_ranking") or {}).get("ranked"))
+SLATE_T = {x["ticker"]: x for x in (_opt("slate.json", {}) or {}).get("tickets") or []}
 SRM = {s["sector"]: s for s in D["srm"]}
 CONS_BY = {c["ticker"]: c for c in CONS}
 BYV = collections.defaultdict(list)
@@ -747,6 +753,28 @@ rsv.append("</svg>")
 reward = ('<div class="card"><h3>Reward at the first two real targets, from the buy line, in R (1R = the risk to the stop)</h3>' + "".join(rsv)
           + f'<div class="legend"><span><i style="background:var(--bar)"></i>first target at 1R or more</span><span><i style="background:var(--clay)"></i>second target</span><span>1R = ${ONE_R}</span></div></div>')
 
+def tmpl_ctx(t):
+    """Everything the ten-field template reads for one name, from the run's files (nothing invented)."""
+    row = ROWS.get(t) or {}
+    lvr = LV.get(t) or {}
+    cut = ""
+    return {"ticker": t, "cons": CONS_BY.get(t), "pos": POS.get(t), "lv": lvr or None, "br": BRK.get(t), "row": row,
+            "srm": SRM.get(row.get("gics_sector_name")), "mtf": MTF.get(t), "cx": CX, "held": t in HELD,
+            "mark": (RMK.get(t) or {}).get("mark"), "mark_plain": (RMK.get(t) or {}).get("mark_plain"),
+            "lane": (CONS_BY.get(t) or {}).get("lane") or lvr.get("lane"), "slate_ticket": SLATE_T.get(t),
+            "market_kill": (mk_plain.split(": ", 1)[1] if ": " in mk_plain else mk_plain) if mk_plain else None,
+            "on_lists": ON_LISTS.get(t), "supplemental": bool(lvr.get("supplemental")), "committee_result": lvr.get("committee_result"), "cut_reason": cut or None}
+
+def tmpl_card(t):
+    """The fixed template card for one name; a whole-template check runs on every card (a dropped field stops the render, so the safety net falls back loudly)."""
+    c = tmpl_ctx(t)
+    head = f'<div class="row"><span class="tk">{E(t)}</span>{ma_pill(ROWS.get(t))}{mom_pill(t)}</div>'
+    h = CT.render_card(c, E, head)
+    errs = CT.validate_card(h)
+    if errs:
+        raise SystemExit(f"card template broken for {t}: {errs}")
+    return h
+
 def tcard(r):
     w = r["w"]; tag = pill("Agreed", "good") if r["status"] == "AGREED" else pill("Contested", "watch")
     rep = re.search(r"(Reports \d{4}-\d{2}-\d{2}[^.]*\.)", w["sector_note"])
@@ -759,6 +787,13 @@ def tcard(r):
             + (f" &middot; {E(rep.group(1)).rstrip('.')}" if rep else "") + '</span></div>'
             + '<div class="kv">' + "".join(f"<div><span class='lab'>{a}</span><b>{b}</b></div>" for a, b in kv) + "</div>"
             + extras(r["t"]) + ma_line(ROWS.get(r["t"])) + f'<p><b>Wait for:</b> {E(w["reason"]["wait_for"])}</p><p><b>Why:</b> {E(w["reason"]["agree"])}</p><p><b>Wrong if:</b> {E(w["reason"]["wrong_if"])}</p>' + ext_line(ROWS.get(r["t"])) + '</div>')
+
+_tcard_numbers = tcard
+def tcard(r):
+    """Template card first; the writer's numbers (buy line, 1R shares, targets) stay folded beneath it."""
+    h = tmpl_card(r["t"])
+    assert h.endswith("</div>")
+    return h[:-6] + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
 
 def thin_li(r):
     w = r["w"]; tag = pill("Agreed", "good") if r["status"] == "AGREED" else pill("Contested", "watch")
@@ -787,6 +822,7 @@ def hold_row(t):
     zone = re.search(r"wait area ([\d.]+-[\d.]+)", wa["action"]).group(1).rstrip(".").replace("-", " to ") if wa else ("held: add question only" if t in HELD else "&mdash;")
     dead = next((f"daily close under {x['level']}" for x in tr if x["kind"] == "close_below"), cd.get("kills", "&mdash;"))
     return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead), extras(t)]
+hold_tmpl = (f'<details class="big"><summary>The {len(holds)} hold cards, same template</summary><div class="stack">' + "".join(tmpl_card(c["ticker"]) for c in holds) + "</div></details>") if holds else ""
 hold_card = card(f"{len(holds)} names wait for a condition first; nothing to do until it prints.",
     table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R"], [hold_row(c["ticker"]) for c in holds]),
     "For a held name the line is an add question only.",
@@ -800,8 +836,10 @@ deal_pinned_html = ("" if not _dp else '<div class="card"><h3>Deal-pinned, not a
             [[f"<b>{c['ticker']}</b>{ma_pill(ROWS.get(c['ticker']))}", E(str(ROWS.get(c['ticker'], {}).get("gics_sector_name") or "")), f2(ROWS[c['ticker']]["entry"]) if (ROWS.get(c['ticker']) or {}).get("entry") else "&mdash;",
               E(str((c.get("deal_pinned") or {}).get("ma_note") or (ROWS.get(c['ticker']) or {}).get("ma_note") or "pending acquisition")),
               f"had it as {'ADVANCE' if c.get('slate_verdict') == 'ADVANCE' else 'WATCH' if c.get('slate_verdict') == 'WATCH' else 'a slate name'}; excluded"] for c in _dp]) + "</div>")
+pass_tmpl = (f'<details class="big"><summary>The {len(passes) + len(_dp)} rejected names, same template: why each was passed</summary><div class="stack">'
+             + "".join(tmpl_card(c["ticker"]) for c in passes + _dp) + "</div></details>") if (passes or _dp) else ""
 pass_det = (f'<details class="big"><summary>{len(passes)} names are passed today: {sum(1 for c in passes if c["status"]=="DROPPED")} dropped on objections, the rest not slated</summary>'
-            + table(["Name", "Why not"], [[f"<b>{c['ticker']}</b>", E(plain(T["passes"][c["ticker"]]))] for c in passes]) + "</details>")
+            + table(["Name", "Why not"], [[f"<b>{c['ticker']}</b>", E(plain(T["passes"][c["ticker"]]))] for c in passes]) + "</details>") + pass_tmpl
 info = P4.get("informational") or []
 lists = lambda x: " + ".join(n for n, k in (("Longlist", "on_longlist"), ("Elder", "on_elder")) if x.get(k)) or "&mdash;"
 lr = D["lens_ranking"]["ranked"][:10]
@@ -826,8 +864,9 @@ strong_det = ('<details class="big"><summary>Strong names no reviewer picked, th
 s5 = section("5 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
                                            f"All {n_adv} ADVANCE names pay 1R or more at two targets." if n_adv else "No name is ADVANCE today."),
     chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
-    + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>' if thin else "")
-    + common + hold_card + deal_pinned_html + pass_det + strong_det, "tickers")
+    + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>'
+       + "".join(tmpl_card(r["t"]) for r in thin) if thin else "")
+    + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + strong_det, "tickers")
 
 # ------------------------------------------------------------------ 5b THE THREE AQE LISTS AGAINST THE COMMITTEE (lists_vs_committee.py, code only)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -979,6 +1018,10 @@ LH3 = {
     "lens": f"Detect lens top 15, by strong-lens count: {FL['lens']['tags']['BREAKING OUT']} are breaking out, and {FL['lens']['outcomes']['OUT']} never reached the room.",
 }
 cardsB = "".join(f'<div class="card"><h3>{LH3[k]}</h3>{list_table(k)}</div>' for k in LKEYS)
+if "swing" in FL:      # PM 2026-11-05: the fourth brief list, shown beside the other three; the three-list comparisons above are unchanged
+    _sw = FL["swing"]
+    cardsB += (f'<div class="card"><h3>Swing pivot top {len(_sw["rows"])}: weekly and daily higher highs and higher lows, sitting within one daily range of the latest daily swing high: '
+               f'{_sw["outcomes"]["ADVANCE"] + _sw["outcomes"]["HOLD"]} advance or hold, and {_sw["outcomes"]["OUT"]} never reached the room.</h3>{list_table("swing")}</div>')
 
 built = ("How this is built", f"<p>Built by code, with <b>zero model calls</b> at run time: a small script reads the run folder&rsquo;s export, committee record, "
          f"card words and door log, tags each name and counts; this page only draws the result. It took {F['runtime_s']:.2f} seconds. "
@@ -1119,7 +1162,7 @@ section#lists>.card{margin-top:14px}
 }
 """
 page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aegis Daily Cards</title><style>{CSS}</style></head><body><div class="wrap">
+<title>Aegis Daily Cards</title><style>{CSS}{CT.TEMPLATE_CSS}</style></head><body><div class="wrap">
 {top}{s1}{s2}{s3}{s4}{s5}{s5b}{s6}{s7}{s8}
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div></body></html>"""
