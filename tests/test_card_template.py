@@ -261,3 +261,17 @@ def test_a_supplemental_advance_row_uses_its_own_committee_levels_and_every_exit
     d["lv"] = None; d["br"] = None
     d["row"]["bracket"] = {"valid": True, "stop": 98.5, "targets": [{"price": 108.0}]}
     assert CT.build_fields(d)[7]["text"] == "No committee exit line; the AQE stop is 98.5."
+
+
+def test_the_folded_audit_trail_names_no_seat_either():
+    assert CT.strip_seats("as seow and wyckoff also filed") == "as other analysts also filed"
+    assert CT.strip_seats("minervini's stage-2 read is intact") == "an analyst's stage-2 read is intact"
+    assert CT.strip_seats("Elder adds on the pullback; oneil, raschke and livermore agree") == "an analyst adds on the pullback; other analysts agree"
+    assert CT.strip_seats("the Elder score is 9 and O'Neil's rule fails") == "the Elder score is 9 and an analyst's rule fails"
+    c = _ctx("contested")
+    c["pos"]["why"].append({"text": "Seow and wyckoff also filed that minervini's template passes.", "voice": "minervini"})
+    c["cons"]["objections"][0]["objection"] = "Raschke objects: the signal is read on the hourly chart."
+    h = CT.render_card(c, html.escape)
+    audit = re.search(r"<details>.*?</details>", h, re.S).group(0).lower()
+    assert not any(s in audit for s in SEATS if s != "chair"), audit
+    assert "other analysts also filed that an analyst" in audit and "an analyst objects" in audit

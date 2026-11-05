@@ -1998,6 +1998,20 @@ def _case_summary(v):
             "cannot_see": c.get("cannot_see"), "opposing_case": v.get("opposing_case"), "self_counter": v.get("self_counter")}
 
 
+def _board_verdict_keys(o):
+    """Every field NAME containing 'verdict' anywhere in the board (a seat's free text saying the word is not a field)."""
+    found = []
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if "verdict" in str(k).lower():
+                found.append(str(k))
+            found += _board_verdict_keys(v)
+    elif isinstance(o, list):
+        for v in o:
+            found += _board_verdict_keys(v)
+    return found
+
+
 def cmd_board(a):
     """R36 round 3, the Chair's BOARD. From the deciders' blind votes (and Steenbarger's challenge):
     per room name, the blind split, every decider's case, and whether the name is CONTESTED -- both
@@ -2051,7 +2065,8 @@ def cmd_board(a):
            "uncontested_oppose": [n["ticker"] for n in names if not n["contested"] and n["split"]["oppose"] and not n["split"]["support"]],
            "challenged": sorted(challenged), "names": names,
            "floor_rule": f"two messages per decider per contested name (floor-check counts); the Chair posts, never votes"}
-    assert "verdict" not in json.dumps(out), "board must never carry a verdict"
+    # the guard is about FIELDS: a seat's free text may say the word 'verdict' (2026-11-05, livermore's case text)
+    assert not _board_verdict_keys(out), "board must never carry a verdict"
     save(a.out, out)
     print(f"board: {len(ds)} names, {len(present)} deciders present{(' (absent: ' + ', '.join(absent) + ')') if absent else ''}; "
           f"CONTESTED {len(out['contested'])}: {' '.join(out['contested']) or 'none'}; "
