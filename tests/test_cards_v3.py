@@ -162,15 +162,19 @@ def test_a_market_kill_line_with_a_gate_note_in_brackets_passes_the_plain_words_
     assert fails == [], fails
 
 
-def _frame(cls, d_pct=None, order="9>21"):
-    return {"served": True, "swing_class": cls, "ema_order": order, "swing": {"close_vs_swing_high_pct": d_pct}}
+def _frame(cls, d_pct=None, order="9>21", close=None, sh=None):
+    f = {"served": True, "swing_class": cls, "ema_order": order, "swing": {"close_vs_swing_high_pct": d_pct}}
+    if close is not None:
+        f["close"] = close
+        f["swing"]["last_swing_high"] = {"price": sh, "date": "2026-10-20"}
+    return f
 
 
 def _mtf_doc(flag_names):
     names = {}
     for t in ("ROKU", "SN", "V", "BRK-B", "DIS", "TMO", "EW", "HNGE", "AJG", "GEN", "SWK", "FA"):
         hit = t in flag_names
-        names[t] = {"served": True, "W": _frame("HH/HL", 1.0), "D": _frame("HH/HL" if hit else "LH but HL", 0.4 if hit else -6.2, "9>21" if hit else "9<21"),
+        names[t] = {"served": True, "W": _frame("HH/HL", 1.0), "D": (_frame("HH/HL", 3.9, "9>21", close=557.07, sh=535.93) if hit else _frame("LH but HL", -6.2, "9<21")),   # BRK-B: atr_14d 7.29 -> 2.9 daily ranges above
                     "H1": _frame("LH/LL", -1.1, "9<21"), "momentum": {"flag": hit, "reasons": ["ok" if hit else "daily swing is LH but HL, not HH/HL"]}}
     names["DIS"] = {"served": False, "reason": "only 14 hr bars; EMA21 needs 21"}
     return {"schema": "mtf.v1", "date": "2026-11-04", "names": names}
@@ -194,9 +198,12 @@ def test_every_card_shows_the_weekly_daily_hourly_strip_the_momentum_flag_and_a_
     assert "Hourly: lower highs and lower lows" in t
     assert "Trend frames: not served (only 14 hr bars; EMA21 needs 21)" in t                      # DIS: declared, not neutral
     assert 'class="unr"' in h
-    assert t.count("Momentum setup") >= 2                                                        # the banner title and BRK-B's pill
-    assert "1 of 11 slate names show the momentum setup" in t        # DIS has no readable flag (not served), so it is not counted either way
-    assert ": BRK-B. Information only: not a gate, not a vote." in t
+    assert t.count("Uptrend") >= 2                                                     # the banner title and BRK-B's pill
+    assert "Uptrend, extended (+2.9 ATR)" in t and "2.9 daily ranges (ATR) above the last swing high (+3.9%), extended" in h
+    assert "1 of 11 slate names have weekly and daily higher highs and higher lows" in t        # DIS has no readable flag (not served), so it is not counted either way
+    assert "extended: BRK-B +2.9" in t and "Information only: not a gate, not a vote." in t
+    assert "Momentum setup" not in t and "within 2%" not in t
+    assert re.search(r"Risk \d+\.\d\d \(\d+\.\d%, \d+\.\d ATR\)", t) or re.search(r"Risk \d+\.\d\d/share \(\d+\.\d%, \d+\.\d ATR\)", t), "the stop's risk is also shown in ATR"
     assert "no useful U&amp;R reference" in t and "U&amp;R: reclaim day. Support line" in t and "U&amp;R: none." in t
     import importlib.util
     spec = importlib.util.spec_from_file_location("chk_x", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
@@ -207,7 +214,25 @@ def test_every_card_shows_the_weekly_daily_hourly_strip_the_momentum_flag_and_a_
 
 def test_no_mtf_file_means_no_strip_claim_and_no_momentum_line(run):
     t = text(render(run))
-    assert "Trend frames" not in t.replace("Trend frames and U&R", "") and "show the momentum setup" not in t
+    assert "Trend frames" not in t.replace("Trend frames and U&R", "") and "have weekly and daily higher highs" not in t
+
+
+def test_the_same_percent_distance_lands_in_different_atr_bands_and_the_edges_live_in_one_place():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("cx2", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "card_extras.py")
+    cx = importlib.util.module_from_spec(spec); spec.loader.exec_module(cx)
+    mt = {"D": {"close": 104.0, "swing": {"last_swing_high": {"price": 100.0}}}}                 # +4.0% above the swing high in all three
+    calm, normal, wild = ({"atr_14d": a} for a in (5.0, 1.5, 0.9))
+    assert cx.atr_distance(mt, calm)["band"] == "at the pivot" and cx.atr_distance(mt, calm)["atr_dist"] == 0.8
+    assert cx.atr_distance(mt, normal)["band"] == "extended" and cx.atr_distance(mt, normal)["atr_dist"] == 2.67
+    assert cx.atr_distance(mt, wild)["band"] == "far extended" and cx.atr_distance(mt, wild)["atr_dist"] == 4.44
+    assert {cx.atr_distance(mt, r)["pct"] for r in (calm, normal, wild)} == {4.0}
+    below = {"D": {"close": 90.0, "swing": {"last_swing_high": {"price": 100.0}}}}
+    assert cx.atr_distance(below, normal)["band"] == "below the pivot" and cx.atr_distance(below, {"atr_14d": 20.0})["band"] == "at the pivot"
+    assert cx.atr_distance(mt, {"ticker": "X"}) is None and cx.atr_distance(mt, {"atr_14d": 0}) is None      # missing/zero ATR: no claim
+    # the edges are the module constants: change them and the bands move, nothing else is hard-wired
+    cx.ATR_NEAR, cx.ATR_FAR = 0.5, 1.0
+    assert cx.atr_distance(mt, calm)["band"] == "extended" and cx.atr_distance(mt, normal)["band"] == "far extended"
 
 
 def test_card_extras_unr_rules_and_brief_table():
@@ -235,8 +260,9 @@ def test_the_v2_fallback_page_has_the_same_strip_flag_and_unr_line():
     pc._MTF = _mtf_doc({"BRK-B"})["names"]
     h = pc._extras("BRK-B", {"unr_status": "NO", "unr_level": None, "entry": 100.0})
     assert "Weekly: higher highs and higher lows; fast average above slow; 1.0% above the last swing high." in h and 'class="unr"' in h and "U&amp;R: none." in h
-    assert "Momentum setup" in pc._mom_pill("BRK-B") and pc._mom_pill("TMO") == ""
-    assert "1 of 11 slate names show the momentum setup" in pc._mom_banner([{"ticker": t, "status": "CONTESTED"} for t in pc._MTF] + [{"ticker": "PASSY", "status": "NOT_SLATED"}])
+    brk = {"ticker": "BRK-B", "atr_14d": 7.29}
+    assert "Uptrend, extended (+2.9 ATR)" in pc._mom_pill("BRK-B", brk) and pc._mom_pill("TMO", {"ticker": "TMO", "atr_14d": 5.0}) == ""
+    assert "1 of 11 slate names have weekly and daily higher highs and higher lows" in pc._mom_banner([{"ticker": t, "status": "CONTESTED"} for t in pc._MTF] + [{"ticker": "PASSY", "status": "NOT_SLATED"}], {"BRK-B": brk})
     pc._MTF = {}
     assert pc._extras("KO", {"ticker": "KO"}).startswith('<p class="unr">U&amp;R: not in this export.') and pc._mom_banner([{"ticker": "KO"}]) == ""
 
@@ -272,7 +298,7 @@ def test_an_older_mtf_grid_without_swing_fields_says_so_instead_of_claiming_no_s
     (run / "mtf.json").write_text(json.dumps(old))
     t = text(render(run))
     assert "swing structure not computed in this grid (older mtf.json)" in t
-    assert "show the momentum setup" not in t                       # no flag in an older grid = no count
+    assert "have weekly and daily higher highs" not in t            # no flag in an older grid = no count
     assert "no clear swing structure" not in t
 
 

@@ -124,9 +124,13 @@ def ma_line(r):
            "PENDING_UNCLEAR": " The role in the deal could not be read from the news; check the headline."}.get(st, "")
     return f'<p class="flag"><b>M&amp;A PENDING.</b> {E(str(r.get("ma_note") or ""))}{E(why)}</p>'
 def mom_pill(t):
-    """PM 2026-11-05: the code-built momentum setup flag from mtf.json (weekly and daily HH/HL, daily close within 2% of the latest daily swing high). Information only."""
-    f, why = CX.momentum(MTF.get(t))
-    return f'<span class="pill good" title="{E(why)}">Momentum setup</span>' if f else ""
+    """PM 2026-11-05: weekly+daily uptrend structure from mtf.json with the daily close's distance from the latest daily swing high in ATR (bands in card_extras). Information only."""
+    f, why = CX.momentum(MTF.get(t), ROWS.get(t))
+    return f'<span class="pill good" title="{E(why)}">{E(CX.trend_pill_text(MTF.get(t), ROWS.get(t)))}</span>' if f else ""
+def risk_atr(r):
+    """', 1.3 ATR' appended to the stop's risk, same card line (PM 2026-11-05); '' when atr_14d is not in the export."""
+    a = (ROWS.get(r["t"]) or {}).get("atr_14d")
+    return f", {r['risk'] / a:.1f} ATR" if isinstance(a, (int, float)) and a > 0 else ""
 def extras(t):
     """The weekly / daily / hourly strip and the one-line U&R tag, both from the files; nothing is claimed when mtf.json has no row."""
     return CX.strip_html(MTF.get(t), E) + f'<p class="unr">{E(CX.unr_tag(ROWS.get(t)))}</p>'
@@ -243,8 +247,8 @@ _ms = D.get("ma_scan")
 ma_banner = ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The export carries no M&amp;A scan result, so no name can be called free of a pending deal.</p>' if not isinstance(_ms, dict) else
              f'<p class="flag"><b>M&amp;A scan {E(str(_ms.get("scan_status")))}.</b> {E(str(_ms.get("n_failed")))} of {E(str(_ms.get("n_scanned")))} names could not be checked for a pending merger or buyout'
              f'{(": " + E(str(_ms.get("reason")))) if _ms.get("reason") else ""}. Names marked &ldquo;M&amp;A not checked&rdquo; are unchecked, not clean.</p>' if _ms.get("scan_status") != "ok" else "")
-_msum = CX.momentum_summary(MTF, [c["ticker"] for c in CONS if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")])
-mom_banner = f'<p class="flag"><b>Momentum setup.</b> {E(_msum["text"])}</p>' if _msum else ""
+_msum = CX.momentum_summary(MTF, [c["ticker"] for c in CONS if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")], ROWS)
+mom_banner = f'<p class="flag"><b>Uptrend structure.</b> {E(_msum["text"])}</p>' if _msum else ""
 top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DATE.day} {RUN_DATE:%b %Y} &middot; to the PM{(' &middot; rerun ' + RERUN + ', not live') if RERUN else ''} &middot; {n_adv} triggers</div>
 <h1>{h1}</h1>
 <p class="ask">{ask}</p>
@@ -748,7 +752,7 @@ def tcard(r):
     rep = re.search(r"(Reports \d{4}-\d{2}-\d{2}[^.]*\.)", w["sector_note"])
     g = SRM.get(r["sector"], {})
     buy = f"{f2(r['entry'])}" + (f" on {r['vol']}x volume" if r["vol"] else "")
-    kv = [("Buy line, hourly close", buy), ("Stop", f"{f2(r['stop'])}"), ("Risk", f"{r['risk']:.2f} ({r['risk_pct']:.1f}%)"),
+    kv = [("Buy line, hourly close", buy), ("Stop", f"{f2(r['stop'])}"), ("Risk", f"{r['risk']:.2f} ({r['risk_pct']:.1f}%{risk_atr(r)})"),
           (f"1R ${ONE_R}", f"{r['shares']} shares"), ("Target 1", f"{f2(r['ladder'][0][1])} &middot; {r['ladder'][0][0]}R"),
           ("Target 2", f"{f2(r['ladder'][1][1])} &middot; {r['ladder'][1][0]}R"), ("Dead if daily close under", f2(r["dead"]) if r["dead"] is not None else "&mdash;"), ("Last close", f"{r['last']}")]
     return (f'<div class="card tcard"><div class="row"><span class="tk">{r["t"]}</span>{tag}{ma_pill(ROWS.get(r["t"]))}{mom_pill(r["t"])}<span class="tag">conviction {r["conv"]}/5 &middot; {E(r["sector"])}, gate {g.get("entry_gate","")}'

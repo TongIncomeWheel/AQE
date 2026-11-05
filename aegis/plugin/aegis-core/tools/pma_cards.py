@@ -371,7 +371,7 @@ def bracket_view(entry, entry_src, stop, stop_type, levels, one_r=None):
     return out
 
 
-def _bracket_html(b):
+def _bracket_html(b, atr=None):
     if b.get("risk") is None:
         return f'<div class="full bracket"><dt>Bracket</dt><dd class="neg">{E(b.get("note") or "n/a")}</dd></div>'
     tp = " &nbsp;·&nbsp; ".join(f'TP{x["n"]} <b>{x["price"]:.2f}</b> ({x["r"]:.1f}R)' for x in b["targets"]) or "no target reaches 1R"
@@ -383,7 +383,7 @@ def _bracket_html(b):
     st = str(b.get("stop_type") or "").replace("_", " ")
     return (f'<div class="full bracket"><dt>Bracket</dt><dd>{first}<br>'
             f'Entry <b>{b["entry"]:.2f}</b> ({E(b["entry_src"])}) &nbsp;·&nbsp; Stop <b>{b["stop"]:.2f}</b> ({E(st)}) &nbsp;·&nbsp; '
-            f'Risk <b>{b["risk"]:.2f}</b>/share ({b["risk_pct"]:.1f}%) &nbsp;·&nbsp; {tp} &nbsp;·&nbsp; RR to TP2 <b>{rr}</b> &nbsp;·&nbsp; {E(one)}'
+            f'Risk <b>{b["risk"]:.2f}</b>/share ({b["risk_pct"]:.1f}%' + (f', {b["risk"] / atr:.1f} ATR' if isinstance(atr, (int, float)) and atr > 0 else '') + f') &nbsp;·&nbsp; {tp} &nbsp;·&nbsp; RR to TP2 <b>{rr}</b> &nbsp;·&nbsp; {E(one)}'
             + (f'<br><span class="cond">Nearby resistance, not targets: {E(near)}</span>' if near else "")
             + (f'<br><span class="neg">{E(b["note"])}</span>' if b.get("note") else "") + '</dd></div>')
 
@@ -674,9 +674,10 @@ def _ma_line(row):
     return f'<p class="flag"><b>M&amp;A PENDING.</b> {E(str(row.get("ma_note") or ""))}{E(why)}</p>'
 
 
-def _mom_pill(t):
-    f, why = _CX.momentum(_MTF.get(t))
-    return f'<span class="pill p-up" title="{E(why)}">Momentum setup</span>' if f else ""
+def _mom_pill(t, row=None):
+    """Weekly+daily uptrend structure with the ATR distance from the daily swing high as data (PM 2026-11-05). No gate, no vote."""
+    f, why = _CX.momentum(_MTF.get(t), row)
+    return f'<span class="pill p-up" title="{E(why)}">{E(_CX.trend_pill_text(_MTF.get(t), row))}</span>' if f else ""
 
 
 def _extras(t, row):
@@ -684,9 +685,9 @@ def _extras(t, row):
     return _CX.strip_html(_MTF.get(t), E) + f'<p class="unr">{E(_CX.unr_tag(row))}</p>'
 
 
-def _mom_banner(cons):
-    m = _CX.momentum_summary(_MTF, [c["ticker"] for c in cons if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")])
-    return f'<p class="flag"><b>Momentum setup.</b> {E(m["text"])}</p>' if m else ""
+def _mom_banner(cons, rows=None):
+    m = _CX.momentum_summary(_MTF, [c["ticker"] for c in cons if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")], rows)
+    return f'<p class="flag"><b>Uptrend structure.</b> {E(m["text"])}</p>' if m else ""
 
 
 def _ma_banner(D):
@@ -1392,7 +1393,7 @@ def cmd_render(a):
     o.append("</div>")
     o.append('<section class="card"><div class="eyebrow">Where money is moving</div><div class="tbl"><table><thead><tr><th>Group</th><th>Read</th><th>What it means</th></tr></thead><tbody>'
              + "".join(f'<tr><td><b>{E(x["group"])}</b></td><td>{E(x["read"])}</td><td>{E(x["meaning"])}</td></tr>' for x in T["money"]) + "</tbody></table></div></section>")
-    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D) + _mom_banner(cons))
+    o.append('<div class="section-title"><h2>Part 2 · Your book and the committee</h2></div>' + _ma_banner(D) + _mom_banner(cons, {x['ticker']: x for x in (D.get('daily_list') or [])}))
     o.append('<section class="card"><div class="eyebrow">What it means for your book</div><div class="tbl"><table><thead><tr><th>Name</th><th>Position</th><th>Broker stop</th><th>Committee read</th><th>Why</th></tr></thead><tbody>')
     for b in T["book"]:
         t = b["ticker"]; h = held.get(t) or {}; s = BS.get(t) or {}
@@ -1424,12 +1425,12 @@ def cmd_render(a):
         valen = E("; ".join(setups) or "no Valen house setup graded") + (f' · {E(_unr_words(r))}' if _unr_words(r) else "")
         void = _void_cell(SL.get("market_kill")) if MK else ""
         o.append(f'<article class="card name"><header><div><span class="tk">{t}</span><span class="pill p-up">ADVANCE</span>'
-                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}{_ma_pill(r)}{_mom_pill(t)}</div>'
+                 f'<span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{"<span class=\"pill p-warn\">HELD · ADD</span>" if t in held else ""}{_ma_pill(r)}{_mom_pill(t, r)}</div>'
                  f'<span class="pill {("p-warn" if not bracket["targets"] else TONE.get(w["readiness_tone"], "p-n"))}">{E("Reward does not justify the risk at this entry" if not bracket["targets"] else w["readiness"])}</span></header>'
                  f'{_extras(t, r)}{_ma_line(r)}<p class="case"><b>{E(w["case"])}</b></p>{_reason_html(w)}{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}'
                  f'<dl class="kv2"><div><dt>Buy trigger</dt><dd>{E(_trig_text(card))}</dd></div><div><dt>Confirms</dt><dd>{E(card.get("confirms", "—"))}</dd></div>'
                  f'<div><dt>Dead if</dt><dd>{E(_dead_text(card))}</dd></div><div><dt>Last close</dt><dd>{E(str(r.get("entry") if t not in held else held[t].get("live_px")))}</dd></div>'
-                 f'{void}{_bracket_html(bracket)}{_ext_bracket_html(r.get("extension_bracket"))}'
+                 f'{void}{_bracket_html(bracket, r.get('atr_14d'))}{_ext_bracket_html(r.get("extension_bracket"))}'
                  f'<div class="full"><dt>Valen</dt><dd>{valen}</dd></div>'
                  f'<div class="full"><dt>Sector</dt><dd>{E(w.get("sector_note") or str(r.get("gics_sector_name") or ""))}</dd></div></dl></article>')
     o.append("</div>")
@@ -1438,7 +1439,7 @@ def cmd_render(a):
     o.append('<section class="card"><div class="eyebrow">HOLD for conditions · nothing to do until the condition prints · AQE rank shown</div><div class="holds">')
     for c in sorted(by["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"]):
         t = c["ticker"]; card = CD["hold"].get(t) or {}; r = rows.get(t) or {}
-        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{_ma_pill(r)}{_mom_pill(t)}<span class="num">#{r.get("rank", "—")}</span></div>'
+        o.append(f'<div class="hold"><div class="hh"><span class="tk2">{t}</span><span class="pill p-n">{E(lane.get(t, c["lane"]).title())}</span>{_ma_pill(r)}{_mom_pill(t, r)}<span class="num">#{r.get("rank", "—")}</span></div>'
                  f'{_extras(t, r)}{_ma_line(r)}<p>{E(T["holds"][t])}</p>{_committee_block(POS.get(t), POS_ON)}{_contest_html(c)}<p class="cond">Condition: {E(_trig_text(card))} · dead: {E(_dead_text(card))}{(" · " + E(_unr_words(r))) if _unr_words(r) else ""}</p></div>')
     o.append("</div></section>")
     o.append('<section class="card"><div class="eyebrow">PASS · off the list</div><div class="tbl"><table><thead><tr><th>Ticker</th><th>Why not</th></tr></thead><tbody>'

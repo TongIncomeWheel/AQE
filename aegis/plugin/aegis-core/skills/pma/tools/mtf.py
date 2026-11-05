@@ -169,7 +169,6 @@ def rollup_hourly(m15):
 
 
 SWING_K = {"W": 2, "D": 3, "H1": 3}          # bars each side of a strict fractal pivot (PM 2026-11-05)
-MOMENTUM_NEAR_PCT = 2.0                      # the momentum flag: daily close within this % of the latest daily swing high
 
 
 def pivots(bars, k):
@@ -286,7 +285,8 @@ def _not_served(reason):
 
 def momentum_flag(row):
     """PM 2026-11-05: a code-built flag, INFORMATION ONLY (not a gate, not a vote input, R1): the WEEKLY and DAILY swing structure are both
-    HH/HL and the daily close is within MOMENTUM_NEAR_PCT of the latest daily swing high (above or below). Always says which test failed."""
+    HH/HL. The distance from the latest daily swing high is NOT part of it (the PM rejected a fixed %): the cards read it in daily ranges
+    (ATR) from card_extras.atr_distance, banded by card_extras.ATR_NEAR / ATR_FAR. Always says which test failed."""
     W, D = row.get("W") or {}, row.get("D") or {}
     if not (W.get("served") and D.get("served")):
         return {"flag": False, "reasons": ["weekly or daily frame not served"]}
@@ -295,13 +295,7 @@ def momentum_flag(row):
         why.append(f"weekly swing is {W.get('swing_class') or 'not readable'}, not HH/HL")
     if D.get("swing_class") != "HH/HL":
         why.append(f"daily swing is {D.get('swing_class') or 'not readable'}, not HH/HL")
-    d = (D.get("swing") or {}).get("close_vs_swing_high_pct")
-    if d is None:
-        why.append("no daily swing high to measure against")
-    elif abs(d) > MOMENTUM_NEAR_PCT:
-        why.append(f"daily close is {abs(d):.1f}% {'above' if d > 0 else 'under'} the latest daily swing high, more than {MOMENTUM_NEAR_PCT:g}% away")
-    return {"flag": not why, "reasons": why or [f"weekly and daily HH/HL, daily close {abs(d):.1f}% from the latest daily swing high"],
-            "rule": f"weekly HH/HL and daily HH/HL and the daily close within {MOMENTUM_NEAR_PCT:g}% of the latest daily swing high"}
+    return {"flag": not why, "reasons": why or ["weekly and daily HH/HL"], "rule": "weekly HH/HL and daily HH/HL"}
 
 
 def build_name(t, doc, run_date, export_close=None):
@@ -438,7 +432,7 @@ def _write_grid_out(a, room, names, extra=None):
                            "close_mismatch_vs_export": mism,
                            "swing_counts": swing_counts(names),
                            "momentum_flagged": sorted(t for t, r in names.items() if (r.get("momentum") or {}).get("flag")),
-                           "momentum_rule": f"weekly HH/HL and daily HH/HL and the daily close within {MOMENTUM_NEAR_PCT:g}% of the latest daily swing high (information only)",
+                           "momentum_rule": "weekly HH/HL and daily HH/HL (information only; the distance from the daily swing high is read in ATR by the cards)",
                            **extra}}
     with open(a.out, "w") as f:
         json.dump(out, f, indent=1)
