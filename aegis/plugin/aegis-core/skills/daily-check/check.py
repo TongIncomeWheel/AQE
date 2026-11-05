@@ -843,6 +843,10 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
     if not os.path.isdir(pk):
         fails.append(f"packets dir MISSING ({pk})")
     else:
+        if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C":
+            for _need in ("aqe_indicators.tsv", "aqe_glossary.md", "c_required_reading.json"):
+                if not os.path.exists(os.path.join(pk, _need)):
+                    fails.append(f"report C packet file MISSING: {_need} (every C seat must read the AQE indicators and the glossary)")
         present = sorted(f for f in os.listdir(pk) if f.endswith(".tsv"))
         for v in deciders:
             f = os.path.join(pk, f"{v}.tsv")

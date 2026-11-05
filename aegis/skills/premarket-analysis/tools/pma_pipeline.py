@@ -646,6 +646,25 @@ def cmd_packets(a):
             raise SystemExit(f"packets: report C needs {_gl} (python3 tools/aqe_glossary.py) -- REFUSING to build packets without it")
         shutil.copy2(_gl, os.path.join(a.outdir, "aqe_glossary.md"))
         print(f"  aqe_glossary.md: copied into the packets for all {len(nominators)} seats (report C)")
+        # Report C is the WHOLE committee reading the AQE indicators (PM 2026-11-05, conductor dry run): the seven method seats' packets are
+        # unchanged, so they get the composites, gates and every sub-component as ONE shared reading file for every candidate, beside the glossary.
+        _AQE_TOP = ("sc_momentum", "sc_m_gates", "sc_m_gate_detail", "sc_p_gates", "sc_p_gate_detail", "pipe_rank", "flow", "energy",
+                    "structure", "mp", "elder", "mp_state", "mp_accel_state")
+        _ind = [f for f in menus[QUANT_SEAT] if f == "ticker" or f in _AQE_TOP or f.startswith("subcomponents.")]
+        _ind_rows = [{f: flat_cache[r["ticker"]].get(f) for f in _ind} for r in universe]
+        rng.shuffle(_ind_rows)
+        _dicts = {f: codebooks[f][1] for f in _ind if codebooks.get(f)}
+        with open(os.path.join(a.outdir, "aqe_indicators.tsv"), "w", newline="") as _fo:
+            for _f, _lg in sorted(_dicts.items()):
+                _fo.write(f"# DICT {_f}: {_lg}\n")
+            _w = csv.DictWriter(_fo, fieldnames=_ind, delimiter="\t")
+            _w.writeheader()
+            for _r in _ind_rows:
+                _w.writerow({k: _cell(x) for k, x in _r.items()})
+        save(os.path.join(a.outdir, "c_required_reading.json"),
+             {"report": "C", "required": ["aqe_indicators.tsv", "aqe_glossary.md"], "seats": list(nominators),
+              "note": "every Report C seat reads both files with its own packet; SUPPORT / OPPOSE and nominations cite at least two AQE fields"})
+        print(f"  aqe_indicators.tsv: {len(_ind_rows)} candidates x {len(_ind)} AQE fields; c_required_reading.json lists it with the glossary for all {len(nominators)} seats")
 
     # ---- THE MACRO PACKETS. Crown gets its OWN ARTIFACT, not a slice of the equity export. -------
     # DEFECT FOUND 2026-09-25, and it was the conductor's, not AQE's. Both macro packets were built

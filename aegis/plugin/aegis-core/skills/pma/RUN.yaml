@@ -98,7 +98,7 @@ report:
     AEGIS_REPORT unset a run is A, byte for byte as before). B = the same seven seats, each with its own method, on the whole daily screened
     AQE universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) BEFORE any AQE score gate. C = the same seven seats plus an
     eighth decider, aqe-quant, who must argue from AQE's composites and sub-components (every SUPPORT / OPPOSE names at least two, the
-    registrar rejects otherwise; the plain glossary rides with every seat's packet). (1) B and C are NOT LIVE: they run as the non-live
+    registrar rejects otherwise -- and the same rule binds EVERY Report C decider, because C is the whole committee reading the AQE indicators; every seat's packet set carries packets/aqe_indicators.tsv (composites, gates, every sub-component for every candidate), packets/aqe_glossary.md and packets/c_required_reading.json, and check.py FAILs a C run missing any of them). (1) B and C are NOT LIVE: they run as the non-live
     rerun kind (publishes_live false), write no levels, are not read by the alerts, and are scored only. (2) They do NOT rerun weather,
     macro, sector or the held-book sections: they reuse A's outputs for the same date (data pull, packets base, market kill, macro
     context, held review) and carry only their ticker section and a scorecard line on their page (tools/pma_cards_report.py). (3) The AEGIS_REPORT
