@@ -1,0 +1,210 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-05",
+ "seat_kind": "challenge",
+ "names_read": 46,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-05\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"DG\", \"nomination_count\": 2"},
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Consumer Discretionary carries 8 of the 32 nominated names (BBY, BALL, HRB, CCL, W, HOG, NCLH, GLBE) across four seats. Sector clustering this deep means the room may be voting one sector bet several times rather than several independent ideas.",
+   "evidence": "gics_sector_name Consumer Discretionary on BBY, BALL, HRB, CCL, W, HOG, NCLH, GLBE; seats elder-lens, minervini, wyckoff, seow, livermore",
+   "addressed_to": "seow, livermore, elder-lens, wyckoff, minervini"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Consumer Staples is the second cluster: DG, KO, CCEP, USFD, TGT nominated (plus KDP in the room). KO and CCEP are both minervini + raschke picks, and both are beverage names; the overlap needs one independent reason each, not a shared one.",
+   "evidence": "gics_sector_name Consumer Staples on DG, KO, CCEP, USFD, TGT, KDP; KO seats minervini, raschke; CCEP seats minervini, raschke",
+   "addressed_to": "minervini, raschke"
+  },
+  {
+   "scope": "lane",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "CCL and NCLH are both cruise lines and both livermore nominations. Two slots on one industry from one seat is a single thesis counted twice; livermore should say which one carries the idea and why the second adds information.",
+   "evidence": "CCL seats livermore convictions 4; NCLH seats livermore convictions 3; both gics_sector_name Consumer Discretionary",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "CCL",
+   "kind": "PROCESS",
+   "ticker": "CCL",
+   "canon_ref": ["C5"],
+   "claim": "Higher-timeframe context is unnamed (R4): the moving averages are stacked downward while structure reads 100. Livermore must state what longer trend this setup sits inside, or it is a pattern in isolation.",
+   "evidence": "ma_50 25.11, ma_100 26.42, ma_200 27.1, structure 100.0, pct_from_52w_high -7.86",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "NCLH",
+   "kind": "PROCESS",
+   "ticker": "NCLH",
+   "canon_ref": ["C5"],
+   "claim": "Inverted average stack and a deep distance from the high: this is a counter-trend recovery, not a momentum leader. Livermore owes the higher-timeframe context and the observable that would prove the recovery wrong.",
+   "evidence": "ma_50 15.44, ma_100 17.44, ma_200 18.64, pct_from_52w_high -25.66, rs_rank_pct 49.76",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "CWK",
+   "kind": "PROCESS",
+   "ticker": "CWK",
+   "canon_ref": ["C5"],
+   "claim": "Same inverted stack as the cruise pair, with two lens warnings. Context unnamed (R4).",
+   "evidence": "ma_50 12.52, ma_100 13.07, ma_200 13.35, lens_warnings 2, rs_rank_pct 46.27",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "lane",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15", "C5"],
+   "claim": "Three shopping-centre REITs (REG, KIM, BRX) are in the room from three seats, and all three have the 50-day below a longer average. Shared industry plus shared weak higher-timeframe context: one decision, not three, and the context question (R4) is owed on each.",
+   "evidence": "REG ma_50 73.68, ma_200 76.75; KIM ma_50 23.13, ma_100 24.11; BRX ma_50 28.25, ma_200 29.61; gics_sector_name Real Estate",
+   "addressed_to": "raschke, wyckoff, livermore"
+  },
+  {
+   "scope": "lane",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Insurance overlap in Financials: MFC, PRU, RYAN, AJG. RYAN and AJG are both insurance brokers and both livermore picks; MFC and PRU are both life insurers from different seats. Say what distinguishes each from its pair.",
+   "evidence": "gics_sector_name Financials on MFC, PRU, RYAN, AJG; RYAN seats livermore; AJG seats livermore convictions 2",
+   "addressed_to": "livermore, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "BBY",
+   "kind": "EXTENSION",
+   "ticker": "BBY",
+   "canon_ref": ["C5", "C7"],
+   "claim": "At the 52-week high with a bearish oscillator divergence and the 50-day well above the 200-day: extension risk. The two seats should state the observable that would show exhaustion before entry.",
+   "evidence": "pct_from_52w_high 0.0, div_state BEARISH, div_bear_count 2, ma_50 91.02, ma_200 75.68",
+   "addressed_to": "elder-lens, minervini"
+  },
+  {
+   "scope": "CVBF",
+   "kind": "EXTENSION",
+   "ticker": "CVBF",
+   "canon_ref": ["C7", "C16"],
+   "claim": "The strongest bearish divergence in the room (four of five oscillators) on a name at its high with the lowest sc_momentum among nominations. Conflicting fields: the seat should either name its invalidation or abstain (R8).",
+   "evidence": "div_state BEARISH, div_bear_count 4, pct_from_52w_high 0.0, sc_momentum 61.2",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "ABT",
+   "kind": "EXTENSION",
+   "ticker": "ABT",
+   "canon_ref": ["C7", "C16"],
+   "claim": "Solo pick carrying a bearish divergence while still well off its high; the momentum read and the oscillator read conflict. Seow owes the disconfirming observable.",
+   "evidence": "div_state BEARISH, div_bear_count 2, pct_from_52w_high -11.55, lens_warnings 1",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "CAH",
+   "kind": "EXTENSION",
+   "ticker": "CAH",
+   "canon_ref": ["C7"],
+   "claim": "At the high with a bearish divergence, solo pick in a pullback lane; the pullback thesis and the at-high reading need reconciling.",
+   "evidence": "pct_from_52w_high 0.0, div_state BEARISH, div_bear_count 1, lane PULLBACK",
+   "addressed_to": "minervini"
+  },
+  {
+   "scope": "BILL",
+   "kind": "EXTENSION",
+   "ticker": "BILL",
+   "canon_ref": ["C7"],
+   "claim": "Bearish divergence on a solo pullback-lane nomination; the seat should state what would prove the pullback is a top instead.",
+   "evidence": "div_state BEARISH, div_bear_count 1, pct_from_52w_high -7.88, day_vol 1.77",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "HRB",
+   "kind": "EXTENSION",
+   "ticker": "HRB",
+   "canon_ref": ["C5", "C17"],
+   "claim": "Conviction 5 solo on a name at its high with the 50-day far above the 200-day: extended. A top-conviction solo case should trace to a few deep fields, not to the number of doors it passed (R12).",
+   "evidence": "convictions 5, pct_from_52w_high 0.0, ma_50 46.74, ma_200 39.32, lens_warnings 1, doors ELDER+LENS, LENS, STRENGTH, AQE_LEADER, SOLO, PM_LENS",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "BALL",
+   "kind": "PROCESS",
+   "ticker": "BALL",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Conviction 5 solo on a flat moving-average stack: the higher-timeframe trend is not evidently up. Wyckoff should name the longer context (range, base) that justifies top conviction.",
+   "evidence": "convictions 5, ma_50 61.27, ma_100 61.75, ma_200 61.06, structure 84.2, rs_rank_pct 68.25",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "UAL",
+   "kind": "PROCESS",
+   "ticker": "UAL",
+   "canon_ref": ["C5"],
+   "claim": "The 50-day sits below both the 100-day and the 200-day and structure is the weakest among nominations; higher-timeframe context unnamed (R4).",
+   "evidence": "ma_50 107.41, ma_100 115.5, ma_200 108.02, structure 57.9, pct_from_52w_high -14.95",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "JAN",
+   "kind": "PROCESS",
+   "ticker": "JAN",
+   "canon_ref": ["C5", "C16"],
+   "claim": "No 200-day average and no 52-week reference are served, so the longer-timeframe context cannot be read at all. Absent fields call for abstention or an explicitly declared gap, not a low-conviction fill (R8).",
+   "evidence": "ma_200 null, pct_from_52w_high null, structure 56.8, convictions 2",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "SIRI",
+   "kind": "EXTENSION",
+   "ticker": "SIRI",
+   "canon_ref": ["C7"],
+   "claim": "At the high on heavy volume with the 50-day below the 100-day: a spike off a non-uptrending base. O'Neil should state the observable that separates a breakout from a one-day climax.",
+   "evidence": "pct_from_52w_high 0.0, day_vol 2.25, ma_50 27.68, ma_100 28.62, sc_momentum 87.0",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C3", "C4"],
+   "claim": "No regime label reaches this packet, and no field in it carries a measured forward-return separation. Any case leaning on sc_momentum or structure as edge is UNPROVEN (R1), and no seat can justify size on environment match (R3).",
+   "evidence": "packet carries no regime or srm field; sc_momentum and structure served on every row with no edge statistic",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Only 7 of 32 nominations have two seats and none has three; 25 are solo. Four of the seven two-seat names are Consumer Staples or Real Estate. Thin independent convergence: much of the room's agreement is sector tilt, not shared evidence.",
+   "evidence": "nomination_count 2 on DG, ABBV, BBY, REG, KO, MFC, CCEP; nomination_count 1 on 25 names",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "livermore", "ticker": "NCLH", "class": "R4", "what_is_owed": "Name the higher-timeframe context for an inverted average stack, and the observable that proves the recovery wrong."},
+  {"seat": "livermore", "ticker": "CCL", "class": "R4", "what_is_owed": "Name the longer trend this sits inside, and why CCL and NCLH are two ideas, not one."},
+  {"seat": "wyckoff", "ticker": "BALL", "class": "R12", "what_is_owed": "Trace conviction 5 to a few named fields and the longer context on a flat average stack."},
+  {"seat": "seow", "ticker": "HRB", "class": "R12", "what_is_owed": "Trace conviction 5 to a few named fields; state the exhaustion observable at the high."},
+  {"seat": "elder-lens", "ticker": "CVBF", "class": "R8", "what_is_owed": "Reconcile div_bear_count 4 with the nomination, or stand aside."},
+  {"seat": "raschke", "ticker": "JAN", "class": "R8", "what_is_owed": "Declare the missing ma_200 context and say why the name is not an abstain."}
+ ],
+ "declarations": [
+  "I do not nominate and do not vote.",
+  "No psychology claims: C18-C21 are PM-facing (R9); C22 gates nothing (R10).",
+  "No finding here uses a bracket field as a reason (house rule R1)."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "No regime or srm context in the packet; R3 environment-match checks cannot be evaluated by this seat."},
+  {"field": "price", "impact": "No close served; extension is read only from pct_from_52w_high and the moving-average spread, not distance of price from the averages."},
+  {"field": "ma_200", "impact": "Null for JAN; its higher-timeframe context cannot be read."},
+  {"field": "pct_from_52w_high", "impact": "Null for JAN; extension cannot be read."},
+  {"field": "forward_return_separation", "impact": "No field carries a measured edge statistic; R1 can only flag UNPROVEN, never confirm edge."}
+ ]
+}
