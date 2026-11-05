@@ -91,14 +91,14 @@ def _row(w_cls, d_cls, d_pct):
     return {"W": sw(w_cls), "D": sw(d_cls, d_pct)}
 
 
-def test_the_momentum_flag_needs_weekly_and_daily_hh_hl_and_a_close_within_2_percent_of_the_daily_swing_high():
+def test_the_flag_is_weekly_and_daily_hh_hl_only_the_distance_is_read_in_atr_by_the_cards():
     assert M.momentum_flag(_row("HH/HL", "HH/HL", 1.0))["flag"] is True
-    assert M.momentum_flag(_row("HH/HL", "HH/HL", -1.9))["flag"] is True               # under the swing high, but within 2%
-    assert M.momentum_flag(_row("HH/HL", "HH/HL", 5.8))["flag"] is False               # GLBE-style: 5.8% above its swing high
+    assert M.momentum_flag(_row("HH/HL", "HH/HL", 5.8))["flag"] is True                # no fixed % cut-off any more (PM 2026-11-05)
     r = M.momentum_flag(_row("LH/LL", "HH/HL", 0.5))
     assert r["flag"] is False and "weekly swing is LH/LL" in r["reasons"][0]
     assert M.momentum_flag({"W": {"served": False}, "D": {"served": True}})["flag"] is False
     assert M.momentum_flag(_row(None, "HH/HL", 0.5))["reasons"][0].startswith("weekly swing is not readable")
+    assert not hasattr(M, "MOMENTUM_NEAR_PCT")
 
 
 def test_swing_counts_summarise_the_room():

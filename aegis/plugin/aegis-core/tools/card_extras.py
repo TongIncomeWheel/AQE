@@ -2,7 +2,7 @@
 """card_extras.py -- code-built, information-only extras for the Cards and the brief (PM 2026-11-05).
 
   1. the weekly / daily / hourly STRIP on every card, built from mtf.json (swing class, average order, distance to the latest swing high);
-  2. the MOMENTUM setup flag and its count over the slate (weekly AND daily HH/HL, daily close within 2% of the latest daily swing high);
+  2. the UPTREND structure (weekly AND daily HH/HL) with the daily close's distance from the latest daily swing high in daily ranges (ATR), banded by ATR_NEAR / ATR_FAR;
   3. the U&R reference: one line on each card and a table for the brief, from the AQE export's unr_status / unr_level / unr_note.
 
 None of it is a gate, a vote input or a verdict change (R1). A missing fact is said, never filled: no mtf row = no strip claim; no U&R fields =
@@ -54,22 +54,76 @@ def strip_html(mtf_row, E=lambda s: s):
     return '<p class="mtf"><b>Trend frames.</b> ' + " ".join(E(frame_plain(tf, mtf_row.get(tf))) for tf in ("W", "D", "H1")) + "</p>"
 
 
-def momentum(mtf_row):
-    """(flag, why) from mtf.json's code-built flag; (None, '') when the row has none (an older grid)."""
+# PM 2026-11-05: the PM rejected a fixed 2% ("random and overly tight"). Distance from the latest confirmed daily swing high is read in
+# daily ranges (ATR): (daily close - swing high) / atr_14d, positive = above. These two edges are the ONLY place the bands are defined;
+# the PM picks the final numbers. They label data, they are not a gate or a vote (R1).
+ATR_NEAR = 1.0      # inside +/- this many daily ranges of the swing high = "at the pivot"; further under = "below"
+ATR_FAR = 3.0       # above the swing high by more than ATR_NEAR and up to this = "extended"; beyond it = "far extended"
+BAND_AT, BAND_EXT, BAND_FAR, BAND_BELOW = "at the pivot", "extended", "far extended", "below the pivot"
+
+
+def atr_band(dist_atr):
+    if dist_atr is None:
+        return None
+    if dist_atr < -ATR_NEAR:
+        return BAND_BELOW
+    if dist_atr <= ATR_NEAR:
+        return BAND_AT
+    return BAND_EXT if dist_atr <= ATR_FAR else BAND_FAR
+
+
+def atr_distance(mtf_row, export_row):
+    """The daily close vs the latest confirmed daily swing high, in daily ranges (ATR) from the export's atr_14d. None when any input is missing
+    (never filled)."""
+    D = (mtf_row or {}).get("D") if isinstance(mtf_row, dict) else None
+    sw = (D or {}).get("swing") or {}
+    sh = (sw.get("last_swing_high") or {}).get("price")
+    close = (D or {}).get("close")
+    atr = (export_row or {}).get("atr_14d") if isinstance(export_row, dict) else None
+    if not all(isinstance(x, (int, float)) for x in (sh, close, atr)) or atr <= 0 or sh <= 0:
+        return None
+    d = (close - sh) / atr
+    pct = (close / sh - 1) * 100
+    way = "at" if abs(d) < 0.05 else ("above" if d > 0 else "under")
+    text = ("at the last swing high" if way == "at" else f"{abs(d):.1f} daily ranges (ATR) {way} the last swing high") + f" ({pct:+.1f}%), {atr_band(d)}"
+    return {"atr_dist": round(d, 2), "pct": round(pct, 2), "band": atr_band(d), "text": text, "atr": atr}
+
+
+def momentum(mtf_row, export_row=None):
+    """(flag, why). flag = weekly AND daily swing structure are both higher highs / higher lows (mtf.json's code-built structure flag;
+    None when the row has none, an older grid). why = the distance from the daily swing high in daily ranges, as data, when it can be read."""
     m = (mtf_row or {}).get("momentum") if isinstance(mtf_row, dict) else None
     if not isinstance(m, dict):
         return None, ""
-    return bool(m.get("flag")), "; ".join(m.get("reasons") or [])
+    ad = atr_distance(mtf_row, export_row)
+    if not m.get("flag"):
+        return False, "; ".join(m.get("reasons") or [])
+    return True, ("weekly and daily higher highs and higher lows; " + ad["text"]) if ad else "weekly and daily higher highs and higher lows; distance from the swing high not readable"
 
 
-def momentum_summary(mtf_names, tickers):
-    """'0 of 12 slate names ...' -- counts only names whose mtf row carries the flag; says so when none do (older grid)."""
+def trend_pill_text(mtf_row, export_row):
+    """Text for the pill on a card: the structure and the ATR distance as data. '' when the structure is not weekly+daily HH/HL."""
+    f, why = momentum(mtf_row, export_row)
+    if not f:
+        return ""
+    ad = atr_distance(mtf_row, export_row)
+    return f"Uptrend, {ad['band']} ({ad['atr_dist']:+.1f} ATR)" if ad else "Uptrend structure"
+
+
+def momentum_summary(mtf_names, tickers, rows=None):
+    """Counts over the slate: weekly+daily HH/HL names by band. Only names whose mtf row carries the flag are counted; None when none do."""
     have = [t for t in tickers if momentum((mtf_names or {}).get(t))[0] is not None]
     if not have:
         return None
     hit = [t for t in have if momentum(mtf_names[t])[0]]
-    return {"n": len(have), "hit": hit, "text": f"{len(hit)} of {len(have)} slate names show the momentum setup (weekly and daily higher highs and higher lows, daily close within 2% of the latest daily swing high)"
-            + (": " + ", ".join(hit) if hit else "") + ". Information only: not a gate, not a vote."}
+    bands = {}
+    for t in hit:
+        ad = atr_distance(mtf_names[t], (rows or {}).get(t))
+        bands.setdefault(ad["band"] if ad else "distance not readable", []).append(f"{t} {ad['atr_dist']:+.1f}" if ad else t)
+    parts = [f"{k}: {', '.join(v)}" for k, v in bands.items()]
+    return {"n": len(have), "hit": hit, "bands": bands, "text": f"{len(hit)} of {len(have)} slate names have weekly and daily higher highs and higher lows"
+            + (" (distance of the daily close from the latest daily swing high in daily ranges, ATR; at the pivot = within " + f"{ATR_NEAR:g}, extended = {ATR_NEAR:g} to {ATR_FAR:g} above, far extended = over {ATR_FAR:g} above). " + "; ".join(parts) if hit else "")
+            + ". Information only: not a gate, not a vote."}
 
 
 # ------------------------------------------------------------------------------------------------ U&R
