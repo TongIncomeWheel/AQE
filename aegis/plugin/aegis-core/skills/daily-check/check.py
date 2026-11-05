@@ -670,6 +670,41 @@ def check_cards_text(path):
     return fails, notes
 
 
+def check_cards_lines(path):
+    """PM 2026-11-05: cards_lines.json = the WRITER's committee-voice lines 2 and 3 for each card ({TICKER: {why, contested}}). FAIL on any line
+    that names a seat, speaks in the first person, carries a tally, a field name or a code, runs past its cap, has more than two numbers or is
+    more than one sentence: the renderer would fall back to the extraction line and say so, this proves it before publish. An absent file is a
+    WARN-level note (the extraction route still renders), never a silent pass."""
+    import importlib.util as _iu
+    fails, notes = [], []
+    if not path or not os.path.exists(path):
+        return fails, [f"cards lines: {path} not found -- the extraction lines will be printed (declared, not silent)"]
+    try:
+        doc = json.load(open(path, encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        return [f"cards lines: {path} unreadable: {e}"], notes
+    doc = doc.get("cards") if isinstance(doc, dict) and isinstance(doc.get("cards"), dict) else doc
+    here = os.path.dirname(os.path.abspath(__file__))
+    mod = None
+    for rel in ("../pma/tools/card_template.py", "../../tools/card_template.py", "../../skills/pma/tools/card_template.py"):
+        q = os.path.join(here, rel)
+        if os.path.exists(q):
+            spec = _iu.spec_from_file_location("card_template_gate", q); mod = _iu.module_from_spec(spec); spec.loader.exec_module(mod); break
+    if mod is None:
+        return ["card_template.py (the lines gate) not found -- cards_lines.json cannot be gated"], notes
+    n = 0
+    for t, d in (doc or {}).items():
+        for kind in ("why", "contested"):
+            ln = (d or {}).get(kind)
+            if ln is None or str(ln).strip() == "":
+                fails.append(f"cards_lines.{t}.{kind}: missing")
+                continue
+            n += 1
+            fails += [f"cards_lines.{t}.{kind}: {e}" for e in mod.gate_line(ln, kind)]
+    notes.append(f"cards lines: {n} writer line(s) checked for {len(doc or {})} ticker(s)")
+    return fails, notes
+
+
 def _legs_from_marker(line):
     """'Macro legs: expected session 2026-11-04 | breadth_whole_market 2026-11-04 CURRENT | dspx 2026-11-03 PUBLISHER_LAG | ... BEHIND: ...' -> legs rows."""
     out = []
@@ -905,6 +940,7 @@ def main(argv=None):
     d_.add_argument("--broker-stops", default=None, help="GATHER's broker_stops.json, cross-checked against the journal")
     ct = sub.add_parser("cards", help="B3: the Cards' plain one-voice reason block (FAIL on raw field names, tallies, jargon, > 4 numbers)")
     ct.add_argument("--text", default="cards_text.json"); ct.add_argument("--html", default=None, help="the rendered pma_cards_<date>.html: FAIL on any raw field name in its text")
+    ct.add_argument("--lines", default=None, help="cards_lines.json (PM 2026-11-05): the writer's committee-voice lines 2 and 3 per card; FAIL on any line that breaks the plain-words/seat/tally gate")
     cv = sub.add_parser("coverage", help="per-voice data coverage; run BEFORE the vote with --phase4 so name-level blanks are scoped to the room")
     cv.add_argument("--packets-dir", required=True); cv.add_argument("--export", required=True)
     cv.add_argument("--phase4", default=None, help="phase4.json: scope name-level blanks to its deliberation_set")
@@ -924,6 +960,8 @@ def main(argv=None):
                           getattr(a, "broker_stops", None), None if str(vc).lower() == "none" else vc); rc |= _report("DATA HANDOFF", f, n)
     if a.cmd == "cards":
         f, n = check_cards_text(a.text); rc |= _report("CARDS TEXT", f, n)
+        if getattr(a, "lines", None):
+            f, n = check_cards_lines(a.lines); rc |= _report("CARDS LINES", f, n)
         if getattr(a, "html", None):
             f, n = check_cards_html(a.html); rc |= _report("CARDS HTML", f, n)
     if a.cmd == "coverage":

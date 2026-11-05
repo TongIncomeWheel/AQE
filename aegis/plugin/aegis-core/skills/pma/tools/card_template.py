@@ -64,7 +64,7 @@ def is_na(text: str) -> bool:
 
 
 # ----------------------------------------------------------------------------------------------- the committee-voice sentence
-_TALLY = re.compile(r"\b\d+\s+(?:of|/)\s*\d+\b|\b\d+\s+(?:analysts|seats|voices|supporters|objections)\b|\b(?:analysts|seats) (?:agree|filed|share)", re.I)
+_TALLY = re.compile(r"\b\d+\s+(?:of|/)\s*\d+\b|\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|all|both|most|several|majority)\b[^.]{0,24}\b(?:analysts?|seats?|voices?|deciders?|supporters?|objectors?|voters?|objections?)\b|\b(?:analysts|seats) (?:agree|filed|share|back)", re.I)
 
 
 _SEAT_VOICE = re.compile(r"\b(?:my|mine|I|I'm|I'd|I've|me|we|our)\b", re.I)                         # a seat speaking in the first person
@@ -135,6 +135,53 @@ def brief_lists(daily_list, lens_ranked=None):
     return out
 
 
+# ----------------------------------------------------------------------------------------------- the writer's lines (cards_lines.json)
+WHY_MAX, CONTESTED_MAX, MAX_NUMBERS = 200, 240, 2
+_FIELDISH = re.compile(r"\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b|\b[CR]\d{1,2}\b|\bW/D/H1\b|\b(?:H1|ADX|EMA\d*|HH/HL|LH/LL)\b|%K/%D|\d+, \d+")
+_SENT_BREAK = re.compile(r"[.!?]\s+[A-Z]")
+
+
+def gate_line(text, kind="why"):
+    """Problems with one WRITER-authored committee line (PM 2026-11-05, cards_lines.json). [] = fit to print. The line must be ONE plain
+    sentence in the committee's voice: no seat name, no first-person seat voice, no tally, no field name or code, at most MAX_NUMBERS numbers,
+    within the length cap. The page never prints a line that breaks this."""
+    t = str(text or "").strip()
+    errs = []
+    if not t:
+        return ["empty"]
+    cap = WHY_MAX if kind == "why" else CONTESTED_MAX
+    if len(t) > cap:
+        errs.append(f"{len(t)} characters, over the {cap} cap")
+    low = t.lower()
+    L = _lvc()
+    for v in list(L.VOICES) + ["elder-lens"]:
+        if v in low:
+            errs.append(f"names a seat ({v})")
+    if _SEAT_NAME.search(t):
+        errs.append("names a seat (Elder/Chair)")
+    if _SEAT_VOICE.search(t):
+        errs.append("first-person seat voice")
+    if _TALLY.search(t):
+        errs.append("vote tally")
+    m = _FIELDISH.search(t)
+    if m:
+        errs.append(f"field name or code ({m.group(0)})")
+    n_num = len(re.findall(r"(?<![A-Za-z_])\d[\d,]*(?:\.\d+)?%?", t))
+    if n_num > MAX_NUMBERS:
+        errs.append(f"{n_num} numbers, over {MAX_NUMBERS}")
+    if _SENT_BREAK.search(t):
+        errs.append("more than one sentence")
+    return errs
+
+
+def writer_line(c, kind):
+    """(text, problems): the writer's line for this ticker if present, else (None, [])."""
+    ln = ((c.get("lines") or {}).get(kind))
+    if ln is None or str(ln).strip() == "":
+        return None, []
+    return str(ln).strip(), gate_line(ln, kind)
+
+
 # ----------------------------------------------------------------------------------------------- fields
 def _lane(c):
     lane = str(c.get("lane") or "").title()
@@ -152,16 +199,26 @@ def _lane(c):
     return lane + (f" · {'; '.join(tags)}" if tags else "")
 
 
+def _why_tag(c):
+    cons = c.get("cons")
+    if c.get("supplemental") and cons:
+        return "supplemental committee pass" + (", contested" if str(cons.get("status")) == "CONTESTED" else "")
+    if cons and str(cons.get("status")) in ("AGREED", "CONTESTED"):
+        return "committee consensus" + (", with reservations" if str(cons.get("status")) == "AGREED" and (cons.get("reservations")) else "")
+    if cons and str(cons.get("status")) in ("DROPPED", "NOT_SLATED", "DEAL_PINNED"):
+        return "committee did not advance it"
+    return "AQE list, not a committee pick"
+
+
 def _why(c):
     cons, pos = c.get("cons"), c.get("pos")
-    if c.get("supplemental") and cons:
-        tag = "supplemental committee pass" + (", contested" if str(cons.get("status")) == "CONTESTED" else "")
-    elif cons and str(cons.get("status")) in ("AGREED", "CONTESTED"):
-        tag = "committee consensus" + (", with reservations" if str(cons.get("status")) == "AGREED" and (cons.get("reservations")) else "")
-    elif cons and str(cons.get("status")) in ("DROPPED", "NOT_SLATED", "DEAL_PINNED"):
-        tag = "committee did not advance it"
-    else:
-        tag = "AQE list, not a committee pick"
+    wl, probs = writer_line(c, "why")
+    if wl and not probs:
+        c.setdefault("_src", {})["why"] = "writer"
+        return _why_tag(c), wl
+    if wl and probs:
+        c.setdefault("_fallback", []).append(("why", probs))
+    tag = _why_tag(c)
     if not pos and not cons:
         ol = c.get("on_lists")
         if ol:
@@ -175,11 +232,17 @@ def _why(c):
         return tag, "On the " + " and ".join(c["on_lists"][:3]) + (" lists." if len(c["on_lists"]) > 1 else " list.")
     if not texts:
         return tag, na("no filed rationale for this name")
-    return tag, na("no sentence in the committee's filed rationale reads clean in plain words (the full words are in the audit trail)")
+    return tag, na("no committee line in plain words is on file for this name")
 
 
 def _contested(c):
     cons = c.get("cons")
+    wl, probs = writer_line(c, "contested")
+    if wl and not probs:
+        c.setdefault("_src", {})["contested"] = "writer"
+        return wl
+    if wl and probs:
+        c.setdefault("_fallback", []).append(("contested", probs))
     if not cons:
         if c.get("committee_result"):
             return str(c["committee_result"]).capitalize() + "."
@@ -193,14 +256,13 @@ def _contested(c):
     if st == "AGREED" and not objs:
         return "No objection filed: the room agreed."
     lead = "Rejected" if st == "DROPPED" else "Contested"
-    obj = first_clean([o.get("objection") for o in objs])
-    clr = first_clean([o.get("would_clear") for o in objs])
     if not objs:
         return na(f"{lead.lower()} but no objection is on file")
-    if not obj and not clr:
-        return na(f"{lead.lower()}: no filed objection reads clean in plain words (see the audit trail)")
-    return (f"{lead}: {obj}" if obj else f"{lead}: the filed objection does not read clean in plain words (the full words are in the audit trail).") + \
-        (f" What would clear it: {clr}" if clr else " What would clear it: not available (no clean line filed).")
+    obj = first_clean([o.get("objection") for o in objs])
+    clr = first_clean([o.get("would_clear") for o in objs])
+    if not obj:
+        return na(f"no committee line in plain words is on file for this {lead.lower()} name")
+    return f"{lead}: {obj}" + (f" What would clear it: {clr}" if clr else "")
 
 
 def _sector(c):
@@ -241,11 +303,30 @@ def _ladder(entry, stop, tps):
     return [(round(r, 1), tp) for r, tp in rr if r >= MIN_TARGET_R], [(round(r, 1), tp) for r, tp in rr if r < MIN_TARGET_R]
 
 
+def row_levels(row):
+    """Levels from an export row's own bracket block (AQE's structural bracket; the ATR fallback stop when the structural one fails the gates).
+    Returns (levels, source, invalid_reason)."""
+    b = (row or {}).get("bracket") or {}
+    e = row.get("entry") if isinstance(row, dict) else None
+    atr = (row or {}).get("atr_14d")
+    stop = b.get("stop") if b.get("valid") else None
+    src = "AQE export bracket"
+    if stop is None and isinstance(b.get("atr_fallback_stop"), (int, float)):
+        stop, src = b["atr_fallback_stop"], "AQE one-daily-range stop (no structural stop passed the gates)"
+    if stop is None or not isinstance(e, (int, float)):
+        return None, None, b.get("invalid_reason") or "no bracket in the export for this name"
+    tps = [t.get("price") for t in b.get("targets") or [] if isinstance(t.get("price"), (int, float))][:3]
+    risk = e - stop
+    rr2 = round((tps[1] - e) / risk, 2) if len(tps) > 1 and risk > 0 else None
+    return {"stop": stop, "tp": tps, "risk_atr": round(risk / atr, 2) if isinstance(atr, (int, float)) and atr > 0 else None, "rr2": rr2, "ref": e}, src, None
+
+
 def _bracket(c):
     br, lv, row, cx = c.get("br"), c.get("lv"), c.get("row") or {}, c.get("cx")
     levels = None
     src = None
-    if br and (br.get("stop") or {}).get("price") is not None:
+    lvl_ok = bool(lv and (lv.get("levels") or {}).get("stop") is not None)
+    if br and (br.get("stop") or {}).get("price") is not None and not (c.get("supplemental") and lvl_ok):
         levels = {"stop": br["stop"]["price"], "tp": [t.get("price") for t in br.get("tp_ladder") or []], "risk_atr": br.get("risk_atr"),
                   "rr2": br.get("rr_to_tp2"), "ref": (br.get("price") or {}).get("value")}
         src = br.get("source")
@@ -253,9 +334,15 @@ def _bracket(c):
         l = lv["levels"]
         levels = {"stop": l["stop"], "tp": l.get("tp") or [], "risk_atr": l.get("risk_atr"), "rr2": l.get("rr_to_tp2"), "ref": l.get("ref_close")}
         src = lv.get("levels_source")
+    if not levels:
+        fl, fsrc, freason = row_levels(row)
+        if fl:
+            levels, src = fl, fsrc
+        else:
+            c.setdefault("_bracket_reason", freason)
     unr = cx.unr_tag(row) if cx else na("U&R reader not loaded")
     if not levels:
-        why = (br or {}).get("invalid_reason") or (lv or {}).get("levels_invalid_reason") or "no bracket was built for this name"
+        why = (br or {}).get("invalid_reason") or (lv or {}).get("levels_invalid_reason") or c.get("_bracket_reason") or "no bracket was built for this name"
         return na(why) + ". " + unr
     trig = next((x["level"] for x in (lv or {}).get("triggers") or [] if x.get("kind") == "close_above"), None)
     entry = trig if isinstance(trig, (int, float)) else levels["ref"]
@@ -269,7 +356,7 @@ def _bracket(c):
             parts.append("nearby resistance, not targets: " + ", ".join(f"{tp:g}" for _, tp in near))
     if isinstance(levels.get("rr2"), (int, float)):
         parts.append(f"reward to the second target {levels['rr2']:g}R")
-    parts.append(f"risk {levels['risk_atr']:g} daily ranges" if isinstance(levels.get("risk_atr"), (int, float)) else "risk in daily ranges not available (no average daily range served)")
+    parts.append((f"risk {levels['risk_atr']:g} daily range" + ("" if levels["risk_atr"] == 1 else "s")) if isinstance(levels.get("risk_atr"), (int, float)) else "risk in daily ranges not available (no average daily range served)")
     return ", ".join(parts) + "." + (f" Levels source: {src}." if src else "") + " " + unr
 
 
@@ -279,7 +366,7 @@ def _verdict(c):
         return na("the committee did not vote this name")
     v = {"ADVANCE": "Advance", "HOLD-FOR-CONDITIONS": "Hold for conditions", "PASS": "Pass"}.get(cons.get("verdict"), str(cons.get("verdict")))
     if not tk:
-        return v + ". Timing: " + na("not on the slate, so no timing read")
+        return v + ". Timing: " + na(c.get("no_timing_reason") or "not on the slate, so no timing read")
     if cons.get("verdict") == "PASS":
         return v + ". Timing: not applicable, the committee passed on it."
     tc = tk.get("timing_count") or {}
@@ -303,6 +390,10 @@ def _wrong_if(c):
         if k:
             return clean_sentence(k) or na("the filed exit line does not read clean in plain words")
     stp = ((br or {}).get("stop") or {}).get("price")
+    if not isinstance(stp, (int, float)):
+        stp = ((lv or {}).get("levels") or {}).get("stop")
+    if not isinstance(stp, (int, float)):
+        stp = (row_levels(c.get("row")) or (None,))[0] and row_levels(c.get("row"))[0]["stop"]
     if isinstance(stp, (int, float)):
         return f"No committee exit line; the AQE stop is {stp:g}."
     return na("no exit line and no stop on file")

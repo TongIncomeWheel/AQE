@@ -363,3 +363,92 @@ def test_a_missing_template_field_stops_the_render_so_the_safety_net_falls_back(
     r = subprocess.run([sys.executable, str(broken / "pma_cards_v3.py"), "--run-dir", str(run), "--out", str(run / "x.html"), "--refresh-dir", str(run / "ref")],
                        capture_output=True, text=True, timeout=300)
     assert r.returncode != 0 or not (run / "x.html").exists()
+
+
+GOOD_WHY = "A market leader breaking to a new high on heavy buying, the strongest of its group."
+GOOD_CONTESTED = "Contested: the buy trigger is read on the hourly chart, not the daily close, and it clears on a daily close above the pivot high."
+
+
+def _render_stdout(run):
+    r = subprocess.run([sys.executable, str(TOOL), "--run-dir", str(run), "--out", str(run / "out.html"), "--refresh-dir", str(run / "ref")],
+                       capture_output=True, text=True, timeout=300)
+    assert r.returncode == 0, r.stderr[-1500:]
+    return (run / "out.html").read_text(encoding="utf-8"), r.stdout
+
+
+def _field(h, ticker, fid):
+    card = h.split(f'<div class="card tmpl" data-t="{ticker}">')[1].split('<div class="card', 1)[0]
+    return text(re.search(rf'data-f="{fid}".*?<div class="val">(.*?)</div>', card, re.S).group(1)).strip()
+
+
+def test_the_writers_lines_are_printed_and_a_line_that_breaks_the_gate_falls_back_loudly(run):
+    cons = json.loads((run / "consensus.json").read_text())
+    adv = [c["ticker"] for c in cons if c["verdict"] == "ADVANCE"][:2]
+    good_t, bad_t = adv
+    (run / "cards_lines.json").write_text(json.dumps({good_t: {"why": GOOD_WHY, "contested": GOOD_CONTESTED},
+                                                      bad_t: {"why": "Livermore likes this leader (C9).", "contested": GOOD_CONTESTED}}))
+    h, out = _render_stdout(run)
+    assert _field(h, good_t, "why") == GOOD_WHY and _field(h, good_t, "contested") == GOOD_CONTESTED
+    assert _field(h, bad_t, "why") != "Livermore likes this leader (C9)." and "livermore" not in _field(h, bad_t, "why").lower()
+    assert _field(h, bad_t, "contested") == GOOD_CONTESTED                              # the good half of a pair still prints
+    assert f"CARDS LINES FALLBACK: {bad_t} (why)" in out and "names a seat" in out
+    assert "cards lines: 2 writer ticker(s) read from cards_lines.json" in out
+
+
+def test_a_run_without_cards_lines_says_so_and_still_renders_the_extraction_lines(run):
+    h, out = _render_stdout(run)
+    assert "file absent: extraction lines used" in out
+    assert h.count('class="card tmpl"') >= 12
+
+
+def test_supplemental_names_get_the_same_ten_field_cards_in_their_own_section(run):
+    cons = {c["ticker"] for c in json.loads((run / "consensus.json").read_text())}
+    exp = json.loads((run / "aqe_daily_export.json").read_text())
+    extra = [r["ticker"] for r in exp["daily_list"] if r["ticker"] not in cons][:3]
+    adv_t, drop_t, ns_t = extra
+    def add(o):
+        o["rows"] += [
+            {"ticker": adv_t, "class": "ADVANCE", "lane": "MOMENTUM", "origin_run": "2026-11-04-r3", "supplemental": True, "supplemental_label": "supplemental committee pass",
+             "committee_status": "CONTESTED", "committee_objections": [{"voice": "seow", "objection": "The signal is read on the hourly chart, so it buys in front of price.", "would_clear": "A daily close above the pivot high."}],
+             "levels": {"ref_close": 100.0, "stop": 96.0, "tp": [104.0, 108.0, 112.0], "rr_to_tp2": 2.0, "risk_atr": 1.0},
+             "triggers": [{"id": "2026-11-04-r3:x-buy0", "kind": "close_above", "level": 102.0, "basis": "15m", "priority": "ACTION", "action": "buy", "volume_min_x": 1.4},
+                          {"id": "2026-11-04-r3:x-dead", "kind": "close_below", "level": 96.0, "basis": "daily", "priority": "WARN", "action": "dead"}]},
+            {"ticker": drop_t, "class": "WATCH", "origin_run": "2026-11-04-r3", "supplemental": True, "brief_watch": True, "triggers": [], "committee_status": "DROPPED",
+             "committee_result": "dropped by the committee (2 objections)", "committee_objections": [{"voice": "oneil", "objection": "Volume did not clear the line on the break.", "would_clear": "A day on 1.4x volume."}]},
+            {"ticker": ns_t, "class": "WATCH", "origin_run": "2026-11-04-r3", "supplemental": True, "brief_watch": True, "triggers": [], "committee_status": "NOT_SLATED",
+             "committee_result": "not slated: cut by claims", "committee_objections": []}]
+    edit(run, "pma_levels.json", add)
+    (run / "cards_lines.json").write_text(json.dumps({adv_t: {"why": GOOD_WHY, "contested": GOOD_CONTESTED}}))
+    h, _out = _render_stdout(run)
+    assert "Supplemental committee pass (contested)" in text(h) and "none is an agreed pick" in text(h)
+    for t in extra:
+        assert f'data-t="{t}"' in h
+        card = h.split(f'<div class="card tmpl" data-t="{t}">')[1].split('<div class="card', 1)[0]
+        assert re.findall(r'data-f="([a-z_]+)"', card) == ["lane", "why", "contested", "sector", "triggers", "bracket", "verdict", "wrong_if", "event", "frames"]
+    assert _field(h, adv_t, "why") == GOOD_WHY and _field(h, adv_t, "contested") == GOOD_CONTESTED
+    assert _field(h, adv_t, "triggers").startswith("An hourly close above 102 on at least 1.4x normal volume")
+    assert "supplemental committee pass, contested" in h.split(f'data-t="{adv_t}"')[1][:600]
+    assert _field(h, ns_t, "contested") == "Not slated: cut by claims."
+    assert _field(h, drop_t, "contested").startswith("Rejected: ") or _field(h, drop_t, "contested").startswith("not available")
+    assert "Timing: not available: the supplemental pass has no timing read on file" in _field(h, adv_t, "verdict")
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("chk_s", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    fails, _ = ck.check_cards_html(str(run / "out.html"))
+    assert fails == [], fails
+
+
+def test_the_supplemental_pass_trend_frames_come_from_mtf_supplement_json_and_never_override_a_room_name(run):
+    cons = {c["ticker"] for c in json.loads((run / "consensus.json").read_text())}
+    exp = json.loads((run / "aqe_daily_export.json").read_text())
+    extra = next(r["ticker"] for r in exp["daily_list"] if r["ticker"] not in cons)
+    def add(o):
+        o["rows"].append({"ticker": extra, "class": "WATCH", "origin_run": "2026-11-04-r3", "supplemental": True, "brief_watch": True, "triggers": [],
+                          "committee_status": "NOT_SLATED", "committee_result": "not slated: cut by claims", "committee_objections": []})
+    edit(run, "pma_levels.json", add)
+    row = _mtf_doc({"BRK-B"})["names"]["BRK-B"]
+    (run / "mtf_supplement.json").write_text(json.dumps({"names": {extra: row, "BRK-B": dict(row, served=False, reason="should never win")}}))
+    (run / "mtf.json").write_text(json.dumps(_mtf_doc({"BRK-B"})))
+    h, _o = _render_stdout(run)
+    assert "Weekly: higher highs and higher lows" in _field(h, extra, "frames")
+    assert "should never win" not in h

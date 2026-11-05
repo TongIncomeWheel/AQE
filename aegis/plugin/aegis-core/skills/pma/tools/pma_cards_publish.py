@@ -87,6 +87,9 @@ def main():
                     if fails:
                         reason = "the plain-words gate FAILED on the v3 page or its words file: " + "; ".join(fails)[:300]
         if reason is None:
+            for ln in (log or "").splitlines():
+                if ln.startswith("CARDS LINES FALLBACK") or ln.startswith("cards lines:") and "file absent" in ln:
+                    note(run_dir, ln.replace("cards lines:", "CARDS LINES:", 1))          # PM 2026-11-05: a writer line that broke the gate is named, never silent
             shutil.move(tmp, out)
             rec["renderer_published"] = "v3"
             print(f"cards: v3 page published -> {out}")
