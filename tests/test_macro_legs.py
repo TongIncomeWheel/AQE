@@ -43,7 +43,8 @@ def test_a_panel_we_did_not_refresh_is_our_budget_and_blocks_and_a_missing_sourc
     assert t["positioning_cot"]["reason"] == L.DOWN and "missing" in t["positioning_cot"]["detail"]      # a missed weekly release is not 'cadence'
 
 
-def test_feed_timing_appends_one_entry_per_run_keeps_history_and_never_raises(tmp_path):
+def test_feed_timing_appends_one_entry_per_run_keeps_history_and_never_raises(tmp_path, monkeypatch):
+    monkeypatch.setattr(FT, "REPO_COPY", tmp_path / "no_committed_copy.json")      # hermetic: the nightly commits a real feed_timing.json (5 Nov) that record() falls back to
     class R:
         def __init__(self, text, lm): self.text, self.status_code, self.headers = text, 200, {"Last-Modified": lm}
     def get(u):
@@ -102,3 +103,59 @@ def test_the_nightly_restores_the_qs_memory_before_qs_runs():
     assert src.index("Step 0a3") < src.index("Step 6e: QS engine")
     persist = (ROOT / "src" / "data" / "persist.py").read_text(encoding="utf-8")
     assert '"aqe.db"' in persist
+
+
+def test_the_gate_reads_the_legs_from_a_fallback_when_the_published_copy_is_stripped():
+    """2026-11-05: the published valen copy carried no data_freshness and the committee could not start. The legs are read from the full copy, the
+    crown artifact or the run marker; the same reason-code rules apply to them; and it still FAILS when none carries a table."""
+    C = _check_module()
+    stripped = {"date": "2026-11-05"}                                   # a published copy with no data_freshness
+    cur = [{"leg": "vix_level", "as_of": "2026-11-04", "expected": EXP, "reason": "CURRENT", "detail": ""},
+           {"leg": "dspx", "as_of": "2026-11-03", "expected": EXP, "reason": "PUBLISHER_LAG", "detail": "next release"}]
+    f, n = C.check_macro_legs(stripped, None, [("valen_dashboard.json", cur)])
+    assert f == [] and any("read from valen_dashboard.json" in x for x in n) and any("PUBLISHER_LAG" in x for x in n)
+    bad = cur + [{"leg": "breadth_whole_market", "as_of": None, "expected": EXP, "reason": "SOURCE_DOWN", "detail": "no panel"}]
+    f, _ = C.check_macro_legs(stripped, None, [("valen_dashboard.json", bad)])
+    assert len(f) == 1 and "SOURCE_DOWN" in f[0]                         # a fallback leg is judged by the same rules
+    f, _ = C.check_macro_legs(stripped, None, [("valen_dashboard.json", None), ("crown", []), ("marker", [])])
+    assert len(f) == 1 and "neither valen_dashboard.json" in f[0]        # no source at all = still a FAIL
+    f, _ = C.check_macro_legs(stripped, None, [])
+    assert len(f) == 1
+    f, _ = C.check_macro_legs({"data_freshness": {"legs_table": cur}}, None, [("valen_dashboard.json", bad)])
+    assert f == []                                                       # the published table, when present, wins
+
+
+def test_the_marker_line_is_parsed_into_legs_with_their_reason_codes():
+    C = _check_module()
+    line = ("Macro legs: expected session 2026-11-04 | breadth_whole_market 2026-11-04 CURRENT | dispersion_vixeq 2026-11-03 PUBLISHER_LAG | "
+            "positioning_cot 2026-10-27 PUBLISHER_CADENCE | BEHIND: dspx")
+    rows = C._legs_from_marker(line)
+    assert [(r["leg"], r["reason"]) for r in rows] == [("breadth_whole_market", "CURRENT"), ("dispersion_vixeq", "PUBLISHER_LAG"), ("positioning_cot", "PUBLISHER_CADENCE")]
+    assert rows[0]["expected"] == "2026-11-04" and C._legs_from_marker("nothing") == [] and C._legs_from_marker(None) == []
+
+
+def test_check_data_passes_the_legs_through_the_fallbacks_end_to_end(tmp_path):
+    """The run marker's line alone is enough for the gate to audit the legs (full copy and crown artifact absent)."""
+    C = _check_module()
+    marker = {"macro_legs": "Macro legs: expected session 2026-11-04 | vix_level 2026-11-04 CURRENT | dspx 2026-11-03 PUBLISHER_LAG"}
+    rows = C._legs_from_marker(marker["macro_legs"])
+    f, n = C.check_macro_legs({"date": "x"}, None, [("valen_dashboard.json", None), ("aqe_crown_macro.json data_legs", None), ("the run marker's Macro legs line", rows)])
+    assert f == [] and any("read from the run marker" in x for x in n)
+
+
+def test_the_published_valen_copy_now_carries_the_legs_table(tmp_path, monkeypatch):
+    from src.valen import daily as VD
+    monkeypatch.setattr(VD, "OUTPUT_DIR", tmp_path); monkeypatch.setattr(VD, "LOCAL_PATH", tmp_path / "valen_dashboard.json")
+    monkeypatch.setattr(VD, "PUBLISHED_PATH", tmp_path / "aqe_valen_dashboard.json")
+    for name in ("stance_banner", "trend_rows", "regime_word", "extension_rows", "breadth_rows", "gex_block", "crown_cockpit_block", "history_rows",
+                 "neighbourhood_lines", "theme_leaders_table", "rotation_table", "selection_block", "house_block", "execution_block", "management_block"):
+        monkeypatch.setattr(VD.card, name, lambda a: None)
+    legs = [{"leg": "vix_level", "as_of": "2026-11-04", "expected": "2026-11-04", "reason": "CURRENT", "detail": ""}]
+    art = {"date": "2026-11-05", "exported_at": "x", "basis": "eod", "status": "OK", "plain_english": {},
+           "data_freshness": {"expected_session": "2026-11-04", "legs_table": legs, "behind": [], "blocking": [], "legs": {"big": "x"}}}
+    VD.write_artifacts(art)
+    pub = json.loads((tmp_path / "aqe_valen_dashboard.json").read_text())
+    assert pub["data_freshness"]["legs_table"] == legs and pub["data_freshness"]["expected_session"] == "2026-11-04" and "legs" not in pub["data_freshness"]
+    C = _check_module()
+    f, _ = C.check_macro_legs(pub, None)
+    assert f == []
