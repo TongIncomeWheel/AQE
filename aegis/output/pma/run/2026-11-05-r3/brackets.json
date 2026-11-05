@@ -1,0 +1,199 @@
+{
+ "schema": "brackets.v1",
+ "date": "2026-11-05",
+ "produced_by": "pma_pipeline.py brackets (PM ruling 2026-09-25)",
+ "render_only": "R1: brackets attach AFTER the vote and are information only. They never reach a seat, a door, the tally, the ranking or a verdict.",
+ "sizing_note": "dynCap lives in the journal on the daily side and is not carried by the committee run, so a bracket without it returns LEVELS and refuses to SIZE. `sized` says which.",
+ "counts": {
+  "requested": 4,
+  "produced": 3,
+  "skipped": 1,
+  "failed": 0
+ },
+ "brackets": {
+  "ADP": {
+   "ticker": "ADP",
+   "date": "2026-11-05",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 303.54,
+    "source": "aqe_export"
+   },
+   "regime": "GREEN",
+   "regime_stop_pct_ceiling": 12.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 296.16,
+    "risk": 7.38,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.76,
+    "stop_pct": 2.43,
+    "flags": {
+     "atr_ok": false,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 309.4
+    },
+    {
+     "type": "fib_1272",
+     "price": 323.94
+    },
+    {
+     "type": "fib_1618",
+     "price": 342.43
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.76,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": false,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "PK": {
+   "ticker": "PK",
+   "date": "2026-11-05",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 16.96,
+    "source": "aqe_export"
+   },
+   "regime": "GREEN",
+   "regime_stop_pct_ceiling": 12.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 16.52,
+    "risk": 0.44,
+    "atr_ratio": 1.0,
+    "rr_tp2": 1.8,
+    "stop_pct": 2.59,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": false,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 17.14
+    },
+    {
+     "type": "fib_1272",
+     "price": 17.75
+    },
+    {
+     "type": "fib_1618",
+     "price": 18.54
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 1.8,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": false,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "MOMENTUM",
+   "sized": false
+  },
+  "SONY": {
+   "ticker": "SONY",
+   "date": "2026-11-05",
+   "authority": "COMMITTEE_ADVANCE",
+   "tier": "aqe",
+   "price": {
+    "value": 25.95,
+    "source": "aqe_export"
+   },
+   "regime": "GREEN",
+   "regime_stop_pct_ceiling": 12.0,
+   "tape_read": null,
+   "entry_zone": {
+    "kind": "levels_only",
+    "low": null,
+    "high": null,
+    "note": "No intraday tape (premarket or bars unavailable) \u2014 queue off AQE/20MA structure."
+   },
+   "stop": {
+    "type": "aqe_atr_fallback",
+    "price": 25.45,
+    "risk": 0.5,
+    "atr_ratio": 1.0,
+    "rr_tp2": 2.38,
+    "stop_pct": 1.93,
+    "flags": {
+     "atr_ok": true,
+     "rr_ok": true,
+     "ceiling_ok": true
+    }
+   },
+   "stop_suggestions": [],
+   "tp_ladder": [
+    {
+     "type": "resistance",
+     "price": 26.31
+    },
+    {
+     "type": "fib_1272",
+     "price": 27.14
+    },
+    {
+     "type": "fib_1618",
+     "price": 28.19
+    }
+   ],
+   "tp_ladder_source": "aqe",
+   "rr_to_tp2": 2.38,
+   "warning": "dynCap unavailable or non-positive (None) \u2014 refusing to size.",
+   "size": null,
+   "sector": null,
+   "flags": {
+    "atr_ok": true,
+    "rr_ok": true,
+    "ceiling_ok": true
+   },
+   "verdict": "ADVANCE",
+   "lane": "PULLBACK",
+   "sized": false
+  }
+ },
+ "skipped": {
+  "V": "HELD \u2014 a position the PM already owns is not bracketed; that is the trailing-stop path, not an entry queue"
+ },
+ "failed": {}
+}
