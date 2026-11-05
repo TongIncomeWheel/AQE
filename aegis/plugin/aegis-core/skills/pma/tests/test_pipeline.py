@@ -2050,6 +2050,28 @@ def test_board_marks_contested_names_and_never_a_verdict(td):
     check("the board carries NO verdict", "verdict" not in json.dumps(B))
 
 
+def test_board_guard_checks_field_names_not_free_text(td):
+    """2026-11-05 (r3 run): a seat's case text containing the word 'verdict' made `board` assert and write no board.json. The guard is about FIELDS:
+    free text may say the word; a board with a verdict KEY still asserts."""
+    d, p4 = _committee_fixture(td, "boardguard")
+    r2 = os.path.join(d, "forms", "r2")
+    f = os.path.join(r2, "livermore.json")
+    doc = json.load(open(f))
+    row = doc["tickets"][0] if "tickets" in doc else doc["votes"][0]
+    case = row["case"]
+    case["for"] = "The verdict of the tape is clear: a fresh high on volume."
+    json.dump(doc, open(f, "w"))
+    out = os.path.join(d, "board.json")
+    rc, log = run([PIPE, "board", "--round2", r2, "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"),
+                   "--date", "2026-11-01", "--out", out])
+    check("a case text saying 'verdict' still builds a board", rc == 0 and os.path.exists(out) and "verdict of the tape" in open(out).read(), log[-400:])
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pp_guard", PIPE)
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    check("the guard finds a verdict KEY at any depth", m._board_verdict_keys({"names": [{"cases": {"oneil": {"Verdict": "ADVANCE"}}}]}) == ["Verdict"])
+    check("the guard ignores the word in free text", m._board_verdict_keys({"names": [{"cases": {"oneil": {"for": "the verdict is in"}}}]}) == [])
+
+
 def test_floor_caps_are_counted_by_code(td):
     """R36. Two messages per seat per name, on open names only, replies to real messages -- counted across
     files by floor-check, which exits 1 and names every breach."""
@@ -4001,7 +4023,8 @@ def main():
                    test_roster_is_seven_deciders_plus_qa, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
-                   test_board_marks_contested_names_and_never_a_verdict, test_floor_caps_are_counted_by_code,
+                   test_board_marks_contested_names_and_never_a_verdict,
+                   test_board_guard_checks_field_names_not_free_text, test_floor_caps_are_counted_by_code,
                    test_objection_rule_counts_the_final_ratification, test_the_record_is_written_per_voice_per_ticket,
                    test_r2digest_reads_the_crown_file_and_marks_retired_seats,
                    test_run_map_carries_the_seven_deciders_and_the_new_rounds,

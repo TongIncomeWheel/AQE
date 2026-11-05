@@ -106,12 +106,27 @@ def first_clean(texts, max_len=MAX_LINE):
     return max(best, key=len) if best else None
 
 
+_SEAT_TOKEN = r"(?:livermore|minervini|o'?neil|raschke|seow|wyckoff|elder-lens|detect-lens|steenbarger|the chair|chair)"
+_SEAT_RUN = re.compile(rf"\b{_SEAT_TOKEN}(?:\s*(?:,|and|&)\s*{_SEAT_TOKEN})*(?P<poss>'s)?\b", re.I)
+_SEAT_NAME_LOOSE = re.compile(r"\bElder\b(?!\s+(?:score|impulse|reading|pattern|run|ray))")
+
+
+def strip_seats(text):
+    """Seat names out of quoted words (PM 2026-11-05: the audit trail names no seat either): one name -> 'an analyst', several -> 'other analysts',
+    possessives kept ('minervini's' -> 'an analyst's'). Nothing else is touched."""
+    def sub(m):
+        n = len(re.findall(_SEAT_TOKEN, m.group(0), re.I))
+        return ("other analysts" if n > 1 else "an analyst") + ("'s" if m.group("poss") else "")
+    t = _SEAT_RUN.sub(sub, str(text or ""))
+    return _SEAT_NAME_LOOSE.sub("an analyst", t)
+
+
 def audit_quotes(items):
-    """Folded audit trail only: the seats' words, plain-words pass applied, with no seat name ('an analyst') and no tally."""
+    """Folded audit trail only: the seats' words, plain-words pass applied, seat names replaced ('an analyst'), no tally."""
     L = _lvc()
     out = []
     for t in items or []:
-        s = L.plain(L.RULE_CODES.sub("", str(t or ""))).strip()
+        s = strip_seats(L.plain(L.RULE_CODES.sub("", str(t or "")))).strip()
         if s:
             out.append(s)
     return out
