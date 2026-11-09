@@ -44,7 +44,7 @@
         "step": {"type": "integer", "minimum": 1,
                  "description": "the checklist step number as written on my card"},
         "canon_ref": {"type": "array", "minItems": 1,
-                      "items": {"type": "string", "pattern": "^(C[0-9]{1,2}|UNGROUNDED)$"},
+                      "items": {"type": "string", "pattern": "^([CA][0-9]{1,2}|UNGROUNDED)$"},
                       "description": "canon principle id(s) from my compiled canon block that this step applies. 'UNGROUNDED' is permitted ONLY while my voice has no canon.lock.yaml — a temporary state the build stamps, never a way to avoid citing."},
         "observed": {"type": "string", "maxLength": 200,
                      "description": "what I actually saw for THIS name at THIS step — the value, not the conclusion"},

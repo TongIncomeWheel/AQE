@@ -51,6 +51,31 @@ level as information. One re-spawn, then absent — same ladder as any REJECT.
 """
 import argparse, datetime, glob, hashlib, json, os, re, sys
 
+# ---- Which report is this run? (PM 2026-11-05) The environment wins; otherwise the run's own manifest says (`report`), so a seat that runs a
+# printed command bare still gets the right roster. Looked for in the working directory, then beside any file named on the command line.
+def _resolve_report_from_manifest(argv=None):
+    if (os.environ.get("AEGIS_REPORT") or "").strip():
+        return
+    cands, argv = [], list(argv if argv is not None else sys.argv[1:])
+    for i, x in enumerate(argv):
+        if x == "--manifest" and i + 1 < len(argv):
+            cands.append(argv[i + 1])
+    cands.append("run_manifest.json")
+    for x in argv:
+        if isinstance(x, str) and os.path.exists(x):
+            d = x if os.path.isdir(x) else os.path.dirname(os.path.abspath(x))
+            cands += [os.path.join(d, "run_manifest.json"), os.path.join(os.path.dirname(d), "run_manifest.json")]
+    for c in cands:
+        try:
+            if os.path.isfile(c):
+                rep = str((json.load(open(c)) or {}).get("report") or "").strip().upper()
+                if rep in ("B", "C"):
+                    os.environ["AEGIS_REPORT"] = rep
+                return
+        except Exception:
+            continue
+_resolve_report_from_manifest()
+
 MAX_FORM_BYTES = 24 * 1024
 R1_REASON_MAX = 300
 # ---- THE REDESIGN (PM 2026-10-30; RULINGS R31-R36). Duplicated from pma_pipeline.py on purpose: the
@@ -222,6 +247,10 @@ R1_TEXT = ("R1 VIOLATION — bracket is never a reject (PM ruling 2026-08-14 / 2
 # own menu (contracts/voice_menus.json "aqe-quant", minus the ticker); a test keeps this literal equal to that menu.
 QUANT_SEAT = "aqe-quant"
 QUANT_MIN_FIELDS = 2
+# Report C is the committee reading the AQE indicators (PM 2026-11-05): EVERY decider's SUPPORT / OPPOSE and nomination names >= 2 AQE fields,
+# not only the aqe-quant seat. Reports A and B are not held to it.
+def _cites_aqe(voice):
+    return REPORT == "C" and voice in DECIDERS
 AQE_QUANT_FIELDS = ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "sc_p_gates", "sc_p_gate_detail", "pipe_rank", "flow", "energy", "structure", "mp", "elder", "mp_state", "mp_accel_state", "rs_rank_pct", "rs_spy_20d", "subcomponents.flow.flow_score", "subcomponents.flow.accum_score", "subcomponents.flow.volume_score", "subcomponents.flow.skew_score", "subcomponents.flow.ext_score", "subcomponents.flow.mfi", "subcomponents.flow.cmf", "subcomponents.flow.ha_quality_count", "subcomponents.energy.vp_position_score", "subcomponents.energy.price_action_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.exhaustion_score", "subcomponents.energy.atr_score", "subcomponents.energy.en_pos50", "subcomponents.energy.en_trend_bars", "subcomponents.structure.rs_spy_score", "subcomponents.structure.rs_accel_score", "subcomponents.structure.base_score", "subcomponents.structure.ms_pos_score", "subcomponents.structure.resist_score", "subcomponents.structure.wk_score", "subcomponents.structure.earn_score", "subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.structure.base_days", "subcomponents.structure.bd_mode", "subcomponents.mp.abs_mom_score", "subcomponents.mp.mp_adx_score", "subcomponents.mp.rel_mom_score", "subcomponents.mp.trend_score", "subcomponents.mp.roc_zscore", "subcomponents.mp.excess_return", "subcomponents.mp.adx_val", "subcomponents.mp.di_bullish", "subcomponents.bq.bq_range_tight", "subcomponents.bq.bq_vol_dry", "subcomponents.bq.bq_base_dur", "subcomponents.bq.bq_ema_conv", "subcomponents.bq.bq_base_days", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score", "subcomponents.pipe.momentum_composite", "subcomponents.pipe.pipe_tier"]
 
 def _quant_fields_in(text):
@@ -246,7 +275,7 @@ def _quant_citation_errors(v, where):
     case = v.get("case") if isinstance(v.get("case"), dict) else {}
     found = _quant_fields_in(" ".join(str(x) for x in (v.get("reason"), case.get("for"), case.get("against")) if x))
     if len(found) < QUANT_MIN_FIELDS:
-        return [f"{where}: {v.get('vote')} cites {len(found)} AQE field(s) ({', '.join(sorted(found)) or 'none'}) -- the AQE-quant seat must name "
+        return [f"{where}: {v.get('vote')} cites {len(found)} AQE field(s) ({', '.join(sorted(found)) or 'none'}) -- a Report C decider must name "
                 f"at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in backticks as its reasons "
                 f"(for example `structure` and `subcomponents.energy.exhaustion_score`). Re-file with the fields named."]
     return []
@@ -291,10 +320,10 @@ def validate_round1(form, universe):
         if not isinstance(c, int) or not (1 <= c <= 5):
             errs.append(f"{w}: conviction must be integer 1-5")
         _bounded(errs, n, "reason", R1_REASON_MAX, w)
-        if form.get("voice") == QUANT_SEAT:
+        if _cites_aqe(form.get("voice")):
             cited = {f for f in (n.get("fields_cited") or []) if f in AQE_QUANT_FIELDS}
             if len(cited) < QUANT_MIN_FIELDS:
-                errs.append(f"{w}: the AQE-quant seat must cite at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in "
+                errs.append(f"{w}: a Report C decider must cite at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in "
                             f"fields_cited ({len(cited)} found: {', '.join(sorted(cited)) or 'none'})")
         for step in (n.get("checklist_trace") or []):
             if isinstance(step, dict):
@@ -371,7 +400,7 @@ def validate_round2(form, universe, deliberation_set, partial=False):
             continue
         if new_regime:
             errs.extend(_validate_case(v.get("case"), w + f" {t}"))
-        if form.get("voice") == QUANT_SEAT:
+        if _cites_aqe(form.get("voice")):
             errs.extend(_quant_citation_errors(v, w + f" {t}"))
         if t in seen:
             errs.append(f"{w}: duplicate ticker {t}")
