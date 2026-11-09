@@ -1,0 +1,1517 @@
+{
+ "voice": "seow",
+ "date": "2026-11-09",
+ "round": 2,
+ "declarations": [
+  "Position system run on every name; system picked from the picture, not the lane (R10/R32). Swing set-up (R1) not evaluable: ma_40, cci_20, bar_low not in the vote packet. Proxies: resistance = structure_shift; TIF = elder_pattern; support = max(fib_swing_low, base_low_20d).",
+  "Not served in the packet: COM proxy subcomponents.flow.cmf, avg_vol_20d (C25 liquidity - a declared caution on every name), index 63d return (R8). Step 4 reads TIF only; strength reads ret_63d sign plus rs_rank_pct.",
+  "C21 weekly structure is a HOUSE RULE, not Seow's: read from the MTF W line; weekly LH/LL with price under the last weekly swing high is a weight against.",
+  "Top-down (C24): VALEN reads RISK OFF / DOWNTREND - a stated weight on every long, not a veto. Steenbarger UNPROVEN: no score is leaned on as measured edge; C18 hit rate not served.",
+  "R1: bracket fields read as context only; no vote rests on a bracket. Shorts out of scope (C32)."
+ ],
+ "votes": [
+  {
+   "ticker": "ETR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system (BOS picture): structure_shift BULLISH_BOS is a resistance-line signal, but the strength step fails - rs_rank_pct 42.49 is not a high medium-term rank (C23/C6) and elder_pattern None gives no TIF confirmation (C28). Utilities group Momentum Fading. A signal without strength and impulse is not my trade.",
+   "opposing_case": "Fresh BOS with mp 76.0 STRONG, rs_spy_20d 13.1 positive, ret_63d 4.64 and sma_dist 5.49% close to its base; U&R reclaim day.",
+   "case": {
+    "for": "Resistance broken (BULLISH_BOS), rs_spy_20d 13.1 > 0, ret_63d 4.64 positive, mp 76.0 STRONG.",
+    "against": "rs_rank_pct 42.49 mid-pack; elder_pattern None; weekly MTF swing LH/LL with 9<21; utilities group fading (C24).",
+    "entry_trigger": "Needs elder_pattern SUSTAINED/ACCELERATION and a higher rs_rank_pct; then buy stop 1 tick over bar_high (trade_above:bar_high).",
+    "wrong_if": "It trends on with elder_pattern turning SUSTAINED and rs_rank_pct climbing.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED/ACCELERATION with a rising rs_rank_pct.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE at from_52w_hi -0.27% - price over the resistance line near new highs (C26), rs_rank_pct 87.84 and ret_63d 2.86 pass the strength test (C23). TIF only partial: elder_pattern CORRECTION_REENTRY, not SUSTAINED/ACCELERATION. Weekly MTF HH/HL intact (C21).",
+   "case": {
+    "for": "Above resistance, rs_rank_pct 87.84, ret_6m 34.28, weekly HH/HL, mp BUILDING/ACCELERATING.",
+    "against": "ret_63d 2.86 is thin; elder_pattern CORRECTION_REENTRY is not a confirmed impulse; sector Momentum Fading; COM unserved.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed to each new prior-day high (C27).",
+    "wrong_if": "A close below max(fib_swing_low, base_low_20d), or a red-candle flip - sell next session below that bar's low (C14).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern turning SUSTAINED would lift me; a close under the support line ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: fresh structure_shift BULLISH_BOS (resistance-line signal, C26) with elder_pattern ACCELERATION as TIF confirmation (C28) and rs_rank_pct 97.14. Weight: ret_63d 1.56 is barely positive over my holding horizon, and weekly MTF sits 11.9% under the last swing high.",
+   "case": {
+    "for": "Fresh break, elder_pattern ACCELERATION, rs_rank_pct 97.14, ret_6m 69.99, weekly HH/HL.",
+    "against": "ret_63d 1.56 thin; daily swing HH but LL; structure 60.0 is a thin base; COM unserved.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed daily (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d turning negative or the impulse flipping.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (BULLISH_BOS, mp 76.0 STRONG) but my strength step cannot be closed: ret_63d -2.25 is negative and the index 63d return (R8) is not served, so I cannot say it beats the index. elder_pattern CORRECTION_REENTRY is not a confirmed impulse. Not enough to support, not a clear fail.",
+   "case": {
+    "for": "Resistance broken, rs_spy_20d 11.68 > 0 (momentum horizon), elder 10.0, mp STRONG/ACCELERATING.",
+    "against": "ret_63d -2.25; rs_rank_pct 76.76; weekly swing LH/LL; elder_pattern CORRECTION_REENTRY.",
+    "entry_trigger": "Would need ret_63d positive or proven above the index, then buy stop over bar_high (trade_above:bar_high).",
+    "wrong_if": "It trends higher with ret_63d turning positive - my abstain was too cautious.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "index 63d return served showing DAL ahead, or elder_pattern SUSTAINED.",
+    "cannot_see": [
+     "index_pct_change_63d",
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 81.17, ret_63d 6.39, mp 89.0 STRONG. TIF partial - elder_pattern CORRECTION_REENTRY, elder_5d mostly high. Weekly MTF LH/LL but price sits above the last weekly swing high, so the weekly structure is being repaired, not broken (C21).",
+   "case": {
+    "for": "Above resistance, rs_rank_pct 81.17, ret_63d 6.39, mp STRONG/ACCELERATING, structure 94.7.",
+    "against": "elder_pattern CORRECTION_REENTRY not SUSTAINED; div BEARISH/1; three lenses warn; COM unserved.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d) or red-candle flip (C14).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse confirming SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system, as in my round 1: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 98.57, ret_63d 13.14, elder_pattern ACCELERATION confirms TIF (C28), weekly HH/HL. Caution stays: my COM proxy read thin in round 1 and is not served here.",
+   "case": {
+    "for": "Top-rank strength, ret_6m 93.84, ACCELERATION impulse, weekly HH/HL, from_52w_hi -0.47%.",
+    "against": "Fund flow thin (COM proxy just above zero in round 1); daily swing LH/LL; run_10d 19.66%.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Fund flow turning negative; a support-line close.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 90.94, ret_63d 17.95, elder_pattern ACCELERATION (TIF, C28), mp 96.0 STRONG, weekly HH/HL. Extension (ext_atr20 3.15) is not a fault in this system. Lowered one notch for the divergence and a market that reads DOWNTREND top-down (C24).",
+   "conviction_change": "5 to 4: C28 tells me to read divergence and div BEARISH/1 is now on the row; top-down (C24) the VALEN market reads RISK OFF. Neither breaks the signal, both weigh on it.",
+   "self_counter": "div BEARISH/1 and H1 below EMA9 say the push is tiring; my COM proxy is unserved here; a solo name in a down-trending market.",
+   "challenge_reply": "Invalidation: a daily close below the support line max(fib_swing_low, base_low_20d), or the trend-colour flip (elder_pattern leaving ACCELERATION/SUSTAINED, or a red bar after the run) - sell next session below that bar's low (C14/C29). Non-price: elder_pattern leaving ACCELERATION. The divergence lowers me 5 to 4 (C28 reads divergence) but is not one of my two exits.",
+   "case": {
+    "for": "Above resistance, top-decile rank, ret_63d 17.95, ACCELERATION impulse, weekly HH/HL, healthcare LEADING in round 1.",
+    "against": "div BEARISH/1; ext_atr20 3.15; H1 below EMA9; sector state Momentum Fading; market DOWNTREND.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed to each new prior-day high (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "The impulse flipping, or a second divergence with fund flow turning negative.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE at from_52w_hi 0.0% (new high, C26), rs_rank_pct 84.15, ret_63d 12.67, elder_pattern SUSTAINED (TIF, C28), mp 97.0 STRONG. Weekly price above its last swing high. Strength is the signal here; extension is a weight.",
+   "self_counter": "ext_atr20 5.53 off a flat base - a vertical leg can retrace hard; my COM proxy is unserved; weekly swing still LH/LL.",
+   "challenge_reply": "Extension means the support line max(fib_swing_low, base_low_20d) sits far under price, so a give-back is likely before it is tested; follow-through is judged by the trailed buy stop over each prior-day high. If the impulse flips (elder_pattern leaving SUSTAINED) I sell next session below that bar's low (C14) - I do not wait for the far support.",
+   "case": {
+    "for": "New high, SUSTAINED impulse, rs_rank_pct 84.15, ret_63d 12.67, mp STRONG/ACCELERATING.",
+    "against": "ext_atr20 5.53; sma_dist 16.6%; weekly LH/LL; sector Momentum Fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving SUSTAINED/ACCELERATION.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip or a red bar after the run.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "MCD",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Position picture (BULLISH_BOS) but the strength step fails: rs_rank_pct 44.7, ret_63d 1.02, ret_12m -9.54. elder_pattern None - no TIF confirmation (C28). Weekly MTF swing LH/LL with 9<21, price still under the last weekly swing high: a daily break inside a broken weekly structure (C21, house rule).",
+   "opposing_case": "Fresh BOS with mp 100.0 STRONG/ACCELERATING, rs_spy_20d 23.11 strongly positive, flow 88.2, and HLT making the same break in its group.",
+   "case": {
+    "for": "Resistance broken, mp 100.0, rs_spy_20d 23.11 (momentum horizon passes).",
+    "against": "rs_rank_pct 44.7; ret_12m -9.54; elder_pattern None; weekly LH/LL under its swing high; from_52w_hi -18.92%.",
+    "entry_trigger": "Needs the weekly swing high taken out and elder_pattern SUSTAINED; then buy stop over bar_high.",
+    "wrong_if": "Price clears the weekly swing high with rs_rank_pct rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high with a SUSTAINED impulse.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system, unchanged from round 1: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 93.38, ret_63d 14.14, elder_pattern SUSTAINED (TIF, C28), mp 87.0 STRONG. Weekly price above its last swing high. Steep run is a caution, not a reject.",
+   "self_counter": "run_10d 36.97% and ext_atr20 3.86 are a near-vertical leg; rs tag LAGGARD; ret_12m -26.3; a loss-making name.",
+   "case": {
+    "for": "Top-decile rank, SUSTAINED impulse, ret_63d 14.14, mp STRONG/ACCELERATING, day_vol 1.72.",
+    "against": "run_10d 36.97%; sma_dist 29.3%; weekly LH/LL; rs LAGGARD tag.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A red bar after the run with the impulse flipping.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: fresh structure_shift BULLISH_BOS (C26), ret_63d 19.12, rs_rank_pct 74.85, mp 92.0 STRONG, weekly price above its last swing high. TIF unconfirmed: elder_pattern None. Signal and strength present, impulse not proven.",
+   "challenge_reply": "Extension is a weight, not a fault, in the position system (C26). It means the support line is far below, so I lean on the impulse flip (elder_pattern / red bar, C14) as the nearer exit rather than waiting for the support close.",
+   "case": {
+    "for": "Fresh break, ret_63d 19.12, mp STRONG/ACCELERATING, daily HH/HL.",
+    "against": "elder_pattern None; rs_rank_pct 74.85 not top-decile; sma_dist 12.59%; travel factor overlap.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "VSXY",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system, unchanged from round 1: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 99.64, ret_63d 8.08, elder_pattern SUSTAINED (TIF, C28), mp 89.0 STRONG, weekly price above its last swing high. Strength is the signal.",
+   "self_counter": "sma_dist 24.1% and run_10d 18.97% - far from the support line; weekly swing HH but LL; COM unserved.",
+   "challenge_reply": "Extension weighed explicitly: it widens the distance to my support line, so the impulse flip (elder_pattern leaving SUSTAINED, red bar after the run) is my working exit (C14). I hold the rank-and-impulse read over composite strength.",
+   "case": {
+    "for": "rs_rank_pct 99.64, ret_6m 124.92, SUSTAINED impulse, daily HH/HL.",
+    "against": "sma_dist 24.1%; run_10d 18.97%; sector Momentum Fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip after the run.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "HSY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "BOS picture judged by the position system: strength fails - rs_rank_pct 36.23, ret_63d -2.56, from_52w_hi -24.63% (C6/C23). elder_pattern None, no TIF. Weekly MTF 9<21 and under its weekly swing high (C21 house rule). Not a long I take.",
+   "opposing_case": "Fresh BULLISH_BOS out of a base, elder 10.0, mp BUILDING/ACCELERATING, rs_spy_20d 14.98 positive, flow 89.5.",
+   "case": {
+    "for": "Resistance broken, rs_spy_20d 14.98 > 0, daily HH/HL.",
+    "against": "rs_rank_pct 36.23; ret_63d -2.56; ret_6m -4.23; weekly 9<21; elder_pattern None.",
+    "entry_trigger": "Needs ret_63d positive and a higher rank; then buy stop over bar_high.",
+    "wrong_if": "It trends higher with ret_63d turning positive and rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d above zero plus a SUSTAINED impulse.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "JNJ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No resistance-line signal yet: structure_shift RANGE, daily 2.1% under the last swing high, so the position system has no buy (C26). Strength is there (rs_rank_pct 80.57, ret_63d 5.5) but the swing set-up cannot be checked (cci_20, ma_40 not served). A signal not generated is not a trade (C19).",
+   "case": {
+    "for": "rs_rank_pct 80.57, ret_63d 5.5, from_52w_hi -0.79%, mp 76.0 STRONG, daily HH/HL.",
+    "against": "RANGE - no break; elder_pattern CORRECTION_REENTRY not SUSTAINED; swing five conditions unverifiable.",
+    "entry_trigger": "A break above the last swing high (structure_shift turning BULLISH_BOS), then buy stop over bar_high.",
+    "wrong_if": "It breaks out and trends without me - the RANGE label was lagging.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS with elder_pattern SUSTAINED/ACCELERATION.",
+    "cannot_see": [
+     "cci_20",
+     "ma_40",
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "FOUR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Daily ABOVE_STRUCTURE, but weekly MTF is LH/LL with 9<21 and price 13.9% under the last weekly swing high - a daily signal inside a broken weekly structure (C21, house rule). Strength weak: rs_rank_pct 50.77, ret_12m -34.54, from_52w_hi -40.42%. elder_pattern CORRECTION_REENTRY, not a confirmed impulse.",
+   "opposing_case": "Up-structure held, elder 10.0, flow 96.1, rs_spy_20d 15.46 positive, U&R reclaim day and value stepping up.",
+   "case": {
+    "for": "Daily above structure, rs_spy_20d 15.46 > 0, ret_63d 1.85 positive, flow 96.1.",
+    "against": "Weekly broken; rs_rank_pct 50.77; from_52w_hi -40.42%; mp FADING/DECELERATING (weight only, R13).",
+    "entry_trigger": "Needs the weekly swing high reclaimed and a higher rank before any buy stop.",
+    "wrong_if": "Weekly structure repairs and price trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "WELL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: fresh structure_shift BULLISH_BOS (C26), ret_63d 4.24, rs_rank_pct 71.57, weekly price above its last swing high. Two weights: elder_pattern None (no TIF, C28) and only a middling rank. Signal taken mechanically (C19), at low conviction.",
+   "case": {
+    "for": "Fresh break close to base (sma_dist 4.8%), ret_63d 4.24, mp BUILDING/ACCELERATING.",
+    "against": "elder_pattern None; rs_rank_pct 71.57; REIT rate-factor overlap with AHR/OHI; daily swing HH but LL.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the break.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position picture (ABOVE_STRUCTURE, mp 97.0) but the medium-term strength test fails: ret_63d -2.47, rs_rank_pct 63.89, from_52w_hi -16.58% (C23/C6). Weekly MTF 9<21. elder_pattern CORRECTION_REENTRY, not SUSTAINED. Extension is not my reason.",
+   "opposing_case": "rank 5 leader on AQE, rs_spy_20d 42.54, flow 100.0, day_vol 1.92, elder 10.0 - the strongest short-horizon thrust on the board.",
+   "challenge_reply": "Extension (ext_atr20 4.71) is weighed but is not my basis - strength is a signal in the position system. My oppose rests on ret_63d -2.47 and rs_rank_pct 63.89 over the position horizon.",
+   "case": {
+    "for": "Thrust over resistance, rs_spy_20d 42.54 (momentum horizon passes), flow 100.0.",
+    "against": "ret_63d -2.47; ret_12m 1.25; rs_rank_pct 63.89; weekly 9<21.",
+    "entry_trigger": "Needs ret_63d positive and a higher rank; then buy stop over bar_high.",
+    "wrong_if": "ret_63d turns positive and it keeps trending.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d above zero with elder_pattern SUSTAINED.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength is real (ret_63d 20.18, rs_rank_pct 87.37, from_52w_hi 0.0%) but there is no resistance break: structure_shift RANGE, daily 0.5% under the last swing high, and elder_pattern INTERRUPTED - the impulse proxy has flipped (C14 proxy). No signal, no trade (C19).",
+   "case": {
+    "for": "ret_63d 20.18, rs_rank_pct 87.37, new-high zone, day_vol 2.32.",
+    "against": "RANGE; elder_pattern INTERRUPTED; div BEARISH/1; travel/lodging overlap.",
+    "entry_trigger": "A break of the last swing high (BULLISH_BOS) with the impulse back to SUSTAINED, then buy stop over bar_high.",
+    "wrong_if": "It breaks out and runs - the INTERRUPTED read was noise.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS plus elder_pattern SUSTAINED/ACCELERATION.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "AHR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE at from_52w_hi 0.0% (C26), elder_pattern SUSTAINED confirms TIF (C28), ret_63d 4.4, weekly price above its last swing high. Weight: rs_rank_pct 68.65 is a middling rank.",
+   "case": {
+    "for": "New high, SUSTAINED impulse, flow 100.0, day_vol 1.96.",
+    "against": "rs_rank_pct 68.65; ret_63d 4.4 modest; REIT overlap with WELL/OHI; weekly swing LH/LL.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Rank rising lifts me; impulse flip ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "PENN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Daily ABOVE_STRUCTURE, but strength fails: ret_63d -7.53, rs_rank_pct 53.04, from_52w_hi -20.99% (C6/C23). Weekly MTF 9<21 and under its weekly swing high (C21 house rule). elder_pattern None - no TIF. Not a long I take.",
+   "opposing_case": "Up-structure held, mp 81.0 STRONG, rs_spy_20d 18.16 positive, flow 96.1, Friday's strong close.",
+   "case": {
+    "for": "Above structure, rs_spy_20d 18.16 > 0, mp STRONG.",
+    "against": "ret_63d -7.53; rs_rank_pct 53.04; weekly 9<21; elder_pattern None; loss-making.",
+    "entry_trigger": "Needs ret_63d positive and the weekly swing high cleared.",
+    "wrong_if": "It trends with ret_63d turning positive.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d above zero plus weekly repair.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "JAN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system, unchanged from round 1: structure_shift ABOVE_STRUCTURE (C26), elder_pattern ACCELERATION (TIF, C28), ret_63d 6.0, day_vol 2.78, weekly price above its last swing high. Weight: rs_rank_pct 72.71 is middling; short listing history (ret_12m None).",
+   "case": {
+    "for": "ACCELERATION impulse, flow 98.7, day_vol 2.78, mp BUILDING/ACCELERATING.",
+    "against": "rs_rank_pct 72.71; ma200 None (short history); REIT group fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip or a support-line close.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "TOST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (ABOVE_STRUCTURE, rs_rank_pct 89.63, weekly HH/HL) but ret_63d -2.86 is negative and the index 63d return is not served (R8), and elder_pattern None gives no TIF. Cannot close the strength or flow steps either way.",
+   "case": {
+    "for": "Above structure, rs_rank_pct 89.63, ret_6m 38.4, weekly HH/HL.",
+    "against": "ret_63d -2.86; elder_pattern None; H1 below EMA9 at 14% of the day's range.",
+    "entry_trigger": "Would need ret_63d positive and elder_pattern SUSTAINED; then buy stop over bar_high.",
+    "wrong_if": "It trends higher with ret_63d turning positive.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Index 63d return showing TOST ahead, or a SUSTAINED impulse.",
+    "cannot_see": [
+     "index_pct_change_63d",
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 90.7, ret_63d 11.56, mp 93.0, weekly price above its last swing high. TIF unconfirmed: elder_pattern None. Signal and strength present.",
+   "case": {
+    "for": "Top-decile rank, ret_63d 11.56, ret_6m 41.61, daily HH/HL.",
+    "against": "elder_pattern None; mp FADING/FLAT (weight only, R13); H1 below EMA9; sma_dist 12.65%.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "YMM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Daily ABOVE_STRUCTURE with elder_pattern ACCELERATION, but strength fails over my horizon: ret_63d -5.57, rs_rank_pct 52.8, ret_12m -27.53 (C6/C23). Weekly MTF 9<21. A signal in a weak name.",
+   "opposing_case": "Closed on its high above the broken level, ACCELERATION impulse, mp 76.0 STRONG, rs_spy_20d 12.57 positive.",
+   "case": {
+    "for": "Above structure, ACCELERATION, mp STRONG/ACCELERATING.",
+    "against": "ret_63d -5.57; rs_rank_pct 52.8; from_52w_hi -27.76%; weekly 9<21.",
+    "entry_trigger": "Needs ret_63d positive and a higher rank.",
+    "wrong_if": "ret_63d turns positive and it trends.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d above zero with rank rising.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "AEE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (ABOVE_STRUCTURE, ret_63d 5.47) but rs_rank_pct 51.13 is mid-pack and elder_pattern None gives no TIF; utilities group fading (C24). Neither a clean signal nor a clear fail.",
+   "case": {
+    "for": "Above structure, ret_63d 5.47, mp 96.0 STRONG, day_vol 1.83.",
+    "against": "rs_rank_pct 51.13; elder_pattern None; weekly swing LH/LL; rate-factor overlap with ETR.",
+    "entry_trigger": "Would need a higher rank and elder_pattern SUSTAINED; then buy stop over bar_high.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED/ACCELERATION with rank climbing.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE at from_52w_hi 0.0% (C26), rs_rank_pct 93.8, ret_63d 14.56, elder_pattern ACCELERATION (TIF, C28), mp 89.0 STRONG, weekly price above its last swing high. All position steps I can read pass.",
+   "self_counter": "div BEARISH/1; H1 5.0% under its last swing high; my COM proxy is unserved; weekly swing LH/LL.",
+   "case": {
+    "for": "New high, top-decile rank, ACCELERATION, ret_6m 47.96.",
+    "against": "div BEARISH/1; sma_dist 12.99%; sector Momentum Fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip or a red bar after the run.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "OMC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (fresh BULLISH_BOS, mp 81.0 STRONG) but rs_rank_pct 68.77 and ret_63d 2.03 are a middling strength read, elder_pattern None gives no TIF, and weekly sits 3.6% under its last swing high (C21 house rule weight). Not enough to support, not a clear fail.",
+   "case": {
+    "for": "Fresh break, mp STRONG/ACCELERATING, daily HH/HL, rs_spy_20d 18.49 > 0.",
+    "against": "rs_rank_pct 68.77; elder_pattern None; weekly under its swing high; day_vol 0.78 light.",
+    "entry_trigger": "Would need elder_pattern SUSTAINED and the weekly swing high cleared; then buy stop over bar_high.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A SUSTAINED impulse and a weekly close over the last weekly swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "CELH",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Daily ABOVE_STRUCTURE, but weekly MTF 9<21 and 11.0% under the last weekly swing high - a daily push inside a broken weekly structure (C21, house rule). rs_rank_pct 43.5, ret_12m -46.33, from_52w_hi -43.27% fail the strength test (C23). elder_pattern CORRECTION_REENTRY, not SUSTAINED.",
+   "opposing_case": "ret_63d 18.19, volume-confirmed squeeze breakout, elder 10.0, U&R reclaim day, rs_spy_20d 18.09 positive.",
+   "case": {
+    "for": "ret_63d 18.19, daily above structure, rs_spy_20d 18.09 > 0.",
+    "against": "Weekly broken; rs_rank_pct 43.5; from_52w_hi -43.27%; div BEARISH/1.",
+    "entry_trigger": "Needs the weekly swing high reclaimed and a higher rank.",
+    "wrong_if": "Weekly structure repairs and rank rises.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "COMP",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "No buy signal in either system: structure_shift BEARISH_CHOCH is the sell-side mirror of the resistance-line signal (C26), ret_63d -17.66 fails the strength test (C6), rs LAGGARD. Weekly 9<21 and 24.9% under its swing high (C21 house rule).",
+   "opposing_case": "rs_rank_pct 75.21, elder 10.0 with a red-to-green impulse turn, daily HH/HL, coil strong, mp BUILDING/ACCELERATING.",
+   "case": {
+    "for": "rs_rank_pct 75.21, daily HH/HL, impulse re-entering.",
+    "against": "BEARISH_CHOCH; ret_63d -17.66; structure 36.8; weekly broken.",
+    "entry_trigger": "Needs structure back above a confirmed pivot (BULLISH_BOS) and ret_63d positive.",
+    "wrong_if": "It reclaims structure and trends with ret_63d turning positive.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS with ret_63d above zero.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "TEM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Pullback picture: structure_shift RANGE, daily 10.0% under the last swing high, so no position-system signal (C26). Strength is strong (ret_63d 38.12, rs_rank_pct 95.11) but the swing set-up (five conditions, C3) cannot be checked - cci_20, ma_40, bar_low not served.",
+   "case": {
+    "for": "ret_63d 38.12, rs_rank_pct 95.11, weekly HH/HL, U&R reclaim day.",
+    "against": "RANGE; structure 41.1; rs LAGGARD tag; loss-making.",
+    "entry_trigger": "Swing: all five set-up conditions on one bar then buy stop over bar_high; or position: a new BULLISH_BOS.",
+    "wrong_if": "It resumes the trend without either signal I could check.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "cci_20 and ma_40 served showing the five conditions, or a fresh BOS.",
+    "cannot_see": [
+     "cci_20",
+     "ma_40",
+     "bar_low",
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "OHI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Daily ABOVE_STRUCTURE, but strength fails: rs_rank_pct 48.75, ret_63d 1.69 (C23/C6). elder_pattern None - no TIF. Weekly MTF 9<21. Signal in a mid-pack name.",
+   "opposing_case": "structure 81.1 above the broken level, price near its base (sma_dist 4.13%), mp BUILDING/ACCELERATING, flow 80.3.",
+   "case": {
+    "for": "Above structure close to base, flow 80.3, rs_spy_20d 14.07 > 0.",
+    "against": "rs_rank_pct 48.75; elder_pattern None; weekly 9<21; REIT overlap.",
+    "entry_trigger": "Needs a higher rank and elder_pattern SUSTAINED.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "rank in the top tier with a SUSTAINED impulse.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "BALL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No resistance-line signal: structure_shift RANGE, daily 0.3% under the last swing high (C26). elder_pattern INTERRUPTED - the impulse proxy has flipped (C14 proxy). rs_rank_pct 69.37 middling. Nothing for the system to take.",
+   "opposing_case": "mp 85.0 STRONG, ret_63d 5.34, rs_spy_20d 18.32 positive, weekly price above its last swing high, U&R reclaim day.",
+   "case": {
+    "for": "ret_63d 5.34, mp STRONG, sitting just under its swing high.",
+    "against": "RANGE; elder_pattern INTERRUPTED; H1 9<21; rs_rank_pct 69.37.",
+    "entry_trigger": "A break of the last swing high with the impulse back to SUSTAINED.",
+    "wrong_if": "It breaks out and trends.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS plus elder_pattern SUSTAINED.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fresh BULLISH_BOS, but strength fails: rs_rank_pct 45.89, ret_63d 0.7 (C23/C6). Weekly MTF 9<21 and 8.6% under the last weekly swing high (C21 house rule). elder_pattern None. Seated by rule (UNR_SEAT) - judged on my method, not on that.",
+   "opposing_case": "mp 97.0 STRONG, structure 75.8 BOS, flow 85.5, adx 37.3, U&R reclaim day.",
+   "case": {
+    "for": "Fresh break, mp 97.0, rs_spy_20d 15.52 > 0.",
+    "against": "rs_rank_pct 45.89; ret_63d 0.7; weekly broken; elder_pattern None.",
+    "entry_trigger": "Needs the weekly swing high cleared and a higher rank.",
+    "wrong_if": "Weekly repairs and rank rises.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high with rank rising.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (ABOVE_STRUCTURE, ret_63d 5.86, weekly price above its last swing high) but rs_rank_pct 61.2 is middling and elder_pattern None gives no TIF; H1 9<21. Neither a clean signal nor a fail.",
+   "case": {
+    "for": "Above structure, ret_63d 5.86, mp 92.0, daily HH/HL.",
+    "against": "rs_rank_pct 61.2; elder_pattern None; sma_dist 11.86%; H1 below EMA9.",
+    "entry_trigger": "Would need a SUSTAINED impulse and a higher rank; then buy stop over bar_high.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED/ACCELERATION.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: fresh structure_shift BULLISH_BOS at from_52w_hi -0.17% (C26), ret_63d 10.13, rs_rank_pct 79.14, weekly price above its last swing high and weekly swing LH but HL. TIF unconfirmed: elder_pattern None.",
+   "case": {
+    "for": "Fresh break near highs, ret_63d 10.13, daily HH/HL, coil strong.",
+    "against": "elder_pattern None; rs_rank_pct 79.14 just under top tier; staples group fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the break.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength is the strongest here (ret_63d 73.73, rs_rank_pct 99.05) but there is no current resistance-line signal: structure_shift RANGE, daily 10.6% under the last swing high - a pullback off a high, and the swing set-up cannot be checked (cci_20, ma_40 not served). elder_pattern None.",
+   "challenge_reply": "Extension (sma_dist 36.87%) is weighed but is not my reason; I abstain because no signal is live today (RANGE), not because it is stretched.",
+   "case": {
+    "for": "ret_63d 73.73, rs_rank_pct 99.05, weekly HH/HL, U&R reclaim day.",
+    "against": "RANGE; elder_pattern None; mp FADING/DECELERATING (weight only, R13).",
+    "entry_trigger": "A new break over the last swing high (BOS), then buy stop over bar_high.",
+    "wrong_if": "It resumes up without a signal I could read.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS with elder_pattern SUSTAINED.",
+    "cannot_see": [
+     "cci_20",
+     "ma_40",
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Daily ABOVE_STRUCTURE, but weekly MTF LH/LL with 9<21 and price 1.0% under the last weekly swing high (C21 house rule). rs_rank_pct 67.34 middling, elder_pattern None - no TIF. Extension is not my reason.",
+   "opposing_case": "mp 100.0, rs_spy_20d 48.64, adx 46.73, flow 82.9 - a powerful short-horizon thrust, rank 14 on AQE.",
+   "challenge_reply": "Extension (ext_atr20 4.48) is weighed, not my basis. My oppose rests on the weekly structure under its swing high and no impulse confirmation.",
+   "case": {
+    "for": "Above structure, rs_spy_20d 48.64, mp 100.0.",
+    "against": "Weekly under its swing high; elder_pattern None; rs_rank_pct 67.34; day_vol 0.55 light.",
+    "entry_trigger": "Needs the weekly swing high cleared and a SUSTAINED impulse.",
+    "wrong_if": "It clears the weekly swing high and trends.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Daily ABOVE_STRUCTURE with elder_pattern ACCELERATION, but the medium-term ranking fails: rs_rank_pct 20.02, ret_6m -16.5, ret_12m -36.6 (C23). Weekly 9<21, 32.1% under the 20-wk high. A thrust in a weak-ranked name.",
+   "opposing_case": "ret_63d 15.4, run_10d 50.32%, flow 100.0, day_vol 2.27, ACCELERATION impulse, delayed episodic pivot triggered.",
+   "case": {
+    "for": "ACCELERATION, ret_63d 15.4, heavy volume, above structure.",
+    "against": "rs_rank_pct 20.02; ret_6m -16.5; weekly 9<21; run_10d 50.32%.",
+    "entry_trigger": "Needs the medium-term rank repaired.",
+    "wrong_if": "Rank climbs and it trends.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "rs_rank_pct rising into the top half with weekly repair.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), elder_pattern ACCELERATION (TIF, C28), ret_63d 19.52, rs_rank_pct 87.01, mp 97.0 STRONG, weekly price above its last swing high. Weight: ret_12m -37.68 and from_52w_hi -40.76% - a recovery, not a long-term leader.",
+   "case": {
+    "for": "ACCELERATION, ret_63d 19.52, rs_rank_pct 87.01, daily HH/HL.",
+    "against": "ret_12m -37.68; weekly swing LH/LL; sma_dist 25.08%; flow 50.0.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION/SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip or a support-line close.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), elder_pattern SUSTAINED (TIF, C28), ret_63d 20.41, mp 97.0 STRONG, weekly price above its last swing high. Weights: rs_rank_pct 70.68 middling, weekly 9<21, ret_12m -1.75.",
+   "challenge_reply": "Extension (ext_atr20 5.59) weighed explicitly: it puts the support line far below, so the impulse flip (elder_pattern leaving SUSTAINED, red bar after the run) is my working exit (C14); it holds conviction at 3, not higher.",
+   "case": {
+    "for": "SUSTAINED impulse, ret_63d 20.41, structure 91.6, flow 90.8.",
+    "against": "rs_rank_pct 70.68; weekly 9<21; sma_dist 27.44%; loss-making; H1 below EMA9.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder_pattern leaving SUSTAINED.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip after the run.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "STGW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE at from_52w_hi 0.0% (C26), rs_rank_pct 97.5, ret_63d 28.05, mp 100.0 STRONG, weekly HH/HL. TIF: elder_pattern CORRECTION_REENTRY but elder 10.0 with elder_5d high on 4 of 5 bars. Buying strength is this system's entry.",
+   "self_counter": "elder_pattern CORRECTION_REENTRY is not a clean SUSTAINED read; sma_dist 30.22% and run_10d 29.62% leave the support line far below; COM unserved.",
+   "challenge_reply": "Extension weighed explicitly: strength is the position signal (C26), and with the support line far below, the impulse flip (red bar after the run) is my working exit (C14). Rank and new-high status carry it over the other extended names.",
+   "case": {
+    "for": "New high, rs_rank_pct 97.5, ret_12m 142.0, weekly and daily HH/HL.",
+    "against": "sma_dist 30.22%; run_10d 29.62%; elder_pattern CORRECTION_REENTRY.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run with the impulse flipping.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Impulse flip after the run.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "GPK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Daily ABOVE_STRUCTURE, but strength fails: ret_63d -6.05, rs_rank_pct 55.3, ret_12m -34.18 (C6/C23). Weekly 9<21 and 8.7% under its last weekly swing high (C21 house rule). elder_pattern None. Extension is not my reason.",
+   "opposing_case": "rs_spy_20d 39.57, mp 85.0 STRONG/ACCELERATING, flow 88.2 - a sharp short-horizon thrust.",
+   "case": {
+    "for": "Above structure, rs_spy_20d 39.57, mp STRONG.",
+    "against": "ret_63d -6.05; rs_rank_pct 55.3; weekly broken; elder_pattern None; day_vol 0.65.",
+    "entry_trigger": "Needs ret_63d positive and the weekly swing high cleared.",
+    "wrong_if": "ret_63d turns positive and it trends.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ret_63d above zero plus weekly repair.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), ret_63d 40.69, rs_rank_pct 72.23, mp 92.0 STRONG, weekly price above its last swing high. TIF partial: elder_pattern CORRECTION_REENTRY. Weight: div BEARISH/2.",
+   "case": {
+    "for": "ret_63d 40.69, mp STRONG/ACCELERATING, daily HH/HL.",
+    "against": "div BEARISH/2; rs_rank_pct 72.23; elder_pattern CORRECTION_REENTRY; sma_dist 27.33%.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "RKT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Daily ABOVE_STRUCTURE with elder_pattern SUSTAINED, but the medium-term ranking fails: rs_rank_pct 36.71, ret_6m -4.02 (C23). Weekly LH/LL with 9<21, price 0.8% under the last weekly swing high (C21 house rule).",
+   "opposing_case": "ret_63d 9.45, rs_spy_20d 36.74, SUSTAINED impulse, mp 93.0 STRONG, flow 88.2.",
+   "case": {
+    "for": "SUSTAINED impulse, ret_63d 9.45, rs_spy_20d 36.74.",
+    "against": "rs_rank_pct 36.71; weekly under its swing high; from_52w_hi -35.75%.",
+    "entry_trigger": "Needs the weekly swing high cleared and the rank repaired.",
+    "wrong_if": "It clears the weekly swing high with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A weekly close over the last weekly swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Fresh BULLISH_BOS, but rs_rank_pct 60.43 is middling, ret_12m -8.56, elder_pattern None (no TIF), and weekly sits 4.2% under its last swing high (C21 house rule weight). Neither clean nor a clear fail.",
+   "case": {
+    "for": "Fresh break, ret_63d 4.72, rs_spy_20d 35.61, daily HH/HL.",
+    "against": "rs_rank_pct 60.43; elder_pattern None; weekly under its swing high; day_vol 0.61.",
+    "entry_trigger": "Would need the weekly swing high cleared and a SUSTAINED impulse; then buy stop over bar_high.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A SUSTAINED impulse with a weekly close over the last swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strength passes (rs_rank_pct 91.3, ret_63d 10.84, weekly HH/HL) but there is no resistance break today: structure_shift RANGE, daily 2.0% under the last swing high (C26). elder_pattern None. A signal not generated is not taken (C19).",
+   "case": {
+    "for": "rs_rank_pct 91.3, ret_6m 42.42, weekly and daily HH/HL, U&R reclaim day.",
+    "against": "RANGE; elder_pattern None; div BEARISH/1; run_10d -0.27%.",
+    "entry_trigger": "A break over the last swing high (BULLISH_BOS), then buy stop over bar_high.",
+    "wrong_if": "It breaks out and trends - I was waiting on a lagging label.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS with elder_pattern SUSTAINED.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), ret_63d 26.23, rs_rank_pct 83.19, weekly HH/HL. Weight: elder_pattern INTERRUPTED - my trend-colour proxy has flipped once (C14 proxy), so the impulse must re-confirm; low conviction.",
+   "case": {
+    "for": "ret_63d 26.23, rs_rank_pct 83.19, weekly and daily HH/HL, close to base (ext_atr20 0.79).",
+    "against": "elder_pattern INTERRUPTED; mp FADING/DECELERATING (weight only, R13); flow 50.0.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or another red bar with the impulse not recovering.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern back to SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: fresh structure_shift BULLISH_BOS (C26), ret_63d 5.84, rs_rank_pct 74.97, weekly HH/HL. Two weights: elder_pattern None (no TIF) and a middling rank. Taken mechanically at low conviction (C19).",
+   "case": {
+    "for": "Fresh break, weekly and daily HH/HL, adx 47.86.",
+    "against": "elder_pattern None; rs_rank_pct 74.97; H1 9<21; staples group fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the break.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 93.68, ret_63d 10.98, mp 97.0 STRONG, weekly HH/HL. TIF unconfirmed: elder_pattern None.",
+   "case": {
+    "for": "Top-decile rank, ret_12m 85.66, weekly and daily HH/HL.",
+    "against": "elder_pattern None; flow 36.8 weak; day_vol 0.69; H1 below EMA9.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "SPOT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: structure_shift ABOVE_STRUCTURE (C26), rs_rank_pct 92.97, ret_63d 17.82, weekly HH/HL and price above its last weekly swing high. TIF unconfirmed: elder_pattern None.",
+   "case": {
+    "for": "Top-decile rank, ret_63d 17.82, weekly and daily HH/HL.",
+    "against": "elder_pattern None; structure 57.9; mp BUILDING/DECELERATING; H1 9<21.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed (C27).",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red bar after the run.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED lifts me; a support-line close ends it.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD"
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Position picture (ABOVE_STRUCTURE, weekly HH/HL) but rs_rank_pct 63.29 and ret_63d 1.74 are a thin strength read and elder_pattern None gives no TIF. Neither a clean signal nor a fail.",
+   "case": {
+    "for": "Above structure close to base (ext_atr20 1.11), weekly HH/HL, U&R reclaim day.",
+    "against": "rs_rank_pct 63.29; ret_63d 1.74; elder_pattern None; H1 at 22% of the day's range.",
+    "entry_trigger": "Would need a higher rank and elder_pattern SUSTAINED; then buy stop over bar_high.",
+    "wrong_if": "It trends with rank rising.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "elder_pattern SUSTAINED/ACCELERATION with rank climbing.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "bar_high",
+     "fib_swing_low",
+     "base_low_20d",
+     "index_pct_change_63d",
+     "avg_vol_20d"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of4.json",
+   "bytes": 17415,
+   "votes": 13,
+   "sha256": "ff29a02b3c90"
+  },
+  {
+   "file": "seow.part2of4.json",
+   "bytes": 13894,
+   "votes": 13,
+   "sha256": "ec4fa53c20e3"
+  },
+  {
+   "file": "seow.part3of4.json",
+   "bytes": 13215,
+   "votes": 13,
+   "sha256": "c2d885c3d247"
+  },
+  {
+   "file": "seow.part4of4.json",
+   "bytes": 12967,
+   "votes": 12,
+   "sha256": "32751ffd94c8"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {"ticker": "AJG", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A 1.4x-volume new high proves this no wrong.", "market_void": null, "reason": "rs LEADER (downday 2.54), structure 78.9, prior uptrend, but D is already 3.2% past the swing high on day_vol 0.84, far under 1.40 (C16). H1 LH/LL below EMA9. Dry-up (C15) belongs before the break, not after."},
+  {"ticker": "AEE", "stance": "SUPPORT", "timing": "ACT_NOW", "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above Friday's high, on volume at least 1.4x normal, while within 5% of the pivot"}, "wrong_if": "A close under the pivot on heavy volume, a 7-8% loss from cost (C20), or a close under ma_200.", "market_void": "No confirmed uptrend (C1): SPY close_below ma_50", "reason": "rs LEADER (downday 2.0), structure 84.2, day_vol 1.83 clears 1.40 (C16), D 3.4% above the swing high is inside 5% (C17). Weak prior uptrend (ma50 104.9 under ma200 108.61) and W LH/LL hold conviction low."},
+  {"ticker": "CAH", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A 1.4x-volume new high proves this no wrong.", "market_void": null, "reason": "Leader at a new high (from_52w_hi 0.0%), but day_vol 1.08 is under 1.40: unconfirmed (C16). structure 66.3 middling; div BEARISH/1; D 4.8% past the swing high."},
+  {"ticker": "KO", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A close above bar_high on 1.4x volume proves this no wrong and flips me to SUPPORT.", "market_void": null, "reason": "Best base shape in its group: rs LEADER (downday 2.17), structure 77.9 BULLISH_BOS, coil strong, D 0.3% above the swing high. But the break came on day_vol 1.01, under 1.40: a C16 hard reject today."},
+  {"ticker": "STGW", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A new base forms and breaks out on 1.4x volume within 5% of its pivot; or the advance continues on volume without a climax day.", "market_void": null, "reason": "Changed on my own C17 test, read on both frames: D 20.8% and W 21.9% above the last swing high, past my 10% hard-rejection line, as with VSXY. entry 11.64 is about 60% over ma200 7.29, near the C24 climax zone. The number-1 leader, but not a buy here."},
+  {"ticker": "ADP", "stance": "SUPPORT", "timing": "WAIT", "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the base's pivot high, on volume at least 1.4x normal (C16)"}, "wrong_if": "A break of the base low, or a 7-8% loss from cost after entry (C20).", "market_void": "No confirmed uptrend (C1): SPY close_below ma_50", "reason": "A base at the highs: rs LEADER (downday 2.48), structure 84.2 RANGE, coil strong, D 2.0% under the last swing high. No breakout yet (day_vol 1.02), so I wait for the pivot break on volume. div BEARISH/1 named."},
+  {"ticker": "EL", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A 1.4x-volume new high proves this no wrong.", "market_void": null, "reason": "rs LEADER, structure 73.7, coil strong, but D is 1.2% past the swing high on day_vol 1.02: a break nobody bought (C16 hard reject). W last bar red; INTERRUPTED adds weight."},
+  {"ticker": "CHD", "stance": "OPPOSE", "timing": null, "trigger": null, "wrong_if": "A 1.4x-volume new high proves this no wrong.", "market_void": null, "reason": "rs LEADER, structure 75.8 BULLISH_BOS at the pivot (D 0.4% above the swing high), but day_vol 0.87 is far under 1.40 (C16). H1 below EMA9 with 9<21."},
+  {"ticker": "LTH", "stance": "SUPPORT", "timing": "WAIT", "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the pivot high, on volume at least 1.4x normal (C16)"}, "wrong_if": "A break of the base low, or a 7-8% loss from cost after entry (C20).", "market_void": "No confirmed uptrend (C1): SPY close_below ma_50", "reason": "A leader at its pivot: rs LEADER (downday 1.53), structure 87.4, D 0.4% and W 0.2% under the last swing high, prior uptrend ret_12m 85.66 (C12). day_vol 0.69: no breakout yet, so I wait for the volume break."}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE - C (C4,C5), A (C6), S (C8), I (C11) untested on every name",
+  "market_gate: DELEGATED - every SUPPORT is void without a confirmed uptrend (C1-C3); in a correction stops tighten to 3-4% (C20)",
+  "substitutes: rs_leadership for RS Rating; day_vol vs 20d (1.40 line); structure composite for base; D distance from the last swing high for the pivot (pct_from_pivot not served)",
+  "STGW: stance changed from SUPPORT to OPPOSE on my own C17 test (D 20.8%, W 21.9% past the swing high), not on the room",
+  "R1: no OPPOSE rests on a bracket. Horizon 40 sessions (C22)"
+ ]
+}

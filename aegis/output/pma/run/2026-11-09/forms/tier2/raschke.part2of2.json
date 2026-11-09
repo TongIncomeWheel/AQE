@@ -1,0 +1,92 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Wait for the pullback into the 20-day average, then buy an hourly close back above it."},
+   "wrong_if": "Daily close below fib_618: the pullback became a reversal.",
+   "market_void": null,
+   "reason": "RETRACEMENT under way: D swing HH/HL, close_vs_swing_high_pct 3.23; H1 LH/LL below EMA9 - the pullback has started. W HH but LL is the weight. Buy the higher low, not the current price."
+  },
+  {
+   "ticker": "AEE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above Friday's high after the pause."},
+   "wrong_if": "Daily close below fib_618: the pause is a reversal.",
+   "market_void": null,
+   "reason": "RETRACEMENT/pause: D close_vs_swing_high_pct 3.4, H1 LH but HL below EMA9. Weights: D swing HH but LL, W LH/LL. Same rate factor as ETR; lowest conviction of my supports."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Wait for the pullback into the 20-day average, then buy an hourly close back above it."},
+   "wrong_if": "Daily close below fib_618.",
+   "market_void": null,
+   "reason": "Continuation, buy the pullback: D swing HH/HL, close_vs_swing_high_pct 4.83, D dist_to_20bar_high_pct 5.09 - already off the high. W swing LH/LL is the weight. The first pullback is the setup."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above Friday's high while it holds the broken pivot."},
+   "wrong_if": "Daily close below structure_shift_ref: the break failed.",
+   "market_void": null,
+   "reason": "BREAKOUT sitting on its test (C20 double stop): D swing HH/HL, close_vs_swing_high_pct 0.31; W LH but HL above EMA9. H1 below EMA9 is the small pullback into the level."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Wait for the first pullback into the 20-day average, then buy an hourly close back above it."},
+   "wrong_if": "Daily close below ma_50.",
+   "market_void": null,
+   "reason": "Holy Grail wait (adx not served): W and D swing HH/HL - cleanest trend on the board - but D close_vs_swing_high_pct 20.75 and H1 pos_in_day_range_pct 98.0. No entry on the extension (C19); buy the first pullback."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above Friday's high off the higher low."},
+   "wrong_if": "Daily close below ma_50.",
+   "market_void": null,
+   "reason": "RETRACEMENT - buying a higher low: W and D swing HH/HL, D close_vs_swing_high_pct -1.96, just under the prior swing high; H1 LH but HL. Trigger and invalidation sit close."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above Friday's high while it holds the prior swing high."},
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "RETRACEMENT resolving at the test (C20): W and D swing HH/HL, D close_vs_swing_high_pct 1.23; H1 LH but HL above EMA9. The refuter's volume point is not my test; I hold."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above Friday's high while it holds the broken pivot."},
+   "wrong_if": "Daily close below fib_786: the test failed.",
+   "market_void": null,
+   "reason": "TEST of the broken level (C20): W and D swing HH/HL, D close_vs_swing_high_pct 0.37; H1 9<21 is the pullback into it. Light participation is a weight, not a failed test."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Buy a daily close above the last confirmed pivot high."},
+   "wrong_if": "Daily close below ma_20: the high held as resistance.",
+   "market_void": null,
+   "reason": "TEST of the prior high (C20): W close_vs_swing_high_pct -0.25 and D -0.42, both swing HH/HL. Long only on the close through; H1 at pos_in_day_range_pct 26.6 is the weight."
+  }
+ ],
+ "declarations": [
+  "setup_type per name (C2). adx, stochastic_kd, bar_range_history: NOT_SERVED; n_day_extreme: MTF swing line substitute; market_breadth: OUT_OF_SERVED_SCOPE. market_void null throughout (R8).",
+  "R1/R41: no bracket field and no Valen flag is a reason in any decision."
+ ]
+}

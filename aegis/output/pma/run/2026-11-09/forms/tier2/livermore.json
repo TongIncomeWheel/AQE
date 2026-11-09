@@ -1,0 +1,308 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-09",
+ "declarations": [
+  "trend_confirmation: from structure/structure_shift, sma_distance_pct and the W/D/H1 grid (C5); sma_distance_pct is extension from the 50-day, not proximity to a high",
+  "danger_signal_threshold: TRANSLATED via atr_14d - fade_atr_ge:1 is my translation of C7's six points, not Livermore's number (C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18). fill_difficulty: NOT_SERVED (day_vol proxy only)",
+  "inside_information: NEVER (C11). R1: no bracket is a reason in any answer or decision here. R41: no Valen flag used",
+  "market_void: null throughout - my method carries no market-level kill line",
+  "inside_information: NEVER (C11). R1: no bracket is a reason in any decision here. R41: no Valen flag used. market_void: null - my method has none"
+ ],
+ "answers": [
+  {
+   "pair_id": "BDX-livermore-for~oneil",
+   "ticker": "BDX",
+   "to": "oneil",
+   "text": "\"Swing-high clear on day_vol 1.18, under 1.40; late buy.\" A 1.40 volume floor is not my test; day_vol is only a proxy for fill difficulty, which I cannot see (R5). C5/C16 buy the new high: W HH/HL, D HH/HL with dist_to_20bar_high 1.4%, so price is at its high, not chasing far above it. H1 below EMA9 at 49% of range is a pause, not a danger signal. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "HLT-livermore-for~oneil",
+   "ticker": "HLT",
+   "to": "oneil",
+   "text": "\"BOS on day_vol 0.85; weekly swing LH/LL, extended leg.\" Volume floor is not my test (R5). The weekly label LH/LL is about past pivots: close 370.45 is above both the last weekly swing high 335.8 and the prior one 358.0, so the weekly pivotal point is cleared (C17/C19). D HH/HL, 2.9% under 20-day high. H1 LH/LL below EMA9 is noted; I still buy only the fresh high. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "VSXY-livermore-for~oneil",
+   "ticker": "VSXY",
+   "to": "oneil",
+   "text": "\"15.7% past the D swing high on day_vol 0.81.\" A fast move after a cleared pivot is C17's expected follow-through, not a reject; volume is not my test (R5). W 5.5% above the last weekly swing high, D dist_to_20bar_high 2.0%: a leader at its high. Extension raises the odds of a danger-signal day, which I hold as my exit (C7), not as a reason against. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "AHR-livermore-for~minervini",
+   "ticker": "AHR",
+   "to": "minervini",
+   "text": "\"Trend Template FAIL: ma50 under ma100, rs_rank_pct 68.65.\" Moving-average stacks and rs_rank_pct are not on my menu; I cannot rule by them. My test: D dist_to_20bar_high 0.3%, H1 91% of the day's range, W 0.8% above the last weekly swing high. The W 20-bar high 58.7 is still 1.4% overhead, so the weekly pivot is the next proof, not a reason to stand aside. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "TOST-livermore-for~oneil",
+   "ticker": "TOST",
+   "to": "oneil",
+   "text": "\"H1 closed at 14% of range; Recovering is not leading.\" This I accept. C12 wants leaders in leading groups, and the confirming high is not printed: W 6.8% under the 20-wk high, D 3.8% under the 20-day high, H1 below EMA9 at 14% of range. That is a stock still inside its reaction, and C5 forbids buying the pullback. I move to ABSTAIN until a fresh high prints.",
+   "concede": true
+  },
+  {
+   "pair_id": "AEE-livermore-for~minervini",
+   "ticker": "AEE",
+   "to": "minervini",
+   "text": "\"Inverted stack ma50 < ma100 < ma200; group cannot repair it.\" The averages are not my fields, but they point at what my grid shows: W swing LH/LL, 4.6% under the 20-wk high, the W prior swing high 118.32 not retaken. No established weekly Upward Trend, so C5 has nothing to buy into yet; the daily HH is a rally in a downward column (C18). I move to ABSTAIN.",
+   "concede": true
+  },
+  {
+   "pair_id": "KO-livermore-for~oneil",
+   "ticker": "KO",
+   "to": "oneil",
+   "text": "\"Break printed on day_vol 1.01, under 1.40.\" Volume floor is not my test (R5). W close is 5.9% above the last weekly swing high 90.36 and above the prior one 92.49, 1.8% under the 20-wk high; D HH/HL 0.3% through the swing high. An established trend at its pivot. I buy the fresh high, adding only higher (C5/C6). Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "ABNB",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - the fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 - a one-day reaction of 1x atr_14d 6.81 off the day's high (my C7 translation, not Livermore's number).",
+   "market_void": null,
+   "reason": "W HH/HL 1.8% under the 20-wk high, D HH/HL 6.1% above the last swing high and 1.3% under the 20-day high; a trend at its highs. mp BUILDING keeps it small."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "After the hourly LH/LL stops, a daily close above yesterday's high."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.42) off the day's high, or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "W HH/HL in a reaction 11.9% under the 20-wk high; D just 0.8% through its swing high, H1 LH/LL. The turn is early; I want the daily close to prove it."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - the next fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 2.05) off the day's high, or structure_shift turning BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "D HH/HL 3.2% above the last swing high, W 3.0% above the last weekly swing high, 2.5% under both 20-bar highs set 2026-11-06; H1 HH/HL. The payments leader I carry (C12)."
+  },
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - a fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.4) off the day's high.",
+   "market_void": null,
+   "reason": "W HH/HL 2.0% above the last weekly swing high; D close above both prior swing highs (25.86, 26.4), 2.8% under the 20-day high. Thin structure keeps it small."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, which is the 20-day high (C5/C16)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 4.67) off the day's high, or CAH failing its highs with it (C14).",
+   "market_void": null,
+   "reason": "W and D both HH/HL, swing highs cleared, D 1.4% under the 20-day high; CAH holds the same state in Healthcare (C14)."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - the fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 8.98) off the day's high, or MCD failing its break with it (C14).",
+   "market_void": null,
+   "reason": "Close 370.45 above weekly swing highs 335.8 and 358.0; D HH/HL 1.6% above the last swing high, 2.9% under the 20-day high. The travel leader with MCD as partner."
+  },
+  {
+   "ticker": "VSXY",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - a fresh high (C16)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 4.97) off the day's high.",
+   "market_void": null,
+   "reason": "D HH/HL 15.7% above the last swing high and 2.0% under the 20-day high; W 5.5% above the last weekly swing high. Strength itself is the signal (C17)."
+  },
+  {
+   "ticker": "AHR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - the fresh 20-day high (C16)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.46) off the day's high, or the REITs failing their highs together (C14).",
+   "market_void": null,
+   "reason": "D 0.3% under the 20-day high, H1 HH/HL at 91% of the day's range, W 0.8% above the last weekly swing high. W 20-bar high 58.7 is the next pivot."
+  },
+  {
+   "ticker": "JAN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - a fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.11) off the day's high.",
+   "market_void": null,
+   "reason": "D close above both prior swing highs, 1.3% under the 20-day high; H1 HH/HL at 78% of range; W 0.4% above the last weekly swing high. Short history (W bars 34) keeps it small."
+  },
+  {
+   "ticker": "TOST",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A fresh 20-day high with the weekly high retaken would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Conceded to oneil: still inside its reaction - W 6.8% under the 20-wk high, D 3.8% under the 20-day high, H1 at 14% of range; group not leading (C5/C12)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Once the quiet reaction ends, an hourly close above yesterday's high; adds only at a fresh 20-day high."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 8.45) off the day's high, or the reaction deepening on rising volume (C8).",
+   "market_void": null,
+   "reason": "D HH/HL 3.2% above the last swing high but 4.4% under the 20-day high, H1 LH/LL below EMA9: a normal reaction in a trend (C8). Not bought until it ends (C5)."
+  },
+  {
+   "ticker": "AEE",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A weekly close through the W prior swing high 118.32 would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Conceded to minervini: W swing LH/LL, 4.6% under the 20-wk high - no established weekly Upward Trend; the daily HH is a rally in a downward column (C5/C18)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Once the reaction ends, an hourly close above yesterday's high; adds only at a fresh 20-day high."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 7.43) off the day's high, or BDX and CAH failing their highs together (C14).",
+   "market_void": null,
+   "reason": "Close above weekly swing highs 249.29 and 258.3; D HH/HL but 5.1% under the 20-day high - a reaction, not a high. BDX confirms the group (C14)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - a fresh high (C5)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.83) off the day's high, or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "W close above weekly swing highs 90.36 and 92.49, 1.8% under the 20-wk high; D HH/HL 0.3% through the swing high. CHD breaks in the same group (C14)."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high - the next new high (C16)."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 0.51) off the day's high - one such day and I step off the track (C7).",
+   "market_void": null,
+   "reason": "W and D HH/HL, 0.3% under both 20-bar highs, H1 at 98% of the day's range. The market's leading stock at its high (C12/C16)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close above pivot_high (D last swing high 309.4) would make standing aside wrong.",
+   "market_void": null,
+   "reason": "W HH/HL uptrend, but D 2.0% under the last swing high and 2.5% under the 20-day high, H1 below EMA9: inside its swing. C5 waits for the new high."
+  },
+  {
+   "ticker": "EL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A fresh 20-day high would make standing aside wrong.",
+   "market_void": null,
+   "reason": "W and D HH/HL, but D 4.5% under the 20-day high and the W last bar red: a reaction. C5 does not buy the pullback; I wait for the high."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Once the hourly turns back up, an hourly close above yesterday's high; adds only at a fresh 20-day high."
+   },
+   "wrong_if": "fade_atr_ge:1 (atr_14d 2.64) off the day's high, or KO and CHD losing their breaks together (C14).",
+   "market_void": null,
+   "reason": "W HH/HL 4.8% above the last weekly swing high; D HH/HL but 4.6% under the 20-day high, H1 9<21 below EMA9. KO confirms the group (C14)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last pivot high - the new high on both timeframes (C5/C17)."
+   },
+   "wrong_if": "A stall under pivot_high then fade_atr_ge:1 (atr_14d 1.76) - the C20 danger signal.",
+   "market_void": null,
+   "reason": "W HH/HL 0.2% under the last weekly swing high, D HH/HL 0.4% under the last swing high 47.32: at the pivotal point on both frames. Buy only the close through it."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 9156,
+   "sha256": "8df5895b6077"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 4702,
+   "sha256": "89230ce1c4e7"
+  }
+ ]
+}

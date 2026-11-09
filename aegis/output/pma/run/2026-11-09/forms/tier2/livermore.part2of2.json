@@ -1,0 +1,92 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Once the quiet reaction ends, an hourly close above yesterday's high; adds only at a fresh 20-day high."},
+   "wrong_if": "fade_atr_ge:1 (atr_14d 8.45) off the day's high, or the reaction deepening on rising volume (C8).",
+   "market_void": null,
+   "reason": "D HH/HL 3.2% above the last swing high but 4.4% under the 20-day high, H1 LH/LL below EMA9: a normal reaction in a trend (C8). Not bought until it ends (C5)."
+  },
+  {
+   "ticker": "AEE",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A weekly close through the W prior swing high 118.32 would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Conceded to minervini: W swing LH/LL, 4.6% under the 20-wk high - no established weekly Upward Trend; the daily HH is a rally in a downward column (C5/C18)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Once the reaction ends, an hourly close above yesterday's high; adds only at a fresh 20-day high."},
+   "wrong_if": "fade_atr_ge:1 (atr_14d 7.43) off the day's high, or BDX and CAH failing their highs together (C14).",
+   "market_void": null,
+   "reason": "Close above weekly swing highs 249.29 and 258.3; D HH/HL but 5.1% under the 20-day high - a reaction, not a high. BDX confirms the group (C14)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high - a fresh high (C5)."},
+   "wrong_if": "fade_atr_ge:1 (atr_14d 1.83) off the day's high, or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "W close above weekly swing highs 90.36 and 92.49, 1.8% under the 20-wk high; D HH/HL 0.3% through the swing high. CHD breaks in the same group (C14)."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high - the next new high (C16)."},
+   "wrong_if": "fade_atr_ge:1 (atr_14d 0.51) off the day's high - one such day and I step off the track (C7).",
+   "market_void": null,
+   "reason": "W and D HH/HL, 0.3% under both 20-bar highs, H1 at 98% of the day's range. The market's leading stock at its high (C12/C16)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close above pivot_high (D last swing high 309.4) would make standing aside wrong.",
+   "market_void": null,
+   "reason": "W HH/HL uptrend, but D 2.0% under the last swing high and 2.5% under the 20-day high, H1 below EMA9: inside its swing. C5 waits for the new high."
+  },
+  {
+   "ticker": "EL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A fresh 20-day high would make standing aside wrong.",
+   "market_void": null,
+   "reason": "W and D HH/HL, but D 4.5% under the 20-day high and the W last bar red: a reaction. C5 does not buy the pullback; I wait for the high."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Once the hourly turns back up, an hourly close above yesterday's high; adds only at a fresh 20-day high."},
+   "wrong_if": "fade_atr_ge:1 (atr_14d 2.64) off the day's high, or KO and CHD losing their breaks together (C14).",
+   "market_void": null,
+   "reason": "W HH/HL 4.8% above the last weekly swing high; D HH/HL but 4.6% under the 20-day high, H1 9<21 below EMA9. KO confirms the group (C14)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the last pivot high - the new high on both timeframes (C5/C17)."},
+   "wrong_if": "A stall under pivot_high then fade_atr_ge:1 (atr_14d 1.76) - the C20 danger signal.",
+   "market_void": null,
+   "reason": "W HH/HL 0.2% under the last weekly swing high, D HH/HL 0.4% under the last swing high 47.32: at the pivotal point on both frames. Buy only the close through it."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d - fade_atr_ge:1 is my translation of C7's six points, not Livermore's number (C18-C20)",
+  "inside_information: NEVER (C11). R1: no bracket is a reason in any decision here. R41: no Valen flag used. market_void: null - my method has none"
+ ]
+}

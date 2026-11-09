@@ -1,0 +1,88 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above the prior day's high off the quiet test"},
+   "wrong_if": "A daily close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Uptrend resting near its broken level (C7): D close_vs_swing_high_pct 3.23, D swing_class HH/HL, the back-up came on light volume. H1 swing_class LH/LL is the correction the trigger must end (C12)."
+  },
+  {
+   "ticker": "AEE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback that holds the broken level, buy an hourly close above the prior day's high"},
+   "wrong_if": "A daily close half an ATR below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Break held, but D close_vs_swing_high_pct 3.4 is past the test, W swing_class LH/LL and D HH but LL: a base break, not a markup. Second to ETR in the rate factor; only on a test (C3, C7)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a quiet pullback into the broken level, buy an hourly close above the prior day's high"},
+   "wrong_if": "A daily close half an ATR below structure_shift_ref.",
+   "market_void": null,
+   "reason": "New high, D and H1 swing_class HH/HL, but D close_vs_swing_high_pct 4.83 is past the test with a fired bearish divergence; W swing_class LH/LL. Hold for the test (C3, C15)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above the prior day's high: the break must bring volume"},
+   "wrong_if": "A daily close back below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Fresh break right at the test (C7): D close_vs_swing_high_pct 0.31, D swing_class HH/HL, W LH but HL. Volume only average on the break, so the trigger supplies the proof (C5, C12)."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a quiet pullback into the broken level, buy an hourly close above the prior day's high"},
+   "wrong_if": "A daily close half an ATR below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Cleanest trend in the set: W and D swing_class HH/HL, H1 pos_in_day_range_pct 98.0. Far from value: D close_vs_swing_high_pct 20.75. Location only; wait for the corrective wave (C3, C15)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "wrong_if": "A break of base_low_20d that does not reclaim.",
+   "market_void": null,
+   "reason": "RANGE read at the upper part of the swing (D close_vs_swing_high_pct -1.96) with a fired bearish divergence. My range playbook buys a spring or value-area-low rejection, not the upper edge (C1, C11)."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy an hourly close above the prior day's high off the broken level"},
+   "wrong_if": "A daily close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Clean uptrend at its broken level (C7): W and D swing_class HH/HL, D close_vs_swing_high_pct 1.23, H1 pos_in_day_range_pct 85.5. Demand still owes effort off the test; the trigger asks for it (C12)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "ABSTAIN",
+   "wrong_if": "A close back below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Round-1 event status I treat as outside my remit, so I do not vote it on structure alone. On structure: D close_vs_swing_high_pct 0.37 at the test, but H1 ema_order 9<21 and a below-average-volume break (C5)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a sign-of-strength day closing near its high, buy an hourly close above the prior day's high"},
+   "wrong_if": "A daily close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W and D swing_class HH/HL at the edge (D close_vs_swing_high_pct -0.42), but H1 pos_in_day_range_pct 26.6 on light volume: no demand at the high. Wait for a sign-of-strength bar (C12)."
+  }
+ ],
+ "declarations": [
+  "R1: no bracket field is a reason in any decision; wrong_if levels are structural.",
+  "R41: no Valen flag used. market_void null throughout: my method has no market-wide void condition."
+ ]
+}
