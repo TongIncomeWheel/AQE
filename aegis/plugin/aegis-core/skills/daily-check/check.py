@@ -531,6 +531,12 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
     if not export_cols:
         fails.append("voice coverage: the export has no daily_list columns to compare the charters against")
         return fails, notes, report
+    # A FLAT BOOK (PM 2026-11-09): hl_score / hl_state (AQE's health verdict) exist only on held rows. With no position held there is nothing
+    # for them to be on, so a charter that reads them has no gap -- it has no held name. Skipped with a WARN, never a FAIL. This is not a
+    # `standing` entry: with a held book the same fields are checked exactly as before.
+    flat_book = not (export.get("held_positions") or [])
+    is_hl = lambda f: f.startswith("hl_") or ".hl_" in f
+    flat_noted = set()
     for v in deciders:
         req = (contract.get("required_fields") or {}).get(v)
         if req is None:
@@ -557,6 +563,8 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
         for f in req:
             if is_cond(f):
                 conditional.append(f); continue
+            if flat_book and is_hl(f):
+                flat_noted.add(f); continue
             if f in aliases:
                 # the canon's name for a column the packet carries under another name: the SOURCE must be served
                 src = aliases[f]["as"]
@@ -622,6 +630,8 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
             notes.append(f"WARN voice coverage {v}: name-level blanks in {len(blanks)} served field(s) of {len(scope)} names ({fields}"
                          f"{', ...' if len(blanks) > 6 else ''}); most affected: " + ", ".join(f"{n} ({c} fields)" for n, c in worst)
                          + " -- the seat declares these no_data")
+    if flat_noted:
+        notes.append(f"WARN voice coverage: flat book: {', '.join(sorted(flat_noted))} not applicable (no position is held, so there is no health verdict to serve); skipped, not a gap")
     return fails, notes, report
 
 
