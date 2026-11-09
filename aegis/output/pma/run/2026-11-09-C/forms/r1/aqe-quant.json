@@ -1,0 +1,130 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-09",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "STGW",
+   "reason": "Broadest agreement on the sheet: `flow` 96.1 (steady buying, clean volume), `mp` 100.0 (strong aligned trend), `structure` 86.7, `energy` 71.4, gate all-pass; `subcomponents.structure.rs_accel` 9.62 says the market lead is widening; A-TIER path still ACCELERATING.",
+   "fields_cited": ["flow", "mp", "structure", "energy", "sc_m_gates", "subcomponents.structure.rs_accel", "subcomponents.pipe.pipe_tier", "mp_accel_state"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 87.6; sc_m_gates True; sc_m_gate_detail 16 (flow, energy, structure, mp, elder all pass); elder 10.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 96.1, energy 71.4, structure 86.7, mp 100.0 -- R2 broad support, all four above the gate floors", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A4", "A5", "A7"], "observed": "flow: subcomponents.flow.flow_score 17.0 (max); mp: subcomponents.mp.abs_mom_score 30.0 (max); weakest energy: subcomponents.energy.squeeze_score 0.0, atr_score 7.0", "verdict": "pass", "fields": ["subcomponents.flow.flow_score", "subcomponents.mp.abs_mom_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.atr_score"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 87.0; pipe_tier 1 (A-TIER); pr_ret_12m 20.0, pr_adx_score 20.0, pr_vol_score 20.0, pr_ma_score 20.0; pr_rsi_score 10.0 (overbought penalty)", "verdict": "pass", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score", "subcomponents.pipe.pr_rsi_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 9.0 (<15, exhaustion test not live, exhaustion_score 10.0 is silence); ext_score 3.0 (bonus); en_pos50 99.17 at the range top", "verdict": "partial", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 30.5, rs_accel 9.62 (R5); excess_return 40.13; rs_rank_pct 97.5; mp_accel_state 1 (ACCELERATING); R9: roc_zscore 2.96, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: extended name (en_pos50 99.17); base_score 2.4, base_days 4.0 -- no base story", "verdict": "partial", "fields": ["subcomponents.structure.base_score", "subcomponents.structure.base_days"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`sc_m_gates` turns False, `mp_accel_state` flips to DECELERATING, or `subcomponents.flow.ext_score` goes negative (climax) -- any of these and the broad, gathering case is gone."
+  },
+  {
+   "ticker": "RYAN",
+   "reason": "Broad support with the run tested and clean: `flow` 96.1, `structure` 92.6, `mp` 97.0, `energy` 63.0; `subcomponents.energy.en_trend_bars` 17.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 10.0 finds no wear; RS lead widening.",
+   "fields_cited": ["flow", "structure", "mp", "energy", "subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.structure.rs_accel"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 85.6; sc_m_gates True; sc_m_gate_detail 16 (all pass); elder 7.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 96.1, energy 63.0, structure 92.6, mp 97.0 -- R2 broad", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A4", "A6", "A5"], "observed": "flow: flow_score 17.0, ext_score 3.0; structure: rs_spy_score 15.0, rs_accel_score 15.0, wk_score 15.0; weakest energy: atr_score 1.0, squeeze_score 0.0", "verdict": "pass", "fields": ["subcomponents.flow.flow_score", "subcomponents.flow.ext_score", "subcomponents.structure.rs_spy_score", "subcomponents.structure.rs_accel_score", "subcomponents.structure.wk_score", "subcomponents.energy.atr_score", "subcomponents.energy.squeeze_score"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 68.4; pipe_tier 2 (B-STRONG); pr_ret_12m 0.0 (12-month loss), pr_adx_score 20.0, pr_rsi_score 15.0, pr_vol_score 20.0, pr_ma_score 17.0", "verdict": "partial", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 17.0 (test live), exhaustion_score 10.0 (no wear found); ext_score 3.0 (bonus); en_pos50 92.49", "verdict": "pass", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 16.94, rs_accel 17.58 (R5); excess_return 34.52; rs_rank_pct 94.99; mp_accel_state 1 (ACCELERATING); R8 pass; R9 roc_zscore 2.32, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: extended (en_pos50 92.49); base_score 10.0, base_days 9.0", "verdict": "partial", "fields": ["subcomponents.structure.base_score", "subcomponents.structure.base_days"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`subcomponents.energy.exhaustion_score` drops below 10 while `subcomponents.energy.en_trend_bars` stays 15+ (wear found), or `subcomponents.structure.rs_accel` turns negative."
+  },
+  {
+   "ticker": "IBN",
+   "reason": "Flow-led but broad: `flow` 98.7 with `subcomponents.flow.ext_score` 5.0 (confirmed breakout bonus), `mp` 97.0, `structure` 84.2, `energy` 66.4, gate all-pass; `subcomponents.mp.roc_zscore` 3.1 is an exceptional month against its own history; ACCELERATING.",
+   "fields_cited": ["flow", "subcomponents.flow.ext_score", "mp", "structure", "energy", "subcomponents.mp.roc_zscore", "mp_accel_state"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 85.8; sc_m_gates True; sc_m_gate_detail 16 (all pass); elder 10.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 98.7, energy 66.4, structure 84.2, mp 97.0 -- R2 broad", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A4", "A7", "A5"], "observed": "flow: flow_score 17.0, ext_score 5.0, mfi 82.31; mp: abs_mom_score 30.0, rel_mom_score 25.0; weakest energy: squeeze_score 0.0, atr_score 4.0", "verdict": "pass", "fields": ["subcomponents.flow.flow_score", "subcomponents.flow.ext_score", "subcomponents.flow.mfi", "subcomponents.mp.abs_mom_score", "subcomponents.mp.rel_mom_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.atr_score"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 64.3; pipe_tier 2 (B-STRONG); pr_ret_12m 12.0, pr_adx_score 20.0, pr_rsi_score 10.0 (overbought penalty), pr_vol_score 20.0, pr_ma_score 17.0", "verdict": "partial", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 7.0 (<15, test not live; exhaustion_score 10.0 is silence); ext_score 5.0 (bonus); en_pos50 97.29", "verdict": "partial", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 20.43, rs_accel 6.64 (R5); excess_return 27.07; rs_rank_pct 84.15; mp_accel_state 1 (ACCELERATING); R8 pass; R9 roc_zscore 3.1, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: extended (en_pos50 97.29); base_score 5.0", "verdict": "partial", "fields": ["subcomponents.structure.base_score"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`subcomponents.flow.ext_score` turns negative (climax) or `mp_accel_state` flips to DECELERATING with `sc_m_gates` failing."
+  },
+  {
+   "ticker": "VLTO",
+   "reason": "Long run tested and clean with broad support: `mp` 100.0, `flow` 88.2, `structure` 81.1, `energy` 71.4; `subcomponents.energy.en_trend_bars` 22.0 puts the exhaustion test live and `subcomponents.energy.exhaustion_score` 10.0 finds no wear; RS still improving, ACCELERATING.",
+   "fields_cited": ["mp", "flow", "structure", "energy", "subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.structure.rs_accel"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 84.1; sc_m_gates True; sc_m_gate_detail 16 (all pass); elder 7.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 88.2, energy 71.4, structure 81.1, mp 100.0 -- R2 broad", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A7", "A4", "A5"], "observed": "mp: abs_mom_score 30.0, mp_adx_score 25.0, rel_mom_score 25.0, trend_score 20.0 (all max); flow: flow_score 17.0, accum_score 7.5; weakest energy: squeeze_score 0.0", "verdict": "pass", "fields": ["subcomponents.mp.abs_mom_score", "subcomponents.mp.mp_adx_score", "subcomponents.mp.rel_mom_score", "subcomponents.mp.trend_score", "subcomponents.flow.flow_score", "subcomponents.flow.accum_score", "subcomponents.energy.squeeze_score"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 66.4; pipe_tier 2 (B-STRONG); pr_ret_12m 12.0, pr_adx_score 20.0, pr_rsi_score 10.0 (overbought penalty), pr_vol_score 20.0, pr_ma_score 20.0", "verdict": "partial", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 22.0 (test live), exhaustion_score 10.0 (no wear); ext_score 0.0; en_pos50 92.57", "verdict": "pass", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 25.52, rs_accel 0.84 (R5, barely improving); excess_return 26.36; rs_rank_pct 88.2; mp_accel_state 1 (ACCELERATING); R9 roc_zscore 2.34, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: extended (en_pos50 92.57); base_score 5.0, base_days 188.0 (old base)", "verdict": "partial", "fields": ["subcomponents.structure.base_score", "subcomponents.structure.base_days"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`subcomponents.energy.exhaustion_score` falls below 10 on this live run, or `subcomponents.structure.rs_accel` (0.84, thin) turns negative."
+  },
+  {
+   "ticker": "WTRG",
+   "reason": "Steady broad case: `structure` 84.2, `mp` 97.0, `flow` 80.3, `energy` 71.4, gate all-pass; `subcomponents.energy.en_trend_bars` 18.0 with `subcomponents.energy.exhaustion_score` 10.0 = tested run, no wear; RS lead improving, ACCELERATING on a B-STRONG path.",
+   "fields_cited": ["structure", "mp", "flow", "energy", "subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "mp_accel_state"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 81.7; sc_m_gates True; sc_m_gate_detail 16 (all pass); elder 7.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 80.3, energy 71.4, structure 84.2, mp 97.0 -- R2 broad", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A7", "A6", "A4"], "observed": "mp: abs_mom_score 30.0, rel_mom_score 25.0; structure: rs_spy_score 15.0, wk_score 15.0; weakest flow: accum_score 5.5, skew_score 2.5, mfi 59.27", "verdict": "pass", "fields": ["subcomponents.mp.abs_mom_score", "subcomponents.mp.rel_mom_score", "subcomponents.structure.rs_spy_score", "subcomponents.structure.wk_score", "subcomponents.flow.accum_score", "subcomponents.flow.skew_score", "subcomponents.flow.mfi"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 69.9; pipe_tier 2 (B-STRONG); pr_ret_12m 12.0, pr_adx_score 20.0, pr_rsi_score 15.0, pr_vol_score 20.0, pr_ma_score 20.0", "verdict": "pass", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 18.0 (test live), exhaustion_score 10.0 (no wear); ext_score 0.0; en_pos50 88.86", "verdict": "pass", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 17.81, rs_accel 4.35 (R5); excess_return 22.16; rs_rank_pct 79.02; mp_accel_state 1 (ACCELERATING); R8 pass; R9 roc_zscore 2.04, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: extended (en_pos50 88.86); base_score 5.0, base_days 777.0", "verdict": "partial", "fields": ["subcomponents.structure.base_score", "subcomponents.structure.base_days"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`flow` slips under its 60 floor (accumulation already the thin leg) or `subcomponents.energy.exhaustion_score` drops below 10 on the live run."
+  },
+  {
+   "ticker": "GEHC",
+   "reason": "Broad and improving: `flow` 88.2, `mp` 96.0, `structure` 78.9, `energy` 71.4, gate all-pass; `subcomponents.structure.rs_accel` 13.75 says the lead is widening; `subcomponents.energy.en_trend_bars` 21.0 with exhaustion 10.0 = tested, no wear. FADING label is default only.",
+   "fields_cited": ["flow", "mp", "structure", "energy", "subcomponents.structure.rs_accel", "subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "mp_state"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["A1", "A2"], "observed": "sc_momentum 82.9; sc_m_gates True; sc_m_gate_detail 16 (all pass); elder 7.0", "verdict": "pass", "fields": ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "elder"]},
+    {"step": 2, "canon_ref": ["A3"], "observed": "flow 88.2, energy 71.4, structure 78.9, mp 96.0 -- R2 broad", "verdict": "pass", "fields": ["flow", "energy", "structure", "mp"]},
+    {"step": 3, "canon_ref": ["A4", "A7", "A5"], "observed": "flow: flow_score 17.0, accum_score 7.5, mfi 72.43; mp: mp_adx_score 25.0, rel_mom_score 25.0; weakest energy: squeeze_score 0.0, atr_score 5.5", "verdict": "pass", "fields": ["subcomponents.flow.flow_score", "subcomponents.flow.accum_score", "subcomponents.flow.mfi", "subcomponents.mp.mp_adx_score", "subcomponents.mp.rel_mom_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.atr_score"]},
+    {"step": 4, "canon_ref": ["A8"], "observed": "pipe_rank 71.2; pipe_tier 2 (B-STRONG); pr_ret_12m 4.0 (small 12-month gain), pr_adx_score 20.0, pr_rsi_score 15.0, pr_vol_score 20.0, pr_ma_score 17.0", "verdict": "partial", "fields": ["pipe_rank", "subcomponents.pipe.pipe_tier", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score"]},
+    {"step": 5, "canon_ref": ["A5", "A4"], "observed": "en_trend_bars 21.0 (test live), exhaustion_score 10.0 (no wear); ext_score 0.0; en_pos50 78.91", "verdict": "pass", "fields": ["subcomponents.energy.en_trend_bars", "subcomponents.energy.exhaustion_score", "subcomponents.flow.ext_score", "subcomponents.energy.en_pos50"]},
+    {"step": 6, "canon_ref": ["A6", "A7"], "observed": "rs_vs_spy 17.12, rs_accel 13.75 (R5); excess_return 30.87; rs_rank_pct 84.98; mp_accel_state 1 (ACCELERATING); mp_state 2 (FADING, default label); R9 roc_zscore 1.95, rel_mom_score 25.0", "verdict": "pass", "fields": ["subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.mp.excess_return", "rs_rank_pct", "mp_accel_state", "mp_state", "subcomponents.mp.roc_zscore", "subcomponents.mp.rel_mom_score"]},
+    {"step": 7, "canon_ref": ["A9"], "observed": "n/a: running name (en_pos50 78.91); base_score 5.0, base_days 36.0", "verdict": "partial", "fields": ["subcomponents.structure.base_score", "subcomponents.structure.base_days"]},
+    {"step": 8, "canon_ref": ["A1"], "observed": "not a held name; step 8 applies to held names only", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "`mp_accel_state` turns DECELERATING while `mp_state` stays FADING (then the label is real decay), or `subcomponents.structure.rs_accel` goes negative."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "TIGHTEN", "line": "Gate passes (`sc_m_gates` True, `sc_momentum` 69.8) but flow is the weak link: `flow` 60.5 on `subcomponents.flow.flow_score` 8.5 and `subcomponents.flow.mfi` 39.07 (sellers in control), with `subcomponents.structure.rs_accel` -5.92 (lead shrinking, R6) and `mp_accel_state` 2 (DECELERATING)."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "No AQE record for MP in my packet or the indicator sheet, so steps 1-6 cannot be run; no engine case either way, KEEP is a default pending the record, declared in data_gaps."}
+ ],
+ "data_gaps": [
+  {"field": "ticker MP (entire AQE record: sc_momentum, flow, energy, structure, mp, subcomponents.*)", "impact": "Held name MP absent from aqe-quant.tsv and aqe_indicators.tsv; held review could not walk steps 1-6 and the verdict is a default, not a reading."},
+  {"field": "V row held flag / held context", "impact": "V is named as held but its packet row shows held False; reviewed on engine fields only."},
+  {"field": "k39_value (R9 fourth filter)", "impact": "Not on my menu; Precision Edge read counted on three sub-scores only, k39 unread, not failed."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected; no standing lesson applies.",
+  "Bracket fields were not read and are no part of any nomination, conviction or held verdict (R1).",
+  "Fewer than ten nominations by choice: six is the R33 cap; next names on the sheet (MCD, SNY, FISV) were weaker on path or acceleration."
+ ],
+ "shortfall_reason": null
+}

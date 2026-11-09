@@ -1,0 +1,117 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a pause, a daily close at a new closing high"
+   },
+   "wrong_if": "Daily close under ma_20 = the advance failed.",
+   "market_void": null,
+   "reason": "Top RS with a measured base: `subcomponents.structure.base_score` 15.0, `subcomponents.structure.rs_accel_score` 15.0, `pipe_rank` 90.5. But D 14.4% over the swing high = chase (C5), `flow` 69.7 soft. Wait for a pause."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under the last swing high = breakout failed.",
+   "market_void": null,
+   "reason": "Template passes, widening RS lead near the pivot (D 3.2% over): `subcomponents.structure.rs_accel_score` 15.0, `subcomponents.structure.rs_spy_score` 15.0, `mp` 93.0. Cautions: `flow` 65.8, `subcomponents.flow.accum_score` 0.0 (C6)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Once volume picks up, an hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under the last swing high = breakout failed.",
+   "market_void": null,
+   "reason": "Near the pivot (D 0.9% over) with strong RS: `structure` 87.4, `subcomponents.structure.rs_vs_spy` 19.7. But `sc_m_gates` False on `flow` 57.9, `subcomponents.flow.volume_score` 2.0: no breakout volume (C6); ma50 just under the ma100 proxy."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last pivot high, out of the flag"
+   },
+   "wrong_if": "Daily close under base_low_20d = the flag failed.",
+   "market_void": null,
+   "reason": "Power-play shape (C18): W/D HH/HL, `subcomponents.structure.rs_vs_spy` 76.6, `subcomponents.structure.base_score` 15.0, `mp` 96.0; flagging 10.6% under the swing high. Cautions: `subcomponents.structure.rs_accel` -26.37, `flow` 57.9."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "After a pause, a daily close at a new closing high"
+   },
+   "wrong_if": "Daily close under ma_20 = the thrust failed.",
+   "market_void": null,
+   "reason": "Full stack, widening lead: `mp` 100.0, `subcomponents.structure.rs_accel_score` 15.0. But D 24.4% over the swing high and `subcomponents.structure.base_score` 5.0: a chase (C5). Wait for a new base."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last pivot high"
+   },
+   "wrong_if": "Daily close under base_low_20d = the base failed.",
+   "market_void": null,
+   "reason": "Template clean, basing 2.0% under the swing high, pre-pivot (C5): `energy` 76.5, `subcomponents.structure.wk_score` 15.0, `subcomponents.structure.resist_score` 10.0. Caution: `sc_m_gates` False on `flow` 53.9 - breakout volume must show (C6)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Once volume picks up, an hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under the last swing high = breakout failed.",
+   "market_void": null,
+   "reason": "Template passes at the pivot (D 0.4% over): `structure` 75.8, `subcomponents.structure.wk_score` 15.0. But `sc_m_gates` False on `flow` 52.6, `subcomponents.flow.volume_score` 2.0 = no volume (C6); staple, rarely a leader (C15)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "On expanding volume, a daily close above the last pivot high"
+   },
+   "wrong_if": "Daily close under base_low_20d = the base failed.",
+   "market_void": null,
+   "reason": "Measured base at the pivot, top RS: `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `subcomponents.structure.rs_accel_score` 15.0, `mp` 97.0. Thin `flow` 36.8 means volume must prove it (C6); `pipe_rank` 0 noted."
+  }
+ ],
+ "declarations": [
+  "trend_template: ma20/50/100/200 + from_52w_hi from my blind sheet; ma_150, 200-day slope, low_52w NOT_SERVED; ma_100 is the 150 proxy (C3). rs_proxy: subcomponents.structure.rs_* + rs_leadership, not IBD RS (C11).",
+  "vcp_detail NOT_SERVED (base_score/base_days composite only, C4); volume_signature: flow/volume_score at the current bar only (C6); earnings_growth NOT_SERVED (C1 el.2, C12, R4).",
+  "R9 advisory: many survivors are staples/utilities/health care (KO, CHD, WTRG, WCN, BDX, GEHC, ADP) - leadership rotating defensive (C14, C15, C17). Market-timing context, not a block on any name.",
+  "R1 honoured: no OPPOSE or answer rests on a bracket. market_void null throughout: my method reads the market from leadership, no watchable index line."
+ ]
+}

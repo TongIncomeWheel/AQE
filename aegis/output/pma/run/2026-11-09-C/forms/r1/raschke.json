@@ -1,0 +1,438 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-09",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HLT",
+   "conviction": 4,
+   "reason": "BREAKOUT/test of prior high (C2,C20): structure_shift BULLISH_BOS, 1.61% off 52w high. `sc_momentum` 78.3 with `sc_m_gates` True; `mp` 92.0 and `subcomponents.mp.adx_val` 40.88 say a strong trend; `subcomponents.energy.exhaustion_score` 10.0 = no climax wear.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "mp",
+    "subcomponents.mp.adx_val",
+    "subcomponents.energy.exhaustion_score",
+    "structure_shift",
+    "sma_distance_pct",
+    "mp_accel_state",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift 3.0 (BULLISH_BOS); sma_distance_pct 12.59",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C7"
+     ],
+     "observed": "breakout above confirmed pivot; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); exact 20-day extreme and NR4/NR7 not served",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED as gate, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, breadth out of scope",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid False (context only, R1); my line = bracket.atr_fallback_stop 361.47 below entry 370.45 — a close back under the broken pivot area",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ],
+   "falsifier": "Close back below bracket.atr_fallback_stop 361.47 (the broken pivot fails = Turtle-Soup failure against the long), or structure_shift flips to BEARISH_CHOCH."
+  },
+  {
+   "ticker": "KO",
+   "conviction": 4,
+   "reason": "BREAKOUT at the prior extreme, lowest-risk test (C20): structure_shift BULLISH_BOS, 0.17% off 52w high, sma_distance_pct 6.37 not stretched. `pipe_rank` 85.2 steady; `sc_momentum` 76.7 gates True; `subcomponents.mp.adx_val` 31.39 a real trend; `subcomponents.energy.squeeze_score` 4.0 mild coil.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "pipe_rank",
+    "subcomponents.mp.adx_val",
+    "subcomponents.energy.squeeze_score",
+    "structure_shift",
+    "sma_distance_pct",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift 3.0 (BULLISH_BOS); sma_distance_pct 6.37",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "test-and-hold of prior high; mp_state 2 (FADING = default label, not decay), mp_accel_state 1 (ACCELERATING); energy.squeeze_score 4.0 partial contraction proxy",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "energy.squeeze_score"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED as gate, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, breadth out of scope",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid False (context only, R1); my line = bracket.atr_fallback_stop 93.84 under entry 95.67, just below the broken high",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ],
+   "falsifier": "Close below bracket.atr_fallback_stop 93.84 — the breakout of the 52w extreme fails and becomes a short-side Turtle Soup."
+  },
+  {
+   "ticker": "BRX",
+   "conviction": 3,
+   "reason": "BREAKOUT from a base not yet stretched (C2): structure_shift BULLISH_BOS, sma_distance_pct 6.16. `sc_momentum` 79.6 gates True; `flow` 85.5 = money in on up days; `mp` 97.0 with `subcomponents.mp.adx_val` 37.3 = trend strong. mp_accel_state FLAT tempers it.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "flow",
+    "mp",
+    "subcomponents.mp.adx_val",
+    "structure_shift",
+    "sma_distance_pct",
+    "mp_accel_state",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift 3.0 (BULLISH_BOS); sma_distance_pct 6.16",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C7"
+     ],
+     "observed": "break of confirmed pivot; mp_state 3 (STRONG), mp_accel_state 3 (FLAT); no N-day extreme or bar-range series",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED as gate, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, breadth out of scope",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid False (context only, R1); my line = bracket.atr_fallback_stop 29.4 under entry 30.02",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ],
+   "falsifier": "Close below bracket.atr_fallback_stop 29.4 or structure_shift back to RANGE/BEARISH_CHOCH."
+  },
+  {
+   "ticker": "MCD",
+   "conviction": 3,
+   "reason": "BREAKOUT off a deep base (C2): structure_shift BULLISH_BOS. `sc_momentum` 83.7 gates True; `mp` 100.0, `subcomponents.mp.adx_val` 42.08, `subcomponents.mp.roc_zscore` 2.27 = exceptional thrust. sma_distance_pct 11.15 after a fast run: watch for range-expansion climax (C19).",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "mp",
+    "subcomponents.mp.adx_val",
+    "subcomponents.mp.roc_zscore",
+    "structure_shift",
+    "sma_distance_pct",
+    "bracket.atr_fallback_stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift 3.0 (BULLISH_BOS); sma_distance_pct 11.15",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3",
+      "C11"
+     ],
+     "observed": "pivot break after thrust; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); day_vol 1.12",
+     "verdict": "partial",
+     "fields": [
+      "mp_state",
+      "mp_accel_state",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED as gate, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, breadth out of scope",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid False (context only, R1); my line = bracket.atr_fallback_stop 270.34 under entry 276.52",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.atr_fallback_stop",
+      "entry"
+     ]
+    }
+   ],
+   "falsifier": "Close below bracket.atr_fallback_stop 270.34, or a wide range-expansion reversal bar (C19 climax exit)."
+  },
+  {
+   "ticker": "USFD",
+   "conviction": 2,
+   "reason": "Range-contraction BREAKOUT (C12): `subcomponents.energy.squeeze_score` 8.5 coiled, structure_shift ABOVE_STRUCTURE, sma_distance_pct 7.5. `sc_momentum` 69.4 gates True; `energy` 71.4; mp_accel_state ACCELERATING. elder_pattern INTERRUPTED and `subcomponents.flow.accum_score` 0.0 caution.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "energy",
+    "subcomponents.energy.squeeze_score",
+    "subcomponents.flow.accum_score",
+    "energy.squeeze_score",
+    "structure_shift",
+    "bracket.stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "structure_shift 1.0 (ABOVE_STRUCTURE); sma_distance_pct 7.5; energy.squeeze_score 8.5",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "energy.squeeze_score"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C12",
+      "C13"
+     ],
+     "observed": "Crabel contraction proxy only: energy.squeeze_score 8.5, atr_14d 3.4, atr_caution False; NR4/NR7 count not served",
+     "verdict": "partial",
+     "fields": [
+      "energy.squeeze_score",
+      "atr_14d",
+      "atr_caution"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C3",
+      "C12"
+     ],
+     "observed": "declared: adx NOT_SERVED as gate, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, breadth out of scope",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C17",
+      "C20"
+     ],
+     "observed": "bracket.valid True; bracket.stop 102.56 (stop_type 2.0 fib_786) under entry 106.67, bracket.risk_pct 3.85",
+     "verdict": "pass",
+     "fields": [
+      "bracket.valid",
+      "bracket.stop",
+      "bracket.stop_type",
+      "entry"
+     ]
+    }
+   ],
+   "falsifier": "Close below bracket.stop 102.56 — failed contraction breakout (C23 says the failure itself points the other way)."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {
+   "field": "held",
+   "impact": "Every packet row has held False and all held_book.* fields empty, so no MP or V held name was available to review; held_review is empty for that reason, not by omission."
+  },
+  {
+   "field": "adx (rising/falling series)",
+   "impact": "Holy Grail (C7) needs ADX>30 AND rising; only a single adx value is served, so no retracement could be gated and none was nominated."
+  },
+  {
+   "field": "rolling 20-day high/low",
+   "impact": "Turtle Soup (C3) and 80-20 (C4) only approximated via structure_shift + sma_distance_pct."
+  },
+  {
+   "field": "per-bar range history",
+   "impact": "NR4/NR7/ID and the 6/100 HV ratio (C12/C13) unavailable; energy.squeeze_score used as partial proxy."
+  }
+ ],
+ "declarations": [
+  {
+   "ticker": "HLT",
+   "setup_type": "breakout",
+   "adx": "NOT_SERVED on my menu (C7, C8); AQE subcomponents.mp.adx_val read as the Report C indicator, not as a Holy Grail gate (no ADX-rising series)",
+   "stochastic_kd": "NOT_SERVED (C6)",
+   "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+   "bar_range_history": "NOT_SERVED (C12, C13)",
+   "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+  },
+  {
+   "ticker": "KO",
+   "setup_type": "breakout (test of prior extreme)",
+   "adx": "NOT_SERVED on my menu (C7, C8); AQE subcomponents.mp.adx_val read as the Report C indicator, not as a Holy Grail gate (no ADX-rising series)",
+   "stochastic_kd": "NOT_SERVED (C6)",
+   "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+   "bar_range_history": "NOT_SERVED (C12, C13)",
+   "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+  },
+  {
+   "ticker": "BRX",
+   "setup_type": "breakout",
+   "adx": "NOT_SERVED on my menu (C7, C8); AQE subcomponents.mp.adx_val read as the Report C indicator, not as a Holy Grail gate (no ADX-rising series)",
+   "stochastic_kd": "NOT_SERVED (C6)",
+   "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+   "bar_range_history": "NOT_SERVED (C12, C13)",
+   "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+  },
+  {
+   "ticker": "MCD",
+   "setup_type": "breakout",
+   "adx": "NOT_SERVED on my menu (C7, C8); AQE subcomponents.mp.adx_val read as the Report C indicator, not as a Holy Grail gate (no ADX-rising series)",
+   "stochastic_kd": "NOT_SERVED (C6)",
+   "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+   "bar_range_history": "NOT_SERVED (C12, C13)",
+   "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+  },
+  {
+   "ticker": "USFD",
+   "setup_type": "breakout (range contraction)",
+   "adx": "NOT_SERVED on my menu (C7, C8); AQE subcomponents.mp.adx_val read as the Report C indicator, not as a Holy Grail gate (no ADX-rising series)",
+   "stochastic_kd": "NOT_SERVED (C6)",
+   "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+   "bar_range_history": "NOT_SERVED (C12, C13)",
+   "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+  }
+ ],
+ "shortfall_reason": "Five, not six: my method only nominates a name that fits one of the four setup types (C2). The highest sc_momentum names (STGW, IBN, RYAN, SARO, FISV) sit ABOVE_STRUCTURE with sma_distance_pct 16-30 and squeeze 0.0: no test, retracement or contraction breakout, and a climax read is subjective (C10, R9). CHOCH names are failed up-structures, not retracements."
+}

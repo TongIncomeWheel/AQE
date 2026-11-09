@@ -1,0 +1,273 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-09",
+ "declarations": [
+  "Triggers are timing words on price fields the PM acts on; my reasons are engine fields only. No bracket field read or used (R1); no Valen flag used (R41).",
+  "`pipe_rank` 0 on LTH is a missing reading, declared, not a zero."
+ ],
+ "answers": [
+  {
+   "pair_id": "BDX-aqe-quant-against~minervini",
+   "ticker": "BDX",
+   "to": "minervini",
+   "text": "\"Energy is not my gate; the Template passes.\" On my test energy is a weighted engine: `energy` 56.3 sits under its 60 floor, `sc_m_gates` False, and R4 is live (`subcomponents.energy.en_trend_bars` 22.0, `subcomponents.energy.exhaustion_score` 7.0). The 3-month lead (`subcomponents.structure.rs_vs_spy` 21.91) I already credited; R6 still holds with `subcomponents.structure.rs_accel` -1.04. W/D HH/HL is not my menu. No concession.",
+   "concede": false
+  },
+  {
+   "pair_id": "FA-aqe-quant-for~oneil",
+   "ticker": "FA",
+   "to": "oneil",
+   "text": "\"No volume; buy point passed.\" `subcomponents.flow.accum_score` 1.5 is my own field and I named it as the case against; it stands as thinness, not a failure: `flow` 69.7 clears its 60 floor on `subcomponents.flow.flow_score` 17.0. The claim was path and structure: `pipe_rank` 90.5, `structure` 89.5, `subcomponents.structure.rs_accel` 17.67 are unrefuted. The D swing distance is not on my menu. Partial point taken, claim holds.",
+   "concede": false
+  },
+  {
+   "pair_id": "GMAB-aqe-quant-against~minervini",
+   "ticker": "GMAB",
+   "to": "minervini",
+   "text": "\"In a power-play flag volume must dry up.\" A flag is not on my menu. On my fields the heaviest engine fails: `flow` 57.9 under its floor with `subcomponents.flow.volume_score` 0.0, `sc_m_gates` False. The 1m-vs-3m erosion is exactly what `subcomponents.structure.rs_accel` -26.37 measures and `subcomponents.structure.rs_accel_score` 0.0 scores it. No concession.",
+   "concede": false
+  },
+  {
+   "pair_id": "GMAB-aqe-quant-against~raschke",
+   "ticker": "GMAB",
+   "to": "raschke",
+   "text": "\"Drying volume and slowing push are a retracement.\" The retracement reading is your method; my fields agree with my claim, not against it: `mp_accel_state` DECELERATING and `subcomponents.flow.volume_score` 0.0 are the slowing you cite. `subcomponents.mp.adx_val` 49.99 is trend strength I credit, but `flow` 57.9 still fails its floor. H1 9<21 is not my test. No concession.",
+   "concede": false
+  },
+  {
+   "pair_id": "SWK-aqe-quant-for~oneil",
+   "ticker": "SWK",
+   "to": "oneil",
+   "text": "\"No fresh base or buying.\" Base is step 7, n/a for an extended name (A9), so `subcomponents.structure.base_score` 5.0 is not a case against here. `subcomponents.flow.accum_score` 1.5 is thin, but `flow` 69.7 clears its floor on `subcomponents.flow.flow_score` 17.0, and R2/R5/R8/R9 stand: `mp` 100.0, `subcomponents.structure.rs_accel` 17.39, A-TIER + ACCELERATING, `subcomponents.mp.roc_zscore` 2.54. No concession.",
+   "concede": false
+  },
+  {
+   "pair_id": "CHD-aqe-quant-against~livermore",
+   "ticker": "CHD",
+   "to": "livermore",
+   "text": "\"Trend passes; concentration is no flaw.\" You confirm my weights: `flow` 52.6 and `subcomponents.flow.accum_score` 1.5, `mp_accel_state` DECELERATING. `subcomponents.mp.adx_val` 47.86 and `pipe_rank` 81.7 I accept as strength, but the heaviest engine fails its floor (`sc_m_gates` False). The sector remark was not my reason and I withdraw it. Claim holds on the fields.",
+   "concede": false
+  },
+  {
+   "pair_id": "LTH-aqe-quant-against~minervini",
+   "ticker": "LTH",
+   "to": "minervini",
+   "text": "\"The base is the strongest read; pipe_rank 0 is missing.\" Agreed that `pipe_rank` 0 is a missing reading; I declared it so, never a zero. `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0 I credit inside `structure` 87.4. But the heaviest engine shows money leaving: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Narrow case stands.",
+   "concede": false
+  },
+  {
+   "pair_id": "LTH-aqe-quant-against~raschke",
+   "ticker": "LTH",
+   "to": "raschke",
+   "text": "\"A test of the prior high with trend and base.\" A test of a high is not on my menu. You concede `flow` 36.8, which is my claim. `subcomponents.mp.adx_val` 31.72 and `subcomponents.energy.exhaustion_score` 10.0 are real, but `subcomponents.flow.cmf` -0.09 says closes near the lows on volume and `sc_m_gates` is False on flow. No concession.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "IBN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "a daily close above Friday's high while the engines still agree"
+   },
+   "wrong_if": "`sc_m_gates` turns False, `mp_accel_state` flips DECELERATING, or `subcomponents.flow.ext_score` turns negative.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 98.7, `energy` 66.4, `structure` 84.2, `mp` 97.0; `subcomponents.flow.ext_score` 5.0 breakout bonus; R5 `subcomponents.structure.rs_accel` 6.64; `subcomponents.mp.roc_zscore` 3.1 exceptional; ACCELERATING."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"
+   },
+   "wrong_if": "`subcomponents.energy.exhaustion_score` drops under 10 on this live run, or `sc_m_gates` turns False.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 76.3, `energy` 71.4, `structure` 77.9, `mp` 92.0; tested clean (`subcomponents.energy.en_trend_bars` 32.0, `subcomponents.energy.exhaustion_score` 10.0). WAIT on R6: `subcomponents.structure.rs_accel` -1.95."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING while `subcomponents.structure.rs_accel` stays negative, or `sc_m_gates` False.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 75.0, `energy` 71.4, `structure` 77.9, `mp` 86.0; R8 A-TIER (`pipe_rank` 85.2) + ACCELERATING; tested clean at `subcomponents.energy.en_trend_bars` 22.0. WAIT on R6: `subcomponents.structure.rs_accel` -0.7."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for a pull-in to the 20-day average to rest the worn run, then act"
+   },
+   "wrong_if": "`energy` falls under its 60 floor, or `subcomponents.energy.exhaustion_score` falls below 8.5.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 82.9, `energy` 62.2, `structure` 94.7, `mp` 89.0; R5 `subcomponents.structure.rs_accel` 14.85; `subcomponents.structure.base_score` 15.0. WAIT on R4: `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 17.0."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "a daily close above Friday's high while the engines still agree"
+   },
+   "wrong_if": "`sc_m_gates` False, `mp_accel_state` DECELERATING, or `subcomponents.flow.ext_score` below 0.",
+   "market_void": null,
+   "reason": "Broadest on the sheet: `flow` 96.1, `energy` 71.4, `structure` 86.7, `mp` 100.0; R8 A-TIER (`pipe_rank` 87.0) + ACCELERATING; R9 `subcomponents.mp.roc_zscore` 2.96, `subcomponents.mp.rel_mom_score` 25.0."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`energy` recovers above 60 with `subcomponents.energy.exhaustion_score` back at 10 and `sc_m_gates` True.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on energy: `energy` 56.3. R4 live wear: `subcomponents.energy.exhaustion_score` 7.0 at `subcomponents.energy.en_trend_bars` 22.0. R6 `subcomponents.structure.rs_accel` -1.04. Narrow on `mp` 96.0."
+  },
+  {
+   "ticker": "FOUR",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`mp` rises above 75 ACCELERATING with `subcomponents.structure.rs_vs_spy` turning positive.",
+   "market_void": null,
+   "reason": "Narrow on flow (`flow` 96.1) while `mp` 55.0 sits at its floor, DECELERATING; no trend: `subcomponents.mp.adx_val` 14.82, `subcomponents.mp.mp_adx_score` 0.0; `subcomponents.structure.rs_vs_spy` -2.94; D-SKIP, `pipe_rank` 42.6."
+  },
+  {
+   "ticker": "GEHC",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "a daily close above Friday's high while the engines still agree"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING, or `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 88.2, `energy` 71.4, `structure` 78.9, `mp` 96.0; `subcomponents.flow.accum_score` 7.5 max; R5 `subcomponents.structure.rs_accel` 13.75; tested clean at `subcomponents.energy.en_trend_bars` 21.0; ACCELERATING."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "a daily close above Friday's high while the engines still agree"
+   },
+   "wrong_if": "`flow` drops under its 60 floor, or `subcomponents.energy.exhaustion_score` drops under 10.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 80.3, `energy` 71.4, `structure` 84.2, `mp` 97.0; tested clean at `subcomponents.energy.en_trend_bars` 18.0; R8 B-STRONG + ACCELERATING; R9 `subcomponents.mp.roc_zscore` 2.04."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"
+   },
+   "wrong_if": "`flow` drops under its 60 floor, or `mp_accel_state` turns DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 69.7, `energy` 63.0, `structure` 89.5, `mp` 97.0; A-TIER `pipe_rank` 90.5; R5 `subcomponents.structure.rs_accel` 17.67. WAIT: `mp_accel_state` FLAT, `subcomponents.flow.accum_score` 1.5 thin."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"
+   },
+   "wrong_if": "`flow` drops under its 60 floor, or `mp_accel_state` turns DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 65.8, `energy` 64.7, `structure` 78.9, `mp` 93.0; tested clean at `subcomponents.energy.en_trend_bars` 18.0; R5 `subcomponents.structure.rs_accel` 10.01. WAIT: `subcomponents.flow.accum_score` 0.0, FLAT."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if `flow` clears 60 and the name runs with `mp` 96.0 intact.",
+   "market_void": null,
+   "reason": "Split: `flow` 57.9 fails its floor (`subcomponents.flow.accum_score` 1.5) while `structure` 87.4 and `mp` 96.0 are strong; `mp_accel_state` DECELERATING. No decisive case."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` back above 60 with `subcomponents.structure.rs_accel` turning positive.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow: `flow` 57.9, `subcomponents.flow.volume_score` 0.0. R6 strongly: `subcomponents.structure.rs_accel` -26.37, `subcomponents.structure.rs_accel_score` 0.0; `mp_accel_state` DECELERATING."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "a daily close above Friday's high while the engines still agree"
+   },
+   "wrong_if": "`subcomponents.energy.exhaustion_score` drops under 10 on the live run, or `mp_accel_state` DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 69.7, `energy` 71.4, `structure` 78.9, `mp` 100.0; tested clean at `subcomponents.energy.en_trend_bars` 19.0; R5 `subcomponents.structure.rs_accel` 17.39; R8 A-TIER + ACCELERATING; R9 `subcomponents.mp.roc_zscore` 2.54."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if `flow` clears 60 and the name runs with the other engines intact.",
+   "market_void": null,
+   "reason": "Split: `flow` 53.9 fails its floor (`subcomponents.flow.flow_score` 11.0, `subcomponents.flow.accum_score` 1.5) against `energy` 76.5, `structure` 84.2, `mp` 89.0. Heaviest engine failing: no decisive case."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` recovers above 60 with `subcomponents.flow.accum_score` rising and `mp_accel_state` no longer DECELERATING.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow: `flow` 52.6, `subcomponents.flow.accum_score` 1.5, `subcomponents.flow.volume_score` 2.0. `mp_accel_state` DECELERATING; `subcomponents.structure.rs_accel` 3.61 small."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` recovers above 60 with `subcomponents.flow.cmf` turning positive.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow, badly: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Narrow: held up by `mp` 97.0 and `structure` 87.4. `pipe_rank` 0 is a missing reading."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "aqe-quant.part1of2.json",
+   "bytes": 9610,
+   "sha256": "acd8a4a3e43f"
+  },
+  {
+   "file": "aqe-quant.part2of2.json",
+   "bytes": 4161,
+   "sha256": "5c948bad96a9"
+  }
+ ]
+}

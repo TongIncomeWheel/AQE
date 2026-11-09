@@ -1,0 +1,67 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-09",
+ "declarations": [
+  "Declared: fundamentals C, A, S, I NOT_AVAILABLE (R10); base_stage NOT_AVAILABLE (C19); market_gate DELEGATED (C1); rs_measure rs_leadership (substitute); volume_measure day_vol vs 20d (substitute).",
+  "Part 2 of 2: decisions on FA AJG WCN GMAB SWK ADP CHD LTH; answers filed in part 1. No stance rests on a bracket (R1) or a Valen flag (R41)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FA",
+   "stance": "ABSTAIN",
+   "wrong_if": "FA advances on light volume: then waiting was wrong.",
+   "market_void": null,
+   "reason": "Measured base on a leader (`structure` 89.5, `subcomponents.structure.base_score` 15.0) but day_vol 0.79, `subcomponents.flow.accum_score` 1.5, and D 14.4% past the swing high: past the pivot, no volume."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "ABSTAIN",
+   "wrong_if": "AJG advances on light volume: then demand was there unseen.",
+   "market_void": null,
+   "reason": "Leader inside the 5% zone (D 3.2% over swing high, `structure` 78.9) but no demand at the pivot: day_vol 0.84, `subcomponents.flow.accum_score` 0.0, `flow` 65.8."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "wrong_if": "WCN advances on light volume: then demand was there unseen.",
+   "market_void": null,
+   "reason": "Leader with `structure` 87.4, D 0.9% over swing high, but day_vol 0.74, `subcomponents.flow.volume_score` 2.0 and `sc_m_gates` False on `flow` 57.9: no institutional demand showing (C16)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "OPPOSE",
+   "wrong_if": "GMAB bases above ma50 and breaks out on day_vol 1.40+: then it was not a climax.",
+   "market_void": null,
+   "reason": "Climax zone (C24, R7): entry 53.63 ~73% over ma200 31.05. `subcomponents.structure.rs_accel` -26.37 lead narrowing fast, `flow` 57.9 with `sc_m_gates` False, `subcomponents.flow.volume_score` 0.0. Sell into, never buy."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "ABSTAIN",
+   "wrong_if": "SWK keeps climbing on light volume: then waiting cost the move.",
+   "market_void": null,
+   "reason": "Leader with `mp` 100.0, `structure` 78.9, but D 24.4% past the swing high (C17), day_vol 1.06, `subcomponents.flow.accum_score` 1.5, `subcomponents.structure.base_score` 5.0: past the buy point."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "wrong_if": "ADP breaks out of the range on volume while I sit out.",
+   "market_void": null,
+   "reason": "At the pivot with a coil (D 2.0% under swing high, `energy` 76.5, `structure` 84.2) but no breakout yet: structure_shift RANGE, day_vol 1.02, `sc_m_gates` False on `flow` 53.9."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "OPPOSE",
+   "wrong_if": "CHD runs from the break without volume expanding past 1.40.",
+   "market_void": null,
+   "reason": "C16 fails: break 0.4% over swing high on day_vol 0.87; `subcomponents.flow.volume_score` 2.0 volume drying up; `flow` 52.6 leaves `sc_m_gates` False. Trend (`mp` 92.0) is not demand."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "wrong_if": "LTH breaks its pivot on volume while I sit out.",
+   "market_void": null,
+   "reason": "Sound base at the pivot (`structure` 87.4, `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, D 0.4% under swing high) but no demand: day_vol 0.69, `flow` 36.8, `subcomponents.flow.accum_score` 0.0."
+  }
+ ]
+}

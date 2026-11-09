@@ -1,0 +1,120 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-09",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "JNJ",
+   "reason": "Permission event: elder_5d [7, 4, 9, 6, 10], last bar 10.0 after a 6; CORRECTION_REENTRY with mp_state STRONG (R8); weekly UP, price_ema_slope 1.0877. AQE: `structure` 77.9, `mp` 76.0, `pipe_rank` 80.7 back the trend; `sc_m_gates` False on `flow` 39.5.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "structure", "pipe_rank", "sc_m_gates", "flow", "weekly_trend_direction", "price_ema_slope"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [7, 4, 9, 6, 10]: 6 then 10 on last bar; elder_pattern CORRECTION_REENTRY, mp_state STRONG", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 1.0877; force_index_ema_13 8975597.73 (bullish zone); force_index_ema_2 20780725.27 not under zero", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 276.22 under channel_upper 288.9; own invalidation ma_50 265.79; dollar risk and costs are the PM's step", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition on last bar plus R8; colour change BLUE to GREEN, not red giving way", "verdict": "pass", "fields": ["elder_5d", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_50 265.79 (my own value-zone level) or impulse_colour_last_bar turning RED ends the dip-and-reclaim read."
+  },
+  {
+   "ticker": "ETR",
+   "reason": "Permission event: elder_5d [7, 7, 10, 6, 7], a 6 then a 7 (blue is already permission, C3); mp_state STRONG, weekly UP, structure_shift BULLISH_BOS. AQE: `sc_m_gates` True, `structure` 77.9, `mp` 76.0, `sc_momentum` 69.9 back the trend leg.",
+   "fields_cited": ["elder", "elder_5d", "mp_state", "mp", "sc_m_gates", "structure", "sc_momentum", "weekly_trend_direction"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [7, 7, 10, 6, 7]: 6 then 7 on last bar; elder_pattern null", "verdict": "pass", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.2794; force_index_ema_13 1382424.65; force_index_ema_2 262942.08 not under zero", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 110.55 under channel_upper 113.28; own invalidation ma_20 107.43; dollar risk is the PM's step", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition on last bar but only to 7 (blue), colour unchanged BLUE/BLUE", "verdict": "partial", "fields": ["elder_5d", "impulse_colour_prior_bar"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 107.43 (my own level) or the next bar back at elder 6 or lower / RED."
+  },
+  {
+   "ticker": "ABNB",
+   "reason": "Red gave way and reclaimed: elder_5d [5, 0, 9, 6, 10], 6 then 10.0, CORRECTION_REENTRY; weekly UP, price_ema_slope 2.8763, entry 189.99 under channel_upper 196.68. AQE: `structure` 77.9, `energy` 73.9 strong; `mp` 55.0 BUILDING, `sc_m_gates` False on flow.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "structure", "energy", "sc_m_gates", "weekly_trend_direction", "price_ema_slope", "entry", "channel_upper"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [5, 0, 9, 6, 10]: 6 then 10 on last bar; CORRECTION_REENTRY but mp_state BUILDING so R8 not met", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 2.8763; force_index_ema_13 35532024.51; force_index_ema_2 159908924.75 not under zero", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 189.99 under channel_upper 196.68; own invalidation ma_20 171.47; dollar risk is the PM's step", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition on last bar; mp 55.0 BUILDING keeps conviction below JNJ", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 171.47 (my own level) or impulse_colour_last_bar back to RED."
+  },
+  {
+   "ticker": "EVRG",
+   "reason": "Dip-and-reclaim (R8): elder_5d [10, 7, 6, 9, 10], a 6 two bars back then reclaimed; CORRECTION_REENTRY, mp_state STRONG, weekly UP. AQE: `sc_m_gates` True, `mp` 90.0, `structure` 81.1, `pipe_rank` 94.4. Entry 87.54 sits just under channel_upper 87.87.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "sc_m_gates", "structure", "pipe_rank", "entry", "channel_upper"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [10, 7, 6, 9, 10]: event 6 to 9 two bars back, not last bar; CORRECTION_REENTRY with mp_state STRONG (R8)", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.3476; force_index_ema_13 1760405.77; force_index_ema_2 2358856.51 not under zero", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 87.54 vs channel_upper 87.87, at the wall; own invalidation ma_20 84.35", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "R8 analogue, incomplete (no volume read); transition is two bars old", "verdict": "partial", "fields": ["elder_5d", "elder_pattern"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 84.35 (my own level), or price over channel_upper 87.87 at entry (R5 refuses the long)."
+  },
+  {
+   "ticker": "BILL",
+   "reason": "R8 dip-and-reclaim: CORRECTION_REENTRY, mp_state STRONG, elder_5d [9, 7, 10, 7, 10] (blue dips, never red); weekly UP, entry 52.41 under channel_upper 55.64. AQE: `sc_momentum` 80.3, `sc_m_gates` True, `structure` 94.7, `mp` 89.0.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "sc_momentum", "sc_m_gates", "structure", "entry", "channel_upper"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 10.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [9, 7, 10, 7, 10]: no 6-or-lower bar; passes only via CORRECTION_REENTRY + mp_state STRONG (R8)", "verdict": "partial", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.4495; force_index_ema_13 995988.96; force_index_ema_2 2215027.04 not under zero", "verdict": "pass", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 52.41 under channel_upper 55.64; own invalidation ma_20 48.44", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "no red-to-permission event; R8 analogue only, incomplete", "verdict": "partial", "fields": ["elder_5d"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 48.44 (my own level) or a RED impulse bar."
+  },
+  {
+   "ticker": "TEM",
+   "reason": "Elder's best long signal: impulse RED to GREEN on the last bar, elder_5d [10, 10, 7, 5, 9], CORRECTION_REENTRY, weekly UP. AQE is the case against: `structure` 41.1, `mp` 47.0, `sc_m_gates` False; only `flow` 71.1 supports. Low conviction.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp", "structure", "sc_m_gates", "flow", "impulse_colour_last_bar", "impulse_colour_prior_bar", "weekly_trend_direction"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 9.0; impulse_colour_last_bar GREEN", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [10, 10, 7, 5, 9]: 5 then 9; impulse_colour_prior_bar RED (red giving way, R2)", "verdict": "pass", "fields": ["elder_5d", "impulse_colour_prior_bar", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.4371; but mp 47.0, mp_state FADING", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "mp", "mp_state"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 76.05 under channel_upper 90.72; own invalidation ma_20 70.75", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "clean transition, weak trend behind it", "verdict": "partial", "fields": ["elder_5d", "mp"]},
+    {"step": 6, "canon_ref": ["C4", "C18"], "observed": "held False; held-name trigger not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar back to RED, or a close under ma_20 70.75 (my own level)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "V", "verdict": "KEEP", "line": "elder_5d [10, 7, 10, 7, 7]: no single-bar drop (7 to 7); BLUE, weekly UP; force_index_ema_2 -34602796.05 under zero with price_ema_slope 1.2992 is a pullback (R3), not an exit; `sc_m_gates` True, `mp` 83.0."},
+  {"ticker": "MP", "verdict": "KEEP", "line": "No MP row in either packet: Elder read not possible. Nothing supports TIGHTEN or EXIT; the existing stop stays and is never lowered (C18). Declared in data_gaps."}
+ ],
+ "data_gaps": [
+  {"field": "MP row (elder, elder_5d, elder_pattern, mp_state, mp, impulse_colour_*, aqe_indicators)", "impact": "Held name MP absent from elder-lens.tsv and aqe_indicators.tsv; the R7 single-bar-drop test cannot be run, so its KEEP is a default, not a read."},
+  {"field": "held", "impact": "held reads False on the V row although V is a held name; I reviewed V as held per the prompt."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected; no standing lesson applies.",
+  "Censor duty: elder 0.0 with impulse RED on C and SYNA; buying is forbidden on both (C3).",
+  "Permission events I declined: COMP and VIK (structure_shift BEARISH_CHOCH, R11); WSE, TIGO, WSC, PRM, OUST (weekly_trend_direction DOWN, R6); APLE and EL (elder_pattern INTERRUPTED, trend leg fails per step 3).",
+  "R3 (force_index_ema_2 under zero with price_ema_slope rising) fires on none of the six nominees.",
+  "TEM carries ma_status PENDING_UNCLEAR (asset purchase); the EVENT-DRIVEN filter runs after tally.",
+  "Invalidation levels are my own, from ma_20/ma_50 (simple averages, outside my stated menu); no bracket field was used as a reason."
+ ],
+ "shortfall_reason": null
+}

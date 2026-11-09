@@ -1,0 +1,284 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-09",
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED as a one-day reaction of 1x atr_14d off the day's high, not literal 6 points (C7, C18-C20); the multiplier is my translation",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "REPORT C: every SUPPORT/OPPOSE rests on >=2 AQE composite/sub-component fields; elder advisory only; R1: no bracket basis; no Valen flags (R41)",
+  "timing rule: ACT_NOW where the name sits within ~2% of its 20-day high; WAIT where a reaction is still under way and the new high must print first"
+ ],
+ "answers": [
+  {
+   "pair_id": "HLT-livermore-for~oneil",
+   "ticker": "HLT",
+   "to": "oneil",
+   "text": "\"Under +40% volume is a C16 hard rejection.\" Volume is not my confirmation; fill difficulty is not served to me. My test is the new high after a normal reaction: D HH/HL, 1.6% over the swing high but 2.9% under the 20-day high, so the new high has not printed. `subcomponents.flow.volume_score` 2.0 is a weight I already named; I act only on a close above the 52w closing high.",
+   "concede": false
+  },
+  {
+   "pair_id": "HLT-livermore-for~elder-lens",
+   "ticker": "HLT",
+   "to": "elder-lens",
+   "text": "\"elder 7.0 after three 10s, swing maturing.\" Elder is advisory only to me. My wear read is `subcomponents.energy.exhaustion_score` 10.0 = untouched, `mp` 92.0 with W over EMA9 9>21. The H1 LH/LL is a minor swing my method filters out (C21); a stall then a 1x atr_14d reaction from the rally top (C20) would move me, not the impulse colour.",
+   "concede": false
+  },
+  {
+   "pair_id": "KO-livermore-for~oneil",
+   "ticker": "KO",
+   "to": "oneil",
+   "text": "\"rs_accel -0.7 lead fading, no fresh measured base.\" `subcomponents.structure.base_days` 1497.0 is a long base, and a break of a long base to a new high is sound to me (C16). `subcomponents.structure.rs_accel` -0.7 is a small erosion, noted. D 0.3% over the swing high is thin clearance (C19), which is why my trigger is the new 52w closing high, not this break.",
+   "concede": false
+  },
+  {
+   "pair_id": "STGW-livermore-for~oneil",
+   "ticker": "STGW",
+   "to": "oneil",
+   "text": "\"base_days 4.0, no base; 20.8% past the swing high.\" I do not need a counted base; I need a trend and a new high (C5). W and D both HH/HL, 0.3% under the 20-day high: it is AT its high, not chasing above it. `subcomponents.energy.exhaustion_score` 10.0 = no wear. The extension is real; my guard is the danger signal (1x atr_14d, my translation), not a base count.",
+   "concede": false
+  },
+  {
+   "pair_id": "WTRG-livermore-for~oneil",
+   "ticker": "WTRG",
+   "to": "oneil",
+   "text": "\"Price governed by the pending AWK merger: event-driven.\" This stands on my own engine: event-driven names are not mine to nominate, and a price tied to a deal is not a free trend whose new high means strength (C2). `structure` 84.2 and `mp` 97.0 still read a trend, but I cannot separate it from the deal. I concede and stand aside.",
+   "concede": true
+  },
+  {
+   "pair_id": "ADP-livermore-for~elder-lens",
+   "ticker": "ADP",
+   "to": "elder-lens",
+   "text": "\"Not a reclaim day; elder 7.0, green gone.\" Elder is advisory to me, and 'reclaim' is not my buy test anyway. My test: D HH/HL but 2.0% under the last swing high, so no new high yet. `flow` 53.9 (`sc_m_gates` False) is a weight. I hold SUPPORT only on a close above the 52w closing high; nothing to buy before it.",
+   "concede": false
+  },
+  {
+   "pair_id": "CHD-livermore-for~oneil",
+   "ticker": "CHD",
+   "to": "oneil",
+   "text": "\"day_vol 0.87 on the BOS fails C16.\" Volume is not my test. My Key Price test (C14) is two related names: KO and CHD both broke structure together. But D is 0.4% over the swing high and 4.6% under the 20-day high, H1 9<21: no fast follow-through (C17). So WAIT for the new high, not a buy on this break.",
+   "concede": false
+  },
+  {
+   "pair_id": "LTH-livermore-for~seow",
+   "ticker": "LTH",
+   "to": "seow",
+   "text": "\"cmf -0.09 and flow 36.8 = selling or thin.\" Money-flow is not my confirmation; price at a new high is. W 0.2% and D 0.4% under the swing high: no fresh break yet. `structure` 87.4 and `mp` 97.0 hold the trend. `flow` 36.8 keeps me at low conviction; I act only on the new 52w closing high.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "IBN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above Friday's high: a fresh print at the new high."
+   },
+   "wrong_if": "A one-day reaction of 1x atr_14d off the day's high (my translation of C7), or a close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Leader at its high (C5/C12): `sc_momentum` 85.8 = strong momentum on every engine; `flow` 98.7 = steady buying; `subcomponents.mp.roc_zscore` 3.1 = exceptional month; `subcomponents.structure.resist_score` 10.0 = at the high. H1 HH/HL 0.5% under the high."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the new high ends the reaction."
+   },
+   "wrong_if": "It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes back below pivot_high.",
+   "market_void": null,
+   "reason": "Established trend: `subcomponents.mp.adx_val` 40.88 = very strong trend; `mp` 92.0; `subcomponents.energy.exhaustion_score` 10.0 = no wear. 2.9% under the 20-day high with H1 LH/LL: the pause must end in a new high first."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high, clearing the pivot by a margin (C19)."
+   },
+   "wrong_if": "Failure to extend and a close back below pivot_high (C20), or a one-day reaction of 1x atr_14d off the high.",
+   "market_void": null,
+   "reason": "`pipe_rank` 85.2 = strong trend by steady days; `sc_momentum` 76.7 with `sc_m_gates` True = every engine over its floor; `subcomponents.structure.resist_score` 10.0 = just under the high, 1.8% off. CHD is the Key Price pair (C14)."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "My stand-aside is wrong if it runs straight to a new 52w closing high; I would act on that high.",
+   "market_void": null,
+   "reason": "`structure` 94.7 and `sc_momentum` 80.3 are strong, but it is still under its 52w high and the weekly swing is LH/LL; `energy` 62.2 soft. C5: never buy inside the reaction; wait for the new high."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above Friday's high: the leader prints another new high."
+   },
+   "wrong_if": "A one-day reaction of 1x atr_14d off the day's high (my scaled translation, C7/C18), or a close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W and D HH/HL at the high: `sc_momentum` 87.6 = top momentum; `subcomponents.mp.adx_val` 41.23 = very strong trend; `subcomponents.energy.exhaustion_score` 10.0 = no wear; `subcomponents.energy.en_pos50` 99.17 = at the 50-day high. Extended; the danger signal is my guard."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the new high confirms the trend."
+   },
+   "wrong_if": "A one-day reaction of 1x atr_14d off the high (C7), or a close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W and D HH/HL, 1.4% under the 20-day high: `mp` 96.0 = strong aligned trend; `subcomponents.mp.adx_val` 43.77 = very strong trend. `energy` 56.3 fails its floor (`sc_m_gates` False) and `subcomponents.energy.exhaustion_score` 7.0 = some wear: weights, not vetoes."
+  },
+  {
+   "ticker": "FOUR",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it trends up through its long averages into a new 52w high; I would buy that high.",
+   "market_void": null,
+   "reason": "C16/C5a: a bounce in a downtrend, W 9<21 and 23.4% under the 20-week high. `subcomponents.mp.adx_val` 14.82 = no trend; `pipe_rank` 42.6 = weak, jumpy path; `mp` 55.0 with mp DECELERATING. Buying far under the high is buying on a low price."
+  },
+  {
+   "ticker": "GEHC",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "My stand-aside is wrong if it resumes straight to a new 52w closing high; I would act there.",
+   "market_void": null,
+   "reason": "Established trend (`subcomponents.mp.adx_val` 44.16, `mp` 96.0, W HH/HL) but 5.9% under the 20-day high with `subcomponents.structure.resist_score` 5.0 and H1 below EMA9: a reaction under way. C5 never buys the pullback."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "My stand-aside is wrong if the deal is not what governs the price and it runs to new highs on its own trend.",
+   "market_void": null,
+   "reason": "Conceded to the refuter: a price tied to a pending merger is event-driven, not mine. `structure` 84.2 and `mp` 97.0 read a trend, but I cannot tell trend strength from deal pricing (C2, engine: no event-driven names)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the new high ends the reaction."
+   },
+   "wrong_if": "It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Established trend: `pipe_rank` 90.5 = strong trend by steady days; `structure` 89.5 = beating the market; `subcomponents.mp.adx_val` 35.85 = a real trend. 4.7% under the 20-day high, W LH/LL: the new high must print first."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the new high confirms the trend resumed."
+   },
+   "wrong_if": "It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.",
+   "market_void": null,
+   "reason": "`structure` 78.9 = beating the market, weekly up; `subcomponents.mp.adx_val` 35.62 = a real trend; `mp` 93.0. mp_accel FLAT, `flow` 65.8 soft, 4.4% under the 20-day high with H1 LH/LL: wait for the new high."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high."
+   },
+   "wrong_if": "A one-day reaction of 1x atr_14d off the high (C7), or a close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "`structure` 87.4 = beating the market, weekly up; `subcomponents.mp.adx_val` 41.49 = very strong trend; `mp` 96.0. `flow` 57.9 fails its floor (`sc_m_gates` False); 3.2% under the 20-day high, H1 9<21: low conviction until the new high."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "My stand-aside is wrong if it resumes straight from the reaction to a new 52w closing high.",
+   "market_void": null,
+   "reason": "A leader (`subcomponents.mp.adx_val` 49.99, `mp` 96.0, W HH/HL) in a natural reaction: D 10.6% under the swing high, `subcomponents.structure.rs_accel` -26.37 = lead eroding, `flow` 57.9 under its floor. C8 holds through it; C5 does not buy it."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high, after the current reaction ends."
+   },
+   "wrong_if": "The reaction deepens into a stall under the high and a further 1x atr_14d drop from the rally top (C20), or a close below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W and D HH/HL: `mp` 100.0 = strong aligned trend; `subcomponents.mp.adx_val` 42.46 = very strong trend; `sc_m_gates` True. But 6.4% under the 20-day high with H1 LH/LL: a reaction under way, so only on the new high."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high."
+   },
+   "wrong_if": "It fails short of the swing high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W HH/HL: `structure` 84.2 = beating the market, weekly up; `energy` 76.5 = high in range; `subcomponents.structure.resist_score` 10.0 = just under the high. `flow` 53.9 fails its floor; D 2.0% under the swing high: no new high yet."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: follow-through on the break (C17)."
+   },
+   "wrong_if": "No follow-through and a close back below pivot_high (C17/C20), or KO losing its own break (C14).",
+   "market_void": null,
+   "reason": "`subcomponents.mp.adx_val` 47.86 = very strong trend; `structure` 75.8; `mp` 92.0. KO is the Key Price pair (C14). `flow` 52.6 under its floor; 4.6% under the 20-day high with H1 9<21: wait for the new high."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the fresh break not yet printed."
+   },
+   "wrong_if": "It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.",
+   "market_void": null,
+   "reason": "W and D HH/HL just under the swing high: `structure` 87.4 = beating the market; `mp` 97.0 STRONG/ACCELERATING. `flow` 36.8 and `subcomponents.flow.cmf` -0.09 = thin buying, so low conviction; `pipe_rank` reads 0, not usable."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 9569,
+   "sha256": "ead5263fdc61"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 5278,
+   "sha256": "6f2d75d6fabc"
+  }
+ ]
+}

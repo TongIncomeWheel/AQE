@@ -1,0 +1,1932 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-09",
+ "round": 2,
+ "declarations": [
+  "Read only the files the round prompt lists.",
+  "Bracket fields read as information only (R1); no vote rests on one.",
+  "Vote packet carries no pvp_*, vwap_14d, bar OHLC or rvol_20d for names I did not nominate: their range/trend read rests on structure_shift, MTF and ma stack, and conviction is capped at 2 there.",
+  "SUPPORT at conviction 1-2 on extended trend names = my card's HOLD-FOR-CONDITIONS; extension is never an OPPOSE (R2, C15).",
+  "Steenbarger UNPROVEN: every case here is a hypothesis; no field carries measured edge.",
+  "Vote packet carries no pvp_*, vwap_14d, bar OHLC or rvol_20d for names I did not nominate: their read rests on structure_shift, MTF and ma stack; conviction capped at 2 there."
+ ],
+ "votes": [
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND, but AWAY from value: ABOVE_STRUCTURE, ext_atr20 5.53, 12.0% over the last daily swing high. Effort is real: `flow` 98.7 and `subcomponents.flow.accum_score` 5.5; `subcomponents.energy.exhaustion_score` 10.0 = no climax yet. I do not chase (C3, C15): HOLD-FOR-CONDITIONS, join on the back-up to the Creek or value (C7).",
+   "case": {
+    "for": "Strong demand: `flow` 98.7, `subcomponents.flow.ext_score` 5.0 breakout-on-volume, `mp` 97.0; weekly and daily above EMA9, 9>21.",
+    "against": "Entry 33.89 is far above ma_20 29.8; buying here is buying extension, not a test. `subcomponents.energy.en_pos50` 97.29 = top of the 50-day range.",
+    "entry_trigger": "Pullback into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume (SOS).",
+    "wrong_if": "Daily close back below structure_shift_ref (re-entering the old range).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "An orderly low-volume back-up holding above the Creek raises conviction; a wide down bar on volume through it ends the idea.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh BULLISH_BOS 1.63% over pivot 364.5 (about 0.66 ATR): at the test (C7). But the break came on day_vol 0.85 and `subcomponents.flow.volume_score` 2.0: a low-volume break is a potential upthrust until it holds (C5, R3). `subcomponents.flow.accum_score` 7.5 and `mp` 92.0 keep the bias long.",
+   "case": {
+    "for": "At the Creek test, `subcomponents.flow.accum_score` 7.5, `subcomponents.mp.adx_val` 40.88 strong trend, `subcomponents.structure.wk_score` 15.0 weekly up.",
+    "against": "No volume on the break (day_vol 0.85); H1 below EMA9 with LH/LL: no follow-through yet.",
+    "entry_trigger": "Hourly close above bar_high with volume >= 1.2x (SOS), buy stop, never a limit (C12).",
+    "wrong_if": "Daily close back under structure_shift_ref = upthrust confirmed.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on above-average volume proves the break; a close back in the range kills it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh BULLISH_BOS 0.31% over pivot 95.37 (about 0.16 ATR): price is AT the Creek test (C7) on day_vol 1.01, genuine-looking (R3). `subcomponents.flow.accum_score` 7.5 = accumulation accelerating; `subcomponents.structure.wk_score` 15.0 = weekly trend up (C16 top-down passes).",
+   "case": {
+    "for": "At the test, `pipe_rank` 85.2 steady path, `subcomponents.energy.squeeze_score` 4.0 mild coil, U&R MET reclaim of the 9-day.",
+    "against": "`subcomponents.structure.rs_accel` -0.7 = lead fading; `subcomponents.flow.cmf` 0.03 barely positive: thin effort behind the break.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x (SOS), buy stop.",
+    "wrong_if": "Daily close back below structure_shift_ref (back inside the range).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A light-volume dip that holds the Creek adds; a heavy-volume close under it removes.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Above structure and value, on the test of the Creek 50.76 and VAH 50.55 after a wide high-volume bar (C7, C11). `structure` 94.7 and `subcomponents.structure.wk_score` 15.0 = weekly up; but `subcomponents.flow.accum_score` 1.5 = no fresh accumulation, and the close fell short of a full SOS, so I wait for the trigger.",
+   "challenge_reply": "Divergence: div BEARISH/1 is one oscillator of five; I read it as a caution on the test, not a structural break. Wrong if a close back under the Creek 50.76 / VAH 50.55 follows it: failed breakout back into value.",
+   "case": {
+    "for": "At the test of both Creek and VAH, `sc_momentum` 80.3 with `sc_m_gates` True, `subcomponents.structure.base_score` 15.0.",
+    "against": "`subcomponents.flow.accum_score` 1.5, div BEARISH/1, three lenses warn.",
+    "entry_trigger": "Buy stop above bar_high on an SOS bar (wide, close top third, volume >= 1.2x).",
+    "wrong_if": "Daily close back under structure_shift_ref and pvp_vah.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A top-third close on volume confirms; a second bearish oscillator plus a close in value ends it.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "close_below:pvp_vah"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Fresh Creek break over 29.72 on a wide bar closing near its high on above-average volume, above value, and at the test (C4, C5, C7). `subcomponents.flow.accum_score` 7.5 = accumulation accelerating; `subcomponents.energy.exhaustion_score` 10.0 = no climax; `mp` 97.0.",
+   "self_counter": "Top-down is the weak leg (C16): weekly 9<21 and 8.6% under the weekly swing high, ma_50 28.28 under ma_200 29.65. The daily break sits inside a larger weekly range; mp_accel_state FLAT.",
+   "challenge_reply": "Field my case rests on that raschke's does not: the bar-and-value read (break bar wide, close near high, volume above average, price above pvp_vah, Creek 29.72 at the test), with `subcomponents.flow.accum_score` 7.5. HTF: weekly range, not weekly trend. Failed-reclaim observable: daily close back under 29.72 into value.",
+   "case": {
+    "for": "Genuine-looking break at the test, above value, accumulation accelerating, U&R MET.",
+    "against": "Weekly context is a range (9<21); ma_50 under ma_200; mp_accel_state FLAT.",
+    "entry_trigger": "Buy stop above bar_high on follow-through (SOS), never a resting limit.",
+    "wrong_if": "Close back under structure_shift_ref into value; a print under vwap_14d proves the read wrong.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Re-entry into the old range on heavy volume = upthrust; I would drop to no support.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "close_below:vwap_14d"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MCD",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh Creek break over 273.42, above value, at the test (C7); bar wide with a high close but volume only modest, so I wait for the SOS trigger (C12). `mp` 100.0 and `subcomponents.mp.adx_val` 42.08 = strong trend; `subcomponents.flow.accum_score` 7.5 = accumulation.",
+   "challenge_reply": "My MCD case rests on value and the Creek test (price above pvp_vah, 273.42 within 1 ATR), not on raschke's base/thrust read. HTF: ma_50 248.77 under ma_200 282.35 and weekly 9<21, so this is a Phase D break out of a daily accumulation inside a weekly downtrend. Failed reclaim: close back under 273.42.",
+   "case": {
+    "for": "At the Creek test, `sc_momentum` 83.7 with `sc_m_gates` True, accumulation 7.5, no exhaustion.",
+    "against": "Weekly 9<21, pct_from_52w_high -18.92; no SOS bar yet; Episodic pivot (delayed) FAILED.",
+    "entry_trigger": "Next SOS bar, buy stop above its high.",
+    "wrong_if": "Close back below structure_shift_ref; below bar_low the break was an upthrust.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A low-volume hold above the Creek with a wide up bar adds; a close back in the range removes.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AHR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (ABOVE_STRUCTURE) but away from value: 5.8% over the last daily swing high, ext_atr20 2.97. `flow` 100.0 = clean demand, yet `subcomponents.mp.adx_val` 19.76 says the trend is young. HOLD-FOR-CONDITIONS: join on the back-up (C3, C7).",
+   "case": {
+    "for": "`flow` 100.0, `subcomponents.flow.accum_score` 7.5, `structure` 84.2, fresh 52w high.",
+    "against": "Extended from the Creek; `subcomponents.mp.adx_val` 19.76 and `mp` 63.0 = trend not established.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A shallow, quiet back-up holding the Creek; or a heavy-volume reversal into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND near the test: ABOVE_STRUCTURE, 2.4% over the daily swing high (under 1 ATR). Coil is present, `subcomponents.energy.squeeze_score` 8.5, but effort is missing: `subcomponents.flow.accum_score` 0.0 and day_vol 0.93. A test on light volume suits C7, yet I need the SOS bar first.",
+   "case": {
+    "for": "Near the Creek, coiled (`subcomponents.energy.squeeze_score` 8.5), `subcomponents.structure.rs_accel` 12.67 improving.",
+    "against": "`subcomponents.flow.accum_score` 0.0, elder INTERRUPTED, H1 below EMA9.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume out of the coil; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 23.7% over the daily swing high (ext_atr20 5.59) under a weekly 9<21 and ma_50 49.34 below ma_200 54.55: a thrust out of a larger range, not a weekly trend (C16). `flow` 90.8 and `subcomponents.flow.accum_score` 7.5 show real effort, so HOLD-FOR-CONDITIONS, never a chase (C15).",
+   "case": {
+    "for": "Strong effort: `flow` 90.8, accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Far from value; HTF stack bearish; `subcomponents.flow.ha_quality_count` 3.0 choppy candles.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d and an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new range forming above the old Creek with a quiet test would lift it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (ABOVE_STRUCTURE, weekly and daily up) but 15.5% over the daily swing high: away from value. `structure` 87.4 and `subcomponents.structure.wk_score` 15.0 keep the bias long; `subcomponents.flow.accum_score` 1.5 = thin fresh accumulation. HOLD-FOR-CONDITIONS (C3).",
+   "case": {
+    "for": "Fresh 52w high, weekly trend up, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Extension; accumulation 1.5; Episodic pivot (delayed) FAILED.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test of the Creek; or heavy selling back into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "STGW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Strongest trend on the sheet, weekly and daily HH/HL, but 20.8% over the daily swing high (ext_atr20 4.06): the move left without me (C15). `flow` 96.1 with `subcomponents.flow.accum_score` 7.5 and `subcomponents.energy.exhaustion_score` 10.0 = demand intact. HOLD-FOR-CONDITIONS.",
+   "case": {
+    "for": "`mp` 100.0, `flow` 96.1, accumulation 7.5, no climax.",
+    "against": "Far above the Creek and value; `subcomponents.structure.base_days` 4.0 = no fresh base to buy from.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A small base inside the uptrend (C7) gives an entry; a climactic reversal bar ends it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND, weekly and daily above EMA9 9>21, but 7.0% over the daily swing high (about 2 ATR): away from the test. `flow` 96.1 and `subcomponents.flow.accum_score` 7.5 = demand; `subcomponents.energy.exhaustion_score` 10.0 = no wear. HOLD-FOR-CONDITIONS (C3, C7).",
+   "case": {
+    "for": "`structure` 92.6, accumulation 7.5, no exhaustion.",
+    "against": "Away from value; pct_from_52w_high -18.24 inside a larger range.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet back-up holding the Creek; or a heavy-volume close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND at a fresh high, but 10.9% over the daily swing high (ext_atr20 3.83): away from value. `mp` 100.0 and `subcomponents.mp.adx_val` 45.52 = strong trend; `subcomponents.flow.accum_score` 7.5. The day_vol 0.9 push is not an SOS. HOLD-FOR-CONDITIONS (C3, C15).",
+   "case": {
+    "for": "Strong trend, accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Extended; below-average volume at the high.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A low-volume test of the Creek; or a heavy-volume reversal.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VSXY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (ABOVE_STRUCTURE, weekly 9>21) but 15.7% over the daily swing high, ext_atr20 2.72, on day_vol 0.81: away from value and no SOS. `structure` 82.1 and `subcomponents.flow.accum_score` 7.5 keep the bias long. HOLD-FOR-CONDITIONS (C3, C15).",
+   "case": {
+    "for": "Accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0, top-percentile strength.",
+    "against": "Extended; `subcomponents.structure.base_days` 2.0 = no fresh base; light volume at the high.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test holding the Creek; or a heavy-volume close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (weekly and daily HH/HL) but 5.7% over the daily swing high (about 2.6 ATR): away from the test. Wear is starting: `subcomponents.energy.exhaustion_score` 7.0 and `subcomponents.flow.accum_score` 3.0, with div BEARISH/1. HOLD-FOR-CONDITIONS, not a chase (C3).",
+   "case": {
+    "for": "`mp` 96.0, `subcomponents.mp.adx_val` 43.77 strong trend, `subcomponents.structure.wk_score` 15.0.",
+    "against": "`sc_m_gates` False on `energy` 56.3; exhaustion 7.0 and a bearish divergence near the high.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A low-volume test that holds; or a climactic wide bar with no follow-through.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HSY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh Creek break (BULLISH_BOS over 175.75, above VAH 177.6) on a sign-of-strength bar, at the test (C5, C7, C12). `subcomponents.flow.ext_score` 5.0 = breakout-on-volume bonus; `subcomponents.flow.accum_score` 7.5. Top-down is weak: `subcomponents.structure.wk_score` 5.0, so conviction comes down.",
+   "conviction_change": "4 to 3: top-down (C16). Weekly 9<21, ma_50 168.46 under ma_200 188.31, `subcomponents.structure.wk_score` 5.0: a daily Phase D break inside a weekly range, not a weekly trend.",
+   "challenge_reply": "HTF: ma_50 168.46 under ma_200 188.31 and weekly 9<21; I enter a daily accumulation break inside a weekly range/markdown, at the Creek test. Reclaim failed if a daily close goes back below 175.75 into value (under VAH 177.6), or the retest comes on heavier volume than the break.",
+   "case": {
+    "for": "SOS break at the test, above value, `sc_momentum` 70.5 with `sc_m_gates` True, `elder` 10.0.",
+    "against": "Weekly not up; `subcomponents.mp.adx_val` 19.75 trend young; `structure` 58.9.",
+    "entry_trigger": "Buy stop above bar_high (SOS follow-through).",
+    "wrong_if": "Daily close back below structure_shift_ref / pvp_vah; below bar_low the read is wrong.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9 crossing over 21 would restore 4; re-entry into value would remove support.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "close_below:pvp_vah"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "pvp_vah"
+    ],
+    "chase": "close_above:structure_shift_ref+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "JNJ",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "RANGE (structure_shift RANGE), 2.1% under the daily swing high: price sits in the upper part of the range, `subcomponents.energy.en_pos50` 84.26, not at the lower edge where a range long lives (C1, C11). No effort behind it: `flow` 39.5, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.02.",
+   "opposing_case": "Weekly above EMA9 9>21, `structure` 77.9, `mp` 76.0, U&R MET reclaim of the 9-day; a high-volume close over the range top would be a Creek break and a trend long.",
+   "case": {
+    "for": "Upper range near a breakout; weekly up; `pipe_rank` 80.7.",
+    "against": "Buying the top of a range with no accumulation; `sc_m_gates` False on flow.",
+    "entry_trigger": "Would need a daily close above pivot_high on volume >= 1.2x, then a held test.",
+    "wrong_if": "A wide up bar on volume closing above pivot_high proves the oppose wrong.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Creek break with volume; or a spring at the range low.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "FOUR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Held above the broken Creek 41.4 and testing VAH 43.83 on a sign-of-strength bar (C7, C11). `flow` 96.1 and `subcomponents.flow.cmf` 0.51 = closes near highs on volume. But top-down fails: weekly LH/LL, 23.4% under the 20-wk high, `subcomponents.mp.adx_val` 14.82.",
+   "conviction_change": "3 to 2: top-down (C16). Weekly 9<21 LH/LL, ma_50 40.3 under ma_200 45.77: a daily break in a weekly downtrend.",
+   "challenge_reply": "HTF: weekly downtrend (LH/LL), ma_50 40.3 under ma_200 45.77, pct_from_52w_high -40.42; this is at best a first accumulation break. Failed: a daily close back inside value under 43.83 and the Creek 41.4.",
+   "case": {
+    "for": "SOS bar at the value edge, `subcomponents.flow.accum_score` 7.5, U&R MET.",
+    "against": "Weekly markdown; `pipe_rank` 42.6; `mp` 55.0.",
+    "entry_trigger": "Buy stop above bar_high on follow-through.",
+    "wrong_if": "Close back under pvp_vah and structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A weekly higher low would lift it; re-entry into value ends it.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "pvp_vah",
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SARO",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE, but 7.7% over the swing high after a sharp thrust into a weekly LH/LL with ma_200 26.46 over ma_50 22.69 (C16). Wear is showing: `subcomponents.energy.exhaustion_score` 5.5 near the top of range, `subcomponents.energy.en_pos50` 98.66. Effort is real (`flow` 100.0). HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "`flow` 100.0, `subcomponents.flow.accum_score` 7.5, day_vol 1.92.",
+    "against": "Possible climactic rally inside a weekly downtrend; exhaustion 5.5.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new range above the Creek with a quiet test lifts it; a wide down bar on volume ends it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GEHC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND, weekly and daily HH/HL, but 15.5% over the daily swing high (ext_atr20 3.2): away from value. `mp` 96.0 with `subcomponents.mp.adx_val` 44.16 = strong trend; `subcomponents.flow.accum_score` 7.5. Day_vol 0.96, H1 below EMA9: no SOS now. HOLD-FOR-CONDITIONS (C3).",
+   "case": {
+    "for": "Strong trend, accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Extended; `subcomponents.flow.cmf` 0.06 thin.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test of the Creek; or a heavy-volume close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WTRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (weekly and daily up), 4.2% over the daily swing high, about 1.8 ATR: past the test. `subcomponents.flow.cmf` 0.42 = closes near highs on volume; `subcomponents.mp.adx_val` 39.55 = strong trend. HOLD-FOR-CONDITIONS for the back-up (C3, C7).",
+   "case": {
+    "for": "`structure` 84.2, `mp` 97.0, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Away from the Creek; `subcomponents.flow.accum_score` 5.5, not accelerating fully.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A low-volume back-up holding the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EXR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND but 17.4% over the daily swing high (ext_atr20 3.94): away from value. Effort has stopped: `subcomponents.flow.accum_score` 0.0 and mp DECELERATING, though `subcomponents.mp.adx_val` 49.06 says the trend is very strong. HOLD-FOR-CONDITIONS (C3, C15).",
+   "case": {
+    "for": "`structure` 87.4, `mp` 100.0, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "No accumulation; H1 LH/LL; extended.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet reaccumulation base; or a wide down bar on volume.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 27.3% over the swing high with no base under it: `subcomponents.structure.base_days` 0.0 and `subcomponents.structure.wk_score` 2.0, weekly LH/LL. No range to anchor value, so no test to buy (C16). `flow` 100.0 shows effort. HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "`flow` 100.0, `subcomponents.flow.accum_score` 7.5, `elder` 10.0.",
+    "against": "No base, weekly weak, `sc_m_gates` False on `energy` 59.7, far from value.",
+    "entry_trigger": "A new range forming, then a back-up into structure_shift_ref and an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base above the Creek; or a climactic reversal.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PENN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend above structure, back at the value-area-high edge 17.31 with a sign-of-strength bar: the test-after-breakout trade (C11). `flow` 96.1 and `subcomponents.structure.base_score` 15.0 support; weekly 9<21 and mp DECELERATING weaken the top-down read.",
+   "conviction_change": "3 to 2: top-down (C16). Weekly 9<21, 22.0% under the 20-wk high; the value-edge test sits inside a weekly range.",
+   "challenge_reply": "HTF: weekly 9<21, pct_from_52w_high -20.99, a daily breakout inside a weekly range. Failed: a close back inside value below 17.31 and through bar_low, reverting toward the POC.",
+   "case": {
+    "for": "SOS at the VAH edge, `subcomponents.flow.accum_score` 7.5, `sc_m_gates` True.",
+    "against": "Weekly range; `subcomponents.structure.rs_vs_spy` -2.06; DECELERATING.",
+    "entry_trigger": "Buy stop above bar_high on follow-through.",
+    "wrong_if": "Close back under pvp_vah and bar_low.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Weekly 9 over 21 lifts it; a close back in value ends it.",
+    "cannot_see": [
+     "HVN/LVN beyond value (NOT_SERVED)",
+     "successive value areas"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pvp_vah",
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "pvp_vah"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (weekly and daily up) but 14.4% over the daily swing high on day_vol 0.79: away from value, no SOS. `structure` 89.5 with `subcomponents.structure.base_score` 15.0 keeps the bias; `subcomponents.flow.accum_score` 1.5 = thin accumulation. HOLD-FOR-CONDITIONS (C3).",
+   "case": {
+    "for": "`mp` 97.0, `pipe_rank` 90.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Extended; accumulation 1.5; light volume.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test of the Creek; or a heavy-volume close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND, weekly and daily up, but 4.5% over the daily swing high (about 2.5 ATR). Effort absent: `subcomponents.flow.accum_score` 0.0, though `pipe_rank` 94.4 says a steady path and `subcomponents.mp.adx_val` 31.84 a real trend. HOLD-FOR-CONDITIONS (C3, C7).",
+   "case": {
+    "for": "`structure` 81.1, `mp` 90.0, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "No accumulation; mp DECELERATING; past the test.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A low-volume back-up holding the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND near the test: ABOVE_STRUCTURE, 3.2% over the daily swing high, about 1 ATR, on light day_vol 0.84 (a quiet back-up suits C7). But `subcomponents.flow.accum_score` 0.0 = no fresh demand; `subcomponents.mp.adx_val` 35.62 = real trend. Needs the SOS trigger.",
+   "case": {
+    "for": "Near the Creek, `subcomponents.structure.wk_score` 15.0 weekly up, `mp` 93.0.",
+    "against": "No accumulation; H1 LH/LL below EMA9.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume from the test; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh BULLISH_BOS (within 2% of the pivot, at the test) on day_vol 1.37: a genuine-looking break by volume (R3). But top-down is unclear: weekly 9<21, ma_50 104.79 under ma_100 107.93. `subcomponents.flow.accum_score` 1.5 thin; `structure` 77.9 supports.",
+   "case": {
+    "for": "Break at the test with volume, U&R MET, `subcomponents.structure.wk_score` 15.0.",
+    "against": "Weekly 9<21; accumulation 1.5; `subcomponents.mp.adx_val` 23.26 modest.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close back below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Hold above the Creek on a quiet test; or re-entry into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND at a fresh high, weekly and daily up, but 4.8% over the daily swing high (about 1.75 ATR): past the test. `subcomponents.flow.accum_score` 7.5 shows accumulation, yet `subcomponents.flow.cmf` -0.12 = closes near lows on volume, with div BEARISH/1. HOLD-FOR-CONDITIONS (C3).",
+   "case": {
+    "for": "`mp` 89.0, accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Negative cmf and a bearish divergence at the high; `structure` 66.3.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test holding the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (weekly HH/HL, 9>21), 6.1% over the daily swing high after a day_vol 3.36 surge: a breakout on volume, `subcomponents.flow.ext_score` 5.0, but `subcomponents.flow.accum_score` 0.0 and `subcomponents.flow.cmf` -0.1 say the volume was not clean accumulation. Away from the test: HOLD-FOR-CONDITIONS (C3, C7).",
+   "case": {
+    "for": "High-volume break, `energy` 73.9, `subcomponents.flow.volume_score` 7.5.",
+    "against": "No accumulation, negative cmf, `subcomponents.mp.adx_val` 19.19 young trend.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d on light volume, then an hourly close above bar_high.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A low-volume test that holds; or a reversal through the break bar.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND break on very heavy volume (day_vol 3.67, `subcomponents.flow.ext_score` 5.0 breakout bonus, `subcomponents.flow.accum_score` 7.5), but 8.1% over the daily swing high (about 1.9 ATR) and ma_100 12.47 still over ma_50 11.54. Past the test: HOLD-FOR-CONDITIONS (C3, C15).",
+   "case": {
+    "for": "`flow` 100.0, `structure` 94.7, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "`sc_m_gates` False on `energy` 59.7; short base, `subcomponents.structure.base_days` 9.0.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet back-up holding the break; or a close back inside the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TEM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "RANGE (structure_shift RANGE), 10.0% under the daily swing high and in the middle of the range, `subcomponents.energy.en_pos50` 58.43: no edge to trade (C1, C2). Structure is weak, `structure` 41.1, and `sc_m_gates` False; no shakeout at the low is visible.",
+   "opposing_case": "Weekly HH/HL 9>21, `flow` 71.1, `subcomponents.energy.squeeze_score` 8.5 coiled, U&R MET reclaim; a spring at the range low or a Creek break would make it a trade.",
+   "case": {
+    "for": "Coil (`subcomponents.energy.squeeze_score` 8.5), weekly up, U&R MET.",
+    "against": "Mid-range, `structure` 41.1, `mp` 47.0, RS laggard.",
+    "entry_trigger": "Would need a spring at base_low_20d closing back above it, or a close above pivot_high on volume.",
+    "wrong_if": "A close above pivot_high on volume >= 1.2x proves the oppose wrong.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A shakeout under the range low that reverses, or a held Creek break.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Small base inside a weekly uptrend (weekly 12.5% over its swing high, 9>21): daily RANGE 0.5% under the swing high, an allowed C7 entry once it breaks. Heavy demand, `flow` 100.0 on day_vol 2.32, but `subcomponents.energy.exhaustion_score` 5.5 and div BEARISH/1 = wear: wait for the Creek break to hold (C4, C5).",
+   "case": {
+    "for": "Upper edge of a base inside an uptrend, `subcomponents.mp.adx_val` 41.98, U&R MET.",
+    "against": "Exhaustion 5.5, bearish divergence, elder INTERRUPTED, `sc_m_gates` False on energy.",
+    "entry_trigger": "Daily close above pivot_high on volume >= 1.2x, then the test.",
+    "wrong_if": "Close below base_low_20d.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A poke over the high that closes back under = upthrust; I would step aside.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "reject:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND (weekly and daily up) but 12.2% over the daily swing high: away from value; H1 9<21 is the corrective wave starting (C3). `energy` 73.9 and `subcomponents.mp.adx_val` 43.21 keep the bias; `subcomponents.flow.accum_score` 1.5 = thin accumulation. HOLD-FOR-CONDITIONS.",
+   "case": {
+    "for": "`mp` 92.0, `subcomponents.energy.exhaustion_score` 10.0, U&R MET.",
+    "against": "Extended; accumulation 1.5; `subcomponents.structure.base_days` 2.0.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test holding the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WCN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND at the test: 0.9% over the daily swing high (well inside 1 ATR) on light day_vol 0.74, the quiet back-up C7 prefers. `subcomponents.mp.adx_val` 41.49 strong trend and `structure` 87.4; but `flow` 57.9 with `subcomponents.flow.accum_score` 1.5 = demand not yet back. Needs the SOS trigger.",
+   "case": {
+    "for": "At the Creek on light volume, U&R MET, `subcomponents.structure.wk_score` 15.0.",
+    "against": "`sc_m_gates` False on flow; accumulation 1.5; H1 9<21.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume from here lifts it; a close back in the range ends it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE after a huge run: structure_shift RANGE, 10.6% under the daily swing high, `subcomponents.energy.en_pos50` 77.16 = not at an edge, and `subcomponents.flow.accum_score` 1.5. Without the value area I cannot place it in the range; R10/C16: unclear context, no forced call.",
+   "case": {
+    "for": "Weekly HH/HL, `mp` 96.0, `subcomponents.mp.adx_val` 49.99.",
+    "against": "Mid-range daily, `flow` 57.9, `sc_m_gates` False.",
+    "entry_trigger": "A spring at base_low_20d closing back above it, or a close above pivot_high on volume.",
+    "wrong_if": "Not applicable (abstain); a close under base_low_20d would turn me against.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Price reaching a range edge with a shakeout or a Creek break.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 29.2% over the swing high on day_vol 0.55, inside a weekly LH/LL 9<21 (C16). `mp` 100.0 and `subcomponents.mp.adx_val` 46.73 show a strong daily trend; `subcomponents.flow.accum_score` 7.5. Far from value: HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "Strong daily trend, accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Weekly downtrend; very extended; quiet volume at the high.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new base above the Creek; or a heavy-volume reversal.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 39.3% over the swing high, under a weekly LH/LL 9<21 with ma_200 409.3 far above ma_50 293.36: a rally inside a markdown (C16). Effort is real, `flow` 100.0 and `subcomponents.flow.accum_score` 7.5, but `subcomponents.structure.base_days` 0.0. HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "`flow` 100.0, day_vol 2.27, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "No base, weekly downtrend, `sc_m_gates` False on `energy` 59.7.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A range forming above the Creek with a quiet test; or a wide down bar on volume.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "TREND near the test (7.0% over the daily swing high, about 1.15 ATR), weekly 9>21. But demand is absent: `flow` 50.0, `subcomponents.flow.mfi` 29.91 = sellers in control, `subcomponents.flow.cmf` -0.08. Effort does not match result; I need an SOS bar before anything (C12).",
+   "case": {
+    "for": "`mp` 97.0, `subcomponents.flow.accum_score` 7.5, ACCELERATION impulse.",
+    "against": "Weak money flow; `sc_m_gates` False; pct_from_52w_high -40.76.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume with mfi turning up; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GPK",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 23.6% over the swing high on day_vol 0.65, with weekly 9<21 and ma_200 10.57 over ma_50 9.43: a rally inside a larger markdown (C16). `flow` 88.2 and `subcomponents.flow.accum_score` 7.5 show effort; `subcomponents.structure.wk_score` 2.0 = weekly down. HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "Accumulation 7.5, `subcomponents.structure.base_score` 15.0, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Weekly down, far from value, quiet volume, H1 LH/LL.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new range above the Creek with a quiet test; or a heavy-volume reversal.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "TREND (weekly 9>21) but 10.1% over the daily swing high and 7.8% under the 20-day high: already pulling back without demand. `subcomponents.flow.accum_score` 1.5 and div BEARISH/2 = two oscillators warning; `subcomponents.mp.adx_val` 40.09 keeps the trend. HOLD-FOR-CONDITIONS (C3).",
+   "case": {
+    "for": "`mp` 92.0, `subcomponents.energy.exhaustion_score` 10.0, weekly up.",
+    "against": "Bearish divergence on two oscillators; thin accumulation; three lenses warn.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test holding the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RKT",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Daily ABOVE_STRUCTURE but 25.6% over the swing high, under a weekly LH/LL 9<21 and ma_200 14.48 over ma_50 12.41 (C16). `flow` 88.2 with `subcomponents.flow.cmf` 0.45 = strong closes on volume, but `subcomponents.structure.base_days` 0.0: no base under the move. HOLD-FOR-CONDITIONS only.",
+   "case": {
+    "for": "Accumulation 7.5, `subcomponents.energy.exhaustion_score` 10.0, SUSTAINED impulse.",
+    "against": "Weekly downtrend, no base, far from value.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A range above the Creek with a quiet test; or a wide down bar on volume.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Fresh BULLISH_BOS 0.7% over the daily swing high, but on day_vol 0.61 with `subcomponents.flow.volume_score` 0.0: a low-volume break is a potential upthrust until it holds (C5, R3). `flow` 47.4 below its floor; ma_200 176.35 over ma_50 166.28. Only a volume-confirmed hold would make this a trade.",
+   "case": {
+    "for": "At the Creek, `structure` 74.7, `subcomponents.mp.adx_val` 40.45, coil lens strong.",
+    "against": "No volume, weak flow, `sc_m_gates` False, H1 9<21.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x after the break holds.",
+    "wrong_if": "Daily close back below structure_shift_ref = upthrust.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume; or re-entry into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND, weekly and daily HH/HL, but 24.4% over the daily swing high (ext_atr20 3.52): away from value. `mp` 100.0 and `subcomponents.mp.adx_val` 42.46 = strong trend; `subcomponents.flow.accum_score` 1.5 = thin fresh accumulation. HOLD-FOR-CONDITIONS (C3, C15).",
+   "case": {
+    "for": "Strong trend, weekly up, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Extended; thin accumulation; H1 LH/LL.",
+    "entry_trigger": "Back-up into structure_shift_ref / vwap_14d, then an hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A quiet test of the Creek; or heavy selling into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "YOU",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Signs of supply at the top: `subcomponents.flow.ext_score` -5.0 = climax or stretched, weakly closing bar; price 15.7% under the 20-day high with H1 closing at 12% of the day's range; `subcomponents.energy.en_pos50` 63.95 off the top; div BEARISH/1; weekly 9<21. That reads as a stopping action/upthrust, not a test to buy (C5, C14).",
+   "opposing_case": "Daily ABOVE_STRUCTURE, `mp` 96.0, `subcomponents.mp.adx_val` 46.21 strong trend, `subcomponents.flow.accum_score` 7.5, SUSTAINED impulse; a quiet back-up holding the Creek would restore the long.",
+   "case": {
+    "for": "Strong daily trend, accumulation 7.5, `elder` 10.0.",
+    "against": "Climactic/weak-close penalty, off the high, bearish divergence, weekly 9<21.",
+    "entry_trigger": "Would need a low-volume test of structure_shift_ref and then an SOS bar above bar_high.",
+    "wrong_if": "A wide up bar on volume closing near its high above bar_high proves the oppose wrong.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Demand returning on a test (SOS from structure).",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "TOST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND near the test: weekly and daily HH/HL, 3.7% over the daily swing high (under 1 ATR). `subcomponents.flow.accum_score` 7.5 and `subcomponents.structure.base_score` 12.0 = accumulation from a measured base. But the last bar closed at 14% of its range and `subcomponents.mp.adx_val` 20.86 is young: no SOS, wait for it.",
+   "case": {
+    "for": "At the Creek, `flow` 85.5, `energy` 71.4, weekly up.",
+    "against": "Weak close; trend young; H1 below EMA9.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume from the Creek lifts it; a close back in the range ends it.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Small base inside a weekly uptrend (weekly HH/HL, 9>21): daily RANGE, 2.0% under the swing high, upper part of the range, `subcomponents.energy.en_pos50` 86.13. An allowed C7 entry on a held break. `energy` 76.5 with `subcomponents.energy.squeeze_score` 4.0 = some coil; but `flow` 53.9 is weak.",
+   "case": {
+    "for": "Base inside an uptrend, `structure` 84.2, U&R MET.",
+    "against": "Weak flow, `sc_m_gates` False, div BEARISH/1.",
+    "entry_trigger": "Daily close above pivot_high on volume >= 1.2x.",
+    "wrong_if": "Close below base_low_20d.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A poke over the high that closes back under = upthrust; I would step aside.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "reject:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND at the test: weekly and daily HH/HL, 1.2% over the daily swing high, ext_atr20 0.79. Coiled: `energy` 84.0 with `subcomponents.energy.squeeze_score` 8.5. But demand is missing, `flow` 50.0 and `subcomponents.flow.mfi` 30.46 = sellers; elder INTERRUPTED. Needs the SOS bar (C12).",
+   "case": {
+    "for": "At the Creek, coiled, U&R MET, `subcomponents.structure.wk_score` 15.0.",
+    "against": "Weak money flow, `sc_m_gates` False, `subcomponents.structure.rs_accel` -13.71.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume out of the coil; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh BULLISH_BOS 0.4% over the daily swing high, at the test, weekly HH/HL; `subcomponents.mp.adx_val` 47.86 strong trend. But the break came on day_vol 0.87 with `subcomponents.flow.accum_score` 1.5: potential upthrust until it holds (C5, R3).",
+   "case": {
+    "for": "At the Creek, weekly up, U&R MET, `structure` 75.8.",
+    "against": "Low-volume break, `flow` 52.6, `sc_m_gates` False, H1 9<21.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close back below structure_shift_ref = upthrust.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume; or re-entry into the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "TREND (weekly and daily HH/HL) sitting 0.4% under the daily swing high: at the Creek. But there is no demand: `flow` 36.8 below its floor, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09, day_vol 0.69. Effort absent; only an SOS bar would make it a trade (C12).",
+   "case": {
+    "for": "`structure` 87.4, `mp` 97.0, `energy` 72.3.",
+    "against": "Weak money flow, `sc_m_gates` False, quiet volume.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Volume returning on an up bar; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SPOT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND at the test: weekly and daily HH/HL, 1.6% over the daily swing high (under half an ATR). `subcomponents.flow.accum_score` 7.5 = accumulation; but `structure` 57.9 and `subcomponents.structure.rs_accel` -6.98 = lead eroding, `subcomponents.mp.adx_val` 21.34 young. Needs the SOS trigger.",
+   "case": {
+    "for": "At the Creek, accumulation 7.5, insti_money lens strong.",
+    "against": "Weak structure, eroding RS, H1 9<21.",
+    "entry_trigger": "Hourly close above bar_high on volume >= 1.2x.",
+    "wrong_if": "Daily close below structure_shift_ref.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A wide up bar on volume from the Creek; or a close back in the range.",
+    "cannot_see": [
+     "pvp_poc/vah/val",
+     "vwap_14d",
+     "bar OHLC",
+     "rvol_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of4.json",
+   "bytes": 16814,
+   "votes": 13,
+   "sha256": "0706eb4faa17"
+  },
+  {
+   "file": "wyckoff.part2of4.json",
+   "bytes": 15818,
+   "votes": 13,
+   "sha256": "9afcaa2fcc72"
+  },
+  {
+   "file": "wyckoff.part3of4.json",
+   "bytes": 14183,
+   "votes": 13,
+   "sha256": "c46f1253bd30"
+  },
+  {
+   "file": "wyckoff.part4of4.json",
+   "bytes": 13120,
+   "votes": 12,
+   "sha256": "d18da1f3f019"
+  }
+ ]
+}

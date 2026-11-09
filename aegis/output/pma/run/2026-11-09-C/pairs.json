@@ -1,0 +1,622 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-09T08:07:53Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-09",
+ "survivors": [
+  "IBN",
+  "HLT",
+  "KO",
+  "BILL",
+  "STGW",
+  "BDX",
+  "FOUR",
+  "GEHC",
+  "WTRG",
+  "FA",
+  "AJG",
+  "WCN",
+  "GMAB",
+  "SWK",
+  "ADP",
+  "CHD",
+  "LTH"
+ ],
+ "pairs": [
+  {
+   "pair_id": "HLT-livermore-for~oneil",
+   "ticker": "HLT",
+   "claim_id": "HLT-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Trend established (`subcomponents.mp.adx_val` 40.88, `mp` 92.0), fresh break of structure, close to the 52w high, no exhaustion.",
+   "refute_evidence": "Trend is real (`mp` 92.0, `subcomponents.mp.adx_val` 40.88), but the break came on day_vol 0.85 with `subcomponents.flow.volume_score` 2.0: under +40% volume is a C16 hard rejection.",
+   "refute_tf": {
+    "W": "LH/LL weekly swing, 2.9% under 20-wk high: no clean weekly base",
+    "D": "HH/HL, 1.6% over the swing high: inside the buy zone but unbought",
+    "H1": "below EMA9, LH/LL: no hourly follow-through"
+   }
+  },
+  {
+   "pair_id": "HLT-livermore-for~elder-lens",
+   "ticker": "HLT",
+   "claim_id": "HLT-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "elder-lens",
+   "claim_text": "Trend established (`subcomponents.mp.adx_val` 40.88, `mp` 92.0), fresh break of structure, close to the 52w high, no exhaustion.",
+   "refute_evidence": "Trend is real (`subcomponents.mp.adx_val` 40.88, `mp` 92.0) but 'no exhaustion' fails my test: `elder` 7.0 after three 10s, green vanished during the upswing, Elder's sign the swing is maturing (C4).",
+   "refute_tf": {
+    "W": "over EMA9, 9>21: tide up",
+    "D": "HH/HL, 2.9% under 20-day high, green gone two bars: maturing swing",
+    "H1": "close under EMA9, LH/LL: short-term wave turning down"
+   }
+  },
+  {
+   "pair_id": "HLT-oneil-against~livermore",
+   "ticker": "HLT",
+   "claim_id": "HLT-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "day_vol 0.85 on the break of structure fails C16 outright; `subcomponents.flow.volume_score` 2.0 says volume is drying up, not expanding; H1 below EMA9.",
+   "refute_evidence": "Volume is not my new-high test (fill difficulty not served). C5 trend test holds: `subcomponents.mp.adx_val` 40.88 = very strong trend, `subcomponents.structure.wk_score` 15.0 = weekly up, `subcomponents.energy.exhaustion_score` 10.0.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 2.9% under 20-wk high: uptrend near its high",
+    "D": "HH/HL, 1.6% above last swing high: trend resumed past the pivot (C19)",
+    "H1": "below EMA9, LH/LL: a minor intraday reaction, filtered out (C21)"
+   }
+  },
+  {
+   "pair_id": "HLT-oneil-against~seow",
+   "ticker": "HLT",
+   "claim_id": "HLT-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 0.85 on the break of structure fails C16 outright; `subcomponents.flow.volume_score` 2.0 says volume is drying up, not expanding; H1 below EMA9.",
+   "refute_evidence": "Volume ratio is not my fund-flow test; COM proxy `subcomponents.flow.cmf` 0.15 above zero and `subcomponents.flow.accum_score` 7.5 (max) confirm (C28); `structure` 77.9, `subcomponents.structure.rs_vs_spy` 20.94 beat the market.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 10.3% over last swing high: weekly frame not broken (C21 house)",
+    "D": "HH/HL, 1.6% over swing high: fresh resistance break, my buy signal (C26)",
+    "H1": "below EMA9 - H1 is not a frame my canon trades"
+   }
+  },
+  {
+   "pair_id": "KO-minervini-for~elder-lens",
+   "ticker": "KO",
+   "claim_id": "KO-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Tight, low-risk breakout at the high with a full stack; `subcomponents.structure.wk_score` 15.0.",
+   "refute_evidence": "A breakout at the high is summer, not Elder's buy (C10, C20): `elder` 7.0 with blue oscillating, no permission event, and `subcomponents.structure.rs_accel` -0.7 says the lead is eroding into the high.",
+   "refute_tf": {
+    "W": "over EMA9, 9>21, LH but HL: tide up but no fresh weekly high leg",
+    "D": "HH/HL, 1.8% under 20-day high: buying at the top, not a pullback",
+    "H1": "under EMA9, HH but LL: wave soft"
+   }
+  },
+  {
+   "pair_id": "KO-livermore-for~oneil",
+   "ticker": "KO",
+   "claim_id": "KO-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Steady established trend, every engine above its floor, sitting at the high; CHD confirms the group (C14).",
+   "refute_evidence": "`structure` 77.9 holds, but `subcomponents.structure.rs_accel` -0.7 says the lead is fading, day_vol 1.01 on the break fails C16, and `subcomponents.structure.base_days` 1497.0 is no fresh measured base.",
+   "refute_tf": {
+    "W": "LH but HL, 5.9% over swing high: weekly up, no counted base",
+    "D": "HH/HL, 0.3% over the swing high: at the pivot, no volume",
+    "H1": "below EMA9, HH but LL, 80% of the day's range"
+   }
+  },
+  {
+   "pair_id": "KO-oneil-against~livermore",
+   "ticker": "KO",
+   "claim_id": "KO-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "day_vol 1.01 on the break fails C16; `subcomponents.structure.rs_accel` -0.7 = lead fading; no measured fresh base.",
+   "refute_evidence": "`subcomponents.structure.rs_accel` -0.7 is a flat lead, not a lost one: `subcomponents.structure.rs_vs_spy` 14.91 still beats the market; `pipe_rank` 85.2 = steady trend; `subcomponents.structure.wk_score` 15.0. Clearance is thin (C19), not failed.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 1.8% under 20-wk high: near the high",
+    "D": "HH/HL, 0.3% above last swing high: just over the pivot",
+    "H1": "below EMA9, HH but LL: minor swing, not a danger signal"
+   }
+  },
+  {
+   "pair_id": "KO-oneil-against~seow",
+   "ticker": "KO",
+   "claim_id": "KO-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "day_vol 1.01 on the break fails C16; `subcomponents.structure.rs_accel` -0.7 = lead fading; no measured fresh base.",
+   "refute_evidence": "Base and volume are not my tests. Strength holds (C6): `subcomponents.structure.rs_vs_spy` 14.91; `subcomponents.structure.rs_accel` -0.7 is slight erosion, a caution. COM `subcomponents.flow.cmf` 0.03 thin but positive.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 5.9% over last swing high: weekly intact",
+    "D": "HH/HL, 0.3% over swing high: fresh break (C26)",
+    "H1": "below EMA9 - not my trading frame"
+   }
+  },
+  {
+   "pair_id": "STGW-livermore-for~oneil",
+   "ticker": "STGW",
+   "claim_id": "STGW-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Trend established on weekly and daily, fresh high, every engine strong, `subcomponents.energy.exhaustion_score` 10.0.",
+   "refute_evidence": "`subcomponents.energy.exhaustion_score` 10.0 and `mp` 100.0 confirm the trend, but `subcomponents.structure.base_days` 4.0 with `subcomponents.structure.base_score` 2.4 = no base, no pivot (R3); D 20.8% past the swing high.",
+   "refute_tf": {
+    "W": "HH/HL, 21.9% over last swing high: extended from any weekly base",
+    "D": "HH/HL, 20.8% over the swing high: past the C17 10% line",
+    "H1": "98% of the day's range: strong close, no C25 signal"
+   }
+  },
+  {
+   "pair_id": "STGW-seow-for~oneil",
+   "ticker": "STGW",
+   "claim_id": "STGW-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Strongest name on the sheet: new high, positive COM, `mp` 100.0, top-percentile strength.",
+   "refute_evidence": "`mp` 100.0 and `structure` 86.7 make it a leader, but strength is not a buy point: `subcomponents.structure.base_score` 2.4 on `subcomponents.structure.base_days` 4.0 (R3), 20.8% past the swing high (C17).",
+   "refute_tf": {
+    "W": "HH/HL, 21.9% over last swing high",
+    "D": "20.8% over the swing high: no pivot to buy",
+    "H1": "HH but EL, 98% of the day's range"
+   }
+  },
+  {
+   "pair_id": "STGW-oneil-against~elder-lens",
+   "ticker": "STGW",
+   "claim_id": "STGW-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "elder-lens",
+   "claim_text": "No base (R3); 20.8% past the swing pivot; nearing the 200-day climax zone (C24).",
+   "refute_evidence": "No climax on my read: `subcomponents.energy.exhaustion_score` 10.0 untouched, `subcomponents.flow.ext_score` 3.0 breakout bonus not a climax penalty, and CORRECTION_REENTRY with `mp` 100.0 STRONG (R8). I buy the pullback, not the extension.",
+   "refute_tf": {
+    "W": "over EMA9, 9>21, HH/HL: tide up",
+    "D": "HH/HL, 20.8% over swing high: extended, wait for value",
+    "H1": "HH but EL at 98% of range: no dip to time yet"
+   }
+  },
+  {
+   "pair_id": "STGW-oneil-against~seow",
+   "ticker": "STGW",
+   "claim_id": "STGW-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "No base (R3); 20.8% past the swing pivot; nearing the 200-day climax zone (C24).",
+   "refute_evidence": "No base needed: buying the break is the entry (C26). No wear: `subcomponents.energy.exhaustion_score` 10.0. COM `subcomponents.flow.cmf` 0.35, `mp` 100.0, `subcomponents.structure.rs_vs_spy` 30.5 - top strength (C23).",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 21.9% over swing high: strong weekly tide",
+    "D": "HH/HL, 20.8% over swing high: position buy signal",
+    "H1": "above EMA9, 98% of range - not my trading frame"
+   }
+  },
+  {
+   "pair_id": "BDX-aqe-quant-against~minervini",
+   "ticker": "BDX",
+   "claim_id": "BDX-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "minervini",
+   "claim_text": "Energy fails its floor, wear found on a live run, lead now shrinking: the case is narrow on persistence.",
+   "refute_evidence": "Energy is not my gate; the Template passes and RS stays large: `subcomponents.structure.rs_vs_spy` 21.91, `subcomponents.structure.rs_spy_score` 15.0, `subcomponents.structure.wk_score` 15.0. `subcomponents.energy.exhaustion_score` 7.0 a caution.",
+   "refute_tf": {
+    "W": "9>21, swing HH/HL: confirmed weekly stage 2",
+    "D": "HH/HL, 5.7% over swing high: at the chase edge, not broken",
+    "H1": "below EMA9, HH/HL, 49% of range: pausing, not failing"
+   }
+  },
+  {
+   "pair_id": "FOUR-seow-for~livermore",
+   "ticker": "FOUR",
+   "claim_id": "FOUR-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "livermore",
+   "claim_text": "Above structure with very strong fund flow and every engine over its floor.",
+   "refute_evidence": "`flow` 96.1 is a bounce's buying. No trend: `subcomponents.mp.adx_val` 14.82, `pipe_rank` 42.6, `mp` 55.0 FADING/DECELERATING; 23.4% under the 20-week high. C16: a low price, not a leader.",
+   "refute_tf": {
+    "W": "9<21, LH/LL, 23.4% under 20-wk high: downtrend",
+    "D": "HH but LL, 2.7% under 20-day high: a bounce",
+    "H1": "above EMA9, LH/LL"
+   }
+  },
+  {
+   "pair_id": "FOUR-wyckoff-for~livermore",
+   "ticker": "FOUR",
+   "claim_id": "FOUR-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "livermore",
+   "claim_text": "SOS bar at the value edge, `subcomponents.flow.accum_score` 7.5, U&R MET.",
+   "refute_evidence": "`subcomponents.flow.accum_score` 7.5 holds, but `subcomponents.mp.mp_adx_score` 0.0 = no trend and `subcomponents.pipe.pr_ret_12m` 0.0 = a losing year. Price action, not accumulation, decides (C21): weekly downtrend.",
+   "refute_tf": {
+    "W": "9<21, LH/LL, 23.4% under 20-wk high",
+    "D": "HH but LL: no confirmed higher low",
+    "H1": "above EMA9, LH/LL"
+   }
+  },
+  {
+   "pair_id": "FOUR-minervini-against~wyckoff",
+   "ticker": "FOUR",
+   "claim_id": "FOUR-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "wyckoff",
+   "claim_text": "Stage 1 at best.",
+   "refute_evidence": "Stage 1 is accumulation; a Phase D break out of it is my long (C4): `flow` 96.1, `subcomponents.flow.cmf` 0.51 = closes near highs on volume, `subcomponents.flow.accum_score` 7.5. Weekly is the weak leg (C16).",
+   "refute_tf": {
+    "W": "above EMA9, 9<21, LH/LL, 23.4% under 20-wk high: weekly markdown base",
+    "D": "9>21, 6.2% over swing high: holding above the broken Creek",
+    "H1": "above EMA9, 81% of day range: closes high"
+   }
+  },
+  {
+   "pair_id": "GEHC-seow-for~minervini",
+   "ticker": "GEHC",
+   "claim_id": "GEHC-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "Above structure, widening lead, every engine over its floor.",
+   "refute_evidence": "Criterion 4 fails: ma50 69.32 under ma200 69.85, so not yet above structure on my template. `subcomponents.pipe.pr_ma_score` 17.0, `subcomponents.structure.base_score` 5.0; 15.5% over the swing high is a chase (C3, C5).",
+   "refute_tf": {
+    "W": "9>21, swing HH/HL: weekly turning up",
+    "D": "HH/HL but 15.5% above last swing high: no pivot to buy",
+    "H1": "below EMA9, LH but HL, 5.9% under 20-hr high"
+   }
+  },
+  {
+   "pair_id": "GEHC-minervini-against~seow",
+   "ticker": "GEHC",
+   "claim_id": "GEHC-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "Stack incomplete; extended.",
+   "refute_evidence": "Extension is no fault in the position system (C26); stack beyond 20/40 not mine (C1). `subcomponents.structure.rs_accel` 13.75 lead widening, `mp` 96.0, `sc_m_gates` True. COM cmf 0.06 thin, a caution.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 8.9% over swing high: weekly tide up",
+    "D": "HH/HL, 15.5% over swing high: break above resistance",
+    "H1": "below EMA9 - not my trading frame"
+   }
+  },
+  {
+   "pair_id": "GEHC-minervini-against~raschke",
+   "ticker": "GEHC",
+   "claim_id": "GEHC-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "Stack incomplete; extended.",
+   "refute_evidence": "Extension is the reason I wait, not a reject: the C7 first pullback is under way with `subcomponents.mp.adx_val` 44.16, `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 21.0, `subcomponents.mp.trend_score` 20.0.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 5.9% under 20-wk high: uptrend",
+    "D": "HH/HL, 5.9% under 20-day high: first pullback",
+    "H1": "below EMA9, 51% of range: pullback in progress"
+   }
+  },
+  {
+   "pair_id": "WTRG-livermore-for~oneil",
+   "ticker": "WTRG",
+   "claim_id": "WTRG-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Clean established trend just under the high, every engine above floor.",
+   "refute_evidence": "`structure` 84.2 and `mp` 97.0 confirm the trend, but day_vol 1.24 is under 1.40 (C16), and the price is governed by the pending AWK merger: event-driven, not mine to buy.",
+   "refute_tf": {
+    "W": "HH but LL, 6.9% over swing high",
+    "D": "HH/HL, 4.2% over swing high: inside 5% but no volume",
+    "H1": "LH but HL, 83% of the day's range"
+   }
+  },
+  {
+   "pair_id": "FA-aqe-quant-for~oneil",
+   "ticker": "FA",
+   "claim_id": "FA-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "oneil",
+   "claim_text": "Cleanest path in the part (`pipe_rank` 90.5), structure high, lead widening, persistence near max.",
+   "refute_evidence": "`pipe_rank` 90.5 and `structure` 89.5 with `subcomponents.structure.base_score` 15.0 show a base, but day_vol 0.79 and `subcomponents.flow.accum_score` 1.5: no volume; D 14.4% past the swing high (C17).",
+   "refute_tf": {
+    "W": "LH/LL, 6.4% under 20-wk high",
+    "D": "HH/HL, 14.4% over the swing high: buy point passed",
+    "H1": "HH/HL, 80% of the day's range"
+   }
+  },
+  {
+   "pair_id": "AJG-seow-for~oneil",
+   "ticker": "AJG",
+   "claim_id": "AJG-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Above structure, widening lead, high strength rank, positive COM.",
+   "refute_evidence": "The widening lead is real (`subcomponents.structure.rs_accel` 10.01, `structure` 78.9), but `subcomponents.flow.accum_score` 0.0 and day_vol 0.84: no institutional demand at the pivot (C16).",
+   "refute_tf": {
+    "W": "HH but LL, 3.2% over swing high, 4.4% under 20-wk high",
+    "D": "HH/HL, 3.2% over the swing high: inside 5%, unbought",
+    "H1": "below EMA9, LH/LL, 59% of the day's range"
+   }
+  },
+  {
+   "pair_id": "AJG-seow-for~elder-lens",
+   "ticker": "AJG",
+   "claim_id": "AJG-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "elder-lens",
+   "claim_text": "Above structure, widening lead, high strength rank, positive COM.",
+   "refute_evidence": "Force behind it is fading on my read: `elder` 7.0 after a 10 is green vanishing on the last bar (C4) and `subcomponents.flow.accum_score` 0.0 shows no accumulation; `flow` 65.8 only moderate.",
+   "refute_tf": {
+    "W": "over EMA9, 9>21: tide up",
+    "D": "HH/HL but green gone last bar: maturing",
+    "H1": "under EMA9, LH/LL at 59% of range: wave down"
+   }
+  },
+  {
+   "pair_id": "GMAB-raschke-for~oneil",
+   "ticker": "GMAB",
+   "claim_id": "GMAB-raschke-for",
+   "kind": "for",
+   "author": "raschke",
+   "refuter": "oneil",
+   "claim_text": "The strongest ADX reading on the sheet; weekly HH/HL.",
+   "refute_evidence": "`subcomponents.mp.adx_val` 49.99 is a strong trend, but entry 53.63 is over 70% above ma200 31.05: a climax to sell into (R7, C24). `subcomponents.structure.rs_accel` -26.37 lead eroding, `sc_m_gates` False.",
+   "refute_tf": {
+    "W": "HH/HL but 80.0% over last swing high: climax extension (C24)",
+    "D": "HH/HL, 10.6% under 20-day high: pulling back from the top",
+    "H1": "9<21, LH/LL, 82% of the day's range"
+   }
+  },
+  {
+   "pair_id": "GMAB-oneil-against~livermore",
+   "ticker": "GMAB",
+   "claim_id": "GMAB-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Over the 70% climax line; RS lead collapsing; failed flow gate.",
+   "refute_evidence": "`subcomponents.structure.rs_accel` -26.37 is the lead narrowing off `subcomponents.structure.rs_vs_spy` 76.6, not collapsing; weekly HH/HL and `subcomponents.mp.adx_val` 49.99 = trend intact. Climax line is not my test.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21: trend intact",
+    "D": "HH/HL, 10.6% under 20-day high: normal reaction",
+    "H1": "9<21, LH/LL"
+   }
+  },
+  {
+   "pair_id": "GMAB-oneil-against~raschke",
+   "ticker": "GMAB",
+   "claim_id": "GMAB-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Over the 70% climax line; RS lead collapsing; failed flow gate.",
+   "refute_evidence": "No climax wear on my field: `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 39.0, `subcomponents.mp.adx_val` 49.99. Conceded: `flow` 57.9 fails its floor. A climax call from composites is declined (R9).",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 80.0% over swing high: extended uptrend",
+    "D": "HH/HL, 10.6% under 20-day high: first pullback",
+    "H1": "9<21, LH/LL, 82% of range: pullback still running"
+   }
+  },
+  {
+   "pair_id": "GMAB-aqe-quant-against~minervini",
+   "ticker": "GMAB",
+   "claim_id": "GMAB-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "minervini",
+   "claim_text": "Flow fails with volume drying up; the lead is collapsing; momentum slowing.",
+   "refute_evidence": "In a power-play flag (C18) volume must dry up (C6): `subcomponents.flow.volume_score` 0.0 is that. The 'collapse' is 1m vs 3m after `subcomponents.structure.rs_vs_spy` 76.6; `subcomponents.structure.base_score` 15.0.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 80.0% over swing high: the thrust",
+    "D": "HH/HL, 10.6% under swing high: the flag forming",
+    "H1": "9<21, LH/LL: quiet inside the flag"
+   }
+  },
+  {
+   "pair_id": "GMAB-aqe-quant-against~raschke",
+   "ticker": "GMAB",
+   "claim_id": "GMAB-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "raschke",
+   "claim_text": "Flow fails with volume drying up; the lead is collapsing; momentum slowing.",
+   "refute_evidence": "Drying volume and slowing push are what a C7 retracement looks like: `subcomponents.flow.volume_score` 0.0, `mp_accel_state` 2 (DECELERATING), inside `subcomponents.mp.adx_val` 49.99 with `subcomponents.energy.exhaustion_score` 10.0.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21",
+    "D": "HH/HL, 10.6% under 20-day high: pullback",
+    "H1": "9<21, LH/LL: wait for the reclaim"
+   }
+  },
+  {
+   "pair_id": "SWK-aqe-quant-for~oneil",
+   "ticker": "SWK",
+   "claim_id": "SWK-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "oneil",
+   "claim_text": "Every recogniser for: broad, tested clean, lead widening, A-TIER path (`pipe_rank` 75.5), ACCELERATING, Precision Edge sub-scores confirm.",
+   "refute_evidence": "`pipe_rank` 75.5 and `mp` 100.0 stand, but `subcomponents.flow.accum_score` 1.5 and `subcomponents.structure.base_score` 5.0: no fresh base or buying; day_vol 1.06, D 24.4% past the swing high (C17).",
+   "refute_tf": {
+    "W": "HH/HL, 9.7% over last swing high",
+    "D": "HH/HL, 24.4% over the swing high: hard C17 rejection zone",
+    "H1": "below EMA9, LH/LL, 61% of the day's range"
+   }
+  },
+  {
+   "pair_id": "SWK-seow-for~oneil",
+   "ticker": "SWK",
+   "claim_id": "SWK-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Above structure with `mp` 100.0, a high strength rank and every engine over its floor.",
+   "refute_evidence": "`mp` 100.0 and `structure` 78.9 make it strong, but `subcomponents.structure.base_score` 5.0 is thin base credit and day_vol 1.06 is no breakout volume; 24.4% past the swing high.",
+   "refute_tf": {
+    "W": "HH/HL weekly, 6.4% under 20-wk high",
+    "D": "24.4% over the swing high: buy point long passed",
+    "H1": "below EMA9, LH/LL"
+   }
+  },
+  {
+   "pair_id": "ADP-livermore-for~elder-lens",
+   "ticker": "ADP",
+   "claim_id": "ADP-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "elder-lens",
+   "claim_text": "Long clean trend, coiled near the high, reclaim day.",
+   "refute_evidence": "Not a reclaim day on my read: `elder` 7.0 after two 10s is green vanishing on the last bar (C4); `subcomponents.energy.squeeze_score` 4.0 little coil; `sc_m_gates` False on `flow` 53.9.",
+   "refute_tf": {
+    "W": "over EMA9, 9>21: tide up",
+    "D": "HH/HL, permission bar two sessions old, green gone now",
+    "H1": "under EMA9, LH but HL: no reclaim timed"
+   }
+  },
+  {
+   "pair_id": "CHD-livermore-for~oneil",
+   "ticker": "CHD",
+   "claim_id": "CHD-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Strong trend, fresh BOS, Staples pair with KO.",
+   "refute_evidence": "`structure` 75.8 and `mp` 92.0 stand, but day_vol 0.87 on the BOS fails C16, `subcomponents.flow.volume_score` 2.0 is volume drying up, `flow` 52.6 leaves `sc_m_gates` False; KO's break also lacked volume.",
+   "refute_tf": {
+    "W": "HH/HL, 4.8% over swing high",
+    "D": "HH/HL, 0.4% over the swing high: at pivot, unbought",
+    "H1": "below EMA9, 9<21, HH but LL"
+   }
+  },
+  {
+   "pair_id": "CHD-oneil-against~livermore",
+   "ticker": "CHD",
+   "claim_id": "CHD-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "No volume on the break; weak flow; defensive.",
+   "refute_evidence": "Volume is not my test (fill difficulty not served). The trend is: `subcomponents.mp.adx_val` 47.86 = very strong trend, `subcomponents.structure.wk_score` 15.0 = weekly up, `pipe_rank` 81.7. Defensive is not a price signal (C21).",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 4.6% under 20-wk high",
+    "D": "HH/HL, 0.4% above swing high: past the pivot",
+    "H1": "below EMA9, 9<21: minor reaction"
+   }
+  },
+  {
+   "pair_id": "CHD-aqe-quant-against~livermore",
+   "ticker": "CHD",
+   "claim_id": "CHD-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "livermore",
+   "claim_text": "Heaviest engine fails with no accumulation; momentum slowing; defensive sector in a crowded set.",
+   "refute_evidence": "`flow` 52.6 and `subcomponents.flow.accum_score` 1.5 are weights I named; `mp_accel_state` DECELERATING holds. Trend passes: `subcomponents.mp.adx_val` 47.86, `pipe_rank` 81.7. Concentration is no flaw (R7).",
+   "refute_tf": {
+    "W": "HH/HL, 9>21: established uptrend",
+    "D": "HH/HL, 0.4% above swing high",
+    "H1": "below EMA9, HH but LL"
+   }
+  },
+  {
+   "pair_id": "LTH-minervini-for~seow",
+   "ticker": "LTH",
+   "claim_id": "LTH-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "Measured base at the pivot, top RS.",
+   "refute_evidence": "Top RS I see (rs_vs_spy 11.82), but the buy needs fund flow (C28) and it fails: `subcomponents.flow.cmf` -0.09, `subcomponents.flow.accum_score` 0.0, `sc_m_gates` False on `flow` 36.8. Base is not my test.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21: weekly up",
+    "D": "0.4% under swing high: break not yet printed on MTF",
+    "H1": "below EMA9, 27% of range - not my trading frame"
+   }
+  },
+  {
+   "pair_id": "LTH-livermore-for~seow",
+   "ticker": "LTH",
+   "claim_id": "LTH-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "seow",
+   "claim_text": "Strong structure and persistence near the high.",
+   "refute_evidence": "`structure` 87.4 and `mp` 97.0 are true, but structure and persistence are not my confirmation; COM is: `subcomponents.flow.cmf` -0.09 and `flow` 36.8 = selling or thin volume (C28).",
+   "refute_tf": {
+    "W": "HH/HL, 0.2% under swing high",
+    "D": "HH/HL, 0.4% under swing high: no fresh break",
+    "H1": "below EMA9 - not my trading frame"
+   }
+  },
+  {
+   "pair_id": "LTH-aqe-quant-against~minervini",
+   "ticker": "LTH",
+   "claim_id": "LTH-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "minervini",
+   "claim_text": "Money flowing out on the heaviest engine; closes near lows; `pipe_rank` 0 unreadable.",
+   "refute_evidence": "The base is the strongest read I have (C4): `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `subcomponents.structure.rs_spy_score` 15.0. `pipe_rank` 0 is a missing reading, not a zero.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 3.1% under 20-wk high: weekly stage 2",
+    "D": "HH/HL, 0.4% under swing high: at the pivot",
+    "H1": "below EMA9, 27% of range: soft close, watch"
+   }
+  },
+  {
+   "pair_id": "LTH-aqe-quant-against~raschke",
+   "ticker": "LTH",
+   "claim_id": "LTH-aqe-quant-against",
+   "kind": "against",
+   "author": "aqe-quant",
+   "refuter": "raschke",
+   "claim_text": "Money flowing out on the heaviest engine; closes near lows; `pipe_rank` 0 unreadable.",
+   "refute_evidence": "A test of the prior high (C20) with trend and base: `subcomponents.mp.adx_val` 31.72, `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `subcomponents.energy.exhaustion_score` 10.0. Conceded: `flow` 36.8.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 0.2% under last swing high",
+    "D": "HH/HL, 0.4% under swing high: test of the extreme",
+    "H1": "below EMA9, 27% of range: wait for H1 reclaim"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 38,
+  "by_author": {
+   "livermore": 8,
+   "oneil": 9,
+   "minervini": 5,
+   "seow": 6,
+   "aqe-quant": 8,
+   "wyckoff": 1,
+   "raschke": 1
+  },
+  "by_refuter": {
+   "oneil": 11,
+   "elder-lens": 5,
+   "livermore": 7,
+   "seow": 6,
+   "minervini": 4,
+   "wyckoff": 1,
+   "raschke": 4
+  }
+ }
+}

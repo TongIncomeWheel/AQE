@@ -1,0 +1,32 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-09",
+ "round": 1,
+ "tickets": [
+  {"ticker": "IBN", "answer": "AGREE", "conviction": 4, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "BILL", "answer": "OBJECT", "conviction": 2, "reservation": null,
+   "objection": "The trigger buys an H1 breakout into a run my R4 says is worn: `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 17.0, with `energy` 62.2 just over its 60 floor. R2 breadth (`structure` 94.7, `mp` 89.0) I back; the chase I do not.",
+   "would_clear": "A WAIT trigger that rests the worn run first: in_zone:ma_20 on D, acting only if `energy` holds above 60 and `subcomponents.energy.exhaustion_score` does not fall below 8.5."},
+  {"ticker": "STGW", "answer": "AGREE", "conviction": 4, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "FA", "answer": "AGREE", "conviction": 3, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "KO", "answer": "AGREE", "conviction": 3, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "HLT", "answer": "AGREE", "conviction": 3, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "AJG", "answer": "AGREE", "conviction": 3, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "SWK", "answer": "AGREE", "conviction": 4, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "WTRG", "answer": "AGREE", "conviction": 4, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "BDX", "answer": "OBJECT", "conviction": 2, "reservation": null,
+   "objection": "R1: `sc_m_gates` False on energy, `energy` 56.3 under its 60 floor; R4 wear is live, `subcomponents.energy.exhaustion_score` 7.0 at `subcomponents.energy.en_trend_bars` 22.0; R6 `subcomponents.structure.rs_accel` -1.04. A narrow case on `mp` 96.0, slated as if broad.",
+   "would_clear": "`energy` back above 60 with `subcomponents.energy.exhaustion_score` back at 10 and `sc_m_gates` True before the trigger counts."},
+  {"ticker": "CHD", "answer": "OBJECT", "conviction": 2, "reservation": null,
+   "objection": "R1: `sc_m_gates` False on flow, the heaviest engine: `flow` 52.6, `subcomponents.flow.accum_score` 1.5, `subcomponents.flow.volume_score` 2.0, with `mp_accel_state` DECELERATING. One day of 1.2x volume does not repair the engine.",
+   "would_clear": "`flow` recovering above its 60 floor with `subcomponents.flow.accum_score` rising, and `mp_accel_state` no longer DECELERATING, before the trigger counts."},
+  {"ticker": "WCN", "answer": "AGREE", "conviction": 2, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "ADP", "answer": "AGREE_WITH_RESERVATION", "conviction": 2,
+   "reservation": "The ticket's words omit that `sc_m_gates` is False on flow: `flow` 53.9 under its 60 floor on `subcomponents.flow.flow_score` 11.0 and `subcomponents.flow.accum_score` 1.5, against `energy` 76.5 and `structure` 84.2.",
+   "objection": null, "would_clear": null},
+  {"ticker": "GEHC", "answer": "AGREE", "conviction": 4, "reservation": null, "objection": null, "would_clear": null},
+  {"ticker": "LTH", "answer": "OBJECT", "conviction": 1, "reservation": null,
+   "objection": "R1: `sc_m_gates` False on flow, badly: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09 (closes near lows on volume). Narrow: held up by `mp` 97.0 and `structure` 87.4; `pipe_rank` 0 is a missing reading.",
+   "would_clear": "`flow` recovering above its 60 floor with `subcomponents.flow.cmf` turning positive before the trigger counts."}
+ ]
+}

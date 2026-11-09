@@ -1,0 +1,247 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-09",
+ "declarations": [
+  "Read only the files the round prompt lists.",
+  "Bracket fields read as information only (R1); no stance rests on one. No Valen flag used (R41).",
+  "Extended trend names are SUPPORT/WAIT with the Creek test as trigger: my card's HOLD-FOR-CONDITIONS (R2, C3, C15); extension is never an OPPOSE.",
+  "Low-demand names at the test are WAIT: volume must print before the sign-of-strength trigger (C5, C12). My method carries no market-wide void: market_void null.",
+  "Not served in this packet: pvp_*, vwap_14d, bar OHLC, rvol_20d for most names; structure read rests on the W/D/H1 grid and my blind-vote reads."
+ ],
+ "answers": [
+  {
+   "pair_id": "FOUR-wyckoff-for~livermore",
+   "ticker": "FOUR",
+   "to": "livermore",
+   "text": "'mp_adx_score 0.0 = no trend; weekly downtrend.' My C16 test is top-down, weekly first: W 9<21, LH/LL, 23.4% under the 20-wk high; `subcomponents.structure.wk_score` 5.0 = weekly trend down and `subcomponents.mp.mp_adx_score` 0.0 = no trend. The daily hold above the Creek on `subcomponents.flow.accum_score` 7.5 stands, but a daily break inside a weekly markdown is not a clear structure. Conceded: I move to ABSTAIN (R10).",
+   "concede": true
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "IBN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, away from value (12.0% over the D swing high). `flow` 98.7 = steady buying and `subcomponents.flow.accum_score` 5.5 = accumulation rising; `subcomponents.energy.en_pos50` 97.29 = top of the range. Do not chase; join the test (C3, C7)."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: the low-volume break was an upthrust",
+   "market_void": null,
+   "reason": "Fresh break at the test (D 1.6% over the swing high), but `subcomponents.flow.volume_score` 2.0 = volume drying up: a potential upthrust (C5). `subcomponents.flow.accum_score` 7.5 and `mp` 92.0 keep the bias long; volume first."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "AT the Creek test (D 0.3% over the swing high, C7). `subcomponents.flow.accum_score` 7.5 = accumulation accelerating; `subcomponents.structure.wk_score` 15.0 = weekly trend up (C16 passes); `subcomponents.flow.volume_score` 5.5 = volume picking up."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref and pvp_vah: back inside value",
+   "market_void": null,
+   "reason": "On the test of the Creek and VAH (C7, C11). `structure` 94.7 = strong base and weekly trend; `subcomponents.flow.ext_score` 5.0 = clean breakout on volume. Caution: `subcomponents.flow.accum_score` 1.5. The SOS trigger is the proof."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "Strongest trend here, W and D HH/HL, but 20.8% over the D swing high: the move left without me (C15). `flow` 96.1 and `subcomponents.flow.accum_score` 7.5 = demand intact; `subcomponents.energy.en_pos50` 99.17 = range top."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND (W/D HH/HL), 5.7% over the D swing high: away from the test. `mp` 96.0 = strong trend, but `subcomponents.energy.exhaustion_score` 7.0 = some wear and `subcomponents.flow.accum_score` 3.0 = thin fresh demand. Wait for the back-up (C3)."
+  },
+  {
+   "ticker": "FOUR",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A weekly close back above its 9/21 order would restore the top-down read; a close under structure_shift_ref ends it",
+   "market_void": null,
+   "reason": "Conceded to the refuter: top-down fails (C16). `subcomponents.structure.wk_score` 5.0 = weekly trend down; `subcomponents.mp.mp_adx_score` 0.0 = no trend; `pipe_rank` 42.6 = weak path. Daily `subcomponents.flow.accum_score` 7.5 alone is not a clear structure (R10)."
+  },
+  {
+   "ticker": "GEHC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, W/D HH/HL, 15.5% over the D swing high: away from value. `mp` 96.0 with `subcomponents.mp.adx_val` 44.16 = strong trend; `subcomponents.flow.accum_score` 7.5 = accumulation. H1 below EMA9: no SOS now (C3)."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, D 4.2% over the swing high, past the test. `subcomponents.flow.cmf` 0.42 = closes near highs on volume; `subcomponents.mp.adx_val` 39.55 = strong trend. Join the back-up (C3, C7)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, but 14.4% over the D swing high: away from value. `structure` 89.5 with `subcomponents.structure.base_score` 15.0 = well-formed base keeps the bias; `subcomponents.flow.accum_score` 1.5 = thin demand. Wait (C3)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "Near the test, D 3.2% over the swing high. `subcomponents.mp.adx_val` 35.62 = real trend; but `subcomponents.flow.accum_score` 0.0 = no fresh demand and `flow` 65.8 = middling. Effort must appear before the SOS (C12)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "AT the test (D 0.9% over the swing high), the quiet back-up C7 prefers. `structure` 87.4 and `subcomponents.mp.adx_val` 41.49 = strong trend; but `flow` 57.9 and `subcomponents.flow.accum_score` 1.5 = demand not back yet."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close under base_low_20d would turn me against",
+   "market_void": null,
+   "reason": "RANGE after a huge run, D 10.6% under the swing high, not at an edge: `subcomponents.energy.en_pos50` 77.16 = mid-upper range; `subcomponents.flow.volume_score` 0.0 = volume drying up; `flow` 57.9. Unclear context (R10, C16)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, W/D HH/HL, but 24.4% over the D swing high: away from value. `mp` 100.0 and `subcomponents.mp.adx_val` 42.46 = strong trend; `subcomponents.flow.accum_score` 1.5 = thin fresh demand. Do not chase (C3, C15)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last pivot high on volume: the small base inside the weekly uptrend breaks"
+   },
+   "wrong_if": "Daily close below base_low_20d: the base fails",
+   "market_void": null,
+   "reason": "Small base in a weekly uptrend, D 2.0% under the swing high (C7). `energy` 76.5 with `subcomponents.energy.squeeze_score` 4.0 = some coil; but `flow` 53.9 and `subcomponents.flow.cmf` 0.01 = weak effort. Wait for the break."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: the low-volume break was an upthrust",
+   "market_void": null,
+   "reason": "Fresh break at the test (D 0.4% over the swing high), W HH/HL. `subcomponents.mp.adx_val` 47.86 = strong trend; but `subcomponents.flow.volume_score` 2.0 and `subcomponents.flow.accum_score` 1.5 = low-volume break, a potential upthrust (C5)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "At the Creek (D 0.4% under the swing high), W/D HH/HL; `structure` 87.4 = strong. But effort is absent: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Only an SOS bar makes it a trade (C12)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of2.json",
+   "bytes": 6967,
+   "sha256": "c99d4cb4b43a"
+  },
+  {
+   "file": "wyckoff.part2of2.json",
+   "bytes": 5542,
+   "sha256": "369ce5761f03"
+  }
+ ]
+}

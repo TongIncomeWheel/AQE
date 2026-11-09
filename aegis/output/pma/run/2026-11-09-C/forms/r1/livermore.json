@@ -1,0 +1,563 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-09",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HLT",
+   "conviction": 4,
+   "reason": "New high after a normal reaction: structure_shift BULLISH_BOS, pct_from_pivot 1.63 over pivot 364.5. `sc_momentum` 78.3 with `sc_m_gates` True = every engine clears its floor; `structure` 77.9 and `subcomponents.mp.adx_val` 40.88 = an established, directional uptrend.",
+   "fields_cited": [
+    "structure_shift",
+    "sma_distance_pct",
+    "atr_14d",
+    "mp_state",
+    "sc_momentum",
+    "sc_m_gates",
+    "structure",
+    "subcomponents.mp.adx_val"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5",
+      "C16"
+     ],
+     "observed": "structure_shift BULLISH_BOS; pct_from_pivot 1.63; pct_from_52w_high -1.61; sma_distance_pct 12.59; structure 77.9",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C9",
+      "C18"
+     ],
+     "observed": "atr_14d 8.98 = danger signal unit (my translation); mp_state STRONG, mp_accel_state ACCELERATING; bracket.valid False, own max-loss level pivot 364.5",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C14"
+     ],
+     "observed": "gics_sector XLY, sector_trend_state Momentum Fading — Hold, Don't Add; RCL and SN also ABOVE_STRUCTURE near highs; rank 34",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6",
+      "C4"
+     ],
+     "observed": "held False; entry 370.45 is above the broken pivot - buying strength, not weakness; day_vol 0.85",
+     "verdict": "pass",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "A close back below the pivot 364.5 (failed break, C20) or a single-day reaction of 1x atr_14d 8.98 or more from the day's high (my translation of C7).",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "IBN",
+   "conviction": 4,
+   "reason": "Leader at a fresh high: pct_from_52w_high 0.0, structure_shift ABOVE_STRUCTURE, day_vol 1.83. `sc_momentum` 85.8 (strong on every engine), `flow` 98.7 (steady buying, volume on up days), `subcomponents.mp.roc_zscore` 3.1 = an exceptional month vs its own history.",
+   "fields_cited": [
+    "structure_shift",
+    "day_vol",
+    "mp_state",
+    "atr_14d",
+    "sc_momentum",
+    "flow",
+    "subcomponents.mp.roc_zscore",
+    "structure"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5",
+      "C16"
+     ],
+     "observed": "pct_from_52w_high 0.0; structure_shift ABOVE_STRUCTURE; structure 84.2; sma_distance_pct 16.6 (far from 50d but AT the high)",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C9",
+      "C18"
+     ],
+     "observed": "atr_14d 0.74 = danger unit (my translation); mp_state STRONG, mp_accel_state ACCELERATING; bracket.valid False, own level continuation pivot 30.69",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C13",
+      "C14"
+     ],
+     "observed": "gics_sector XLF, sector_trend_state Momentum Fading — Hold, Don't Add; MRSH, AJG, NDAQ near highs but mp_state FADING; rank 2",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6",
+      "C4"
+     ],
+     "observed": "held False; entry 33.89 = the 52w high itself - entry on strength",
+     "verdict": "pass",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 0.74 or more from the day's high (my C7 translation); a close below the continuation pivot 30.69 ends the trend read.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "EW",
+   "conviction": 4,
+   "reason": "Fresh new high: pct_from_52w_high 0.0, ABOVE_STRUCTURE, mp_state STRONG ACCELERATING. `structure` 87.4 (beating the market, weekly up), `subcomponents.structure.wk_score` 15.0 (weekly close above rising 10-wk avg), `subcomponents.mp.roc_zscore` 3.04 exceptional; `sc_momentum` 78.0.",
+   "fields_cited": [
+    "structure_shift",
+    "mp_state",
+    "atr_14d",
+    "structure",
+    "subcomponents.structure.wk_score",
+    "subcomponents.mp.roc_zscore",
+    "sc_momentum"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5",
+      "C16"
+     ],
+     "observed": "pct_from_52w_high 0.0; structure_shift ABOVE_STRUCTURE; structure 87.4; sma_distance_pct 14.87",
+     "verdict": "pass",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C9",
+      "C18"
+     ],
+     "observed": "atr_14d 3.03 = danger unit (my translation); mp_state STRONG, mp_accel_state ACCELERATING; bracket.valid False, own reference 99.11 (1 ATR under)",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C14"
+     ],
+     "observed": "gics_sector XLV, sector_trend_state Momentum Fading — Hold, Don't Add; BDX ABOVE_STRUCTURE pct_from_52w_high -0.78 confirms; rank 36",
+     "verdict": "partial",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6",
+      "C4"
+     ],
+     "observed": "held False; entry 102.14 = the 52w high - entry on strength; day_vol 1.11",
+     "verdict": "pass",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 3.03 or more from the day's high (my C7 translation), or a close below 99.11.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "KO",
+   "conviction": 3,
+   "reason": "Break of structure to a new high: BULLISH_BOS, pct_from_pivot 0.31, pct_from_52w_high -0.17. `sc_momentum` 76.7 with `sc_m_gates` True; `pipe_rank` 85.2 = strong trend reached by steady days; `subcomponents.structure.wk_score` 15.0. Clearance of the pivot is thin (C19).",
+   "fields_cited": [
+    "structure_shift",
+    "mp_state",
+    "atr_14d",
+    "sc_momentum",
+    "sc_m_gates",
+    "pipe_rank",
+    "subcomponents.structure.wk_score"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5",
+      "C19"
+     ],
+     "observed": "structure_shift BULLISH_BOS; pct_from_pivot 0.31 (thin margin over pivot 95.37); pct_from_52w_high -0.17; sma_distance_pct 6.37",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C9",
+      "C18"
+     ],
+     "observed": "atr_14d 1.83 = danger unit (my translation); mp_state FADING (default label, not decay), mp_accel_state ACCELERATING; own level pivot 95.37",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C14"
+     ],
+     "observed": "gics_sector XLP; CCEP and CHD also BULLISH_BOS = second-name Key Price confirmation; sector_trend_state Momentum Fading — Hold, Don't Add",
+     "verdict": "pass",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6",
+      "C4"
+     ],
+     "observed": "held False; entry 95.67 above the broken pivot - entry on strength; day_vol 1.01",
+     "verdict": "pass",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "Failure to extend past the pivot 95.37 and a close back below it (C20 failure), or a single-day reaction of 1x atr_14d 1.83 or more from the high.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "EXR",
+   "conviction": 3,
+   "reason": "REIT leader holding near its high in a group that confirms (KIM, CUBE, AHR, COLD all ABOVE_STRUCTURE). `structure` 87.4, `subcomponents.mp.adx_val` 49.06 = a very strong trend, `sc_momentum` 79.4; but `subcomponents.flow.accum_score` 0.0 and mp DECELERATING temper it.",
+   "fields_cited": [
+    "structure_shift",
+    "mp_accel_state",
+    "gics_sector",
+    "structure",
+    "subcomponents.mp.adx_val",
+    "sc_momentum",
+    "subcomponents.flow.accum_score"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5"
+     ],
+     "observed": "pct_from_52w_high -1.15 (just under the high, not yet a fresh one); structure_shift ABOVE_STRUCTURE; structure 87.4; sma_distance_pct 13.8",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C8",
+      "C18"
+     ],
+     "observed": "atr_14d 3.46 = danger unit (my translation); mp_state FADING, mp_accel_state DECELERATING; own level continuation pivot 156.74",
+     "verdict": "partial",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C14"
+     ],
+     "observed": "gics_sector XLRE; KIM, CUBE, AHR, COLD ABOVE_STRUCTURE within 3.3% of highs = group confirms; sector_trend_state Momentum Fading — Hold, Don't Add",
+     "verdict": "pass",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6"
+     ],
+     "observed": "held False; entry 159.19 vs high 161.04 - add only on a print above 161.04",
+     "verdict": "partial",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "A close below the continuation pivot 156.74, or a single-day reaction of 1x atr_14d 3.46 or more from the day's high.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "AHR",
+   "conviction": 2,
+   "reason": "Fresh high on volume: pct_from_52w_high 0.0, day_vol 1.96, REIT group confirms. `flow` 100.0 = steady buying; `sc_momentum` 78.3. But `subcomponents.mp.adx_val` 19.76 and `subcomponents.mp.trend_score` 8.0 say the uptrend is not yet established (C5a), so conviction stays low.",
+   "fields_cited": [
+    "structure_shift",
+    "day_vol",
+    "mp_state",
+    "flow",
+    "sc_momentum",
+    "subcomponents.mp.adx_val",
+    "subcomponents.mp.trend_score"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C5"
+     ],
+     "observed": "pct_from_52w_high 0.0; structure_shift ABOVE_STRUCTURE; structure 84.2; sma_distance_pct 9.08; trend not established (adx 19.76)",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C7",
+      "C9",
+      "C18"
+     ],
+     "observed": "atr_14d 1.46 = danger unit (my translation); mp_state BUILDING, mp_accel_state ACCELERATING; own level continuation pivot 56.46",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "mp_state",
+      "mp_accel_state",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C12",
+      "C14"
+     ],
+     "observed": "gics_sector XLRE; EXR, KIM, CUBE ABOVE_STRUCTURE near highs confirm; sector_trend_state Momentum Fading — Hold, Don't Add",
+     "verdict": "pass",
+     "fields": [
+      "gics_sector",
+      "sector_trend_state",
+      "rank"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C6",
+      "C4"
+     ],
+     "observed": "held False; entry 57.91 = the 52w high - entry on strength; day_vol 1.96",
+     "verdict": "pass",
+     "fields": [
+      "held",
+      "entry",
+      "day_vol"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C11",
+      "C18"
+     ],
+     "observed": "declared block filed: danger threshold via atr_14d is my translation; fill_difficulty NOT_SERVED; no tip or rumour used",
+     "verdict": "pass",
+     "fields": [
+      "atr_14d",
+      "day_vol"
+     ]
+    }
+   ],
+   "falsifier": "A close below the continuation pivot 56.46, or a single-day reaction of 1x atr_14d 1.46 or more from the day's high.",
+   "price_at_nomination": null
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {
+   "field": "held",
+   "impact": "held is False on every packet row and every held_book.* column is null, so no MP or V held name was visible to review; held_review is empty for that reason, not by omission"
+  },
+  {
+   "field": "fill_difficulty",
+   "impact": "order-fill difficulty is not served; day_vol read only as a partial proxy for strength confirmation"
+  }
+ ],
+ "declarations": [
+  "trend_confirmation: per-name in checklist step 1 (structure/structure_shift + sma_distance_pct, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x atr_14d single-day reaction from the day's high), not literal 6pts (C7, C18-C20) - the multiplier is my translation, not Livermore's number",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger lessons: no voice_memory block was injected this run, so no standing lesson applies",
+  "REPORT C: AQE composites/sub-components read from aqe_indicators.tsv per the prompt; elder read as advisory only, never a passing basis",
+  "R1: bracket.valid False on 5 of 6 names is stated as context only; where invalid I name my own structural level"
+ ],
+ "shortfall_reason": null
+}

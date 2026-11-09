@@ -1,0 +1,143 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-09",
+ "declarations": [
+  "Declared: fundamentals C, A, S, I NOT_AVAILABLE (R10); base_stage NOT_AVAILABLE (C19); market_gate DELEGATED (C1); rs_measure rs_leadership (substitute); volume_measure day_vol vs 20d (substitute); base_measure structure + base_score (substitute).",
+  "Pivot distance read from the MTF D line '% above the last swing high' (pct_from_pivot not served). No stance here rests on a bracket (R1) or a Valen flag (R41).",
+  "Part 1 of 2: all answers (incl. GMAB, CHD) + decisions on IBN HLT KO BILL STGW BDX FOUR GEHC WTRG."
+ ],
+ "answers": [
+  {
+   "pair_id": "HLT-oneil-against~livermore",
+   "ticker": "HLT",
+   "to": "livermore",
+   "text": "'Volume is not my new-high test.' It is mine: C16 makes breakout volume under +40% a hard rejection. D is HH/HL 1.6% over the swing high, but day_vol 0.85 and `subcomponents.flow.volume_score` 2.0 say nobody bought the break. adx 40.88 and wk_score 15.0 show trend, not demand.",
+   "concede": false
+  },
+  {
+   "pair_id": "HLT-oneil-against~seow",
+   "ticker": "HLT",
+   "to": "seow",
+   "text": "'cmf 0.15 and accum_score 7.5 confirm fund flow.' Those are same-day proxies, advisory to me, not breakout volume. C16 reads the breakout day: day_vol 0.85 with `subcomponents.flow.volume_score` 2.0 (volume drying up). W and D trend are intact; the volume test still fails.",
+   "concede": false
+  },
+  {
+   "pair_id": "KO-oneil-against~livermore",
+   "ticker": "KO",
+   "to": "livermore",
+   "text": "'rs_accel -0.7 is a flat lead, not a lost one.' Fair: -0.7 is slight erosion, I drop 'fading'. The claim stands on C16 and R3: day_vol 1.01 on a break only 0.3% over the swing high, and `subcomponents.structure.base_score` 5.0 over `subcomponents.structure.base_days` 1497.0 measures no fresh base.",
+   "concede": false
+  },
+  {
+   "pair_id": "KO-oneil-against~seow",
+   "ticker": "KO",
+   "to": "seow",
+   "text": "'Base and volume are not my tests.' They are mine. W is LH but HL, D a thin 0.3% break; day_vol 1.01 fails C16 and `subcomponents.structure.base_score` 5.0 gives no measured base (R3). rs_vs_spy 14.91 is leadership I grant; leadership without base and volume is not a buy.",
+   "concede": false
+  },
+  {
+   "pair_id": "STGW-oneil-against~elder-lens",
+   "ticker": "STGW",
+   "to": "elder-lens",
+   "text": "'No climax: exhaustion_score 10.0 untouched.' Granted on C24: 11.64 vs ma200 7.29 is ~60% above, under the 70% line, and exhaustion 10.0 shows no wear. The base claim stands (R3): `subcomponents.structure.base_days` 4.0, `subcomponents.structure.base_score` 2.4, D 20.8% past the swing high: no pivot to buy.",
+   "concede": false
+  },
+  {
+   "pair_id": "STGW-oneil-against~seow",
+   "ticker": "STGW",
+   "to": "seow",
+   "text": "'No base needed: buying the break is the entry.' Under C12/C18 a base is the method: no base, no pivot. W and D are HH/HL, but `subcomponents.structure.base_score` 2.4 on `subcomponents.structure.base_days` 4.0 and 20.8% past the D swing high is a C17 hard rejection zone. Strength granted; buy point absent.",
+   "concede": false
+  },
+  {
+   "pair_id": "GMAB-oneil-against~livermore",
+   "ticker": "GMAB",
+   "to": "livermore",
+   "text": "'Climax line is not my test.' It is mine (C24, R7): entry 53.63 vs ma200 31.05 is ~73% above the 200-day, W 80.0% over its swing high. 'Collapsing' overstates it; `subcomponents.structure.rs_accel` -26.37 off rs_vs_spy 76.6 is a sharply narrowing lead. Climax rule decides.",
+   "concede": false
+  },
+  {
+   "pair_id": "GMAB-oneil-against~raschke",
+   "ticker": "GMAB",
+   "to": "raschke",
+   "text": "'No climax wear: exhaustion 10.0, adx 49.99.' The engine's wear score is not my climax test; price 70%+ over ma200 is (C24). Refuter concedes `flow` 57.9 fails its floor, and `subcomponents.flow.volume_score` 0.0 shows no volume. D is pulling back 10.6% off the high: sell-into, not buy.",
+   "concede": false
+  },
+  {
+   "pair_id": "CHD-oneil-against~livermore",
+   "ticker": "CHD",
+   "to": "livermore",
+   "text": "'Volume is not my test.' It is my C16 test. adx 47.86 and wk_score 15.0 show trend; the D break is only 0.4% over the swing high on day_vol 0.87, `subcomponents.flow.volume_score` 2.0, `flow` 52.6 with `sc_m_gates` False. No institutional demand at the pivot.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "IBN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Buy a daily close at a new 52-week closing high, on volume at least 1.4x normal."},
+   "wrong_if": "A close 8% under entry 33.89 (C20), or a new high on below-average volume (C25).",
+   "market_void": "void if the index is under distribution (C1, market gate DELEGATED)",
+   "reason": "Leader on breakout volume (day_vol 1.83): `flow` 98.7 with `subcomponents.flow.ext_score` 5.0 (breakout bonus), `subcomponents.flow.volume_score` 6.5, `structure` 84.2, `sc_momentum` 85.8. Caution: `subcomponents.structure.base_score` 5.0, D 12.0% past swing high (C17 late)."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "OPPOSE",
+   "wrong_if": "HLT runs on from pivot 364.5 without volume ever expanding past 1.40.",
+   "market_void": null,
+   "reason": "C16 fails: day_vol 0.85 on the break; `subcomponents.flow.volume_score` 2.0 = volume drying up; `flow` 76.3 middling. Leader (`structure` 77.9, `mp` 92.0) but an unbought breakout."
+  },
+  {
+   "ticker": "KO",
+   "stance": "OPPOSE",
+   "wrong_if": "KO holds the break and runs without volume expanding.",
+   "market_void": null,
+   "reason": "No measured base (R3): `subcomponents.structure.base_score` 5.0 on `subcomponents.structure.base_days` 1497.0; day_vol 1.01 fails C16; `subcomponents.structure.rs_accel` -0.7 flat lead. `structure` 77.9 is not enough without base and volume."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Buy a daily close above Friday's high, on volume at least 1.4x normal; no add past 5% over the pivot."},
+   "wrong_if": "A close back under pivot 50.76 on day_vol above 1.40, or 8% under entry 52.41 (C20).",
+   "market_void": "void if the index is under distribution (C1, market gate DELEGATED)",
+   "reason": "Best measured base in the set: `structure` 94.7, `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `subcomponents.structure.rs_accel` 14.85 lead widening; day_vol 1.58 clears C16; D 3.2% over swing high, inside 5%. Caution: `subcomponents.flow.accum_score` 1.5."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "OPPOSE",
+   "wrong_if": "STGW climbs another leg without basing.",
+   "market_void": null,
+   "reason": "No base, no pivot (R3): `subcomponents.structure.base_score` 2.4 on `subcomponents.structure.base_days` 4.0; D 20.8% past the swing high (C17 hard zone). Strength granted: `sc_momentum` 87.6, `flow` 96.1."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "ABSTAIN",
+   "wrong_if": "BDX breaks out on volume while I sit out.",
+   "market_void": null,
+   "reason": "Leader with `structure` 77.9 and `mp` 96.0, but `sc_m_gates` False on `energy` 56.3, `subcomponents.energy.exhaustion_score` 7.0 some wear, day_vol 1.18 under C16, D 5.7% past swing high."
+  },
+  {
+   "ticker": "FOUR",
+   "stance": "OPPOSE",
+   "wrong_if": "FOUR reclaims ma200 45.77 and holds: then the repair became a base.",
+   "market_void": null,
+   "reason": "Laggard repairing damage (C9, C12): `subcomponents.structure.rs_vs_spy` -2.94 trails the market, `mp` 55.0, `pipe_rank` 42.6; W is 9<21 LH/LL, 23.4% under the 20-wk high. Volume does not make a laggard a leader."
+  },
+  {
+   "ticker": "GEHC",
+   "stance": "ABSTAIN",
+   "wrong_if": "GEHC keeps running on light volume.",
+   "market_void": null,
+   "reason": "Leader (`sc_momentum` 82.9, `subcomponents.structure.rs_accel` 13.75) but past the buy point: D 15.5% past swing high, day_vol 0.96, `subcomponents.structure.base_score` 5.0, `subcomponents.structure.resist_score` 5.0. Wait for a new base."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "ABSTAIN",
+   "wrong_if": "If the merger is off and WTRG breaks out on volume, abstaining was wrong.",
+   "market_void": null,
+   "reason": "Event-driven (pending AWK merger): not mine to vote up. On fields, `structure` 84.2 and `mp` 97.0 are sound but day_vol 1.24 under C16."
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+{
+ "voice": "seow",
+ "date": "2026-11-09",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "IBN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Name is a POSITION-system case (`sc_momentum` 85.8, `sc_m_gates` True, `subcomponents.flow.cmf` 0.22 COM confirms) but the trigger waits for a daily close at a new closing high; my entry is a buy stop over the prior-day high, never a close (C27, C5).",
+   "would_clear": "Trigger trade_above:bar_high (D): buy stop one tick over the prior-day high, trailed to each new prior-day high (C27)."
+  },
+  {
+   "ticker": "BILL",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "STGW",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Strongest position picture (`mp` 100.0, `subcomponents.flow.cmf` 0.35 COM confirms, `sc_m_gates` True) yet the trigger waits for a tight flag and a daily close at a new closing high; strength is the signal (C26) and entry is a buy stop over the prior-day high (C27).",
+   "would_clear": "Trigger trade_above:bar_high (D): buy stop one tick over the prior-day high, trailed daily (C27)."
+  },
+  {
+   "ticker": "FA",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger is a daily close above the 52-week closing high; my entry is a buy stop over the prior-day high once COM firms (C27, C28). COM is thin: `subcomponents.flow.cmf` 0.07, `flow` 69.7, though `structure` 89.5 and `pipe_rank` 90.5 hold.",
+   "would_clear": "Trigger trade_above:bar_high (D) after a clearly positive flow day, buy stop one tick over the prior-day high (C27)."
+  },
+  {
+   "ticker": "KO",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "ADVANCE reads act-now, but my WAIT dissent is printed: COM barely on (`subcomponents.flow.cmf` 0.03) and lead eroding (`subcomponents.structure.rs_accel` -0.7); yes once a clearly positive flow day prints. Same bar_high level as mine.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "HLT",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Fresh BULLISH_BOS with `sc_m_gates` True, `subcomponents.flow.cmf` 0.15 COM positive, `mp` 92.0: the signal is already printed (C26). Waiting for a daily close above the 52-week closing high is not my entry; a buy stop over the prior-day high is (C27).",
+   "would_clear": "Trigger trade_above:bar_high (D): buy stop one tick over the prior-day high, trailed daily (C27)."
+  },
+  {
+   "ticker": "AJG",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SWK",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger is a daily close above the 52-week closing high after the reaction; my entry is a buy stop over the prior-day high once COM firms (C27, C28). `mp` 100.0 and `sc_m_gates` True hold; COM marginal at `subcomponents.flow.cmf` 0.07.",
+   "would_clear": "Trigger trade_above:bar_high (D) after a clearly positive flow day, buy stop one tick over the prior-day high (C27)."
+  },
+  {
+   "ticker": "WTRG",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "BDX",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Above structure with TIF proxy ACCELERATION, `mp` 96.0, `subcomponents.flow.cmf` 0.3 COM confirms: the position signal is present (C26). The trigger waits for a daily close at a new closing high; my entry is a buy stop over the prior-day high (C27).",
+   "would_clear": "Trigger trade_above:bar_high (D): buy stop one tick over the prior-day high, trailed daily (C27)."
+  },
+  {
+   "ticker": "CHD",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "WCN",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ADP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "RANGE picture with no fund-flow confirmation (C28): `subcomponents.flow.cmf` 0.01 flat COM, `sc_m_gates` False on `flow` 53.9. A close above the 52-week closing high with COM flat is a break without fund flow, and a close is not my entry (C27).",
+   "would_clear": "COM above zero on a positive flow day (`subcomponents.flow.cmf` clearly > 0), then trade_above:bar_high (D) buy stop (C27)."
+  },
+  {
+   "ticker": "GEHC",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Horizon 10 sessions is short for a position-system trade (C22: more than two weeks); the trade should run to its support line, not a clock. Yes once COM firms: `subcomponents.flow.cmf` 0.06 thin, `mp` 96.0.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "LTH",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "Fund flow does not confirm (C28): `subcomponents.flow.cmf` -0.09 COM below zero, `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `sc_m_gates` False. A close above pivot_high with COM negative is structure without fund flow, not a position signal.",
+   "would_clear": "`subcomponents.flow.cmf` turning above zero (COM positive) before the trigger fires."
+  }
+ ]
+}

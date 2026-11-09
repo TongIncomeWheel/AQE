@@ -1,0 +1,114 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, but 14.4% over the D swing high: away from value. `structure` 89.5 with `subcomponents.structure.base_score` 15.0 = well-formed base keeps the bias; `subcomponents.flow.accum_score` 1.5 = thin demand. Wait (C3)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "Near the test, D 3.2% over the swing high. `subcomponents.mp.adx_val` 35.62 = real trend; but `subcomponents.flow.accum_score` 0.0 = no fresh demand and `flow` 65.8 = middling. Effort must appear before the SOS (C12)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "AT the test (D 0.9% over the swing high), the quiet back-up C7 prefers. `structure` 87.4 and `subcomponents.mp.adx_val` 41.49 = strong trend; but `flow` 57.9 and `subcomponents.flow.accum_score` 1.5 = demand not back yet."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close under base_low_20d would turn me against",
+   "market_void": null,
+   "reason": "RANGE after a huge run, D 10.6% under the swing high, not at an edge: `subcomponents.energy.en_pos50` 77.16 = mid-upper range; `subcomponents.flow.volume_score` 0.0 = volume drying up; `flow` 57.9. Unclear context (R10, C16)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Pull back into the broken Creek (structure_shift_ref); then buy only on an hourly sign-of-strength close over the high"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "TREND, W/D HH/HL, but 24.4% over the D swing high: away from value. `mp` 100.0 and `subcomponents.mp.adx_val` 42.46 = strong trend; `subcomponents.flow.accum_score` 1.5 = thin fresh demand. Do not chase (C3, C15)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last pivot high on volume: the small base inside the weekly uptrend breaks"
+   },
+   "wrong_if": "Daily close below base_low_20d: the base fails",
+   "market_void": null,
+   "reason": "Small base in a weekly uptrend, D 2.0% under the swing high (C7). `energy` 76.5 with `subcomponents.energy.squeeze_score` 4.0 = some coil; but `flow` 53.9 and `subcomponents.flow.cmf` 0.01 = weak effort. Wait for the break."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: the low-volume break was an upthrust",
+   "market_void": null,
+   "reason": "Fresh break at the test (D 0.4% over the swing high), W HH/HL. `subcomponents.mp.adx_val` 47.86 = strong trend; but `subcomponents.flow.volume_score` 2.0 and `subcomponents.flow.accum_score` 1.5 = low-volume break, a potential upthrust (C5)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"
+   },
+   "wrong_if": "Daily close back below structure_shift_ref: price re-enters the old range",
+   "market_void": null,
+   "reason": "At the Creek (D 0.4% under the swing high), W/D HH/HL; `structure` 87.4 = strong. But effort is absent: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Only an SOS bar makes it a trade (C12)."
+  }
+ ],
+ "declarations": [
+  "Read only the files the round prompt lists.",
+  "Bracket fields read as information only (R1); no stance rests on one. No Valen flag used (R41).",
+  "Extended trend names are SUPPORT/WAIT with the Creek test as trigger: my card's HOLD-FOR-CONDITIONS (R2, C3, C15); extension is never an OPPOSE.",
+  "Low-demand names at the test are WAIT: volume must print before the sign-of-strength trigger (C5, C12). My method carries no market-wide void: market_void null.",
+  "Not served in this packet: pvp_*, vwap_14d, bar OHLC, rvol_20d for most names; structure read rests on the W/D/H1 grid and my blind-vote reads."
+ ]
+}

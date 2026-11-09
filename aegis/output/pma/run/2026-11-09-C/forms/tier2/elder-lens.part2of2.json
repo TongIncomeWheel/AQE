@@ -1,0 +1,88 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Price pulls back into the 20-day average while elder holds 7 or higher at the close; buy there, not at the high"
+   },
+   "wrong_if": "A red impulse bar at the close, or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "R8: blue dip reclaimed, mp_state STRONG, `elder` 10.0 not red; W and D 9>21. `structure` 89.5 (outperforming, weekly up) and `pipe_rank` 90.5 steady trend; `mp` 97.0, `sc_m_gates` True. W swing LH/LL and `flow` 69.7 moderate: wait for value (C10)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A dip to 6 or lower then reclaim to 7+ near ma_20 would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Green vanished on the last bar: `elder` 7.0 (C4). `mp` 93.0 trend intact but `flow` 65.8 moderate and `subcomponents.flow.accum_score` 0.0 no accumulation; H1 under EMA9. Stand aside (C22)."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A permission event with flow back over its floor would make standing aside wrong.",
+   "market_void": null,
+   "reason": "`elder` 7.0 blue persisting, no transition (C4). `structure` 87.4 strong but `sc_m_gates` False with `flow` 57.9 under its floor; H1 9<21. Stand aside (C22)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A permission event out of the range with W still 9>21 would make standing aside wrong.",
+   "market_void": null,
+   "reason": "`elder` 7.0 flat blue five bars, no colour change (C4). `mp` 96.0 strong but `sc_m_gates` False on `flow` 57.9; D is 10.6% under its 20-day high. Stand aside (C22)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A dip-and-reclaim in elder near ma_20 would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Green vanished on the last bar: `elder` 7.0 (C4). `mp` 100.0 and `sc_momentum` 78.1 strong, but D is 24.4% over its last swing high, likely near the upper wall (C11); wait for the pullback (C22)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A fresh dip-and-reclaim with flow back over its floor would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Permission bar two sessions back, then green vanished: `elder` 7.0 (C4). `energy` 76.5 strong but `sc_m_gates` False with `flow` 53.9 under its floor. Stand aside (C22)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A permission event with flow back over its floor would make standing aside wrong.",
+   "market_void": null,
+   "reason": "`elder` 7.0 blue persisting, no transition (C4). `subcomponents.mp.adx_val` 47.86 a very strong trend, but `sc_m_gates` False with `flow` 52.6 under its floor; H1 9<21. Stand aside (C22)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A dip-and-reclaim with flow back over its floor would make standing aside wrong.",
+   "market_void": null,
+   "reason": "Green vanished on the last bar: `elder` 7.0 (C4). `structure` 87.4 strong but `flow` 36.8 selling-side and `sc_m_gates` False; H1 closed at 27% of the day's range. Stand aside (C22)."
+  }
+ ],
+ "declarations": [
+  "No refutation of my claims was paired to me; answers is empty.",
+  "Impulse colour, force index, channel and weekly_trend_direction are not in my tier-2 packet; weekly read from the W grid (EMA9 vs EMA21) as a declared proxy (C21).",
+  "Elder buys the pullback into value, never the plateau (C6, C10): every SUPPORT is WAIT on in_zone:ma_20. No bracket is a basis (R1)."
+ ]
+}

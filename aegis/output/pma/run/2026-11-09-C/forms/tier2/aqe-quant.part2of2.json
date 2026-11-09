@@ -1,0 +1,82 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-09",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"},
+   "wrong_if": "`flow` drops under its 60 floor, or `mp_accel_state` turns DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 69.7, `energy` 63.0, `structure` 89.5, `mp` 97.0; A-TIER `pipe_rank` 90.5; R5 `subcomponents.structure.rs_accel` 17.67. WAIT: `mp_accel_state` FLAT, `subcomponents.flow.accum_score` 1.5 thin."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "wait for a pull-in to the 20-day average, then act if the engines hold"},
+   "wrong_if": "`flow` drops under its 60 floor, or `mp_accel_state` turns DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 65.8, `energy` 64.7, `structure` 78.9, `mp` 93.0; tested clean at `subcomponents.energy.en_trend_bars` 18.0; R5 `subcomponents.structure.rs_accel` 10.01. WAIT: `subcomponents.flow.accum_score` 0.0, FLAT."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if `flow` clears 60 and the name runs with `mp` 96.0 intact.",
+   "market_void": null,
+   "reason": "Split: `flow` 57.9 fails its floor (`subcomponents.flow.accum_score` 1.5) while `structure` 87.4 and `mp` 96.0 are strong; `mp_accel_state` DECELERATING. No decisive case."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` back above 60 with `subcomponents.structure.rs_accel` turning positive.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow: `flow` 57.9, `subcomponents.flow.volume_score` 0.0. R6 strongly: `subcomponents.structure.rs_accel` -26.37, `subcomponents.structure.rs_accel_score` 0.0; `mp_accel_state` DECELERATING."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "a daily close above Friday's high while the engines still agree"},
+   "wrong_if": "`subcomponents.energy.exhaustion_score` drops under 10 on the live run, or `mp_accel_state` DECELERATING.",
+   "market_void": null,
+   "reason": "R2 broad: `flow` 69.7, `energy` 71.4, `structure` 78.9, `mp` 100.0; tested clean at `subcomponents.energy.en_trend_bars` 19.0; R5 `subcomponents.structure.rs_accel` 17.39; R8 A-TIER + ACCELERATING; R9 `subcomponents.mp.roc_zscore` 2.54."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if `flow` clears 60 and the name runs with the other engines intact.",
+   "market_void": null,
+   "reason": "Split: `flow` 53.9 fails its floor (`subcomponents.flow.flow_score` 11.0, `subcomponents.flow.accum_score` 1.5) against `energy` 76.5, `structure` 84.2, `mp` 89.0. Heaviest engine failing: no decisive case."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` recovers above 60 with `subcomponents.flow.accum_score` rising and `mp_accel_state` no longer DECELERATING.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow: `flow` 52.6, `subcomponents.flow.accum_score` 1.5, `subcomponents.flow.volume_score` 2.0. `mp_accel_state` DECELERATING; `subcomponents.structure.rs_accel` 3.61 small."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` recovers above 60 with `subcomponents.flow.cmf` turning positive.",
+   "market_void": null,
+   "reason": "R1 `sc_m_gates` False on flow, badly: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Narrow: held up by `mp` 97.0 and `structure` 87.4. `pipe_rank` 0 is a missing reading."
+  }
+ ],
+ "declarations": [
+  "Triggers are timing words on price fields the PM acts on; my reasons are engine fields only. No bracket field read or used (R1); no Valen flag used (R41)."
+ ]
+}

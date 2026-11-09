@@ -1,0 +1,218 @@
+{
+ "date": "2026-11-09",
+ "chair": "chair",
+ "board_sha256": "4ca67bbf44117bd81375d3a559d22f88b4dd936b538888ce04e2dbec9802b033",
+ "tickets": [
+  {
+   "ticker": "IBN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pause, a daily close at a new closing high",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a pause, a daily close at a new closing high"},
+   "timing_count": {"support": 8, "act_now": 4, "wait": 4, "oppose": 0, "abstain": 0},
+   "wrong_if": "minervini: \"Daily close under ma_20 = the thrust failed (C7).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "livermore: \"Leader at its high (C5/C12): `sc_momentum` 85.8 = strong momentum on every engine; `flow` 98.7 = steady buying\" | oneil: \"Leader on breakout volume (day_vol 1.83): `flow` 98.7 with `subcomponents.flow.ext_score` 5.0 (breakout bonus)\"",
+   "dissent": [],
+   "sources": ["tier2:livermore", "tier2:oneil", "tier2:minervini"]
+  },
+  {
+   "ticker": "BILL",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit"},
+   "timing_count": {"support": 7, "act_now": 4, "wait": 3, "oppose": 0, "abstain": 1},
+   "wrong_if": "minervini: \"Daily close back under the last swing high = the base failed.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Best measured base in the set: `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `structure` 94.7\" | wyckoff: \"On the test of the Creek and VAH (C7, C11). `structure` 94.7 = strong base and weekly trend; `subcomponents.flow.ext_score` 5.0 = clean breakout on volume.\"",
+   "dissent": [
+    {"voice": "elder-lens", "why": "R8 analogue: dip-and-reclaim with mp_state STRONG; `elder` 10.0 not red. `structure` 94.7 (outperforming, weekly up) and `mp` 89.0 persisting trend; `sc_momentum` 80.3, `sc_m_gates` True. `subcomponents.flow.accum_score` 1.5 thin, R8 lacks volume half."},
+    {"voice": "raschke", "why": "Base breakout, retest wanted (C2, C20): `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `structure` 94.7, `sc_m_gates` True. `subcomponents.mp.adx_val` 27.29 under 30 and `subcomponents.energy.exhaustion_score` 8.5 say wait for the retest, not chase."},
+    {"voice": "aqe-quant", "why": "R2 broad: `flow` 82.9, `energy` 62.2, `structure` 94.7, `mp` 89.0; R5 `subcomponents.structure.rs_accel` 14.85; `subcomponents.structure.base_score` 15.0. WAIT on R4: `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 17.0."}
+   ],
+   "sources": ["tier2:minervini", "tier2:wyckoff", "tier2:elder-lens", "tier2:raschke", "tier2:aqe-quant"]
+  },
+  {
+   "ticker": "STGW",
+   "verdict": "WATCH",
+   "entry_trigger": "After a tight flag, a daily close at a new closing high",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a tight flag, a daily close at a new closing high"},
+   "timing_count": {"support": 7, "act_now": 3, "wait": 4, "oppose": 1, "abstain": 0},
+   "wrong_if": "minervini: \"Daily close under ma_20 = the thrust failed.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "seow: \"POSITION system, strongest picture: W/D/H1 all HH, all green. `sc_momentum` 87.6 with `sc_m_gates` True; `mp` 100.0 STRONG/ACCELERATING\" | aqe-quant: \"Broadest on the sheet: `flow` 96.1, `energy` 71.4, `structure` 86.7, `mp` 100.0\"",
+   "dissent": [
+    {"voice": "oneil", "why": "No base, no pivot (R3): `subcomponents.structure.base_score` 2.4 on `subcomponents.structure.base_days` 4.0; D 20.8% past the swing high (C17 hard zone). Strength granted: `sc_momentum` 87.6, `flow` 96.1."}
+   ],
+   "sources": ["tier2:seow", "tier2:aqe-quant", "tier2:minervini", "tier2:oneil"]
+  },
+  {
+   "ticker": "FA",
+   "verdict": "WATCH",
+   "entry_trigger": "A daily close above the 52-week closing high: the new high ends the reaction.",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close above the 52-week closing high: the new high ends the reaction."},
+   "timing_count": {"support": 7, "act_now": 0, "wait": 7, "oppose": 0, "abstain": 1},
+   "wrong_if": "livermore: \"It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Top RS with a measured base: `subcomponents.structure.base_score` 15.0, `subcomponents.structure.rs_accel_score` 15.0, `pipe_rank` 90.5.\" | livermore: \"Established trend: `pipe_rank` 90.5 = strong trend by steady days; `structure` 89.5 = beating the market; `subcomponents.mp.adx_val` 35.85 = a real trend.\"",
+   "dissent": [],
+   "sources": ["tier2:minervini", "tier2:livermore"]
+  },
+  {
+   "ticker": "KO",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy stop: a completed 1-hour candle closes above yesterday's high on volume (sign of strength), never a resting limit"},
+   "timing_count": {"support": 6, "act_now": 4, "wait": 2, "oppose": 1, "abstain": 1},
+   "wrong_if": "minervini: \"Daily close back under the last swing high = failed breakout.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "wyckoff: \"AT the Creek test (D 0.3% over the swing high, C7). `subcomponents.flow.accum_score` 7.5 = accumulation accelerating; `subcomponents.structure.wk_score` 15.0 = weekly trend up (C16 passes)\" | raschke: \"Test of the prior extreme, my lowest-risk family (C20): D HH/HL 0.3% over the swing high\"",
+   "dissent": [
+    {"voice": "oneil", "why": "No measured base (R3): `subcomponents.structure.base_score` 5.0 on `subcomponents.structure.base_days` 1497.0; day_vol 1.01 fails C16; `subcomponents.structure.rs_accel` -0.7 flat lead. `structure` 77.9 is not enough without base and volume."},
+    {"voice": "seow", "why": "POSITION system: BULLISH_BOS, D HH/HL. `sc_m_gates` True, `pipe_rank` 85.2 steady trend, `subcomponents.structure.wk_score` 15.0. COM barely on: `subcomponents.flow.cmf` 0.03, and `subcomponents.structure.rs_accel` -0.7 lead eroding - so WAIT for flow."},
+    {"voice": "aqe-quant", "why": "R2 broad: `flow` 75.0, `energy` 71.4, `structure` 77.9, `mp` 86.0; R8 A-TIER (`pipe_rank` 85.2) + ACCELERATING; tested clean at `subcomponents.energy.en_trend_bars` 22.0. WAIT on R6: `subcomponents.structure.rs_accel` -0.7."}
+   ],
+   "sources": ["tier2:wyckoff", "tier2:raschke", "tier2:minervini", "tier2:oneil", "tier2:seow", "tier2:aqe-quant"]
+  },
+  {
+   "ticker": "HLT",
+   "verdict": "WATCH",
+   "entry_trigger": "A daily close above the 52-week closing high: the new high ends the reaction.",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close above the 52-week closing high: the new high ends the reaction."},
+   "timing_count": {"support": 6, "act_now": 3, "wait": 3, "oppose": 1, "abstain": 1},
+   "wrong_if": "livermore: \"It stalls under the high and reacts 1x atr_14d from the rally top (C20), or closes back below pivot_high.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "livermore: \"Established trend: `subcomponents.mp.adx_val` 40.88 = very strong trend; `mp` 92.0; `subcomponents.energy.exhaustion_score` 10.0 = no wear.\" | minervini: \"Full stack near the pivot, D HH/HL 1.6% over the swing high: `subcomponents.structure.wk_score` 15.0, `mp` 92.0.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "C16 fails: day_vol 0.85 on the break; `subcomponents.flow.volume_score` 2.0 = volume drying up; `flow` 76.3 middling. Leader (`structure` 77.9, `mp` 92.0) but an unbought breakout."}
+   ],
+   "sources": ["tier2:livermore", "tier2:minervini", "tier2:oneil"]
+  },
+  {
+   "ticker": "AJG",
+   "verdict": "WATCH",
+   "entry_trigger": "After the hourly pullback ends, buy stop one tick over the prior-day high (C27).",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "After the hourly pullback ends, buy stop one tick over the prior-day high (C27)."},
+   "timing_count": {"support": 6, "act_now": 1, "wait": 5, "oppose": 0, "abstain": 2},
+   "wrong_if": "seow: \"A daily close below max(fib_swing_low, base_low_20d), or a red daily candle - sell next session under its low.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template passes, widening RS lead near the pivot (D 3.2% over): `subcomponents.structure.rs_accel_score` 15.0, `subcomponents.structure.rs_spy_score` 15.0, `mp` 93.0.\" | livermore: \"`structure` 78.9 = beating the market, weekly up; `subcomponents.mp.adx_val` 35.62 = a real trend; `mp` 93.0.\"",
+   "dissent": [],
+   "sources": ["tier2:minervini", "tier2:livermore", "tier2:seow"]
+  },
+  {
+   "ticker": "SWK",
+   "verdict": "WATCH",
+   "entry_trigger": "A daily close above the 52-week closing high, after the current reaction ends.",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close above the 52-week closing high, after the current reaction ends."},
+   "timing_count": {"support": 6, "act_now": 1, "wait": 5, "oppose": 0, "abstain": 2},
+   "wrong_if": "livermore: \"The reaction deepens into a stall under the high and a further 1x atr_14d drop from the rally top (C20), or a close below structure_shift_ref.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Full stack, widening lead: `mp` 100.0, `subcomponents.structure.rs_accel_score` 15.0.\" | aqe-quant: \"R2 broad: `flow` 69.7, `energy` 71.4, `structure` 78.9, `mp` 100.0; tested clean at `subcomponents.energy.en_trend_bars` 19.0; R5 `subcomponents.structure.rs_accel` 17.39\"",
+   "dissent": [],
+   "sources": ["tier2:minervini", "tier2:aqe-quant", "tier2:livermore"]
+  },
+  {
+   "ticker": "WTRG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy a 1-hour close above Friday's high, day-only",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy a 1-hour close above Friday's high, day-only"},
+   "timing_count": {"support": 5, "act_now": 4, "wait": 1, "oppose": 0, "abstain": 3},
+   "wrong_if": "raschke: \"A daily close under Friday's low: a failed probe of the high is Turtle Soup against the long\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template clean, D HH/HL 4.2% over the swing high: `subcomponents.pipe.pr_ma_score` 20.0, `subcomponents.structure.wk_score` 15.0, `flow` 80.3 with `subcomponents.flow.cmf` 0.42 = closes near highs.\" | raschke: \"Test of the prior extreme (C20): D HH/HL, 2.0% under the 20-day high; `subcomponents.mp.adx_val` 39.55, `mp` 97.0\"",
+   "dissent": [
+    {"voice": "wyckoff", "why": "TREND, D 4.2% over the swing high, past the test. `subcomponents.flow.cmf` 0.42 = closes near highs on volume; `subcomponents.mp.adx_val` 39.55 = strong trend. Join the back-up (C3, C7)."}
+   ],
+   "sources": ["tier2:minervini", "tier2:raschke", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "BDX",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pause, a daily close at a new closing high",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "After a pause, a daily close at a new closing high"},
+   "timing_count": {"support": 5, "act_now": 2, "wait": 3, "oppose": 1, "abstain": 2},
+   "wrong_if": "minervini: \"Daily close under the last swing high = breakout failed.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "livermore: \"W and D HH/HL, 1.4% under the 20-day high: `mp` 96.0 = strong aligned trend; `subcomponents.mp.adx_val` 43.77 = very strong trend.\" | seow: \"POSITION system: above structure, W/D HH/HL, TIF proxy ACCELERATION. `mp` 96.0 STRONG; `subcomponents.flow.cmf` 0.3 COM confirms.\"",
+   "dissent": [
+    {"voice": "aqe-quant", "why": "R1 `sc_m_gates` False on energy: `energy` 56.3. R4 live wear: `subcomponents.energy.exhaustion_score` 7.0 at `subcomponents.energy.en_trend_bars` 22.0. R6 `subcomponents.structure.rs_accel` -1.04. Narrow on `mp` 96.0."}
+   ],
+   "sources": ["tier2:livermore", "tier2:seow", "tier2:minervini", "tier2:aqe-quant"]
+  },
+  {
+   "ticker": "CHD",
+   "verdict": "WATCH",
+   "entry_trigger": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"},
+   "timing_count": {"support": 5, "act_now": 1, "wait": 4, "oppose": 2, "abstain": 1},
+   "wrong_if": "wyckoff: \"Daily close back below structure_shift_ref: the low-volume break was an upthrust\"",
+   "horizon_sessions": 20,
+   "why_agreed": "raschke: \"Test of a just-broken pivot (C20): D HH/HL 0.4% over the swing high; `subcomponents.mp.adx_val` 47.86 very strong trend, `subcomponents.energy.exhaustion_score` 10.0, `mp` 92.0.\" | livermore: \"`subcomponents.mp.adx_val` 47.86 = very strong trend; `structure` 75.8; `mp` 92.0.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "C16 fails: break 0.4% over swing high on day_vol 0.87; `subcomponents.flow.volume_score` 2.0 volume drying up; `flow` 52.6 leaves `sc_m_gates` False. Trend (`mp` 92.0) is not demand."},
+    {"voice": "aqe-quant", "why": "R1 `sc_m_gates` False on flow: `flow` 52.6, `subcomponents.flow.accum_score` 1.5, `subcomponents.flow.volume_score` 2.0. `mp_accel_state` DECELERATING; `subcomponents.structure.rs_accel` 3.61 small."}
+   ],
+   "sources": ["tier2:raschke", "tier2:livermore", "tier2:wyckoff", "tier2:oneil", "tier2:aqe-quant"]
+  },
+  {
+   "ticker": "WCN",
+   "verdict": "WATCH",
+   "entry_trigger": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "First volume must return (>=1.2x); then a 1-hour close above yesterday's high (sign of strength), buy stop"},
+   "timing_count": {"support": 5, "act_now": 0, "wait": 5, "oppose": 0, "abstain": 3},
+   "wrong_if": "minervini: \"Daily close under the last swing high = breakout failed.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Near the pivot (D 0.9% over) with strong RS: `structure` 87.4, `subcomponents.structure.rs_vs_spy` 19.7.\" | wyckoff: \"AT the test (D 0.9% over the swing high), the quiet back-up C7 prefers. `structure` 87.4 and `subcomponents.mp.adx_val` 41.49 = strong trend\"",
+   "dissent": [],
+   "sources": ["tier2:minervini", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "ADP",
+   "verdict": "WATCH",
+   "entry_trigger": "A daily close above the 52-week closing high.",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close above the 52-week closing high."},
+   "timing_count": {"support": 4, "act_now": 2, "wait": 2, "oppose": 0, "abstain": 4},
+   "wrong_if": "livermore: \"It fails short of the swing high and reacts 1x atr_14d from the rally top (C20), or closes below structure_shift_ref.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template clean, basing 2.0% under the swing high, pre-pivot (C5): `energy` 76.5, `subcomponents.structure.wk_score` 15.0, `subcomponents.structure.resist_score` 10.0.\" | wyckoff: \"Small base in a weekly uptrend, D 2.0% under the swing high (C7). `energy` 76.5 with `subcomponents.energy.squeeze_score` 4.0 = some coil\"",
+   "dissent": [],
+   "sources": ["tier2:minervini", "tier2:wyckoff", "tier2:livermore"]
+  },
+  {
+   "ticker": "GEHC",
+   "verdict": "WATCH",
+   "entry_trigger": "After flow firms, buy stop one tick over the prior-day high, trailed daily (C27).",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "After flow firms, buy stop one tick over the prior-day high, trailed daily (C27)."},
+   "timing_count": {"support": 4, "act_now": 1, "wait": 3, "oppose": 1, "abstain": 3},
+   "wrong_if": "seow: \"A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "seow: \"POSITION system: above structure, W 9>21 HH/HL, D HH/HL. `sc_momentum` 82.9 with `sc_m_gates` True; `subcomponents.structure.rs_accel` 13.75 lead widening; `mp` 96.0.\" | aqe-quant: \"R2 broad: `flow` 88.2, `energy` 71.4, `structure` 78.9, `mp` 96.0; `subcomponents.flow.accum_score` 7.5 max\"",
+   "dissent": [
+    {"voice": "minervini", "why": "Criterion 4 fails (C3): ma50 under ma200, `subcomponents.pipe.pr_ma_score` 17.0. `subcomponents.structure.base_score` 5.0 = no fresh base; D 15.5% over the swing high = chase (C5). Strong RS (`subcomponents.structure.rs_accel` 13.75) noted."}
+   ],
+   "sources": ["tier2:seow", "tier2:aqe-quant", "tier2:minervini"]
+  },
+  {
+   "ticker": "LTH",
+   "verdict": "WATCH",
+   "entry_trigger": "On expanding volume, a daily close above the last pivot high",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "On expanding volume, a daily close above the last pivot high"},
+   "timing_count": {"support": 4, "act_now": 1, "wait": 3, "oppose": 2, "abstain": 2},
+   "wrong_if": "minervini: \"Daily close under base_low_20d = the base failed.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Measured base at the pivot, top RS: `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, `subcomponents.structure.rs_accel_score` 15.0, `mp` 97.0.\" | livermore: \"W and D HH/HL just under the swing high: `structure` 87.4 = beating the market; `mp` 97.0 STRONG/ACCELERATING.\"",
+   "dissent": [
+    {"voice": "seow", "why": "Fund flow does not confirm (C28): `subcomponents.flow.cmf` -0.09 COM below zero, `flow` 36.8 weak, `subcomponents.flow.accum_score` 0.0; `sc_m_gates` False and `pipe_rank` 0. Structure alone is not a position signal."},
+    {"voice": "aqe-quant", "why": "R1 `sc_m_gates` False on flow, badly: `flow` 36.8, `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.09. Narrow: held up by `mp` 97.0 and `structure` 87.4. `pipe_rank` 0 is a missing reading."}
+   ],
+   "sources": ["tier2:minervini", "tier2:livermore", "tier2:seow", "tier2:aqe-quant"]
+  }
+ ],
+ "market_kill": {
+  "plain": "void if the index is under distribution (C1, market gate DELEGATED)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": ["oneil"]
+ }
+}

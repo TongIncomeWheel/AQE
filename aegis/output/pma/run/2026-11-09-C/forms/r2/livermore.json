@@ -1,0 +1,1375 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-09",
+ "round": 2,
+ "declarations": [
+  "trend_confirmation: structure/structure_shift + sma_distance_pct + from_52w_hi per name (C5)",
+  "danger_signal_threshold: TRANSLATED as a one-day reaction of 1x atr_14d off the day's high (fade_atr_ge:1), not literal 6 points (C7, C18-C20); the multiplier is my translation",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "REPORT C: every vote rests on >=2 AQE composite/sub-component fields; elder advisory only; R1: no bracket basis anywhere",
+  "Market weather RISK OFF / GROWTH_SCARE noted as context; my method trades the leaders' own price action (C21)"
+ ],
+ "votes": [
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "C5 leader AT its high: from_52w_hi 0.0%, ABOVE_STRUCTURE, mp STRONG/ACCELERATING, day_vol 1.83. `sc_momentum` 85.8 = strong momentum on every engine; `flow` 98.7 = steady buying on up days; `subcomponents.mp.roc_zscore` 3.1 = an exceptional month vs its own history. Danger unit atr 0.74 (my translation, not Livermore's 6 points).",
+   "conviction_change": null,
+   "self_counter": "The most stretched name I back: sma_dist 16.6%, `subcomponents.energy.en_pos50` 97.29 at the very top of its range, `energy` 66.4 its softest engine. A fast thrust can end in a one-day reversal.",
+   "challenge_reply": "Extension: I am wrong on a one-day reaction of 1x atr 0.74 off the day's high (fade_atr_ge:1) or a close back under the broken structure. My field not shared with seow: from_52w_hi 0.0% read with `subcomponents.mp.roc_zscore` 3.1. Argued as a hypothesis, not proven edge.",
+   "case": {
+    "for": "Fresh high in an established trend; `flow` 98.7 and `structure` 84.2 say money and relative strength lead. Price action is the only justification needed (C21).",
+    "against": "`energy` 66.4 and sma_dist 16.6% = a stretched run; weekly swing LH/LL; sector Momentum Fading.",
+    "entry_trigger": "1H close above bar_high (a print at a fresh high) with strength vs SPY.",
+    "wrong_if": "One-day reaction >= 1x atr 0.74 off the high (C7) or close below structure_shift_ref (C20).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-signal day, or the other XLF leaders failing to hold their highs (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "New high after a normal reaction (C5): BULLISH_BOS, from_52w_hi -1.61%, mp STRONG/ACCELERATING. `subcomponents.mp.adx_val` 40.88 = a very strong, directional trend (C5a established); `sc_momentum` 78.3 with `sc_m_gates` True = no engine below its floor; `subcomponents.energy.exhaustion_score` 10.0 = no climax wear. Danger unit atr 8.98 (my translation).",
+   "conviction_change": null,
+   "self_counter": "day_vol 0.85 = the break came on below-average participation, and the 1H chart is below EMA9; a break without follow-through is itself a warning (C17).",
+   "challenge_reply": "The one field my HLT case rests on: `subcomponents.mp.adx_val` 40.88, the established-trend test of C5(a), not the BOS label the others share. HLT is Consumer Discretionary, not a defensive pick; valid in a broadening tape. A hypothesis, not proven edge.",
+   "obligations": {
+    "o_a_hard_or_soft": null,
+    "o_a_note": null,
+    "o_b_stop_honored": null,
+    "o_c_invalidation": "structure_shift turning BEARISH_CHOCH, or the other XLY leaders failing to make new highs alongside it (C14)."
+   },
+   "case": {
+    "for": "Trend established (`subcomponents.mp.adx_val` 40.88, `mp` 92.0), fresh break of structure, close to the 52w high, no exhaustion.",
+    "against": "day_vol 0.85 thin; sector Momentum Fading; weekly swing LH/LL; 2.9% under the 20-day high, so the true new high is still ahead.",
+    "entry_trigger": "Daily close above high_52w_close: the new high confirms the reaction is over.",
+    "wrong_if": "Close back below pivot_high (failed break, C20) or a one-day reaction >= 1x atr 8.98 off the high (C7).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-signal day, or price stalling under the high and reacting 1x atr from the rally top (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Break of structure to within from_52w_hi -0.17% of the high: BULLISH_BOS, ma20 93.28 > ma50 89.94 > ma200 82.74. `pipe_rank` 85.2 = strong trend reached by steady days; `sc_momentum` 76.7 with `sc_m_gates` True = every engine clears its floor. Clearance over the pivot is thin (C19). Danger unit atr 1.83 (my translation).",
+   "conviction_change": null,
+   "challenge_reply": "Field my KO case rests on: `pipe_rank` 85.2 (steady trend path) with from_52w_hi -0.17%, not the shared BOS label. Staples are valid inside a defensive rotation / the packet's GROWTH_SCARE read; CHD's own BOS is my second-name Key Price check (C14). rs lead fading is a real weight.",
+   "case": {
+    "for": "Steady established trend, every engine above its floor, sitting at the high; CHD confirms the group (C14).",
+    "against": "`mp` 86.0 FADING label and `subcomponents.mp.roc_zscore` 1.45 = an ordinary month; staple in a momentum book; pivot clearance thin.",
+    "entry_trigger": "Daily close above high_52w_close (a new high, clearing the pivot by a margin, C19).",
+    "wrong_if": "Failure to extend and a close back below pivot_high (C20), or a one-day reaction >= 1x atr 1.83.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "CHD losing its break while KO stalls: the Key Price pair failing together.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Uptrend stack intact (ma20 48.44 > ma50 47.27 > ma200 42.65) and `structure` 94.7 / `sc_momentum` 80.3 are strong, but from_52w_hi -6.93% = still inside the reaction; C5 waits for the new high, never buys the pullback. Not eligible yet, not broken.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 94.7 = outperforming with a clean base; `mp` 89.0 STRONG/ACCELERATING; daily HH/HL.",
+    "against": "6.93% under its high; weekly swing LH/LL; div BEARISH/1 caution; `energy` 62.2 soft.",
+    "entry_trigger": "Only a daily close above high_52w_close would make it eligible.",
+    "wrong_if": "My stand-aside is wrong if it runs to a new high without a reaction; I would then act on that high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high with the Technology group confirming.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not an established uptrend (C5a): ma200 29.65 over ma50 28.28, weekly 9<21, from_52w_hi -8.17%. `sc_momentum` 79.6 and `mp` 97.0 measure a one-month thrust, not the long trend I need; `structure` 75.8 is its weakest engine, the one that carries weekly trend and distance to the high. A rally inside a range is not a new high.",
+   "conviction_change": null,
+   "opposing_case": "Fresh break of structure on above-average volume (day_vol 1.39), `flow` 85.5 = money in on up days, `subcomponents.mp.adx_val` 37.3 strong trend, REITs leading from their own highs per VALEN.",
+   "challenge_reply": "REIT exposure is a defensive bet valid only in a GROWTH_SCARE tape; I oppose on trend shape, not sector.",
+   "case": {
+    "for": "`flow` 85.5, `mp` 97.0, fresh BOS, REIT group strong.",
+    "against": "Long trend down/flat (ma200 over ma50), 8.17% under the high: a natural rally, not a trend resumption.",
+    "entry_trigger": "A daily close above high_52w_close with ma50 back over ma200.",
+    "wrong_if": "Wrong if it carries straight through its 52w high; I would buy that high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w high with KIM or EXR confirming (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "MCD",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16/C5: from_52w_hi -18.92% with ma200 282.35 over ma50 248.77, weekly 9<21 = a natural rally in a longer downtrend. `mp` 100.0 and `subcomponents.mp.roc_zscore` 2.27 measure a sharp one-month thrust, not an established uptrend; buying 19% under the high is buying on a low price, which I never do.",
+   "conviction_change": null,
+   "opposing_case": "`sc_momentum` 83.7 with `sc_m_gates` True, `subcomponents.mp.adx_val` 42.08 a strong trend, `flow` 88.2 steady buying, a fresh BOS: the thrust is real and may be a trend change in the making.",
+   "case": {
+    "for": "Strong thrust on every engine; fresh break of structure.",
+    "against": "Far under the high, ma200 above price trend, weekly LH/LL; delayed-EP setup FAILED.",
+    "entry_trigger": "None until a new high after a reaction; at minimum ma50 back over ma200.",
+    "wrong_if": "Wrong if it keeps trending up through ma200 282.35 into new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high with ma50 recrossing ma200, then a normal reaction and a new high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "AHR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh high on volume: from_52w_hi 0.0%, ABOVE_STRUCTURE, day_vol 1.96. `flow` 100.0 = clean buying; `sc_momentum` 78.3 with `sc_m_gates` True. But `subcomponents.mp.adx_val` 19.76 and `subcomponents.mp.trend_score` 8.0 say the uptrend is not yet established (C5a), so conviction stays low. Danger unit atr 1.46.",
+   "conviction_change": null,
+   "challenge_reply": "Field not shared with seow: day_vol 1.96 at the 52w high, read against `subcomponents.mp.adx_val` 19.76 which caps me at 2. Regime: REITs leading from their own highs (VALEN); a defensive bet valid in a GROWTH_SCARE tape.",
+   "case": {
+    "for": "New high on above-normal volume; `flow` 100.0; EXR in the same group near its high (C14).",
+    "against": "`mp` 63.0 BUILDING, `subcomponents.mp.adx_val` 19.76 = trend not established; pipe_rank reads 0, not a usable reading.",
+    "entry_trigger": "1H close above bar_high (a further new high).",
+    "wrong_if": "One-day reaction >= 1x atr 1.46 off the high, or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "EXR losing its high while AHR stalls, or a danger-signal day.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "pipe_rank value (reads 0)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Stack up (ma20 102.54 > ma50 99.23 > ma200 95.07) but from_52w_hi -3.85%, 5.2% under its 20-day high: inside a reaction. `subcomponents.mp.trend_score` 8.0 and `mp` 73.0 BUILDING say the trend is not yet firm. C5: wait for the new high.",
+   "conviction_change": null,
+   "challenge_reply": "Staples exposure would be a defensive bet valid only in a GROWTH_SCARE tape; I stand aside on trend shape.",
+   "case": {
+    "for": "`energy` 71.4 coiled, `sc_m_gates` True, uptrend stack intact.",
+    "against": "Under its high, elder INTERRUPTED, `flow` 65.8 soft.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it runs to a new high; I would act on that high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Counter-trend thrust, not an established uptrend (C5a): ma200 54.55 > ma100 50.46 > ma50 49.34, from_52w_hi -9.98%, sma_dist 27.44%. `sc_momentum` 85.1 and `subcomponents.mp.roc_zscore` 3.01 measure one exceptional month; `pipe_rank` 49.7 = a weak, jumpy longer path. Never buy below a falling long trend.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 91.6, `flow` 90.8 and `mp` 97.0 all strong with every gate passing; a thrust this size can be the first leg of a new major move.",
+   "case": {
+    "for": "Exceptional month, strong engines, ABOVE_STRUCTURE.",
+    "against": "Downward MA stack, 10% under the high, very extended; pipeline weak.",
+    "entry_trigger": "None until ma50 is over ma200 and a new high follows a normal reaction.",
+    "wrong_if": "Wrong if it clears ma200 54.55 territory into new highs and holds.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A normal reaction that holds, then a new 52w high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Fresh new high (C5/C16): from_52w_hi 0.0%, ABOVE_STRUCTURE, mp STRONG/ACCELERATING, stack ma20 91.31 > ma50 88.92 > ma200 85.77. `structure` 87.4 = beating the market, weekly up; `subcomponents.mp.roc_zscore` 3.04 = exceptional month; `subcomponents.energy.exhaustion_score` 10.0 = no wear. Danger unit atr 3.03 (my translation).",
+   "conviction_change": null,
+   "self_counter": "sma_dist 14.87% after a run_10d 14.67%: extended; `flow` 72.4 is its softest engine and the delayed-EP setup reads FAILED.",
+   "challenge_reply": "Healthcare is a defensive bet: valid while MedTech leads on both VALEN lists and in the GROWTH_SCARE read; BDX near its own high is my second-name check (C14). A hypothesis, not proven edge.",
+   "case": {
+    "for": "New high in an established uptrend, group confirmed by BDX, no exhaustion.",
+    "against": "Extended; `flow` 72.4; sector Momentum Fading.",
+    "entry_trigger": "1H close above bar_high (a further new high) with strength vs SPY.",
+    "wrong_if": "One-day reaction >= 1x atr 3.03 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "BDX failing its high while EW stalls, or a danger-signal day.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "STGW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "The book's leader at a new high: from_52w_hi 0.0%, weekly and daily HH/HL, stack ma20 9.57 > ma50 8.94 > ma200 7.29. `sc_momentum` 87.6 with `sc_m_gates` True = top momentum, no weak engine; `flow` 96.1 = steady buying; `subcomponents.mp.adx_val` 41.23 = very strong trend. Low-priced issue: danger unit atr 0.51 (my scaled translation, C18).",
+   "conviction_change": null,
+   "self_counter": "sma_dist 30.22% and run_10d 29.62%: a vertical run in a sub-$12 stock; the delayed-EP setup reads FAILED. A one-day reversal here is the danger signal I fear most.",
+   "challenge_reply": "No edge claimed: a hypothesis that a leader at its high keeps leading (C12).",
+   "case": {
+    "for": "Trend established on weekly and daily, fresh high, every engine strong, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Very extended; low price makes point thresholds misleading; sector only Recovering.",
+    "entry_trigger": "1H close above bar_high (a further new high).",
+    "wrong_if": "One-day reaction >= 1x atr 0.51 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-signal day or a failed follow-through after the next high (C17).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5/C16: from_52w_hi -18.24% and ret_12m -13.88 = a recovery rally, not a new high in an established uptrend; weekly swing LH/LL. `sc_momentum` 85.6 and `mp` 97.0 measure the recent thrust only; `energy` 63.0 is the soft engine. I do not buy 18% under the high.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 92.6 and `flow` 96.1 are elite, stack is up (ma20 42.97 > ma50 40.76 > ma200 38.87), `subcomponents.energy.exhaustion_score` 10.0: a trend may be re-forming.",
+   "case": {
+    "for": "Strong engines, MAs re-stacked up, no exhaustion.",
+    "against": "Far under its high, weekly LH/LL; not a trend resumption yet.",
+    "entry_trigger": "A daily close above high_52w_close after a normal reaction.",
+    "wrong_if": "Wrong if it trends straight on to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high and a new 52w high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "New high in an established trend: from_52w_hi 0.0%, ABOVE_STRUCTURE, stack ma20 105.97 > ma50 99.98 > ma200 93.34. `mp` 100.0 = strong, aligned trend; `subcomponents.mp.adx_val` 45.52 = very strong trend; `sc_momentum` 84.1 with `sc_m_gates` True; `subcomponents.energy.exhaustion_score` 10.0 on a long run = no wear. Danger unit atr 2.9.",
+   "conviction_change": null,
+   "self_counter": "day_vol 0.9 at the high = participation is not rising with price; sma_dist 17.12% is extended.",
+   "case": {
+    "for": "Long, tested, clean trend at a new high; every engine above its floor.",
+    "against": "Thin volume at the high; extended; sector only Recovering.",
+    "entry_trigger": "1H close above bar_high (a further new high).",
+    "wrong_if": "One-day reaction >= 1x atr 2.9 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-signal day or no follow-through after the next high (C17).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "mp_state transition move-size"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VSXY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader holding at its high: from_52w_hi -0.83%, ABOVE_STRUCTURE, mp STRONG/ACCELERATING, ret_12m 188.67, stack ma20 94.54 > ma50 87.07 > ma200 70.76. `structure` 82.1 = beating the market, weekly up; `sc_momentum` 77.3 with `sc_m_gates` True; `subcomponents.energy.exhaustion_score` 10.0 = no wear. Danger unit atr 4.97 (my translation).",
+   "conviction_change": null,
+   "case": {
+    "for": "Major uptrend, top-percentile strength, a hair under the high.",
+    "against": "day_vol 0.81 thin; sma_dist 24.1% extended; weekly swing HH but LL; pipe_rank reads 0.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 4.97 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-signal day or a stall under the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "pipe_rank value (reads 0)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Near its high in an established trend: from_52w_hi -0.78%, weekly and daily HH/HL, stack ma20 197.15 > ma50 188.21 > ma200 167.08. `mp` 96.0 = strong aligned trend; `subcomponents.mp.adx_val` 43.77 = very strong trend. `sc_m_gates` False on `energy` 56.3 is a weight I name, not a veto. Danger unit atr 4.67.",
+   "conviction_change": null,
+   "challenge_reply": "Healthcare is a defensive bet valid while MedTech leads (VALEN, both lists) and in the GROWTH_SCARE read; EW at its high is my Key Price partner (C14). Divergence BEARISH/1 and the failed energy gate keep me at 3.",
+   "case": {
+    "for": "Long established trend, near the high, group confirmed by EW.",
+    "against": "`energy` 56.3 fails its floor; `subcomponents.energy.exhaustion_score` 7.0 shows some wear; div BEARISH/1.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 4.67 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "EW failing its high while BDX stalls (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HSY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16/C5: from_52w_hi -24.63% with ma200 188.31 over ma50 168.46 = a rally inside a downtrend. `structure` 58.9 = lagging, no weekly trend; `subcomponents.mp.adx_val` 19.75 = drifting, no established trend. A break of a short swing 25% under the high is a low-price buy.",
+   "conviction_change": null,
+   "opposing_case": "Fresh BOS on day_vol 1.57, `flow` 89.5 = steady buying, `sc_m_gates` True; Staples may be gaining in a GROWTH_SCARE tape.",
+   "challenge_reply": "Staples is a defensive bet valid only in a GROWTH_SCARE tape; I oppose on trend shape.",
+   "case": {
+    "for": "Strong flow and a fresh break on volume.",
+    "against": "Long trend down, far under the high, weak structure and no trend strength.",
+    "entry_trigger": "None until ma50 recrosses ma200 and a new high follows.",
+    "wrong_if": "Wrong if it reclaims ma200 188.31 and keeps making highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200 with KO and CHD leading (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "JNJ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Close to the high (from_52w_hi -0.79%) but RANGE, weekly swing LH/LL and ma20 264.68 under ma50 265.79: no fresh new high, no clean trend. `flow` 39.5 = selling/thin volume and `sc_m_gates` False; `structure` 77.9 and `mp` 76.0 are fair. Eligible only on a new high.",
+   "conviction_change": null,
+   "challenge_reply": "Healthcare is a defensive bet valid in a GROWTH_SCARE tape; I stand aside on the RANGE read.",
+   "case": {
+    "for": "Near its high, `mp` 76.0 STRONG, `structure` 77.9.",
+    "against": "RANGE, `flow` 39.5 weak, gate fails, MAs flat.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it breaks out and runs; I would act on that high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high with `flow` recovering.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "FOUR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16: from_52w_hi -40.42%, ret_12m -34.54, ma200 45.77 over ma50 40.3 = a bounce in a downtrend. `subcomponents.mp.adx_val` 14.82 = no trend; `pipe_rank` 42.6 = weak trend and a jumpy path; `mp` 55.0 FADING/DECELERATING. Buying 40% under the high is buying on a low price.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 96.1 with day_vol 1.67 = real buying, held above the broken structure, bullish divergence: possibly an early base.",
+   "case": {
+    "for": "Strong flow, above structure, reclaim day.",
+    "against": "Long downtrend, no trend strength, deep under the high.",
+    "entry_trigger": "None until a long base completes and a new high prints.",
+    "wrong_if": "Wrong if it trends up through ma200 45.77.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 over ma200 and a weekly higher high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5a/C16: ma200 26.46 > ma100 25.32 > ma50 22.69, from_52w_hi -16.58% = a counter-trend thrust. `subcomponents.mp.roc_zscore` 3.35 measures one exceptional month; `subcomponents.energy.exhaustion_score` 5.5 = the run already shows wear. Not a new high in an established trend.",
+   "conviction_change": null,
+   "opposing_case": "`sc_momentum` 85.2, `flow` 100.0, `structure` 88.4 with gates passing and day_vol 1.92: heavy accumulation can turn a trend.",
+   "case": {
+    "for": "Elite flow and structure, heavy volume.",
+    "against": "Downward MA stack, far under the high, exhaustion showing, EP setup FAILED.",
+    "entry_trigger": "None until ma50 recrosses ma200 and a new high follows a reaction.",
+    "wrong_if": "Wrong if it clears ma200 26.46 and holds into new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A normal reaction that holds, then a weekly higher high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "GEHC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Established uptrend (stack ma20 74.04 > ma50 69.32, weekly HH/HL; `subcomponents.mp.adx_val` 44.16, `mp` 96.0) but from_52w_hi -6.56%, 5.9% under its 20-day high: a reaction under way. C5 never buys the pullback; I wait for the new high.",
+   "conviction_change": null,
+   "challenge_reply": "Healthcare is a defensive bet valid while MedTech leads (VALEN); I stand aside on timing.",
+   "case": {
+    "for": "Strong trend, `sc_momentum` 82.9 with gates passing.",
+    "against": "Inside a reaction; 1H below EMA9.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it resumes to a new high; I would act there.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "WTRG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Near its high in an established trend: from_52w_hi -1.3%, ABOVE_STRUCTURE, stack ma20 42.35 > ma50 41.18 > ma200 39.54. `structure` 84.2 = beating the market, weekly up; `subcomponents.mp.adx_val` 39.55 = strong trend; `subcomponents.energy.exhaustion_score` 10.0 = no wear; `sc_m_gates` True. Danger unit atr 1.05.",
+   "conviction_change": null,
+   "challenge_reply": "Utilities are a defensive bet valid inside a GROWTH_SCARE / risk-off tape, which is the packet's read; I need EVRG or ETR making highs too before calling the group (C14), so 3 not 4.",
+   "case": {
+    "for": "Clean established trend just under the high, every engine above floor.",
+    "against": "Defensive name in a momentum book; weekly swing HH but LL; mp FADING label.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 1.05 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Utilities peers failing to make highs alongside it (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EXR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "REIT leader holding near its high (from_52w_hi -1.15%) in a group that confirms (AHR at its high). `structure` 87.4 = beating the market, weekly up; `subcomponents.mp.adx_val` 49.06 = very strong trend; `sc_momentum` 79.4 with `sc_m_gates` True. mp DECELERATING and day_vol 0.94 temper it. Danger unit atr 3.46.",
+   "conviction_change": null,
+   "challenge_reply": "REITs: a defensive bet valid in a GROWTH_SCARE tape; VALEN lists REITs leading from their own highs, and AHR is my Key Price partner (C14).",
+   "case": {
+    "for": "Very strong trend, near the high, group confirmed.",
+    "against": "mp FADING/DECELERATING; ma100 143.49 over ma50 139.89 = stack not clean; 1H LH/LL.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 3.46 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "AHR failing its high while EXR stalls (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16: from_52w_hi -24.69%, ret_12m -26.3, rs LAGGARD; a 36.97% ten-day spike is not a new high after a normal reaction. `energy` 59.7 below its floor with `sc_m_gates` False = a stretched run; `structure` 67.4 = no base, weak weekly trend.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0 and `mp` 87.0 STRONG/ACCELERATING, `subcomponents.mp.roc_zscore` 2.67: a powerful thrust that could start a new trend.",
+   "case": {
+    "for": "Powerful thrust, perfect flow.",
+    "against": "A quarter under the high, no established trend, gate fails, very extended.",
+    "entry_trigger": "None until a base, a reaction and a new high.",
+    "wrong_if": "Wrong if it keeps running to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high and a new 52w high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "PENN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16/C5a: from_52w_hi -20.99%, ma100 18.08 over ma50 16.01, weekly 9<21 = a rally inside a downtrend. `structure` 66.3 = lagging, weak weekly trend; `mp` 81.0 with mp DECELERATING = the thrust is already slowing. Not a new high.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 96.1 with day_vol 1.43 and `sc_m_gates` True: buyers in control after a 20% ten-day run.",
+   "case": {
+    "for": "Strong flow, gates passing.",
+    "against": "Far under the high, MAs inverted, momentum slowing.",
+    "entry_trigger": "None until a new high in an established trend.",
+    "wrong_if": "Wrong if it clears ma100 18.08 and keeps rising.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma100.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "FA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established trend (stack ma20 20.81 > ma50 20.29 > ma200 16.53, daily HH/HL) within from_52w_hi -2.45% of the high. `structure` 89.5 = beating the market with a base; `pipe_rank` 90.5 = strong trend by steady days; `subcomponents.mp.adx_val` 35.85. But day_vol 0.79 and 4.7% under the 20-day high: low conviction until the new high. Danger unit atr 0.99.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong, steady trend; `mp` 97.0; gates pass.",
+    "against": "Thin volume; weekly LH/LL; still under its recent high.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 0.99 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A stall under the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Near the high (from_52w_hi -0.67%) but the long trend is not clean: ma100 83.17 and ma200 82.31 both over ma50 81.8. `pipe_rank` 94.4 and `mp` 90.0 are strong, `energy` 60.5 soft, mp DECELERATING. A new high would decide it.",
+   "conviction_change": null,
+   "challenge_reply": "Utilities are a defensive bet valid only in a GROWTH_SCARE tape; I stand aside on trend shape.",
+   "case": {
+    "for": "Strong pipeline and persistence, near the high.",
+    "against": "Flat long trend, soft energy, slowing momentum.",
+    "entry_trigger": "Daily close above high_52w_close with ma50 over ma200.",
+    "wrong_if": "My stand-aside is wrong if it trends to new highs; I would act there.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w high with WTRG also at highs (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established uptrend (stack ma20 262.97 > ma50 249.99 > ma200 232.76, daily HH/HL) within from_52w_hi -2.35% of the high. `structure` 78.9 = beating the market, weekly up; `subcomponents.mp.adx_val` 35.62 = a real trend; `mp` 93.0. But mp FADING/FLAT, day_vol 0.84 and 1H LH/LL: low conviction until the new high. Danger unit atr 8.45.",
+   "conviction_change": null,
+   "case": {
+    "for": "Clean long trend near the high; gates pass; Insurance leading from its own highs (VALEN).",
+    "against": "`flow` 65.8 soft, thin volume, momentum flat, 4.4% under the 20-day high.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 8.45 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A stall under the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5a: no established uptrend - ma100 107.93 over ma50 104.79, weekly 9<21, from_52w_hi -6.24%. `subcomponents.mp.adx_val` 23.26 = a weak trend; `energy` 60.5 = price not high in its range with room to run. A break of a short swing is not a new high.",
+   "conviction_change": null,
+   "opposing_case": "Fresh BOS, `structure` 77.9 and `sc_m_gates` True, a reclaim day: the utility may be turning up.",
+   "challenge_reply": "Utilities are a defensive bet valid only in a GROWTH_SCARE tape; I oppose on trend shape, not sector.",
+   "case": {
+    "for": "BOS, gates pass, reclaim day.",
+    "against": "Flat/down long trend, weak trend strength, under the high.",
+    "entry_trigger": "None until ma50 over ma100 and a new high.",
+    "wrong_if": "Wrong if it runs through its 52w high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w high with WTRG confirming (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At a new high: from_52w_hi 0.0%, ABOVE_STRUCTURE, mp STRONG/ACCELERATING, stack ma20 252.96 > ma50 240.48 > ma200 223.44. `mp` 89.0 = strong aligned trend; `pipe_rank` 80.7 = strong trend by steady days; `sc_m_gates` True. `structure` 66.3 and div BEARISH/1 keep it at 3. Danger unit atr 7.43.",
+   "conviction_change": null,
+   "challenge_reply": "Healthcare is a defensive bet valid while MedTech leads (VALEN) and in the GROWTH_SCARE read; EW and BDX near highs confirm the group (C14).",
+   "case": {
+    "for": "New high in an established trend; group confirmed.",
+    "against": "`structure` 66.3 middling; `flow` 61.8 soft; bearish divergence.",
+    "entry_trigger": "1H close above bar_high (a further new high).",
+    "wrong_if": "One-day reaction >= 1x atr 7.43 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "EW and BDX failing their highs (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Pressing its high on heavy volume: from_52w_hi -0.27%, day_vol 3.36, stack ma20 171.47 > ma50 169.07 > ma200 147.78, weekly HH/HL. `structure` 77.9 and `energy` 73.9 = high in its range. But `subcomponents.mp.adx_val` 19.19 and `mp` 55.0 BUILDING = trend not yet established (C5a). Danger unit atr 6.81.",
+   "conviction_change": null,
+   "case": {
+    "for": "Near the high on 3x volume; weekly and daily higher highs.",
+    "against": "`sc_m_gates` False on `flow` 59.2; weak trend strength.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 6.81 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A stall at the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C16: from_52w_hi -13.17%, ma100 12.47 over ma50 11.54, 14% under its 20-week high = a rally, not a new high in an established trend. `energy` 59.7 below its floor with `sc_m_gates` False = a stretched run; `pipe_rank` 59.5 = jumpy path.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 94.7 and `flow` 100.0 on day_vol 3.67: genuine heavy buying that could start a leg.",
+   "case": {
+    "for": "Elite structure and flow on huge volume.",
+    "against": "Under the high, MAs not stacked, gate fails, extended.",
+    "entry_trigger": "None until a new 52w high after a reaction.",
+    "wrong_if": "Wrong if it runs straight to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 over ma100 and a new 52w high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "TEM",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No trend to follow: RANGE, from_52w_hi -10.61%, rs LAGGARD. `structure` 41.1 = lagging, no base; `mp` 47.0 = a fading, unaligned move; `sc_m_gates` False; `subcomponents.mp.adx_val` 16.69 = drifting. Nothing here a trend-follower can buy.",
+   "conviction_change": null,
+   "opposing_case": "Impulse turned up with a reclaim day, `flow` 71.1 and `energy` coil (squeeze), 12.5% ten-day run.",
+   "challenge_reply": "Healthcare exposure here is not a regime bet I can make: the name has no trend in any regime.",
+   "case": {
+    "for": "Reclaim day, decent flow.",
+    "against": "RANGE, weak structure and persistence, no trend.",
+    "entry_trigger": "None until a trend forms and a new high prints.",
+    "wrong_if": "Wrong if it breaks its swing high and trends.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A daily higher high above the 20-day high with `structure` recovering.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New high on volume in an established trend: from_52w_hi 0.0%, day_vol 2.32, stack ma20 17.92 > ma50 16.71 > ma200 14.81. `flow` 100.0 = clean buying; `subcomponents.mp.adx_val` 41.98 = very strong trend. But `subcomponents.energy.exhaustion_score` 5.5 = wear, `energy` 53.8 fails its floor and mp DECELERATING: climax risk caps me at 2. Danger unit atr 0.45.",
+   "conviction_change": null,
+   "challenge_reply": "REIT: a defensive bet valid in a GROWTH_SCARE tape; REITs lead from their own highs (VALEN).",
+   "case": {
+    "for": "Fresh high on 2.3x volume, strong trend, REIT group strong.",
+    "against": "Exhaustion showing, `sc_m_gates` False, RANGE label, div BEARISH/1.",
+    "entry_trigger": "1H close above bar_high (follow-through above the high).",
+    "wrong_if": "One-day reaction >= 1x atr 0.45 off the high (C7) or close below bar_low (no follow-through, C17).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "No follow-through within days of the high (C17).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Strong recent trend (`subcomponents.mp.adx_val` 43.21, `mp` 92.0, `sc_m_gates` True) but from_52w_hi -4.35%, 5.2% under its 20-day high, 1H 9<21, and ma200 59.0 over ma50 58.44: a reaction inside an unclean long trend. Wait for the new high.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong trend strength, `energy` 73.9.",
+    "against": "Under the high, long MAs not stacked, mp DECELERATING.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it resumes to a new high; I would act there.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "WCN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established uptrend just under the high: from_52w_hi -1.43%, stack ma20 176.72 > ma50 165.52 > ma200 164.02. `structure` 87.4 = beating the market, weekly up; `subcomponents.mp.adx_val` 41.49 = very strong trend. But `flow` 57.9 fails its floor (`sc_m_gates` False) and day_vol 0.74: thin. Danger unit atr 4.77.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong long trend, near the high.",
+    "against": "Weak flow, thin volume, 1H 9<21, mp DECELERATING.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 4.77 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A stall under the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A true leader (ret_12m 83.73, weekly HH/HL, `subcomponents.mp.adx_val` 49.99, `mp` 96.0) now in a natural reaction: from_52w_hi -6.39%, RANGE, 10.6% under the daily swing high. `flow` 57.9 fails its floor. C8: hold through a normal reaction; C5: do not buy it - wait for the new high.",
+   "conviction_change": null,
+   "case": {
+    "for": "Major uptrend, top strength.",
+    "against": "In a reaction, `sc_m_gates` False, sma_dist 36.87% extended.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it resumes straight to a new high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high after the reaction.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5a/C16: ma200 14.55 > ma100 14.26 > ma50 13.19, weekly 9<21, from_52w_hi -6.18% = a thrust under a falling long trend. `mp` 100.0 and `subcomponents.mp.adx_val` 46.73 measure the one-month move only; `pipe_rank` 59.0 = a jumpy longer path. day_vol 0.55 = no participation.",
+   "conviction_change": null,
+   "opposing_case": "`sc_momentum` 82.3 with `sc_m_gates` True, `energy` 73.9, `flow` 82.9: a 28% ten-day run with every engine passing.",
+   "case": {
+    "for": "Every engine passes; very strong thrust.",
+    "against": "Inverted MAs, thin volume, under the high.",
+    "entry_trigger": "None until ma50 over ma200 and a new high.",
+    "wrong_if": "Wrong if it clears ma200 14.55 into new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16: from_52w_hi -46.67%, ret_12m -36.6, ma200 409.3 over ma50 293.36 = a violent bounce in a downtrend. `subcomponents.mp.roc_zscore` 3.9 measures one exceptional month; `energy` 59.7 below floor with `sc_m_gates` False = stretched. Buying half off the high is buying on a low price.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0 on day_vol 2.27 and a delayed-EP TRIGGERED: institutions buying hard after news; strong fundamentals growth.",
+   "case": {
+    "for": "Perfect flow, EP triggered, heavy volume.",
+    "against": "Deep downtrend, far under the high, extended 50% in ten days.",
+    "entry_trigger": "None until a long base and a new high.",
+    "wrong_if": "Wrong if it trends back through ma200 409.3.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 over ma200 and a weekly higher high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16: from_52w_hi -40.76%, ret_12m -37.68, ma200 13.26 over ma50 13.02 = a bounce in a downtrend. `flow` 50.0 fails its floor (`sc_m_gates` False) = no steady buying; `pipe_rank` 53.9 = weak longer trend. Not a new high.",
+   "conviction_change": null,
+   "opposing_case": "`mp` 97.0 STRONG/ACCELERATING and `subcomponents.mp.roc_zscore` 2.23 with insti_money strong: a runner flag says the move is live.",
+   "case": {
+    "for": "Strong persistence, accelerating.",
+    "against": "Deep under the high, weak flow, long trend down.",
+    "entry_trigger": "None until a base and a new high.",
+    "wrong_if": "Wrong if it keeps trending up through its 20-week high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high with ma50 over ma200.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "GPK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16: from_52w_hi -32.06%, ret_12m -34.18, ma200 10.57 > ma100 10.25 > ma50 9.43 = a bounce in a downtrend. `structure` 61.1 = lagging, weak weekly trend; `pipe_rank` 64.7 = a weak longer path. day_vol 0.65 = no participation. Buying a third off the high is buying on a low price.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 88.2, `mp` 85.0 STRONG/ACCELERATING and `sc_m_gates` True after a 27.59% ten-day run, bullish divergence: a base may be turning.",
+   "case": {
+    "for": "Strong flow and persistence, gates pass.",
+    "against": "Long downtrend, far under the high, thin volume, delayed-EP FAILED.",
+    "entry_trigger": "None until ma50 over ma200 and a new high.",
+    "wrong_if": "Wrong if it trends through ma200 10.57 and keeps rising.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "C5/C16: from_52w_hi -17.53%, ret_12m -14.94, weekly swing HH but LL, 7.8% under its 20-day high = a recovery rally now reacting, not a new high. `pipe_rank` 59.4 = weak, jumpy longer trend; `flow` 72.4 its soft engine; div BEARISH/2.",
+   "conviction_change": null,
+   "opposing_case": "`mp` 92.0 STRONG/ACCELERATING, `subcomponents.mp.adx_val` 40.09 strong trend, MAs re-stacked up (ma50 13.41 > ma200 13.22), `sc_m_gates` True.",
+   "case": {
+    "for": "Strong trend strength, MAs turning up, gates pass.",
+    "against": "Far under the high, two bearish divergences, reacting.",
+    "entry_trigger": "A daily close above high_52w_close after the reaction.",
+    "wrong_if": "Wrong if it resumes straight to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w high with the Technology group confirming (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "RKT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16/C5a: from_52w_hi -35.75%, ma200 14.48 > ma100 13.3 > ma50 12.41, weekly 9<21 = a 28% bounce in a downtrend. `subcomponents.mp.adx_val` 28.44 and `mp` 93.0 measure the bounce only; `pipe_rank` 61.9 = weak longer path. day_vol 0.86.",
+   "conviction_change": null,
+   "opposing_case": "`sc_momentum` 79.6 with `sc_m_gates` True and `flow` 88.2: buyers are in control and every engine passes.",
+   "case": {
+    "for": "Every engine passes; strong flow.",
+    "against": "Long downtrend, a third under the high, delayed-EP FAILED.",
+    "entry_trigger": "None until ma50 over ma200 and a new high.",
+    "wrong_if": "Wrong if it clears ma200 14.48 into new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C5a/C16: ma200 176.35 over ma50 166.28, from_52w_hi -16.47% = a rally under a falling long trend. `flow` 47.4 = selling pressure/thin volume and `sc_momentum` 65.6 with `sc_m_gates` False; day_vol 0.61. A short BOS is not a new high.",
+   "conviction_change": null,
+   "opposing_case": "BULLISH_BOS, `structure` 74.7, `subcomponents.mp.adx_val` 40.45 strong trend, `mp` 84.0 STRONG.",
+   "case": {
+    "for": "BOS and strong trend strength.",
+    "against": "Inverted long MAs, weak flow, thin volume, far under the high.",
+    "entry_trigger": "None until ma50 over ma200 and a new high.",
+    "wrong_if": "Wrong if it clears ma200 176.35 and trends up.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200 with flow recovering.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established uptrend near the high: from_52w_hi -2.94%, weekly HH/HL, stack ma20 99.98 > ma50 94.7 > ma200 86.25. `mp` 100.0 = strong aligned trend; `subcomponents.mp.adx_val` 42.46 = very strong trend; `sc_m_gates` True. But 6.4% under its 20-day high and 1H LH/LL: a reaction is under way, so only on the new high. Danger unit atr 4.22.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong long trend, every engine passes.",
+    "against": "Reacting from its recent high; `flow` 69.7 soft; sma_dist 21.27% extended.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 4.22 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The reaction deepening below the rally's base (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "YOU",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C16/C5a: ma200 48.17 > ma100 47.87 > ma50 43.89, from_52w_hi -10.5%, 19.2% under its 20-week high = a rally in a downtrend, now reacting (12% of the day's range). `energy` 61.3 = soft range position; `pipe_rank` 64.4 = weak longer path.",
+   "conviction_change": null,
+   "opposing_case": "`mp` 96.0 STRONG/ACCELERATING, `subcomponents.mp.adx_val` 46.21 strong trend, `sc_m_gates` True.",
+   "case": {
+    "for": "Strong persistence and trend strength.",
+    "against": "Inverted MAs, under the high, bearish divergence.",
+    "entry_trigger": "None until ma50 over ma200 and a new high.",
+    "wrong_if": "Wrong if it clears ma200 48.17 and trends up.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high above ma200.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "TOST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "MAs stacked up (ma20 32.49 > ma50 31.85 > ma200 29.36) but from_52w_hi -9.57% and `subcomponents.mp.adx_val` 20.86 with `mp` 67.0 BUILDING = trend not established and not at a high. `flow` 85.5 is good. Not eligible, not broken.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 85.5, gates pass, stack up.",
+    "against": "Weak trend strength, under the high, closed at 14% of the day's range.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it trends to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established uptrend close to the high: from_52w_hi -1.49%, weekly HH/HL, stack ma20 292.97 > ma50 279.18 > ma200 241.46. `structure` 84.2 = beating the market, weekly up; `energy` 76.5 = high in range, coiled. But RANGE, `flow` 53.9 fails its floor (`sc_m_gates` False), div BEARISH/1: only on the new high. Danger unit atr 7.69.",
+   "conviction_change": null,
+   "case": {
+    "for": "Long clean trend, coiled near the high, reclaim day.",
+    "against": "Weak flow, gate fails, RANGE, flat ten days.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 7.69 off the high (C7) or close below base_low_20d (C20).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break of the 20-day low instead of a new high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:base_low_20d"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Uptrend stack intact (ma20 106.47 > ma50 100.72 > ma200 91.35, weekly HH/HL) but from_52w_hi -7.98%: inside a reaction. `energy` 84.0 is high and coiled, `flow` 50.0 fails its floor (`sc_m_gates` False). C5: wait for the new high.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong energy/coil, established trend.",
+    "against": "Under the high, weak flow, elder INTERRUPTED, mp DECELERATING.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it resumes to a new high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Break of structure in an established trend: BULLISH_BOS, from_52w_hi -2.41%, weekly HH/HL, stack ma20 106.0 > ma50 100.17 > ma200 98.2. `subcomponents.mp.adx_val` 47.86 = very strong trend; `structure` 75.8. KO's own BOS is my Key Price pair (C14). `flow` 52.6 fails its floor: low conviction. Danger unit atr 2.64.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong trend, fresh BOS, Staples pair with KO.",
+    "against": "Weak flow, `sc_m_gates` False, 4.6% under 20-day high, 1H 9<21.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "Close back below pivot_high (failed break, C20) or a one-day reaction >= 1x atr 2.64.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "KO failing its break at the same time (C14).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Established uptrend just under the high: from_52w_hi -1.32%, weekly and daily HH/HL, stack ma20 43.0 > ma50 41.8 > ma200 35.7. `structure` 87.4 = beating the market, weekly up; `mp` 97.0 STRONG/ACCELERATING. But `flow` 36.8 fails its floor and day_vol 0.69: thin buying. Danger unit atr 1.76.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strong structure and persistence near the high.",
+    "against": "Very weak flow, thin volume, pipe_rank reads 0.",
+    "entry_trigger": "Daily close above high_52w_close (the new high).",
+    "wrong_if": "One-day reaction >= 1x atr 1.76 off the high (C7) or close below structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A stall under the high then a 1x atr reaction (C20).",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)",
+     "pipe_rank value (reads 0)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+2atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SPOT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Stack up (ma20 561.91 > ma50 537.34 > ma200 499.83) but from_52w_hi -6.92%, `structure` 57.9 = weak relative standing and `subcomponents.mp.adx_val` 21.34 = trend not established. Not at a high; C5 waits.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 76.3, gates pass, stack up.",
+    "against": "Weak structure and trend strength, under the high, mp DECELERATING.",
+    "entry_trigger": "Daily close above high_52w_close.",
+    "wrong_if": "My stand-aside is wrong if it trends to new highs.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new 52w closing high.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol proxy only)"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of4.json",
+   "bytes": 18358,
+   "votes": 13,
+   "sha256": "d18d4a4bd56c"
+  },
+  {
+   "file": "livermore.part2of4.json",
+   "bytes": 14249,
+   "votes": 13,
+   "sha256": "c7eedcb88210"
+  },
+  {
+   "file": "livermore.part3of4.json",
+   "bytes": 13379,
+   "votes": 13,
+   "sha256": "b5cf72841a71"
+  },
+  {
+   "file": "livermore.part4of4.json",
+   "bytes": 11499,
+   "votes": 12,
+   "sha256": "a886902e770c"
+  }
+ ]
+}

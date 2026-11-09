@@ -1,0 +1,127 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-09",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "IBN",
+   "answer": "OBJECT",
+   "conviction": 3,
+   "objection": "The trigger omits the volume test C16 makes a hard rule: a new closing high on light volume is distribution (C25), not a buy. The name itself passes: `flow` 98.7, `subcomponents.flow.ext_score` 5.0, `sc_momentum` 85.8, day_vol 1.83.",
+   "would_clear": "Write the volume into the trigger: the new closing high must print on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "BILL",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "STGW",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "objection": "No base, no pivot (R3): `subcomponents.structure.base_score` 2.4 on `subcomponents.structure.base_days` 4.0, and D 20.8% past the swing high is C17's hard-rejection zone. A new high from here is a chase, not a buy point. Strength granted: `sc_momentum` 87.6.",
+   "would_clear": "A new base of at least 5-6 weeks forms (C18) and the trigger becomes a close above that base's pivot on day_vol at least 1.40.",
+   "reservation": null
+  },
+  {
+   "ticker": "FA",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "Trigger carries no volume test, and demand is absent now: day_vol 0.79, `subcomponents.flow.accum_score` 1.5, `flow` 69.7. A new closing high on that volume is C25 distribution. The base is real (`subcomponents.structure.base_score` 15.0) but D is 14.4% past the swing high.",
+   "would_clear": "The new closing high must print on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "KO",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "objection": "No measured base, so no pivot for the trigger to clear (R3): `subcomponents.structure.base_score` 5.0 on `subcomponents.structure.base_days` 1497.0; D only 0.3% over the swing high on day_vol 1.01 (C16 fails). `structure` 77.9 alone does not make a buy point.",
+   "would_clear": "A completed, measured base (`subcomponents.structure.base_score` 15.0 class) whose pivot is broken on day_vol at least 1.40.",
+   "reservation": null
+  },
+  {
+   "ticker": "HLT",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "C16 fails and the trigger does not test it: day_vol 0.85 on the break, `subcomponents.flow.volume_score` 2.0 = volume drying up, `flow` 76.3. Leader (`structure` 77.9, `mp` 92.0), but a new high nobody bought is C25 distribution.",
+   "would_clear": "The closing-high trigger must print on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "AJG",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "A buy stop over the prior-day high with no volume test buys a break nobody confirmed: day_vol 0.84, `subcomponents.flow.accum_score` 0.0, `flow` 65.8. Leader inside the 5% zone (`structure` 78.9, D 3.2% over the swing high); demand is the missing letter.",
+   "would_clear": "The trade-above trigger fires only on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "SWK",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "objection": "Past the buy point with no base (R3, C17): D 24.4% past the swing high, `subcomponents.structure.base_score` 5.0, `subcomponents.flow.accum_score` 1.5, day_vol 1.06. A new high off this is a chase. Leadership granted: `mp` 100.0.",
+   "would_clear": "A new base forms and the trigger becomes a close above its pivot on day_vol at least 1.40.",
+   "reservation": null
+  },
+  {
+   "ticker": "WTRG",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "Trigger has no volume test and the break is unbought: day_vol 1.24 under C16's 1.40. Sound structure (`structure` 84.2, `mp` 97.0, `subcomponents.structure.wk_score` 15.0), D 4.2% over the swing high inside the 5% zone; demand is what is missing.",
+   "would_clear": "The 1-hour break of Friday's high counts only on a session with day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "BDX",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "Trigger has no volume test: day_vol 1.18 is under C16's 1.40, `energy` 56.3 leaves `sc_m_gates` False, `subcomponents.energy.exhaustion_score` 7.0 shows wear, D 5.7% past the swing high (C17 late). Leader (`structure` 77.9, `mp` 96.0).",
+   "would_clear": "The new closing high must print on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "CHD",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "The trigger's volume bar (1.2x) is under C16's hard floor of 1.40. Now: day_vol 0.87, `subcomponents.flow.volume_score` 2.0, `flow` 52.6 leaving `sc_m_gates` False. Trend (`mp` 92.0, `subcomponents.mp.adx_val` 47.86) is not demand.",
+   "would_clear": "Raise the trigger's volume condition from 1.2x to day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "WCN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "The trigger's volume bar (1.2x) is under C16's hard floor of 1.40. Now: day_vol 0.74, `subcomponents.flow.volume_score` 2.0, `flow` 57.9 with `sc_m_gates` False. Leader at the pivot (`structure` 87.4, D 0.9% over the swing high).",
+   "would_clear": "Raise the trigger's volume condition from 1.2x to day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "ADP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "objection": "Right shape, pre-pivot coil (`energy` 76.5, `structure` 84.2, D 2.0% under the swing high), but the breakout trigger has no volume test and demand is absent: day_vol 1.02, `flow` 53.9 leaving `sc_m_gates` False.",
+   "would_clear": "The close above the 52-week closing high must print on day_vol at least 1.40 (C16).",
+   "reservation": null
+  },
+  {
+   "ticker": "GEHC",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "objection": "Past the buy point with no fresh base (C17, R3): D 15.5% past the swing high, `subcomponents.structure.base_score` 5.0, `subcomponents.structure.resist_score` 5.0, day_vol 0.96. Leadership granted (`sc_momentum` 82.9, `subcomponents.structure.rs_accel` 13.75).",
+   "would_clear": "A new base forms and the trigger becomes a close above its pivot on day_vol at least 1.40.",
+   "reservation": null
+  },
+  {
+   "ticker": "LTH",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Words: 'expanding volume' should read day_vol at least 1.40 (C16). The trigger is my own: a close above the pivot of a measured base (`subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0); demand is absent today (`flow` 36.8, day_vol 0.69).",
+   "objection": null,
+   "would_clear": null
+  }
+ ]
+}

@@ -1,0 +1,1618 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-09",
+ "round": 2,
+ "declarations": [
+  "Declared on every vote: setup type per C2 named in the reason; adx NOT_SERVED as a C7/C8 gate (one `subcomponents.mp.adx_val`, no rising series); stochastic_kd NOT_SERVED (C6); n_day_extreme via sma_dist + structure_shift (C3/C4); bar_range_history NOT_SERVED (C12/C13); breadth OUT_OF_SCOPE (C16).",
+  "Rubric: BOS or near the prior high with adx_val over 30 = breakout/test (C20); extended but ADX-strong in an up-stacked trend = Holy Grail, conditional on the first pullback to ma_20 (C7); squeeze_score >= 4 = C12 breakout; none = ABSTAIN, or OPPOSE where AQE fields show wear or no trend/base.",
+  "R9/C10: no visual climax call from composites. Extension is a weight, never a veto (R27). No OPPOSE rests on a bracket field (R1).",
+  "Steenbarger UNPROVEN: every case is a hypothesis; no AQE field carries a measured edge, so no conviction above 3. CROWDING: my defensive picks are valid only inside the current risk-off, defensive tape.",
+  "Memory: no ledger memory block was injected this round; no standing lesson applies.",
+  "Horizons are my own: 5 sessions for breakouts/tests (C3, C18); 10 for Holy Grail pullbacks that must first come in."
+ ],
+ "votes": [
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail forming (C7), not a buy here: fresh high with `subcomponents.mp.adx_val` 32.22 and `mp` 97.0 STRONG/ACCELERATING; `subcomponents.energy.exhaustion_score` 10.0 = no climax wear. `subcomponents.energy.squeeze_score` 0.0 and sma_dist 16.6% = no test or coil today, so I wait for the first pullback to the 20-day.",
+   "conviction_change": null,
+   "challenge_reply": "UNPROVEN: argued as a hypothesis only; no edge is claimed and conviction stays 2.",
+   "case": {
+    "for": "ADX-confirmed uptrend at the 52w high; `flow` 98.7 and `sc_m_gates` True say every engine clears its floor; the first pullback in this trend is the C7 low-risk entry.",
+    "against": "Range-expansion run (run_10d 15.04%, `subcomponents.mp.roc_zscore` 3.1): C19 calls that bar an exit, not an entry; buying today is chasing.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback (C7)",
+    "wrong_if": "close_below:ma_20-1atr, or structure_shift turns BEARISH_CHOCH",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day with mp_accel_state still ACCELERATING raises me; a slide through it ends the setup.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HLT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT/test of the prior high (C2, C20): BULLISH_BOS 1.61% off the 52w high, sma_dist 12.59%. `subcomponents.mp.adx_val` 40.88 and `mp` 92.0 = strong trend; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 32.0 = a long run with no climax wear.",
+   "conviction_change": "4 to 3: day_vol 0.85 and the shared-BOS overlap mean the breakout lacks independent confirmation.",
+   "challenge_reply": "My field, independent of the BOS: `subcomponents.energy.exhaustion_score` 10.0 across `subcomponents.energy.en_trend_bars` 32.0 (no climax wear, C11/C19). The BOS label is shared; this read is not.",
+   "case": {
+    "for": "`sc_momentum` 78.3 with `sc_m_gates` True; a break of a confirmed pivot in an ADX-strong trend keeps entry and invalidation close together.",
+    "against": "day_vol 0.85 below normal on the break; `subcomponents.energy.squeeze_score` 0.0 so no contraction; H1 below EMA9.",
+    "entry_trigger": "h1_close_above:bar_high, day-only (C3, C22)",
+    "wrong_if": "close_below:bar_low after entry or BEARISH_CHOCH: a failed breakout is Turtle Soup against the long",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the broken pivot ends it; a wide range-expansion reversal bar is a C19 exit.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Test of the prior extreme, my lowest-risk family (C20): BULLISH_BOS 0.17% off the 52w high, sma_dist 6.37% not stretched. `subcomponents.mp.adx_val` 31.39 a real trend; `subcomponents.energy.squeeze_score` 4.0 a mild coil; `pipe_rank` 85.2 a steady path.",
+   "conviction_change": "4 to 3: `subcomponents.structure.rs_accel` -0.7 (lead eroding) and the shared trio anchor.",
+   "challenge_reply": "My field is proximity to the extreme for a C20 double stop: `subcomponents.structure.resist_score` 10.0 with `subcomponents.energy.squeeze_score` 4.0, not the BOS label. Higher timeframe: ma50 89.94 > ma100 87.49 > ma200 82.74, stacked up. Valid inside a defensive, risk-off tape.",
+   "case": {
+    "for": "`sc_momentum` 76.7 with `sc_m_gates` True; entry and invalidation sit together at the old high (double stop point).",
+    "against": "`subcomponents.structure.rs_accel` -0.7: the lead over SPY is eroding; a staple in a momentum lane; H1 below EMA9.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low, or a close back under the old high (failed test)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "rs_accel turning positive raises me; a close back below the pivot ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Base breakout, now a retest candidate (C2, C20): `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0, ABOVE_STRUCTURE 3.2% over the swing high; `structure` 94.7, `sc_m_gates` True. `subcomponents.mp.adx_val` 27.29 under 30 and `subcomponents.energy.exhaustion_score` 8.5 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "A measured base broke; a retest of the broken pivot would put entry and stop together (C20).",
+    "against": "div BEARISH/1 and `subcomponents.flow.accum_score` 1.5: no fresh accumulation behind the break; ADX below the C7 gate.",
+    "entry_trigger": "reclaim:pivot_high on the retest",
+    "wrong_if": "close_below:pivot_high-0.5atr: the breakout failed",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A clean retest that holds the pivot raises me; a second oscillator joining the divergence lowers me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:pivot_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [
+     "pivot_high"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT from a base not yet stretched (C2): BULLISH_BOS, sma_dist 6.16%. `subcomponents.mp.adx_val` 37.3 with `mp` 97.0 = trend strong; `subcomponents.energy.en_trend_bars` 12.0 = a first push, `subcomponents.energy.exhaustion_score` 10.0 no wear. mp_accel_state FLAT tempers it.",
+   "conviction_change": null,
+   "challenge_reply": "Field Wyckoff does not rest on: `subcomponents.mp.adx_val` 37.3, trend strength behind a young run (`subcomponents.energy.en_trend_bars` 12.0). Wyckoff's case is accumulation and volume.",
+   "case": {
+    "for": "`sc_momentum` 79.6 with `sc_m_gates` True; `flow` 85.5 money in on up days; U&R reclaim of the 9-day on the last session.",
+    "against": "Weekly 9<21 and 8.6% under the 20-wk high: the longer trend is not yet up; `subcomponents.energy.squeeze_score` 0.0, no contraction.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low or BEARISH_CHOCH",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9>21 raises me; a close back into the old range ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MCD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout already 9.7% past the swing high, so my setup is now the first pullback (C7): `subcomponents.mp.adx_val` 42.08, `mp` 100.0 STRONG/ACCELERATING, `subcomponents.mp.roc_zscore` 2.27; `subcomponents.energy.exhaustion_score` 10.0. sma_dist 11.15% after run_10d 11.29%: watch for a C19 climax.",
+   "conviction_change": "3 to 2: entry is now 9.7% over the broken swing high, so the trade is the first pullback, not the breakout.",
+   "challenge_reply": "My field, not Wyckoff's: `subcomponents.mp.roc_zscore` 2.27 with `subcomponents.mp.adx_val` 42.08, a trend-strength read; I wait for the pullback, Wyckoff for the SOS.",
+   "case": {
+    "for": "`sc_momentum` 83.7 with `sc_m_gates` True; an ADX-strong thrust off a deep base.",
+    "against": "Price under ma200 282.35 and weekly 9<21: the longer trend is still down, so this may be a counter-trend thrust.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr or BEARISH_CHOCH",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A close back above ma200 makes it an established trend and raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AHR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Fresh high on `flow` 100.0 with `subcomponents.flow.ext_score` 5.0, but no setup type I can name: `subcomponents.mp.adx_val` 19.76 and `subcomponents.mp.mp_adx_score` 0.0 = no trend gate (C7); `subcomponents.energy.squeeze_score` 0.0 = no coil (C12). A fresh extreme without either is Turtle Soup territory.",
+   "conviction_change": null,
+   "case": {
+    "for": "Confirmed breakout on volume (day_vol 1.96), `sc_m_gates` True, elder 10.0 SUSTAINED.",
+    "against": "Trend not established (`subcomponents.mp.trend_score` 8.0); fresh extremes without trend strength are what Turtle Soup fades (C3).",
+    "entry_trigger": "A test that holds: reclaim:pivot_high after a dip",
+    "wrong_if": "close_below:pivot_high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx_val rising over 30 or a coil forming.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "USFD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Range-contraction BREAKOUT (C12): `subcomponents.energy.squeeze_score` 8.5 coiled, ABOVE_STRUCTURE, sma_dist 7.5%. `sc_momentum` 69.4 with `sc_m_gates` True; `energy` 71.4; mp_accel_state ACCELERATING. elder_pattern INTERRUPTED and `subcomponents.flow.accum_score` 0.0 caution.",
+   "conviction_change": null,
+   "case": {
+    "for": "The coil is the breakout family I can proxy: contraction precedes trend days (C12, C13).",
+    "against": "No accumulation (`subcomponents.flow.accum_score` 0.0), `subcomponents.mp.adx_val` 27.87 under 30, H1 below EMA9.",
+    "entry_trigger": "h1_close_above:bar_high (upper side of the straddle)",
+    "wrong_if": "close_below:bar_low: a failed contraction breakout points the other way (C23)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Accumulation turning up raises me; NR4/NR7 data would confirm or deny the coil.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Exceptional thrust, but none of my four setups: sma_dist 27.44%, 23.7% over the swing high, `subcomponents.energy.squeeze_score` 0.0. `subcomponents.mp.adx_val` 32.29 is strong, but ma200 54.55 > ma100 50.46 > ma50 49.34 means no established uptrend for a C7 pullback; `subcomponents.flow.ha_quality_count` 3.0 choppy.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 85.1, `sc_m_gates` True, `flow` 90.8, elder 10.0 SUSTAINED.",
+    "against": "A counter-trend thrust under a downward MA stack; a climax read from composites is declined (R9, C10).",
+    "entry_trigger": "A first pullback that holds after ma50 crosses back over ma200",
+    "wrong_if": "close_below:ma_20",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ma50 back above ma200, then a pullback to the 20-day.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Fresh 52w high with `mp` 93.0 STRONG/ACCELERATING and `subcomponents.mp.roc_zscore` 3.04, but `subcomponents.mp.adx_val` 25.85 is under the C7 gate and `subcomponents.energy.squeeze_score` 0.0 shows no coil; sma_dist 14.87%. No test, retracement or contraction to classify.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 87.4, `sc_m_gates` True, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "`subcomponents.flow.accum_score` 1.5 and insti_money warn; a range-expansion run with no named setup (R1).",
+    "entry_trigger": "adx_val over 30, then reclaim:ma_20 on a first pullback",
+    "wrong_if": "close_below:ma_20",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "adx_val above 30 makes this a Holy Grail candidate.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "STGW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail forming (C7): fresh high in an ADX-strong uptrend, `subcomponents.mp.adx_val` 41.23, `mp` 100.0, MAs stacked up; `subcomponents.energy.exhaustion_score` 10.0. But sma_dist 30.22% with `subcomponents.energy.squeeze_score` 0.0: today is a range-expansion bar, so I act only on the first pullback.",
+   "conviction_change": null,
+   "challenge_reply": "UNPROVEN: a hypothesis, no edge claimed; conviction 2.",
+   "case": {
+    "for": "`sc_momentum` 87.6, `sc_m_gates` True, `flow` 96.1: the strongest trend on the sheet.",
+    "against": "run_10d 29.62% and H1 at 98% of the day's range: C19 says a parabolic bar is where profit is taken, not where entries go.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A shallow pullback that holds above the 20-day with ADX intact raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate (C7): `subcomponents.mp.adx_val` 30.81 just over the gate, `mp` 97.0 STRONG/ACCELERATING, `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 17.0. sma_dist 17.11% and `subcomponents.energy.squeeze_score` 0.0: no entry today, wait for the first pullback.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 85.6, `sc_m_gates` True, `structure` 92.6, `flow` 96.1.",
+    "against": "18.24% under the 52w high and ma50 40.76 below ma100 41.05: the longer trend is only just turning; ADX barely clears 30.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "adx_val slipping under 30 removes the gate.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VLTO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate (C7): fresh high, `subcomponents.mp.adx_val` 45.52, `mp` 100.0 STRONG/ACCELERATING, MAs stacked up; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 22.0. sma_dist 17.12%: wait for the first pullback.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 84.1, `sc_m_gates` True, `flow` 88.2.",
+    "against": "day_vol 0.9 on the high; `subcomponents.energy.squeeze_score` 0.0; a range-expansion run (C19).",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VSXY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Top-percentile strength but no setup I can classify: sma_dist 24.1%, 15.7% over the swing high, `subcomponents.energy.squeeze_score` 0.0, and `subcomponents.mp.adx_val` 28.49 under the C7 gate. A climax read from composites is declined (R9).",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 82.1, `sc_m_gates` True, `mp` 89.0, elder 10.0 SUSTAINED.",
+    "against": "day_vol 0.81 on an extended run; no test, retracement or contraction.",
+    "entry_trigger": "adx_val over 30, then reclaim:ma_20 on a first pullback",
+    "wrong_if": "close_below:ma_20",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ADX over 30 with a first pullback that holds.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate (C7): `subcomponents.mp.adx_val` 43.77 with `mp` 96.0 STRONG/ACCELERATING, MAs stacked up, 0.78% off the 52w high. `sc_m_gates` False on `energy` 56.3 and `subcomponents.energy.exhaustion_score` 7.0 show some wear; I wait for the first pullback.",
+   "conviction_change": null,
+   "case": {
+    "for": "A strong, ADX-confirmed uptrend; `structure` 77.9; weekly HH/HL.",
+    "against": "div BEARISH/1 and the failed energy floor: the run is wearing; sma_dist 12.58%.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score falling further or a second bearish oscillator ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HSY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "BULLISH_BOS at sma_dist 5.71%, but nothing behind the break for my taxonomy: `subcomponents.mp.adx_val` 19.75 with `subcomponents.mp.mp_adx_score` 0.0 (no trend gate), `subcomponents.energy.squeeze_score` 0.0 (no coil), `structure` 58.9.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 89.5 with `subcomponents.flow.ext_score` 5.0: a breakout on volume; `sc_m_gates` True.",
+    "against": "Under ma200 188.31 with weekly 9<21: a break inside a longer downtrend.",
+    "entry_trigger": "h1_close_above:bar_high only after adx_val turns up",
+    "wrong_if": "close_below:pivot_high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx_val rising over 25 with the BOS holding.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "JNJ",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No setup: structure_shift RANGE inside the swing, `flow` 39.5 (selling or thin volume) with `sc_m_gates` False, and `subcomponents.mp.adx_val` 22.76 under the C7 gate. A test needs a probe of the extreme; this sits 2.1% under the swing high without one.",
+   "conviction_change": null,
+   "opposing_case": "Near the 52w high (-0.79%), `structure` 77.9, `mp` 76.0, a U&R reclaim of the 9-day and CORRECTION_REENTRY: a retest of the old high could become a C20 double stop.",
+   "case": {
+    "for": "`structure` 77.9 and `mp` 76.0 STRONG near the 52w high; the reclaim day is a higher low.",
+    "against": "Money flow fails its floor and the trend reading is drifting; inside the swing there is no test, pullback or coil to trade.",
+    "entry_trigger": "A probe and failure at the swing high, then h1_close_above:bar_high",
+    "wrong_if": "A close above the swing high on `flow` back over its floor",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "flow clearing its floor with a break above the swing high.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "FOUR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mixed: a 21-day base (`subcomponents.structure.base_score` 15.0) with a partial coil (`subcomponents.energy.squeeze_score` 4.0) is a C12 shape, but `subcomponents.mp.adx_val` 14.82, `pipe_rank` 42.6 and mp FADING/DECELERATING, 40.42% under the high under a downward MA stack.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 96.1 with `subcomponents.flow.cmf` 0.51 closes near highs; U&R reclaim of the 9-day.",
+    "against": "No trend: ma200 45.77 over ma50 40.3.",
+    "entry_trigger": "h1_close_above:bar_high with mp_accel_state turning ACCELERATING",
+    "wrong_if": "close_below:bar_low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "mp_accel_state ACCELERATING and a tighter coil.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A thrust into wear, not a setup: `subcomponents.energy.exhaustion_score` 5.5 already off its clean 10 at `subcomponents.energy.en_trend_bars` 15.0, under ma200 26.46 > ma100 25.32 > ma50 22.69 (longer trend down). Range expansion into wear is the C19 exit bar; a climax long needs the turn visible first (C11).",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0 with `subcomponents.flow.accum_score` 7.5, `sc_momentum` 85.2 and `subcomponents.mp.adx_val` 36.94: genuine buying behind a strong directional move.",
+   "case": {
+    "for": "Real accumulation and a strong directional move; `sc_m_gates` True.",
+    "against": "Exhaustion already showing on a counter-trend thrust; sma_dist 21.75%, no coil.",
+    "entry_trigger": "A pullback that holds the 20-day after the wear clears",
+    "wrong_if": "exhaustion_score back to 10.0 with a hold above ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A quiet pullback that holds and resets exhaustion.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "GEHC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "First pullback after fresh highs in an ADX-strong trend, the C7 shape: `subcomponents.mp.adx_val` 44.16, `mp` 96.0, now 5.9% under the 20-day high with H1 below EMA9; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 21.0. FADING is default only (R13).",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 82.9, `sc_m_gates` True, `subcomponents.structure.rs_accel` 13.75: the lead is widening.",
+    "against": "sma_dist 18.84% still well above the 20-day; resistance lens warn.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that breaks the 20-day ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WTRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of the prior extreme (C20): 1.3% off the 52w high, 2.0% under the 20-day high, sma_dist 10.38%. `subcomponents.mp.adx_val` 39.55 and `mp` 97.0 = strong trend; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 18.0.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 81.7, `sc_m_gates` True, `structure` 84.2.",
+    "against": "`subcomponents.energy.squeeze_score` 0.0, no coil; a utility in a momentum book.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low: a failed probe of the high is Turtle Soup against",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A failed probe of the high ends it; a coil forming raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EXR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate (C7): `subcomponents.mp.adx_val` 49.06 very strong, `mp` 100.0, 1.15% off the 52w high, now 2.5% under the 20-day high with H1 below EMA9; `subcomponents.energy.exhaustion_score` 10.0. mp_accel_state DECELERATING and `subcomponents.flow.accum_score` 0.0 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 87.4, `sc_m_gates` True, a very strong trend reading.",
+    "against": "Momentum decelerating; sma_dist 13.8%; no accumulation.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me; a break of it ends the setup.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fits none of my four: `subcomponents.structure.base_days` 0.0 (no base, so no contraction breakout), `subcomponents.mp.adx_val` 23.64 (under the C7 gate), `subcomponents.structure.wk_score` 2.0 (weekly trend not up), `sc_m_gates` False on `energy` 59.7. A 36.97% ten-day run with no structure is a climax read I decline (R9).",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0, `mp` 87.0 STRONG/ACCELERATING, elder 10.0 SUSTAINED: real buying behind the thrust.",
+   "case": {
+    "for": "Real buying and an accelerating thrust.",
+    "against": "No base, no trend strength, no weekly trend: nothing to define the trade or the stop structurally.",
+    "entry_trigger": "A base and a coil after this run",
+    "wrong_if": "A base forms and adx_val clears 30",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A base with a coil and a weekly trend score that recovers.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "PENN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A 19-day base breakout (`subcomponents.structure.base_score` 15.0) but no coil (`subcomponents.energy.squeeze_score` 0.0), `subcomponents.mp.adx_val` 25.38 under the gate, mp DECELERATING, 12.3% over the swing high under ma100 18.08: no clean setup type.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 96.1, `sc_m_gates` True, div BULLISH.",
+    "against": "Longer trend down, weekly 9<21; `subcomponents.structure.rs_vs_spy` -2.06.",
+    "entry_trigger": "A retest: reclaim:pivot_high",
+    "wrong_if": "close_below:pivot_high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A retest of the broken pivot that holds.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "FA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an ADX-strong uptrend (C7): `subcomponents.mp.adx_val` 35.85, `mp` 97.0, 4.7% under the 20-day high; `subcomponents.structure.base_score` 15.0 and `pipe_rank` 90.5. sma_dist 15.94% is still above the 20-day, so I wait.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 89.5, `sc_m_gates` True, MAs stacked up.",
+    "against": "mp_accel_state FLAT, day_vol 0.79, `subcomponents.flow.accum_score` 1.5.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EVRG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of the prior extreme after a dip and reclaim (C2, C20): 0.67% off the 52w high, sma_dist 7.02%. `subcomponents.mp.adx_val` 31.84 over the gate, `pipe_rank` 94.4 a steady path; `subcomponents.energy.exhaustion_score` 10.0. `subcomponents.flow.accum_score` 0.0 tempers it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_m_gates` True, `structure` 81.1, `mp` 90.0.",
+    "against": "mp DECELERATING; no accumulation; a utility in a momentum book.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A failed probe of the high ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an ADX-strong trend (C7): `subcomponents.mp.adx_val` 35.62, `mp` 93.0, 4.4% under the 20-day high with H1 below EMA9; `subcomponents.energy.exhaustion_score` 10.0. FADING/FLAT is the default label (R13); `subcomponents.flow.accum_score` 0.0 tempers it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 73.5, `sc_m_gates` True, `subcomponents.structure.rs_accel_score` 15.0.",
+    "against": "sma_dist 12.65% still above the 20-day; no accumulation; day_vol 0.84.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me; a break of it ends the setup.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ETR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "BULLISH_BOS at sma_dist 5.49%, but `subcomponents.mp.adx_val` 23.26 is under the C7 gate and `subcomponents.energy.squeeze_score` 0.0 shows no coil; mp DECELERATING. A BOS alone is not one of my four types.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_m_gates` True, `structure` 77.9, U&R reclaim of the 9-day.",
+    "against": "Weekly 9<21; insti_money warn.",
+    "entry_trigger": "h1_close_above:bar_high after adx_val turns up",
+    "wrong_if": "close_below:pivot_high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx_val rising over 25 with the BOS holding.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Fresh high, `mp` 89.0 STRONG/ACCELERATING, `subcomponents.energy.squeeze_score` 4.0 a partial coil, but `subcomponents.mp.adx_val` 27.64 is under the C7 gate and sma_dist 12.99% leaves no test; div BEARISH/1. No clean type.",
+   "conviction_change": null,
+   "case": {
+    "for": "`pipe_rank` 80.7, `sc_m_gates` True, elder 10.0 ACCELERATION.",
+    "against": "`subcomponents.flow.flow_score` 8.5 and `subcomponents.flow.cmf` -0.12: closes lean to the lows.",
+    "entry_trigger": "adx_val over 30, then reclaim:ma_20",
+    "wrong_if": "close_below:ma_20",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "adx_val over 30 with a pullback that holds.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Range-contraction BREAKOUT at the prior extreme (C12, C20): `subcomponents.energy.squeeze_score` 8.5 coiled, `subcomponents.structure.base_score` 12.0 on `subcomponents.structure.base_days` 30.0, 0.27% off the 52w high. `sc_m_gates` False on `flow` 59.2 and `subcomponents.mp.adx_val` 19.19 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`energy` 73.9, `structure` 77.9, U&R reclaim; a coil at the high is the C12 straddle setup.",
+    "against": "No accumulation (`subcomponents.flow.accum_score` 0.0), `mp` 55.0 BUILDING; day_vol 3.36.",
+    "entry_trigger": "h1_close_above:bar_high (upper side of the straddle)",
+    "wrong_if": "close_below:bar_low: a failed contraction breakout points the other way (C23)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Flow clearing its floor raises me; a close back under the base ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A heavy range-expansion bar (day_vol 3.67) at sma_dist 23.35% with `subcomponents.energy.squeeze_score` 0.0, `subcomponents.mp.adx_val` 27.92 under the gate and `subcomponents.structure.base_days` 9.0: no test, retracement or coil. A climax call from composites is declined (R9).",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 94.7, `flow` 100.0, `sc_momentum` 85.4.",
+    "against": "`sc_m_gates` False on `energy` 59.7; ma100 12.47 above ma50 11.54.",
+    "entry_trigger": "A base and coil after this bar",
+    "wrong_if": "close_below:bar_low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A tight base forming above the breakout.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "TEM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No setup and weak engines: structure_shift RANGE, `structure` 41.1, `mp` 47.0, `sc_m_gates` False, `subcomponents.mp.adx_val` 16.69 and `subcomponents.structure.rs_accel` -32.78. Inside the swing with no trend, 10.0% under the 20-day high.",
+   "conviction_change": null,
+   "opposing_case": "`subcomponents.energy.squeeze_score` 8.5 is a real coil, and the U&R reclaim plus the elder red-to-green turn could start a C12 breakout from it.",
+   "case": {
+    "for": "A real coil and a reclaim day.",
+    "against": "No trend, lagging relative strength and a failed gate: a coil inside a weak range has no direction to trade.",
+    "entry_trigger": "h1_close_above:bar_high with structure_shift turning BULLISH_BOS",
+    "wrong_if": "structure_shift turns BULLISH_BOS and `structure` recovers",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A break of the swing high out of the coil.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "APLE",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "At the 52w high the read is a failure test, not a long: `subcomponents.energy.exhaustion_score` 5.5 (climax-prone wear), `sc_m_gates` False on `energy` 53.8, div BEARISH/1, elder INTERRUPTED, structure_shift RANGE. A tired probe of the extreme is Turtle Soup against the long (C3).",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0, `pipe_rank` 94.0, `subcomponents.mp.adx_val` 41.98 and a U&R reclaim of the 9-day: a strong trend may simply absorb the wear.",
+   "case": {
+    "for": "Strong trend and steady buying.",
+    "against": "Wear plus divergence at the extreme: the probe is more likely to fail than to run.",
+    "entry_trigger": "Exhaustion resets and a test of the high holds",
+    "wrong_if": "A close through the 52w high with exhaustion_score back to 10.0",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "exhaustion_score recovering and the divergence clearing.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "FTV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an ADX-strong trend (C7): `subcomponents.mp.adx_val` 43.21, `mp` 92.0, 5.2% under the 20-day high with H1 below EMA9; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 21.0; U&R reclaim of the 9-day. mp DECELERATING tempers it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_m_gates` True, `energy` 73.9.",
+    "against": "sma_dist 11.86%, insti_money warn, `subcomponents.flow.accum_score` 1.5.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WCN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate (C7): `subcomponents.mp.adx_val` 41.49, `mp` 96.0, 3.2% under the 20-day high; `subcomponents.energy.exhaustion_score` 10.0, `structure` 87.4. `sc_m_gates` False on `flow` 57.9 and day_vol 0.74 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "An ADX-strong uptrend, MAs stacked up, U&R reclaim.",
+    "against": "Flow below its floor; `subcomponents.flow.volume_score` 2.0, volume drying.",
+    "entry_trigger": "reclaim:ma_20 on the first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Flow clearing its floor raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback after fresh highs, the C7 shape: `subcomponents.mp.adx_val` 49.99, `mp` 96.0, now 10.6% under the 20-day high; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 39.0; U&R reclaim. `sc_m_gates` False on `flow` 57.9 and `subcomponents.structure.rs_accel` -26.37 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "The strongest ADX reading on the sheet; weekly HH/HL.",
+    "against": "structure_shift RANGE; sma_dist 36.87% still far above the 20-day; the lead is eroding.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A deeper slide through the 20-day ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "`subcomponents.mp.adx_val` 46.73 and `mp` 100.0, but under a downward MA stack (ma200 14.55 > ma100 14.26 > ma50 13.19): no established uptrend for C7; sma_dist 23.09% and `subcomponents.energy.squeeze_score` 0.0 give no test or coil.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 82.3, `sc_m_gates` True, `subcomponents.structure.rs_accel` 36.95.",
+    "against": "day_vol 0.55; weekly 9<21; a counter-trend thrust.",
+    "entry_trigger": "ma50 back over ma200, then reclaim:ma_20",
+    "wrong_if": "close_below:ma_20",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "The MA stack turning up.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fits none of my four: `subcomponents.structure.wk_score` 0.0 and `subcomponents.structure.base_score` 0.0 (no weekly trend, no base), `subcomponents.mp.trend_score` 8.0 under a downward MA stack, 46.67% under the high. A 50.32% ten-day run with `subcomponents.mp.roc_zscore` 3.9 is range expansion, a C19 exit bar; `sc_m_gates` False.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 100.0 with `subcomponents.flow.accum_score` 7.5, `mp` 85.0 ACCELERATING, elder 10.0 ACCELERATION: a powerful reversal with real money behind it.",
+   "case": {
+    "for": "Real money and an accelerating reversal.",
+    "against": "No base, no weekly trend, price under ma200: nothing structural to define the trade.",
+    "entry_trigger": "A base after the thrust",
+    "wrong_if": "A base forms and holds above ma_50",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A tight base above the 50-day.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "KD",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No setup and weak money: `flow` 50.0 with `subcomponents.flow.mfi` 29.91 (sellers in control), `subcomponents.structure.base_score` 0.0, `sc_m_gates` False, 40.76% under the high at sma_dist 25.08%. `subcomponents.mp.adx_val` 30.61 is a thrust without a base or a pullback.",
+   "conviction_change": null,
+   "opposing_case": "`mp` 97.0 STRONG/ACCELERATING, insti_money strong, elder 10.0 ACCELERATION and a runner flag: momentum may persist.",
+   "case": {
+    "for": "Persistent momentum with institutional money.",
+    "against": "Money flow fails its floor and there is no base to define a stop.",
+    "entry_trigger": "A pullback that holds with flow over its floor",
+    "wrong_if": "flow clears its floor and a base forms",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "flow over its floor plus a base.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "GPK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "An 18-day base breakout (`subcomponents.structure.base_score` 15.0) now 23.6% past the swing high, under a downward MA stack with `subcomponents.structure.wk_score` 2.0 and `subcomponents.mp.trend_score` 8.0: no established trend for C7 and no coil (`subcomponents.energy.squeeze_score` 0.0).",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 88.2, `sc_m_gates` True, `subcomponents.mp.adx_val` 30.8.",
+    "against": "H1 below EMA9, day_vol 0.65, 32.06% under the 52w high.",
+    "entry_trigger": "A retest of the base: reclaim:pivot_high",
+    "wrong_if": "close_below:pivot_high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A retest of the broken base that holds with the weekly trend turning up.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an ADX-strong trend (C7): `subcomponents.mp.adx_val` 40.09, `mp` 92.0 STRONG/ACCELERATING, 7.8% under the 20-day high; `subcomponents.energy.exhaustion_score` 10.0 over `subcomponents.energy.en_trend_bars` 25.0. div BEARISH/2 and `subcomponents.flow.accum_score` 1.5 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_m_gates` True, the 20-day above the 50-day and 100-day.",
+    "against": "Two oscillators diverge bearishly; `subcomponents.pipe.pipe_tier` 3 C-WATCH; sma_dist 27.33%.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A third bearish oscillator or a break of the 20-day ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RKT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fits none of my four: `subcomponents.structure.base_score` 0.0 (no base), `subcomponents.mp.adx_val` 28.44 under the C7 gate, a downward MA stack (ma200 14.48 > ma100 13.3 > ma50 12.41), 25.6% past the swing high at sma_dist 21.33%. Range expansion into overhead supply is a C19 exit, not an entry.",
+   "conviction_change": null,
+   "opposing_case": "`flow` 88.2, `mp` 93.0 STRONG/ACCELERATING, elder 10.0 SUSTAINED, `subcomponents.structure.rs_accel` 31.14: the turn has real money behind it.",
+   "case": {
+    "for": "Real buying and an accelerating turn.",
+    "against": "No base, no trend gate, price under ma200: nothing structural to define the trade.",
+    "entry_trigger": "A base above ma_50",
+    "wrong_if": "A base forms with adx_val over 30",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A tight base and ma50 turning up through ma100.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "EFX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT just through a confirmed pivot (C2): BULLISH_BOS 0.7% over the swing high; `subcomponents.mp.adx_val` 40.45 strong trend, `subcomponents.energy.exhaustion_score` 10.0. `sc_m_gates` False on `flow` 47.4 and day_vol 0.61 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 74.7, coil lens strong, `subcomponents.structure.rs_accel` 27.98.",
+    "against": "Thin participation; 16.47% under the 52w high and under the weekly swing high.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low or BEARISH_CHOCH: a failed breakout",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Flow clearing its floor raises me; a close back under the pivot ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "First pullback in an ADX-strong uptrend (C7): `subcomponents.mp.adx_val` 42.46, `mp` 100.0 STRONG/ACCELERATING, 6.4% under the 20-day high, MAs stacked up; `subcomponents.energy.exhaustion_score` 10.0.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_momentum` 78.1, `sc_m_gates` True, `pipe_rank` 75.5.",
+    "against": "sma_dist 21.27% still far above the 20-day; `subcomponents.flow.accum_score` 1.5; H1 below EMA9.",
+    "entry_trigger": "reclaim:ma_20 on this first pullback",
+    "wrong_if": "close_below:ma_20-1atr",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A pullback that holds the 20-day raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+2atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "YOU",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A climax that has already turned: `subcomponents.flow.ext_score` -5.0 (climax or weak-close penalty), `subcomponents.structure.resist_score` 0.0, `subcomponents.energy.en_pos50` 63.95, 15.7% under the 20-day high, H1 at 12% of the day's range, div BEARISH/1. A visible climax reversal is a short-side read (C11), not a long.",
+   "conviction_change": null,
+   "opposing_case": "`mp` 96.0 STRONG/ACCELERATING, `subcomponents.mp.adx_val` 46.21, elder 10.0 SUSTAINED: the drop could be the first pullback in a strong trend.",
+   "case": {
+    "for": "Strong trend reading and a sustained impulse.",
+    "against": "The extension penalty and the drop off the high say the climax already happened; MAs mixed, weekly 9<21.",
+    "entry_trigger": "A pullback that stops and reclaim:ma_20 with ext_score back to 0",
+    "wrong_if": "reclaim:ma_20 holds and ext_score recovers",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A hold and reclaim of the 20-day with the penalty gone.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "TOST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A higher low in a weekly and daily HH/HL trend is the retracement family (C2), but `subcomponents.mp.adx_val` 20.86 fails the C7 gate and the Anti's %K/%D is not served (R4); `subcomponents.energy.squeeze_score` 0.0.",
+   "conviction_change": null,
+   "case": {
+    "for": "`sc_m_gates` True, `flow` 85.5, `subcomponents.structure.base_score` 12.0, mp ACCELERATING.",
+    "against": "H1 at 14% of the day's range; `pipe_rank` 56.6.",
+    "entry_trigger": "h1_close_above:bar_high after the higher low holds",
+    "wrong_if": "close_below:bar_low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx_val over 30 or a stochastic field to grade the Anti.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Retracement inside an ADX-strong trend, already reclaimed (C2, C7): `subcomponents.mp.adx_val` 31.78, 2.0% under the swing high, U&R reclaim of the 9-day; `subcomponents.energy.squeeze_score` 4.0 a partial coil, `energy` 76.5. `sc_m_gates` False on `flow` 53.9 and div BEARISH/1 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 84.2, `pipe_rank` 73.4, near the 52w high (-1.49%).",
+    "against": "Flow below its floor; structure_shift RANGE.",
+    "entry_trigger": "h1_close_above:bar_high (C7 buy stop over the prior bar)",
+    "wrong_if": "close_below:bar_low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the reclaim-day low ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Range-contraction BREAKOUT candidate (C12): `subcomponents.energy.squeeze_score` 8.5 coiled, `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 16.0, `energy` 84.0, ext_atr20 0.79 tight to the 20-day. `flow` 50.0 with `subcomponents.flow.mfi` 30.46 and elder INTERRUPTED temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 33.69, weekly HH/HL.",
+    "against": "Sellers in control on money flow, `sc_m_gates` False; `subcomponents.structure.rs_accel` -13.71.",
+    "entry_trigger": "h1_close_above:bar_high (upper side of the straddle)",
+    "wrong_if": "close_below:bar_low: a failed contraction breakout points the other way (C23)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Money flow turning up raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of a just-broken pivot (C2, C20): BULLISH_BOS 0.4% over the swing high, sma_dist 9.14%, U&R reclaim of the 9-day. `subcomponents.mp.adx_val` 47.86 a very strong trend, `subcomponents.energy.exhaustion_score` 10.0. `sc_m_gates` False on `flow` 52.6 tempers it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`pipe_rank` 81.7, `structure` 75.8.",
+    "against": "H1 below EMA9 with 9<21; `subcomponents.flow.volume_score` 2.0, thin volume.",
+    "entry_trigger": "h1_close_above:bar_high",
+    "wrong_if": "close_below:bar_low or BEARISH_CHOCH",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the broken pivot ends it.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Test of the prior high (C20): 0.4% under the daily swing high, 1.32% off the 52w high; `subcomponents.mp.adx_val` 31.72, `mp` 97.0 STRONG/ACCELERATING, `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 24.0. `flow` 36.8, `sc_m_gates` False and day_vol 0.69 temper it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure` 87.4, `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "Money flow weak (`subcomponents.flow.accum_score` 0.0); thin participation at the test.",
+    "entry_trigger": "h1_close_above:pivot_high",
+    "wrong_if": "close_below:bar_low: a failed test of the high",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A probe of the high that fails ends it; flow clearing its floor raises me.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SPOT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "A pullback in a HH/HL trend, but `subcomponents.mp.adx_val` 21.34 fails the C7 gate, `structure` 57.9 and `subcomponents.structure.base_score` 0.0 give no base, mp BUILDING/DECELERATING: no type I can name.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow` 76.3, `sc_m_gates` True, insti_money strong.",
+    "against": "H1 below EMA9 with 9<21, 5.0% under the 20-day high.",
+    "entry_trigger": "adx_val over 30, then reclaim:ma_20",
+    "wrong_if": "close_below:ma_50",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Trend strength rising over 30 on the pullback.",
+    "cannot_see": [
+     "ADX rising series",
+     "%K/%D stochastic",
+     "rolling 20-day high/low",
+     "NR4/NR7 bar-range history"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of4.json",
+   "bytes": 17185,
+   "votes": 13,
+   "sha256": "749d538e11d1"
+  },
+  {
+   "file": "raschke.part2of4.json",
+   "bytes": 13865,
+   "votes": 13,
+   "sha256": "91087d97a4c8"
+  },
+  {
+   "file": "raschke.part3of4.json",
+   "bytes": 13511,
+   "votes": 13,
+   "sha256": "2f2288f4e664"
+  },
+  {
+   "file": "raschke.part4of4.json",
+   "bytes": 13016,
+   "votes": 12,
+   "sha256": "06c79f484db6"
+  }
+ ]
+}

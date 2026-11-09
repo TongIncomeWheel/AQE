@@ -1,0 +1,272 @@
+{
+ "voice": "seow",
+ "date": "2026-11-09",
+ "declarations": [
+  "Position system judged every survivor except GMAB/ADP (RANGE, swing set-up not checkable: cci_20, ma_40 not served). Declared proxies: structure_shift=resistance, cmf=COM, elder_pattern=TIF, support=max(fib_swing_low, base_low_20d).",
+  "No bracket field used (R1); no Valen flag used (R41); shorts out of scope (C32); no market_void in my method.",
+  "Part 2 of 2: answers to all refutations are filed in part 1. GMAB/ADP ABSTAIN: RANGE pictures need the swing set-up, which cannot be verified (cci_20, ma_40 not served)."
+ ],
+ "answers": [
+  {
+   "pair_id": "STGW-seow-for~oneil",
+   "ticker": "STGW",
+   "to": "oneil",
+   "text": "'Strength is not a buy point; 20.8% past swing high.' In my position system strength IS the buy signal (C26); no base length is required to buy a break of resistance. W HH/HL, D HH/HL, H1 HH at 98% of range: no red candle, no close under support (C14). `subcomponents.flow.cmf` 0.35 (COM proxy) and `mp` 100.0 confirm. Base and extension are not my tests.",
+   "concede": false
+  },
+  {
+   "pair_id": "FOUR-seow-for~livermore",
+   "ticker": "FOUR",
+   "to": "livermore",
+   "text": "'Weekly 9<21, LH/LL: a bounce, not a leader.' This stands on my own tests: the weekly frame is broken (C21, house rule), `mp` 55.0 FADING/DECELERATING and `pipe_rank` 42.6 say no trend path, and `subcomponents.structure.wk_score` 5.0 agrees. `subcomponents.flow.cmf` 0.51 alone is not a trend. Conceded; I am OPPOSE.",
+   "concede": true
+  },
+  {
+   "pair_id": "GEHC-seow-for~minervini",
+   "ticker": "GEHC",
+   "to": "minervini",
+   "text": "'ma50 under ma200; 15.5% over swing high is chase.' My author names no 50 or 200-day average (C1), so that template is not my test; extension above the averages is not a fault in the position system (C26). W 9>21 HH/HL, D HH/HL; `subcomponents.structure.wk_score` 15.0, `mp` 96.0. My caution stays thin COM, `subcomponents.flow.cmf` 0.06.",
+   "concede": false
+  },
+  {
+   "pair_id": "AJG-seow-for~oneil",
+   "ticker": "AJG",
+   "to": "oneil",
+   "text": "'accum_score 0.0, day_vol 0.84: no institutional demand.' My fund-flow test is COM above zero (C28): `subcomponents.flow.cmf` 0.17 passes. Accumulation acceleration is not my test; it is a caution I name. D HH/HL 3.2% over the swing high is a fresh break; `subcomponents.structure.rs_accel` 10.01 lead widening.",
+   "concede": false
+  },
+  {
+   "pair_id": "AJG-seow-for~elder-lens",
+   "ticker": "AJG",
+   "to": "elder-lens",
+   "text": "'elder 7.0 after 10, green vanishing on last bar.' My exit is a red candle or a close under support (C14). Daily last bar is green, D HH/HL, `elder` 7.0 still over its floor with `sc_m_gates` True. H1 red under EMA9 is a ripple I manage, not a sell (C7). I move to WAIT for the buy stop to be taken.",
+   "concede": false
+  },
+  {
+   "pair_id": "SWK-seow-for~oneil",
+   "ticker": "SWK",
+   "to": "oneil",
+   "text": "'base_score 5.0 thin, 24.4% past the swing high.' Base credit and distance past the pivot are not position-system tests; the break above resistance is the signal (C26). W HH/HL, D HH/HL, daily bar green. `mp` 100.0 and `subcomponents.structure.wk_score` 15.0 hold. My own caution is COM, `subcomponents.flow.cmf` 0.07.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "IBN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed to each new prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle with the impulse fading - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: new high, all frames green. `sc_momentum` 85.8 with `sc_m_gates` True = every engine over its floor; `flow` 98.7 and `subcomponents.flow.cmf` 0.22 = COM confirms; `mp` 97.0 STRONG. Caution: `subcomponents.energy.en_pos50` 97.29 at range top."
+  },
+  {
+   "ticker": "HLT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle with the impulse fading - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: fresh BULLISH_BOS, D HH/HL. `sc_momentum` 78.3, `sc_m_gates` True; `subcomponents.flow.cmf` 0.15 COM positive; `mp` 92.0 STRONG/ACCELERATING; `subcomponents.structure.wk_score` 15.0 weekly up. Caution: `subcomponents.structure.rs_accel` -1.95."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After a clearly positive flow day, buy stop one tick over the prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: BULLISH_BOS, D HH/HL. `sc_m_gates` True, `pipe_rank` 85.2 steady trend, `subcomponents.structure.wk_score` 15.0. COM barely on: `subcomponents.flow.cmf` 0.03, and `subcomponents.structure.rs_accel` -0.7 lead eroding - so WAIT for flow."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle with the impulse fading - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, D HH/HL, H1 HH/HL. `structure` 94.7 and `subcomponents.structure.rs_accel` 14.85 lead widening; `sc_m_gates` True; `subcomponents.flow.cmf` 0.17 COM positive. Caution: `subcomponents.flow.accum_score` 1.5."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed to each new prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle with the impulse fading - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system, strongest picture: W/D/H1 all HH, all green. `sc_momentum` 87.6 with `sc_m_gates` True; `mp` 100.0 STRONG/ACCELERATING; `subcomponents.flow.cmf` 0.35 COM confirms; `flow` 96.1. Strength is the signal (C26)."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or elder_pattern leaving ACCELERATION with a red candle - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, W/D HH/HL, TIF proxy ACCELERATION. `mp` 96.0 STRONG; `subcomponents.flow.cmf` 0.3 COM confirms. Cautions: `sc_m_gates` False on `energy` 56.3, `subcomponents.energy.exhaustion_score` 7.0 some wear."
+  },
+  {
+   "ticker": "FOUR",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if the weekly 9 crosses back over 21 and it trades through bar_high with COM still positive.",
+   "market_void": null,
+   "reason": "Weekly frame broken: W 9<21, LH/LL, 23.4% under the 20-wk high (C21, house rule). `mp` 55.0 FADING/DECELERATING and `pipe_rank` 42.6 = no trend path; `subcomponents.structure.wk_score` 5.0. `subcomponents.flow.cmf` 0.51 is a bounce's flow."
+  },
+  {
+   "ticker": "GEHC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After flow firms, buy stop one tick over the prior-day high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, W 9>21 HH/HL, D HH/HL. `sc_momentum` 82.9 with `sc_m_gates` True; `subcomponents.structure.rs_accel` 13.75 lead widening; `mp` 96.0. COM thin at `subcomponents.flow.cmf` 0.06; H1 red under EMA9 - WAIT."
+  },
+  {
+   "ticker": "WTRG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle with the impulse fading - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, D HH/HL, H1 above EMA9. `sc_momentum` 81.7 with `sc_m_gates` True; `subcomponents.flow.cmf` 0.42 COM confirms; `mp` 97.0; `structure` 84.2. Cannot see sector_rrg_quadrant (C24)."
+  },
+  {
+   "ticker": "FA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After a clearly positive flow day, buy stop one tick over the prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, D and H1 HH/HL. `structure` 89.5 and `pipe_rank` 90.5 strong, `sc_m_gates` True, `mp` 97.0. COM thin: `subcomponents.flow.cmf` 0.07, `flow` 69.7; TIF a re-entry - WAIT."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After the hourly pullback ends, buy stop one tick over the prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red daily candle - sell next session under its low.",
+   "market_void": null,
+   "reason": "POSITION system: fresh break 3.2% over the swing high, D HH/HL. `subcomponents.structure.rs_accel` 10.01 lead widening; `sc_m_gates` True; `subcomponents.flow.cmf` 0.17 COM positive. Cautions: `subcomponents.flow.accum_score` 0.0, H1 LH/LL."
+  },
+  {
+   "ticker": "WCN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After flow firms, buy stop one tick over the prior-day high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, D HH/HL. `structure` 87.4 and `mp` 96.0 strong; `subcomponents.flow.cmf` 0.2 COM positive. But `sc_m_gates` False on `flow` 57.9 and H1 9<21 - WAIT."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A close under ma_40, or the pullback lasting five sessions or more (R7).",
+   "market_void": null,
+   "reason": "RANGE, 10.6% under the daily swing high: no resistance-line signal (C26). A swing case, but cci_20 and ma_40 are not served. `sc_m_gates` False on `flow` 57.9; `subcomponents.structure.rs_accel` -26.37 lead eroding."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After a clearly positive flow day, buy stop one tick over the prior-day high (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: above structure, W/D HH/HL. `mp` 100.0 STRONG/ACCELERATING, `sc_m_gates` True, `subcomponents.structure.rs_accel` 17.39 lead widening. COM marginal at `subcomponents.flow.cmf` 0.07; H1 LH/LL - WAIT."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A close under ma_40, or the pullback lasting five sessions or more (R7).",
+   "market_void": null,
+   "reason": "RANGE, 2.0% under the daily swing high: no resistance break (C26). Swing set-up not checkable (cci_20, ma_40 not served). `sc_m_gates` False on `flow` 53.9; `subcomponents.flow.cmf` 0.01 flat COM."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "After flow firms, buy stop one tick over the prior-day high, trailed daily (C27)."
+   },
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or COM turning negative.",
+   "market_void": null,
+   "reason": "POSITION system: BULLISH_BOS, D HH/HL. `mp` 92.0 and `pipe_rank` 81.7 steady trend. COM barely on, `subcomponents.flow.cmf` 0.03, and `sc_m_gates` False on `flow` 52.6; H1 9<21 - WAIT."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it trades through bar_high with COM turning positive.",
+   "market_void": null,
+   "reason": "Fund flow does not confirm (C28): `subcomponents.flow.cmf` -0.09 COM below zero, `flow` 36.8 weak, `subcomponents.flow.accum_score` 0.0; `sc_m_gates` False and `pipe_rank` 0. Structure alone is not a position signal."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 8080,
+   "sha256": "24a6a2048219"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 4075,
+   "sha256": "926d397fa068"
+  }
+ ]
+}

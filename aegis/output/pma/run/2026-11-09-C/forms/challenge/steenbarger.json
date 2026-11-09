@@ -1,0 +1,164 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-09",
+ "seat_kind": "challenge",
+ "names_read": 51,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-09\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"IBN\", \"nomination_count\": 3, \"seats\": [\"aqe-quant\", \"livermore\", \"seow\"]"},
+ "findings": [
+  {
+   "scope": "committee",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C3", "C4", "C12"],
+   "claim": "A momentum book whose nominated set leans defensive: 15 of the 32 nominated names sit in Healthcare (6), Consumer Staples (3), Utilities (3) and Real Estate (3). That is one environment bet expressed many times, not several approaches. Each decider should name the regime their defensive pick is valid inside; no regime field reaches this seat, so environment match cannot justify size.",
+   "evidence": "gics_sector_name Healthcare: EW, BDX, JNJ, GEHC, CAH, TEM; Consumer Staples: KO, USFD, HSY; Utilities: WTRG, EVRG, ETR; Real Estate: BRX, AHR, EXR. Regime/srm not in packet.",
+   "addressed_to": "oneil, minervini, livermore"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C3", "C17"],
+   "claim": "Utilities clustering in one seat: two of elder-lens's six nominations are Utilities, and both have middling relative standing. Is this an Elder impulse read, or a sector rotation read under another name? The seat should say which environment the utility impulse is valid inside.",
+   "evidence": "ETR gics_sector_name Utilities, rs_rank_pct 42.49, ma_50 104.79, ma_100 107.93; EVRG gics_sector_name Utilities, rs_rank_pct 58.76, ma_50 81.8, ma_100 83.17; WTRG (aqe-quant) also Utilities.",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "HLT",
+   "kind": "OVERLAP",
+   "ticker": "HLT",
+   "canon_ref": ["C15", "C17"],
+   "claim": "HLT and KO were put forward by the identical trio of seats with the same doors and identical structure readings. Agreement among three seats counts only if each reached it on its own evidence. Each of the three should state the one field its case rests on; if all three rest on the same BULLISH_BOS, this is one read counted three times. HLT also comes on below-average participation.",
+   "evidence": "HLT seats livermore/minervini/raschke, convictions [4,4,4], structure 77.9, structure_shift BULLISH_BOS, day_vol 0.85; KO same seats, convictions [3,3,4], structure 77.9, structure_shift BULLISH_BOS, day_vol 1.01.",
+   "addressed_to": "livermore, minervini, raschke"
+  },
+  {
+   "scope": "KO",
+   "kind": "OVERLAP",
+   "ticker": "KO",
+   "canon_ref": ["C15", "C5"],
+   "claim": "Same trio as HLT (shared-anchor risk). Separately, KO is a Staples name in a momentum lane, so its higher-timeframe case needs saying outright. Its pipeline trend parts are strong, but its relative-strength lead is fading.",
+   "evidence": "KO seats livermore/minervini/raschke; gics_sector_name Consumer Staples; ma_50 89.94, ma_100 87.49, ma_200 82.74; subcomponents.structure.rs_accel -0.7; pct_from_52w_high -0.17.",
+   "addressed_to": "livermore, minervini, raschke"
+  },
+  {
+   "scope": "lane",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15"],
+   "claim": "Pair overlap: raschke and wyckoff share both BRX and MCD, and livermore and seow share both IBN and AHR. Two pairs of seats converging twice each is a possible shared anchor, not independent confirmation. Each seat should name the field its case rests on that the other seat does not.",
+   "evidence": "BRX seats raschke/wyckoff [3,4]; MCD seats raschke/wyckoff [3,3]; IBN seats aqe-quant/livermore/seow [4,4,5]; AHR seats livermore/seow [2,3].",
+   "addressed_to": "raschke, wyckoff, livermore, seow"
+  },
+  {
+   "scope": "IBN",
+   "kind": "EXTENSION",
+   "ticker": "IBN",
+   "canon_ref": ["C5", "C6", "C7"],
+   "claim": "The room's highest-agreement name is also among its most stretched: it sits at its 52-week high, at the top of its 50-day range, after a month-long move three standard deviations above normal. The exhaustion read is clean and the run is young, so this is a timing question, not a veto. Seats should state the observable that would prove the thesis wrong if the thrust stalls.",
+   "evidence": "IBN pct_from_52w_high 0.0, subcomponents.energy.en_pos50 97.29, subcomponents.mp.roc_zscore 3.1, subcomponents.energy.exhaustion_score 10.0, subcomponents.energy.en_trend_bars 7.0, day_vol 1.83.",
+   "addressed_to": "livermore, seow"
+  },
+  {
+   "scope": "SARO",
+   "kind": "EXTENSION",
+   "ticker": "SARO",
+   "canon_ref": ["C5", "C7"],
+   "claim": "A sharp one-month thrust into a downward-stacked moving-average structure, with wear already showing. The run is at the length where exhaustion checks begin, and the exhaustion score is already off its clean 10. The higher-timeframe context (the 200-day still above the 50-day) has to be named and argued, not assumed.",
+   "evidence": "SARO ma_50 22.69, ma_100 25.32, ma_200 26.46; pct_from_52w_high -16.58; subcomponents.mp.roc_zscore 3.35; subcomponents.energy.exhaustion_score 5.5; subcomponents.energy.en_trend_bars 15.0; en_pos50 98.66.",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "FISV",
+   "kind": "EXTENSION",
+   "ticker": "FISV",
+   "canon_ref": ["C5"],
+   "claim": "A conviction-4 solo momentum nomination whose moving averages are stacked downward: the 200-day sits above the 100-day, which sits above the 50-day. The month's move is exceptional, the candles are choppy and the pipeline tier is C-WATCH. Is this a trend or a counter-trend thrust? The seat owes the higher-timeframe context.",
+   "evidence": "FISV ma_50 49.34, ma_100 50.46, ma_200 54.55; pct_from_52w_high -9.98; subcomponents.mp.roc_zscore 3.01; subcomponents.mp.excess_return 43.36; subcomponents.flow.ha_quality_count 3.0; subcomponents.pipe.pipe_tier 3.",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C5", "C16"],
+   "claim": "Five of wyckoff's six nominations sit well below their 52-week highs, and four have the 50-day under the 200-day. That fits an accumulation/reclaim method, but a pattern in isolation is not a setup. For each name the seat should state the higher-timeframe context it enters with, and the observable that would show the reclaim failed.",
+   "evidence": "MCD ma_50 248.77, ma_200 282.35, pct_from_52w_high -18.92; HSY ma_50 168.46, ma_200 188.31, pct_from_52w_high -24.63, structure 58.9; FOUR ma_50 40.3, ma_200 45.77, pct_from_52w_high -40.42; BRX ma_50 28.28, ma_200 29.65; PENN pct_from_52w_high -20.99.",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "BILL",
+   "kind": "EXTENSION",
+   "ticker": "BILL",
+   "canon_ref": ["C7", "C15"],
+   "claim": "A three-seat name with a fired bearish-divergence caution and three lenses reading warn. The seats' convictions span 2 to 4, so they do not agree on depth. Each seat should say how it read the divergence, and what follow-through would prove it wrong.",
+   "evidence": "BILL div_state BEARISH, div_bear_count 1, lens_warnings 3, structure 94.7, pct_from_52w_high -6.93; seats elder-lens/oneil/wyckoff convictions [2,4,3].",
+   "addressed_to": "oneil, wyckoff, elder-lens"
+  },
+  {
+   "scope": "BDX",
+   "kind": "EXTENSION",
+   "ticker": "BDX",
+   "canon_ref": ["C7", "C16"],
+   "claim": "A conviction-4 solo with a fired bearish-divergence caution and a failed momentum gate. The composite is high, but one engine is below its floor: a real combination the seat should name and answer, not average away.",
+   "evidence": "BDX div_state BEARISH, div_bear_count 1, lens_warnings 2, sc_m_gates False, energy 56.3, sc_momentum 73.8.",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "BETA",
+   "kind": "PROCESS",
+   "ticker": "BETA",
+   "canon_ref": ["C5"],
+   "claim": "The higher-timeframe context is thin: no base was counted, the weekly trend score is near zero and the price is a quarter off its high, while the momentum gate fails on energy. The month's thrust is strong, but the seat should name the longer trend it is meant to exploit.",
+   "evidence": "BETA subcomponents.structure.base_days 0.0, subcomponents.structure.wk_score 2.0, pct_from_52w_high -24.69, sc_m_gates False, energy 59.7, subcomponents.mp.roc_zscore 2.67.",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C16", "C5"],
+   "claim": "Ambiguity check on elder-lens's two RANGE names: JNJ (conviction 4) and TEM (conviction 2) both read inside the swing, with a failed momentum gate. TEM also has a weak structure. Where the required fields conflict, abstaining is a valid output. The seat should say why these are nominations rather than stand-asides.",
+   "evidence": "JNJ structure_shift RANGE, sc_m_gates False, flow 39.5, sc_momentum 62.0; TEM structure_shift RANGE, sc_m_gates False, structure 41.1, sc_momentum 56.8.",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "LION",
+   "kind": "PROCESS",
+   "ticker": "LION",
+   "canon_ref": ["C16"],
+   "claim": "A high composite with a failed momentum gate, on very heavy participation, nominated at conviction 2. A conviction-2 entry on conflicting fields is the shape C16 warns about. The seat should say whether this is a real hypothesis or a slot filled.",
+   "evidence": "LION sc_momentum 85.4, sc_m_gates False, energy 59.7, day_vol 3.67, ma_50 11.54, ma_100 12.47, pct_from_52w_high -13.17; seat oneil conviction 2.",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C2"],
+   "claim": "No field served to this room carries a measured forward-return separation from baseline, including the composites and structure_shift labels most cases will lean on. Every case should be argued as a hypothesis, not as proven edge. Size may not be justified by edge claims.",
+   "evidence": "Packet fields (sc_momentum, structure, structure_shift, div_state, lens_warnings) and indicator sheet carry no edge statistic; e.g. IBN sc_momentum 85.8, STGW sc_momentum 87.6.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "livermore", "ticker": "HLT", "class": "OVERLAP", "what_is_owed": "The one field your HLT case rests on, so it can be checked as independent of minervini and raschke."},
+  {"seat": "wyckoff", "ticker": "HSY", "class": "PROCESS", "what_is_owed": "Higher-timeframe context with ma_50 168.46 under ma_200 188.31, and the observable that would show the reclaim failed."},
+  {"seat": "oneil", "ticker": "SARO", "class": "EXTENSION", "what_is_owed": "Higher-timeframe context against ma_200 26.46 over ma_50 22.69, and the invalidation observable after a roc_zscore 3.35 thrust."},
+  {"seat": "seow", "ticker": "FISV", "class": "EXTENSION", "what_is_owed": "Trend vs counter-trend: the context for a conviction-4 case under a ma_50 49.34 / ma_200 54.55 stack."},
+  {"seat": "elder-lens", "ticker": "TEM", "class": "PROCESS", "what_is_owed": "Why a nomination, not an abstention, on structure_shift RANGE, structure 41.1, sc_m_gates False."}
+ ],
+ "declarations": [
+  "No nomination, no vote: this is the QA challenge only.",
+  "psychology_claims: NONE; C18-C21 are PM-facing (R9).",
+  "Bracket fields were read as context and are used in no finding (house rule R1)."
+ ],
+ "data_gaps": [
+  {"field": "regime / srm", "impact": "Not in the packet, so R3 (regime named) cannot be evaluated from data; the defensive-crowding finding asks each seat to name it."},
+  {"field": "price (close)", "impact": "Not served, so price vs ma_50/ma_100/ma_200 cannot be read directly; MA-stack order and pct_from_52w_high used instead."},
+  {"field": "nomination reasons / fields_cited", "impact": "Seat reasons are not in the packet, so R5 (invalidation stated) and R12 (field count) cannot be checked before the vote."},
+  {"field": "pipe_rank", "impact": "Reads 0 for AHR, VSXY and LTH on the indicator sheet; this may be a missing value coded as zero, so it was not read as a score."},
+  {"field": "voice_memory ledger block", "impact": "Not injected, so this seat's own sector-clustering memory (C17 guard) is unavailable."}
+ ]
+}

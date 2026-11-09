@@ -1,0 +1,629 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-09",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HLT",
+   "conviction": 4,
+   "reason": "Stage 2 leader just through its pivot: `sc_momentum` 78.3 with `sc_m_gates` True (no weak engine), `mp` 92.0 STRONG, `subcomponents.structure.wk_score` 15.0 weekly trend up. BULLISH_BOS 1.63% over pivot 364.5, not a chase.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "mp",
+    "subcomponents.structure.wk_score",
+    "subcomponents.structure.rs_spy_score",
+    "structure_shift",
+    "rs_leadership",
+    "pct_from_pivot"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 370.45 vs low_52w 264.32 (~40% off the low); structure_shift BULLISH_BOS",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 329.03 > ma_150 328.46 > ma_200 322.66; entry above all; pct_from_52w_high -1.61; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 19.0, rs_rank_pct 74.85, rs_down_day_20d 1.1",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 77.9, base_score 5.0 (base credit faded post-breakout); day_vol 0.85; flow 76.3, energy 71.4",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_pivot 1.63 over pivot_high 364.5; bracket.valid False, atr_fallback_stop 361.47; my invalidation: close back under 364.5 pivot",
+     "verdict": "pass",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close back below the 364.5 pivot (failed breakout), or `sc_m_gates` flipping False.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "AJG",
+   "conviction": 3,
+   "reason": "Trend Template intact, RS improving: `subcomponents.structure.rs_accel_score` 15.0 (rs_accel 10.01), `subcomponents.structure.rs_spy_score` 15.0, `mp` 93.0, `sc_momentum` 73.5 with `sc_m_gates` True. 3.81% over pivot 271.27 - at the edge of the chase limit.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "mp",
+    "subcomponents.structure.rs_accel_score",
+    "subcomponents.structure.rs_spy_score",
+    "rs_leadership",
+    "bracket.stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 281.61 vs low_52w 192.0 (~47% off the low); structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 249.99 > ma_150 236.18 > ma_200 232.76; entry above all; pct_from_52w_high -2.35; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 26.58, rs_rank_pct 90.7, rs_down_day_20d 2.54",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 78.9, bq_base_dur 20.0, base_days 85; day_vol 0.84; flow 65.8, energy 64.7",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_pivot 3.81 over pivot_high 271.27; bracket.stop 270.56 fib_618, bracket.valid True",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close under bracket.stop 270.56 (back inside the base below pivot 271.27).",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "FA",
+   "conviction": 3,
+   "reason": "Strongest RS in my set: `structure` 89.5 with `subcomponents.structure.base_score` 15.0 and `subcomponents.structure.rs_accel_score` 15.0, `mp` 97.0 STRONG, `pipe_rank` 90.5, `sc_m_gates` True. 5.19% over pivot - wait for the 22.96 continuation zone, don't chase.",
+   "fields_cited": [
+    "structure",
+    "subcomponents.structure.base_score",
+    "subcomponents.structure.rs_accel_score",
+    "mp",
+    "pipe_rank",
+    "sc_m_gates",
+    "pct_from_pivot"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 23.53 vs low_52w 8.95 (well over 100% off the low); structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 20.29 > ma_150 18.24 > ma_200 16.53; entry above all; pct_from_52w_high -2.45; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 29.14, rs_rank_pct 93.56, rs_down_day_20d 2.22",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 89.5, base_days 22; day_vol 0.79 (no breakout-day expansion); flow 69.7, energy 63.0",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_pivot 5.19 over pivot_high 22.37 (chase); continuation_state BUY_ZONE 2.48 over 22.96; bracket.valid False, atr_fallback_stop 22.54",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close under the 22.37 pivot, or rs_leadership dropping off LEADER.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "KO",
+   "conviction": 3,
+   "reason": "Tight breakout at the high: `sc_momentum` 76.7, `sc_m_gates` True, `pipe_rank` 85.2, `subcomponents.structure.resist_score` 10.0; BULLISH_BOS 0.31% over pivot 95.37, 0.17% off the 52w high. Large-cap staple - C15 says leaders are rarely here.",
+   "fields_cited": [
+    "sc_momentum",
+    "sc_m_gates",
+    "pipe_rank",
+    "subcomponents.structure.resist_score",
+    "subcomponents.structure.wk_score",
+    "structure_shift",
+    "pct_from_pivot"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 95.67 vs low_52w 67.54 (~42% off the low); structure_shift BULLISH_BOS",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 89.94 > ma_150 84.59 > ma_200 82.74; entry above all; pct_from_52w_high -0.17; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 14.21, rs_rank_pct 79.14, rs_down_day_20d 2.17",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 77.9, base_score 5.0; day_vol 1.01 (flat, not expanding); flow 75.0, energy 71.4",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_pivot 0.31 over pivot_high 95.37; bracket.valid False, atr_fallback_stop 93.84; my invalidation: close under 95.37",
+     "verdict": "pass",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close back under the 95.37 pivot on rising volume.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "USFD",
+   "conviction": 3,
+   "reason": "Coiling at the continuation pivot: `subcomponents.energy.squeeze_score` 8.5, `subcomponents.structure.rs_accel_score` 15.0, `sc_m_gates` True, `sc_momentum` 69.4; 0.53% over continuation pivot 106.11. elder_pattern INTERRUPTED tempers it.",
+   "fields_cited": [
+    "subcomponents.energy.squeeze_score",
+    "subcomponents.structure.rs_accel_score",
+    "sc_m_gates",
+    "sc_momentum",
+    "energy",
+    "bracket.stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 106.67 vs low_52w 70.05 (~52% off the low); structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 99.23 > ma_150 96.35 > ma_200 95.07; entry above all; pct_from_52w_high -3.85; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 15.04, rs_rank_pct 81.76, rs_down_day_20d 1.23",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 68.4, squeeze_score 8.5, base_days 33; day_vol 0.93; flow 65.8, energy 71.4",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_continuation_pivot 0.53 (BUY_ZONE), pct_from_pivot 2.37; bracket.stop 102.56 fib_786, bracket.valid True",
+     "verdict": "pass",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close under bracket.stop 102.56, back below the 104.2 pivot.",
+   "price_at_nomination": null
+  },
+  {
+   "ticker": "CAH",
+   "conviction": 3,
+   "reason": "New 52-week high, RS leader: `mp` 89.0 STRONG ACCELERATING, `subcomponents.structure.rs_spy_score` 15.0, `elder` 10.0, `sc_m_gates` True, `pipe_rank` 80.7. 4.83% over pivot 259.21; 1-oscillator bearish divergence is a caution.",
+   "fields_cited": [
+    "mp",
+    "subcomponents.structure.rs_spy_score",
+    "elder",
+    "sc_m_gates",
+    "pipe_rank",
+    "div_state",
+    "bracket.stop"
+   ],
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": [
+      "C2"
+     ],
+     "observed": "entry 271.72 vs low_52w 182.5 (~49% off the low); structure_shift ABOVE_STRUCTURE",
+     "verdict": "pass",
+     "fields": [
+      "structure_shift",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 2,
+     "canon_ref": [
+      "C3"
+     ],
+     "observed": "ma_50 240.48 > ma_150 225.46 > ma_200 223.44; entry above all; pct_from_52w_high 0.0; 200-day slope not served",
+     "verdict": "partial",
+     "fields": [
+      "ma_50",
+      "ma_200",
+      "sma_distance_pct"
+     ]
+    },
+    {
+     "step": 3,
+     "canon_ref": [
+      "C11"
+     ],
+     "observed": "rs_leadership LEADER, rs_spy_20d 19.93, rs_rank_pct 93.8, rs_down_day_20d 1.84",
+     "verdict": "pass",
+     "fields": [
+      "rs_leadership",
+      "rs_spy_20d",
+      "rs_down_day_20d"
+     ]
+    },
+    {
+     "step": 4,
+     "canon_ref": [
+      "C4",
+      "C6"
+     ],
+     "observed": "structure 66.3, base_score 5.0; day_vol 1.08; flow 61.8, energy 67.2; div_state BEARISH div_bear_count 1",
+     "verdict": "partial",
+     "fields": [
+      "structure",
+      "day_vol",
+      "flow",
+      "energy"
+     ]
+    },
+    {
+     "step": 5,
+     "canon_ref": [
+      "C5",
+      "C7"
+     ],
+     "observed": "pct_from_pivot 4.83 over pivot_high 259.21; continuation BUY_ZONE 3.6; bracket.stop 259.84 fib_618, bracket.valid True",
+     "verdict": "partial",
+     "fields": [
+      "entry",
+      "bracket.stop",
+      "bracket.valid"
+     ]
+    },
+    {
+     "step": 6,
+     "canon_ref": [
+      "C1",
+      "C12"
+     ],
+     "observed": "no earnings, sales or category field served; SEPA element 2 not run",
+     "verdict": "no_data",
+     "fields": [
+      "ticker"
+     ]
+    }
+   ],
+   "falsifier": "A close under bracket.stop 259.84 (back through the 259.21 pivot).",
+   "price_at_nomination": null
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "V",
+   "verdict": "KEEP",
+   "line": "Template 7/7 on served fields, BULLISH_BOS 1.94% over pivot 414.6, `sc_m_gates` True; mp_accel DECELERATING and `subcomponents.structure.rs_accel_score` 0.0 - hold, stop at bracket.stop 412.42, no adds."
+  },
+  {
+   "ticker": "MP",
+   "verdict": "KEEP",
+   "line": "No packet row for MP, so I cannot run the Trend Template on it; no evidence for an exit case from my data - hold under the existing stop, gap declared."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "MP (whole row)",
+   "impact": "held name MP absent from my packet; Trend Template, RS and pivot read could not be run - held_review is a placeholder"
+  },
+  {
+   "field": "ma_200 slope (Trend Template criterion 3)",
+   "impact": "cannot confirm the 200-day has risen for a month on any name; step 2 is partial everywhere"
+  },
+  {
+   "field": "held / held_book.*",
+   "impact": "held is False and held_book fields are null on every row incl. V, so the held book's entry, stop and hl_state could not be read"
+  },
+  {
+   "field": "earnings growth / EPS acceleration",
+   "impact": "SEPA element 2 (C12) not run on any nomination"
+  }
+ ],
+ "declarations": [
+  "trend_template: 7 of 8 criteria PASS on served fields; criterion 3 (200-day rising for a month) NO_DATA, no slope field served (C3)",
+  "vcp_detail: NOT_SERVED (structure/structure_shift are a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20)",
+  "rs_proxy: rs_leadership + rs_spy_20d + rs_rank_pct (substitute for IBD RS rank, not the same statistic, C3/C11)",
+  "volume_signature: day_vol at the current bar only (C6, partial)",
+  "ledger memory: none injected; no standing lesson applies",
+  "event screen: excluded names with ma_status PENDING_* (STGW, VLTO, SN, SWK, GPN, KDP, etc.) and earnings on 2026-11-09 (HRB) as event-driven"
+ ],
+ "shortfall_reason": null
+}

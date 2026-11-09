@@ -1,0 +1,37 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-09",
+ "evidence_read": [
+  {"voice": "oneil", "read": true, "note": "Every stance cites fields (day_vol, `subcomponents.structure.base_score`, `flow`). Declares fundamentals NOT_AVAILABLE and market_gate DELEGATED. The only seat with a market_void."},
+  {"voice": "minervini", "read": true, "note": "Trend Template read from fields and the MTF D distance. Declares ma_150/low_52w NOT_SERVED and notes defensive rotation (R9 advisory)."},
+  {"voice": "livermore", "read": true, "note": "Fields plus a declared translated danger signal (1x atr_14d). Conceded WTRG as event-driven and moved to ABSTAIN."},
+  {"voice": "elder-lens", "read": true, "note": "Reads `elder`, `mp`, `sc_m_gates`. Declares impulse colour and force index NOT_SERVED. No refutation was paired to it, so its answers are empty."},
+  {"voice": "seow", "read": true, "note": "Declared proxies (cmf=COM, elder_pattern=TIF). cci_20/ma_40 NOT_SERVED, so it abstained on GMAB and ADP."},
+  {"voice": "raschke", "read": true, "note": "Declares adx as a single value (no series), so NOT_SERVED as a gate; stochastic NOT_SERVED; market_breadth out of scope."},
+  {"voice": "wyckoff", "read": true, "note": "Grid plus fields. Declares pvp_*/vwap_14d/bar OHLC not served. Conceded FOUR."},
+  {"voice": "aqe-quant", "read": true, "note": "Engine fields only. Declares `pipe_rank` 0 on LTH as a missing reading, not a zero."}
+ ],
+ "shared_anchors": [
+  "`mp` 92.0-100.0 carries nearly every SUPPORT reason across all eight seats",
+  "MTF 'D x% over the swing high' is used both as the buy case (KO 0.3%, CHD 0.4%) and as the chase case (STGW 20.8%, SWK 24.4%, GEHC 15.5%)",
+  "`subcomponents.mp.adx_val` as trend proof (livermore, raschke, wyckoff), e.g. CHD 47.86 and HLT 40.88",
+  "`sc_m_gates` False / the 60 floor on `flow` or `energy` (aqe-quant, elder-lens, seow, oneil, raschke)",
+  "`subcomponents.structure.wk_score` 15.0 as weekly-up proof (minervini, seow, wyckoff)"
+ ],
+ "unanswered_points": [
+  {"voice": "oneil", "ticker": "WTRG", "point": "Cross REFUTE: 'the price is governed by the pending AWK merger: event-driven'. livermore conceded and moved to ABSTAIN. None of the five supporters (minervini, raschke, seow, aqe-quant, wyckoff) answered it, and the slate dissent omits it."},
+  {"voice": "livermore", "ticker": "WTRG", "point": "Ratify OBJECT: 'I conceded the price is tied to a pending merger (C2)'. would_clear close_above:high_52w_close D. Not answered."},
+  {"voice": "oneil", "ticker": "IBN", "point": "Ratify would_clear is the same on IBN, FA, HLT, AJG, WTRG, BDX, CHD, WCN and ADP: the trigger must print on day_vol at least 1.40 (C16). No trigger was rewritten and no seat answered."},
+  {"voice": "aqe-quant", "ticker": "BILL", "point": "Ratify OBJECT: `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 17.0, `energy` 62.2. would_clear in_zone:ma_20 D. raschke, livermore and elder-lens also OBJECT with named triggers. None answered."},
+  {"voice": "livermore", "ticker": "KO", "point": "Ratify OBJECT: 'D only 0.3% over the swing high' does not clear the pivot by a margin (C19). would_clear close_above:high_52w_close D. oneil (no base, day_vol 1.01) and elder-lens (`elder` 7.0, no permission event) also OBJECT. None answered."},
+  {"voice": "elder-lens", "ticker": "STGW", "point": "Ratify OBJECTs on 15 of 15 tickets with one would_clear: in_zone:ma_20 D. It was never engaged as a single structural objection to the room's breakout triggers."},
+  {"voice": "minervini", "ticker": "AJG", "point": "Ratify reservation: the slate wrong_if (seow's 'red daily candle') is not his exit; his exit is a daily close under the last swing high. The wording stands unchanged."}
+ ],
+ "slate_says_what_deciders_said": false,
+ "note": "Every why_agreed quote I checked matches the filed tier-2 reason. But WTRG's dissent lists only wyckoff's timing. It omits the event-driven read: oneil cross, livermore's concession and ratify OBJECT. The engine forbids event-driven names, so that is material. Ratify shows many OBJECTs left unanswered. The three ADVANCEs drew OBJECT from WTRG 4/8, BILL 4/8 and KO 3/8. No decider named a regime (R3); market_kill is DELEGATED by oneil alone. R1: no stance rests on a bracket. R41: no Valen flag cited. Gaps: funnel.json and 7 of 8 cross files (all but oneil) not read in full.",
+ "holds": [
+  {"ticker": "WTRG", "question": "oneil and livermore read WTRG as event-driven (pending AWK merger) and livermore conceded. Supporters: on what field is this trend separable from the deal price? If none, is WTRG out of scope as an event-driven name?"},
+  {"ticker": "BILL", "question": "ADVANCE rests on ACT_NOW 4 vs WAIT 3, yet aqe-quant, raschke, livermore and elder-lens OBJECT to the H1 trigger, each naming a clearing trigger. Which of those conditions does the H1 close above yesterday's high answer?"},
+  {"ticker": "KO", "question": "livermore (no margin over the pivot, D 0.3%), oneil (no base, day_vol 1.01) and elder-lens (no permission event) OBJECT with named clearing triggers. What answers them before an H1 buy stop?"}
+ ]
+}
