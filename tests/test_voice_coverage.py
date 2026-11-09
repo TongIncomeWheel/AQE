@@ -326,3 +326,30 @@ def test_the_index_return_rides_every_row_beside_the_stock_return():
     menu = json.loads((CORE / "skills" / "pma" / "contracts" / "voice_menus.json").read_text())["seow"]
     assert "index_pct_change_63d" in menu and "ret_63d" in menu
     assert "index_pct_change_63d" in drive_sync._FIELD_GLOSSARY
+
+
+# ---------------------------------------------------------------------------------- a flat book (PM 2026-11-09)
+def _hl(msgs):
+    return [m for m in msgs if "hl_score" in m or "hl_state" in m]
+
+
+def test_a_flat_book_skips_the_health_verdict_fields_with_a_warning_not_a_fail(work):
+    """hl_score / hl_state exist only on held rows. With nothing held they are not a gap: WARN 'flat book', never FAIL."""
+    _, pk, exp = work
+    exp = copy.deepcopy(exp)
+    exp["held_positions"] = []
+    for r in exp.get("daily_list") or []:
+        for k in [k for k in r if k.startswith("hl_")]:
+            r.pop(k)
+    fails, notes, _ = cov(pk, exp)
+    assert not _hl(fails), _hl(fails)
+    assert any("flat book" in n and "hl_score" in n for n in notes)
+
+
+def test_a_held_book_still_checks_the_health_verdict_fields(work):
+    """The skip is for a flat book only: with a position held the same fields are checked exactly as before (no 'flat book' note)."""
+    _, pk, exp = work
+    exp = copy.deepcopy(exp)
+    exp["held_positions"] = [{"ticker": "MP", "hl_score": 55, "hl_state": "HOLD"}]
+    fails, notes, _ = cov(pk, exp)
+    assert not any("flat book" in n for n in notes)
