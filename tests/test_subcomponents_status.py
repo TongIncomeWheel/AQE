@@ -25,3 +25,24 @@ def test_error_when_nothing_is_usable_and_never_raises():
 
 def test_a_key_check_alone_would_have_passed_the_all_null_block():
     assert _subcomponents_status([{"ticker": "A", "subcomponents": NULLS}])["status"] != "live"
+
+
+def test_rows_built_on_the_recipe_path_are_filled_from_the_scores_row_and_the_rest_stay_loud():
+    from src.data import drive_sync as ds
+    wr = {"ticker": "NDAQ", "flow_100": 90.0, "energy_100": 70.0, "structure_100": 80.0, "mp_100": 85.0, "elder_score": 8.0,
+          "bq_100": 70.0, "k39_gate": True, "mfi": 60.0}
+    rows = [{"ticker": "NDAQ", "subcomponents": None, "sc_m_gate_detail": None, "sc_p_gate_detail": None, "sc_m_gates": None, "sc_p_gates": None},
+            {"ticker": "OK", "subcomponents": GOOD, "sc_m_gate_detail": {"flow": True}, "sc_p_gate_detail": {"flow": True}},
+            {"ticker": "GONE", "subcomponents": None, "sc_m_gate_detail": None, "sc_p_gate_detail": None}]
+    out = ds._fill_aqe_blocks(rows, {"NDAQ": wr})
+    assert out["filled"] == 1 and out["absent"] == ["GONE"]
+    assert isinstance(rows[0]["subcomponents"], dict) and set(rows[0]["subcomponents"]) >= {"flow", "energy", "structure", "mp", "bq", "pipe"}
+    assert rows[0]["sc_m_gate_detail"] is not None and rows[0]["sc_m_gates"] in (True, False)
+    assert rows[1]["subcomponents"] is GOOD, "a row that already has the block is never touched"
+    st = ds._subcomponents_status(rows)
+    assert st["status"] in ("degraded", "error") and "GONE" in st.get("tickers", [])
+
+
+def test_the_filler_never_raises():
+    from src.data import drive_sync as ds
+    assert "filled" in ds._fill_aqe_blocks([None, {"ticker": None}], {})
