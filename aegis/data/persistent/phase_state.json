@@ -2,11 +2,11 @@
  "x_version": "1.1.0",
  "phases": {
   "post_market": {
-   "status": "partial",
+   "status": "ok",
    "run_date": "2026-11-09",
-   "run_at_utc": "2026-11-09T06:34:25+00:00",
-   "journal_date": "2026-11-05",
-   "note": "connector push verified for journal + eod artefacts + dyncap_ledger.json + ARCHIVE_master.json; portfolio_ledger.json (~48KB) and trade_journal.json (~121KB) NOT pushed via connector this run -- committed locally only, left for next session rather than risk hand-transcription error on large financial ledgers (same size-limit pattern as 2026-11-04). True close-date basis for this run (per portfolio_ledger.py _close_date_of, keyed off broker_sync.last_sync_utc, not the DATE arg) is 2026-11-06 (Friday), not 2026-11-05 -- Tiger exposes no historical position snapshot, so 2026-11-05's own EOD state is not recoverable from this broker pull."
+   "run_at_utc": "2026-11-09T06:42:03+00:00",
+   "journal_date": "2026-11-06",
+   "note": "deterministic batch: all jobs passed; connector push verified for journal + dyncap_ledger.json + eod gate/support artefacts; portfolio_ledger.json (~47.7KB) and trade_journal.json (~121KB) NOT pushed via connector this run -- committed locally only, same transcription-risk precedent as 2026-11-04/2026-11-05. True close-date basis matches journal_date this run (broker_sync.last_sync_utc 2026-11-09T06:42:01Z, pre-market ET, resolves to prior trading day 2026-11-06) -- no mismatch this time."
   },
   "premarket_data": {
    "status": "ok",
