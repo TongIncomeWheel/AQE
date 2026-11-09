@@ -89,6 +89,8 @@ def test_top_level_keys_are_additive_only():
         "held_positions_completion",
         # the M&A scan result and the pending names (PM 2026-11-04), stamped by _attach_ma_flags
         "ma_scan", "ma_pending",
+        # PM 2026-11-05: the swing-pivot stamp status, the engine sub-components value check (Report C), the universe rows file status (Report B)
+        "swing_pivot_status", "subcomponents_status", "universe_rows_status",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
@@ -134,6 +136,8 @@ def test_v21_record_fields_is_additive_only():
         "unr_status", "unr_note", "unr_as_of", "unr_level",
         # M&A flag (PM 2026-11-04), stamped by _attach_ma_flags on every daily_list / held row
         "ma_status", "ma_note", "ma_evidence",
+        # Momentum at the pivot (PM 2026-11-05), stamped by valen.swing_pivot.attach_swing_pivot in build_export
+        "swing_pivot", "swing_atr_dist", "swing_high", "swing_high_date", "swing_daily", "swing_weekly",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (
