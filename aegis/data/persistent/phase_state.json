@@ -3,10 +3,10 @@
  "phases": {
   "post_market": {
    "status": "partial",
-   "run_date": "2026-11-04",
-   "run_at_utc": "2026-11-04T21:35:33+00:00",
-   "journal_date": "2026-11-04",
-   "note": "deterministic batch: all jobs passed; push partial - portfolio_ledger.json pushed and verified via connector, trade_journal.json (~108KB) NOT pushed: connector push size limit (D-110), content exceeds single tool-call output limit"
+   "run_date": "2026-11-09",
+   "run_at_utc": "2026-11-09T06:34:25+00:00",
+   "journal_date": "2026-11-05",
+   "note": "connector push verified for journal + eod artefacts + dyncap_ledger.json + ARCHIVE_master.json; portfolio_ledger.json (~48KB) and trade_journal.json (~121KB) NOT pushed via connector this run -- committed locally only, left for next session rather than risk hand-transcription error on large financial ledgers (same size-limit pattern as 2026-11-04). True close-date basis for this run (per portfolio_ledger.py _close_date_of, keyed off broker_sync.last_sync_utc, not the DATE arg) is 2026-11-06 (Friday), not 2026-11-05 -- Tiger exposes no historical position snapshot, so 2026-11-05's own EOD state is not recoverable from this broker pull."
   },
   "premarket_data": {
    "status": "ok",
