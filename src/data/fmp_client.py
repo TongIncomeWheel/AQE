@@ -229,6 +229,24 @@ class FMPClient:
                 continue
             if not isinstance(payload, list):
                 continue
+            if not payload and batch:
+                # FMP's stable /quote answers ONE symbol: a comma-separated list returns an EMPTY list with no error (CI probe 2026-11-10;
+                # /batch-quote is restricted on this plan). That silent {} emptied the whole universe pass 1. Small chunks fall back to one call
+                # per symbol; a large chunk is reported loudly, never returned as if it were an answer.
+                if len(batch) <= 10:
+                    payload = []
+                    for _sym in batch:
+                        try:
+                            one = self._get_json(url, params={"symbol": _sym, "apikey": self.config.api_key})
+                        except FMPQuotaError:
+                            raise
+                        except FMPError:
+                            continue
+                        if isinstance(one, list):
+                            payload.extend(one)
+                else:
+                    print(f"[fmp] [WARN] get_quotes_batch: {len(batch)} symbols returned NO quotes (a comma-separated /quote is not supported); "
+                          f"these names have no quote", flush=True)
             for row in payload:
                 if not isinstance(row, dict):
                     continue
@@ -257,10 +275,13 @@ class FMPClient:
         min_volume: int = 500_000,
         exchanges: list[str] | None = None,
         limit: int = 5000,
+        country: str | None = None,
     ) -> list[dict]:
         """Pull equity screener results from FMP.
 
-        Returns list of dicts with keys: symbol, companyName, marketCap, price, volume, exchange.
+        Returns list of dicts with keys: symbol, companyName, marketCap, price, volume, avgVolume, exchange, exchangeShortName, country,
+        isEtf, isFund, sector, industry. `avgVolume` is FMP's own average volume and is what the universe's pass-1 split reads: the
+        batch /quote endpoint carries NO avgVolume (CI probe 2026-11-10). `country` (e.g. "US") is passed to FMP when given.
         """
         if exchanges is None:
             exchanges = ["NASDAQ", "NYSE"]
@@ -275,6 +296,8 @@ class FMPClient:
             "isEtf": "false",
             "limit": str(limit),
         }
+        if country:
+            params["country"] = country
         url = f"{FMP_BASE_STABLE}/company-screener"
         payload = self._get_json(url, params=params)
         if not isinstance(payload, list):
