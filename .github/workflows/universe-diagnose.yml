@@ -1,0 +1,25 @@
+name: Universe diagnose (find the stage that trims the scan universe; writes nothing)
+
+# PM 2026-11-10: TTD and ~400 rule-qualifying names are not scored. This re-runs build_universe's pass 1 stage by stage, traces a watch list,
+# runs the real build_universe(dry_run=True) and diffs it against the committed aqe_universe_rows.json. Prints only; writes nothing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Diagnose
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python -u -m scripts.universe_diagnose
