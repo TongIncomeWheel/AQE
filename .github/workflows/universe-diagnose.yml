@@ -4,6 +4,11 @@ name: Universe diagnose (find the stage that trims the scan universe; writes not
 # runs the real build_universe(dry_run=True) and diffs it against the committed aqe_universe_rows.json. Prints only; writes nothing.
 on:
   workflow_dispatch:
+    inputs:
+      args:
+        description: "optional: --probe (endpoint probe only) or a scored-rows path then WATCH tickers"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -22,4 +27,4 @@ jobs:
       - name: Diagnose
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
-        run: python -u -m scripts.universe_diagnose
+        run: python -u -m scripts.universe_diagnose ${{ github.event.inputs.args }}

@@ -20,7 +20,41 @@ DEFAULT_WATCH = ["ADM", "MCHP", "CPRT", "DXCM", "EQT", "CCJ", "RPRX", "FISV", "V
                  "TD", "TTE", "BNS", "NWG", "BIRK", "GLBE", "G", "SBSW", "LU"]
 
 
+def probe():
+    """Which quote endpoint answers a comma-separated batch? Prints the raw shape of each; changes nothing."""
+    from src.data import fmp_client as F
+    c = F.FMPClient()
+    syms = ["AAPL", "MSFT", "ADM", "MCHP", "TTD"]
+    base = F.FMP_BASE_STABLE
+    tries = [("quote?symbol=a,b,c", f"{base}/quote", {"symbol": ",".join(syms)}),
+             ("quote?symbols=a,b,c", f"{base}/quote", {"symbols": ",".join(syms)}),
+             ("batch-quote?symbols=a,b,c", f"{base}/batch-quote", {"symbols": ",".join(syms)}),
+             ("quote-short?symbol=a,b,c", f"{base}/quote-short", {"symbol": ",".join(syms)}),
+             ("quote?symbol=AAPL (single)", f"{base}/quote", {"symbol": "AAPL"})]
+    for name, url, params in tries:
+        try:
+            r = c._get_json(url, params=dict(params, apikey=c.config.api_key))
+            keys = sorted(r[0].keys())[:14] if isinstance(r, list) and r and isinstance(r[0], dict) else None
+            print(f"[probe] {name}: type={type(r).__name__} len={len(r) if hasattr(r, '__len__') else '-'} "
+                  f"symbols={[x.get('symbol') for x in r][:6] if isinstance(r, list) else None} avgVolume={[x.get('avgVolume') for x in r][:3] if isinstance(r, list) else None} keys={keys}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[probe] {name}: ERROR {type(exc).__name__}: {str(exc)[:160]}")
+    rows = c.get_screener(min_mcap=2_000_000_000, min_price=5.0, min_volume=500_000, exchanges=["NASDAQ", "NYSE"], limit=5)
+    print("[probe] screener row keys:", sorted(rows[0].keys()) if rows else None)
+    for name, extra in (("country=US", {"country": "US"}), ("isAdr=false", {"isAdr": "false"}), ("isFund=false", {"isFund": "false"})):
+        try:
+            params = {"apikey": c.config.api_key, "marketCapMoreThan": "2000000000", "exchange": "NASDAQ,NYSE", "isActivelyTrading": "true",
+                      "isEtf": "false", "volumeMoreThan": "500000", "priceMoreThan": "5", "limit": "5000", **extra}
+            r = c._get_json(f"{base}/company-screener", params=params)
+            import collections
+            print(f"[probe] screener {name}: rows={len(r)} countries={dict(collections.Counter(x.get('country') for x in r).most_common(5))}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[probe] screener {name}: ERROR {exc}")
+
+
 def main(argv):
+    if argv and argv[0] == "--probe":
+        probe(); return 0
     from src.data import universe as U
     from src.data.fmp_client import FMPClient, FMPError
 
