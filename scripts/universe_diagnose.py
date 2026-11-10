@@ -39,6 +39,15 @@ def probe():
                   f"symbols={[x.get('symbol') for x in r][:6] if isinstance(r, list) else None} avgVolume={[x.get('avgVolume') for x in r][:3] if isinstance(r, list) else None} keys={keys}")
         except Exception as exc:  # noqa: BLE001
             print(f"[probe] {name}: ERROR {type(exc).__name__}: {str(exc)[:160]}")
+    for tk in ["TD", "TTE", "BNS", "NWG", "TCOM", "JBS", "RYAAY", "TECK", "EC", "ARM", "SHOP", "SPOT", "ACN", "LIN", "ETN", "CCJ", "BIRK", "GLBE", "PDD",
+               "TSM", "ASML", "HSBC", "BABA", "G", "SBSW", "LU", "AAPL"]:
+        try:
+            r = c._get_json(f"{base}/profile", params={"symbol": tk, "apikey": c.config.api_key})
+            r = (r[0] if isinstance(r, list) and r else r) or {}
+            print(f"[probe] profile {tk:6} isAdr={r.get('isAdr')} isEtf={r.get('isEtf')} isFund={r.get('isFund')} country={r.get('country')} "
+                  f"exchange={r.get('exchange')} currency={r.get('currency')} cik={r.get('cik')} isin={r.get('isin')}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[probe] profile {tk}: ERROR {str(exc)[:120]}")
     rows = c.get_screener(min_mcap=2_000_000_000, min_price=5.0, min_volume=500_000, exchanges=["NASDAQ", "NYSE"], limit=5)
     print("[probe] screener row keys:", sorted(rows[0].keys()) if rows else None)
     for name, extra in (("country=US", {"country": "US"}), ("isAdr=false", {"isAdr": "false"}), ("isFund=false", {"isFund": "false"})):
@@ -76,7 +85,10 @@ def main(argv):
         av = r.get("avgVolume")
         band = ("admit (>= %s)" % f"{U.SCREEN_AVG_VOL_HIGH:,}" if av and av >= U.SCREEN_AVG_VOL_HIGH else
                 "reject cheap" if av is not None and av < U.SCREEN_AVG_VOL_PREFILTER else "verify on bars")
-        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} avgVolume={av} -> {band if (r.get('country') or '').upper() == U.SCREEN_COUNTRY else 'excluded: non-US'} | scored: {tk in scored}")
+        ov = U.load_universe_overrides()
+        tag = "override: EXCLUDE (PM ADR list)" if tk in ov["exclude"] else "override: INCLUDE (PM ordinary-share list)" if tk in ov["include"] else \
+              ("US-domiciled, no ADR check" if (r.get("country") or "").upper() == "US" else "foreign-domiciled: profiled for isAdr")
+        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} avgVolume={av} -> {band} | {tag} | scored: {tk in scored}")
 
     print("[real dry run] build_universe(dry_run=True) ...")
     res = U.build_universe(dry_run=True)
