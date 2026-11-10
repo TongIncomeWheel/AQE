@@ -25,6 +25,7 @@ from collections import Counter
 import pandas as pd
 
 from . import spec as S
+from . import ticker as T
 from .classify import classify
 
 
@@ -35,14 +36,20 @@ def _load(panel_weekly_path) -> pd.DataFrame:
     return df.assign(date=pd.to_datetime(df["date"]))
 
 
+def _load_daily(panel_daily_path) -> pd.DataFrame | None:
+    try:
+        df = pd.read_parquet(panel_daily_path)
+        df = df[[c for c in ("date", "ticker", "close", "volume") if c in df.columns]]
+        return df.assign(date=pd.to_datetime(df["date"]))
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def last_completed_session(panel_daily_path) -> pd.Timestamp | None:
     """Latest daily close on the panel — any weekly bar dated after it is the
     still-forming week."""
-    try:
-        d = pd.read_parquet(panel_daily_path, columns=["date"])["date"]
-        return pd.Timestamp(pd.to_datetime(d).max())
-    except Exception:  # noqa: BLE001
-        return None
+    d = _load_daily(panel_daily_path)
+    return None if d is None or d.empty else pd.Timestamp(d["date"].max())
 
 
 def _public(row: dict) -> dict:
@@ -124,11 +131,12 @@ def _market_read(market: dict, breadth: dict) -> dict:
 
 
 def compute(panel_weekly_path, panel_daily_path, sector_etfs, held: list[str] | None = None,
-            daily_list: list[str] | None = None) -> dict:
+            daily_list: list[str] | None = None, extra: list[str] | None = None) -> dict:
     """Full Stage Weather read. Never raises on a missing ticker; a name that
     can't be read is NA with its reason, never dropped silently."""
     df = _load(panel_weekly_path)
-    cutoff = last_completed_session(panel_daily_path)
+    daily = _load_daily(panel_daily_path)
+    cutoff = None if daily is None or daily.empty else pd.Timestamp(daily["date"].max())
     by = {t: g for t, g in df.groupby("ticker")}
     bench = by.get(S.BENCHMARK)
     bench_c = None
@@ -145,10 +153,15 @@ def compute(panel_weekly_path, panel_daily_path, sector_etfs, held: list[str] | 
         return classify(g, bench_c, cutoff)
 
     market = {t: read(t) for t in S.MARKET_SYMBOLS}
+    for t in S.DD_INDEXES:     # O'Neil C2: the canon's market-top count, beside the stage
+        if t in market:
+            one = None if daily is None else daily[daily["ticker"] == t]
+            market[t]["distribution_days"] = T.distribution_days(one)
     sectors = {t: read(t) for t in sector_etfs}
     non_single = set(S.MARKET_SYMBOLS) | set(sector_etfs)
     singles = {t: read(t) for t in by if t not in non_single}
     breadth = _breadth(singles)
+    extra_reads: dict = {}
 
     def transitions(names):
         out = []
@@ -164,6 +177,11 @@ def compute(panel_weekly_path, panel_daily_path, sector_etfs, held: list[str] | 
                             "weeks_in_stage": r["weeks_in_stage"]})
         return out
 
+    for t in extra or []:      # names asked for by the export that aren't single names on the panel
+        if t not in singles and t not in sectors and t not in market:
+            singles_extra = read(t)
+            singles_extra.pop("_series", None)
+            extra_reads.setdefault(t, singles_extra)
     held = sorted(set(held or []))
     dl = sorted(set(daily_list or []))
     held_rows = {t: _public(singles.get(t) or read(t)) for t in held}
@@ -185,6 +203,9 @@ def compute(panel_weekly_path, panel_daily_path, sector_etfs, held: list[str] | 
             {"ticker": t, "transition": r["transition"], "stage": r["stage"]}
             for t, r in sorted(singles.items())
             if r.get("status") == "OK" and r["confirmed_this_week"]],
+        # private: full reads + daily panel for the export's row stamp (stripped before any write)
+        "_reads": {**extra_reads, **singles, **sectors, **market},
+        "_daily": daily,
         "by_ticker": {t: {k: r.get(k) for k in ("status", "stage", "candidate", "candidate_forming",
                                                 "weeks_in_stage", "transition", "rs_mansfield", "reason")}
                       for t, r in sorted(singles.items())},

@@ -1,7 +1,13 @@
 # Stage Weather — the four-stage market cycle
 
-**Status:** Phase 1 built 2026-11-10 on branch `claude/intelligent-hopper-m78oal`, not yet on `main`.
-The `IMPL_*` measurement thresholds need **PM sign-off** before merge (see §6).
+**Status:** built 2026-11-10 on branch `claude/intelligent-hopper-m78oal`, not yet on `main`.
+Phase 1 = market / sector / breadth artifact. Phase 2 (same day, PM: "show market, sector and ticker level") =
+ticker-level columns on every export row + the committee canon's own tests. The `IMPL_*` thresholds need
+**PM sign-off** before merge (§6).
+
+The vocabulary is the committee's own: Minervini canon C2 is this same four-stage cycle, O'Neil C2 is the
+market-top count, Wyckoff's accumulation/distribution are Stages 1 and 3. AQE's job is the parameters, the
+compute and the reporting; the voices interpret.
 
 ## 1. What it is
 
@@ -47,6 +53,38 @@ anything else                                    -> transitional:
   `updown_volume_ratio` (avg up-week volume ÷ avg down-week volume over 10 weeks), `range_pos_52w`, `pct_from_ma30w`.
   If RS moved the stage, the stage would stop being Weinstein's and nobody could tell which fact produced it.
 
+## 2b. Parameters: three sources, three prefixes (`src/stages/spec.py`)
+
+| Prefix | Source | Values |
+|---|---|---|
+| `WS_*` | Weinstein | 30-week MA, 52-week Mansfield RS line |
+| `CANON_*` | the committee's locked canon (`aegis/canon/*/canon.lock.yaml`) | Minervini C2: Stage 2 confirmed only ≥25% off the 52-week low. Minervini C3: Trend Template, 8 criteria, all-or-nothing (30% off low, within 25% of high, RS ≥70). O'Neil C2: distribution days, 25 sessions, ≥4 = top signal |
+| `IMPL_*` | AQE's measurement where the source gives words, not numbers | ±0.5% flat band, 2-week confirmation, 200-day "rising a month" = above its level 21 sessions ago, ±3-pt breadth band |
+
+## 2c. Ticker level (`src/stages/ticker.py`, stamped in the export build)
+
+Every `daily_list` + `held_positions` row (and every Report B universe row) carries:
+
+| Field | Meaning |
+|---|---|
+| `stage` / `stage_name` | confirmed Weinstein stage (null = too little weekly history, reason in `stage_detail.reason`) |
+| `stage_candidate` | what the latest data reads; differs from `stage` = a change in progress |
+| `stage_weeks` | weeks in the current stage |
+| `stage_transition` | set only in the confirming week (BREAKOUT, TOPPING, BREAKDOWN, BASING, …) |
+| `trend_template` | Minervini C3: PASS / FAIL / NA (an input missing → NA, never a pass by omission) |
+| `trend_template_met` | criteria passed, 0-8 |
+| `stage2_confirmed` | Minervini C2: Stage 2 **and** ≥25% off the 52-week low |
+| `stage_detail` | everything behind those: MA30w + slope, Mansfield RS, up/down volume, the sector ETF's stage, the market stage, every Trend Template criterion |
+
+The Trend Template reads the row's **own** `entry`, `ma_50/150/200`, `high_52w`, `low_52w`, `rs_rank_pct`, so the
+checklist shows the numbers the row shows. Criterion 3 (200-day rising a month) is computed from the daily panel,
+both ends from the same series. Criterion 8 uses `rs_rank_pct` as AQE's stand-in for IBD RS and says so (`rs_basis`).
+
+Top level: `stage_market` (SPY/QQQ stage + distribution days, 11 sectors, breadth, headline) and `stage_status`
+(live/error, unreadable names, counts by stage, Trend Template passes, names that changed stage). `summary` gains
+`stage_status`, `market_stage`, `stage_2_count`, `trend_template_pass_count`. Scanner shows the six flat columns
+next to the list flags.
+
 ## 3. Market read (categorical, no score)
 
 `market_read.stage` = SPY's confirmed stage. `breadth_agreement` compares it with the single-name breadth:
@@ -83,15 +121,14 @@ Page: **Stage Weather** (`src/ui/pages/9_Stage_Weather.py`), plain tables, one-c
   basket constituents and held names), labelled as such.
 - **Standalone.** Reads nothing from VALEN / Crown / SRM and feeds nothing to them (the Crown rule), so the
   overlap (VALEN 10/20-day trend, SRM sector grades) stays measurable before anyone merges them.
-- **No `stage` column on `daily_list` yet.** That changes the export schema (`_REQUIRED_FIELDS`, the field glossary,
-  voice packets); it is Phase 2 and needs a PM call.
+- **Not a `_REQUIRED_FIELDS` key.** If the stamp fails the export still ships; `stage_status: error` says nothing
+  was read. Voice packets don't carry the columns yet (§6.3).
 
 ## 6. Open decisions for the PM
 
 1. **Sign off the `IMPL_*` numbers** in `src/stages/spec.py`: flat band ±0.5% over 4 weeks, 2-week confirmation,
    ±3-pt breadth band. They were chosen once and documented, not fitted.
-2. **Phase 2:** add `stage` / `stage_candidate` / `rs_mansfield` to every `daily_list` + `held_positions` row
-   (the Minervini seat already proxies Stage 2 with the Trend Template; this makes it explicit).
+2. ~~Phase 2: ticker-level columns~~ — built (§2c).
 3. **Committee wiring:** the data-steward fetches `aqe_stage_weather.json` beside the other macro artifacts
    (it is already published to `aegis/output`); whether a seat reads it is the committee's design call.
 4. **Whole-market breadth:** run the same classifier over `ma_panel.parquet` (~2000 names, VALEN breadth's source)
@@ -103,3 +140,16 @@ Page: **Stage Weather** (`src/ui/pages/9_Stage_Weather.py`), plain tables, one-c
   30-week average (750.74), so it reads **Stage 3, unconfirmed**. The forming week has bounced back to a Stage 2 read.
 - **QQQ: Stage 3 (Topping), confirmed 2026-10-30**, 7.5% under its 30-week average, RS against SPY −3.5.
 - **History reconstructed:** Stage 3 Mar-2025 → Stage 4 Apr-2025 → Stage 1 May-2025 → Stage 2 Jun/Aug-2025 → Stage 3 Mar-2026 → Stage 2 May-2026.
+
+## 8. First production read (Daily Persist snapshot, export 2026-11-10, panel through 2026-11-09)
+
+- **Market:** SPY Stage 2 with a Stage 3 read pending; QQQ Stage 3. **Distribution days: SPY 8, QQQ 9 in 25 sessions**
+  (canon top signal = 4). Using IBD's usual 0.2% minimum decline still gives 7 and 9, so the count is not inflated by flat days.
+- **Sectors:** Stage 2 = XLB, XLE, XLF, XLP, XLV · Stage 3 = XLI, XLK, XLRE · Stage 1 = XLY · Stage 4 = XLC, XLU.
+- **Breadth (827 names):** Stage 2 40.3% (37.2% four weeks ago), Stage 4 23.1% (34.0%). The decline is
+  clearing underneath while the index tops: more names basing (Stage 1 7.3% → 14.0%).
+- **Daily list (286):** Stage 1 51 · Stage 2 127 · Stage 3 49 · Stage 4 58 · 1 unreadable (WSE, short history).
+  Trend Template PASS 66, Stage 2 confirmed (C2) 117. **Longlist: 112 of 223 in Stage 2, 45 in Stage 4**;
+  Elder: 74 of 182 in Stage 2, 41 in Stage 4. 42 names confirmed a stage change this week.
+- Held book was empty in that snapshot, so held rows were exercised in tests only.
+- Timing: the stamp adds ~7 s to the export build.

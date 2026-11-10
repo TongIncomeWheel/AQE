@@ -729,6 +729,38 @@ _FIELD_GLOSSARY.update({
     "unr_level": "Price of the support level behind unr_status (null for NO / NA).",
     "unr_summary": "Longlist + Elder names by U&R status on the last completed trading day: "
                    "`met` and `setup` ticker lists, `as_of`, and how many were checked.",
+    # Stage Weather at ticker level (docs/AQE_STAGE_WEATHER.md, 2026-11-10). Readings only, never a gate.
+    "stage": "Weinstein stage on WEEKLY bars vs the 30-week average: 1 Basing (accumulation), 2 Advancing "
+             "(mark-up), 3 Topping (distribution), 4 Declining (mark-down). Above a rising average = 2, below a "
+             "falling one = 4, a flat reading = 3 after an advance / 1 after a decline. A change needs 2 completed "
+             "weeks. null = not enough weekly history (see stage_detail.reason), never a guess. Same four-stage "
+             "cycle as Minervini canon C2.",
+    "stage_name": "Basing / Advancing / Topping / Declining (the word for `stage`).",
+    "stage_candidate": "The stage the LATEST data reads (the forming week if there is one, else the last "
+                       "completed week). Differs from `stage` = a change in progress, not yet confirmed.",
+    "stage_weeks": "Completed weeks the name has been in its current stage.",
+    "stage_transition": "Set only in the week a change is confirmed: BREAKOUT (1->2), TOPPING (2->3), "
+                        "BREAKDOWN (3->4), BASING (4->1), ADVANCE_RESUMED (3->2), BASE_FAILED (1->4), "
+                        "BROKE_DOWN_FROM_ADVANCE (2->4), V_REVERSAL (4->2).",
+    "trend_template": "Minervini C3 Trend Template, all eight criteria, all-or-nothing: PASS / FAIL (any one "
+                      "criterion failed) / NA (an input missing, so it cannot be confirmed - never a pass by "
+                      "omission). Criterion 8 reads rs_rank_pct as AQE's stand-in for IBD RS. Detail in "
+                      "stage_detail.trend_template.checks.",
+    "trend_template_met": "How many of the eight Trend Template criteria passed (0-8).",
+    "stage2_confirmed": "Minervini C2: in Stage 2 AND at least 25% above the 52-week low. null = an input "
+                        "missing.",
+    "stage_detail": "The full stage read: since, weeks_in_stage, previous_stage, transition, candidate / "
+                    "candidate_forming, ma30w + its 4-week slope, pct_from_ma30w, Mansfield RS vs SPY "
+                    "(rs_mansfield, rs_rising), up/down-week volume ratio, 52-week range position, the "
+                    "name's sector ETF and that sector's stage, the market (SPY) stage, and both canon "
+                    "tests with every criterion. Evidence fields never move the stage.",
+    "stage_market": "The four-stage cycle at MARKET and SECTOR level: SPY/QQQ stage (+ O'Neil C2 "
+                    "distribution-day count, the canon's top signal), the 11 GICS sector ETFs' stages, "
+                    "breadth (share of every single name on AQE's panel in each stage now vs 1 and 4 weeks "
+                    "ago) and whether breadth CONFIRMS / is NARROWING / IMPROVING_UNDERNEATH the index.",
+    "stage_status": "'live' (stage stamped on rows) or 'error' (reason given; rows carry no stage keys, "
+                    "which means nothing was read, NOT a quiet tape). Lists unreadable names, the "
+                    "daily_list count by stage, Trend Template passes and names that changed stage.",
     "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
                      "every row's missing `setups` means nothing was checked, NOT a "
                      "quiet tape. Also lists names that could not be graded.",
@@ -2977,6 +3009,18 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["swing_pivot_status"].get("status") != "live":
         print(f"  [WARN] swing_pivot not computed: {export['swing_pivot_status'].get('reason')}")
 
+    # ---- Stage at ticker / sector / market level (docs/AQE_STAGE_WEATHER.md, 2026-11-10): Weinstein stage on weekly bars,
+    # Minervini C3 Trend Template + C2 Stage 2 confirmation, O'Neil C2 distribution days. Readings only. Loud, never raises.
+    try:
+        from src.stages.daily import attach_to_export as _attach_stage
+        export["stage_status"], export["stage_market"] = _attach_stage(
+            list(_dl.values()), export.get("held_positions") or [])
+    except Exception as _exc:  # noqa: BLE001 -- additive, never breaks the export
+        export["stage_status"] = {"status": "error", "reason": str(_exc), "stamped": 0}
+        export["stage_market"] = {"status": "UNAVAILABLE", "reason": str(_exc)}
+    if export["stage_status"].get("status") != "live":
+        print(f"  [WARN] stage not stamped: {export['stage_status'].get('reason')}")
+
     # ---- Engine sub-components, VALUE level (PM 2026-11-05, Report C). `subcomponents` is already a _REQUIRED_FIELDS key; a key check
     # passes on a block of nothing but nulls, which would hand the AQE-quant seat an empty page that reads as "no signal". Loud, never raises.
     _fill = _fill_aqe_blocks(list(_dl.values()), _sc_by_tk)
@@ -2999,6 +3043,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             _u_passes.append(("volume_validation", lambda r: (_loc["_stamp_vol_validation"](r), {"status": "ok"})[1]))
         _u_passes.append(("setups", lambda r: _attach_setups(r, [])))
         _u_passes.append(("swing_pivot", lambda r: _attach_swing(r, [], run_date=export.get("date") or None)))
+        if _loc.get("_attach_stage"):
+            _u_passes.append(("stage", lambda r: _loc["_attach_stage"](r, [])[0]))
         if _wl_record is not None and _sc_by_tk:
             _u_rows, _u_status = _build_universe_rows(_sc_by_tk, _wl_record, _u_passes)
         else:
@@ -3050,6 +3096,10 @@ def build_export(shortlist: dict | None = None) -> dict:
                              and not r.get("on_longlist") and not r.get("on_elder")),
         "qs_status": export.get("qs_status", "not_run"),
         "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
+        "stage_status": (export.get("stage_status") or {}).get("status", "not_run"),
+        "market_stage": ((export.get("stage_market") or {}).get("market_read") or {}).get("stage"),
+        "stage_2_count": sum(1 for r in _daily_list if r.get("stage") == 2),
+        "trend_template_pass_count": sum(1 for r in _daily_list if r.get("trend_template") == "PASS"),
         "subcomponents_status": (export.get("subcomponents_status") or {}).get("status", "not_run"),
         "universe_rows_status": (export.get("universe_rows_status") or {}).get("status", "not_run"),
         "universe_rows_count": (export.get("universe_rows_status") or {}).get("rows", 0),

@@ -68,9 +68,19 @@ _COLS = ["stage", "stage_name", "since", "weeks_in_stage", "candidate", "candida
 
 
 def _table(rows: dict) -> pd.DataFrame:
-    df = pd.DataFrame.from_dict(rows, orient="index")
+    flat = {}
+    for t, r in rows.items():
+        r = dict(r)
+        dd = r.pop("distribution_days", None) or {}
+        if dd:
+            r["distribution_days_25s"] = dd.get("count")
+            r["dd_at_canon_top_signal"] = dd.get("at_or_above_threshold")
+        flat[t] = r
+    df = pd.DataFrame.from_dict(flat, orient="index")
     df.index.name = "ticker"
-    return df[[c for c in _COLS if c in df.columns]].reset_index()
+    cols = [c for c in _COLS if c in df.columns] + [c for c in ("distribution_days_25s", "dd_at_canon_top_signal")
+                                                   if c in df.columns]
+    return df[cols].reset_index()
 
 
 st.header("Market")
@@ -110,6 +120,38 @@ if ch:
     table_with_copy(pd.DataFrame(ch), key="sw_dl_changes")
 else:
     st.write("None this week.")
+
+st.header("Ticker level: daily list + held (from today's export)")
+st.caption("Stage, the Trend Template (Minervini C3, all eight or nothing) and the Stage 2 confirmation "
+           "(Minervini C2, at least 25% off the 52-week low). NA = an input missing, never a pass.")
+try:
+    import json as _json
+    _ex = _json.loads(D.EXPORT_PATH.read_text(encoding="utf-8"))
+except Exception as _e:  # noqa: BLE001
+    _ex = None
+    st.error(f"Export unreadable, so no ticker-level read: {_e}")
+if _ex is not None:
+    _ss = _ex.get("stage_status") or {}
+    if _ss.get("status") != "live":
+        st.error(f"Stage not stamped on this export: {_ss.get('status', 'not_run')} - {_ss.get('reason', '')}")
+    else:
+        _rows = []
+        for _src, _list in (("daily_list", _ex.get("daily_list") or []), ("held", _ex.get("held_positions") or [])):
+            for _r in _list:
+                _d = _r.get("stage_detail") or {}
+                _rows.append({"ticker": _r.get("ticker"), "from": _src,
+                              "on_longlist": _r.get("on_longlist"), "on_elder": _r.get("on_elder"),
+                              "on_qs": _r.get("on_qs"), "stage": _r.get("stage"),
+                              "stage_candidate": _r.get("stage_candidate"), "stage_weeks": _r.get("stage_weeks"),
+                              "stage_transition": _r.get("stage_transition"),
+                              "trend_template": _r.get("trend_template"),
+                              "trend_template_met": _r.get("trend_template_met"),
+                              "stage2_confirmed": _r.get("stage2_confirmed"),
+                              "pct_from_ma30w": _d.get("pct_from_ma30w"), "rs_mansfield": _d.get("rs_mansfield"),
+                              "sector": _d.get("sector_etf"), "sector_stage": _d.get("sector_stage"),
+                              "reason": _d.get("reason")})
+        table_with_copy(pd.DataFrame(_rows), key="sw_ticker_level")
+        st.caption(f"Unreadable: {', '.join(_ss.get('unreadable') or []) or 'none'}")
 
 st.header("Every name on the panel")
 bt = art.get("by_ticker") or {}

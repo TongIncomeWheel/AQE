@@ -96,3 +96,48 @@ MARKET_SYMBOLS = ("SPY", "QQQ")  # both on the panel every engine reads; SPY lea
 BENCHMARK = "SPY"
 
 POPULATION_PANEL = "aqe_panel_equities"   # every single-name ticker on panel_weekly
+
+# ---------------------------------------------------------------------------
+# CANON_* — the committee's OWN definitions, transcribed from the locked canon
+# the voices run on (aegis/canon/<voice>/canon.lock.yaml). The stage vocabulary
+# above is the same four-stage cycle these voices use; these are the extra
+# tests they attach to it. Change only when the canon lock changes.
+# ---------------------------------------------------------------------------
+
+# Minervini C2 (TLSMW pp. 81-86): "A stage 2 advance is only confirmed after a
+# prior rally of at least 25 to 30 percent off the 52-week low." The lower bound
+# is the confirmation floor; C3 criterion 6 below carries the 30.
+CANON_STAGE2_MIN_RALLY_OFF_LOW_PCT = 25.0
+
+# Minervini C3 (TLSMW pp. 99-100): THE TREND TEMPLATE, all-or-nothing, eight
+# criteria verbatim:
+#  (1) price above both the 150-day and 200-day MA
+#  (2) the 150-day MA above the 200-day MA
+#  (3) the 200-day MA trending up for at least one month
+#  (4) the 50-day MA above both the 150-day and 200-day MA
+#  (5) price above the 50-day MA
+#  (6) price at least 30% above its 52-week low
+#  (7) price within at least 25% of its 52-week high
+#  (8) IBD relative strength ranking no less than 70
+CANON_TT_ABOVE_LOW_PCT = 30.0
+CANON_TT_WITHIN_HIGH_PCT = 25.0
+CANON_TT_RS_MIN = 70.0
+# "at least one month" measured as: the 200-day MA today above where it stood
+# 21 sessions ago (one trading month). The canon gives the month, not the test.
+IMPL_TT_MA200_RISING_SESSIONS = 21
+# Criterion 8 basis: AQE has no IBD rating. It reads the export's own
+# rs_rank_pct (6-month return percentile across the scored universe) and says so
+# on every row (`rs_basis`). A held name outside the scored universe has no
+# rank -> criterion 8 is NA -> the template is NA, never a pass.
+TT_RS_BASIS = "rs_rank_pct (AQE 6-month return percentile across the scored universe; stands in for IBD RS)"
+
+# O'Neil C2 (CSKB p. 4): "Call the top by counting distribution days - a major
+# index closing down, or stalling on negligible progress, on volume heavier than
+# the prior session. Four or five of them inside any four-to-five-week span means
+# stop buying..." Counted here: down closes on higher volume than the prior
+# session, over the last 25 sessions (five weeks). Stall days are NOT counted
+# (the canon gives no number for "negligible progress"); any down close counts,
+# with no minimum decline (the canon sets none).
+CANON_DD_WINDOW_SESSIONS = 25
+CANON_DD_COUNT = 4
+DD_INDEXES = ("SPY", "QQQ")

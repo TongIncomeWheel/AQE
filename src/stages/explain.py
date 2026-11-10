@@ -76,10 +76,25 @@ def build(art: dict) -> dict:
                 f"{mr['weeks_in_stage']} weeks in.")
     if mr.get("change_in_progress"):
         headline += " A change of stage is in progress but not yet confirmed."
+    hot = [sym for sym in S.DD_INDEXES
+           if (((art.get("market") or {}).get(sym) or {}).get("distribution_days") or {}).get("at_or_above_threshold")]
+    if hot:
+        headline += (f" {' and '.join(hot)} {'are' if len(hot) > 1 else 'is'} at the canon's market-top "
+                     f"reading on distribution days.")
 
     because = []
     spy = (art.get("market") or {}).get("SPY") or {}
     because.append(f"Stage {st} means {S.STAGE_PLAIN[st]}. " + _position(spy))
+    dd_bits = []
+    for sym in S.DD_INDEXES:
+        dd = ((art.get("market") or {}).get(sym) or {}).get("distribution_days") or {}
+        if dd.get("status") == "OK":
+            dd_bits.append(f"{sym} {dd['count']}")
+    if dd_bits:
+        thr = S.CANON_DD_COUNT
+        because.append(f"Distribution days (down closes on heavier volume) in the last "
+                       f"{S.CANON_DD_WINDOW_SESSIONS} sessions: {', '.join(dd_bits)}. O'Neil's canon reads "
+                       f"{thr} or more as a market top.")
     qqq = (art.get("market") or {}).get("QQQ") or {}
     if qqq.get("status") == "OK":
         same = "agrees" if qqq["stage"] == st else "disagrees"
@@ -108,6 +123,11 @@ def build(art: dict) -> dict:
         watch.append(f"A weekly close back above the 30-week average (about {spy.get('ma30w')}) with the average flattening starts a base.")
     elif st in (1, 3):
         watch.append(f"Which way SPY leaves the range around {spy.get('ma30w')} decides the next stage.")
+    for sym in S.DD_INDEXES:
+        dd = ((art.get("market") or {}).get(sym) or {}).get("distribution_days") or {}
+        if dd.get("at_or_above_threshold"):
+            watch.append(f"{sym} has {dd['count']} distribution days in {dd['window_sessions']} sessions, "
+                         f"at or above the canon's top signal ({dd['canon_threshold']}).")
     for r in art.get("held_changes") or []:
         if r.get("transition"):
             watch.append(f"Held {r['ticker']}: moved from Stage {r['previous_stage']} to "
