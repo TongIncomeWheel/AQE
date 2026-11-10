@@ -304,6 +304,14 @@ class FMPClient:
             return []
         return payload
 
+    def get_profile(self, symbol: str) -> dict | None:
+        """Company profile (stable /profile, one symbol). Carries `isAdr`, `country`, `exchange`, `isin`, `isEtf`, `isFund` -- the real field
+        the universe uses to tell an ADR from an ordinary share (CI probe 2026-11-10). None when FMP has no profile for the symbol."""
+        payload = self._get_json(f"{FMP_BASE_STABLE}/profile", params={"symbol": symbol, "apikey": self.config.api_key})
+        if isinstance(payload, list) and payload and isinstance(payload[0], dict):
+            return payload[0]
+        return None
+
     # ---------- internals ----------
 
     # A transient connection drop here used to propagate straight out of
