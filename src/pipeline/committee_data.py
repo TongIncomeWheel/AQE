@@ -453,7 +453,7 @@ def failed_manifest(run_date: str, reason: str, f: Fetcher | None = None) -> dic
 
 
 def run(export: dict, run_date: str | None = None, client=None, panel: dict | None = None, universe_previous: dict | None = None, git_loader=None,
-        previous_pack: dict | None = None, ledger: list[str] | None = None,
+        previous_pack: dict | None = None, ledger: list[str] | None = None, extra_rows: list[dict] | None = None,
         budget_s: float = TIME_BUDGET_S, clock=time.monotonic) -> dict:
     """Fetch, build and return {manifest, files{name: bytes}}. Never raises: any failure is a FAILED manifest."""
     run_date = run_date or datetime.now(SGT).date().isoformat()
@@ -465,6 +465,12 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
         f = Fetcher(client, budget_s=budget_s, clock=clock)
         mtf = _mtf()
         tickers = scope_of(export)
+        # Report B's screened names (conductor defect 2026-11-10): the screens read the whole universe, so every name they seat must have the same
+        # committee data as the export names. `extra_rows` = universe rows for those names; their last close stands in for the export `entry`.
+        extra = [r for r in (extra_rows or []) if isinstance(r, dict) and r.get("ticker") and r["ticker"] not in set(tickers)]
+        if extra:
+            export = {**export, "daily_list": list(export.get("daily_list") or []) + [{"ticker": r["ticker"], "entry": r.get("last_close") or r.get("entry")} for r in extra]}
+            tickers = scope_of(export)
         if not tickers:
             return {"manifest": failed_manifest(run_date, "the export has no daily_list rows to fetch for", f), "files": {}}
         panel = panel if panel is not None else load_panel_daily(sorted(set(tickers) | {BENCH} | set(ledger or [])))

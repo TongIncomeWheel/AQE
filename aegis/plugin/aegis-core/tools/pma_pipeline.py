@@ -345,6 +345,24 @@ def cmd_reuse_a(a):
     print(f"receipt: reuse-a: {len(reused)} B names already deliberated in A reuse A's verdict ({', '.join(reused) or 'none'}); {len(new)} new names go through B's chain")
 
 
+def cmd_coverage(a):
+    """REPORT B (conductor defect 2026-11-10): every name in seat_sets.json must have a fundamentals row, a SERVED MTF row and closes in the committee data the
+    run reads, or this fails (exit 1, names listed). Run after `screens`; fix with the committee-topup workflow, never by proceeding."""
+    S = load(a.seat_sets, needs=["seats"])
+    names = sorted({x["ticker"] for v in S["seats"].values() for x in v})
+    d = a.committee_dir
+    fund, grid, closes = (load(os.path.join(d, n)) for n in ("fundamentals_pack.json", "mtf_grid.json", "closes_scorecard.json"))
+    ft, gn, cm = fund.get("tickers") or {}, grid.get("names") or {}, closes
+    miss = {"fundamentals": [t for t in names if (ft.get(t) or {}).get("status") not in ("served", "carried", "partial")],
+            "mtf": [t for t in names if not (gn.get(t) or {}).get("served")],
+            "closes": [t for t in names if t not in cm or t in (cm.get("_missing") or [])]}
+    if any(miss.values()):
+        print("COVERAGE FAIL: " + "; ".join(f"{k}: {', '.join(v)}" for k, v in miss.items() if v)
+              + ". Dispatch the committee-topup workflow (names + screens) and re-run; do not deliberate names the seats cannot see.")
+        raise SystemExit(1)
+    print(f"receipt: coverage: all {len(names)} screened names have fundamentals, a served MTF row and closes")
+
+
 def cmd_cset(a):
     """REPORT C (PM 2026-11-10): the C deliberation set = Report A's deliberation set (re-voted by all eight seats with the AQE indicators) UNION
     aqe-quant's own nominations (max 6, ranked by `rank` with every door off). Reads C's phase4.json and A's phase4.json; writes the union back into
@@ -3726,6 +3744,8 @@ if __name__ == "__main__":
     s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=(10 if REPORT == "B" else 25), help="names per seat; Report B reads the top 10 (PM 2026-11-10), anything else 25"); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
     s = sub.add_parser("reuse-a", help="REPORT B: names A already deliberated today reuse A's verdict and leave B's deliberation set (PM 2026-11-10, option 1)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-consensus", required=True, help="Report A's consensus.json for the same date"); s.add_argument("--date", required=True); s.add_argument("--out", default="reused_from_a.json")
+    s = sub.add_parser("coverage", help="REPORT B: every name in seat_sets.json has fundamentals + a served MTF row + closes in the committee data, or fail")
+    s.add_argument("--seat-sets", default="seat_sets.json"); s.add_argument("--committee-dir", default="aegis/output/committee_data")
     s = sub.add_parser("cset", help="REPORT C: deliberation set = Report A's set + aqe-quant's own nominations (PM 2026-11-10)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-phase4", required=True, help="Report A's phase4.json for the same date")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
@@ -3821,7 +3841,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "cset": cmd_cset, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "cset": cmd_cset, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
