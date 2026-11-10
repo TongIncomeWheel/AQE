@@ -2139,6 +2139,44 @@ def test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pa
     check("a strong-ADX name still passes it (the Holy Grail gate is unchanged)", n2 == 5)
     check("a flat, weak-ADX, un-washed name does not", n3 == 4 and not any("Holy Grail" in x for x in h3), str(h3))
 
+def test_the_brief_sections_registry_isolates_modules_from_the_core_gate(td):
+    """PM 2026-11-10: the brief is a core plus self-contained modules. An off module is skipped, a failed one shows one loud line and blocks nothing,
+    the core gate never sees module text, and a module's own rules hold only when it rendered ok."""
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("brief_sections_t", os.path.join(TOOLS, "brief_sections.py")); bs = _iu.module_from_spec(sp); sp.loader.exec_module(bs)
+    run = os.path.join(td, "run", "2026-11-10"); os.makedirs(run)
+    runB = run + "-B"; os.makedirs(runB)
+    json.dump([{"ticker": "AAA", "verdict": "ADVANCE", "conviction": 4, "split": {}}, {"ticker": "BBB", "verdict": "PASS", "conviction": 2, "split": {}}],
+              open(os.path.join(run, "consensus.json"), "w"))
+    json.dump([{"ticker": "CCC", "verdict": "ADVANCE", "conviction": 3, "split": {}}, {"ticker": "DDD", "verdict": "HOLD-FOR-CONDITIONS", "conviction": 2, "split": {}},
+               {"ticker": "EEE", "verdict": "PASS", "conviction": 1, "split": {}}], open(os.path.join(runB, "consensus.json"), "w"))
+    brief = "# 0 VERDICTS\n| Ticker | Verdict |\n|---|---|\n| AAA | ADVANCE |\n\n# 1 MACRO\ntext\n\n# 9B\n§9B\n| AAA | x |\n§9C\n"
+    res = bs.render_all(run, "2026-11-10", env="")
+    check("report B rendered ok", res["sweep_B"]["status"] == "ok", str(res["sweep_B"]))
+    check("report C has not run: degraded with its reason, never an exception", res["indicators_C"]["status"] == "degraded" and "has not run" in res["indicators_C"]["reason"], str(res["indicators_C"]))
+    out = bs.assemble(brief, res)
+    check("modules sit after the verdict block and before the macro section", out.index("module:sweep_B") > out.index("| AAA | ADVANCE |") and out.index("module:sweep_B") < out.index("# 1 MACRO"))
+    check("the B section shows ADVANCE and HOLD names only, with a count line, and is labelled not a trade row",
+          "| CCC |" in out and "| DDD |" in out and "| EEE |" not in out and "3 names deliberated" in out and "not a trade row" in out)
+    check("the C degraded module is exactly one loud line", "> Section Indicators C (the committee reading the AQE indicators) unavailable:" in out)
+    check("stripping the modules gives back the core byte for byte", bs.strip_modules(out) == brief)
+    check("assemble is idempotent", bs.assemble(out, res) == out)
+    fails, notes = bs.check(out, run, "2026-11-10")
+    check("the module gate passes a clean brief and notes the degraded module", not fails and any("degraded" in n for n in notes), str((fails, notes)))
+    bad = out.replace("| CCC |", "| ZZZ |")
+    fails, _ = bs.check(bad, run, "2026-11-10")
+    check("a name that is not in the report's consensus fails the module rules", any("ZZZ" in f for f in fails), str(fails))
+    leak = out.replace("| AAA | x |", "| CCC | x |")
+    fails, _ = bs.check(leak, run, "2026-11-10")
+    check("a B-only name in the 9B trade list fails", any("trade row" in f for f in fails), str(fails))
+    off = bs.assemble(brief, bs.render_all(run, "2026-11-10", env="none"))
+    check("with every module off the brief is the core, untouched", off == brief)
+    one = bs.render_all(run, "2026-11-10", env="sweep_B")
+    check("AEGIS_BRIEF_MODULES picks modules", one["sweep_B"]["status"] == "ok" and one["indicators_C"]["status"] == "off")
+    nodeg = out.replace("> Section Indicators C (the committee reading the AQE indicators) unavailable: ", "")
+    fails, _ = bs.check(nodeg, run, "2026-11-10")
+    check("a degraded block without its one-line note fails", any("lacks its one-line note" in f for f in fails), str(fails))
+
 
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
@@ -4314,7 +4352,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
