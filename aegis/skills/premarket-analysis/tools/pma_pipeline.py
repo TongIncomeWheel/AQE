@@ -3499,6 +3499,10 @@ def cmd_grade(a):
 
 def cmd_gate(a):
     brief = open(a.brief).read()
+    # PM 2026-11-10: the brief is a CORE plus optional code-built MODULES (contracts/brief_sections.json). Every core rule below runs on the core text only,
+    # so a module's text can never trip a core rule; the modules are held to their own rules at the end, and a failed module is a note, never a FAIL.
+    import brief_sections as _BS
+    brief_full, brief = brief, _BS.strip_modules(brief)
     cons = load(a.consensus, needs=["ticker", "verdict"])
     fails = []
     def chk(ok, code, msg):
@@ -3661,6 +3665,12 @@ def cmd_gate(a):
         chk(False, "Q8L", f"R8: no verdict ledger at {vlp!r} -- the day's decisions were never "
                           f"written. Run `record-verdicts` at DECIDE, before WRITE.")
 
+    # ---- the brief modules (Sweep B, Indicators C): their own rules only when they rendered ok; a degraded one must carry its one-line note ----
+    _mf, _mn = _BS.check(brief_full, os.path.dirname(os.path.abspath(a.consensus)) or ".", a.date)
+    for _n in _mn:
+        print(f"[NOTE] MOD {_n}")
+    for _f in _mf:
+        chk(False, "MOD", _f)
     print(f"RESULT: {len(fails)} FAIL")
     sys.exit(1 if fails else 0)
 

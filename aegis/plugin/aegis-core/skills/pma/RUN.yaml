@@ -740,6 +740,13 @@ steps:
       contested or rejected + what would clear it). No seat name, no first person, no vote tally, no field name or code, at most 2 numbers per sentence. Schema and
       examples in agents/brief-writer.md. check.py cards --lines gates it; a line that breaks the gate is NOT printed (the renderer falls back to the extraction
       line and run_notes gets CARDS LINES FALLBACK: <ticker>).
+    modules: >
+      PM 2026-11-10: AFTER the writer returns and BEFORE the gate, run `brief_sections.py assemble --brief pma_brief_<date>.md --run-dir . --date <date>`. It inserts the
+      code-built brief modules (contracts/brief_sections.json: Sweep B "§0C", Indicators C "§0D") between the verdict block and the macro section, each wrapped in
+      <!-- module:ID status:... --> markers. A module that is off is skipped; one whose report has not run (or fails) shows ONE line "> Section ... unavailable: <reason>" and
+      never blocks the brief. `pma_pipeline.py gate` runs every core rule on the core text only and holds a module to its own rules only when it rendered ok. AEGIS_BRIEF_MODULES
+      (a comma list, or `none`) overrides the registry flags for one run. The modules show ADVANCE / HOLD names only with an "N names deliberated" line, are labelled
+      "scored only, not a trade row", and 9B stays the main list's ADVANCE names only.
     cards_text: >
       R23: the writer ALSO writes cards_text.json -- WORDS ONLY, schema in agents/brief-writer.md
       (bottom line, market reads, money, book, changed, one case+`reason`{agree,wrong_if,wait_for}+readiness per ADVANCE, one line per
