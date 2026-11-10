@@ -677,7 +677,17 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         except Exception:  # noqa: BLE001 - no previous pack = fetch everything
             _prev = None
         _export = _json.loads((OUTPUT_DIR / "aqe_daily_export.json").read_text(encoding="utf-8"))
-        _res = _cd.run(_export, str(run_date), previous_pack=_prev)
+        # Report B's screens read the whole universe: serve the names they would seat the same data (conductor defect 2026-11-10).
+        _extra = []
+        try:
+            from src.pipeline import committee_topup as _ct
+            _urows = _ct.load_universe_rows(OUTPUT_DIR / "aqe_universe_rows.json")
+            _picks = set(_ct.screen_picks(_urows))
+            _extra = [r for r in _urows if r["ticker"] in _picks]
+            print(f"  committee data scope: + {len(_extra)} Report B screened names from {len(_urows)} universe rows (the rest are export names)")
+        except Exception as _e:  # noqa: BLE001 - loud, never silent: the PMA's B run tops up from CI instead (committee_topup)
+            print(f"  [WARN] committee data: Report B screened names NOT added to scope ({_e}); run committee_topup before a B run")
+        _res = _cd.run(_export, str(run_date), previous_pack=_prev, extra_rows=_extra)
         _cd.write_local(_res)
         _cdp = _cd.publish(_res)
         print(f"  {_cd.summary_line(_res, _cdp)}")

@@ -107,6 +107,10 @@ report:
     pma_pipeline read the cap from the report), `rank` with every AQE door off as above, then `pma_pipeline.py reuse-a --phase4 phase4.json --a-consensus <report A run dir>/consensus.json
     --date <date>`: a B name Report A has ALREADY deliberated today reuses A's verdict (written to reused_from_a.json, tagged on the brief section) and leaves B's deliberation set, so
     only NEW names run the vote chain. The brief's Sweep B section (contracts/brief_sections.json) is built from B's consensus.json plus reused_from_a.json. B stays non-live.
+    (5d) REPORT B DATA COVERAGE (conductor defect 2026-11-10): the screens read the whole universe but the committee data (aegis/output/committee_data) was built for the export names only, so a screened name could
+    arrive with NO MTF and NO fundamentals and be dropped on a data gap. The nightly now adds the names the seven screens would seat (src/pipeline/committee_topup.py via committee_data extra_rows). After `screens`, run
+    `pma_pipeline.py coverage --seat-sets seat_sets.json`: it FAILS (exit 1, names listed) if any screened name lacks fundamentals, a served MTF row or closes. The fix is the "Committee data top-up" workflow
+    (workflow_dispatch committee-topup.yml, inputs names + screens=true), which pulls the gap with the same fetchers, merges it into the three files and publishes to main; then `git pull` and re-run `coverage`. Never proceed past a FAIL.
     (5c) REPORT C's chain, PM decision 2026-11-10: ONLY aqe-quant NOMINATES (at most six; the registrar rejects round-1 nominations from any other C seat). `rank` runs with every AQE door off (as in 5), then
     `pma_pipeline.py cset --phase4 phase4.json --a-phase4 <report A run dir>/phase4.json`: C's deliberation set is A's deliberation set (re-voted by all EIGHT seats reading the AQE indicators)
     plus aqe-quant's new names; phase4 records from_a / quant_new. Everything from VOTE on is the same chain, with the drop rule 4 of 8. The brief's Indicators C section shows the deliberated names that passed. C stays non-live.

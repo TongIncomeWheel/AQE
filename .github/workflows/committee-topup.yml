@@ -1,0 +1,45 @@
+name: Committee data top-up (Report B screened names)
+
+# Conductor defect 2026-11-10: Report B screens the whole universe but committee data exists only for the export's daily_list. This pulls fundamentals,
+# the W/D/H1 grid and closes (same fetchers as the nightly) for the names Report B screens/needs and publishes them to aegis/output/committee_data/ on main.
+# Loud: exits non-zero if any requested name is still unserved. Run it after `screens` and before the B committee reads its data.
+on:
+  workflow_dispatch:
+    inputs:
+      names:
+        description: "comma-separated tickers to cover (optional)"
+        required: false
+        default: ""
+      screens:
+        description: "also cover every name the seven Report B screens seat (top 10 per seat)"
+        required: false
+        default: "true"
+
+permissions:
+  contents: write
+
+jobs:
+  topup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Top up
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+        run: |
+          ARGS="--publish"
+          if [ "${{ github.event.inputs.screens }}" = "true" ]; then ARGS="$ARGS --screens"; fi
+          if [ -n "${{ github.event.inputs.names }}" ]; then ARGS="$ARGS --names ${{ github.event.inputs.names }}"; fi
+          python -u -m src.pipeline.committee_topup $ARGS

@@ -2238,6 +2238,24 @@ def test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_name
     check("cset refuses to run outside Report C", r.returncode != 0)
 
 
+def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data(td):
+    """Conductor defect 2026-11-10: every name in seat_sets.json needs fundamentals + a served MTF row + closes, or `coverage` fails and names them."""
+    d = os.path.join(td, "cov"); os.makedirs(d, exist_ok=True)
+    ss = os.path.join(d, "seat_sets.json"); json.dump({"seats": {"oneil": [{"ticker": "AAA"}, {"ticker": "BBB"}], "seow": [{"ticker": "AAA"}]}}, open(ss, "w"))
+    def put(fund_names, mtf_names, close_names):
+        json.dump({"tickers": {t: {"status": "served"} for t in fund_names}}, open(os.path.join(d, "fundamentals_pack.json"), "w"))
+        json.dump({"names": {t: {"served": True} for t in mtf_names}}, open(os.path.join(d, "mtf_grid.json"), "w"))
+        json.dump({**{t: {"2026-11-12": 1.0} for t in close_names}, "_missing": []}, open(os.path.join(d, "closes_scorecard.json"), "w"))
+    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    def cov():
+        return subprocess.run([sys.executable, PIPE, "coverage", "--seat-sets", ss, "--committee-dir", d], capture_output=True, text=True, env=env)
+    put(["AAA", "BBB"], ["AAA", "BBB"], ["AAA", "BBB"])
+    r = cov(); check("coverage passes when every screened name is covered", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+    put(["AAA"], ["AAA"], ["AAA", "BBB"])
+    r = cov(); out = r.stdout + r.stderr
+    check("coverage FAILS and names the uncovered name (fundamentals and mtf)", r.returncode == 1 and "fundamentals: BBB" in out and "mtf: BBB" in out and "topup" in out, out[-300:])
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4412,7 +4430,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
