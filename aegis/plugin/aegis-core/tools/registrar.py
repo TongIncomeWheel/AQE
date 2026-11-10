@@ -89,7 +89,7 @@ if REPORT not in ("A", "B", "C"):
 DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])      # three reports (PM 2026-11-05): C adds the AQE quant seat
 QA_SEAT = "steenbarger"
 R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
-SHORTLIST_CAP = 6              # R33
+SHORTLIST_CAP = 3 if REPORT == "B" else 6   # R33 (six); Report B is capped at THREE nominations per seat (PM 2026-11-10)
 def _slate_cap_from_run_yaml(default=25):
     """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
     run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
