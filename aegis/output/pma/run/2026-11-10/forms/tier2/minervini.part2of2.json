@@ -1,0 +1,81 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-10",
+ "declarations": [
+  "Trend Template read from my blind-vote figures (ma50/ma100/ma200, from_52w_hi, rs_rank_pct as the IBD RS proxy); ma_150 not served. vcp_detail NOT_SERVED (C4); earnings_growth NOT_SERVED (C1, C12). No market_void: my method times from leadership, not an index line.",
+  "R1: no stance or wrong_if rests on a bracket field. Regime RISK OFF/CHOP is a C14 weight, never a block. Healthcare and Staples read as defensive rotation (C15/C17), context only."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A 1-hour close above the prior day's high, on volume."},
+   "wrong_if": "A daily close back below pivot_high, or below ma_50.",
+   "market_void": null,
+   "reason": "Template passes: entry 282.11 > ma50 266.07 > ma100 262.11 > ma200 248.64, from_52w_hi 0.0%, rs_rank_pct 80.29, LEADER. D close_vs_swing_high_pct 0.03 = the pivot (C5). Weights: day_vol 0.85, W LH/LL, Healthcare follower."
+  },
+  {
+   "ticker": "SJM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A 1-hour close above the last confirmed pivot high, on volume."},
+   "wrong_if": "A daily close below base_low_20d, or a break that fails back under pivot_high.",
+   "market_void": null,
+   "reason": "Template passes: entry 133.26 > ma50 124.61 > ma100 121.09 > ma200 112.05, rs_rank_pct 84.32, LEADER. W/D HH/HL, D close_vs_swing_high_pct -0.55 on day_vol 0.8: tight under the pivot (C5, C6)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A 1-hour close above the last confirmed pivot high, the flag's top, on volume."},
+   "wrong_if": "A daily close below base_low_20d, or the pause deepening on rising volume.",
+   "market_void": null,
+   "reason": "Template passes: entry 55.8 > ma50 39.63 > ma100 34.63 > ma200 31.16, rs_rank_pct 98.46, LEADER. W HH/HL after a thrust, D close_vs_swing_high_pct -6.95 on day_vol 0.81: a possible power-play flag (C18)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A 1-hour close above the last confirmed pivot high, on volume."},
+   "wrong_if": "A daily close below base_low_20d, or a break that fails back under pivot_high.",
+   "market_void": null,
+   "reason": "Template passes: entry 118.1 > ma50 95.11 > ma100 94.72 > ma200 86.43, rs_rank_pct 92.52, LEADER. W/D HH/HL, pausing at D close_vs_swing_high_pct -3.73. Weights: sma_dist 24.17%, day_vol 1.0, H1 below EMA9."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A 1-hour close above the last confirmed pivot high, on volume."},
+   "wrong_if": "A daily close below base_low_20d, or a break that fails back under pivot_high.",
+   "market_void": null,
+   "reason": "Template passes: entry 302.06 > ma50 279.47 > ma100 267.51 > ma200 241.68, rs_rank_pct 89.43, LEADER. W/D HH/HL, D close_vs_swing_high_pct -2.37, tight near the high (C5). Weights: H1 9<21, large cap."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A 1-hour close above the prior day's high, on volume."},
+   "wrong_if": "A daily close back below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Template passes: entry 721.63 > ma50 662.8 > ma100 610.14 > ma200 553.45, from_52w_hi 0.0%, rs_rank_pct 94.66. W/D HH/HL, D close_vs_swing_high_pct 1.37 at the pivot (C5). Weights: rs IN-LINE, day_vol 0.94."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A 1-hour close above the prior day's high, on volume."},
+   "wrong_if": "A daily close back below pivot_high, or below ma_20.",
+   "market_void": null,
+   "reason": "Stack ordered: entry 111.31 > ma50 100.37 > ma100 99.69 > ma200 98.29, rs_rank_pct 77.43, LEADER. W/D HH/HL, D close_vs_swing_high_pct 2.18 near the pivot. Weights: long trend near flat, day_vol 0.86, defensive."
+  },
+  {
+   "ticker": "SHW",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if it breaks to a new high on volume with rs_rank_pct back above the floor.",
+   "market_void": null,
+   "reason": "Crit 4 fails: ma50 329.85 under ma100 336.1 and ma200 332.69; crit 8 fails: rs_rank_pct 67.1 under the floor (C11). W close_vs_swing_high_pct -3.82."
+  }
+ ]
+}

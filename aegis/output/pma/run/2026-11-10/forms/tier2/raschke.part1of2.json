@@ -1,0 +1,128 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "RETRACEMENT-in-waiting (C2/C20): W HH/HL, H1 HH/HL, but D 12.3% above the last swing high after a range-expansion leg (C19). Buy the pivot test, not this bar."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "BREAKOUT/TEST (C2/C20): D HH/HL 0.9% above the last swing high, H1 100% of the day's range. Trigger and invalidation adjacent."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "TEST of a fresh break (C2/C20): W and D HH/HL, D 0.1% above the last swing high. The double stop point is my lowest-risk entry; 5.0% under 20-day high is overhead supply."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "RETRACEMENT, buy a higher low (C2/C7 shape): D HH/HL 1.8% under the last swing high, D 9>21. H1 LH/LL says the pullback must turn first, hence the bar_high trigger. ADX NOT_SERVED (R3)."
+  },
+  {
+   "ticker": "LION",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "TEST-in-waiting (C2/C20): D HH/HL 8.1% above the last swing high; W LH but HL leaves the longer trend unsettled. Act only on the test of the broken pivot."
+  },
+  {
+   "ticker": "VSXY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "RETRACEMENT-in-waiting (C2/C7 shape): D 21.6% above the last swing high is climax geometry (C19); H1 LH/LL. Supported only on a test back to the broken pivot."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "Established uptrend (C2/C7 shape): W, D and H1 all HH/HL, D 7.4% above the last swing high. My entry is the pivot test, not the extension."
+  },
+  {
+   "ticker": "SONY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "BREAKOUT/TEST (C2/C20): W and D HH/HL, D 2.9% above the last swing high; H1 43% of the day's range. Buy the test of the broken level."
+  },
+  {
+   "ticker": "PG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "BREAKOUT/TEST at the pivot (C2/C20): D HH/HL 0.9% above the last swing high, H1 HH/HL 88% of the day's range. Trigger and invalidation close together."
+  }
+ ],
+ "declarations": [
+  "Declared on every decision: setup_type per decision (C2); adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via MTF swing + structure_shift (C3/C4); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16), so market_void is null.",
+  "No refutations of my claims were paired to me; answers is empty."
+ ]
+}

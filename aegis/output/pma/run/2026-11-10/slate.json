@@ -1,0 +1,234 @@
+{
+ "date": "2026-11-10",
+ "chair": "chair",
+ "board_sha256": "98c942c7f205171840f5f6143972fb1ebd3acc3a22e3e101a4ea03af1d5d86a7",
+ "market_kill": {
+  "plain": "Index not in a Confirmed Uptrend, or 4-5 distribution days in 4-5 weeks (C1, C2)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": ["oneil"]
+ },
+ "tickets": [
+  {
+   "ticker": "SWK",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high on volume at least 1.4x normal"},
+   "entry_trigger": "Daily close above the pivot high on volume at least 1.4x normal",
+   "timing_count": {"support": 7, "act_now": 4, "wait": 3, "oppose": 0, "abstain": 0},
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, rank 12 third in Industrials, prior uptrend (ma50 95.11 > ma200 86.43), W and D HH/HL\" | minervini: \"Template passes: entry 118.1 > ma50 95.11 > ma100 94.72 > ma200 86.43, rs_rank_pct 92.52, LEADER.\"",
+   "wrong_if": "minervini: \"A daily close below base_low_20d, or a break that fails back under pivot_high.\"",
+   "dissent": [
+    {"voice": "livermore", "why": "Upward Trend: W and D swing HH/HL, W 12.8% above the last swing high. D 3.7% under its 20-day high and H1 below EMA9: a normal reaction; wait for the new high (C5, C8)."},
+    {"voice": "raschke", "why": "RETRACEMENT forming (C2/C7 shape): W and D HH/HL, D 3.7% under the last swing high, H1 below EMA9. First pullback after fresh highs; I buy it at the 20-day."},
+    {"voice": "wyckoff", "why": "Top-down TREND: W and D HH/HL; D 3.7% under the swing high with H1 below EMA9 - a corrective wave underway. Join at the trading zone with an SOS bar (C3, C7, C12)."}
+   ],
+   "sources": ["tier2:oneil", "tier2:minervini", "tier2:livermore", "tier2:raschke", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "MGNI",
+   "verdict": "WATCH",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "entry_trigger": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high",
+   "timing_count": {"support": 7, "act_now": 3, "wait": 4, "oppose": 0, "abstain": 0},
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, rank 18 tops its group, day_vol 1.57 on a new high (C16, C7), group Building.\" | minervini: \"Template passes: entry 29.04 > ma50 24.17 > ma100 22.58 > ma200 17.91, rs_rank_pct 98.81, LEADER.\"",
+   "wrong_if": "wyckoff: \"Daily close under structure_shift_ref, or choch_bearish.\"",
+   "dissent": [],
+   "sources": ["tier2:oneil", "tier2:minervini", "tier2:wyckoff"]
+  },
+  {
+   "ticker": "PG",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, holding outside the old range"},
+   "entry_trigger": "Hourly close above the prior day's high, on volume, holding outside the old range",
+   "timing_count": {"support": 6, "act_now": 5, "wait": 1, "oppose": 1, "abstain": 0},
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Stack ordered: entry 168.3 > ma50 152.49 > ma100 149.78 > ma200 149.48, from_52w_hi 0.0%, D close_vs_swing_high_pct 0.87 at the pivot.\" | raschke: \"BREAKOUT/TEST at the pivot (C2/C20): D HH/HL 0.9% above the last swing high\"",
+   "wrong_if": "minervini: \"A daily close back below pivot_high, or below ma_20.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "New 52-week high (from_52w_hi 0.0%) on day_vol 0.86: a new high on below-average volume says institutions are not buying (C25). rank 173 is fifth in Consumer Staples here (C9)."},
+    {"voice": "elder-lens", "why": "elder_5d [7, 10, 10, 7, 10] CORRECTION_REENTRY: dip-and-reclaim on the last bar; mp 89.0 FADING so R8 half met. W 9>21, LH but HL; D HH/HL. Buy rests at value, not in front of price (C10)."}
+   ],
+   "sources": ["tier2:minervini", "tier2:raschke", "r2:oneil", "tier2:elder-lens"]
+  },
+  {
+   "ticker": "TMO",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, just above the broken swing high"},
+   "entry_trigger": "Hourly close above the prior day's high, on volume, just above the broken swing high",
+   "timing_count": {"support": 6, "act_now": 5, "wait": 1, "oppose": 1, "abstain": 0},
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Template passes: entry 721.63 > ma50 662.8 > ma100 610.14 > ma200 553.45, from_52w_hi 0.0%, rs_rank_pct 94.66.\" | raschke: \"TEST at the break (C2/C20): W and D HH/HL, D 1.4% above the last swing high, H1 96% of the day's range.\"",
+   "wrong_if": "raschke: \"Daily close below bar_low: the test of the break failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "A new high (from_52w_hi 0.0%) on day_vol 0.94: a breakout under 1.40 (C16) and a low-volume high (C25). rs IN-LINE downday 0.17 is a weight under R27; rank 109 is fourth in Healthcare here (C9)."},
+    {"voice": "seow", "why": "Position system: new high above resistance (D 1.4% above the last swing high, 0.2% under 20-day high), W and D HH/HL 9>21, but TIF INTERRUPTED does not confirm (C28). Wait for the impulse to resume, then the buy stop."}
+   ],
+   "sources": ["tier2:minervini", "tier2:raschke", "r2:oneil", "tier2:seow"]
+  },
+  {
+   "ticker": "JNJ",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, off the Creek"},
+   "entry_trigger": "Hourly close above the prior day's high, on volume, off the Creek",
+   "timing_count": {"support": 6, "act_now": 4, "wait": 2, "oppose": 1, "abstain": 0},
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Template passes: entry 282.11 > ma50 266.07 > ma100 262.11 > ma200 248.64, from_52w_hi 0.0%, rs_rank_pct 80.29, LEADER.\" | raschke: \"TEST at the pivot (C2/C20): D 0.0% above the last swing high, H1 HH/HL 91% of the day's range\"",
+   "wrong_if": "raschke: \"Daily close below bar_low: the test of the break failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "New high (from_52w_hi 0.0%, D 0.0% above the last swing high) on day_vol 0.85: a breakout under 1.40 is a hard rejection (C16) and a new high on low volume is distribution (C25). rank 194 is last of the Healthcare names here (C9)."},
+    {"voice": "elder-lens", "why": "elder_5d [4, 9, 6, 10, 10] CORRECTION_REENTRY, permission event two bars back and held; mp 76.0 FADING, R8 half met. W 9>21 but swing LH/LL; D at the 20-day high, so I wait for value (C10)."},
+    {"voice": "seow", "why": "Position system: break right at the high (D 0.0% above the last swing high, HH/HL) but W swing LH/LL; under C21 (house rule) wait for the weekly to print a higher high (0.2% under 20-wk high), then the buy stop."}
+   ],
+   "sources": ["tier2:minervini", "tier2:raschke", "r2:oneil", "tier2:elder-lens", "tier2:seow"]
+  },
+  {
+   "ticker": "SJM",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high on volume at least 1.4x normal"},
+   "entry_trigger": "Daily close above the pivot high on volume at least 1.4x normal",
+   "timing_count": {"support": 6, "act_now": 4, "wait": 2, "oppose": 0, "abstain": 1},
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"rs LEADER, rank 35 second in Staples, W and D HH/HL, D 0.6% under the swing high: base under the pivot with day_vol 0.8 dry-up (C15).\" | minervini: \"Template passes: entry 133.26 > ma50 124.61 > ma100 121.09 > ma200 112.05, rs_rank_pct 84.32, LEADER.\"",
+   "wrong_if": "oneil: \"Breakout on day_vol under 1.40, a heavy-volume close under ma_50, or 8% below fill (C20)\"",
+   "dissent": [
+    {"voice": "livermore", "why": "W and D swing HH/HL but D 0.6% under the last swing high and 2.2% under its 20-day high: a normal reaction ending; I act only on the new high (C5)."},
+    {"voice": "elder-lens", "why": "W and D HH/HL, 9>21. elder_5d [6, 10, 10, 7, 10] CORRECTION_REENTRY: dip-and-reclaim on the last bar; mp 82.0 FADING so R8 half met. Buy at value (C10)."}
+   ],
+   "sources": ["tier2:oneil", "tier2:minervini", "tier2:livermore", "tier2:elder-lens"]
+  },
+  {
+   "ticker": "BDX",
+   "verdict": "WATCH",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "entry_trigger": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high",
+   "timing_count": {"support": 6, "act_now": 2, "wait": 4, "oppose": 1, "abstain": 0},
+   "horizon_sessions": 10,
+   "why_agreed": "wyckoff: \"Clean imbalance up on all three frames (W, D, H1 HH/HL) but away from value: D close_vs_swing_high_pct 7.37.\" | raschke: \"Established uptrend (C2/C7 shape): W, D and H1 all HH/HL, D 7.4% above the last swing high.\"",
+   "wrong_if": "raschke: \"Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "rs LEADER and rank 59 tops Healthcare here at a new high (from_52w_hi 0.0%), but day_vol 1.09 is under 1.40 (C16), D 7.4% above the last swing high is late (C17), div BEARISH/1 and lens coil warn."}
+   ],
+   "sources": ["tier2:wyckoff", "tier2:raschke", "r2:oneil"]
+  },
+  {
+   "ticker": "VSXY",
+   "verdict": "WATCH",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a corrective wave into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "entry_trigger": "After a corrective wave into structure_shift_ref / pvp_vah, an hourly close above the prior day's high",
+   "timing_count": {"support": 6, "act_now": 2, "wait": 4, "oppose": 1, "abstain": 0},
+   "horizon_sessions": 10,
+   "why_agreed": "raschke: \"Supported only on a test back to the broken pivot.\" | wyckoff: \"Missing it costs nothing; wait for the next trading zone (C15, C3).\"",
+   "wrong_if": "wyckoff: \"Daily close under structure_shift_ref, or choch_bearish.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "rs LEADER, rank 57 second in Consumer Discretionary here, from_52w_hi 0.0%, but the new high came on day_vol 1.1, under 1.40 (C16), and D 21.6% above the last swing high is past the 10% line (C17, a weight under R27)."}
+   ],
+   "sources": ["tier2:raschke", "tier2:wyckoff", "r2:oneil"]
+  },
+  {
+   "ticker": "COR",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high off the Creek test"},
+   "entry_trigger": "Hourly close above the prior day's high off the Creek test",
+   "timing_count": {"support": 5, "act_now": 5, "wait": 0, "oppose": 1, "abstain": 1},
+   "horizon_sessions": 10,
+   "why_agreed": "wyckoff: \"Back-up to the broken Creek (C7): D close_vs_swing_high_pct 0.09, W and D HH/HL, H1 HL.\" | raschke: \"TEST of a fresh break (C2/C20): W and D HH/HL, D 0.1% above the last swing high.\"",
+   "wrong_if": "wyckoff: \"Daily close back under pvp_vah into value, or a trade under bar_low.\"",
+   "dissent": [
+    {"voice": "minervini", "why": "Trend Template not met on the served stack: ma100 316.21 sits under ma200 316.75, so the long average is flat and the 150-over-200 / 200-rising criteria (C3 crit 2-3) cannot be shown."}
+   ],
+   "sources": ["tier2:wyckoff", "tier2:raschke", "r2:minervini"]
+  },
+  {
+   "ticker": "CNK",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, as follow-through off the Creek"},
+   "entry_trigger": "Hourly close above the prior day's high, on volume, as follow-through off the Creek",
+   "timing_count": {"support": 5, "act_now": 4, "wait": 1, "oppose": 1, "abstain": 1},
+   "horizon_sessions": 20,
+   "why_agreed": "wyckoff: \"Fresh break at the test: D close_vs_swing_high_pct 0.89, D HH/HL, H1 pos_in_day_range_pct 100.0.\" | raschke: \"BREAKOUT/TEST (C2/C20): D HH/HL 0.9% above the last swing high, H1 100% of the day's range.\"",
+   "wrong_if": "wyckoff: \"Daily close back below structure_shift_ref into value.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "New 52-week high (from_52w_hi 0.0%) on day_vol 0.99: a new high on below-average volume is institutions not buying (C25), and a breakout under 1.40 is a hard rejection (C16)."},
+    {"voice": "seow", "why": "Position system: fresh break (D 0.9% above the last swing high, HH/HL) but TIF INTERRUPTED does not confirm (C28). Wait for elder_pattern back to SUSTAINED/ACCELERATION, then the buy stop."}
+   ],
+   "sources": ["tier2:wyckoff", "tier2:raschke", "r2:oneil", "tier2:seow"]
+  },
+  {
+   "ticker": "ABBV",
+   "verdict": "ADVANCE",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high as the sign-of-strength follow-through"},
+   "entry_trigger": "Hourly close above the prior day's high as the sign-of-strength follow-through",
+   "timing_count": {"support": 5, "act_now": 3, "wait": 2, "oppose": 1, "abstain": 1},
+   "horizon_sessions": 20,
+   "why_agreed": "wyckoff: \"Fresh break near the test, D HH/HL, D close_vs_swing_high_pct -1.82\" | raschke: \"RETRACEMENT, buy a higher low (C2/C7 shape): D HH/HL 1.8% under the last swing high, D 9>21.\"",
+   "wrong_if": "raschke: \"Daily close below bar_low: the test of the break failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "Breakout on day_vol 1.03, under 1.40 (C16 hard rejection), and rank 165 is not top-3 of Healthcare here (C9)."},
+    {"voice": "livermore", "why": "Uptrend intact (D swing HH/HL, W above EMA9 9>21) but D 1.8% under the last swing high and 3.2% under its 20-day high: the reaction must end with a new high first (C5, C19)."},
+    {"voice": "seow", "why": "Position system: break near the high (D HH/HL, 1.8% under the last swing high) with strong 63-day outperformance, but TIF INTERRUPTED does not confirm (C28). Wait for the impulse to resume, then the buy stop."}
+   ],
+   "sources": ["tier2:wyckoff", "tier2:raschke", "r2:oneil", "tier2:livermore", "tier2:seow"]
+  },
+  {
+   "ticker": "SONY",
+   "verdict": "WATCH",
+   "trigger": {"word": "reclaim:structure_shift_ref", "tf": "H1", "plain": "Dip to the broken pivot, then a 1-hour close back above it."},
+   "entry_trigger": "Dip to the broken pivot, then a 1-hour close back above it.",
+   "timing_count": {"support": 5, "act_now": 2, "wait": 3, "oppose": 1, "abstain": 1},
+   "horizon_sessions": 10,
+   "why_agreed": "raschke: \"BREAKOUT/TEST (C2/C20): W and D HH/HL, D 2.9% above the last swing high; H1 43% of the day's range.\" | wyckoff: \"W and D HH/HL, D close_vs_swing_high_pct 2.85\"",
+   "wrong_if": "raschke: \"Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "rs LEADER downday 2.59 and structure 72.6, D 2.9% above the last swing high inside the buy window, but day_vol 1.35 falls under the 1.40 breakout line (C16) and rank 143 is sixth of six Technology names here (C9)."}
+   ],
+   "sources": ["tier2:raschke", "tier2:wyckoff", "r2:oneil"]
+  },
+  {
+   "ticker": "CHD",
+   "verdict": "WATCH",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "a daily close above its 52-week closing high"},
+   "entry_trigger": "a daily close above its 52-week closing high",
+   "timing_count": {"support": 5, "act_now": 1, "wait": 4, "oppose": 1, "abstain": 1},
+   "horizon_sessions": 20,
+   "why_agreed": "raschke: \"TEST of a recent break (C2/C20): W and D HH/HL, D 2.2% above the last swing high\" | wyckoff: \"W and D HH/HL, D close_vs_swing_high_pct 2.2\"",
+   "wrong_if": "raschke: \"Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "rank 111 third in Consumer Staples here and rs LEADER, but the move past the pivot (D 2.2% above the last swing high) printed on day_vol 0.86 (C16), lens coil and insti_money warn, mp DECELERATING."}
+   ],
+   "sources": ["tier2:raschke", "tier2:wyckoff", "r2:oneil"]
+  },
+  {
+   "ticker": "SHW",
+   "verdict": "WATCH",
+   "trigger": {"word": "reclaim:structure_shift_ref", "tf": "H1", "plain": "Dip to the broken pivot, then a 1-hour close back above it."},
+   "entry_trigger": "Dip to the broken pivot, then a 1-hour close back above it.",
+   "timing_count": {"support": 4, "act_now": 2, "wait": 2, "oppose": 2, "abstain": 1},
+   "horizon_sessions": 10,
+   "why_agreed": "raschke: \"TEST of a recent break (C2/C20): D HH/HL 3.4% above the last swing high\" | wyckoff: \"D HH/HL, D close_vs_swing_high_pct 3.4\"",
+   "wrong_if": "raschke: \"Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "day_vol 1.02 is under 1.40 (C16), lens leadership and resistance warn, ma50 329.85 under ma100 336.1 and ret_63d -1.78: no clean prior uptrend (C12); D 3.4% above the last swing high."},
+    {"voice": "minervini", "why": "Trend Template fails: ma50 329.85 under ma100 336.1 and ma200 332.69 (crit 4), rs_rank_pct 67.1 under the floor (crit 8). from_52w_hi -3.94% passes."}
+   ],
+   "sources": ["tier2:raschke", "tier2:wyckoff", "r2:oneil", "r2:minervini"]
+  },
+  {
+   "ticker": "LION",
+   "verdict": "WATCH",
+   "trigger": {"word": "in_zone:vwap_14d", "tf": "D", "plain": "Buy a pullback into 14-day value while elder stays at or above 7"},
+   "entry_trigger": "Buy a pullback into 14-day value while elder stays at or above 7",
+   "timing_count": {"support": 4, "act_now": 1, "wait": 3, "oppose": 2, "abstain": 1},
+   "horizon_sessions": 10,
+   "why_agreed": "raschke: \"TEST-in-waiting (C2/C20): D HH/HL 8.1% above the last swing high\" | wyckoff: \"D HH/HL but away from value: D close_vs_swing_high_pct 8.12\"",
+   "wrong_if": "raschke: \"Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.\"",
+   "dissent": [
+    {"voice": "oneil", "why": "Leader of the only Building group (rs LEADER, rank 20, Momentum Building) with structure 94.7, but the move printed on day_vol 1.14, under 1.40 (C16), and D 8.1% above the last swing high is the late-buy band (C17)."},
+    {"voice": "minervini", "why": "Trend Template fails crit 4: ma50 11.6 sits under both ma100 12.46 and ma200 11.74, and ma100 over ma200 is the only ordered pair."}
+   ],
+   "sources": ["tier2:raschke", "tier2:wyckoff", "r2:oneil", "r2:minervini"]
+  }
+ ]
+}

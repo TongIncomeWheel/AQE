@@ -1,0 +1,84 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, off the Creek"},
+   "wrong_if": "Daily close back below structure_shift_ref.",
+   "market_void": null,
+   "reason": "Break right at the Creek: D close_vs_swing_high_pct 0.03, D and H1 HH/HL, H1 pos_in_day_range_pct 90.6. Weekly LH/LL is the larger range (C16); a low-volume break needs follow-through (C5, C12)."
+  },
+  {
+   "ticker": "SJM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the range top (pivot_high) on volume"},
+   "wrong_if": "Reject at pivot_high, or a daily close under vwap_14d.",
+   "market_void": null,
+   "reason": "Rising-slope range near its top edge (C8): W and D HH/HL, D close_vs_swing_high_pct -0.6. The long is the break of the range top holding outside it (C5)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "n/a while abstaining; a close under base_low_20d would turn it bearish.",
+   "market_void": null,
+   "reason": "structure_shift RANGE high up after a run (W close_vs_swing_high_pct 87.2), D 7.0% under the swing high, H1 LH/LL; range edges not served. Unclear read (R10, C16)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "wrong_if": "Daily close under structure_shift_ref, or choch_bearish.",
+   "market_void": null,
+   "reason": "Top-down TREND: W and D HH/HL; D 3.7% under the swing high with H1 below EMA9 - a corrective wave underway. Join at the trading zone with an SOS bar (C3, C7, C12)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "n/a while abstaining.",
+   "market_void": null,
+   "reason": "structure_shift RANGE with H1 below EMA9 and 9<21, D 2.4% under the swing high: mid-range balance with no served edges. The middle of a range is not a trade (C1, R10)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above the prior day's high, on volume, just above the broken swing high"},
+   "wrong_if": "Daily close under structure_shift_ref, or choch_bearish.",
+   "market_void": null,
+   "reason": "Near the test: D close_vs_swing_high_pct 1.4, W and D HH/HL, H1 pos_in_day_range_pct 96 at dist_to_20bar_high_pct 0.2. Below-average volume, so follow-through is required (C7, C12)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "wrong_if": "Daily close under structure_shift_ref, or choch_bearish.",
+   "market_void": null,
+   "reason": "W and D HH/HL, D close_vs_swing_high_pct 2.2, H1 HH but LL - past the test band. Wait for the test (R2, C3)."
+  },
+  {
+   "ticker": "SHW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a pullback into structure_shift_ref / pvp_vah, an hourly close above the prior day's high"},
+   "wrong_if": "Daily close under structure_shift_ref, or choch_bearish.",
+   "market_void": null,
+   "reason": "D HH/HL, D close_vs_swing_high_pct 3.4, but W 3.8% under its swing high - weekly range unbroken (C16), H1 HH but LL. Wait for the test (C3)."
+  }
+ ],
+ "declarations": [
+  "Read on my own method only; no bracket field and no Valen flag is a reason (R1, R41).",
+  "pvp_*, bar_* and vwap_14d values are not in this packet; read from the W/D/H1 grid; successive value areas and volume nodes NOT_SERVED (R11).",
+  "My method carries no market-wide kill line; market_void null throughout."
+ ]
+}

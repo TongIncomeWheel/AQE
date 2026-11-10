@@ -1,0 +1,127 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "SWK",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "MGNI",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger waits for a pullback into structure_shift_ref / pvp_vah before buying. My test is the new high after a normal reaction (C5): W dist_to_20bar_high_pct 0.72, it is at its high now. Waiting for the lower entry usually means missing the move.",
+   "would_clear": "Drop the pullback precondition: the trigger is the hourly close above the prior day's high (h1_close_above:bar_high) from today, a fresh new high."
+  },
+  {
+   "ticker": "PG",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "TMO",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "JNJ",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SJM",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "close_above:pivot_high can fire with SJM still under its high: D 0.6% under the last swing high but 2.2% under its 20-day high. A close over that pivot is a Natural Rally inside the reaction, not the new high that ends it (C5, C19).",
+   "would_clear": "Trigger is a daily close above its 52-week closing high (close_above:high_52w_close), the new high."
+  },
+  {
+   "ticker": "BDX",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger waits for a pullback into structure_shift_ref / pvp_vah, 7.4% below. W, D and H1 HH/HL with D 7.4% above the last swing high is an Upward Trend at its high; buying the pullback instead is what C5 forbids.",
+   "would_clear": "Drop the pullback precondition: the trigger is the hourly close above the prior day's high (h1_close_above:bar_high) from today, a fresh new high."
+  },
+  {
+   "ticker": "VSXY",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger waits for a corrective wave into structure_shift_ref / pvp_vah, with D 21.6% above the last swing high. A leader at its high is strength that justifies the position (C5, C16); waiting for a lower entry is the error.",
+   "would_clear": "Drop the corrective-wave precondition: the trigger is the hourly close above the prior day's high (h1_close_above:bar_high) from today."
+  },
+  {
+   "ticker": "COR",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "An hourly close above the prior day's high buys COR inside its reaction: dist_to_20bar_high_pct 5.0, W 5.0% under its 20-wk high, the prior Pivotal Point not cleared (C19). D close_vs_swing_high_pct 0.09 is not a new high; I never buy the pullback (C5).",
+   "would_clear": "Trigger is a daily close above its 52-week closing high (close_above:high_52w_close), the new high."
+  },
+  {
+   "ticker": "CNK",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ABBV",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "An hourly close above the prior day's high can fire with ABBV still in its reaction: D 1.8% under the last swing high and 3.2% under its 20-day high. The reaction must end with a new high first (C5, C19).",
+   "would_clear": "Trigger is a daily close above its 52-week closing high (close_above:high_52w_close), the new high."
+  },
+  {
+   "ticker": "SONY",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "reclaim:structure_shift_ref buys a dip to the broken pivot, i.e. buys the pullback, which C5 forbids. W and D HH/HL is a trend, but the entry must be the new high after the reaction, not the reclaim of an old level.",
+   "would_clear": "Trigger is a daily close above its 52-week closing high (close_above:high_52w_close), the new high."
+  },
+  {
+   "ticker": "CHD",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SHW",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "reclaim:structure_shift_ref buys a dip to the broken pivot (C5 forbids buying the pullback), and the weekly Pivotal Point is not cleared: W 3.8% under its 20-wk high, D 3.6% under its 20-day high (C19). Not yet an Upward Trend at a new high.",
+   "would_clear": "Trigger is a daily close above its 52-week closing high (close_above:high_52w_close), the new high."
+  },
+  {
+   "ticker": "LION",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "in_zone:vwap_14d buys a pullback into value (C5 forbids it), and W dist_to_20bar_high_pct 14.0 with swing LH: the daily HH/HL is a Natural Rally under the prior Pivotal Point, not an Upward Trend at a new high (C19).",
+   "would_clear": "Trigger is a weekly close above its 20-week high, the prior Pivotal Point cleared, ideally with MGNI also at a new high (C14)."
+  }
+ ]
+}

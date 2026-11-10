@@ -1,0 +1,106 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DAL",
+   "reason": "Upward Trend column in a leading airline group: structure 96.8, structure_shift 1 (above structure), mp_state 3 STRONG, mp_accel_state 1 ACCELERATING; Key Price pair with LUV and ALK. Danger signal = one-day reaction >= atr_14d 3.38 off the high (my translation). Wrong below 88.42.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "day_vol", "gics_sector", "bracket"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 96.8, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 13.3; new-high proximity not on my menu", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 3.38 as danger-signal unit; mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 88.42 used as my max-loss line", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI; airline peers LUV structure_shift 1 mp_state 3, ALK structure_shift 3 mp_state 3; rank 29; sector_trend_state 3", "verdict": "pass", "fields": ["gics_sector", "rank", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False); adds only at higher prices after entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; fill difficulty NOT_SERVED (day_vol 1.03 proxy only); no tip relied on", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "LION",
+   "reason": "Leader of the one group whose sector_trend_state 2 reads Momentum Building: structure 94.7, structure_shift 1, mp_state 3 STRONG, mp_accel_state 1, day_vol 1.14; MGNI confirms the group. Danger signal = one-day reaction >= atr_14d 0.59 off the high (my translation). Wrong below bracket.stop 13.19.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "sector_trend_state", "day_vol", "atr_14d", "bracket.stop"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 94.7, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 22.75 (extended from 50-day; not a high-proximity read)", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.59; mp_state 3, mp_accel_state 1; bracket.stop 13.19, bracket.stop_type 8, bracket.valid True, bracket.risk_pct 7.37", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLC, sector_trend_state 2; peer MGNI mp_state 3 mp_accel_state 1; rank 20", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False); pyramid only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; fill difficulty NOT_SERVED (day_vol 1.14 proxy only)", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "ALK",
+   "reason": "Fresh trend resumption: structure_shift 3 (BULLISH_BOS) with mp_state 3 STRONG and mp_accel_state 1, sma_distance_pct 7.63 not chased; second airline confirming DAL and LUV. Danger signal = one-day reaction >= atr_14d 2.06 off the high (my translation). Wrong below bracket.stop 38.88.",
+   "fields_cited": ["structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "bracket.stop", "gics_sector"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C19"], "observed": "structure_shift 3 (BULLISH_BOS), structure 55.2, sma_distance_pct 7.63", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.06; mp_state 3, mp_accel_state 1; bracket.stop 38.88, bracket.stop_type 11, bracket.valid True, bracket.risk_pct 6.76", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI; peers DAL structure 96.8, LUV structure 84.2 both mp_state 3; rank 171; sector_trend_state 3", "verdict": "partial", "fields": ["gics_sector", "rank", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False)", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; day_vol 0.8 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "MGNI",
+   "reason": "Second name in the Momentum Building group (sector_trend_state 2), Key Price partner to LION: structure_shift 1, mp_state 3 STRONG, mp_accel_state 1, day_vol 1.57 heavy. Danger signal = one-day reaction >= atr_14d 1.43 off the high (my translation). Wrong below 27.61.",
+   "fields_cited": ["structure_shift", "mp_state", "mp_accel_state", "day_vol", "sector_trend_state", "atr_14d", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 74.7, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 20.17", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.43; mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 27.61 as my max-loss line", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLC, sector_trend_state 2; peer LION structure 94.7 mp_state 3; rank 18", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False)", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; day_vol 1.57 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "AMZN",
+   "reason": "Pullback over and trend resuming: structure_shift 3 (BULLISH_BOS), mp_state 1 BUILDING, mp_accel_state 1, sma_distance_pct 5.11 not chased; CNK also structure_shift 3 in XLY. Danger signal = one-day reaction >= atr_14d 9.68 off the high (my translation). Wrong below 257.25.",
+   "fields_cited": ["structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "gics_sector", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C19"], "observed": "structure_shift 3 (BULLISH_BOS), structure 56.8, sma_distance_pct 5.11", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 9.68; mp_state 1, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 257.25 as my max-loss line", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLY, sector_trend_state 3; peer CNK structure_shift 3; rank 246", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False)", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; day_vol 1.04 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "CNK",
+   "reason": "Break of structure in a strong name: structure_shift 3 (BULLISH_BOS), structure 81.1, mp_state 3 STRONG, sma_distance_pct 9.81; pairs with AMZN as XLY Key Price. mp_accel_state 3 FLAT keeps it lower. Danger signal = one-day reaction >= atr_14d 1.46 off the high (my translation). Wrong below 39.43.",
+   "fields_cited": ["structure_shift", "structure", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "bracket"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C19"], "observed": "structure_shift 3 (BULLISH_BOS), structure 81.1, sma_distance_pct 9.81", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.46; mp_state 3, mp_accel_state 3 (FLAT); bracket.valid False, bracket.atr_fallback_stop 39.43 as my max-loss line", "verdict": "partial", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLY, sector_trend_state 3; peer AMZN structure_shift 3; rank 103", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held (held False)", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation declared; day_vol 0.99 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "held", "impact": "Every packet row reads held False and all held_book fields are null, so no held name (MP or V) could be reviewed; held_review is empty for lack of data, not judgment."},
+  {"field": "structure_shift", "impact": "Null for COST and WMT, so the base-and-break test (step 1) could not be run on either."}
+ ],
+ "declarations": [
+  "trend_confirmation: read from structure/structure_shift + sma_distance_pct (C5); sma_distance_pct is extension from the 50-day, not proximity to a high",
+  "danger_signal_threshold: TRANSLATED via atr_14d (one-day reaction of 1x atr_14d from the day's high), not the literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger_memory: no voice_memory block was supplied in this round, so no standing lesson is applied",
+  "R1: where bracket.valid is False I named my own max-loss line from bracket.atr_fallback_stop; the bracket was not a reason for or against any name"
+ ],
+ "shortfall_reason": null
+}

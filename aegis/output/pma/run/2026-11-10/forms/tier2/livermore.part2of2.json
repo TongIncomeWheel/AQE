@@ -1,0 +1,79 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high: a fresh new high"},
+   "wrong_if": "a one-day reaction of 1x atr_14d off the day's high (my translation of C7), or a close under entry-1atr",
+   "market_void": null,
+   "reason": "At its high: D dist_to_20bar_high_pct 0.2, W 0.2% under its 20-wk high, D and H1 swing HH/HL, H1 at 91% of range. W swing LH/LL is the old pivot pattern now being cleared (C5, C19)."
+  },
+  {
+   "ticker": "SJM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "a daily close above its 52-week closing high"},
+   "wrong_if": "a stall under the high then a one-day reaction of 1x atr_14d off the day's high, or a close under entry-1atr",
+   "market_void": null,
+   "reason": "W and D swing HH/HL but D 0.6% under the last swing high and 2.2% under its 20-day high: a normal reaction ending; I act only on the new high (C5)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "a daily close above its 52-week closing high"},
+   "wrong_if": "a stall under the high then a one-day reaction of 1x atr_14d off the day's high, or a close under entry-1atr",
+   "market_void": null,
+   "reason": "W and D swing HH/HL, a leader in a firm trend, but D dist_to_20bar_high_pct 7.0: the reaction is still running. The new high is the trigger, not today (C5)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "a daily close above its 52-week closing high"},
+   "wrong_if": "a stall under the high then a one-day reaction of 1x atr_14d off the day's high, or a close under entry-1atr",
+   "market_void": null,
+   "reason": "Upward Trend: W and D swing HH/HL, W 12.8% above the last swing high. D 3.7% under its 20-day high and H1 below EMA9: a normal reaction; wait for the new high (C5, C8)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "wrong_if": "a daily close above its 52-week closing high would make it eligible and prove my standing aside wrong",
+   "market_void": null,
+   "reason": "W and D swing HH/HL but D 2.4% under the last swing high and H1 below EMA9 with 9<21: the reaction is not over. Eligible only on its new high (C5)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high: a fresh new high"},
+   "wrong_if": "a one-day reaction of 1x atr_14d off the day's high (my translation of C7), or a close under entry-1atr",
+   "market_void": null,
+   "reason": "Trend, reaction, new high: W and D swing HH/HL, D 1.4% above the last swing high, 0.2% under its 20-day and 20-wk highs, H1 at 96% of range. The C5 shape; BDX confirms the group (C14)."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "a daily close above its 52-week closing high"},
+   "wrong_if": "a stall under the high then a one-day reaction of 1x atr_14d off the day's high, or a close under entry-1atr",
+   "market_void": null,
+   "reason": "W and D swing HH/HL, D 2.2% above the last swing high but 2.9% under its 20-day high, H1 HH but LL: a step from the new high; act only when it prints (C5). PG confirms staples (C14)."
+  },
+  {
+   "ticker": "SHW",
+   "stance": "ABSTAIN",
+   "wrong_if": "a daily close above its 52-week closing high would make it eligible and prove my standing aside wrong",
+   "market_void": null,
+   "reason": "W 3.8% under the last swing high and its 20-wk high; D 3.6% under its 20-day high: the weekly Pivotal Point is not cleared, so this is not yet an Upward Trend at a new high (C5, C19)."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED as a one-day reaction of 1x atr_14d off the day's high, my translation, not the literal 6 points (C7, C18-C20)",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11); R1: no bracket field is a basis for any decision; no market_void, my method has none"
+ ]
+}

@@ -1,0 +1,115 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "TEST at the pivot (C2/C20): D 0.0% above the last swing high, H1 HH/HL 91% of the day's range: price sits on the level it broke, the double stop point. W LH/LL is the caution."
+  },
+  {
+   "ticker": "SJM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last confirmed pivot high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "BREAKOUT from contraction (C2/C12 shape): W and D HH/HL, D 0.6% under the last swing high, not yet broken. bar_range_history NOT_SERVED (R5)."
+  },
+  {
+   "ticker": "GMAB",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Pullback to the 20-day MA, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below ma_20-0.5atr: the first pullback became a reversal.",
+   "market_void": null,
+   "reason": "RETRACEMENT forming (C2/C7 shape): W HH/HL, D 7.0% under the last swing high: first pullback after fresh highs. Buy it at the 20-day; ADX NOT_SERVED (R3)."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Pullback to the 20-day MA, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below ma_20-0.5atr: the first pullback became a reversal.",
+   "market_void": null,
+   "reason": "RETRACEMENT forming (C2/C7 shape): W and D HH/HL, D 3.7% under the last swing high, H1 below EMA9. First pullback after fresh highs; I buy it at the 20-day."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "A daily close above the last confirmed pivot high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "BREAKOUT from contraction (C2/C12 shape): W and D HH/HL, D 2.4% under the last swing high; H1 below EMA9, 9<21 means the break must print first. bar_range_history NOT_SERVED (R5)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high."
+   },
+   "wrong_if": "Daily close below bar_low: the test of the break failed.",
+   "market_void": null,
+   "reason": "TEST at the break (C2/C20): W and D HH/HL, D 1.4% above the last swing high, H1 96% of the day's range. Entry and invalidation sit close together."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "TEST of a recent break (C2/C20): W and D HH/HL, D 2.2% above the last swing high; H1 HH but LL, 2.9% under the last swing high. Take the test of the broken level."
+  },
+  {
+   "ticker": "SHW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Dip to the broken pivot, then a 1-hour close back above it."
+   },
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "TEST of a recent break (C2/C20): D HH/HL 3.4% above the last swing high; W 3.8% under its swing high and H1 HH but LL. Only the pivot test is my entry."
+  }
+ ],
+ "declarations": [
+  "Declared on every decision: setup_type per decision (C2); adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via MTF swing + structure_shift (C3/C4); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16), so market_void is null.",
+  "No refutations of my claims were paired to me; answers is empty."
+ ]
+}
