@@ -2086,7 +2086,7 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
     menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
     env = dict(os.environ); env["AEGIS_REPORT"] = "B"
     cs, sets, out = os.path.join(td, "b_cs.json"), os.path.join(td, "b_sets.json"), os.path.join(td, "b_pk")
-    a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--out", cs, "--out-sets", sets],
+    a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--top", "25", "--out", cs, "--out-sets", sets],
                        capture_output=True, text=True, env=env)
     check("screens runs", a.returncode == 0, (a.stdout + a.stderr)[-400:])
     if a.returncode != 0:
@@ -2176,6 +2176,40 @@ def test_the_brief_sections_registry_isolates_modules_from_the_core_gate(td):
     nodeg = out.replace("> Section Indicators C (the committee reading the AQE indicators) unavailable: ", "")
     fails, _ = bs.check(nodeg, run, "2026-11-10")
     check("a degraded block without its one-line note fails", any("lacks its one-line note" in f for f in fails), str(fails))
+
+
+def test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a(td):
+    """PM 2026-11-10 (option 1): Report B reads the top 10 per seat, a seat nominates at most THREE, and a B name Report A already deliberated reuses A's
+    verdict (tagged) and does not run again. Reports A and C keep six."""
+    def reg(args, report, cwd=None):
+        env = dict(os.environ); env.pop("AEGIS_REPORT", None)
+        if report: env["AEGIS_REPORT"] = report
+        return subprocess.run([sys.executable, REG] + args, capture_output=True, text=True, env=env, cwd=cwd)
+    names = ["S%02d" % i for i in range(8)]
+    cs = os.path.join(td, "capB_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
+    def val(n, report, tag):
+        f = os.path.join(td, f"capB_{tag}.json"); open(f, "w").write(json.dumps(_r1_ballot("oneil", "2026-11-12", names[:n]))); return f
+    r = reg(["validate", "--file", val(4, "B", "b4"), "--round", "1", "--candidates", cs], "B")
+    check("report B: four nominations from one seat are REJECTED (cap three)", r.returncode != 0 and "R33" in r.stdout + r.stderr and "most 3" in r.stdout + r.stderr, (r.stdout + r.stderr)[-300:])
+    r = reg(["validate", "--file", val(3, "B", "b3"), "--round", "1", "--candidates", cs], "B")
+    check("report B: three are accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+    r = reg(["validate", "--file", val(6, "A", "a6"), "--round", "1", "--candidates", cs], None)
+    check("report A is unchanged: six are accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+    r = reg(["validate", "--file", val(7, "A", "a7"), "--round", "1", "--candidates", cs], None)
+    check("report A: seven are still rejected", r.returncode != 0)
+    src = open(PIPE).read()
+    check("the screens command defaults to the top 10 under report B", '(10 if REPORT == "B" else 25)' in src)
+    # reuse-a
+    d = os.path.join(td, "reuse"); os.makedirs(d, exist_ok=True)
+    p4 = os.path.join(d, "phase4.json"); json.dump({"deliberation_set": ["AAA", "BBB", "CCC"], "ranked": [{"ticker": t} for t in ("AAA", "BBB", "CCC")]}, open(p4, "w"))
+    ac = os.path.join(d, "a_consensus.json"); json.dump([{"ticker": "AAA", "verdict": "ADVANCE"}, {"ticker": "ZZZ", "verdict": "PASS"}, {"ticker": "BBB", "verdict": "PASS"}], open(ac, "w"))
+    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    r = subprocess.run([sys.executable, PIPE, "reuse-a", "--phase4", p4, "--a-consensus", ac, "--date", "2026-11-12", "--out", os.path.join(d, "reused_from_a.json")],
+                       capture_output=True, text=True, env=env)
+    P = json.load(open(p4)); R = json.load(open(os.path.join(d, "reused_from_a.json")))
+    check("reuse-a runs", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+    check("only the name A did not deliberate is left to run", P["deliberation_set"] == ["CCC"] and [x["ticker"] for x in P["ranked"]] == ["CCC"], str(P))
+    check("the reused names carry A's verdict, tagged", R["tickers"] == ["AAA", "BBB"] and R["a_verdicts"] == {"AAA": "ADVANCE", "BBB": "PASS"} and P["reused_from_a"] == ["AAA", "BBB"], str(R))
 
 
 def test_shortlist_cap_is_six(td):
@@ -4352,7 +4386,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

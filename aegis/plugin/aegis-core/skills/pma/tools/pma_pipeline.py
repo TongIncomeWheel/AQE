@@ -327,6 +327,24 @@ def cmd_screens(a):
     print("receipt: screens " + ", ".join(f"{s}={len(v)}" for s, v in res.items()) + f"; {len(keep)} distinct names; universe {len(rows)} rows")
 
 
+def cmd_reuse_a(a):
+    """REPORT B (PM 2026-11-10): a name Report B seats that Report A has ALREADY deliberated today is not run again -- A's verdict is reused and tagged.
+    Reads B's phase4.json and A's consensus.json; removes those names from B's deliberation_set, writes reused_from_a.json
+    {tickers, a_verdicts} and records them in phase4 under `reused_from_a`. Held names are A's by definition. Only the new names go through B's chain."""
+    P4 = load(a.phase4, needs=["deliberation_set"])
+    A = {c["ticker"]: c for c in load(a.a_consensus)}
+    reused = [t for t in P4["deliberation_set"] if t in A]
+    new = [t for t in P4["deliberation_set"] if t not in A]
+    P4["reused_from_a"] = reused
+    P4["deliberation_set"] = new
+    if "ranked" in P4:
+        P4["ranked"] = [r for r in P4["ranked"] if r.get("ticker") not in A]
+    save(a.phase4, P4)
+    save(a.out, {"date": a.date, "tickers": reused, "a_verdicts": {t: A[t]["verdict"] for t in reused},
+                 "note": "Report B seated these names but Report A had already deliberated them today: A's verdict is reused, not re-run (PM 2026-11-10, option 1)"})
+    print(f"receipt: reuse-a: {len(reused)} B names already deliberated in A reuse A's verdict ({', '.join(reused) or 'none'}); {len(new)} new names go through B's chain")
+
+
 def _slice(row, menu):
     """Resolve a menu field against a universe row.
 
@@ -871,7 +889,7 @@ QA_SEAT = "steenbarger"
 BENCH_SEATS = ["weis", "thorp"]
 STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
 R33_EFFECTIVE = "2026-11-01"   # ballots dated from here carry the shortlist cap (6) and the case form
-SHORTLIST_CAP = 6              # R33: at most six nominations per decider (fewer is valid, never padded)
+SHORTLIST_CAP = 3 if REPORT == "B" else 6   # R33: at most six nominations per decider (fewer is valid, never padded); Report B: three (PM 2026-11-10)
 def _slate_cap_from_run_yaml(default=25):
     """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
     run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
@@ -3680,7 +3698,9 @@ if __name__ == "__main__":
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
     s = sub.add_parser("screens", help="REPORT B (PM 2026-11-05): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json; no AQE list is a door")
     s.add_argument("--universe-rows", required=True); s.add_argument("--export", required=True, help="Report A's export: only the held book and the market blocks are read from it")
-    s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=25); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
+    s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=(10 if REPORT == "B" else 25), help="names per seat; Report B reads the top 10 (PM 2026-11-10), anything else 25"); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
+    s = sub.add_parser("reuse-a", help="REPORT B: names A already deliberated today reuse A's verdict and leave B's deliberation set (PM 2026-11-10, option 1)")
+    s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-consensus", required=True, help="Report A's consensus.json for the same date"); s.add_argument("--date", required=True); s.add_argument("--out", default="reused_from_a.json")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
@@ -3774,7 +3794,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
