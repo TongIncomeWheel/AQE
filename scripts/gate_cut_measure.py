@@ -30,7 +30,7 @@ def load():
     if not (sc.exists() and px.exists()):
         from src.data import persist
         print("[measure] restoring the state snapshot ...", flush=True)
-        print(persist.load_snapshot_best(only=["data/scores_daily.parquet", "data/panel_daily.parquet"]), flush=True)
+        print(persist.load_snapshot_best(only=["scores_daily.parquet", "panel_daily.parquet"]), flush=True)
     s = pd.read_parquet(sc, columns=["date", "ticker", "sc_momentum", "elder_score"])
     p = pd.read_parquet(px, columns=["date", "ticker", "close"])
     for d in (s, p):
