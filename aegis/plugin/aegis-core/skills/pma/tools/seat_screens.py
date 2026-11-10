@@ -93,7 +93,7 @@ SCREENS = {
         ("price at or under the 20 day", lambda r: _n(_px(r)) and _n(r.get("ma_20")) and _px(r) <= r["ma_20"] * 1.01),
         ("not a bearish shift", lambda r: r.get("choch_state") != "BEARISH" and r.get("structure_shift") != "BEARISH_CHOCH"),
     ],
-    # Seow: position system -- 20 above 40 and rising, a pullback with CCI under -100, close above the 40 day, buyers in the flow, beating the index (R1, R8, R13, R14)
+    # Seow: position system -- 20 above 40 and rising, a pullback with CCI under -100, close above the 40 day, buyers in the flow, beating the index (R1, R8, R14). PM 2026-11-10: the 'break of structure' test (R13) is dropped from the screen -- it excluded the pullback names this seat buys.
     "seow": [
         ("20 day above 40 day", lambda r: _n(r.get("ma_20")) and _n(r.get("ma_40")) and r["ma_20"] > r["ma_40"]),
         ("20 day rising", lambda r: _ge(r, "ma_20_slope_5d_pct", 1e-9)),
@@ -102,13 +102,13 @@ SCREENS = {
         ("low reached the 20 day", lambda r: _n(r.get("bar_low")) and _n(r.get("ma_20")) and r["bar_low"] <= r["ma_20"]),
         ("buyers in the flow", lambda r: _n(_cmf(r)) and _cmf(r) > 0),
         ("beating the index over 63 days", lambda r: _n(r.get("ret_63d")) and _n(r.get("index_pct_change_63d")) and r["ret_63d"] > r["index_pct_change_63d"]),
-        ("break of structure", lambda r: r.get("structure_shift") in BOS or _ge(r, "pct_from_pivot", 1e-9)),
     ],
-    # Raschke: the short-term setups -- ADX-gated pullback to the 20 day (Holy Grail), stochastic Anti, range contraction (NR4/NR7, HV ratio)
+    # Raschke: the short-term setups (canon C5-C8, C12-C13). PM 2026-11-10: the ADX gate no longer blocks rebound / pullback names. The Holy Grail (C7) is
+    # ADX-gated (ADX above 30); the Anti (C6) is NOT -- it reads a washed-out 7/10 stochastic against the longer trend. So the trigger test is EITHER, which is the
+    # smallest loosening that keeps both setups as the canon states them; the ADX threshold itself is untouched.
     "raschke": [
-        ("trend strength 30+", lambda r: _ge(r, "adx_14", 30)),
+        ("Holy Grail or Anti trigger: trend strength 30+, or stochastic washed out", lambda r: _ge(r, "adx_14", 30) or _le(r, "stoch_k_14", 30)),
         ("pullback to the 20 day", lambda r: _n(_px(r)) and _n(r.get("ma_20")) and _n(r.get("atr_14d")) and abs(_px(r) - r["ma_20"]) <= r["atr_14d"]),
-        ("stochastic washed out", lambda r: _le(r, "stoch_k_14", 30)),
         ("narrow range day", lambda r: r.get("nr4_flag") is True or r.get("nr7_flag") is True),
         ("volatility contracted", lambda r: _le(r, "hv_ratio_6_100", 0.5)),
         ("20 day above 50 day", lambda r: _n(r.get("ma_20")) and _n(r.get("ma_50")) and r["ma_20"] > r["ma_50"]),
