@@ -67,6 +67,8 @@ kl = lambda what: next(k for k in KL if k["what"] == what)
 def f2(x): return f"{x:,.2f}"
 def sg(x, d=2): return f"{x:+.{d}f}".replace("-", "&minus;")
 def mins(s): return str(s).replace("-", "&minus;") if str(s).startswith("-") else str(s)
+from card_words import LEVEL_PLAIN, WORD_PLAIN, GENERIC_COND, cond_plain, no_raw_words   # one table; see card_words.py
+
 def plain(s):
     """Term swaps only (never a fact): the same jargon-to-words idea the real page's plainify step uses."""
     for a, b in (("rs rank", "strength rank"), ("ATRs", "daily ranges"), ("Elder impulse", "momentum score"), ("RSI", "momentum")):
@@ -212,6 +214,7 @@ last_run_row = [c.strip() for c in sc_lines[-1].strip("|").split("|")]          
 y_spy, y_list, y_beat = last_run_row[3], last_run_row[4], last_run_row[5]
 mk = DEC["market_kill"]
 mk_plain = re.sub(r"\s*\(\s*C\d+(?:\s*,\s*(?:C\d+|gate [A-Z_ ]+))*\s*\)", "", re.sub(r"^\s*void\s+(every\s+new\s+trigger\s+)?if\s+", "", mk["plain"], flags=re.I)).strip().rstrip(".")
+mk_plain = no_raw_words(mk_plain)               # the 9 Nov line printed "SPY close_below ma_50" raw
 now_sgt = datetime.now(SGT)
 WORD = {i: w for i, w in enumerate("No One Two Three Four Five Six Seven Eight Nine Ten".split())}
 nword = lambda n: WORD.get(n, str(n))
@@ -976,7 +979,8 @@ at, ht = FC["advance_tags"], FC["hold_tags"]
 lanes = FC["advance_lanes"]; trg = FC["advance_triggers"]
 trg_words = {"h1_close_above:bar_high": "above yesterday&rsquo;s high", "h1_close_above:pivot_high": "above the last pivot high"}
 trg_names = {w: [x["ticker"] for x in FC["advance"] if x["trigger_word"] == w] for w in trg}
-trg_txt = " and ".join(f"{n} {trg_words.get(w, E(w))}" + (f" ({', '.join(trg_names[w])})" if n <= 2 else "") for w, n in sorted(trg.items(), key=lambda kv: -kv[1]))
+trg_txt = " and ".join(f"{n} {trg_words.get(w) or E(cond_plain(w))}" + (f" ({', '.join(trg_names[w])})" if n <= 2 else "") for w, n in sorted(trg.items(), key=lambda kv: -kv[1]))
+trg_txt = no_raw_words(trg_txt)
 ext_l = {k: FL[k]["tags"]["EXTENDED"] for k in LKEYS}
 _nA = len(FC["advance"])
 _dom = max(LVC.TAGS, key=lambda t: at.get(t, 0)) if _nA else None
