@@ -593,6 +593,27 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] VALEN playbook failed: {exc}")
 
+    # Step 8a-1c: Stage Weather — Weinstein's four-stage cycle (basing /
+    # advancing / topping / declining) on weekly bars, for SPY/QQQ, the 11
+    # GICS sectors and every single name on the panel (docs/AQE_STAGE_WEATHER.md).
+    # After Step 8 so the held book / daily_list it reports on are this run's.
+    # A weather READING only — never a gate, never a size. Wrapped: an
+    # addition that must never take the export down.
+    print(f"{_el()} [daily] Step 8a-1c: Stage Weather...")
+    try:
+        from src.stages.daily import run_stage_weather, write_artifacts as _sw_write
+        _sw = run_stage_weather()
+        _sw_paths = _sw_write(_sw)
+        _swm = _sw.get("market_read") or {}
+        _b = (_sw.get("breadth") or {}).get("now") or {}
+        print(f"  status {_sw['status']} · market Stage {_swm.get('stage')} ({_swm.get('stage_name')}, "
+              f"{_swm.get('weeks_in_stage')} wks) · breadth {_swm.get('breadth_agreement')} · "
+              f"Stage 2 share {_b.get('stage_2_pct')}% of {_b.get('n')} · {_sw_paths['published']}")
+        if _sw["status"] != "OK":
+            print(f"  [WARN] Stage Weather {_sw['status']}: {_sw.get('reason') or (_sw.get('breadth') or {}).get('reason')}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] Stage Weather failed: {exc}")
+
     # Step 8a-2: publish the day's artifacts into the repo (aegis/output/).
     # GitHub is the primary store as of 2026-08-12; the Drive write above stays
     # as the backup leg. Both run every day so the book is never in one place.

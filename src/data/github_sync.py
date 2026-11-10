@@ -414,6 +414,7 @@ DAILY_ARTIFACTS = (
     "aqe_macro_pack.json",        # Crown+MacroWeather+SRM+Thematic, one door
     "aqe_valen_dashboard.json",   # VALEN reading copy, plain English first
     "valen_dashboard.json",       # VALEN runtime record
+    "aqe_stage_weather.json",     # Stage Weather reading copy (Weinstein 4-stage cycle), plain English first
     "qs_daily.json",              # QS standalone artifact
     "shortlist.json",
     "held_positions.json",
