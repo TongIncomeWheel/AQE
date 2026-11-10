@@ -32,7 +32,24 @@
       "missing_conditions": [
         "HYG up (roc5 0.81%, roc20 0.28%)",
         "IWM up (roc5 1.21%, roc20 1.66%)",
-        "CTA rates bias -0.30"
+        "CTA rates bias -0.25"
+      ],
+      "unavailable": [],
+      "can_lead": true
+    },
+    {
+      "scenario": "DISPERSION_REGIME",
+      "score": 0.5,
+      "coverage": 1.0,
+      "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
+      "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
+      "evidence": [
+        "dispersion ELEVATED (spread 23.98)",
+        "CTA sector spread 0.63"
+      ],
+      "missing_conditions": [
+        "implied correlation 13.23 (55% pctl)",
+        "VIX 19.92"
       ],
       "unavailable": [],
       "can_lead": true
@@ -46,32 +63,13 @@
       "evidence": [
         "HYG up (roc5 0.81%, roc20 0.28%)",
         "IWM up (roc5 1.21%, roc20 1.66%)",
-        "CTA energy bias +0.02",
-        "CTA rates bias -0.30"
+        "CTA energy bias +0.03",
+        "CTA rates bias -0.25"
       ],
       "missing_conditions": [
         "CPER down (roc5 -2.39%, roc20 -5.41%)",
         "COPPER_GOLD down (roc5 -6.99%, roc20 -4.76%)",
         "TLT up (roc5 0.28%, roc20 5.01%)"
-      ],
-      "unavailable": [],
-      "can_lead": true
-    },
-    {
-      "scenario": "LIQUIDITY_STRESS",
-      "score": 0.3125,
-      "coverage": 1.0,
-      "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
-      "expression": "Cut gross. Defined-risk downside. Cash is a position.",
-      "evidence": [
-        "TLT up (roc5 0.28%, roc20 5.01%)",
-        "implied correlation at 79% pctl"
-      ],
-      "missing_conditions": [
-        "UUP flat (roc5 0.03%, roc20 -0.55%)",
-        "GLD flat (roc5 4.94%, roc20 -0.69%)",
-        "HYG up (roc5 0.81%, roc20 0.28%)",
-        "dispersion NORMAL"
       ],
       "unavailable": [],
       "can_lead": true
@@ -84,7 +82,7 @@
       "expression": "US large-cap domestic over international and commodities.",
       "evidence": [
         "CPER down (roc5 -2.39%, roc20 -5.41%)",
-        "CTA fx bias +0.40"
+        "CTA fx bias +0.38"
       ],
       "missing_conditions": [
         "UUP flat (roc5 0.03%, roc20 -0.55%)",
@@ -95,18 +93,20 @@
       "can_lead": true
     },
     {
-      "scenario": "DISPERSION_REGIME",
-      "score": 0.1667,
+      "scenario": "LIQUIDITY_STRESS",
+      "score": 0.125,
       "coverage": 1.0,
-      "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
-      "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
+      "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
+      "expression": "Cut gross. Defined-risk downside. Cash is a position.",
       "evidence": [
-        "CTA sector spread 0.70"
+        "TLT up (roc5 0.28%, roc20 5.01%)"
       ],
       "missing_conditions": [
-        "implied correlation 20.76 (79% pctl)",
-        "dispersion NORMAL (spread 21.78)",
-        "VIX 19.92"
+        "UUP flat (roc5 0.03%, roc20 -0.55%)",
+        "GLD flat (roc5 4.94%, roc20 -0.69%)",
+        "HYG up (roc5 0.81%, roc20 0.28%)",
+        "implied correlation at 55% pctl",
+        "dispersion ELEVATED"
       ],
       "unavailable": [],
       "can_lead": true
@@ -118,7 +118,7 @@
       "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
       "expression": "Real assets, energy, short duration. Multiple compression risk.",
       "evidence": [
-        "CTA energy bias +0.02"
+        "CTA energy bias +0.03"
       ],
       "missing_conditions": [
         "USO down (roc5 -9.06%, roc20 -5.54%)",
@@ -188,7 +188,7 @@
     }
   },
   "weather_missing": [],
-  "generated_at": "2026-11-10T06:51:27+08:00",
+  "generated_at": "2026-11-10T14:48:05+08:00",
   "expected_session": "2026-11-09",
-  "as_of": "2026-11-06"
+  "as_of": "2026-11-09"
 }
