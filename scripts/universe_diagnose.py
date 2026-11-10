@@ -85,7 +85,10 @@ def main(argv):
         av = r.get("avgVolume")
         band = ("admit (>= %s)" % f"{U.SCREEN_AVG_VOL_HIGH:,}" if av and av >= U.SCREEN_AVG_VOL_HIGH else
                 "reject cheap" if av is not None and av < U.SCREEN_AVG_VOL_PREFILTER else "verify on bars")
-        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} avgVolume={av} -> {band if (r.get('country') or '').upper() == U.SCREEN_COUNTRY else 'excluded: non-US'} | scored: {tk in scored}")
+        ov = U.load_universe_overrides()
+        tag = "override: EXCLUDE (PM ADR list)" if tk in ov["exclude"] else "override: INCLUDE (PM ordinary-share list)" if tk in ov["include"] else \
+              ("US-domiciled, no ADR check" if (r.get("country") or "").upper() == "US" else "foreign-domiciled: profiled for isAdr")
+        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} avgVolume={av} -> {band} | {tag} | scored: {tk in scored}")
 
     print("[real dry run] build_universe(dry_run=True) ...")
     res = U.build_universe(dry_run=True)
