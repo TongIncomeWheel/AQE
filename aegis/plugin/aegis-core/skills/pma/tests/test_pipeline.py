@@ -2122,6 +2122,24 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
     check("the screen is deterministic", sc.screen("oneil", D["daily_list"]) == sc.screen("oneil", list(D["daily_list"])))
 
 
+def test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass(td):
+    """PM 2026-11-10: Seow loses the 'break of structure' test (7 left); Raschke's ADX gate no longer blocks rebound / pullback names (Holy Grail ADX 30+ OR the
+    Anti's washed-out stochastic)."""
+    import importlib.util as _iu
+    sp = _iu.spec_from_file_location("seat_screens_l", os.path.join(TOOLS, "seat_screens.py")); sc = _iu.module_from_spec(sp); sp.loader.exec_module(sc)
+    check("Seow has 7 tests and none is a break of structure", len(sc.SCREENS["seow"]) == 7 and not any("structure" in n for n, _ in sc.SCREENS["seow"]))
+    base = {"ticker": "R", "ma_20": 50.0, "ma_50": 48.0, "bar_close": 50.5, "atr_14d": 1.5, "hv_ratio_6_100": 0.4, "nr7_flag": True}
+    weak_adx_rebound = dict(base, adx_14=18.0, stoch_k_14=12.0)
+    strong_adx = dict(base, adx_14=35.0, stoch_k_14=70.0)
+    flat = dict(base, adx_14=18.0, stoch_k_14=70.0)
+    n1, h1 = sc.score("raschke", weak_adx_rebound)
+    n2, _ = sc.score("raschke", strong_adx)
+    n3, h3 = sc.score("raschke", flat)
+    check("a rebound name with a washed-out stochastic and weak ADX now passes the trigger", n1 == len(sc.SCREENS["raschke"]) == 5 and any("stochastic washed out" in x for x in h1), str(h1))
+    check("a strong-ADX name still passes it (the Holy Grail gate is unchanged)", n2 == 5)
+    check("a flat, weak-ADX, un-washed name does not", n3 == 4 and not any("Holy Grail" in x for x in h3), str(h3))
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4296,7 +4314,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
