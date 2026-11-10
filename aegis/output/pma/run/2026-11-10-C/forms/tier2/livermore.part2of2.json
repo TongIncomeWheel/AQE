@@ -1,0 +1,88 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "Group leader: `mp` 100.0 STRONG/ACCELERATING, `structure` 82.1, `sc_momentum` 82.9, `flow` 80.3; W and D HH/HL but 3.7% under the high and H1 below EMA9: break first."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "`mp` 100.0 and `structure` 82.1 pair with SWK (second-name confirmation); `flow` 40.8 and D HH but LL, 2.4% under the high: wait for the new high."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "`sc_momentum` 80.4, `flow` 84.2, W and D HH/HL; `structure` 75.8 RANGE (no BOS), `mp` 93.0 DECELERATING, H1 closed on its low: wait for the pivot break."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or H1 failing to recover its EMA21",
+   "market_void": null,
+   "reason": "`energy` 84.0 coiled and `sc_momentum` 75.1, but `structure` 74.7 RANGE, `mp` 80.0 DECELERATING and H1 9<21: smallest conviction, only on the break."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "0.2% under the high with W and D HH/HL: `structure` 73.7, `energy` 77.3, `mp` 76.0 STRONG/ACCELERATING, `sc_momentum` 73.3; `day_vol` 0.95 is no confirmation yet."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "0.6% under the high, D HH/HL: `structure` 89.5, `flow` 90.8, `mp` 93.0 STRONG/ACCELERATING, `sc_momentum` 84.4; W swing LH/LL is the one weak leg."
+  }
+ ],
+ "declarations": [
+  "Danger signal translated via atr_14d as fade_atr_ge: my own translation, not Livermore's six points. Fill difficulty NOT_SERVED."
+ ]
+}

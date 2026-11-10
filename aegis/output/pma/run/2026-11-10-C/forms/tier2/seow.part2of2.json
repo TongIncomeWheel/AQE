@@ -1,0 +1,63 @@
+{
+ "voice": "seow",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red candle then a break of its low.",
+   "market_void": null,
+   "reason": "Break near high: `structure` 82.1, `mp` 100.0, `flow` 82.1 vs COM `subcomponents.flow.cmf 0.11`, `elder` 10.0, `sc_momentum` 82.9. Weekly and daily HH/HL, 4 confirms 0 refutes."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if cmf turns above zero and flow rises while price holds the high.",
+   "market_void": null,
+   "reason": "High on negative COM: `subcomponents.flow.cmf -0.2`, `flow` 40.8, `sc_momentum` 69.3; daily swing HH but LL. `structure` 82.1 and `mp` 100.0 are strength without money behind it (C28)."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "trade_above:pivot_high", "tf": "D", "plain": "Buy stop through the last pivot high; no resistance break has printed yet."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a rejection back under pivot_high.",
+   "market_void": null,
+   "reason": "Signal pending: `structure` 75.8 not yet broken. `mp` 93.0, `flow` 84.2, `sc_momentum` 80.4 strong but COM thin `subcomponents.flow.cmf 0.05`, `elder` 7.0. Hourly under EMA9, daily red: wait for the break."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "trade_above:pivot_high", "tf": "D", "plain": "Buy stop through the last pivot high once price breaks out of the coil."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a rejection back under pivot_high.",
+   "market_void": null,
+   "reason": "Coiled, no break yet: `structure` 74.7, `energy` 84.0, `sc_momentum` 75.1. COM modest `subcomponents.flow.cmf 0.05`, `flow` 63.2, `elder` 7.0. Daily red, hourly 9<21: wait."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Break at a high, 0.2% under weekly high: `structure` 73.7, `subcomponents.flow.cmf 0.16`, `flow` 67.1, `mp` 76.0, `energy` 77.3, `sc_momentum` 73.3. `elder` 9.0 INTERRUPTED and lead fading are cautions."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red candle then a break of its low.",
+   "market_void": null,
+   "reason": "Every position test passes: `structure` 89.5, `flow` 90.8, `subcomponents.flow.cmf 0.27`, `elder` 10.0, `mp` 93.0, `sc_momentum` 84.4. Caution: weekly swing LH/LL (C21 house) but 0.6% under its 20-wk high."
+  }
+ ],
+ "declarations": [
+  "Proxies: resistance line = structure_shift; COM = subcomponents.flow.cmf; TIF = elder_pattern; support = max(fib_swing_low, base_low_20d).",
+  "bar_high, pivot_high, base_low_20d levels not in packet; named by field only. Liquidity unseen. No market_void: my method has none."
+ ]
+}

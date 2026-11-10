@@ -1,0 +1,37 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {"ticker": "SWK", "stance": "OPPOSE", "timing": null, "trigger": null,
+   "wrong_if": "A break of the Nov 4 high on day_vol 1.40 or more would make it a clean breakout.",
+   "market_void": null,
+   "reason": "`day_vol` 1.0 fails C16 and price is 3.7% under the swing high. `sc_momentum` 82.9, `mp` 100.0, `structure` 82.1 and `subcomponents.structure.base_days` 61.0 make a leader I buy on a volume break, not before. W HH/HL, H1 below EMA9."},
+  {"ticker": "TREX", "stance": "OPPOSE", "timing": null, "trigger": null,
+   "wrong_if": "A new base builds and breaks on day_vol 1.40 or more with flow rising.",
+   "market_void": null,
+   "reason": "`day_vol` 1.09 fails C16 at the new high; `subcomponents.structure.base_score` 0.0 on `subcomponents.structure.base_days` 1.0 is no base and `flow` 40.8 is low. `structure` 82.1 and `mp` 100.0 are strong, W HH/HL, but D HH but LL."},
+  {"ticker": "GPN", "stance": "OPPOSE", "timing": null, "trigger": null,
+   "wrong_if": "A BOS through the Oct 30 high on day_vol 1.40 or more.",
+   "market_void": null,
+   "reason": "`structure` 75.8 is RANGE: no BOS and no pivot break to buy (R3); `mp_accel_state` 2 is DECELERATING. `sc_momentum` 80.4, `flow` 84.2 and `mp` 93.0 are strong and `day_vol` 0.83 on the dip is handle dry-up (C15). H1 12% of range. Buy the break."},
+  {"ticker": "ADP", "stance": "OPPOSE", "timing": null, "trigger": null,
+   "wrong_if": "A break of the Oct 23 pivot high on day_vol 1.40 or more.",
+   "market_void": null,
+   "reason": "`day_vol` 0.96 fails C16; structure_shift RANGE with `structure` 74.7 and `mp` 80.0 on `mp_accel_state` 2 (DECELERATING). `energy` 84.0 and `sc_momentum` 75.1 are good but quiet. D 2.4% under swing high, H1 9<21."},
+  {"ticker": "TMO", "stance": "OPPOSE", "timing": null, "trigger": null,
+   "wrong_if": "A push on day_vol 1.40 or more with rs_leadership turning LEADER.",
+   "market_void": null,
+   "reason": "At the high on `day_vol` 0.95 with `rs_leadership` IN-LINE (downday 0.17): fails both L and C16. `structure` 73.7, `mp` 76.0 and `energy` 77.3 are good but do not replace volume. W D HH/HL, H1 LH/LL."},
+  {"ticker": "EW", "stance": "SUPPORT", "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, on volume at least 1.4x normal"},
+   "wrong_if": "Hourly reject of yesterday's high, a close under ma_50 89.21, or the push prints on day_vol under 1.40.",
+   "market_void": "Index under distribution or no confirmed uptrend (C1-C3): every breakout void",
+   "reason": "Cleanest breakout: new high on `day_vol` 1.43 (+43%, just clears C16), `structure` 89.5, `flow` 90.8, `mp` 93.0, `sc_momentum` 84.4. `subcomponents.structure.base_days` 566.0 is long but `subcomponents.structure.base_score` 5.0 is modest; W LH/LL is the flaw."}
+ ],
+ "declarations": [
+  "Substitutes: day_vol 20-day stands for the +40% volume test (C16); base_days/base_score for base integrity; rs_leadership for the RS rating.",
+  "NOT_AVAILABLE, never inferred: C A S I fundamentals and base-stage count. market_gate DELEGATED: every SUPPORT is void unless the index is in a confirmed uptrend.",
+  "pivot_high and pct_from_pivot UNSERVED: no pivot-distance test claimed. sc_m_gates and pipe_rank are null in the indicator sheet."
+ ]
+}

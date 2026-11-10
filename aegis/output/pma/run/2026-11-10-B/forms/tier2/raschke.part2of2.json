@@ -1,0 +1,23 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "TECH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes above yesterday's high, after H1 gets back above EMA9."
+   },
+   "wrong_if": "A daily close below bar_low: the failed contraction breakout flips (C23) and I am out.",
+   "market_void": null,
+   "reason": "Breakout family (C2/C12): D 0.1% above last swing high, W 0.1% under 20-wk high, both HH/HL, sma_distance_pct 0.46 so entry and invalidation sit close (C20). H1 is below EMA9 (LH but EL, 46% of range), so the entry waits for the H1 close above bar_high."
+  }
+ ],
+ "declarations": [
+  "bar_range_history NOT_SERVED (R5): atr_14d is not a trustworthy contraction read, so the call rests on structure_shift and sma_distance_pct. No bracket field is a reason (R1)."
+ ]
+}

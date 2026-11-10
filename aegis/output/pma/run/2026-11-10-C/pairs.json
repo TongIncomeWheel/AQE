@@ -1,0 +1,314 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-10T14:39:20Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-10",
+ "survivors": [
+  "MGNI",
+  "CNK",
+  "DAL",
+  "ABBV",
+  "BDX",
+  "ELF",
+  "SWK",
+  "TREX",
+  "GPN",
+  "ADP",
+  "TMO",
+  "EW"
+ ],
+ "pairs": [
+  {
+   "pair_id": "CNK-oneil-against~seow",
+   "ticker": "CNK",
+   "claim_id": "CNK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "`day_vol 1.05` under the volume test; div_bear_count 2 at the high.",
+   "refute_evidence": "`subcomponents.energy.exhaustion_score 10.0` (no divergence at highs), `subcomponents.flow.accum_score 7.5`, `subcomponents.flow.volume_score 5.5`: flow engine sees no distribution. Thin spot is `subcomponents.flow.cmf 0.02`. day_vol not served.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21; swing LH but HL; 1.6% under 20-wk high, week still open",
+    "D": "above EMA9, 9>21; HH/HL; 0.9% above swing high; 1.6% under 20-day high",
+    "H1": "above EMA9, 9>21; LH/LL; closed at 100% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CNK-oneil-against~wyckoff",
+   "ticker": "CNK",
+   "claim_id": "CNK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "`day_vol 1.05` under the volume test; div_bear_count 2 at the high.",
+   "refute_evidence": "`flow` 71.1 with `subcomponents.flow.volume_score` 5.5: volume is participating, day_vol 1.05 clears my 1.0 floor. `subcomponents.energy.exhaustion_score` 10.0 shows no tired-run read to back div_bear_count 2.",
+   "refute_tf": {
+    "W": "9>21, LH but HL, 5.3% above last swing high (open week)",
+    "D": "9>21, HH/HL, 0.9% above last swing high: at the Creek",
+    "H1": "9>21, LH/LL, 0.7% above swing high, closed 100% of day range"
+   }
+  },
+  {
+   "pair_id": "DAL-livermore-for~oneil",
+   "ticker": "DAL",
+   "claim_id": "DAL-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Above all four averages (ma20 80.89, ma200 77.22); sma_dist 13.3% is modest; `flow` 84.2 supports.",
+   "refute_evidence": "Extension is fair (entry 91.8 is 19% over ma200 77.22) but it does not carry: `flow` 84.2 is a same-day proxy, rs_leadership is IN-LINE, `day_vol 1.03` is under 1.4, and `energy` 61.3 is only mid.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, LH/LL, 4.1% under 20-wk high: weekly swing not up",
+    "D": "HH but LL, 0.8% under 20-day high: no clean base",
+    "H1": "HH/HL, 72% of range: fine but unconfirmed"
+   }
+  },
+  {
+   "pair_id": "DAL-aqe-quant-for~oneil",
+   "ticker": "DAL",
+   "claim_id": "DAL-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "oneil",
+   "claim_text": "Structure at `structure 96.8`, momentum built on `subcomponents.mp.abs_mom_score 30.0`, Precision Edge all three.",
+   "refute_evidence": "`structure` 96.8 with `subcomponents.structure.base_score 15.0` is full marks, but it rests on `subcomponents.structure.base_days 11.0`, under the 7-8 weeks a base needs; `day_vol 1.03` and IN-LINE leadership also fail.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, LH/LL: no weekly base",
+    "D": "HH but LL, 0.8% under 20-day high: 11-day base too short",
+    "H1": "HH/HL, 72% of range: unconfirmed"
+   }
+  },
+  {
+   "pair_id": "DAL-oneil-against~aqe-quant",
+   "ticker": "DAL",
+   "claim_id": "DAL-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "aqe-quant",
+   "claim_text": "IN-LINE not LEADER; `day_vol 1.03`; base_days 11.0; coil warn.",
+   "refute_evidence": "`subcomponents.structure.base_days 11.0` is inside the 10-25 sweet spot, `subcomponents.structure.base_score 15.0` is the ceiling. `subcomponents.structure.rs_vs_spy 5.79` is positive, so IN-LINE does not hold. Day-volume unread.",
+   "refute_tf": {
+    "W": "`subcomponents.structure.wk_score 15.0`: weekly close above rising 10-wk avg",
+    "D": "`structure 96.8`; `subcomponents.structure.base_days 11.0` in 10-25 range",
+    "H1": "not served to my method: engines score daily bars"
+   }
+  },
+  {
+   "pair_id": "ABBV-oneil-against~raschke",
+   "ticker": "ABBV",
+   "claim_id": "ABBV-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "`day_vol 1.04` under the test; `mp` 65.0 DECELERATING; `structure` 63.2 modest.",
+   "refute_evidence": "A reclaim, not a breakout: volume is not my test of a failed test. `energy` 82.4 and D swing HH/HL stand; `structure` 63.2 clears its floor; `mp` 65.0 FADING is a default label, not decay.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, LH but HL, 3.2% under 20-wk high",
+    "D": "above EMA9, 9>21, HH/HL, last bar red, 3.2% under 20-day high",
+    "H1": "above EMA9, 9>21, LH/LL, 76% of range"
+   }
+  },
+  {
+   "pair_id": "ABBV-oneil-against~wyckoff",
+   "ticker": "ABBV",
+   "claim_id": "ABBV-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "`day_vol 1.04` under the test; `mp` 65.0 DECELERATING; `structure` 63.2 modest.",
+   "refute_evidence": "day_vol 1.04 clears my 1.0 floor and the daily is 1.8% under its swing high: a quiet back-up to the Creek. `energy` 82.4 with `subcomponents.energy.squeeze_score` 12.5 is a coil there. `structure` 63.2 modest: conceded.",
+   "refute_tf": {
+    "W": "9>21, LH but HL, 9.9% above last swing high, 3.2% under 20-wk high",
+    "D": "9>21, HH/HL, 1.8% under last swing high: pullback to the test",
+    "H1": "9>21, LH/LL, 0.4% under swing high, 76% of day range"
+   }
+  },
+  {
+   "pair_id": "BDX-seow-for~oneil",
+   "ticker": "BDX",
+   "claim_id": "BDX-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Break at a high with the strongest COM in this part and TIF ACCELERATION.",
+   "refute_evidence": "The break is unconfirmed: `day_vol 1.09` is a hard rejection under my 1.4 line and div BEARISH count 1 sits at the high. COM and TIF are not my fields; `mp` 96.0 does not replace volume.",
+   "refute_tf": {
+    "W": "HH/HL, 0.7% under 20-wk high: at the high, not through it",
+    "D": "HH/HL, 0.7% under 20-day high: no volume break",
+    "H1": "HH/HL, 0.7% under 20-hr high: 73% of range, quiet"
+   }
+  },
+  {
+   "pair_id": "BDX-oneil-against~livermore",
+   "ticker": "BDX",
+   "claim_id": "BDX-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "`day_vol 1.09` under the test; div BEARISH count 1.",
+   "refute_evidence": "`day_vol 1.09` is above normal at a high, not a failure. Divergence count is advisory-only for me. `structure` 76.8 ABOVE_STRUCTURE and `mp` 96.0 FADING/ACCELERATING, from_52w_hi 0.0%, W D H1 all HH/HL.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 0.7% under 20-wk high",
+    "D": "HH/HL, 7.4% above swing high, 0.7% under 20-day high",
+    "H1": "HH/HL, 0.2% above swing high, 73% of range"
+   }
+  },
+  {
+   "pair_id": "BDX-oneil-against~seow",
+   "ticker": "BDX",
+   "claim_id": "BDX-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "`day_vol 1.09` under the test; div BEARISH count 1.",
+   "refute_evidence": "COM is strong: `subcomponents.flow.cmf 0.35`, `subcomponents.flow.accum_score 5.5`, `subcomponents.flow.volume_score 5.5`; no negative-cmf divergence. Concede `subcomponents.flow.mfi 87.71` stretched.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21; HH/HL; 0.7% under 20-wk high",
+    "D": "above EMA9, 9>21; HH/HL; 7.4% above swing high; 0.7% under 20-day high",
+    "H1": "above EMA9, 9>21; HH/HL; last bar red; 73% of range"
+   }
+  },
+  {
+   "pair_id": "ELF-oneil-for~seow",
+   "ticker": "ELF",
+   "claim_id": "ELF-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "New high on `day_vol` 1.61, BOS, base_days 35.0, coil strong, `energy` 85.7, sector strong.",
+   "refute_evidence": "New high on volume but money closes at the lows: `subcomponents.flow.volume_score 6.5` with `subcomponents.flow.cmf -0.3`, `subcomponents.flow.accum_score 0.0`, `flow` 48.7. That is the C28 divergence. Coil `energy` 85.7 is real.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21; HH/HL; 0.9% above swing high; 3.1% under 20-wk high",
+    "D": "above EMA9, 9>21; LH but HL; 1.3% above swing high; 3.1% under 20-day high",
+    "H1": "above EMA9, 9>21; HH/HL; 2.4% under 20-hr high; 41% of range"
+   }
+  },
+  {
+   "pair_id": "ELF-minervini-for~seow",
+   "ticker": "ELF",
+   "claim_id": "ELF-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "A 52w high on day_vol 1.61 with `energy` 85.7 coiled and strong 12m return.",
+   "refute_evidence": "Coil is real (`energy` 85.7, `subcomponents.energy.squeeze_score 12.5`) but a 52-week high without money is unconfirmed: `subcomponents.flow.cmf -0.3`, `flow` 48.7, `subcomponents.flow.mfi 49.44`. 12m return not served.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21; HH/HL; 0.9% above swing high; 3.1% under 20-wk high",
+    "D": "above EMA9, 9>21; LH but HL; 1.3% above swing high; 3.1% under 20-day high",
+    "H1": "above EMA9, 9>21; HH/HL; 2.4% under 20-hr high; 41% of range"
+   }
+  },
+  {
+   "pair_id": "SWK-oneil-against~wyckoff",
+   "ticker": "SWK",
+   "claim_id": "SWK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "`day_vol` 1.0 under the test; lens.coil warn; lens.resistance warn.",
+   "refute_evidence": "day_vol 1.0 meets my 1.0 floor and the daily is 3.7% under its swing high, a pullback to value. `flow` 80.3 with `subcomponents.flow.volume_score` 5.5 and `structure` 82.1. Coil and resistance lens values are not in my packet.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 12.8% above last swing high, 3.7% under 20-wk high",
+    "D": "9>21, HH/HL, 3.7% under last swing high and 20-day high: pullback",
+    "H1": "below EMA9, 9>21, LH but HL, 1.4% above swing high, 46% of day range"
+   }
+  },
+  {
+   "pair_id": "TREX-minervini-for~seow",
+   "ticker": "TREX",
+   "claim_id": "TREX-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "A 52w high with `structure` 82.1, `mp` 100.0, `elder` 10.0 and a triggered pivot grade.",
+   "refute_evidence": "The break is unconfirmed: `subcomponents.flow.cmf -0.2`, `flow` 40.8, `subcomponents.flow.accum_score 0.0`. `structure` 82.1, `mp` 100.0, `elder` 10.0 are real, but a price high without money is the C28 divergence.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21; HH/HL; 15.3% above swing high; 2.4% under 20-wk high",
+    "D": "above EMA9, 9>21; HH but LL; 14.9% above swing high; 2.4% under 20-day high",
+    "H1": "above EMA9, 9>21; HH but LL; 1.4% under 20-hr high; 77% of range"
+   }
+  },
+  {
+   "pair_id": "GPN-livermore-for~oneil",
+   "ticker": "GPN",
+   "claim_id": "GPN-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "ma20 88.28 over ma50 86.79 over ma200 77.61; W and D HH/HL; `flow` 84.2.",
+   "refute_evidence": "structure_shift is RANGE (`structure` 75.8): no completed break. `day_vol 0.83` is far under 1.4 and `mp` 93.0 is DECELERATING. `flow` 84.2 is a same-day proxy, advisory for me.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 3.5% under 20-wk high: intact, below pivot",
+    "D": "HH/HL, 3.5% under 20-day high: range, no break",
+    "H1": "below EMA9, HH/HL, 12% of range: closed on the low"
+   }
+  },
+  {
+   "pair_id": "GPN-oneil-against~raschke",
+   "ticker": "GPN",
+   "claim_id": "GPN-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "`day_vol` 0.83; RANGE; two lens warns.",
+   "refute_evidence": "RANGE is price inside the swing, the pullback itself, not BEARISH_CHOCH. `structure` 75.8 sits with `flow` 84.2 and `mp` 93.0 (slowing, default label); day_vol 0.83 on a dip is quiet and lens warns are not read.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 3.5% under 20-wk high",
+    "D": "above EMA9, 9>21, HH/HL, 3.5% under 20-day high",
+    "H1": "below EMA9, 9>21, HH/HL, 12% of day range: the dip"
+   }
+  },
+  {
+   "pair_id": "TMO-livermore-for~oneil",
+   "ticker": "TMO",
+   "claim_id": "TMO-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "ma20 690.13 over ma50 662.8 over ma200 553.45; rs_rank_pct 93.38; coil lens strong; Valen reclaim day.",
+   "refute_evidence": "The coil is real (`subcomponents.energy.squeeze_score 12.5`, `energy` 77.3) but the high came on `day_vol 0.95` with rs_leadership IN-LINE. RS rank 93.38 is not my rating; `mp` 76.0 does not replace volume.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 0.2% under 20-wk high: at the high",
+    "D": "HH/HL, 0.2% under 20-day high: coiled, no volume",
+    "H1": "LH/LL, 96% of range, 0.2% under 20-hr high: tight"
+   }
+  },
+  {
+   "pair_id": "TMO-oneil-against~livermore",
+   "ticker": "TMO",
+   "claim_id": "TMO-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "`day_vol` 0.95; IN-LINE not LEADER.",
+   "refute_evidence": "At the high: from_52w_hi 0.0%, `structure` 73.7 ABOVE_STRUCTURE, `mp` 76.0 STRONG/ACCELERATING, W and D HH/HL. `day_vol 0.95` is below normal but noted; leadership tags are not my test and rs_rank_pct 93.38.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 0.2% under 20-wk high",
+    "D": "HH/HL, 1.4% above swing high, 0.2% under 20-day high",
+    "H1": "LH/LL, 1.4% above swing high, 96% of range"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 18,
+  "by_author": {
+   "oneil": 11,
+   "livermore": 3,
+   "aqe-quant": 1,
+   "seow": 1,
+   "minervini": 2
+  },
+  "by_refuter": {
+   "seow": 5,
+   "wyckoff": 3,
+   "oneil": 5,
+   "aqe-quant": 1,
+   "raschke": 2,
+   "livermore": 2
+  }
+ }
+}

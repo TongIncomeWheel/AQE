@@ -1,0 +1,67 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-10",
+ "seat_kind": "challenge",
+ "names_read": 14,
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C15"],
+   "claim": "Healthcare is 8 of the 14 room names, spread across 5 different seats. That is sector clustering: one sector call counted several times as if each were independent evidence.",
+   "evidence": "gics_sector_name Healthcare on EW, RLAY, XERS, ADPT, PRGO, TECH, TGTX, VEEV; Technology 4 (G, AMPL, BRZE, EPAM); Consumer Discretionary 1 (ARHS); Industrials 1 (RHI).",
+   "addressed_to": "oneil, minervini, livermore, wyckoff, raschke"
+  },
+  {
+   "scope": "lane",
+   "kind": "EXTENSION",
+   "ticker": null,
+   "canon_ref": ["C12", "C5"],
+   "claim": "Seven names sit exactly at their 52-week high. Entries there are extended by construction; the deciders should say what is different about each given the shared setup.",
+   "evidence": "pct_from_52w_high 0.0 on EW, ARHS, XERS, ADPT, PRGO, TECH, TGTX; BRZE -0.04, AMPL -0.69, RLAY -1.73.",
+   "addressed_to": "livermore, oneil, minervini"
+  },
+  {
+   "scope": "XERS",
+   "kind": "EXTENSION",
+   "ticker": "XERS",
+   "canon_ref": ["C5", "C12"],
+   "claim": "XERS is at its high with four of five oscillators confirming bearish divergence. Price strength is not matched by internal energy. A Healthcare name also carrying the sector cluster.",
+   "evidence": "div_state BEARISH, div_bear_count 4, pct_from_52w_high 0.0, day_vol 1.97, sc_momentum 85.9, gics_sector_name Healthcare.",
+   "addressed_to": "livermore, elder-lens"
+  },
+  {
+   "scope": "TECH",
+   "kind": "EXTENSION",
+   "ticker": "TECH",
+   "canon_ref": ["C5", "C12"],
+   "claim": "TECH is at its high on below-normal participation with four oscillators confirming bearish divergence. The atr_14d reading looks implausibly small for the price, so volatility context is unreliable.",
+   "evidence": "div_state BEARISH, div_bear_count 4, day_vol 0.94, pct_from_52w_high 0.0, atr_14d 0.14 against ma_50 72.49.",
+   "addressed_to": "raschke, wyckoff"
+  },
+  {
+   "scope": "BRZE",
+   "kind": "UNPROVEN",
+   "ticker": "BRZE",
+   "canon_ref": ["C1", "C17"],
+   "claim": "BRZE reads a structure break on very light participation. A break without volume is unconfirmed; ask what supports it beyond the structure reading.",
+   "evidence": "structure_shift BULLISH_BOS, day_vol 0.51, sc_momentum 56.2, structure 79.8.",
+   "addressed_to": "minervini, oneil"
+  },
+  {
+   "scope": "committee",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Livermore alone supplies EW, ARHS and XERS, all strength-door names at their highs. Three picks from one method is one view repeated, not convergence.",
+   "evidence": "EW seats livermore nomination_count 1; ARHS seats livermore; XERS seats livermore; all doors include STRENGTH; EW and XERS also AQE_LEADER.",
+   "addressed_to": "livermore, seow"
+  }
+ ],
+ "data_gaps": [
+  {"field": "lens_warnings", "impact": "null on every room name; lens-warning crowding could not be read."},
+  {"field": "regime", "impact": "not in the packet; regime named for no case, so environment match cannot be judged here."},
+  {"field": "srm", "impact": "not in the packet; sector rotation context unavailable for the Healthcare cluster."}
+ ]
+}

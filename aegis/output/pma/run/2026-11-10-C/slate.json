@@ -1,0 +1,368 @@
+{
+ "date": "2026-11-10",
+ "chair": "chair",
+ "board_sha256": "a03ce0c09333dce03c9cd05f8c58c12e25ee2366782f2bcdcbaf0554ba98ff98",
+ "decision_sha256": "c664308a6defa3653a52762a47665d68b20afa8d82b1292a054b16dedab0dc66",
+ "tickets": [
+  {
+   "ticker": "MGNI",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Daily close above the 52-week closing high",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at a new high on `day_vol` 1.61 (+61%, clears C16) with `flow` 100.0, `sc_momentum` 82.9\" | minervini: \"`sc_momentum` 82.9, `flow` 100.0, `mp` 89.0, `elder` 10.0 are broad. But D swing is LH/LL, 12.3\" | livermore: \"New high 0.7% away, W and H1 HH/HL: `structure` 74.7 and `mp` 89.0 STRONG/ACCELERATING, `sc_mom\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "CNK",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the 52-week closing high on expanding volume",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high on expanding volume"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 2,
+    "wait": 5,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"Daily close below ma_20, or structure turns BEARISH_CHOCH.\"",
+   "horizon_sessions": 12,
+   "why_agreed": "minervini: \"`structure` 81.1 BOS, `energy` 79.0 coiled, `sc_momentum` 76.4 at a high, but `elder` 7.0 is IN\" | livermore: \"`structure` 81.1 BOS and `sc_momentum` 76.4 confirm price; `mp` 76.0 FLAT, `elder` 7.0 INTERRUP\" | elder-lens: \"Permission event on last bar: elder_5d 0,6,7,2,7, `elder` 7.0, ban lifted. `structure` 81.1 and\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`day_vol` 1.05 fails the C16 test at the high. `structure` 81.1 and `subcomponents.structure.base_days` 73.0 are a real base, but `subcomponents.flow.skew_score` 0.0 and `subcomponents.flow.cmf` 0.02 show no buying behind it; `sc_momentum` 76.4. W LH but HL."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "DAL",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the last confirmed pivot high on expanding volume",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high on expanding volume"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 1,
+    "wait": 5,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50, which is the line my template needs it to hold.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"`structure` 96.8, `flow` 84.2, `mp` 87.0, `sc_momentum` 80.4 are strong, but W swing is LH/LL 4\" | livermore: \"`structure` 96.8 and `mp` 87.0 ACCELERATING with `sc_momentum` 80.4; W LH/LL and `energy` 61.3 \" | seow: \"`structure` 96.8, `mp` 87.0, `flow` 84.2, `subcomponents.flow.cmf 0.22`, `sc_momentum` 80.4 pas\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`rs_leadership` IN-LINE (downday 0.17) and `day_vol` 1.03. `structure` 96.8, `mp` 87.0 and `sc_momentum` 80.4 are excellent, but `subcomponents.structure.base_days` 11.0 is far short of a 7-8 week base (C12). W LH/LL, D HH but LL."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "ABBV",
+   "verdict": "WATCH",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high on rising volume.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high on rising volume."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 1,
+    "wait": 6,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "elder-lens: \"`elder` at 1 or lower, or another dip to 4 inside two bars (whipsaw).\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Lowest weight. `energy` 82.4 coiled and D HH/HL, but `structure` 63.2, `mp` 65.0, `elder` 7.0 I\" | livermore: \"3.2% under the high with `structure` 63.2, `energy` 82.4 coiled, `sc_momentum` 69.3; `mp` 65.0 \" | elder-lens: \"Lift 4 to 7 on last bar: elder_5d 2,7,4,4,7, `elder` 7.0, minimum permission. `energy` 82.4 sup\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`day_vol` 1.04 fails C16; `mp` 65.0 with `subcomponents.structure.rs_accel` -13.02 says the lead is eroding. `energy` 82.4 holds a coil and `structure` 63.2 is modest, but there is no breakout: D red bar 3.2% under the high, W LH but HL."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "BDX",
+   "verdict": "WATCH",
+   "entry_trigger": "Price pulls back to within 0.25 ATR of the broken Creek and holds.",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Price pulls back to within 0.25 ATR of the broken Creek and holds."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "wyckoff: \"Daily close below structure_shift_ref-0.5atr, or more oscillators join the bearish divergence.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Cleanest grid here: W, D and H1 all HH/HL, 0.7% under the 20-day high. `flow` 82.9, `structure`\" | livermore: \"W and D HH/HL, 0.7% under the high: `mp` 96.0 ACCELERATING, `structure` 76.8, `sc_momentum` 76.\" | seow: \"Break at a high: `structure` 76.8, COM strongest `subcomponents.flow.cmf 0.35`, `flow` 82.9, `e\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leader on a long base (`subcomponents.structure.base_days` 170.0) at a new high, but `day_vol` 1.09 fails C16. `structure` 76.8, `mp` 96.0 and `sc_momentum` 76.8 are strong; `subcomponents.flow.mfi` 87.71 is stretched. I buy the day volume reaches 1.40."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "ELF",
+   "verdict": "WATCH",
+   "entry_trigger": "Hourly close above yesterday's high after any dip toward the 20-day average",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high after any dip toward the 20-day average"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 0,
+    "wait": 5,
+    "oppose": 3,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Hourly reject of yesterday's high, a close under ma_50, or the push prints on day_vol under 1.40.\"",
+   "horizon_sessions": 12,
+   "why_agreed": "oneil: \"New high on `day_vol` 1.61 (C16 passes) from `subcomponents.structure.base_score` 8.0 over `sub\" | minervini: \"`energy` 85.7 coiled at a high, but `flow` 48.7 and `subcomponents.flow.cmf` -0.3 show no money\" | livermore: \"`energy` 85.7 coiled and `structure` 69.5 BOS, but `flow` 48.7 does not back price, D LH but HL\"",
+   "dissent": [
+    {
+     "voice": "seow",
+     "why": "New high on negative COM: `subcomponents.flow.cmf -0.3`, `flow` 48.7, `elder` 8.0 INTERRUPTED, `sc_momentum` 69.0. Break not confirmed (C28); 3 confirms against. `energy` 85.7 does not replace money flow."
+    },
+    {
+     "voice": "wyckoff",
+     "why": "Effort without result (C5): `flow` 48.7 with `subcomponents.flow.cmf` -0.3 means closes lean low on volume, yet `energy` 85.7 and `structure` 69.5 cannot supply demand. Daily 20-day high 123.13 on 2026-11-05 was rejected back to 119.35, an upthrust shape; `elder` 8.0 does not repair it."
+    },
+    {
+     "voice": "aqe-quant",
+     "why": "Heaviest-weighted engine fails: `flow 48.7` (`sc_m_gate_detail 7`), `subcomponents.flow.cmf -0.3` closes near lows on volume, `subcomponents.flow.accum_score 0.0`. `energy 85.7` alone carries; `subcomponents.structure.rs_accel -21.74`."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "SWK",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high, entered with a buy stop.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high, entered with a buy stop."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "raschke: \"Daily close under fib_618 of the swing\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"`mp` 100.0, `structure` 82.1, `sc_momentum` 82.9, `flow` 80.3, `elder` 10.0; W and D HH/HL. 3.7\" | livermore: \"Group leader: `mp` 100.0 STRONG/ACCELERATING, `structure` 82.1, `sc_momentum` 82.9, `flow` 80.3\" | elder-lens: \"Weekly and daily both HH/HL, 9>21. `mp` 100.0 STRONG, `structure` 82.1, `flow` 80.3, `elder` 10\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`day_vol` 1.0 fails C16 and price is 3.7% under the swing high. `sc_momentum` 82.9, `mp` 100.0, `structure` 82.1 and `subcomponents.structure.base_days` 61.0 make a leader I buy on a volume break, not before. W HH/HL, H1 below EMA9."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "GPN",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the last confirmed pivot high on expanding volume",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high on expanding volume"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 1,
+    "wait": 5,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"`flow` 84.2, `sc_momentum` 80.4, `mp` 93.0, W and D HH/HL, 3.5% under the high. But `elder` 7.0\" | livermore: \"`sc_momentum` 80.4, `flow` 84.2, W and D HH/HL; `structure` 75.8 RANGE (no BOS), `mp` 93.0 DECE\" | seow: \"Signal pending: `structure` 75.8 not yet broken. `mp` 93.0, `flow` 84.2, `sc_momentum` 80.4 str\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`structure` 75.8 is RANGE: no BOS and no pivot break to buy (R3); `mp_accel_state` 2 is DECELERATING. `sc_momentum` 80.4, `flow` 84.2 and `mp` 93.0 are strong and `day_vol` 0.83 on the dip is handle dry-up (C15). H1 12% of range. Buy the break."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "ADP",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the last confirmed pivot high on expanding volume",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high on expanding volume"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 0,
+    "wait": 7,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"Daily close below ma_20.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"`energy` 84.0 coiled, `sc_momentum` 75.1, `structure` 74.7, W and D HH/HL. But `flow` 63.2 and \" | livermore: \"`energy` 84.0 coiled and `sc_momentum` 75.1, but `structure` 74.7 RANGE, `mp` 80.0 DECELERATING\" | elder-lens: \"Pullback in a rising stack (W and D HH/HL): `elder` 7.0, elder_5d 6,10,10,7,7, green gone, not \"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "`day_vol` 0.96 fails C16; structure_shift RANGE with `structure` 74.7 and `mp` 80.0 on `mp_accel_state` 2 (DECELERATING). `energy` 84.0 and `sc_momentum` 75.1 are good but quiet. D 2.4% under swing high, H1 9<21."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "TMO",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high, entered with a buy stop.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high, entered with a buy stop."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 7,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "elder-lens: \"`elder` back to 1 or lower, or a daily close below bar_low.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Tightest of the highs: 0.2% under the 20-day high, W and D HH/HL, `energy` 77.3 coiled, `struct\" | livermore: \"0.2% under the high with W and D HH/HL: `structure` 73.7, `energy` 77.3, `mp` 76.0 STRONG/ACCEL\" | elder-lens: \"Best event in the set: elder_5d 7,7,1,6,9, red gave way and `elder` is 9.0. `mp` 76.0 STRONG, `\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "At the high on `day_vol` 0.95 with `rs_leadership` IN-LINE (downday 0.17): fails both L and C16. `structure` 73.7, `mp` 76.0 and `energy` 77.3 are good but do not replace volume. W D HH/HL, H1 LH/LL."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "EW",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Daily close above the 52-week closing high on expanding volume",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high on expanding volume"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 5,
+    "wait": 2,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_20, or a high-volume failure at the high.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Cleanest breakout: new high on `day_vol` 1.43 (+43%, just clears C16), `structure` 89.5, `flow`\" | minervini: \"Broadest engines: `sc_momentum` 84.4, `flow` 90.8, `structure` 89.5, `mp` 93.0, `elder` 10.0, 0\" | livermore: \"0.6% under the high, D HH/HL: `structure` 89.5, `flow` 90.8, `mp` 93.0 STRONG/ACCELERATING, `sc\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index under distribution or no confirmed uptrend (C1-C3): every breakout void",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 3
+ }
+}

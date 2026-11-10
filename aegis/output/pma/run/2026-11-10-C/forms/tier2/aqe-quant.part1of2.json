@@ -1,0 +1,92 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-10",
+ "answers": [
+  {
+   "pair_id": "DAL-aqe-quant-for~oneil",
+   "ticker": "DAL",
+   "to": "oneil",
+   "text": "\"base_days 11.0, under the 7-8 weeks a base needs\": the glossary puts 10 to 25 days in the sweet spot, so `subcomponents.structure.base_score 15.0` at `subcomponents.structure.base_days 11.0` is full marks by AQE's own definition. It is one of seven terms; `structure 96.8` also rests on `subcomponents.structure.ms_pos_score 15.0` and `subcomponents.structure.resist_score 15.0`. Weekly base reading is not on my menu. No concession.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average (trend alignment intact)"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING while `subcomponents.structure.rs_accel` stays negative, or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "Broad support: `flow 100.0`, `energy 67.2`, `structure 74.7`, `mp 89.0`, all four over their floors; `sc_m_gate_detail 15` passes every engine. `mp_accel_state` ACCELERATING with A-TIER `subcomponents.pipe.pipe_tier`. Caution `subcomponents.structure.rs_accel -1.42`."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "ma_above:ma_20:ma_50",
+    "tf": "D",
+    "plain": "20-day average stays above the 50-day at the close (trend alignment)"
+   },
+   "wrong_if": "elder falls to 5 or less, or `subcomponents.structure.rs_accel` turns negative with `mp_accel_state` DECELERATING.",
+   "market_void": null,
+   "reason": "Broad: `flow 71.1`, `energy 79.0`, `structure 81.1`, `mp 76.0`; coil `subcomponents.energy.squeeze_score 12.5`. But `mp_accel_state` FLAT and `elder 7.0` is the thinnest margin, so wait for elder to rise."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average (trend alignment intact)"
+   },
+   "wrong_if": "`energy` falls under 60 (now `energy 61.3`), or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "`structure 96.8` and `mp 87.0` with `flow 84.2`; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_accel 12.07` with `subcomponents.structure.rs_vs_spy 5.79` (beating and improving). Thin: `energy 61.3`, `subcomponents.energy.squeeze_score 0.0`."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "ma_above:ma_20:ma_50",
+    "tf": "D",
+    "plain": "20-day average stays above the 50-day at the close (trend alignment)"
+   },
+   "wrong_if": "elder falls to 5 or less, or `flow` drops under its 60 floor.",
+   "market_void": null,
+   "reason": "`energy 82.4` with coil `subcomponents.energy.squeeze_score 12.5` and a clean live test (`subcomponents.energy.en_trend_bars 27.0`, `subcomponents.energy.exhaustion_score 10.0`). But `mp_accel_state` DECELERATING and `subcomponents.structure.rs_accel -13.02`: wait."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "ma_above:ma_20:ma_50",
+    "tf": "D",
+    "plain": "20-day average stays above the 50-day at the close (trend alignment)"
+   },
+   "wrong_if": "`subcomponents.energy.exhaustion_score` falls under 7.0, or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "`flow 82.9`, `structure 76.8`, `mp 96.0` with `mp_accel_state` ACCELERATING; but `energy 58.0` misses its floor and wear is live (`subcomponents.energy.en_trend_bars 23.0`, `subcomponents.energy.exhaustion_score 7.0`). Wait for volume to confirm."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`subcomponents.flow.cmf` turns positive and `flow` clears 60 with accumulation rising.",
+   "market_void": null,
+   "reason": "Heaviest-weighted engine fails: `flow 48.7` (`sc_m_gate_detail 7`), `subcomponents.flow.cmf -0.3` closes near lows on volume, `subcomponents.flow.accum_score 0.0`. `energy 85.7` alone carries; `subcomponents.structure.rs_accel -21.74`."
+  }
+ ],
+ "declarations": [
+  "Method: AQE composites and sub-components only. Charts, grid frames and price levels are not on my menu and were not read."
+ ]
+}

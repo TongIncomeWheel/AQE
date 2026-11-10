@@ -1,0 +1,110 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "answers": [
+  {
+   "pair_id": "DAL-livermore-for~oneil",
+   "ticker": "DAL",
+   "to": "oneil",
+   "text": "\"weekly swing not up\": W is above EMA9, 9>21, 4.1% under the 20-wk high; D 0.8% under 20-day high; H1 HH/HL. `structure` 96.8 and `mp` 87.0 outweigh `energy` 61.3. Weekly LH/LL is the unproven leg, so WAIT for the pivot break.",
+   "concede": false
+  },
+  {
+   "pair_id": "GPN-livermore-for~oneil",
+   "ticker": "GPN",
+   "to": "oneil",
+   "text": "\"no completed break\": agreed on the tape: `structure` 75.8 RANGE, H1 closed 12% of range. W and D HH/HL, 3.5% under the high, `mp` 93.0 DECELERATING. That moves me to WAIT on the pivot break, not off the name.",
+   "concede": true
+  },
+  {
+   "pair_id": "TMO-livermore-for~oneil",
+   "ticker": "TMO",
+   "to": "oneil",
+   "text": "\"high came on day_vol 0.95\": day_vol is only a fill-difficulty proxy, NOT_SERVED. W and D HH/HL, 0.2% under the high; `structure` 73.7, `energy` 77.3, `mp` 76.0 STRONG. Volume confirms, it does not gate C5.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "New high 0.7% away, W and H1 HH/HL: `structure` 74.7 and `mp` 89.0 STRONG/ACCELERATING, `sc_momentum` 82.9, `flow` 100.0. D swing LH/LL and `energy` 67.2 are the soft spots; extension is a weight."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from a day's high, or the break above the pivot high fails on a close back under it",
+   "market_void": null,
+   "reason": "`structure` 81.1 BOS and `sc_momentum` 76.4 confirm price; `mp` 76.0 FLAT, `elder` 7.0 INTERRUPTED, W LH but HL: wait for the new closing high to print."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "`structure` 96.8 and `mp` 87.0 ACCELERATING with `sc_momentum` 80.4; W LH/LL and `energy` 61.3 keep the uptrend leg unproven: buy the pivot break, not the base."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Daily close under ma_20 turns the reaction into a trend change",
+   "market_void": null,
+   "reason": "3.2% under the high with `structure` 63.2, `energy` 82.4 coiled, `sc_momentum` 69.3; `mp` 65.0 DECELERATING and H1 LH/LL: only the new closing high qualifies."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "W and D HH/HL, 0.7% under the high: `mp` 96.0 ACCELERATING, `structure` 76.8, `sc_momentum` 76.8, `flow` 82.9; `energy` 58.0 is the weakest engine."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high"
+   },
+   "wrong_if": "Fade of 1 ATR from the day's high (my atr_14d translation of the danger signal) or a daily close under ma_20",
+   "market_void": null,
+   "reason": "`energy` 85.7 coiled and `structure` 69.5 BOS, but `flow` 48.7 does not back price, D LH but HL, 3.1% under the high: wait for the break to print."
+  }
+ ],
+ "declarations": [
+  "Danger signal translated via atr_14d as fade_atr_ge: my own translation, not Livermore's six points. Fill difficulty NOT_SERVED (day_vol is a proxy only)."
+ ]
+}

@@ -1,0 +1,122 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-10T14:11:55Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-10",
+ "survivors": [
+  "ARHS",
+  "TECH"
+ ],
+ "pairs": [
+  {
+   "pair_id": "ARHS-livermore-for~oneil",
+   "ticker": "ARHS",
+   "claim_id": "ARHS-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "oneil",
+   "claim_text": "Leader at its high: structure 86.7, mp 100.0, rs_rank_pct 99.17, flow 100.0, W and D both HH/HL.",
+   "refute_evidence": "Leader is true (rs_rank_pct 99.17), but entry 15.02 vs ma200 8.4 is past the 70% climax line (R7, C24): sold into, not bought. D close 43.3% above last swing high.",
+   "refute_tf": {
+    "W": "HH/HL but close 43.3% above last swing high: vertical run, no base",
+    "D": "HH/HL, 43.3% above last swing high, 1.0% under 20-day high: climax",
+    "H1": "HH/HL, 12.9% above last swing high, 84% of range: late"
+   }
+  },
+  {
+   "pair_id": "ARHS-oneil-against~livermore",
+   "ticker": "ARHS",
+   "claim_id": "ARHS-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "entry 15.02 vs ma200 8.4 (climax), run_10d 28.93%, Valen High tight flag FAILED (6/12), lone name in its group per nominator.",
+   "refute_evidence": "All three frames swing HH/HL with 9>21, price dist_to_20bar_high_pct 0.99, momentum flag true. A new high after a run is my C5/C16 entry, not a climax. Lone name is a group-call issue (C14), not a name failure. Valen flag not used (R41).",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, swing HH/HL, dist_to_20bar_high_pct 0.99: trend at its high",
+    "D": "above EMA9, 9>21, swing HH/HL, dist_to_20bar_high_pct 0.99",
+    "H1": "above EMA9, 9>21, swing HH/HL, 84% of the day's range"
+   }
+  },
+  {
+   "pair_id": "ARHS-oneil-against~seow",
+   "ticker": "ARHS",
+   "claim_id": "ARHS-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "entry 15.02 vs ma200 8.4 (climax), run_10d 28.93%, Valen High tight flag FAILED (6/12), lone name in its group per nominator.",
+   "refute_evidence": "Extension over ma200 and run_10d 28.93% are weights, not faults, in the position system (C26: strength is the signal). Valen FAILED flags are not my method (R41). Weekly, daily and H1 all HH/HL and 0.99 under the 20-day high.",
+   "refute_tf": {
+    "W": "HH/HL, above EMA9, 9>21; dist_to_20bar_high_pct 0.99",
+    "D": "HH/HL, above EMA9, 9>21; dist_to_20bar_high_pct 0.99",
+    "H1": "HH/HL, above EMA9, 9>21; pos_in_day_range_pct 83.9"
+   }
+  },
+  {
+   "pair_id": "TECH-raschke-for~oneil",
+   "ticker": "TECH",
+   "claim_id": "TECH-raschke-for",
+   "kind": "for",
+   "author": "raschke",
+   "refuter": "oneil",
+   "claim_text": "BULLISH_BOS with sma_dist 0.46 at ma20 72.63: not extended, entry and invalidation sit close together (C20 double stop). D 0.1% above last swing high; W 0.1% under 20-wk high.",
+   "refute_evidence": "sma_dist 0.46 is not extended, true, but the BULLISH_BOS prints on day_vol 0.94, far under 1.40: a breakout nobody bought (R4, C16). div BEARISH/4 and H1 under EMA9 add caution.",
+   "refute_tf": {
+    "W": "HH/HL, 0.2% above last swing high, 0.1% under 20-wk high: at the high",
+    "D": "HH/HL, 0.1% above last swing high, flat bar: break with no volume",
+    "H1": "below EMA9, swing LH but EL, 46% of range: weak"
+   }
+  },
+  {
+   "pair_id": "TECH-oneil-against~raschke",
+   "ticker": "TECH",
+   "claim_id": "TECH-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "day_vol 0.94 under 1.40, div BEARISH/4, flow 43.4, H1 below EMA9, group Momentum Fading.",
+   "refute_evidence": "day_vol 0.94 is an unmet confirmation, not a failed breakout. H1 close 72.815 vs ema9 72.8155 is no real gap; D swing HH/HL, 0.11% above last swing high. div BEARISH/4 is advisory only; flow 43.4 and group are not my fields.",
+   "refute_tf": {
+    "W": "HH/HL, above EMA9, 0.07% under 20-bar high; trend intact",
+    "D": "HH/HL, close above EMA9, 9>21, close_vs_swing_high_pct 0.11",
+    "H1": "close under EMA9 by 0.0005, swing LH but EL; timing frame unresolved, not broken"
+   }
+  },
+  {
+   "pair_id": "TECH-seow-against~minervini",
+   "ticker": "TECH",
+   "claim_id": "TECH-seow-against",
+   "kind": "against",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "flow 43.4, elder INTERRUPTED [3, 6, 3, 6, 8], div BEARISH/4, day_vol 0.94, rs_spy_20d 3.64, ret_63d 0.94 only just above index -2.32, H1 below EMA9.",
+   "refute_evidence": "Against case rests on elder INTERRUPTED, div BEARISH/4, H1 below EMA9: advisory tags, never a veto. W and D stack intact. Only day_vol 0.94 bears on C6: wait for expansion, not a disqualifier.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 0.1% under 20-wk high; intact",
+    "D": "above EMA9, 9>21, HH/HL, 0.1% under 20-day high; intact",
+    "H1": "below EMA9 by a hair (72.815 vs 72.8155), LH but EL; noise, not a template test"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 6,
+  "by_author": {
+   "livermore": 1,
+   "oneil": 3,
+   "raschke": 1,
+   "seow": 1
+  },
+  "by_refuter": {
+   "oneil": 2,
+   "livermore": 1,
+   "seow": 1,
+   "raschke": 1,
+   "minervini": 1
+  }
+ }
+}

@@ -1,0 +1,60 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "RLAY",
+   "reason": "Fresh BULLISH_BOS through structure_shift_ref 20.2 on a wide bar (atr_14d 1.19), rvol_20d 1.49, close near the high; pvp_position ABOVE_VALUE with value stepping up. At the test zone; buy stop over bar_high 20.64. Caution: div_state BEARISH.",
+   "fields_cited": ["structure_shift", "structure_shift_ref", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "pvp_position", "pvp_vah", "pvp_poc", "vwap_14d", "avwap_structure", "div_state"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift BULLISH_BOS; bar_high 20.64 bar_low 18.71 vs atr_14d 1.19; bar_close 20.39 in top third; rvol_20d 1.49", "verdict": "pass", "fields": ["structure_shift", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position ABOVE_VALUE; bar_close 20.39 > pvp_poc 18.81; vwap_14d 18.34, slope_5d RISING, avwap_structure 18.23 under close; div_state BEARISH div_bear_count 1", "verdict": "pass", "fields": ["pvp_position", "pvp_poc", "bar_close", "vwap_14d", "elder_context.vwap_5d.slope_5d", "avwap_structure", "div_state", "div_bear_count"]},
+    {"step": 3, "canon_ref": ["C7"], "observed": "entry 20.39 vs structure_shift_ref 20.2 and pvp_vah 19.34 with atr_14d 1.19: within ~1 ATR of both, at the test zone", "verdict": "pass", "fields": ["entry", "structure_shift_ref", "pvp_vah", "atr_14d"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_open 19.08 < bar_close 20.39; range >= atr_14d 1.19; close in top third; rvol_20d 1.49 >= 1.2; buy stop above bar_high 20.64", "verdict": "pass", "fields": ["bar_open", "bar_close", "bar_high", "bar_low", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop null: own danger point under bar_low 18.71, behind vwap_14d 18.34 and pvp_val 17.41. last_pivot_high.price 20.2 is under price; bracket.targets R@20.79", "verdict": "partial", "fields": ["bracket.stop", "bar_low", "vwap_14d", "pvp_val", "last_pivot_high.price", "bracket.targets"]}
+   ],
+   "falsifier": "bar_close back under pvp_vah 19.34 (failed-breakout, back inside value) or a close under bar_low 18.71."
+  },
+  {
+   "ticker": "SDGR",
+   "reason": "Trend name (ABOVE_STRUCTURE, pvp_position ABOVE_VALUE) printing a sign-of-strength bar: wide vs atr_14d 2.35, close near the high, rvol_20d 1.57. Value stepping up. Upper edge of the test zone over structure_shift_ref 31.07 and pvp_vah 32.39; enter on buy stop over bar_high 33.72.",
+   "fields_cited": ["structure_shift", "structure_shift_ref", "pvp_vah", "pvp_position", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "vwap_14d", "avwap_structure"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift ABOVE_STRUCTURE (not a fresh BOS); bar_high 33.72 bar_low 29.45 vs atr_14d 2.35; bar_close 33.39 near high; rvol_20d 1.57", "verdict": "partial", "fields": ["structure_shift", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position ABOVE_VALUE; bar_close 33.39 > pvp_poc 29.28; vwap_14d 27.75, slope_5d RISING, avwap_structure 29.14 under close", "verdict": "pass", "fields": ["pvp_position", "pvp_poc", "bar_close", "vwap_14d", "elder_context.vwap_5d.slope_5d", "avwap_structure"]},
+    {"step": 3, "canon_ref": ["C7"], "observed": "entry 33.39 vs structure_shift_ref 31.07 and pvp_vah 32.39, atr_14d 2.35: about 1 ATR over the Creek, close to pvp_vah; upper edge of the test zone", "verdict": "partial", "fields": ["entry", "structure_shift_ref", "pvp_vah", "atr_14d"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_open 29.79 < bar_close 33.39; range >= atr_14d 2.35; close in top third; rvol_20d 1.57 >= 1.2; buy stop above bar_high 33.72", "verdict": "pass", "fields": ["bar_open", "bar_close", "bar_high", "bar_low", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop null: own danger point under bar_low 29.45, behind avwap_structure 29.14 and pvp_poc 29.28. last_pivot_high.price 31.07 is under price; bracket.targets R@33.78", "verdict": "partial", "fields": ["bracket.stop", "bar_low", "avwap_structure", "pvp_poc", "last_pivot_high.price", "bracket.targets"]}
+   ],
+   "falsifier": "bar_close back under structure_shift_ref 31.07 (re-entry under the Creek) or a close under bar_low 29.45."
+  },
+  {
+   "ticker": "ADPT",
+   "reason": "Break of the Creek structure_shift_ref 29.05 held (ABOVE_STRUCTURE, pvp_position ABOVE_VALUE); sign-of-strength bar, wide vs atr_14d 1.73, rvol_20d 1.31, close near the high. Within ~1 ATR of pvp_vah 29.28: at the test. 5-day VWAP not served.",
+   "fields_cited": ["structure_shift", "structure_shift_ref", "pvp_vah", "pvp_position", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "vwap_14d", "avwap_structure"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift ABOVE_STRUCTURE (pct_from_pivot 4.17); bar_high 30.79 bar_low 28.23 vs atr_14d 1.73; bar_close 30.26 near high; rvol_20d 1.31", "verdict": "partial", "fields": ["structure_shift", "pct_from_pivot", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position ABOVE_VALUE; bar_close 30.26 > pvp_poc 28.22; vwap_14d 26.93; avwap_structure 27.34 under close; elder_context.vwap_5d.slope_5d null", "verdict": "partial", "fields": ["pvp_position", "pvp_poc", "bar_close", "vwap_14d", "avwap_structure", "elder_context.vwap_5d.slope_5d"]},
+    {"step": 3, "canon_ref": ["C7"], "observed": "entry 30.26 vs structure_shift_ref 29.05 and pvp_vah 29.28 with atr_14d 1.73: within ~1 ATR of both, at the test zone", "verdict": "pass", "fields": ["entry", "structure_shift_ref", "pvp_vah", "atr_14d"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_open 28.53 < bar_close 30.26; range >= atr_14d 1.73; close in top third; rvol_20d 1.31 >= 1.2; buy stop above bar_high 30.79", "verdict": "pass", "fields": ["bar_open", "bar_close", "bar_high", "bar_low", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop null: own danger point under bar_low 28.23, behind avwap_structure 27.34 and vwap_14d 26.93. last_pivot_high.price 29.05 is under price; bracket.targets R@30.74", "verdict": "partial", "fields": ["bracket.stop", "bar_low", "avwap_structure", "vwap_14d", "last_pivot_high.price", "bracket.targets"]}
+   ],
+   "falsifier": "bar_close back under structure_shift_ref 29.05 (re-entry under the Creek) or a close under bar_low 28.23."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "elder_context.vwap_5d.value", "impact": "ADPT: 5-day VWAP value null, so the rising-value read (R5) rests on vwap_14d and avwap_structure only."},
+  {"field": "elder_context.vwap_5d.slope_5d", "impact": "ADPT: 5-day VWAP slope null, so step 2 is partial; value-stepping-up cannot be confirmed from the 5-day slope."}
+ ],
+ "declarations": [
+  "No ledger memory block was supplied; no standing lesson applies.",
+  "Book is flat; held_review is empty.",
+  "High/low-volume nodes beyond the value area and successive value areas are NOT_SERVED (R11); not used."
+ ],
+ "shortfall_reason": null
+}

@@ -1,0 +1,95 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-10",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "MGNI",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "The plain words carry no volume clause. I act only if the daily close above the 52-week closing high prints on `day_vol` 1.40 or more (C16); `day_vol` 1.61 today clears it, and `subcomponents.structure.base_score` 0.0 means no base. Market gate stays delegated.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "CNK",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "DAL",
+   "answer": "AGREE",
+   "conviction": 2,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ABBV",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "The trigger is an hourly reclaim of yesterday's high on 'rising volume', not a pivot break on `day_vol` 1.40. `day_vol` 1.04 fails C16, and `mp` 65.0 with `subcomponents.structure.rs_accel` -13.02 says the lead is eroding.",
+   "would_clear": "Trigger rewritten as a daily close through the swing high on `day_vol` 1.40 or more."
+  },
+  {
+   "ticker": "BDX",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger buys a pullback into the broken Creek with no volume test. My method buys the break on volume, not the retest: `day_vol` 1.09 fails C16 even though `structure` 76.8 and `mp` 96.0 make a leader on `subcomponents.structure.base_days` 170.0.",
+   "would_clear": "A trigger that buys the break of the high on `day_vol` 1.40 or more."
+  },
+  {
+   "ticker": "ELF",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "The plain words omit the 1.40 volume test; the wrong-if carries it. I act only if the hourly push prints `day_vol` 1.40 or more. `flow` 48.7 and `subcomponents.flow.cmf` -0.3 are a real caution, and the market gate is delegated.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SWK",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "ADVANCE on an hourly close above yesterday's high with no volume condition. `day_vol` 1.0 is +0% over average, a hard rejection (C16), and price is 3.7% under the swing high, so no pivot has broken.",
+   "would_clear": "Trigger stating a close through the swing high on `day_vol` 1.40 or more, and the verdict held at WATCH until it prints."
+  },
+  {
+   "ticker": "GPN",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ADP",
+   "answer": "AGREE",
+   "conviction": 2,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "TMO",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "ADVANCE ACT_NOW with no volume condition on a name at the high with `day_vol` 0.95 and `rs_leadership` IN-LINE (downday 0.17): it fails both L and C16. `structure` 73.7 and `mp` 76.0 do not replace volume.",
+   "would_clear": "`rs_leadership` LEADER and a close above the high on `day_vol` 1.40 or more, with the verdict held at WATCH until then."
+  },
+  {
+   "ticker": "EW",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "'Expanding volume' is looser than my 1.40 test: `day_vol` 1.43 only just clears C16. The wrong-if uses ma_20 where I would hold ma_50. W LH/LL and `subcomponents.structure.base_score` 5.0 are the missing condition. Market gate delegated.",
+   "objection": null,
+   "would_clear": null
+  }
+ ]
+}

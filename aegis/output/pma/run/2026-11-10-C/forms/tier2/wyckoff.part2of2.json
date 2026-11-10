@@ -1,0 +1,62 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A completed hourly candle closes above yesterday's high, entered with a buy stop."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr, or a heavy-volume close back inside the old range.",
+   "market_void": null,
+   "reason": "First pullback after an impulse (C7): weekly and daily HH/HL, daily 3.7% under its swing high. `structure` 82.1, `mp` 100.0, `flow` 80.3, `energy` 74.8, `elder` 10.0, `sc_momentum` 82.9 all agree. Hourly still below EMA9, so I act only on the hourly thrust."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "ABSTAIN",
+   "wrong_if": "n/a (no position): flow recovers above 55 on up-volume with closes in the top third.",
+   "market_void": null,
+   "reason": "Unclear sequence (R10, C16): daily swing HH but LL, 14.9% above the Creek. `structure` 82.1 and `mp` 100.0 are strong but `flow` 40.8 with `subcomponents.flow.accum_score` 0.0 and cmf -0.2 show no accumulation at the high. Not a shape I can place; wait for a held test."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A completed hourly candle closes above the last confirmed swing high on volume."},
+   "wrong_if": "reject:pivot_high on volume, or daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "Upper edge of a range, not a place to buy the top: daily last bar red, 3.5% under its swing high, hourly closed at 12% of range. `flow` 84.2, `structure` 75.8, `sc_momentum` 80.4, `mp` 93.0 FADING/DECELERATING. The long is a volume break that holds (C5, C12)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A completed hourly candle closes above the last confirmed swing high on volume."},
+   "wrong_if": "reject:pivot_high on volume, or daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "Contraction under the Creek: `energy` 84.0 with `subcomponents.energy.squeeze_score` 8.5, `structure` 74.7, `flow` 63.2. Daily is 2.4% under its swing high, last bar red, hourly 9<21, `mp` 80.0 FADING/DECELERATING. The trade is the break on volume, not a fade (C5, C12)."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A completed hourly candle closes above yesterday's high, entered with a buy stop."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: back inside the old range.",
+   "market_void": null,
+   "reason": "At the test: weekly and daily HH/HL, daily 1.4% above its swing high and 0.2% under the 20-day high (C7). `energy` 77.3 with `subcomponents.energy.squeeze_score` 12.5, `structure` 73.7, `mp` 76.0 STRONG/ACCELERATING, `flow` 67.1, `elder` 9.0. Volume is flat, so I need the hourly thrust."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Price pulls back to within 0.25 ATR of the broken Creek and holds."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr, or a heavy-volume reversal bar closing at the lows.",
+   "market_void": null,
+   "reason": "Demand is real: `flow` 90.8, `structure` 89.5, `mp` 93.0 STRONG/ACCELERATING, `elder` 10.0, `sc_momentum` 84.4. But daily is 18.4% above its swing high and weekly swing is LH/LL: the Creek is far. Extension sets location, not opposition (R2, C15)."
+  }
+ ],
+ "declarations": [
+  "NOT_SERVED to me: pvp_poc, pvp_vah, pvp_val and structure_shift_ref values are not in my packet; the Creek is proxied by the daily last swing high on the W/D/H1 grid."
+ ]
+}

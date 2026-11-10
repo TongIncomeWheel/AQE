@@ -1,0 +1,32 @@
+{
+ "voice": "seow",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "PRGO",
+   "reason": "POSITION system fired: close above last pivot high, structure_shift 2 (BULLISH_BOS), pct_from_pivot 0.95; cmf 0.1 confirms flow; ret_63d 31.91 vs index -2.32; sector LEADING. TIF proxy elder_pattern 4 (INTERRUPTED) is a caution. Wrong below 15.12 (base_low_20d).",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "pivot_high", "subcomponents.flow.cmf", "elder_pattern", "ret_63d", "rs_rank_pct", "sector_rrg_quadrant", "base_low_20d", "fib_swing_low", "bar_high", "elder_context.volume.avg_vol_20d"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2540703 x entry 16.95 is about $43M per day; liquid enough, no caution", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C6", "C24"], "observed": "ret_63d 31.91 vs index_pct_change_63d -2.32; rs_rank_pct 91.81; sector_rrg_quadrant 3 (LEADING)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift 2 (BULLISH_BOS), pct_from_pivot 0.95, pivot_high 16.79 (declared proxy for resistance line)", "verdict": "pass", "fields": ["structure_shift", "pct_from_pivot", "pivot_high"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.1 above zero confirms; elder_pattern 4 (INTERRUPTED) is not SUSTAINED/ACCELERATION", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "elder_pattern"]},
+    {"step": 5, "canon_ref": ["C27", "C29", "C30"], "observed": "buy stop 1 tick over bar_high 17.02; support max(fib_swing_low 13.91, base_low_20d 15.12) = 15.12; exit on close below or trend-colour flip", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d", "elder_pattern"]}
+   ],
+   "falsifier": "A close below 15.12 (max of fib_swing_low 13.91 and base_low_20d 15.12), or a close back under pivot_high 16.79 with elder_pattern staying INTERRUPTED."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null for PRGO; invalidation named from structure (base_low_20d 15.12) instead, not used as a reason for or against"},
+  {"field": "atr_14d", "impact": "not served in packet; swing R7 range test (bar_range_5d vs atr_14d) could not be evaluated, and only the other R7 tests were applied"}
+ ],
+ "declarations": [
+  "Declared proxies used: structure_shift/pct_from_pivot/pivot_high for the resistance line; cmf for COM; elder_pattern for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "Swing system run on all names: BSP has all five R1 conditions (cci_20 -119.09) but fails R8 (ret_63d -22.27 vs index -2.32) and R7 (days_since_swing_high 10); VEEV is four of five (cci_20 -74.92), not a set-up.",
+  "Shorts out of scope (C32). No lesson from ledger memory was injected; none applied."
+ ],
+ "shortfall_reason": "Only one name has a valid Seow trigger. Position system: only PRGO has a resistance break (structure_shift BULLISH_BOS); the other eight are RANGE with pct_from_pivot below zero. Swing system: BSP fails the R8 odds gate and R7; VEEV is four of five. Not padded."
+}

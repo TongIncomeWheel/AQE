@@ -1,0 +1,141 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-10",
+ "seat_kind": "challenge",
+ "names_read": 52,
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "canon_ref": ["C12", "C15"],
+   "claim": "Industrials is the largest cluster in the room: 11 of 52 names share one sector, spanning both lanes. Three sit at a 52-week high, several carry high lens warnings. One sector call is being repeated through many tickers rather than 11 independent reads.",
+   "evidence": "gics_sector_name Industrials: ALK, DAL, BETA, HAYW, SARO, FBIN, SWK, TREX, ADP, TEX, LOAR. SWK pct_from_52w_high -0.19; TREX pct_from_52w_high 0.0; HAYW lens_warnings 3; TEX lens_warnings 3.",
+   "addressed_to": "oneil, livermore, raschke"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "canon_ref": ["C12", "C15"],
+   "claim": "Healthcare is the second cluster: 9 of 52 names. Five are at a 52-week high at the same time, which reads as one sector move expressed through several tickers.",
+   "evidence": "gics_sector_name Healthcare: COR, MRNA, SDGR, ABBV, BDX, JNJ, GMAB, TMO, EW. pct_from_52w_high 0.0 on MRNA, SDGR, BDX, TMO, EW.",
+   "addressed_to": "oneil, minervini, wyckoff"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "canon_ref": ["C12"],
+   "claim": "Financials (7 names) and Consumer Discretionary (7 names) add further same-sector stacking. Within Financials, names from the traditional (PFG, PRU, TPG, HOMB) and the high-beta end (RKT, RYAN, GPN) are all present, so one rate/credit read is repeated at several price levels.",
+   "evidence": "gics_sector_name Financials: PFG, TPG, HOMB, PRU, RYAN, RKT, GPN. Consumer Discretionary: CNK, M, VSXY, DLTR, AMZN, UA, CPRI.",
+   "addressed_to": "seow, elder-lens"
+  },
+  {
+   "scope": "lane",
+   "kind": "CROWDING",
+   "canon_ref": ["C3", "C12"],
+   "claim": "A defensive, rate-sensitive block runs across sector labels: Consumer Staples (5), Real Estate (4) and big-cap Healthcare names (JNJ, ABBV, COR) all sit in the PULLBACK lane together. Counted by sector label they look spread; counted by what they respond to they are one cluster.",
+   "evidence": "Staples: ELF, CLX, PG, NWL, CHD. Real Estate: OHI, BRX, CURB, KIM. PULLBACK lane carries PG, JNJ, ABBV, COR, OHI, BRX, CURB, KIM, NWL. PG sc_momentum 68.8; JNJ sc_momentum 67.1.",
+   "addressed_to": "seow, wyckoff"
+  },
+  {
+   "scope": "MRNA",
+   "ticker": "MRNA",
+   "kind": "EXTENSION",
+   "canon_ref": ["C5", "C12"],
+   "claim": "MRNA is far extended from its long averages with the 50-day more than double the 200-day, at a 52-week high, yet participation is below normal and two oscillators already disagree with the price high.",
+   "evidence": "ma_50 194.47; ma_100 135.63; ma_200 92.57; pct_from_52w_high 0.0; day_vol 0.74; div_state MIXED; div_bear_count 2; atr_14d 21.34; rs_rank_pct 99.83.",
+   "addressed_to": "oneil, livermore"
+  },
+  {
+   "scope": "CNK",
+   "ticker": "CNK",
+   "kind": "EXTENSION",
+   "canon_ref": ["C12"],
+   "claim": "CNK prints a break of structure at a 52-week high while bearish divergence is already confirmed on two oscillators and volume is only average. The strength read and the exhaustion read disagree on the same name.",
+   "evidence": "structure_shift BULLISH_BOS; pct_from_52w_high 0.0; div_state BEARISH; div_bear_count 2; day_vol 1.05; lens_warnings 0; ma_50 37.24; ma_200 31.77.",
+   "addressed_to": "livermore, elder-lens"
+  },
+  {
+   "scope": "SDGR",
+   "ticker": "SDGR",
+   "kind": "EXTENSION",
+   "canon_ref": ["C5"],
+   "claim": "SDGR sits at a 52-week high with the 50-day well above the 200-day; a young, vertical run. Volume is elevated, which supports it today, but the distance from the long averages leaves little room for ordinary pullback.",
+   "evidence": "ma_50 26.07; ma_100 21.47; ma_200 17.12; pct_from_52w_high 0.0; day_vol 1.59; rs_rank_pct 99.42; structure_shift ABOVE_STRUCTURE.",
+   "addressed_to": "minervini, wyckoff"
+  },
+  {
+   "scope": "APP",
+   "ticker": "APP",
+   "kind": "ANCHOR",
+   "canon_ref": ["C5", "C17"],
+   "claim": "APP carries the top composite in the room but its higher-timeframe context contradicts it: price history is a down-trend, the 50-day is far under the 200-day and relative strength rank is low. The headline score and the longer-term trend point in opposite directions.",
+   "evidence": "sc_momentum 85.2; ma_50 295.2; ma_100 351.79; ma_200 408.73; pct_from_52w_high -44.11; rs_rank_pct 24.98; div_state BULLISH.",
+   "addressed_to": "minervini, oneil"
+  },
+  {
+   "scope": "lane",
+   "kind": "ANCHOR",
+   "canon_ref": ["C5", "C17"],
+   "claim": "Several MOMENTUM-lane names have a 50-day under the 200-day while carrying high composite scores. A composite near 80 is not a higher-timeframe context by itself; a decider using it as the reason must show the trend it sits inside.",
+   "evidence": "UA sc_momentum 78.7, ma_50 4.77, ma_200 5.77, pct_from_52w_high -32.99. RKT sc_momentum 80.3, ma_50 12.44, ma_200 14.45, pct_from_52w_high -35.2. SARO sc_momentum 87.8, ma_50 22.77, ma_200 26.44. FBIN sc_momentum 84.5, ma_50 41.4, ma_200 44.69.",
+   "addressed_to": "minervini, oneil, raschke"
+  },
+  {
+   "scope": "lane",
+   "kind": "ANCHOR",
+   "canon_ref": ["C15", "C17"],
+   "claim": "All six nominations so far come from one seat (aqe-quant) and rest on the same composite family, so there is no independent convergence yet. Two of its conviction-4 names sit under their 200-day average, which the context step should answer before the vote.",
+   "evidence": "SWK conviction 5; EW conviction 5; FISV conviction 4; CPRI conviction 4; LOAR conviction 4; KIM conviction 3; all seats [aqe-quant]. FISV ma_50 49.55, ma_200 54.53. CPRI ma_50 15.5, ma_200 17.72.",
+   "addressed_to": "oneil, minervini, elder-lens"
+  },
+  {
+   "scope": "committee",
+   "kind": "OVERLAP",
+   "canon_ref": ["C15", "C17"],
+   "claim": "The door labels overlap heavily: STRENGTH, AQE_LEADER and PM_LENS repeatedly stack on the same names, so apparent multi-door support is largely the same composite counted through different routes, not independent evidence.",
+   "evidence": "MGNI doors SEATS, STRENGTH, AQE_LEADER, PM_LENS. ALK doors SEATS, STRENGTH, AQE_LEADER, PM_LENS. VSXY doors ELDER+LENS, STRENGTH, AQE_LEADER, SOLO, PM_LENS. BDX the same five. EW doors STRENGTH, AQE_LEADER, SOLO, PM_LENS.",
+   "addressed_to": "elder-lens, seow, raschke"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "canon_ref": ["C1", "C2"],
+   "claim": "High composite with many lens warnings is a conflict the room has not resolved. A strong sc_momentum alongside three or four warning lenses means the composite and the lens read disagree; neither has a measured forward-return separation in what I was given.",
+   "evidence": "VERX sc_momentum 75.7, lens_warnings 4, div_state BEARISH, div_bear_count 2. RYAN sc_momentum 80.4, lens_warnings 3. HAYW sc_momentum 76.6, lens_warnings 3. TOST sc_momentum 75.8, lens_warnings 3. TEX sc_momentum 53.9, lens_warnings 3.",
+   "addressed_to": "raschke, elder-lens"
+  },
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "canon_ref": ["C3", "C4", "C16"],
+   "claim": "No regime or sector-rotation label reaches me in this packet, so no name in the room can be tied to a named environment from what I hold. Any size argument resting on environment match is unsupported until the deciders state the regime themselves.",
+   "evidence": "Packet rows carry no regime and no srm field; tally rows list sector, ma_50, ma_100, ma_200, structure, structure_shift, div_state only.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "canon_ref": ["C16"],
+   "claim": "Fifteen names carry a NOMINATED door while showing zero nominations and no seats. Either the door label is stale or the nomination pattern was anonymised away; the board cannot be read as a nomination count until that is clarified.",
+   "evidence": "nomination_count 0 and seats [] with door NOMINATED: DLTR, PFG, TPG, HOMB, OHI, CLX, BRX, SONY, CURB, PG, JNJ, AMZN, NWL, PRU, RYAN.",
+   "addressed_to": "oneil, minervini"
+  }
+ ],
+ "obligations": [
+  {"seat": "minervini", "ticker": "APP", "class": "context", "what_is_owed": "State the higher-timeframe trend APP enters with, given ma_50 295.2 under ma_200 408.73, or leave it unnominated."},
+  {"seat": "oneil", "ticker": "MRNA", "class": "extension", "what_is_owed": "Say why a 52-week-high name with day_vol 0.74 and div_bear_count 2 is not already extended."},
+  {"seat": "livermore", "ticker": "CNK", "class": "extension", "what_is_owed": "Reconcile BULLISH_BOS with div_state BEARISH, div_bear_count 2 at a 52-week high."},
+  {"seat": "elder-lens", "ticker": "FISV", "class": "context", "what_is_owed": "Name the trend context for FISV with ma_50 49.55 under ma_200 54.53."}
+ ],
+ "declarations": [
+  "No nomination and no vote filed. Psychology claims: NONE.",
+  "Sector counts come from the 52 tally rows in the seat packet.",
+  "Edge measurement: NOT_MEASURED for every composite cited; none is leaned on as edge."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Absent from the packet; no name can be bound to a named environment (C3, C4)."},
+  {"field": "srm", "impact": "Absent from the packet; sector rotation context not available."},
+  {"field": "aqe_indicators.tsv", "impact": "Read only the first 94 of 481 lines; most rows there are not room names, so sub-components were not cross-read."},
+  {"field": "nomination_count", "impact": "15 names show a NOMINATED door with zero count and no seats."}
+ ]
+}

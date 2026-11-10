@@ -1,0 +1,71 @@
+{
+ "voice": "seow",
+ "date": "2026-11-10",
+ "answers": [
+  {
+   "pair_id": "BDX-seow-for~oneil",
+   "ticker": "BDX",
+   "to": "oneil",
+   "text": "Refuter: \"The break is unconfirmed: `day_vol 1.09` is a hard rejection\". My position test is fund flow, not a volume line: `subcomponents.flow.cmf 0.35` above zero (COM) and `elder` 10.0 ACCELERATION (TIF proxy) both confirm. Grid W/D/H1 all HH/HL, 0.7% under the 20-bar high. `mp` 96.0 is strength, not volume. Volume is not my evidence; no concession.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red candle then a break of its low next session.",
+   "market_void": null,
+   "reason": "Position system: `structure` 74.7 resistance break at a high; COM confirms `flow` 100.0, `subcomponents.flow.cmf 0.18`; `elder` 10.0; `mp` 89.0; `sc_momentum` 82.9. Weekly HH/HL, 3 confirms 0 refutes. Extension is a weight here."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop over yesterday's high, only once cmf lifts clear of zero."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or cmf below zero with a red candle.",
+   "market_void": null,
+   "reason": "Fresh break: `structure` 81.1, `energy` 79.0, `sc_momentum` 76.4, `mp` 76.0. But COM thin `subcomponents.flow.cmf 0.02`, `flow` 71.1 and `elder` 7.0 INTERRUPTED: fund flow must print first."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop over yesterday's high once the weekly stops printing LH/LL."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "`structure` 96.8, `mp` 87.0, `flow` 84.2, `subcomponents.flow.cmf 0.22`, `sc_momentum` 80.4 pass. Weekly swing LH/LL is a broken weekly (C21 house rule), 2 confirms vs 2 refutes: wait for the weekly to repair."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop over yesterday's high after the daily red bar is absorbed."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or cmf below zero.",
+   "market_void": null,
+   "reason": "Break present, `structure` 63.2, `energy` 82.4, COM only mild `subcomponents.flow.cmf 0.08`, `flow` 63.2; TIF unconfirmed `elder` 7.0, `mp` 65.0, `sc_momentum` 69.3. Daily bar red, 3.2% under 20-day high: wait."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red candle then a break of its low.",
+   "market_void": null,
+   "reason": "Break at a high: `structure` 76.8, COM strongest `subcomponents.flow.cmf 0.35`, `flow` 82.9, `elder` 10.0, `mp` 96.0, `sc_momentum` 76.8. Caution `subcomponents.flow.mfi 87.71` stretched, `energy` 58.0 soft."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if cmf turns above zero and elder_pattern returns to SUSTAINED while price holds above the break.",
+   "market_void": null,
+   "reason": "New high on negative COM: `subcomponents.flow.cmf -0.3`, `flow` 48.7, `elder` 8.0 INTERRUPTED, `sc_momentum` 69.0. Break not confirmed (C28); 3 confirms against. `energy` 85.7 does not replace money flow."
+  }
+ ],
+ "declarations": [
+  "Proxies: resistance line = structure_shift; COM = subcomponents.flow.cmf; TIF = elder_pattern; support = max(fib_swing_low, base_low_20d).",
+  "bar_high, base_low_20d, fib_swing_low levels not in packet; named by field only. Liquidity unseen. No market_void: my method has none."
+ ]
+}

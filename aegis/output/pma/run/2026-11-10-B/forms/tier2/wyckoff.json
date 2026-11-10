@@ -1,0 +1,44 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-10",
+ "declarations": [
+  "Packet serves no structure_shift_ref, pvp_* or bar_* values for ARHS; the trigger level is read from the stamped export at alert time.",
+  "Bracket fields are not a basis for any decision here (R1).",
+  "atr_14d 0.14 on a 72.83 entry is unreliable, so bar-width tests are not gradable."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "ARHS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to pull back into the broken Creek zone and hold there before any entry."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref by half an ATR: the Creek break has failed and price is back inside value.",
+   "market_void": null,
+   "reason": "TREND: swing HH/HL and EMA 9>21 on W, D and H1. But sma_distance_pct 49.84 and ext_atr20 4.55 put price far from value, so R2: do not chase (C3, C15). Extension sets entry location, not an oppose. Entry is the test of the Creek, then a sign-of-strength bar."
+  },
+  {
+   "ticker": "TECH",
+   "stance": "ABSTAIN",
+   "wrong_if": "Not a long call; a daily close back under structure_shift_ref would end any long case.",
+   "market_void": null,
+   "reason": "Hairline break: D close 0.1% above the last swing high, day_vol 0.94 (under 1.0) is a potential upthrust until it holds (C5). H1 below EMA9, swing LH but EL. atr_14d 0.14 is implausible, so R3 and R6 cannot be graded. Unclear read, R10: ABSTAIN, not an oppose."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of2.json",
+   "bytes": 937,
+   "sha256": "43d9e0b2e0e1"
+  },
+  {
+   "file": "wyckoff.part2of2.json",
+   "bytes": 675,
+   "sha256": "f498c70f8293"
+  }
+ ]
+}

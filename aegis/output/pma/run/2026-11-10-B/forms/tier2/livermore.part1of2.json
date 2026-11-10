@@ -1,0 +1,35 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "answers": [
+  {
+   "pair_id": "ARHS-livermore-for~oneil",
+   "ticker": "ARHS",
+   "to": "oneil",
+   "text": "\"past the 70% climax line\": that is a base-reader's test, not mine (C16). My test is trend plus a new high: W, D and H1 all HH/HL, D close 15.02 is 0.99% under 20-day high 15.17, ema_order 9>21 on all three. A new high is the entry, not the warning; my exit is the danger signal (C7), not a climax line.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "ARHS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "An hourly candle closes above the 52-week closing high: the new high prints on strength, never a dip buy."
+   },
+   "wrong_if": "A fade of 1x atr_14d from the day's high (my translation, not Livermore's 6 points), or D swing stops being HH/HL.",
+   "market_void": null,
+   "reason": "C5/C16: established uptrend at its high, W/D/H1 swing HH/HL, D close 15.02 above ema9 13.1421 and ema21 11.9834, H1 pos_in_day_range_pct 83.9. Extension is a weight, not a veto; a lone name in its group, so no second-name confirmation (C14). Exit is the danger signal."
+  }
+ ],
+ "declarations": [
+  "trend_confirmation: PASS (W/D/H1 HH/HL, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d, my translation, not Livermore's 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11)"
+ ]
+}

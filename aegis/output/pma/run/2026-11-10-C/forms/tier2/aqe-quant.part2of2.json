@@ -1,0 +1,84 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average (trend alignment intact)"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING with `subcomponents.structure.rs_accel` negative, or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "Broad and clean: `flow 80.3`, `energy 74.8`, `structure 82.1`, `mp 100.0`; `mp_accel_state` ACCELERATING; A-TIER `subcomponents.pipe.pipe_tier`; live wear test clean (`subcomponents.energy.en_trend_bars 20.0`, `subcomponents.energy.exhaustion_score 10.0`); `subcomponents.structure.rs_accel 17.73`."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`flow` clears 60 with `subcomponents.flow.cmf` positive and `subcomponents.flow.accum_score` rising.",
+   "market_void": null,
+   "reason": "Narrow: `flow 40.8` fails (`sc_m_gate_detail 7`), `subcomponents.flow.cmf -0.2`, `subcomponents.flow.accum_score 0.0`. `mp 100.0` and `structure 82.1` carry, built on one-month size; `pipe_tier` is B-STRONG but money flow is absent."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "ma_above:ma_20:ma_50",
+    "tf": "D",
+    "plain": "20-day average stays above the 50-day at the close (trend alignment)"
+   },
+   "wrong_if": "elder falls to 5 or less, or `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Broad: `flow 84.2`, `energy 71.4`, `structure 75.8`, `mp 93.0`; `subcomponents.structure.rs_vs_spy 8.12` with `subcomponents.structure.rs_accel 14.29`. But `mp_accel_state` DECELERATING and `elder 7.0` is thin: wait."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "ma_above:ma_20:ma_50",
+    "tf": "D",
+    "plain": "20-day average stays above the 50-day at the close (trend alignment)"
+   },
+   "wrong_if": "elder falls to 5 or less, or `flow` drops under its 60 floor (now `flow 63.2`).",
+   "market_void": null,
+   "reason": "`energy 84.0` with coil `subcomponents.energy.squeeze_score 8.5`, clean live test (`subcomponents.energy.en_trend_bars 23.0`, `subcomponents.energy.exhaustion_score 10.0`); `mp 80.0`. But `mp_accel_state` DECELERATING and `subcomponents.structure.rs_accel -0.12`."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average (trend alignment intact)"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING with `subcomponents.structure.rs_accel` still negative, or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "Four engines over floors: `flow 67.1`, `energy 77.3`, `structure 73.7`, `mp 76.0`; `elder 9.0`, `mp_accel_state` ACCELERATING, coil `subcomponents.energy.squeeze_score 12.5`. Caution: `subcomponents.structure.rs_accel -13.48` (lead shrinking), `subcomponents.energy.en_trend_bars 2.0` young."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average (trend alignment intact)"
+   },
+   "wrong_if": "`mp_accel_state` turns DECELERATING with `subcomponents.structure.rs_accel` negative, or elder falls to 5 or less.",
+   "market_void": null,
+   "reason": "Broadest in set: `flow 90.8`, `energy 68.9`, `structure 89.5`, `mp 93.0`; ACCELERATING; A-TIER `subcomponents.pipe.pipe_tier`; `subcomponents.structure.rs_accel 7.11`; clean live test (`subcomponents.energy.exhaustion_score 10.0`)."
+  }
+ ],
+ "declarations": [
+  "Method: AQE composites and sub-components only. Charts, grid frames and price levels are not on my menu and were not read."
+ ]
+}

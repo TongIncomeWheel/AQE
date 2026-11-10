@@ -1,0 +1,70 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "ELF",
+   "reason": "Stage 2 leader breaking out right at its pivot: pct_from_pivot 0.9, squeeze_breakout_state BREAKOUT_UP with volume confirmed, day_vol 1.61, rs_rank_pct 98.18, pct_from_52w_high 0.0. Not a chase. Fundamentals not checked.",
+   "fields_cited": ["ma_50", "ma_150", "ma_200", "rs_rank_pct", "rs_spy_20d", "pct_from_pivot", "pivot_high", "day_vol", "squeeze_breakout_state", "pct_from_52w_high", "structure_shift"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "ma_200 81.97 < ma_100 94.94 < ma_50 106.53; entry 119.35 vs low_52w 49.57 (well over +30%); structure_shift BULLISH_BOS", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "low_52w", "entry", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "Crit 1,2,4,5,6,7 pass: entry 119.35 > ma_150 83.22 > ma_200 81.97, ma_50 106.53, pct_from_52w_high 0.0. Crit 3 (200d rising) no slope served; crit 8 proxy rs_rank_pct 98.18", "verdict": "partial", "fields": ["entry", "ma_50", "ma_150", "ma_200", "low_52w", "pct_from_52w_high", "rs_rank_pct"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_spy_20d 11.82, rs_rank_pct 98.18, rs_leadership IN-LINE, rs_down_day_20d 0.0", "verdict": "pass", "fields": ["rs_spy_20d", "rs_rank_pct", "rs_leadership", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "base_range_pct 15.6; squeeze_breakout_state BREAKOUT_UP, was_squeezed True, volume_confirmed True, day_vol 1.61. Contraction count not served", "verdict": "partial", "fields": ["day_vol", "squeeze_breakout_state", "was_squeezed", "squeeze_breakout_volume_confirmed", "elder_context.vcp.base_range_pct"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "pivot_high 118.29, pct_from_pivot 0.9 (near pivot). bracket.stop null, bracket.valid False: own level = close below ma_20 113.22", "verdict": "pass", "fields": ["pivot_high", "pct_from_pivot", "ma_20", "bracket.valid", "bracket.stop"]},
+    {"step": 6, "canon_ref": ["C1", "C12"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; fundamentals leg of SEPA not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "Close back below the breakout pivot_high 118.29, and certainly below ma_20 113.22 (own structural level; engine bracket.stop is null). Breakout failing on light volume also voids it."
+  },
+  {
+   "ticker": "BRZE",
+   "reason": "Stage 2 leader sitting on its pivot: pct_from_pivot 0.28, structure_shift BULLISH_BOS, rs_rank_pct 98.59, rs_leadership LEADER, pct_from_52w_high -0.04. Caution: day_vol 0.51 is not expanding; sma_distance_pct 40.24 stretched.",
+   "fields_cited": ["ma_50", "ma_150", "ma_200", "rs_rank_pct", "rs_leadership", "rs_spy_20d", "pct_from_pivot", "pivot_high", "day_vol", "sma_distance_pct", "structure_shift"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "ma_200 25.24 < ma_100 29.31 < ma_50 32.86; entry 46.08 vs low_52w 15.79 (well over +30%); structure_shift BULLISH_BOS", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "low_52w", "entry", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "Crit 1,2,4,5,6,7 pass: entry 46.08 > ma_150 27.05 > ma_200 25.24, ma_50 32.86, pct_from_52w_high -0.04. Crit 3 no slope served; crit 8 proxy rs_rank_pct 98.59", "verdict": "partial", "fields": ["entry", "ma_50", "ma_150", "ma_200", "low_52w", "pct_from_52w_high", "rs_rank_pct"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership LEADER, rs_spy_20d 61.83, rs_rank_pct 98.59, rs_down_day_20d 0.48", "verdict": "pass", "fields": ["rs_leadership", "rs_spy_20d", "rs_rank_pct", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "base_range_pct 49.8 (wide), vcp_tightness_pct 2.9; day_vol 0.51 (no breakout expansion), flow 19.7. Contraction count not served", "verdict": "partial", "fields": ["day_vol", "flow", "elder_context.vcp.base_range_pct", "elder_context.vcp.vcp_tightness_pct"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "pivot_high 45.95, pct_from_pivot 0.28 (at pivot); sma_distance_pct 40.24 stretched. bracket.stop null, bracket.valid False: own level = lose pivot 45.95", "verdict": "partial", "fields": ["pivot_high", "pct_from_pivot", "sma_distance_pct", "bracket.valid", "bracket.stop"]},
+    {"step": 6, "canon_ref": ["C1", "C12"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; fundamentals leg of SEPA not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "Close back below pivot_high 45.95 (own structural level; engine bracket.stop is null), or the breakout failing to draw volume expansion over the next sessions."
+  },
+  {
+   "ticker": "AMPL",
+   "reason": "Stage 2 leader coiled just under its pivot: pct_from_pivot -2.91, pct_from_52w_high -0.69, rs_rank_pct 99.5, vcp_tightness_pct 74.3, day_vol 1.28. Caution: div_state BEARISH with div_bear_count 1; structure_shift RANGE.",
+   "fields_cited": ["ma_50", "ma_150", "ma_200", "rs_rank_pct", "rs_spy_20d", "pct_from_pivot", "pivot_high", "day_vol", "pct_from_52w_high", "div_state", "structure_shift"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "ma_200 9.81 < ma_100 12.45 < ma_50 14.87; entry 17.32 vs low_52w 5.61 (well over +30%); structure_shift RANGE", "verdict": "pass", "fields": ["ma_50", "ma_100", "ma_200", "low_52w", "entry", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "Crit 1,2,4,5,6,7 pass: entry 17.32 > ma_150 10.6 > ma_200 9.81, ma_50 14.87, pct_from_52w_high -0.69. Crit 3 no slope served; crit 8 proxy rs_rank_pct 99.5", "verdict": "partial", "fields": ["entry", "ma_50", "ma_150", "ma_200", "low_52w", "pct_from_52w_high", "rs_rank_pct"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_spy_20d 14.79, rs_rank_pct 99.5, rs_leadership IN-LINE, rs_down_day_20d -0.24", "verdict": "pass", "fields": ["rs_spy_20d", "rs_rank_pct", "rs_leadership", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "base_range_pct 25.2, vcp_tightness_pct 74.3, day_vol 1.28, structure_shift RANGE; div_state BEARISH, div_bear_count 1. Contraction count not served", "verdict": "partial", "fields": ["day_vol", "structure_shift", "div_state", "div_bear_count", "elder_context.vcp.base_range_pct", "elder_context.vcp.vcp_tightness_pct"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "pivot_high 17.84, pct_from_pivot -2.91 (not yet through the pivot). bracket.stop null, bracket.valid False: own level = ma_20 16.52", "verdict": "partial", "fields": ["pivot_high", "pct_from_pivot", "ma_20", "bracket.valid", "bracket.stop"]},
+    {"step": 6, "canon_ref": ["C1", "C12"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; fundamentals leg of SEPA not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "Close below ma_20 16.52 (own structural level; engine bracket.stop is null) before clearing pivot_high 17.84, or a pivot break on light volume."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null on all three nominees (bracket.valid False); own invalidation level named from structure; not used to cap conviction (R1)"},
+  {"field": "bracket.stop_type", "impact": "null on all three nominees; own invalidation level named from structure; not used to cap conviction (R1)"},
+  {"field": "ma_200_slope", "impact": "Trend Template criterion 3 (200-day rising one month) not directly readable; criterion 3 marked partial on every name"},
+  {"field": "bq.bq_base_dur", "impact": "not in packet; base duration not read, base shape judged from elder_context.vcp fields only"},
+  {"field": "bq.bq_range_tight", "impact": "not in packet; tight_base flag not read"},
+  {"field": "energy.squeeze_score", "impact": "not in packet; squeeze read only via squeeze_breakout_state / was_squeezed"}
+ ],
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,6,7 PASS directly; criterion 3 (200d rising) NOT directly computable; criterion 8 approximated by rs_rank_pct + rs_spy_20d (not IBD RS rank) (C3)",
+  "vcp_detail: NOT_SERVED (contraction count/depth not exported; elder_context.vcp and structure fields are proxies only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20)",
+  "rs_proxy: rs_rank_pct + rs_leadership + rs_spy_20d (substitute for IBD RS rank, C3/C11)",
+  "volume_signature: day_vol at current bar only (C6, partial)",
+  "ledger_lessons: no standing lessons applied (none injected for this round)"
+ ],
+ "shortfall_reason": null
+}

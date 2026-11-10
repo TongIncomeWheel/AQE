@@ -1,0 +1,62 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Price pulls back to within 0.25 ATR of the broken Creek and holds there."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr: the break failed and price is back inside the old range.",
+   "market_void": null,
+   "reason": "Trend, but away from value: daily D is 12.3% above its last swing high (C3, C15). Demand is real: `flow` 100.0, `mp` 89.0, `elder` 10.0, `sc_momentum` 82.9, `structure` 74.7. I wait for the test, I do not chase."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A completed hourly candle closes above yesterday's high, entered with a buy stop."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr, or choch_bearish prints.",
+   "market_void": null,
+   "reason": "At the test: daily is 0.9% above its last swing high, inside 1 ATR of the Creek (C7). `structure` 81.1, `energy` 79.0 with `subcomponents.energy.squeeze_score` 12.5 (coil), `flow` 71.1, `mp` 76.0. Weekly LH but HL and `elder` 7.0 keep conviction moderate."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Price comes back to within 0.25 ATR of the broken Creek and holds."},
+   "wrong_if": "Weekly close under its last swing low, or daily close below structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "Strong engines: `structure` 96.8, `flow` 84.2, `mp` 87.0, `elder` 10.0, `sc_momentum` 80.4. But weekly is LH/LL (W swing LH/LL, 4.1% under the 20-wk high) and daily is 6.5% above its swing high: weekly Creek untested, so I wait for the test (C16, C3)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "A completed hourly candle closes above yesterday's high on rising volume."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr, or elder falls to 4 or less.",
+   "market_void": null,
+   "reason": "At value but no strength bar: daily last bar red, 1.8% under its last swing high. `energy` 82.4 with `subcomponents.energy.squeeze_score` 12.5 is coiled, yet `flow` 63.2, `structure` 63.2, `mp` 65.0 FADING/DECELERATING, `elder` 7.0 show average demand. Need a sign-of-strength bar (C12)."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:structure_shift_ref", "tf": "D", "plain": "Price pulls back to within 0.25 ATR of the broken Creek and holds."},
+   "wrong_if": "Daily close below structure_shift_ref-0.5atr, or more oscillators join the bearish divergence.",
+   "market_void": null,
+   "reason": "Weekly and daily HH/HL, value stepping up (C10 proxy). `flow` 82.9, `mp` 96.0, `elder` 10.0, `structure` 76.8. But daily is 7.4% above its swing high and `energy` 58.0 is lowest with `subcomponents.energy.exhaustion_score` 7.0: extended, so wait for the test (C3, C15)."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "wrong_if": "Two sessions close in the top third on volume above the 20-day high, with cmf turning positive.",
+   "market_void": null,
+   "reason": "Effort without result (C5): `flow` 48.7 with `subcomponents.flow.cmf` -0.3 means closes lean low on volume, yet `energy` 85.7 and `structure` 69.5 cannot supply demand. Daily 20-day high 123.13 on 2026-11-05 was rejected back to 119.35, an upthrust shape; `elder` 8.0 does not repair it."
+  }
+ ],
+ "declarations": [
+  "NOT_SERVED to me: pvp_poc, pvp_vah, pvp_val and structure_shift_ref values are not in my packet; the Creek is proxied by the daily last swing high on the W/D/H1 grid."
+ ]
+}

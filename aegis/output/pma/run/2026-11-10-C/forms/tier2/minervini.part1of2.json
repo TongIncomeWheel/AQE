@@ -1,0 +1,79 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-10",
+ "answers": [
+  {
+   "pair_id": "ELF-minervini-for~seow",
+   "ticker": "ELF",
+   "to": "seow",
+   "text": "Quote: \"a 52-week high without money is unconfirmed\". My C6 volume test agrees on the money leg: `flow` 48.7, `subcomponents.flow.cmf` -0.3. Grid: W HH/HL, D LH but HL 3.1% under the 20-day high, H1 closed 41% of range. So no buy on the high; I keep it WAIT for a volume-backed close, coil `energy` 85.7.",
+   "concede": true
+  },
+  {
+   "pair_id": "TREX-minervini-for~seow",
+   "ticker": "TREX",
+   "to": "seow",
+   "text": "Quote: \"a price high without money is the C28 divergence\". C6: volume must confirm price or the setup is not valid. `flow` 40.8 and `subcomponents.flow.accum_score` 0.0 are no money. D swing HH but LL, 14.9% above the last swing high is a chase (C5). W HH/HL, `structure` 82.1, `mp` 100.0 are real but do not replace volume. Conceded; I move to OPPOSE.",
+   "concede": true
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Daily close above the 52-week closing high on expanding volume"},
+   "wrong_if": "Daily close below ma_20 after the break, or a high-volume reversal bar at the high.",
+   "market_void": null,
+   "reason": "`sc_momentum` 82.9, `flow` 100.0, `mp` 89.0, `elder` 10.0 are broad. But D swing is LH/LL, 12.3% above the last swing high: no base to count, so I buy a fresh closing high on volume, not the chase. W and H1 HH/HL."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Daily close above the 52-week closing high on expanding volume"},
+   "wrong_if": "Daily close below ma_20, or structure turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "`structure` 81.1 BOS, `energy` 79.0 coiled, `sc_momentum` 76.4 at a high, but `elder` 7.0 is INTERRUPTED and day_vol 1.05 gives no breakout volume. W LH but HL, H1 LH/LL: wait for the volume-backed high."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last confirmed pivot high on expanding volume"},
+   "wrong_if": "Daily close below ma_50, which is the line my template needs it to hold.",
+   "market_void": null,
+   "reason": "`structure` 96.8, `flow` 84.2, `mp` 87.0, `sc_momentum` 80.4 are strong, but W swing is LH/LL 4.1% under the 20-week high and ma50 sits under ma100. Base not confirmed on the weekly: wait for the pivot to clear."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last confirmed pivot high on expanding volume"},
+   "wrong_if": "Daily close below ma_50.",
+   "market_void": null,
+   "reason": "Lowest weight. `energy` 82.4 coiled and D HH/HL, but `structure` 63.2, `mp` 65.0, `elder` 7.0 INTERRUPTED and `flow` 63.2 are thin for a leader. W LH but HL, H1 LH/LL: only a volume-backed break qualifies."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Daily close above the 52-week closing high on expanding volume"},
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "Cleanest grid here: W, D and H1 all HH/HL, 0.7% under the 20-day high. `flow` 82.9, `structure` 76.8, `mp` 96.0, `elder` 10.0 agree. `energy` 58.0 is the low engine and volume is mild, so the break must print on volume."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Daily close above the 52-week closing high on expanding volume"},
+   "wrong_if": "Daily close below ma_20.",
+   "market_void": null,
+   "reason": "`energy` 85.7 coiled at a high, but `flow` 48.7 and `subcomponents.flow.cmf` -0.3 show no money, `elder` 8.0 INTERRUPTED. D LH but HL. I act only on a volume-backed close; conceded the refuter's money point."
+  }
+ ],
+ "declarations": [
+  "Trend Template from served proxies; ma_150, 200-day slope and 52-week low not served. Earnings growth, company category, VCP contraction count NOT_SERVED."
+ ]
+}

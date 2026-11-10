@@ -1,0 +1,53 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "declarations": [
+  "adx, stochastic_kd, exact n-day extreme, bar_range_history NOT_SERVED (R2-R5); proxies declared. Breadth out of scope (C16). No bracket field is a reason on any ticket (R1).",
+  "bar_range_history NOT_SERVED (R5): atr_14d is not a trustworthy contraction read, so the call rests on structure_shift and sma_distance_pct. No bracket field is a reason (R1)."
+ ],
+ "answers": [
+  {
+   "pair_id": "TECH-raschke-for~oneil",
+   "ticker": "TECH",
+   "to": "oneil",
+   "text": "\"a breakout nobody bought\" (day_vol 0.94). My breakout test is range contraction (C12), where quiet precedes the trend day, so light volume is not a refutation. W 0.1% under 20-wk high, D 0.1% above last swing high, both HH/HL; H1 below EMA9 only delays the trigger, so I WAIT for the H1 close above bar_high. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "ARHS",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if it coils near the 20-day high and breaks bar_high on rising day_vol, a contraction breakout.",
+   "market_void": null,
+   "reason": "None of the four set-ups: D 43.3% above the last swing high, W 43.3%, H1 12.9% is an extended run, not a test, retracement or contraction. No climax reversal is established (C11), and I decline to call one (R9). No setup fit is not evidence against."
+  },
+  {
+   "ticker": "TECH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes above yesterday's high, after H1 gets back above EMA9."
+   },
+   "wrong_if": "A daily close below bar_low: the failed contraction breakout flips (C23) and I am out.",
+   "market_void": null,
+   "reason": "Breakout family (C2/C12): D 0.1% above last swing high, W 0.1% under 20-wk high, both HH/HL, sma_distance_pct 0.46 so entry and invalidation sit close (C20). H1 is below EMA9 (LH but EL, 46% of range), so the entry waits for the H1 close above bar_high."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of2.json",
+   "bytes": 1245,
+   "sha256": "3d19f3f00c83"
+  },
+  {
+   "file": "raschke.part2of2.json",
+   "bytes": 929,
+   "sha256": "9e854ac6a19b"
+  }
+ ]
+}

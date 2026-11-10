@@ -1,0 +1,161 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-10",
+ "declarations": [
+  "Elder series fields (impulse colour, force index, price_ema_slope, channel, weekly_trend_direction) are not in the packet: R1-R6 unread; weekly read from the MTF W line only.",
+  "answer_pairs is empty: no claim of mine was refuted, answers is []. Brackets were not used as a reason.",
+  "answer_pairs is empty: no claim of mine was refuted, answers is []. Elder series fields R1-R6 are not in the packet and were not read.",
+  "Brackets were not used as a reason; no Valen flags cited."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`elder` falls to 1 or lower, or price runs on with no pullback and the wait costs the trade.",
+   "market_void": null,
+   "reason": "`elder` 10.0 on elder_5d 3,5,10,10,10 is a flat high tail, summer (C20), no fresh event. `mp` 89.0 and `flow` 100.0 are real but Elder buys the pullback, not the plateau. Stand aside, not oppose."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high while price holds the 20-day average"
+   },
+   "wrong_if": "`elder` back to 1 or lower, or a daily close below bar_low.",
+   "market_void": null,
+   "reason": "Permission event on last bar: elder_5d 0,6,7,2,7, `elder` 7.0, ban lifted. `structure` 81.1 and `energy` 79.0 back it; `mp` 76.0 STRONG. Series flips (C22), weekly LH but HL, so WAIT for the hourly confirm."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Weekly turns to HH/HL with the 20-week high retaken; then standing aside was wrong.",
+   "market_void": null,
+   "reason": "Weekly first (C21): W swing LH/LL, 4.1% under the 20-week high, so the tide is not up. `elder` 10.0, elder_5d 10,10,7,10,10 never went red, `mp` 87.0 and `structure` 96.8 are strong. Moved from my blind SUPPORT on the weekly read."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high after the daily red bar is absorbed"
+   },
+   "wrong_if": "`elder` at 1 or lower, or another dip to 4 inside two bars (whipsaw).",
+   "market_void": null,
+   "reason": "Lift 4 to 7 on last bar: elder_5d 2,7,4,4,7, `elder` 7.0, minimum permission. `energy` 82.4 supports; `mp` 65.0 and `structure` 63.2 are modest, daily bar red, weekly LH but HL. WAIT."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`elder` falls to 1 or lower, or a dip-and-lift prints and I missed the entry.",
+   "market_void": null,
+   "reason": "`elder` 10.0, elder_5d 6,10,10,10,10: lift was three bars ago, now a plateau (C20, C24 unsourced). `mp` 96.0 and `flow` 82.9 are real, but `energy` 58.0 is the weak engine and 0.7% under the 20-day high leaves no value zone."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high after any dip toward the 20-day average"
+   },
+   "wrong_if": "`elder` back to 1 or lower, or another 0 inside the next five bars.",
+   "market_void": null,
+   "reason": "elder_5d 0,5,0,7,8: red twice then lifted, `elder` 8.0. `energy` 85.7 good, but `flow` 48.7 is thin and `mp` 74.0 is BUILDING; two red prints are whipsaw (C22). Low conviction, WAIT for hourly confirmation."
+  },
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Dip to the 20-day average, then an hourly close back above it"
+   },
+   "wrong_if": "Daily close under ma_20 minus half an ATR, or `elder` at 1 or lower.",
+   "market_void": null,
+   "reason": "Weekly and daily both HH/HL, 9>21. `mp` 100.0 STRONG, `structure` 82.1, `flow` 80.3, `elder` 10.0 after elder_5d 7,10,10,7,10 dip-and-reclaim. Dip never red and H1 is below EMA9, so wait for the value zone."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Dip to the 20-day average, then an hourly close back above it"
+   },
+   "wrong_if": "Daily close under ma_20 minus half an ATR, or `elder` at 1 or lower.",
+   "market_void": null,
+   "reason": "`mp` 100.0 STRONG, `structure` 82.1, `elder` 10.0 on elder_5d 7,10,10,7,10, weekly HH/HL. `flow` 40.8 is thin buying and daily swing is HH but LL, so low conviction and no chase; wait for the pullback."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`elder` falls to 1 or lower, or elder_5d lifts to 9 or higher off the flat 7 and I stood aside.",
+   "market_void": null,
+   "reason": "`elder` 7.0, elder_5d 10,7,7,7,7: green went away four bars ago, no dip-and-lift. `mp` 93.0 and `flow` 84.2 are strong but H1 is below EMA9 at 12% of range and the daily bar is red. A pause, not a signal."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Dip to the 20-day average, then an hourly close back above it"
+   },
+   "wrong_if": "`elder` at 1 or lower, or a daily close under ma_20 minus half an ATR.",
+   "market_void": null,
+   "reason": "Pullback in a rising stack (W and D HH/HL): `elder` 7.0, elder_5d 6,10,10,7,7, green gone, not red. `energy` 84.0 and `mp` 80.0 support; `flow` 63.2 middling, H1 9<21. No event yet, conviction low, WAIT."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high while the rising average holds"
+   },
+   "wrong_if": "`elder` back to 1 or lower, or a daily close below bar_low.",
+   "market_void": null,
+   "reason": "Best event in the set: elder_5d 7,7,1,6,9, red gave way and `elder` is 9.0. `mp` 76.0 STRONG, `energy` 77.3, `structure` 73.7; W and D HH/HL, 0.2% under the 20-day high. INTERRUPTED label, hourly LH/LL."
+  },
+  {
+   "ticker": "EW",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "`elder` falls to 1 or lower, or a dip-and-lift prints and I missed the entry.",
+   "market_void": null,
+   "reason": "`elder` 10.0, elder_5d five pinned tens, summer (C20), no event. `mp` 93.0 and `structure` 89.5 are strong, but weekly swing is LH/LL (C21) and price is 18.4% over the last daily swing high. Stand aside."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of2.json",
+   "bytes": 3107,
+   "sha256": "2b4756659079"
+  },
+  {
+   "file": "elder-lens.part2of2.json",
+   "bytes": 3041,
+   "sha256": "f4e8bbc54793"
+  }
+ ]
+}

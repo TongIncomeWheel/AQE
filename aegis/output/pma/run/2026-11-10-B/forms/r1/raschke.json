@@ -1,0 +1,52 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "TECH",
+   "reason": "BREAKOUT family (C2/C12): coiled name now through structure - structure_shift 2 (BULLISH_BOS), sma_distance_pct 0.46 (at the average, not extended), atr_14d 0.14 (contraction proxy). Wrong if it loses the breakout bar low; I name that swing low myself.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "atr_14d", "structure", "bracket.valid", "elder_pattern"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 2 (BULLISH_BOS), structure 72.6, sma_distance_pct 0.46 -> fits BREAKOUT type", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.14, atr_caution False, day_vol 0.94; no per-bar range series so no NR4/NR7 or HV ratio count", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C2", "C12"], "observed": "declared: adx, stochastic_kd, exact n-day extreme, bar_range_history NOT_SERVED; proxies atr_14d + structure_shift; div_state BEARISH div_bear_count 4 advisory only", "verdict": "partial", "fields": ["div_state", "div_bear_count"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, bracket.stop null; own level = breakout-bar swing low just under entry 72.83 (engine atr_fallback_stop 72.69 for reference)", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "entry"]}
+   ],
+   "falsifier": "Close back inside the prior range below the breakout-bar swing low (about 72.6-72.69) - failed range-contraction breakout; per C23 it then flips, so I am out."
+  },
+  {
+   "ticker": "VEEV",
+   "reason": "RETRACEMENT family (C2): structure_shift 3 (RANGE, inside the swing) with sma_distance_pct 5.75 - a pullback within an established trend, bracket.stop 289.74 (ma50) is the swing support. ADX gate (Holy Grail) NOT_SERVED, so low conviction.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "structure", "bracket.stop", "bracket.stop_type", "bracket.valid", "mp_state"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (RANGE), structure 55.8, sma_distance_pct 5.75 -> RETRACEMENT shape", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail needs ADX>30 rising: not served; mp_state 2 (FADING), mp_accel_state 2 (DECELERATING) as weak proxy, day_vol 0.77", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C6", "C7"], "observed": "declared: adx and stochastic_kd NOT_SERVED; n-day extreme approximated by sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.stop 289.74, bracket.stop_type ma50, bracket.valid True, entry 306.4", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "entry"]}
+   ],
+   "falsifier": "Close below the ma50 stop at 289.74 - the retracement has become a trend change and the higher-low premise is broken."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "adx", "impact": "Holy Grail / ADX Gapper (C7, C8) cannot be gated; retracement names carry reduced conviction"},
+  {"field": "stochastic_kd", "impact": "The Anti (C6) cannot be tested"},
+  {"field": "n_day_extreme", "impact": "Turtle Soup / 80-20 (C3, C4) only approximated via sma_distance_pct + structure_shift; no test-family name nominated"},
+  {"field": "bar_range_history", "impact": "NR4/NR7/HV-ratio (C12, C13) not countable; atr_14d is a single-value proxy"},
+  {"field": "lens", "impact": "null for every packet row; no lens read available"},
+  {"field": "energy.squeeze_score", "impact": "absent from packet; squeeze read not available"},
+  {"field": "bracket.stop", "impact": "null for TECH (bracket.valid False); invalidation level named from structure instead"}
+ ],
+ "declarations": [
+  "setup_type: breakout (TECH), retracement (VEEV) - C2",
+  "adx: NOT_SERVED (C7, C8)",
+  "stochastic_kd: NOT_SERVED (C6)",
+  "n_day_extreme: sma_distance_pct + structure_shift (substitute, C3/C4)",
+  "bar_range_history: NOT_SERVED (C12, C13)",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16)"
+ ],
+ "shortfall_reason": "Only two of ten packet names fit one of the four setup families with a readable trigger; the rest are extended, RANGE with no trigger, or null on structure_shift, and no test/climax setup is readable from served fields. Not padded."
+}

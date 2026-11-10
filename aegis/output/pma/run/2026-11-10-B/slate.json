@@ -1,0 +1,41 @@
+{
+ "date": "2026-11-10",
+ "chair": "chair",
+ "board_sha256": "e4b0e57e6fdc5bce6f9d302e859b3fd7817dc75bb8298484d22a6a135e3a19e1",
+ "decision_sha256": "819fb31d20b3c2cebd3fe7476399c5529bdbfd266176406aff72bfcd6297f07e",
+ "tickets": [
+  {
+   "ticker": "ARHS",
+   "verdict": "WATCH",
+   "entry_trigger": "A completed 1-hour candle closes above yesterday's high on rising volume, after a tight pause.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high on rising volume, after a tight pause."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 2,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below bar_low-0.5atr, or a pullback on rising volume that gives back the weekly higher low.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Weekly and daily swing HH/HL, close_vs_ema9 above, ema_order 9>21 on W, D and H1: Trend Templat\" | livermore: \"C5/C16: established uptrend at its high, W/D/H1 swing HH/HL, D close 15.02 above ema9 13.1421 a\" | elder-lens: \"Weekly tide first: W above EMA9, 9>21, swing HH/HL, so longs are permitted. D swing HH/HL, ema9\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leadership is real (rs LEADER, day_vol 1.66) but entry 15.02 vs ma200 8.4 is past the 70% climax line (R7, C24); sold into, never bought. W/D/H1 grid is HH/HL but extension is the fault."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": null
+}

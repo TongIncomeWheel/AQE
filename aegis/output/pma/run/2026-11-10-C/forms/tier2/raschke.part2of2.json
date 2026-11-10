@@ -1,0 +1,85 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SWK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under fib_618 of the swing",
+   "market_void": null,
+   "reason": "RETRACEMENT under way: H1 below EMA9 inside W and D HH/HL. `sc_momentum` 82.9, `flow` 80.3, `structure` 82.1, `mp` 100.0 hold; extension is the caution."
+  },
+  {
+   "ticker": "TREX",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close over the 20-day high with `flow` rising would change my read",
+   "market_void": null,
+   "reason": "TEST family against the chase (C3). `flow` 40.8 trails `mp` 100.0 and `structure` 82.1, so price outruns money; `sc_momentum` 69.3 is mid. Daily swing HH but LL, not a retracement."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20 minus half an ATR",
+   "market_void": null,
+   "reason": "RETRACEMENT under way: H1 below EMA9 in a W and D HH/HL trend. `flow` 84.2, `sc_momentum` 80.4, `energy` 71.4 support; `structure` 75.8 RANGE and `elder` 7.0 cap it."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Hourly reclaim of the 20-day average after the dip"
+   },
+   "wrong_if": "Daily close under ma_20 minus half an ATR",
+   "market_void": null,
+   "reason": "RETRACEMENT under way, least extended of the set. `energy` 84.0, `sc_momentum` 75.1, `structure` 74.7 RANGE; H1 EMA9<21 so I wait for the reclaim."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under bar_low",
+   "market_void": null,
+   "reason": "TEST (C3/C20, approximated), reclaim day at the high. `energy` 77.3, `structure` 73.7, `mp` 76.0 support; `elder` 9.0 INTERRUPTED and `flow` 67.1 middling."
+  },
+  {
+   "ticker": "EW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:fib_382",
+    "tf": "H1",
+    "plain": "Hourly reclaim of the 38.2% fib after a pullback"
+   },
+   "wrong_if": "Daily close under fib_618 of the swing",
+   "market_void": null,
+   "reason": "No retracement yet. `sc_momentum` 84.4, `flow` 90.8, `structure` 89.5, `mp` 93.0 broad; weekly swing LH/LL and extension, so only a first pullback that holds."
+  }
+ ],
+ "declarations": [
+  "Declared (C3-C13, R2-R5): adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE.",
+  "answer_pairs is empty: none of my claims was refuted, so answers is []."
+ ]
+}

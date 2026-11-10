@@ -1,0 +1,1733 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "round": 2,
+ "declarations": [
+  "Declared (C3-C13, R2-R5): adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE. Setup family named in each reason.",
+  "sc_m_gates and pipe_rank are null for every name in aqe_indicators.tsv, so I did not read them; engine floors are read from flow, energy, structure, mp, elder values.",
+  "Regime read from the packet only: Valen RISK OFF, trend CHOP, SPY gamma NEGATIVE. My method has no regime input; short holds (C18) and convictions of 3 or less reflect it.",
+  "Sector crowding: Industrials (11 names) is counted as ONE slot; extension (R27) is a weight, never a veto. No round-1 ballot exists for this seat, so conviction_change is null throughout.",
+  "Sector crowding: the defensive Staples/Real Estate/Healthcare block (PG, JNJ, OHI, CURB, BRX) is read as one rate-sensitive cluster; I take shapes, not the block. No round-1 ballot exists for this seat, so conviction_change is null."
+ ],
+ "votes": [
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2), not formed yet. `sc_momentum` 82.9, `flow` 100.0, `structure` 74.7, `mp` 89.0, `elder` 10.0 say the thrust is real, but sma_dist 20.17% and run_10d 34.32% mean a long now buys the climax end (C19). I back only the first pullback that holds a higher low. U&R FAILED, so no test shape either. Weight, not veto (R27).",
+   "case": {
+    "for": "Every engine strong: `flow` 100.0, `mp` 89.0 STRONG/ACCELERATING, `elder` 10.0 ACCELERATION; W and H1 swing HH/HL.",
+    "against": "ext_atr20 3.74 and sma_dist 20.17%: the first pullback may be deep; U&R FAILED shows an earlier failed test.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382; no chase above the 20-day high.",
+    "wrong_if": "Daily close under fib_618 of the thrust swing, or `elder` falling to red.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A tight pause near the 20-day high on below-normal volume would give a range-contraction breakout shape.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Agreed: STRENGTH, AQE_LEADER and PM_LENS are one composite counted three ways. I count no door label, only my own setup shape, which is PULLBACK and not yet formed.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST family (C3/C20, approximated): U&R MET, reclaim day after a dip under the 9-day average, sma_dist 9.81%, so the invalidation sits close. `structure` 81.1 BULLISH_BOS, `energy` 79.0, `flow` 71.1 carry it. `elder` 7.0 INTERRUPTED and div BEARISH/2 cap me at conviction 2.",
+   "case": {
+    "for": "Reclaim day with `structure` 81.1 and `energy` 79.0; the failed-test low is close.",
+    "against": "div BEARISH/2 at a 52-week high, `elder` 7.0 INTERRUPTED, H1 swing LH/LL: strength and exhaustion disagree.",
+    "entry_trigger": "Hourly close above bar_high next session, above session VWAP.",
+    "wrong_if": "Close under bar_low, the failed-test low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "Divergence count rising or a close under ma_20 ends the test read.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "COR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST/RETRACEMENT (C2): U&R MET reclaim day, sma_dist 6.2%, W and D swing HH/HL, close invalidation. `flow` 88.2, `energy` 73.9, `structure` 63.2 BULLISH_BOS, `elder` 9.0 CORRECTION_REENTRY (advisory). `mp` 66.0 FADING is a default label (R13), not decay. Conviction 3: structure only mid-range.",
+   "case": {
+    "for": "Reclaim day, `flow` 88.2 and `energy` 73.9, price near ma_20 so the stop is close.",
+    "against": "`mp` 66.0 DECELERATING and `structure` 63.2 only mid-range; 5.0% under the 20-day high.",
+    "entry_trigger": "Hourly close above bar_high next session, above session VWAP.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Failure to hold the reclaim on a second close.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "M",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3, approximated): U&R MET on the last session, sma_dist 8.49%, D HH/HL. `structure` 75.8 BULLISH_BOS and `energy` 73.9 support; `flow` 51.3 is thin, `sc_momentum` 65.5 modest and `elder` 7.0 INTERRUPTED, so conviction 2.",
+   "case": {
+    "for": "Reclaim day with `structure` 75.8 BULLISH_BOS; near ma_20.",
+    "against": "`flow` 51.3 thin, `mp` 64.0 DECELERATING, H1 swing HH but LL.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "`flow` rising through the gate floor on the reclaim.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ALK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No setup family: the up-trend is not established. W EMA9<21 swing LH/LL, 22.2% under 20-wk high, price under ma100 43.07 and ma200 43.71. `structure` 55.2 and `sc_momentum` 68.9 are the weakest of the strength names; `day_vol` 0.8 under normal. A bounce inside a down-trend is not my retracement (C2).",
+   "opposing_case": "`elder` 10.0 SUSTAINED on all five bars, `mp` 78.0 STRONG/ACCELERATING, BULLISH_BOS, D above EMA9: a real momentum burst with a close invalidation.",
+   "case": {
+    "for": "`mp` 78.0 accelerating, `elder` 10.0 SUSTAINED, BULLISH_BOS.",
+    "against": "Weekly down-trend, `structure` 55.2, `day_vol` 0.8; no established trend to retrace.",
+    "entry_trigger": "Would need weekly EMA9 back above 21 and a higher-low pullback.",
+    "wrong_if": "Not applicable as a long; a daily close over the 20-wk high would change the read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly EMA9 crossing above 21 with `structure` rising.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot, not eleven reads: I take the cluster's best setup shape only; ALK fails on trend context. Door overlap noted, not counted."
+  },
+  {
+   "ticker": "MRNA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C2/C19): reversal not yet visible so I do not fade it, and I do not buy it. sma_dist 38.33%, ma50 194.47 vs ma200 92.57, `day_vol` 0.74 below normal, div MIXED/2, H1 below EMA9. `mp` 67.0 FADING, `flow` 61.8 mid-range. Parabolic is the exit zone, not the entry (C19). Weight, not veto (R27).",
+   "opposing_case": "`elder` 10.0 SUSTAINED, rs_rank_pct 99.83, `energy` 77.3, `structure` 63.6 ABOVE_STRUCTURE: extraordinary momentum, and a first pullback could be a buy.",
+   "case": {
+    "for": "`elder` 10.0 SUSTAINED, `energy` 77.3, rs_rank_pct 99.83.",
+    "against": "Parabolic distance from ma_50, volume under normal at the high, oscillators disagree.",
+    "entry_trigger": "Only a first pullback that holds, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; a close over the 20-day high on volume above normal would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Volume above normal on a pullback hold.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout just made; no retracement yet: sma_dist 28.06%, run_10d 36.29%, at the 52-week high. `flow` 88.2, `structure` 78.9, `elder` 10.0 ACCELERATION and `day_vol` 1.59 show real participation, so I back only the first higher-low pullback. `mp` 67.0 BUILDING. Conviction 2.",
+   "case": {
+    "for": "`flow` 88.2, `structure` 78.9, `day_vol` 1.59; H1 and W swing HH/HL.",
+    "against": "Vertical young run, ext_atr20 2.95; little room for an ordinary pullback.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the thrust swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A tight, low-volume pause near the high.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT shape forming (C2): EMA9 intact, 0.8% under the 20-day high, elder CORRECTION_REENTRY (advisory). `structure` 96.8, `mp` 87.0 STRONG/ACCELERATING, `flow` 84.2 strong; `energy` 61.3 is the lowest engine and sma_dist 13.3%. Conviction 2.",
+   "case": {
+    "for": "`structure` 96.8, `mp` 87.0 accelerating, div BULLISH/0.",
+    "against": "`energy` 61.3 low, ext_atr20 3.23, weekly swing LH/LL.",
+    "entry_trigger": "Hourly reclaim of fib_382 on a pullback.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly swing turning HH/HL.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot: DAL has an intact D and H1 structure, so it is the shape I would take from the cluster, never several.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST (C3, approximated): U&R MET, dipped under the rising trendline and closed back above, reclaim day; sma_dist 7.55%. `energy` 82.4, `structure` 63.2 BULLISH_BOS, `flow` 63.2. `mp` 65.0 FADING is a default label (R13); `elder` 7.0 INTERRUPTED. Conviction 3.",
+   "case": {
+    "for": "Reclaim day, `energy` 82.4, D HH/HL, near ma_20.",
+    "against": "`structure` 63.2 mid-range, `elder` 7.0 INTERRUPTED, H1 LH/LL.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A second close back under the trendline.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family: run_10d 43.9%, ext_atr20 4.12, sma_dist 34.9%. `sc_momentum` 82.7, `flow` 96.1, `mp` 93.0 are real, but a parabolic run is the exit zone (C19), not an entry; `energy` 61.3 is the weak engine. Reversal not visible, so I only decline. Weight, not veto (R27).",
+   "opposing_case": "Every engine clears its floor, `elder` 10.0 SUSTAINED, `flow` 96.1; the next higher low would be a clean buy.",
+   "case": {
+    "for": "`flow` 96.1, `mp` 93.0, `elder` 10.0 SUSTAINED.",
+    "against": "Most parabolic run in my set; `energy` 61.3 lagging.",
+    "entry_trigger": "Only a first pullback that holds, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; a close over the 20-day high with volume above normal would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A shallow, low-volume pause holding above ma_20.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot; BETA is the most extended of the cluster, so it is not the one I would take."
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST in progress (C3/C20): U&R SETUP, dipped under the rising trendline and closed 4.9% under it; the reclaim day is the next session. `structure` 94.7, `flow` 84.2, `mp` 93.0, `energy` 61.3; sma_dist 22.75%. I buy the reclaim, not the dip. Conviction 2.",
+   "case": {
+    "for": "`structure` 94.7, `mp` 93.0 accelerating, `elder` 10.0 CORRECTION_REENTRY.",
+    "against": "Not reclaimed yet; `energy` 61.3 low; sma_dist 22.75% extended.",
+    "entry_trigger": "Hourly close above bar_high on the reclaim session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "A close that stays under the trendline.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VSXY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "No retracement yet: sma_dist 29.61%, ext_atr20 3.4, 52-week high, H1 swing LH/LL. `elder` 10.0 SUSTAINED, `mp` 93.0, `structure` 78.3, `flow` 78.9 are strong; `energy` 63.0 mid. I back only a first pullback that holds. Conviction 2.",
+   "case": {
+    "for": "`elder` 10.0 SUSTAINED, `mp` 93.0 accelerating, `structure` 78.3.",
+    "against": "Extended, 52-week high, `energy` 63.0 mid; H1 lower highs.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A tight pause holding above ma_20.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Agreed on overlap: the doors are one composite counted several ways. I use my own shape (pullback not yet formed), not the door count.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Retracement not formed: at the highs, 0.7% under the 20-day high, sma_dist 14.06%, div BEARISH/1. `flow` 82.9, `structure` 76.8, `elder` 10.0 ACCELERATION; `mp` 96.0 FADING is a default label (R13); `energy` 58.0 is the weak engine. Conviction 2 on a first pullback.",
+   "case": {
+    "for": "`flow` 82.9, `structure` 76.8; W, D, H1 all HH/HL.",
+    "against": "`energy` 58.0 weak, div BEARISH/1, ext_atr20 3.55.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "`energy` rising back through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Overlap agreed: STRENGTH, AQE_LEADER and PM_LENS are one read. I vote on the shape, which is a pullback not yet formed.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST (C3/C20, approximated): U&R MET, dipped under the 9-day average on the last session and closed back above, so invalidation is close. `flow` 85.5, `structure` 70.5 BULLISH_BOS, `sc_momentum` 76.3 carry it; `mp` 92.0 FADING is a default label (R13). `elder` 7.0 INTERRUPTED and `energy` 60.5 cap me at conviction 3.",
+   "case": {
+    "for": "Reclaim day with `flow` 85.5; ma_20 sits just below as structural support.",
+    "against": "H1 EMA9<21 and 7.7% under the last H1 swing high; `elder` 7.0 INTERRUPTED.",
+    "entry_trigger": "Hourly close above bar_high next session, above session VWAP.",
+    "wrong_if": "Close under bar_low, or under ma_20.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "A failed reclaim on the next close.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ELF",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C12/C13), proxy only: `subcomponents.energy.squeeze_score` 12.5 is a tight coil and `subcomponents.energy.exhaustion_score` 10.0 shows no wear, at the 52-week high, `day_vol` 1.61. `energy` 85.7 and `structure` 69.5 BULLISH_BOS support; `flow` 48.7 is thin and `elder` 8.0 INTERRUPTED. bar_range_history not served, so conviction 2.",
+   "case": {
+    "for": "Coil plus participation (`day_vol` 1.61) at the high; all frames HH/HL.",
+    "against": "`flow` 48.7 under its floor, `elder` 8.0 INTERRUPTED, `mp` 74.0 FLAT; no real NR4/NR7 count.",
+    "entry_trigger": "Hourly close above pivot_high with volume above normal.",
+    "wrong_if": "Close under pivot_high minus half an ATR after the break.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` rising through the gate floor on the break.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-0.5atr"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PFG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3, approximated): U&R MET reclaim day, sma_dist 2.67%, so price sits at support. `flow` 76.3, `structure` 60.0 and `sc_momentum` 66.4 are middling; `energy` 59.7 is the weak engine; `elder` 9.0 CORRECTION_REENTRY is advisory. Conviction 2.",
+   "case": {
+    "for": "Reclaim day close to ma_20; `flow` 76.3.",
+    "against": "`structure` 60.0 and `energy` 59.7 mid-range; weekly swing HH but LL.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "`energy` rising back above its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TPG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3, approximated): U&R MET reclaim day, sma_dist 5.77%, D HH/HL. `flow` 76.3 and `elder` 9.0 CORRECTION_REENTRY help; `sc_momentum` 62.4, `structure` 56.8 and `energy` 51.3 are weak and `day_vol` 0.72 is light, so I keep it at conviction 2 as a short tactical test only.",
+   "case": {
+    "for": "Reclaim day with `flow` 76.3; low-distance invalidation.",
+    "against": "`energy` 51.3, `structure` 56.8, `day_vol` 0.72; 29.54% under the 52-week high.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "Volume above normal on the reclaim.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HOMB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3/C20, approximated): U&R MET reclaim day, sma_dist 3.41%, D HH/HL, `structure` 71.6 BULLISH_BOS, `elder` 9.0. The weak spot is `flow` 22.4, far under its floor, with `sc_momentum` 55.1 low: the test shape is clean but participation is not, so conviction 2.",
+   "case": {
+    "for": "Clean reclaim day at support; `structure` 71.6 BULLISH_BOS.",
+    "against": "`flow` 22.4 and `sc_momentum` 55.1: no money behind it.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "`flow` improving materially on the reclaim.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TEX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No setup family: `structure` 49.5 reads BEARISH_CHOCH, the up-structure has failed. ma20 53.8 under ma50 56.2, ma100 61.51, ma200 61.75; W EMA9<21. `sc_momentum` 53.9, `flow` 48.7 and `energy` 47.9 are all weak, `day_vol` 0.57. A reclaim-day bounce inside a broken structure is not my test (C3).",
+   "opposing_case": "U&R MET reclaim day, `mp` 75.0 STRONG/ACCELERATING, `elder` 9.0 CORRECTION_REENTRY, rs LEADER: a bounce with a very close invalidation.",
+   "case": {
+    "for": "Reclaim day and `mp` 75.0 accelerating.",
+    "against": "BEARISH_CHOCH, weak engines, weekly down-trend, light volume.",
+    "entry_trigger": "Would need a close back above the broken structure level, structure_shift_ref.",
+    "wrong_if": "Not a long here; a close above ma_50 would change my read.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "`structure` back to BULLISH_BOS with `flow` rising.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot, and TEX is the weakest of the eleven. UNPROVEN: I do not use lens warnings; I read `structure` and `flow`, and both are weak here, so composite and lens agree for once."
+  },
+  {
+   "ticker": "OHI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): D HH/HL, 1.0% under the 20-day high, H1 0.3% under its high, sma_dist 5.38%; `elder` 10.0 CORRECTION_REENTRY is advisory. `structure` 81.1 and `flow` 75.0 support; `energy` 59.7 and `mp` 72.0 FADING (default label, R13) keep it at conviction 2.",
+   "case": {
+    "for": "`structure` 81.1, `flow` 75.0, price near ma_20.",
+    "against": "`energy` 59.7 under floor, weekly swing LH/LL, no fresh test.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Daily close under ma_20 minus half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`energy` rising back through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CLX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No retracement family: a 17.01% under-the-high name, ma50 87.77 under ma100 93.77 and ma200 99.37, W EMA9<21: a rally inside a down-trend, not an established trend. ext_atr20 4.75, sma_dist 20.23%. `sc_momentum` 83.3, `flow` 100.0 and `mp` 85.0 are real but `structure` 82.1 is only RANGE. Weight, not veto (R27).",
+   "opposing_case": "`flow` 100.0, `elder` 10.0 SUSTAINED, `mp` 85.0 accelerating, D HH/HL and H1 94% of range: broad, real strength.",
+   "case": {
+    "for": "`flow` 100.0, `mp` 85.0, `elder` 10.0 SUSTAINED.",
+    "against": "Counter-trend rally, ext_atr20 4.75, `structure` RANGE.",
+    "entry_trigger": "A first pullback holding a higher low above ma_20, after the weekly EMA9 recovers above 21.",
+    "wrong_if": "Not a long here; weekly EMA9 crossing above 21 would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly trend repair plus a shallow pullback hold.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): `mp` 94.0 STRONG but DECELERATING means the pullback is in progress, sma_dist 7.07%, D 1.2% under the 20-day high. `structure` 82.1 BULLISH_BOS, `flow` 84.2 and `sc_momentum` 80.9 support; weekly EMA9<21 and a young base keep it at conviction 2.",
+   "case": {
+    "for": "`structure` 82.1, `flow` 84.2, `mp` 94.0; pullback near ma_20.",
+    "against": "Weekly EMA9<21, `elder` 7.0 with no pattern, `energy` 68.1 middling.",
+    "entry_trigger": "After a dip, hourly reclaim of ma_20.",
+    "wrong_if": "Daily close under ma_20 minus one ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly EMA9 back above 21.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SONY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): D HH/HL, 4.4% under the 20-day high, sma_dist 10.3%; `elder` 10.0 ACCELERATION corroborates. `structure` 72.6 and `mp` 86.0 STRONG/ACCELERATING support; `flow` 65.8 and `energy` 66.4 are middling, `sc_momentum` 71.4 modest. Conviction 2.",
+   "case": {
+    "for": "`mp` 86.0 accelerating, `structure` 72.6, trend HH/HL on W and D.",
+    "against": "`flow` 65.8 middling; H1 only 43% of range, no dip yet.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` rising on the reclaim.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CURB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): sma_dist 4.66%, price hugging ma_20, D HH/HL, div BULLISH/0. `mp` 82.0 STRONG/ACCELERATING and `structure` 64.2 BULLISH_BOS support; `flow` 67.1, `sc_momentum` 69.3 modest; weekly EMA9<21. Conviction 2.",
+   "case": {
+    "for": "Close to ma_20 so risk is short; `mp` 82.0 accelerating.",
+    "against": "Weekly EMA9<21, `structure` 64.2 only mid-range, `elder` 7.0.",
+    "entry_trigger": "Hourly reclaim of ma_20 after a dip.",
+    "wrong_if": "Daily close under ma_20 minus one ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly EMA9 back above 21.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): `elder` 10.0 CORRECTION_REENTRY (advisory) at the 52-week high, all frames HH/HL, sma_dist 10.38%. `structure` 71.6 BULLISH_BOS and `mp` 89.0 (FADING default label, R13) support; `flow` 59.2 under its floor and `sc_momentum` 68.8 keep it at conviction 2.",
+   "case": {
+    "for": "`structure` 71.6, `mp` 89.0; trend clean on every frame.",
+    "against": "`flow` 59.2 under floor; `mp` DECELERATING; at the high, not at support.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` rising through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "JNJ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): `elder` 10.0 CORRECTION_REENTRY (advisory) at the 52-week high, sma_dist 6.03%, D 0.2% under the 20-day high. `structure` 80.0 BULLISH_BOS supports; `flow` 56.6 under its floor, `mp` 76.0 (FADING default label, R13) and `sc_momentum` 67.1 keep it at conviction 2.",
+   "case": {
+    "for": "`structure` 80.0 BULLISH_BOS; trend clean on every frame.",
+    "against": "`flow` 56.6 under floor, `mp` DECELERATING; at the high.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` rising through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AMZN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No established trend to retrace (C2): D swing LH/LL, H1 at 0% of the day's range. `mp` 48.0 BUILDING, `structure` 56.8 and `sc_momentum` 59.2 are mid-range, `flow` 55.3 under its floor; adx 13.13 reads no trend. `elder` 10.0 ACCELERATION is advisory only and cannot carry a line alone.",
+   "opposing_case": "`elder` 10.0 ACCELERATION, `energy` 72.3, BULLISH_BOS, W HH/HL and a 6.02% distance to the high: a large-cap with room and a defined swing low.",
+   "case": {
+    "for": "`elder` 10.0 ACCELERATION, `energy` 72.3, W HH/HL.",
+    "against": "Daily lower lows, `mp` 48.0, `flow` 55.3, no trend strength.",
+    "entry_trigger": "Would need a daily higher-low pullback and a close above bar_high.",
+    "wrong_if": "Not a long here; a daily close above pivot_high would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` rising through its floor with `structure` improving.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "NWL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "The test shape is there (U&R MET reclaim day, div BULLISH/0) but nothing sits behind it: `structure` 45.3 RANGE, `flow` 43.4 and `sc_momentum` 53.7 are among the weakest, `mp` 52.0 BUILDING. A reclaim in a broken range is a coin flip, not a double stop point (C20).",
+   "opposing_case": "Reclaim day with div BULLISH/0, `energy` 70.6, `elder` 9.0 CORRECTION_REENTRY, rs LEADER: a very close invalidation at bar_low.",
+   "case": {
+    "for": "Reclaim day, bullish divergence, `energy` 70.6.",
+    "against": "`structure` 45.3 RANGE, `flow` 43.4, weekly 17.4% under its high.",
+    "entry_trigger": "Would need a close above pivot_high to leave the range.",
+    "wrong_if": "Not a long here; a close above pivot_high would change my read.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "`flow` and `structure` both rising through their floors.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3, approximated): U&R MET reclaim day, sma_dist 4.28%, D HH/HL, so price is at support. `mp` 84.0 STRONG and `flow` 68.4 help; `structure` 61.1, `energy` 58.8 and `sc_momentum` 67.2 are middling and H1 is below EMA9. Conviction 2.",
+   "case": {
+    "for": "Reclaim day at support; `mp` 84.0.",
+    "against": "`energy` 58.8 and `structure` 61.1 mid-range; H1 below EMA9; `mp` DECELERATING.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "`energy` rising back through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RYAN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2) under way: H1 below EMA9 at 6% of the day's range inside a D HH/HL trend, 3.9% under the 20-day high, ext_atr20 2.15 (modest). `structure` 92.6, `flow` 82.9, `sc_momentum` 80.4 and `mp` 93.0 (FADING default label, R13) are strong; `energy` 61.3 and `elder` 7.0 are the soft spots. Conviction 3.",
+   "case": {
+    "for": "Intraday pullback inside an intact trend with `structure` 92.6 and `flow` 82.9.",
+    "against": "`energy` 61.3 lowest engine, `elder` 7.0, weekly swing LH/LL, 19.3% under the 52-week high.",
+    "entry_trigger": "Hourly reclaim of ma_20 area or close above bar_high after the dip.",
+    "wrong_if": "Daily close under ma_20 minus half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A lower low on D.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "UNPROVEN noted: I do not use lens warnings; composite and engines (`structure` 92.6, `flow` 82.9) agree here, and the pullback shape is the reason, not the 80.4.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "UA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST (C3, approximated), not a retracement: U&R MET reclaim day, sma_dist 10.69%. Context: W EMA9<21, ma50 4.77 under ma200 5.77, 32.99% under the high, so the longer trend is down and this is a short counter-trend test only. `flow` 88.2, `structure` 84.2, `sc_momentum` 78.7 are strong; `elder` 7.0, `mp` 76.0 DECELERATING.",
+   "case": {
+    "for": "Reclaim day; `flow` 88.2, `structure` 84.2.",
+    "against": "Weekly EMA9<21 and 50-day under 200-day: no established up-trend behind it.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "Weekly EMA9 crossing above 21 would lift it to a retracement.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Lane ANCHOR answered: the trend UA sits in is down (weekly EMA9<21, ma50 4.77 under ma200 5.77). I use the 78.7 only to size the test as 1-3 sessions, not as a trend call.",
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): run_10d 57.24%, ext_atr20 5.87, sma_dist 38.89%, a parabolic bar. Context: W EMA9<21 LH/LL, ma50 295.2 under ma200 408.73, rs_rank_pct 24.98, 44.11% under the high: a violent bounce in a down-trend. `sc_momentum` 85.2, `flow` 96.1, `mp` 97.0 are real; I do not buy a climax. Weight, not veto (R27).",
+   "opposing_case": "`sc_momentum` 85.2, `flow` 96.1, `mp` 97.0 ACCELERATING, `elder` 10.0, div BULLISH/0: the strongest composite in the room with a live higher low on H1.",
+   "case": {
+    "for": "`flow` 96.1, `mp` 97.0 accelerating, `structure` 84.2.",
+    "against": "Parabolic distance from ma_20, longer trend still down, weekly EMA9<21.",
+    "entry_trigger": "Only a first pullback that holds a higher low, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; weekly EMA9 crossing above 21 would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A shallow pullback hold above ma_20 and weekly trend repair.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): sma_dist 40.79% is the widest in the set, ext_atr20 3.63, with `mp` 96.0 now DECELERATING, `day_vol` 0.81 under normal and `structure` 57.9 only RANGE. `sc_momentum` 69.6 and `flow` 57.9 are mid-range: a vertical move on fading push, not an entry. Weight, not veto (R27).",
+   "opposing_case": "`energy` 71.4, adx 49.69, rs LEADER, W and D HH/HL: a very strong trend, and a first pullback could be a clean buy.",
+   "case": {
+    "for": "Trend strength (adx 49.69), `energy` 71.4, rs LEADER.",
+    "against": "Widest extension, `mp` DECELERATING, light volume, `structure` RANGE.",
+    "entry_trigger": "Only a first pullback that holds, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; a close over the 20-day high with volume above normal would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` re-accelerating with volume above normal.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): run_10d 31.75%, ext_atr20 4.98, sma_dist 27.49% on `day_vol` 0.74, a range-expansion run with below-normal participation. `mp` 100.0 is DECELERATING, `flow` 59.2 under its floor, `sc_momentum` 76.6. `structure` 87.2 is real; I do not buy the climax end. Weight, not veto (R27).",
+   "opposing_case": "`structure` 87.2, `mp` 100.0, adx 47.2, rs LEADER, D 2.1% under its high: a clean trend, and a first pullback would be a buy.",
+   "case": {
+    "for": "`structure` 87.2, `mp` 100.0, trend strength.",
+    "against": "Range expansion on light volume, `flow` 59.2 weak, `mp` DECELERATING.",
+    "entry_trigger": "Only a first pullback that holds, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; a close over the 20-day high on volume above normal would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` rising on a pullback hold.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot and HAYW is among the most extended of the eleven. UNPROVEN: I do not use lens warnings; `flow` 59.2 and light `day_vol` 0.74 are my reasons."
+  },
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): ext_atr20 5.39, run_10d 29.1%, sma_dist 27.21%. Context answered: W EMA9<21 LH/LL, ma50 22.77 under ma100 25.34 and ma200 26.44, 12.53% under the high: a thrust off lows, no established trend. `sc_momentum` 87.8, `flow` 100.0, `mp` 97.0 are real, but `mp` is DECELERATING. Weight, not veto (R27).",
+   "opposing_case": "Top composite in the room: `sc_momentum` 87.8, `flow` 100.0, `structure` 93.7, `day_vol` 1.81 confirms the volume; D and H1 HH/HL.",
+   "case": {
+    "for": "`flow` 100.0, `structure` 93.7, `day_vol` 1.81.",
+    "against": "Counter-trend thrust, ext_atr20 5.39, `mp` DECELERATING.",
+    "entry_trigger": "Only a first pullback holding a higher low, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; weekly EMA9 crossing above 21 would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly trend repair and a shallow pullback hold.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot, and SARO is extended and counter-trend. Lane ANCHOR answered: the trend SARO sits in is down (weekly EMA9<21, ma50 22.77 under ma200 26.44); the 87.8 is not its context."
+  },
+  {
+   "ticker": "KD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2) wanted, not formed: D HH/HL, 6.8% under the 20-day high, ma20 14.26 above ma50 13.1 above ma100 12.8 near ma200 13.23, so the base is rebuilding. `mp` 97.0 STRONG/ACCELERATING, `structure` 73.7, `elder` 10.0 ACCELERATION support; `flow` 56.6 under its floor, sma_dist 28.28%, `sc_momentum` 72.8. Conviction 2.",
+   "case": {
+    "for": "`mp` 97.0, `elder` 10.0 ACCELERATION, `energy` 72.3; averages stacking up.",
+    "against": "`flow` 56.6 under floor, extended off ma_20, weekly swing LH/LL, 38.91% under the 52-week high.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "`flow` rising through its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RKT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): run_10d 32.2%, ext_atr20 4.3, sma_dist 22.1% on `day_vol` 0.71. Context answered: W EMA9<21 LH/LL, ma50 12.44 under ma100 13.32 and ma200 14.45, rs_rank_pct 48.8, 35.2% under the high: a thrust inside a down-trend. `sc_momentum` 80.3, `flow` 84.2 and `mp` 97.0 are real. Weight, not veto (R27).",
+   "opposing_case": "`flow` 84.2, `structure` 81.1, `mp` 97.0 ACCELERATING; D and H1 HH/HL, 1.2% under the 20-day high.",
+   "case": {
+    "for": "`flow` 84.2, `structure` 81.1, `mp` 97.0 accelerating.",
+    "against": "Counter-trend thrust on light volume; `elder` 7.0; ext_atr20 4.3.",
+    "entry_trigger": "Only a first pullback holding a higher low, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; weekly EMA9 crossing above 21 would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly trend repair with volume above normal.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Lane ANCHOR answered: RKT's trend is down (weekly EMA9<21, ma50 12.44 under ma200 14.45), so the 80.3 composite sits inside a down-trend and I do not read it as trend."
+  },
+  {
+   "ticker": "VERX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "No retracement yet: sma_dist 28.38%, ext_atr20 2.9, H1 LH but HL 1.2% under its high. `mp` 96.0 STRONG/ACCELERATING, `elder` 10.0, `structure` 70.5 and `flow` 72.4 are solid; div BEARISH/2 on two oscillators and `energy` 68.9 hold me at conviction 2 and on a first pullback only.",
+   "case": {
+    "for": "`mp` 96.0 accelerating, `elder` 10.0, trend HH/HL on D.",
+    "against": "div BEARISH/2 at an extended level; lens warnings are not mine, but exhaustion is.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Divergence count rising to 3 or more.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "UNPROVEN agreed: composite versus lens disagreement is unproven, so I ignore lens warnings and use the divergence count instead, which already caps me at 2.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FBIN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2) wanted, not formed: D HH/HL, 1.2% under the 20-day high, W EMA9>21 swing LH but HL, price over ma20 43.52 and ma50 41.4 and recovering through ma200 44.69. `structure` 89.5, `flow` 96.1, `sc_momentum` 84.5 strong; `mp` 97.0 DECELERATING, `energy` 61.3 lowest. sma_dist 24.73%. Conviction 2.",
+   "case": {
+    "for": "`structure` 89.5, `flow` 96.1; elder CORRECTION_REENTRY (advisory).",
+    "against": "`energy` 61.3, ext_atr20 3.9, weekly structure still LH.",
+    "entry_trigger": "After a pullback, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "Weekly swing turning HH/HL.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot; FBIN is not the one I would take over SWK. Lane ANCHOR answered: weekly EMA9>21 with a LH but HL swing, price recovering through ma200 44.69, so trend is repairing, not established.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SWK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2) under way: H1 below EMA9 at 46% of range (LH but HL) inside W and D HH/HL, 3.7% under the 20-day high, 0.19% from the 52-week high. `sc_momentum` 82.9, `flow` 80.3, `energy` 74.8, `structure` 82.1, `mp` 100.0 ACCELERATING all hold; elder CORRECTION_REENTRY is advisory. sma_dist 24.17% and ext_atr20 3.83 keep it at 3.",
+   "case": {
+    "for": "Broad engines plus an intraday pullback inside an intact trend.",
+    "against": "sma_dist 24.17%: a deeper retracement to ma_20 is still possible.",
+    "entry_trigger": "Hourly close above bar_high after the dip, above session VWAP.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly or daily lower high with `flow` falling.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot, not eleven reads: SWK is the shape I would take from the cluster (pullback under way, engines broad); I would not stack it with others.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TREX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "TEST family against the chase (C3): a 52-week-high breakout is what Turtle Soup fades. `flow` 40.8 is the weakest of the strength names against `mp` 100.0 and `structure` 82.1, so price is outrunning money; `sc_momentum` 69.3 is mid. sma_dist 26.17%, ext_atr20 3.48. Not a retracement and not a test. Weight, not veto (R27).",
+   "opposing_case": "`mp` 100.0 ACCELERATING, `elder` 10.0, `structure` 82.1, W and D HH/HL: a clean trend, and a first pullback could be a buy.",
+   "case": {
+    "for": "`mp` 100.0, `structure` 82.1, trend on every frame.",
+    "against": "`flow` 40.8 under its floor at a new high; extended.",
+    "entry_trigger": "Only a first pullback that holds, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; `flow` rising above its floor on a high would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` repairing while price holds the high.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot and TREX is not the one I would pick: money is not behind the high."
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2) under way: H1 below EMA9 at 12% of range inside D and W HH/HL, 3.5% under the 20-day high, ext_atr20 2.64 (modest), sma_dist 12.65%. `flow` 84.2, `sc_momentum` 80.4, `energy` 71.4 support; `structure` 75.8 is RANGE and `mp` 93.0 DECELERATING (FADING default label, R13), `elder` 7.0. Conviction 3.",
+   "case": {
+    "for": "Pullback inside an intact trend with `flow` 84.2.",
+    "against": "`structure` RANGE, `mp` DECELERATING, `elder` 7.0 with no pattern.",
+    "entry_trigger": "Hourly close above bar_high after the dip.",
+    "wrong_if": "Daily close under ma_20 minus half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A daily lower low.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TOST",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2): W and D HH/HL, 3.5% under the 20-day high, ext_atr20 1.54, sma_dist 9.19%, so price sits near ma_20. `flow` 88.2, `energy` 71.4, `structure` 75.8 ABOVE_STRUCTURE and `sc_momentum` 75.8 support; `mp` 64.0 BUILDING and `elder` 7.0 are the soft spots. Conviction 3.",
+   "case": {
+    "for": "Low extension, `flow` 88.2, intact trend on every frame.",
+    "against": "`mp` 64.0 only building, `elder` 7.0 with no pattern, 9.31% under the 52-week high.",
+    "entry_trigger": "Hourly reclaim of ma_20 or close above bar_high after the dip.",
+    "wrong_if": "Daily close under ma_20 minus one ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` stalling below its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "UNPROVEN agreed: I ignore lens warnings. The reasons here are `flow` 88.2, low extension and the HH/HL swing, none of which the lens count tests.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2) under way: ext_atr20 1.03 (lowest in the set), 2.4% under the 20-day high, H1 below EMA9 and 9<21, sma_dist 8.08%. `energy` 84.0, `sc_momentum` 75.1, `structure` 74.7 RANGE, `flow` 63.2; `mp` 80.0 FADING default label (R13) and div BEARISH/1 hold me at conviction 3.",
+   "case": {
+    "for": "Lowest extension, pullback in progress near ma_20, `energy` 84.0.",
+    "against": "div BEARISH/1, `structure` RANGE, `elder` 7.0 with no pattern.",
+    "entry_trigger": "Hourly reclaim of ma_20, then close above bar_high.",
+    "wrong_if": "Daily close under ma_20 minus half an ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Divergence count rising.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot: ADP is a lower-extension, different-driver name, so as a single slot it is a candidate, but I would not hold it beside SWK.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST (C3/C20, approximated): U&R MET, dipped under the rising trendline and closed back above, reclaim day, sma_dist 8.88%, at the 52-week high. `energy` 77.3, `structure` 73.7, `mp` 76.0 STRONG/ACCELERATING and `flow` 67.1 support; `elder` 9.0 INTERRUPTED and H1 LH/LL at 96% of range. Conviction 3.",
+   "case": {
+    "for": "Reclaim day with `energy` 77.3 and `mp` 76.0 accelerating.",
+    "against": "`elder` 9.0 INTERRUPTED, `flow` 67.1 middling, at the high.",
+    "entry_trigger": "Hourly close above bar_high next session.",
+    "wrong_if": "Close under bar_low.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "A second close under the trendline.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHD",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT (C2): D and W HH/HL, 2.9% under the 20-day high, H1 HH but LL, sma_dist 10.9%, ext_atr20 1.8. `structure` 77.9 and `energy` 72.3 support; `flow` 60.5 is borderline, `mp` 89.0 DECELERATING (FADING default label, R13), `sc_momentum` 73.2 and `elder` 7.0 with no pattern. Conviction 2.",
+   "case": {
+    "for": "Low extension, `structure` 77.9, clean trend.",
+    "against": "`flow` 60.5 borderline, `mp` DECELERATING, no fresh test.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` falling under its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SHW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2): D and W HH/HL, 3.6% under the 20-day high, ext_atr20 1.65, sma_dist 8.51%; `elder` 10.0 CORRECTION_REENTRY is advisory. `mp` 87.0 STRONG/ACCELERATING, `flow` 71.1 and `energy` 70.6 support; `structure` 63.2 is only mid-range and `sc_momentum` 72.5 modest. Conviction 3.",
+   "case": {
+    "for": "Low extension, `mp` 87.0 accelerating, pullback near ma_20.",
+    "against": "`structure` 63.2 mid-range; weekly 3.8% under its high.",
+    "entry_trigger": "After a dip, hourly reclaim of ma_20.",
+    "wrong_if": "Daily close under ma_20 minus one ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` turning DECELERATING.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "No retracement yet: sma_dist 17.37%, ext_atr20 4.09, 0.6% under the 20-day high. The engines are broad: `sc_momentum` 84.4, `flow` 90.8, `structure` 89.5, `mp` 93.0 STRONG/ACCELERATING, `elder` 10.0 SUSTAINED; `energy` 68.9 mid. I back only a first pullback that holds. Conviction 2.",
+   "case": {
+    "for": "Broad engines and a clean trend on every frame.",
+    "against": "ext_atr20 4.09 and sma_dist 17.37%: pullback not yet in.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A tight low-volume pause near the high.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Overlap agreed: STRENGTH, AQE_LEADER and PM_LENS are one read. I vote on shape, a pullback not yet formed.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): run_10d 31.43%, ext_atr20 5.66, sma_dist 28.2%, with ma50 49.55 under ma200 54.53 so the run is a thrust off a down-trend. `sc_momentum` 85.1, `structure` 96.8, `mp` 97.0 and `flow` 82.9 are real, but `elder` 7.0 shows no pattern. Weight, not veto (R27).",
+   "opposing_case": "`structure` 96.8, `mp` 97.0 ACCELERATING, `flow` 82.9, `day_vol` 1.16; D and W HH/HL: the broadest read in the set.",
+   "case": {
+    "for": "`structure` 96.8, `mp` 97.0, `flow` 82.9.",
+    "against": "Extreme extension, 50-day under 200-day, young run.",
+    "entry_trigger": "Only a first pullback holding a higher low, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; ma_50 crossing above ma_200 would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A shallow pullback hold above ma_20 on volume.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "CPRI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "CLIMAX family (C19): run_10d 37.32%, ext_atr20 4.19, sma_dist 37.97% on `day_vol` 0.81, with `subcomponents.flow.volume_score` 2.0 weak and ma50 15.5 under ma200 17.72. `sc_momentum` 84.2, `structure` 96.8 and `mp` 100.0 are real, but `elder` 7.0 shows no pattern. Parabolic, light volume. Weight, not veto (R27).",
+   "opposing_case": "`structure` 96.8, `mp` 100.0 ACCELERATING, `flow` 78.9, W and D HH/HL: the strongest structure read in the set.",
+   "case": {
+    "for": "`structure` 96.8, `mp` 100.0.",
+    "against": "Extreme extension, light volume, 50-day under 200-day.",
+    "entry_trigger": "Only a first pullback holding a higher low, hourly reclaim of fib_382.",
+    "wrong_if": "Not a long here; a close over the 20-day high on volume above normal would change my read.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Volume rising on a pullback hold.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "LOAR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "No retracement yet: sma_dist 21.09%, ext_atr20 3.91, 0.5% under the 20-day high, H1 0.4% under its high. `sc_momentum` 83.4, `flow` 88.2, `structure` 84.2, `mp` 97.0 ACCELERATING and `elder` 10.0 SUSTAINED are broad; ma50 64.88 under ma200 66.48 and weekly LH/LL keep it at 2 on a first pullback only.",
+   "case": {
+    "for": "Broad engines, `elder` 10.0 SUSTAINED, D and H1 HH/HL.",
+    "against": "Weekly swing LH/LL, 50-day still under 200-day, extended.",
+    "entry_trigger": "After a dip, hourly reclaim of fib_382.",
+    "wrong_if": "Daily close under fib_618 of the swing.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "Weekly swing turning HH/HL.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "challenge_reply": "Industrials is one slot; LOAR is extended and weekly-down, so I rank it under SWK and ADP, and would not hold it with them.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "ma_20",
+     "fib_382"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KIM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT (C2) under way: `mp` 100.0 is DECELERATING, sma_dist 10.94%, D LH but HL 2.2% under the 20-day high, H1 at its swing high. `sc_momentum` 84.7, `flow` 88.2, `structure` 84.2 and `energy` 71.4 are broad; `elder` 7.0 shows no pattern and ext_atr20 3.78 is high. Conviction 3.",
+   "case": {
+    "for": "Broad engines; pullback forming as `mp` slows.",
+    "against": "`mp` DECELERATING, `elder` 7.0 with no pattern, weekly 3.3% under its high.",
+    "entry_trigger": "After a dip, hourly reclaim of ma_20.",
+    "wrong_if": "Daily close under ma_20 minus one ATR.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` falling under its floor.",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd",
+     "n_day_extreme",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of4.json",
+   "bytes": 14380,
+   "votes": 13,
+   "sha256": "0743dba5b1d3"
+  },
+  {
+   "file": "raschke.part2of4.json",
+   "bytes": 13233,
+   "votes": 13,
+   "sha256": "d3f770c09d11"
+  },
+  {
+   "file": "raschke.part3of4.json",
+   "bytes": 14966,
+   "votes": 13,
+   "sha256": "eb1351a65a49"
+  },
+  {
+   "file": "raschke.part4of4.json",
+   "bytes": 14045,
+   "votes": 13,
+   "sha256": "05d57bcb5233"
+  }
+ ]
+}

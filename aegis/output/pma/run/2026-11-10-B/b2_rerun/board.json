@@ -1,0 +1,964 @@
+{
+ "schema": "board.v1",
+ "date": "2026-11-10",
+ "deliberation_set": [
+  "AMPL",
+  "BRZE",
+  "RHI",
+  "EPAM",
+  "VEEV"
+ ],
+ "deciders_present": [
+  "elder-lens",
+  "livermore",
+  "minervini",
+  "oneil",
+  "raschke",
+  "seow",
+  "wyckoff"
+ ],
+ "deciders_absent": [],
+ "ignored_ballots": [],
+ "ballots_off_room": [],
+ "contested": [
+  "AMPL",
+  "BRZE",
+  "RHI",
+  "EPAM",
+  "VEEV"
+ ],
+ "uncontested_support": [],
+ "uncontested_oppose": [],
+ "challenged": [
+  "AMPL",
+  "BRZE",
+  "EPAM",
+  "RHI"
+ ],
+ "names": [
+  {
+   "ticker": "AMPL",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [
+     "minervini",
+     "oneil",
+     "raschke"
+    ],
+    "oppose": [
+     "livermore"
+    ],
+    "abstain": [
+     "elder-lens",
+     "seow",
+     "wyckoff"
+    ]
+   },
+   "convictions": {
+    "elder-lens": null,
+    "livermore": 2,
+    "minervini": 3,
+    "oneil": 2,
+    "raschke": 2,
+    "seow": null,
+    "wyckoff": null
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 3 support / 1 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "AMPL is at its 52-week high with a bearish oscillator divergence already showing, while structure is only mid-range. Price strength and internal energy disagree; this tests a pullback-lane thesis."
+   ],
+   "cases": {
+    "elder-lens": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "My censor test cannot be run: the packet carries elder None, no impulse_colour_last_bar and no force_index_ema_2 for AMPL. Red vetoes every long (R1) and I will not proxy it. Weekly reads W above EMA9, but the 1-hour is H1 below EMA9. Standing aside is a decision (C22).",
+     "for": "MTF weekly W above EMA9, 9>21, swing HH/HL and daily D above EMA9, 9>21, swing HH/HL: the higher screens (C21) are up and the Minervini note names a coiled leader.",
+     "against": "Impulse colour, force_index_ema_2 and price_ema_slope are unread. Hourly is H1 below EMA9 with swing LH/LL. Steenbarger: div_state BEARISH at the high is a force-vs-price split (C8).",
+     "entry_trigger": "Need impulse_colour_last_bar not RED and force_index_ema_2 under zero while price_ema_slope rises; then a pullback bid under ma_20.",
+     "wrong_if": "impulse_colour_last_bar prints RED, or a daily close under base_low_20d.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A populated impulse_colour_last_bar and impulse_colour_prior_bar showing red giving way, plus force_index_ema_2 under zero with a rising price_ema_slope.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "impulse_colour_prior_bar",
+      "force_index_ema_2",
+      "force_index_ema_13",
+      "price_ema_slope",
+      "channel_upper",
+      "elder_5d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "No fresh new high: MTF D is 2.9% under the last swing high and H1 is swing LH/LL below EMA9. C5 buys the new high after the pullback, never the pullback itself. structure_shift RANGE and div_state BEARISH say the pullback is not over. Weekly trend is intact, so this is a wait, not a rejection.",
+     "for": "Established uptrend: W and D both swing HH/HL, above EMA9, 9>21. Sits just under its high with rs_rank_pct 99.5. A new high would satisfy C5(c).",
+     "against": "Not at the new high yet; H1 swing LH/LL below EMA9 shows the pullback still running. div_state BEARISH with div_bear_count 1 and structure_shift RANGE are advisory only, but they agree with the wait.",
+     "entry_trigger": "Hourly close above pivot_high, then a new high on the daily.",
+     "wrong_if": "My wait is wrong if it breaks out and runs without a pullback; my trend read is wrong on a danger-signal reaction (1x atr_14d, my translation).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A daily close above the last swing high (new high after the pullback) flips me to SUPPORT.",
+     "cannot_see": [
+      "atr_14d",
+      "mp_state",
+      "sma_distance_pct",
+      "pct_from_52w_high"
+     ],
+     "opposing_case": "Stage 2 leader, rs_rank_pct 99.5, pct_from_52w_high -0.69, tight base (vcp_tightness_pct 74.3), weekly and daily both HH/HL: a close above the swing high would be exactly my new-high entry.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Stage 2 leader under its pivot: rs_rank_pct 99.5, pct_from_52w_high -0.69, pct_from_pivot -2.91, vcp_tightness_pct 74.3, day_vol 1.28; weekly and daily swing HH/HL. Entry is the pivot break on expanding volume, not the anticipation (C5). Fundamentals not run.",
+     "for": "Leader at the highs: rs_rank_pct 99.5, pct_from_52w_high -0.69; weekly and daily swing HH/HL, daily 2.9% under the last swing high; vcp_tightness_pct 74.3 shows a coil; day_vol 1.28 is above normal.",
+     "against": "div_state BEARISH with div_bear_count 1 while structure 55.8 and structure_shift RANGE: price at the high, internal energy not confirming. H1 is swing LH/LL at 0% of the day's range. Not through the pivot, so no entry yet.",
+     "entry_trigger": "h1_close_above pivot_high with vol_x_ge 1.4. pct_from_pivot -2.91 means price must first clear it; no buy under the pivot.",
+     "wrong_if": "close_below ma_20 before pivot_high is cleared, or a pivot break on light day_vol.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "Volume expansion on the pivot break raises it; div_bear_count rising or structure_shift turning BEARISH_CHOCH drops me out.",
+     "cannot_see": [
+      "earnings growth",
+      "contraction count and depth",
+      "IBD RS rank",
+      "200-day slope",
+      "MA stack (None in packet)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "L passes: rs_rank_pct 99.5, pct_from_52w_high -0.69. Not through the pivot yet (pct_from_pivot -2.91), so day_vol 1.28 is a pre-breakout read, under the 1.40 test. Base only partial: structure_shift RANGE, div_state BEARISH with div_bear_count 1. A buy-point watch, not a buy. Low conviction, conditional on a volume breakout.",
+     "for": "Leader at the highs: rs_rank_pct 99.5, pct_from_52w_high -0.69, coiled with vcp_tightness_pct 74.3 and daily HH/HL. The pivot is 2.91% away (pct_from_pivot -2.91), inside the 5% buy zone.",
+     "against": "structure_shift is RANGE: no completed base, and the structure composite is only mid-range. div_state BEARISH (div_bear_count 1). day_vol 1.28 is under 1.40. H1 is LH/LL, below EMA9, at 0% of the day's range. Fundamentals and base stage are not testable.",
+     "entry_trigger": "Hourly close above pivot_high on vol_x_ge 1.4. Not before, and not past pivot_high+5pct.",
+     "wrong_if": "Close below pivot_high-7pct or below ma_50; or a break of pivot_high on volume under 1.4x (no one bought it).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A completed base and a volume break lift me; a lone break against a weak group, or a close under ma_50, drops me to OPPOSE.",
+     "cannot_see": [
+      "fundamentals (C,A,S,I)",
+      "base stage (C19)",
+      "12-month RS rating",
+      "lens block",
+      "bq base duration",
+      "group rank"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "RETRACEMENT family (C2): D above EMA9, 9>21, swing HH/HL, 2.9% under the last swing high while H1 pulls back (below EMA9, swing LH/LL, 0% of the day's range) - a pullback inside an uptrend, no hook yet. div_state BEARISH with div_bear_count 1 is advisory only. ADX gate NOT_SERVED, so low conviction; stand aside until H1 turns.",
+     "for": "W and D both swing HH/HL, D above EMA9, 9>21; the dip is 2.9% under the last swing high, a shallow retracement with structure_shift RANGE (inside the swing); rs_rank_pct 99.5.",
+     "against": "H1 below EMA9, swing LH/LL, closed 0% of the day's range: no higher low, no hook. div_state BEARISH, div_bear_count 1. day_vol 1.28 is not a dry-up pullback. ADX NOT_SERVED so the Holy Grail gate is unproven.",
+     "entry_trigger": "H1 sets a higher low, then an hourly close above bar_high with above_vwap_s. No action while H1 stays LH/LL.",
+     "wrong_if": "Daily close below fib_swing_low (higher-low premise broken), or the daily loses EMA9 with swing LH/LL.",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A bearish CHoCH on the daily, or H1 higher low plus hourly close above bar_high on day_vol above 1.28 would raise it.",
+     "cannot_see": [
+      "adx",
+      "stochastic_kd",
+      "bar_range_history",
+      "sma_distance_pct",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Neither system fires. Position: structure_shift RANGE, pct_from_pivot -2.91, so no resistance break yet (R13). Swing: daily is above EMA9 with 9>21 and 2.9% under the last swing high, not a dip to a rising 20MA; cci_20, ma_20, ma_40 not served so the five conditions cannot be run. rs_rank_pct 99.5 is real strength, but a coil under the pivot is not my signal. Not mine to judge long; abstain.",
+     "for": "rs_rank_pct 99.5, pct_from_52w_high -0.69, weekly and daily swing HH/HL with 9>21; the coil under pivot_high is where a position-system break would come from.",
+     "against": "structure_shift RANGE and pct_from_pivot -2.91: no resistance break, so no signal. div_state BEARISH with div_bear_count 1. H1 below EMA9 with swing LH/LL. Fund-flow confirmation (cmf) not served.",
+     "entry_trigger": "Act only on a close above pivot_high (structure_shift to BULLISH_BOS) with cmf above zero, then buy stop 1 tick over bar_high (trade_above:bar_high).",
+     "wrong_if": "A close below base_low_20d or structure_shift BEARISH_CHOCH. Until a signal fires there is no position to be wrong in.",
+     "horizon_sessions": 30,
+     "would_change_my_mind": "A close above pivot_high with cmf above zero and elder_pattern SUSTAINED or ACCELERATION moves me to SUPPORT.",
+     "cannot_see": [
+      "cci_20",
+      "ma_20",
+      "ma_40",
+      "subcomponents.flow.cmf",
+      "elder_pattern",
+      "pivot_high",
+      "bar_high",
+      "base_low_20d",
+      "fib_swing_low",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "structure_shift RANGE and price at the top edge of it (pct_from_52w_high -0.69), with div_state BEARISH div_bear_count 1. A range long needs a spring or a pvp_val rejection (C6, C11); neither is served and pvp_position is not in the packet, so the range read cannot be placed inside value (R10, C16).",
+     "for": "Weekly and daily swing HH/HL, rs_rank_pct 99.5 and vcp_tightness_pct 74.3 per the packet: a strong name coiling under its pivot, with the daily 2.9% under the last swing high.",
+     "against": "structure_shift RANGE at the top edge with div_state BEARISH div_bear_count 1. The 1-hour chart is LH/LL. No spring and no value-area-low rejection to anchor a range long.",
+     "entry_trigger": "h1_close_above:pivot_high on a sign-of-strength bar (clv_ge:0.67, vol_x_ge:1.2), or a pull into pvp_val with a rejection.",
+     "wrong_if": "close_below:base_low_20d, or a close back inside value after the break.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "A volume-backed hold over the swing high (rvol_20d at or above 1.2), or a pvp_val rejection with pvp_position INSIDE_VALUE.",
+     "cannot_see": [
+      "pvp_poc",
+      "pvp_vah",
+      "pvp_val",
+      "pvp_position",
+      "rvol_20d",
+      "bar_high",
+      "bar_low",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "livermore",
+     "minervini",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [
+     "elder-lens",
+     "raschke"
+    ]
+   },
+   "convictions": {
+    "elder-lens": null,
+    "livermore": 3,
+    "minervini": 3,
+    "oneil": 3,
+    "raschke": null,
+    "seow": 3,
+    "wyckoff": 2
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 4 support / 1 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "BRZE is pressed against its 52-week high after a break of structure, on well below-normal participation. A breakout without volume confirmation tests the momentum thesis."
+   ],
+   "cases": {
+    "elder-lens": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Packet carries elder None and no impulse colour or force fields for BRZE, so the red veto (R1) and the R3 pullback timer cannot be read. It sits on its high (D 0.6% under 20-day high); Elder buys the dip, not the plateau (C6). No permission event is visible. I stand aside (C22).",
+     "for": "MTF W above EMA9, D above EMA9 with swing HH/HL and H1 above EMA9: every screen is rising, a strong momentum-lane tape.",
+     "against": "Pressed on the high, not a pullback (C6); weekly is swing HH but LL, a mixed weekly. day_vol 0.51 is thin participation (C23). Colour unread.",
+     "entry_trigger": "A dip of force_index_ema_2 under zero while price_ema_slope rises and impulse_colour_last_bar is not RED.",
+     "wrong_if": "impulse_colour_last_bar prints RED, or a daily close under base_low_20d.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A populated colour field showing red giving way or a force_index_ema_2 dip under zero in a rising price_ema_slope; volume expanding at a fresh high.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "impulse_colour_prior_bar",
+      "force_index_ema_2",
+      "force_index_ema_13",
+      "price_ema_slope",
+      "channel_upper",
+      "elder_5d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Textbook C5(c): established uptrend, W and D swing HH/HL, D 0.3% above the last swing high and 0.6% under its 20-day high, structure_shift BULLISH_BOS, pct_from_52w_high -0.04, rs_leadership LEADER. Momentum lane: sma_distance_pct 40.24 stretched is a weight (R27). day_vol 0.51 is not expanding; I hold it back to conviction 3.",
+     "for": "Leader pressing its high after a break of structure: structure_shift BULLISH_BOS, pct_from_52w_high -0.04, H1 and D both HH/HL above EMA9. Group: BRZE is the packet's lone Technology name with this read.",
+     "against": "day_vol 0.51 shows a break without participation; sma_distance_pct 40.24 is stretched; weekly shows HH but LL; Technology crowding (Steenbarger) means one sector view counted thrice; Valen stance RISK OFF.",
+     "entry_trigger": "Hourly close above pivot_high with the hour above session VWAP.",
+     "wrong_if": "Daily close back under the broken pivot_high, or a 1x atr_14d reaction from the day's high (my translation).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A failed breakout (reject of pivot_high) or a danger-signal reaction flips me to OPPOSE; volume expansion above 1.2 raises conviction.",
+     "cannot_see": [
+      "atr_14d",
+      "mp_state",
+      "fill_difficulty",
+      "second Technology name confirming"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Stage 2 leader on its pivot: pct_from_pivot 0.28, structure_shift BULLISH_BOS, rs_rank_pct 98.59, rs_leadership LEADER, pct_from_52w_high -0.04. But day_vol 0.51 is not expanding and sma_distance_pct 40.24 is stretched; I need volume to confirm the break (C5, C6).",
+     "for": "Break of structure at the 52-week high: pct_from_52w_high -0.04, rs_rank_pct 98.59, rs_leadership LEADER; weekly, daily and H1 above EMA9 with 9>21 and HH/HL; H1 at 100% of the day's range. Momentum lane: extension is a weight (R27).",
+     "against": "A breakout on day_vol 0.51 is unconfirmed; sma_distance_pct 40.24 is stretched; weekly swing HH but LL, 31.6% above the last swing high. Chasing past the pivot breaks the risk math (C5).",
+     "entry_trigger": "h1_close_above pivot_high with vol_x_ge 1.4 and above_vwap_s; no chase beyond pivot_high+3pct.",
+     "wrong_if": "close_below pivot_high, or no volume expansion on the breakout over the next sessions.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "day_vol expanding on a hold above pivot_high lifts it; a close back inside the base drops me out.",
+     "cannot_see": [
+      "earnings growth",
+      "contraction count and depth",
+      "IBD RS rank",
+      "200-day slope",
+      "MA stack (None in packet)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "Leader on its pivot: rs_leadership LEADER, rs_rank_pct 98.59, pct_from_pivot 0.28, structure_shift BULLISH_BOS. But day_vol 0.51 is far under the 1.40 test: a break on that volume is a hard rejection (C16), not a softer buy. sma_distance_pct 40.24 is a weight only (R27). Vote rests on volume.",
+     "for": "Strongest O'Neil shape of the five: LEADER, rs_rank_pct 98.59, pct_from_pivot 0.28 (inside the 5% zone), BULLISH_BOS, H1 HH/HL closing at 100% of the day's range.",
+     "against": "day_vol 0.51: no volume behind the break (C16 hard reject). sma_distance_pct 40.24 is stretched and the weekly is 31.6% above its last swing high, so a late-stage base (C19) cannot be ruled out; it is uncounted.",
+     "entry_trigger": "Flip to SUPPORT on a close above pivot_high with vol_x_ge 1.4. Not past pivot_high+5pct.",
+     "wrong_if": "Wrong to oppose if it closes above pivot_high on vol_x_ge 1.4 and holds. A new high on volume under 1.4x confirms my read (C25).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "One session of 1.4x volume or more on a close above pivot_high flips me. A base count showing a late-stage base would harden the oppose.",
+     "cannot_see": [
+      "fundamentals (C,A,S,I)",
+      "base stage (C19)",
+      "market gate",
+      "12-month RS rating",
+      "lens block",
+      "group rank"
+     ],
+     "opposing_case": "Best case FOR: LEADER at pct_from_52w_high -0.04, through the pivot by pct_from_pivot 0.28 with a BULLISH_BOS. Quiet volume can be the handle's dry-up before the real breakout day, and R27 makes extension a weight only.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Fits none of my four families cleanly (C2): D 0.3% above the last swing high is a breakout, but a breakout needs range contraction I cannot count (bar_range_history NOT_SERVED), sma_distance_pct 40.24 is stretched and day_vol 0.51 is not expanding. C3: 20-day-high breakouts on thin participation fail often. Standing aside, not opposing: H1 closed 100% of the day's range.",
+     "for": "D 0.3% above the last swing high with structure_shift BULLISH_BOS and rs_leadership LEADER; H1 above EMA9 closing 100% of the day's range. Momentum lane: extension is a weight, not a veto (R27).",
+     "against": "day_vol 0.51 not expanding on the break; sma_distance_pct 40.24 stretched; W swing HH but LL, 31.6% above the last swing high; no contraction to call a Crabel breakout; C3 failure rate of 20-day-high breakouts.",
+     "entry_trigger": "A pullback that holds a higher low (retracement), or a break on day_vol well above 0.51 after a visible contraction. Not a buy here on 0.51.",
+     "wrong_if": "A daily close back below structure_shift_ref turns the breakout into a failed one; a hold above it on rising volume says I was too cautious.",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "Volume expansion on the breakout (day_vol well above 0.51), or a quiet inside-range day that gives a countable contraction.",
+     "cannot_see": [
+      "bar_range_history",
+      "adx",
+      "stochastic_kd",
+      "n_day_extreme"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "POSITION system fired: structure_shift BULLISH_BOS, pct_from_pivot 0.28, a resistance-line buy signal (R13, declared proxy); rs_rank_pct 98.59, pct_from_52w_high -0.04, weekly and daily swing HH/HL, H1 above EMA9. Cautions: day_vol 0.51 not expanding, sma_distance_pct 40.24 stretched (weights on a momentum-lane name, R27). cmf, elder_pattern, avg_vol_20d not served, so flow confirmation (C28) is unproven. Conviction 3.",
+     "for": "Fresh break of the resistance line: BULLISH_BOS, pct_from_pivot 0.28, at the 52-week high (pct_from_52w_high -0.04), rs_rank_pct 98.59, weekly and daily HH/HL. Strength is the signal (C26).",
+     "against": "day_vol 0.51: a break without participation. sma_distance_pct 40.24 stretched. Weekly reads HH but LL. cmf and elder_pattern not served, so fund flow is unconfirmed.",
+     "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed to each new prior-day high until filled; want vol_x_ge:1.0 on the break.",
+     "wrong_if": "A close below base_low_20d, or BEARISH_CHOCH; or a red candle after an up-run (sell next session below its low).",
+     "horizon_sessions": 30,
+     "would_change_my_mind": "cmf below zero with elder_pattern leaving SUSTAINED or ACCELERATION, or a close back under pivot_high, moves me off; expanding volume on the break moves me up.",
+     "cannot_see": [
+      "subcomponents.flow.cmf",
+      "elder_pattern",
+      "elder_context.volume.avg_vol_20d",
+      "bar_high",
+      "base_low_20d",
+      "fib_swing_low",
+      "ret_63d",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "structure_shift BULLISH_BOS with pct_from_pivot 0.28, a trend read: the break just happened and the 1-hour chart is HH/HL. But day_vol 0.51 is below normal, so under C5/R3 this is a potential upthrust until price holds outside the range. sma_distance_pct 40.24 is a weight on entry location, not a reason against. Low conviction, hold for the test.",
+     "for": "Fresh structure_shift BULLISH_BOS, rs_leadership LEADER, rs_rank_pct 98.59, pct_from_52w_high -0.04; weekly, daily and 1-hour all above EMA9 with 9>21 per the MTF line.",
+     "against": "day_vol 0.51: a break on thin volume is a potential upthrust until it holds (C5, R3). sma_distance_pct 40.24 puts price far from value, so no test of the Creek yet.",
+     "entry_trigger": "in_zone:structure_shift_ref then h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67; a buy stop, never a resting limit (C12).",
+     "wrong_if": "close_below:structure_shift_ref, or a close back inside value (close_below:pvp_vah).",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A hold outside the old range with rvol_20d at or above 1.2 lifts conviction. A close back under structure_shift_ref ends the long.",
+     "cannot_see": [
+      "pvp_poc",
+      "pvp_vah",
+      "pvp_val",
+      "pvp_position",
+      "rvol_20d",
+      "bar_high",
+      "bar_low",
+      "atr_14d",
+      "structure_shift_ref"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "RHI",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [
+     "elder-lens"
+    ],
+    "oppose": [
+     "livermore",
+     "minervini",
+     "oneil",
+     "seow"
+    ],
+    "abstain": [
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "convictions": {
+    "elder-lens": 3,
+    "livermore": 3,
+    "minervini": 3,
+    "oneil": 3,
+    "raschke": null,
+    "seow": 2,
+    "wyckoff": null
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 1 support / 4 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "RHI is a pullback with a bullish divergence, but the 50- and 100-day averages are nearly flat to each other, and participation is low. The case should name its own invalidation observable."
+   ],
+   "cases": {
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Red giving way: impulse_colour_prior_bar RED -> impulse_colour_last_bar BLUE lifts the buy ban (C3, C4). force_index_ema_2 -119144.06 dips under zero while price_ema_slope 0.0669 rises (R3), weekly_trend_direction UP (R6). Weak leg: elder_pattern 4 (INTERRUPTED), so trend leg is partial.",
+     "for": "R2 plus R3: colour RED->BLUE, force_index_ema_2 -119144.06 under zero, price_ema_slope 0.0669 rising, weekly_trend_direction UP; MTF weekly W above EMA9, swing HH/HL.",
+     "against": "elder_pattern 4 (INTERRUPTED) fails the trend leg; daily D below EMA9 with swing LH/LL, 7.7% under the last swing high; no clean >=7 bar. Steenbarger flags low participation.",
+     "entry_trigger": "Bid under ma_20 on the pullback while the colour stays BLUE or green; no chase above the upper wall (R5).",
+     "wrong_if": "impulse_colour_last_bar prints RED again, or a daily close under base_low_20d.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "RED colour, price_ema_slope turning negative, or force_index_ema_2 staying positive with no dip; volume drying with no lower-low failure.",
+     "cannot_see": [
+      "swing low level",
+      "pullback volume contraction"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "Fails C5 on the packet: D is below EMA9, swing LH/LL, 7.7% under the last swing high and 10.2% under its 20-day high; H1 has 9<21. This is a name inside a reaction with no new high, and the nomination reads Red giving way with elder_pattern 4 (INTERRUPTED). I do not buy a pullback or a low price alone (C16).",
+     "for": "Weekly uptrend still HH/HL, weekly_trend_direction UP; bullish divergence and a Red to Blue impulse turn mark possible exhaustion of the reaction.",
+     "against": "D swing LH/LL below EMA9, 10.2% under its 20-day high, H1 9<21, day_vol 0.49 and sc_momentum 52.2: still a reaction, not a new high. Steenbarger asks it to name its invalidation: mine is a lower low.",
+     "entry_trigger": "Daily close above the last swing high with D back above EMA9 (new high after the pullback).",
+     "wrong_if": "Wrong to oppose if it closes above the last swing high within a few sessions.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "D swing turning HH/HL and a close above the last swing high, with day_vol above 1.",
+     "cannot_see": [
+      "atr_14d",
+      "mp_state",
+      "sma_distance_pct",
+      "pct_from_52w_high"
+     ],
+     "opposing_case": "Weekly is HH/HL above EMA9; div_state BULLISH, price_ema_slope 0.0669 rising and the elder-lens Red-to-Blue turn make a base-turn case with the weekly trend UP.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "No stage 2 base to buy: daily below EMA9, swing LH/LL, 7.7% under the last swing high, 10.2% under 20-day high; H1 9<21. This is a dip bought on weakness (C11), timed by Elder force-index, not a pivot. ma_50 and ma_100 are nearly flat to each other; day_vol is below normal. RS not served.",
+     "for": "Weekly above EMA9 with 9>21 and swing HH/HL; ma_200 32.67 under ma_50 38.61; div_state BULLISH; pullback volume is quiet at day_vol 0.49.",
+     "against": "Daily swing LH/LL below EMA9, 10.2% under 20-day high; H1 9<21 at 3% of the day's range; ma_50 38.61 and ma_100 38.52 flat to each other; no base or pivot named; RS unread.",
+     "entry_trigger": "A fresh base break: daily close_above pivot_high with vol_x_ge 1.4. No buy on the dip.",
+     "wrong_if": "Daily closes back above EMA9 with a higher high and expanding volume; the lower-high structure is then over.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "A daily higher high and higher low with expanding volume, and an rs_rank_pct I can read at 70 or better.",
+     "cannot_see": [
+      "rs_rank_pct",
+      "ma_150",
+      "200-day slope",
+      "base contraction count",
+      "earnings growth"
+     ],
+     "opposing_case": "Weekly above EMA9, 9>21, swing HH/HL; ma_200 sits well under ma_50; div_state BULLISH and weekly_trend_direction UP, so a quiet pullback inside an uptrend on low day_vol.",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "No leadership read served and no pivot to buy: daily swing LH/LL, 7.7% under the last swing high and 10.2% under the 20-day high, structure_shift RANGE. Participation is far under the 1.40 test per the packet's challenge round. A pullback below its highs with elder_pattern 4 (INTERRUPTED) is not a CAN SLIM entry.",
+     "for": "Weekly trend up (HH/HL, above EMA9), the averages stacked 50 over 100 over 200, div_state BULLISH, and the last bar turned BLUE after RED. Quiet participation suits a base.",
+     "against": "Daily LH/LL and below EMA9, 10.2% under the 20-day high with no pivot in reach. structure_shift RANGE. Volume well under 1.4x. No rs_leadership or rank served, so L is untested. elder_pattern 4 (INTERRUPTED).",
+     "entry_trigger": "Cannot support until leadership is shown and a close through pivot_high comes on vol_x_ge 1.4 with the daily back to HH/HL.",
+     "wrong_if": "Wrong to oppose if it closes above pivot_high on vol_x_ge 1.4 and the daily turns HH/HL.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A leadership read of LEADER, a completed base, and a volume breakout through pivot_high. Nothing short of that.",
+     "cannot_see": [
+      "fundamentals (C,A,S,I)",
+      "base stage (C19)",
+      "rs_leadership",
+      "rs_rank_pct",
+      "pivot_high",
+      "lens block",
+      "market gate"
+     ],
+     "opposing_case": "Best case FOR: weekly HH/HL above EMA9 with the 20-week high 10.2% away, div_state BULLISH, a RED-to-BLUE impulse bar, and the 50-day over the 100-day over the 200-day, so a base could be forming.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "No setup yet (C2): W swing HH/HL, but D below EMA9, swing LH/LL, 7.7% under the last swing high; H1 above EMA9, 9<21, swing LH/LL, 3% of the day's range. A retracement needs a higher low and the daily shows a lower low; a test (C3) needs a reclaim not yet shown. div_state BULLISH is advisory only. Stand aside (C22).",
+     "for": "Weekly HH/HL above EMA9; div_state BULLISH; D 10.2% under 20-day high is a deep pullback that could set a test of a prior low if it fails to extend and reclaims.",
+     "against": "D swing LH/LL below EMA9; H1 9<21 and closed at 3% of the day's range; day_vol 0.49; sc_momentum 52.2; structure_shift RANGE. No higher low and no reclaim to classify.",
+     "entry_trigger": "A reclaim of a prior low with an hourly close back above it (test shape, approximated), or an H1 higher low then h1_close_above bar_high. Not before.",
+     "wrong_if": "Daily close below base_low_20d: the test has failed and the higher-low premise is gone.",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A daily swing higher low, or a reclaim of the prior low on day_vol above 1.",
+     "cannot_see": [
+      "n_day_extreme",
+      "adx",
+      "stochastic_kd",
+      "bar_range_history"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Swing picture (pullback in an uptrend) but no set-up bar: daily below EMA9 with swing LH/LL, 7.7% under the last swing high and 10.2% under 20-day high is not a measured dip (C4, R7). H1 9<21. cci_20, ma_20, ma_40, ma_20_slope_5d_pct not served, so none of the five R1 conditions can be marked; four of five is not a set-up, and unverified is not met. Weekly HH/HL (C21) keeps it a watch.",
+     "for": "Weekly above EMA9 with 9>21 and HH/HL (C21 intact); H1 above EMA9 with a RED to BLUE colour turn; a pullback inside a weekly uptrend is the swing system's hunting ground.",
+     "against": "Daily below EMA9 with swing LH/LL, 7.7% under the last swing high, 10.2% under 20-day high: too deep to be measured bars. Five-condition bar unverifiable. participation below normal per the finding.",
+     "entry_trigger": "No order now. If all five R1 conditions mark on one bar: buy stop 1 tick over bar_high (trade_above:bar_high), re-placed daily.",
+     "wrong_if": "A close below ma_40 or below fib_swing_low; days_since_swing_high at 5 or more disqualifies the dip (R7).",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A bar with ma_20 rising above ma_40, cci_20 below -100, bar_low at or under ma_20, bar_close above ma_40, under 5 days since the swing high.",
+     "cannot_see": [
+      "cci_20",
+      "ma_20",
+      "ma_40",
+      "ma_20_slope_5d_pct",
+      "days_since_swing_high",
+      "bar_range_5d",
+      "atr_14d",
+      "pct_run_10d",
+      "ret_63d",
+      "bar_high"
+     ],
+     "opposing_case": "Weekly above EMA9, 9>21, HH/HL; H1 above EMA9; elder-lens sees RED giving way to BLUE with weekly_trend_direction UP. If cci_20 is below -100 with the low at a rising 20MA it could arm a swing set-up.",
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "structure_shift RANGE, but the daily chart is LH/LL and below EMA9 on thin participation. No spring (bar under base_low_20d closing back above) and no pvp_val rejection is served, and the range cannot be placed (pvp_val, pvp_poc not in packet). div_state BULLISH alone is not a Wyckoff trigger (C6: confirm with the next move, never on the probe). Unclear read (R10, C16).",
+     "for": "Weekly swing HH/HL with the weekly above EMA9 and 9>21. div_state BULLISH and the elder-lens colour flip RED to BLUE: a pullback inside a higher-timeframe uptrend.",
+     "against": "Daily chart LH/LL, below EMA9, 7.7% under the last swing high. day_vol 0.49 shows no effort on either side. No spring and no value-area-low rejection yet.",
+     "entry_trigger": "reclaim:base_low_20d (spring) then h1_close_above:bar_high with vol_x_ge:1.2. Never on the probe alone.",
+     "wrong_if": "close_below:base_low_20d with no hourly reclaim.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "A shakeout under base_low_20d that closes back above it, then a wide bar on rvol_20d at or above 1.2.",
+     "cannot_see": [
+      "pvp_poc",
+      "pvp_vah",
+      "pvp_val",
+      "pvp_position",
+      "base_low_20d",
+      "rvol_20d",
+      "bar_low",
+      "bar_close"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "EPAM",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "elder-lens",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [
+     "livermore",
+     "minervini",
+     "oneil"
+    ],
+    "abstain": []
+   },
+   "convictions": {
+    "elder-lens": 2,
+    "livermore": 2,
+    "minervini": 4,
+    "oneil": 2,
+    "raschke": 3,
+    "seow": 2,
+    "wyckoff": 2
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 4 support / 3 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "EPAM's higher-timeframe context is mixed: the 100-day average sits below the 200-day, and price is far from its high. A momentum-lane case needs the trend context named, not assumed."
+   ],
+   "cases": {
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "Pullback timer in a strong rising trend: force_index_ema_2 -444089.48 under zero while price_ema_slope 2.1464 rises, force_index_ema_13 7638981.94 bullish, weekly_trend_direction UP, mp 93.0. Colour GREEN->BLUE is green giving way, no permission event, so conviction stays low.",
+     "for": "R3 fires: force_index_ema_2 -444089.48 under zero in a rising price_ema_slope 2.1464; force_index_ema_13 7638981.94 bullish zone; weekly_trend_direction UP; mp 93.0.",
+     "against": "Green giving way is Elder's swing-end warning (C4); no red-giving-way event; H1 below EMA9 with swing LH. Steenbarger: ma_100 108.55 under ma_200 120.03 is outside my menu.",
+     "entry_trigger": "Pullback bid under ma_20 while impulse_colour_last_bar stays not RED.",
+     "wrong_if": "impulse_colour_last_bar prints RED, or price_ema_slope turns negative, or a daily close under base_low_20d.",
+     "horizon_sessions": 8,
+     "would_change_my_mind": "A RED colour, price_ema_slope turning negative, or green reasserting after a clean BLUE dip with force_index_ema_2 back over zero.",
+     "cannot_see": [
+      "elder_pattern",
+      "swing low level"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Uptrend structure is fine (W and D HH/HL, mp 93.0) but price is 7.0% under its 20-day high and H1 is below EMA9 with a lower swing high: a normal reaction (C8) in progress, not a new high. C5 waits for the new high. Elder-lens itself calls conviction low (Green to Blue). Momentum lane: I weigh extension, not veto it.",
+     "for": "Strong rising trend: W and D HH/HL, D 12.7% above the last swing high, mp 93.0, weekly_trend_direction UP. The reaction looks normal.",
+     "against": "7.0% under 20-day high with H1 below EMA9: no new high, pullback not over. Steenbarger: ma_100 108.55 under ma_200 120.03 and pct_from_52w_high -29.17, so the higher-timeframe base is mixed.",
+     "entry_trigger": "Hourly close above pivot_high, then a new 20-day high on the daily.",
+     "wrong_if": "I am wrong to wait if it breaks out; the trend is wrong if a daily close takes out the D swing low.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A new high after this pullback, with H1 back above EMA9, moves me to SUPPORT.",
+     "cannot_see": [
+      "atr_14d",
+      "sma_distance_pct",
+      "pct_from_52w_high",
+      "fill_difficulty"
+     ],
+     "opposing_case": "Momentum lane, STRENGTH door: mp 93.0, price_ema_slope 2.1464 rising, force_index_ema_13 7638981.94 bullish, W and D both HH/HL; a pullback timer inside a strong trend.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Trend Template gate fails: pct_from_52w_high -29.17 breaks criterion 7 (within 25 of the high), and ma_100 under ma_200 breaks the moving-average stack order (criterion 4 proxy). ma_50 is only just above ma_200. Not a confirmed stage 2 (C2, C3): all eight or none.",
+     "for": "Rebound momentum: mp 93.0, weekly and daily swing HH/HL, daily 12.7% above the last swing high, day_vol 1.41, force_index_ema_13 7638981.94 bullish.",
+     "against": "pct_from_52w_high -29.17 fails criterion 7; ma_100 108.55 under ma_200 120.03; H1 below EMA9, 7.0% under 20-day high; elder-lens flags GREEN->BLUE, green giving way.",
+     "entry_trigger": "No entry. I would need pct_from_52w_high inside 25 and ma_above ma_100 ma_200, then a pivot break on vol_x_ge 1.4.",
+     "wrong_if": "Price holds above ma_200 with ma_100 above it and pct_from_52w_high inside 25; the template then passes.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A repaired stack (100-day over 200-day) with price within 25 of the 52-week high, or a peer supplying a base shape I cannot see.",
+     "cannot_see": [
+      "ma_150",
+      "200-day slope",
+      "IBD RS rank",
+      "base contraction count",
+      "earnings growth"
+     ],
+     "opposing_case": "Strongest case: mp 93.0, force_index_ema_13 7638981.94 bullish, weekly and daily swing HH/HL, day_vol above normal, weekly_trend_direction UP; on the momentum lane extension and an interrupted pattern are weights (R27).",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Not a leader at a pivot: pct_from_52w_high -29.17, 7.0% under the 20-day high, no rs_leadership read served. Trend context: the 50-day sits above the 200-day, but the 100-day sits under both. A rebound under heavy overhead supply, not new highs out of a base (C7). Volume only just clears the 1.40 test.",
+     "for": "Recovery thrust is real: weekly HH/HL, 24.0% above its last swing high, the 50-day now above the 200-day, structure_shift ABOVE_STRUCTURE, volume just clears the 1.40 test.",
+     "against": "pct_from_52w_high -29.17 means price is far from new highs and under heavy overhead supply. The 100-day sits under the 200-day. H1 is below EMA9. No leadership read served.",
+     "entry_trigger": "Would support only on a close through the 20-day high (pivot_high) on vol_x_ge 1.4 with leadership shown.",
+     "wrong_if": "Wrong to oppose if it closes above pivot_high on vol_x_ge 1.4 and holds ma_50; it then reads as a base breakout.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A LEADER reading, a completed base under the 20-day high, and a volume breakout. A close under ma_50 would harden the oppose.",
+     "cannot_see": [
+      "fundamentals (C,A,S,I)",
+      "base stage (C19)",
+      "rs_leadership",
+      "rs_rank_pct",
+      "pivot_high",
+      "lens block",
+      "market gate"
+     ],
+     "opposing_case": "Best case FOR: structure_shift ABOVE_STRUCTURE, volume clears 1.40 by a hair, the 50-day has crossed above the 200-day, the weekly is HH/HL and 24.0% above its last swing high, and R27 makes a non-LEADER tag a weight only.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "RETRACEMENT family (C2): first pullback inside a strong uptrend - W and D above EMA9, 9>21, swing HH/HL; H1 below EMA9, 9>21, swing LH but HL (a higher low), 100% of the day's range, with mp 93.0. ADX gate (Holy Grail) NOT_SERVED, so conviction 3 and no higher.",
+     "for": "D above EMA9, 9>21, swing HH/HL, 12.7% above the last swing high; W 24.0% above the last swing high; H1 holds a higher low, 1.4% under the last swing high, 100% of the day's range; day_vol 1.41, mp 93.0.",
+     "against": "ma_100 108.55 under ma_200 120.03 and pct_from_52w_high -29.17: higher-timeframe context mixed. D 12.7% above the last swing high is extended. ADX NOT_SERVED. H1 still below EMA9.",
+     "entry_trigger": "H1 higher low holds, then an hourly close above bar_high with above_vwap_s and vol_x_ge 1.2. Do not chase.",
+     "wrong_if": "H1 higher low fails (hourly close below bar_low), or the daily loses EMA9 with swing LH/LL.",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A daily lower low, or day_vol falling under 1 on the bounce. A served ADX would let me gate the Holy Grail properly.",
+     "cannot_see": [
+      "adx",
+      "stochastic_kd",
+      "bar_range_history",
+      "n_day_extreme"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "POSITION system, weakly: structure_shift ABOVE_STRUCTURE (a state, not a fresh break; R13 proxy still reads a resistance-break signal), weekly and daily swing HH/HL, daily 12.7% above the last swing high. The 7.0% under 20-day high with H1 below EMA9 is a pause inside the trend. mp 93.0; participation above normal per the finding. pct_from_52w_high -29.17 far from a high is a weight (R27). cmf, rs_rank_pct, ret_63d not served: strength vs index unverified. Conviction 2.",
+     "for": "ABOVE_STRUCTURE with weekly and daily HH/HL, 24.0% weekly and 12.7% daily above the last swing high; mp 93.0; participation above normal; the H1 dip is a pause above the swing structure.",
+     "against": "Not a fresh break; pct_from_52w_high -29.17; 7.0% under 20-day high; H1 below EMA9 with LH. cmf, ret_63d, rs_rank_pct not served, so C23/C6 and C28 are unproven.",
+     "entry_trigger": "Buy stop 1 tick over bar_high (trade_above:bar_high), trailed to each new prior-day high until filled.",
+     "wrong_if": "A close below base_low_20d, or BEARISH_CHOCH; a red candle after an up-run means sell next session below its low.",
+     "horizon_sessions": 30,
+     "would_change_my_mind": "ret_63d at or under the index, or cmf below zero, moves me to OPPOSE; rs_rank_pct high with cmf above zero moves me up.",
+     "cannot_see": [
+      "ret_63d",
+      "rs_rank_pct",
+      "subcomponents.flow.cmf",
+      "elder_pattern",
+      "pct_from_pivot",
+      "bar_high",
+      "base_low_20d",
+      "fib_swing_low",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "structure_shift ABOVE_STRUCTURE: it broke out earlier and kept running, a state not an event. The daily is HH/HL, 12.7% above the last swing high, so price is away from the Creek and the 1-hour is pulling back (below EMA9). R2: do not chase, hold for the test of structure_shift_ref. Participation is not thin. The 100-day under the 200-day is context only.",
+     "for": "Weekly and daily swing HH/HL, mp 93.0, structure_shift ABOVE_STRUCTURE, day_vol 1.41. A pullback-to-test setup after a trend leg is the C7 entry.",
+     "against": "pct_from_52w_high -29.17 and ma_100 108.55 under ma_200 120.03 argue against a clean trend. The 1-hour is LH/HL below EMA9, and price is 12.7% above the last daily swing high, i.e. away from the Creek.",
+     "entry_trigger": "in_zone:structure_shift_ref, then h1_close_above:bar_high on vol_x_ge:1.2 with above_vwap_s. A buy stop, not a resting limit.",
+     "wrong_if": "close_below:structure_shift_ref-0.5atr, i.e. back under the broken Creek.",
+     "horizon_sessions": 12,
+     "would_change_my_mind": "A close back under structure_shift_ref ends it. A hold on light selling volume at the Creek raises conviction.",
+     "cannot_see": [
+      "pvp_poc",
+      "pvp_vah",
+      "pvp_val",
+      "pvp_position",
+      "structure_shift_ref",
+      "rvol_20d",
+      "bar_high",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "VEEV",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "livermore",
+     "seow"
+    ],
+    "abstain": [
+     "elder-lens",
+     "minervini",
+     "oneil"
+    ]
+   },
+   "convictions": {
+    "elder-lens": null,
+    "livermore": 2,
+    "minervini": null,
+    "oneil": null,
+    "raschke": 2,
+    "seow": 2,
+    "wyckoff": 2
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 2 support / 2 oppose"
+   ],
+   "challenge_claims": [],
+   "cases": {
+    "elder-lens": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Packet carries elder None and no impulse colour or force fields for VEEV, so the red veto (R1) and the R3 timer cannot be read. Weekly W above EMA9 but D below EMA9 and H1 9<21. No permission event can be shown; I stand aside (C22).",
+     "for": "Weekly W above EMA9, 9>21, swing HH/HL, and daily swing HH/HL, 6.0% under the last swing high: a pullback inside an uptrend, the shape Elder buys (C10).",
+     "against": "D below EMA9 and H1 below EMA9 with 9<21: the dip has not stopped extending, and colour, force_index_ema_2 and price_ema_slope are unread.",
+     "entry_trigger": "A populated colour not RED, force_index_ema_2 under zero with price_ema_slope rising, then a bid under ma_20.",
+     "wrong_if": "impulse_colour_last_bar prints RED, or a daily close under base_low_20d.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A populated impulse_colour_last_bar showing red giving way plus force_index_ema_2 under zero in a rising price_ema_slope.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "impulse_colour_prior_bar",
+      "force_index_ema_2",
+      "force_index_ema_13",
+      "price_ema_slope",
+      "channel_upper",
+      "elder_5d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "A pullback inside a good trend: W and D swing HH/HL but D is below EMA9, 6.0% under the last swing high, and H1 has 9<21. Raschke tags it a RETRACEMENT with sma_distance_pct 5.75: exactly the pullback I do not buy (C5). No new high, day_vol 0.77. I would revisit on a close above the swing high.",
+     "for": "Established uptrend W and D HH/HL; reaction is shallow with sma_distance_pct 5.75 near the 50-day; fundamentals strong (net_margin 0.29344801651081026).",
+     "against": "D below EMA9 and 6.0% under the last swing high, H1 9<21: no new high. Raschke itself is low conviction (ADX gate NOT_SERVED). day_vol 0.77 is thin.",
+     "entry_trigger": "Daily close above the last swing high (new high after the pullback).",
+     "wrong_if": "Wrong to oppose if a close above the swing high comes on higher day_vol.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A new high after the pullback, with D back above EMA9.",
+     "cannot_see": [
+      "atr_14d",
+      "mp_state",
+      "pct_from_52w_high",
+      "fill_difficulty"
+     ],
+     "opposing_case": "Weekly and daily HH/HL, above weekly EMA9, structure_shift RANGE inside the swing with sma_distance_pct 5.75 near support; a healthy normal reaction that could resume.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "The gate cannot be run from this packet: no MA stack, no rs_rank_pct, no pivot printed for VEEV, so I decline to call it stage 2 (C3, no_data). What I can see is a pullback: daily below EMA9 with HH/HL, 6.0% under the last swing high, day_vol 0.77, sma_distance_pct 5.75. My entry is a breakout, not a dip.",
+     "for": "Weekly and daily swing HH/HL with 9>21; 6.0% under 20-day high is inside the 25 limit; day_vol 0.77 is quiet pullback volume (C6); sma_distance_pct 5.75 is near support.",
+     "against": "No base or pivot named; H1 9<21 and swing LH; MA stack and RS unread so criteria 1 to 5 and 8 are unverified; fundamentals not run.",
+     "entry_trigger": "A daily close_above pivot_high on vol_x_ge 1.4 would let me support; no dip buy.",
+     "wrong_if": "Daily close_below ma_50 ends the pullback read and the stage 2 case.",
+     "horizon_sessions": 15,
+     "would_change_my_mind": "A readable MA stack and rs_rank_pct passing the template, plus a base and pivot named by a peer.",
+     "cannot_see": [
+      "ma_20 to ma_200 (None in packet)",
+      "rs_rank_pct",
+      "pivot_high",
+      "base contraction count",
+      "earnings growth"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Leadership is not served for VEEV, so my step 1 is no_data. The base reads constructive: daily HH/HL, 6.0% under the last swing high, sma_distance_pct 5.75 above the 50-day, participation quiet. It is not a breakout, so there is nothing to confirm on volume yet. Abstain, not oppose: no hard test fails.",
+     "for": "Handle-like pullback: 6.0% under the last swing high (inside the 8-12% handle), weekly and daily HH/HL, sma_distance_pct 5.75 above the 50-day, quiet volume as C15 wants.",
+     "against": "No rs_leadership or rank read, so L is untested. Daily below EMA9, H1 9<21 with LH. structure_shift RANGE. No breakout and volume under 1.4x. Handle drift is unproven.",
+     "entry_trigger": "Support if rs_leadership shows LEADER and an hourly close above pivot_high comes on vol_x_ge 1.4, not past pivot_high+5pct.",
+     "wrong_if": "Close below ma_50 or below pivot_high-8pct; or a break of pivot_high on volume under 1.4x.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A LEADER reading plus a volume breakout through pivot_high moves me to SUPPORT. A close under ma_50 moves me to OPPOSE.",
+     "cannot_see": [
+      "fundamentals (C,A,S,I)",
+      "base stage (C19)",
+      "rs_leadership",
+      "rs_rank_pct",
+      "pivot_high",
+      "lens block",
+      "market gate"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "RETRACEMENT family (C2): W and D swing HH/HL, 6.0% under the last swing high, D below EMA9 with 9>21; H1 below EMA9, 9<21, swing LH but HL, 28% of the day's range; structure_shift 3 (RANGE, inside the swing) with sma_distance_pct 5.75. ADX NOT_SERVED and no hook yet, so conviction stays 2.",
+     "for": "Higher-low premise intact on W and D (swing HH/HL); the dip is 6.0% under the last swing high, a retracement not a break; H1 swing LH but HL; swing support is bracket.stop 289.74 (ma50).",
+     "against": "D below EMA9 and H1 9<21 below EMA9: the pullback is not finished; day_vol 0.77 under normal; ADX NOT_SERVED so the Holy Grail gate is unproven.",
+     "entry_trigger": "After the H1 higher low, an hourly close above bar_high with above_vwap_s. Buy the hook, not the drift.",
+     "wrong_if": "Daily close below ma_50 (bracket.stop 289.74 (ma50)): the retracement has become a trend change.",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A daily lower low through the swing support, or W losing swing HH/HL, would withdraw it; an hourly hook on day_vol above 1 would lift it.",
+     "cannot_see": [
+      "adx",
+      "stochastic_kd",
+      "bar_range_history",
+      "n_day_extreme"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Swing picture: weekly above EMA9 with HH/HL, daily below EMA9, 9>21, HH/HL, 6.0% under the last swing high, H1 9<21 with LH but HL. My round-1 read had cci_20 not below -100, so the five-condition bar is incomplete; four of five is not a set-up (C3, R1). Raschke's line shows structure_shift RANGE with sma_distance_pct 5.75, still above the 20-day. No order; re-run when all five mark on one bar.",
+     "for": "Weekly above EMA9, 9>21, HH/HL; daily HH/HL with 9>21; 6.0% under the last swing high is a short, orderly pullback in a trend; fundamentals positive (rev_g, eps_g).",
+     "against": "cci_20 not below -100 on my round-1 read, so four of five, not a set-up. Daily below EMA9 and H1 9<21. participation below normal. No resistance break for the position system.",
+     "entry_trigger": "No order now. When all five R1 conditions mark on one bar: buy stop 1 tick over bar_high (trade_above:bar_high), re-placed daily.",
+     "wrong_if": "A close below ma_40 or below fib_swing_low; days_since_swing_high at 5 or more disqualifies the dip (R7).",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "A bar with ma_20 rising above ma_40, cci_20 below -100, bar_low at or under ma_20, bar_close above ma_40, under 5 days since the swing high.",
+     "cannot_see": [
+      "cci_20",
+      "ma_20",
+      "ma_40",
+      "ma_20_slope_5d_pct",
+      "days_since_swing_high",
+      "bar_range_5d",
+      "atr_14d",
+      "pct_run_10d",
+      "ret_63d",
+      "bar_high"
+     ],
+     "opposing_case": "Weekly and daily HH/HL with 9>21, a 6.0% pullback inside an established trend, RANGE structure; one more down bar could push cci_20 under -100 at the 20MA and arm a clean swing set-up.",
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "structure_shift RANGE inside a weekly and daily HH/HL structure, sma_distance_pct 5.75: a pullback within an established trend, 6.0% under the last swing high. A range read, so the edge play needs a pvp_val rejection or a spring (C11, C6); neither is served. day_vol 0.77 is quiet. Hold for the value-area-low test, low conviction.",
+     "for": "Weekly and daily swing HH/HL with the weekly above EMA9 and 9>21. A pullback within the trend on quiet volume (day_vol 0.77): the stocks to buy at the lower edge of value.",
+     "against": "structure_shift RANGE with the daily below EMA9 and the 1-hour 9<21. day_vol 0.77 shows no demand yet. No spring or value-area-low rejection is served, so the range cannot be placed.",
+     "entry_trigger": "in_zone:pvp_val then h1_close_above:bar_high on vol_x_ge:1.2 with above_vwap_s; a buy stop above the trigger bar (C12).",
+     "wrong_if": "close_below:base_low_20d, or a close under pvp_val with no reclaim.",
+     "horizon_sessions": 12,
+     "would_change_my_mind": "A pvp_val rejection or spring on rvol_20d at or above 1.2 lifts conviction. A close under base_low_20d withdraws support.",
+     "cannot_see": [
+      "pvp_poc",
+      "pvp_vah",
+      "pvp_val",
+      "pvp_position",
+      "base_low_20d",
+      "rvol_20d",
+      "bar_low",
+      "atr_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  }
+ ],
+ "floor_rule": "two messages per decider per contested name (floor-check counts); the Chair posts, never votes"
+}

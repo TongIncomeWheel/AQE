@@ -1,0 +1,49 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-10",
+ "declarations": [
+  "trend_template: stack and RS read from packet grid and my blind vote; ma_150 and 200d slope not served; RS rank is a proxy, not IBD (C3).",
+  "vcp_detail NOT_SERVED; earnings_growth NOT_SERVED; volume signature partial (C4, C6, R2, R4)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "ARHS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above yesterday's high on rising volume, after a tight pause."
+   },
+   "wrong_if": "Daily close below bar_low-0.5atr, or a pullback on rising volume that gives back the weekly higher low.",
+   "market_void": null,
+   "reason": "Weekly and daily swing HH/HL, close_vs_ema9 above, ema_order 9>21 on W, D and H1: Trend Template read holds (C3, C11). But D close_vs_swing_high_pct 43.32 is far above any base; C5 forbids chasing, so wait for a pause and the break. VCP count and fundamentals not served."
+  },
+  {
+   "ticker": "TECH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour candle closes above the confirmed pivot high on expanding volume."
+   },
+   "wrong_if": "Daily close below structure_shift_ref, or a break of the pivot that fails on light volume.",
+   "market_void": null,
+   "reason": "W and D swing HH/HL, close_vs_ema9 above, dist_to_20bar_high_pct 0.07 on D: template read holds (C3). H1 swing_class LH but EL, close_vs_ema9 below: no breakout yet, and day_vol 0.94 in my blind vote gave no expansion (C6). Wait for the break on volume. Low conviction."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 954,
+   "sha256": "70d5915b6edc"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 931,
+   "sha256": "e7359665297e"
+  }
+ ]
+}

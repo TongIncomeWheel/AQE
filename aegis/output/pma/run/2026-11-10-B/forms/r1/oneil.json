@@ -1,0 +1,72 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "MGNI",
+   "reason": "LEADER (rs_leadership 3), rank 27, rs_rank_pct 98.26, group sector_trend_state 1 (Building). structure 74.7, day_vol 1.61 clears 1.40. Late: pct_from_pivot 10.0 (warning, not >10), sma_distance_pct 20.17. Base loose (vcp_tightness_pct 92.4).",
+   "fields_cited": ["rs_leadership", "rank", "rs_rank_pct", "sector_trend_state", "structure", "day_vol", "pct_from_pivot", "sma_distance_pct", "vcp_tightness_pct"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER), rank 27, rs_rank_pct 98.26, gics_sector XLC; position within group not shown", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C13", "C14", "C18"], "observed": "structure 74.7, structure_shift 1 (ABOVE_STRUCTURE), lens null, base_range_pct 33.4, vcp_tightness_pct 92.4, ma_50 24.17. base_measure: structure composite (substitute)", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C16"], "observed": "day_vol 1.61 >= 1.40 (volume_measure: day_vol vs 20d, substitute)", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot 10.0 (late-buy warning, not >10); entry 29.04 vs ma_200 17.91 = +62%, under 70%; sma_distance_pct 20.17", "verdict": "partial", "fields": ["entry", "ma_200", "sma_distance_pct"]},
+    {"step": 5, "canon_ref": ["C20", "C21", "C22"], "observed": "bracket.stop null, bracket.valid False, atr_fallback_stop 27.61 (information only). Own invalidation: close below ma_50 24.17. Eight-week rule flagged if +20% in 3 weeks", "verdict": "partial", "fields": ["bracket.stop", "bracket.valid", "bracket.atr_fallback_stop", "ma_50"]},
+    {"step": 6, "canon_ref": ["C24", "C25"], "observed": "sector_trend_state 1 (Momentum Building - Add) confirms group; lens.sector null; div_state NONE; no climax read served", "verdict": "pass", "fields": ["sector_trend_state", "lens", "div_state"]},
+    {"step": 7, "canon_ref": ["C23"], "observed": "Ranked first: leadership strongest (rs_rank_pct 98.26), base partial, volume pass. Declared block: fundamentals/base_stage NOT_AVAILABLE, market_gate DELEGATED", "verdict": "pass", "fields": ["rs_leadership"]}
+   ],
+   "falsifier": "Close back under ma_50 24.17, or a new high on lower day_vol than 1.40, or sector_trend_state leaving Momentum Building. Valid only into a confirmed uptrend (market_gate DELEGATED)."
+  },
+  {
+   "ticker": "G",
+   "reason": "LEADER (rs_leadership 3), rank 3, rs_rank_pct 84.28. structure 88.4 with structure_shift 2 (BULLISH_BOS), day_vol 1.58, pct_from_pivot 1.53 inside the 5% buy zone. Caveats: ret_12m 10.84 thin prior run, sector_trend_state 3 (Recovering).",
+   "fields_cited": ["rs_leadership", "rank", "rs_rank_pct", "structure", "structure_shift", "day_vol", "pct_from_pivot", "ret_12m", "sector_trend_state"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER), rank 3, rs_rank_pct 84.28 (>=80), gics_sector XLK", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C13", "C14", "C18"], "observed": "structure 88.4, structure_shift 2 (BULLISH_BOS), lens null, ma_50 36.62, ret_12m 10.84 (prior uptrend under +30%), base_range_pct 21.6. base_measure: structure composite (substitute)", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C16"], "observed": "day_vol 1.58 >= 1.40 (volume_measure: day_vol vs 20d, substitute)", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot 1.53 (within 5%); entry 42.55 vs ma_200 35.39 = +20%; sma_distance_pct 16.2; pct_from_52w_high -12.27", "verdict": "pass", "fields": ["entry", "ma_200", "sma_distance_pct"]},
+    {"step": 5, "canon_ref": ["C20", "C21", "C22"], "observed": "bracket.stop null, bracket.valid False, atr_fallback_stop 41.14 (information only). Own invalidation: close under pivot_high 41.91, then ma_50 36.62. Eight-week rule flagged", "verdict": "partial", "fields": ["bracket.stop", "bracket.valid", "bracket.atr_fallback_stop", "ma_50"]},
+    {"step": 6, "canon_ref": ["C24", "C25"], "observed": "sector_trend_state 3 (Recovering From Weakness - Watch for Entry): group not yet confirming; lens.sector null; div_state NONE", "verdict": "partial", "fields": ["sector_trend_state", "lens", "div_state"]},
+    {"step": 7, "canon_ref": ["C23"], "observed": "Ranked second: leadership pass, base partial (BOS but thin prior run), volume pass. Declared block: fundamentals/base_stage NOT_AVAILABLE, market_gate DELEGATED", "verdict": "pass", "fields": ["rs_leadership"]}
+   ],
+   "falsifier": "Close back under pivot_high 41.91 (BOS failed), or day_vol falling under 1.40 on the next push, or group stays Recovering while name stalls alone. Valid only into a confirmed uptrend (market_gate DELEGATED)."
+  },
+  {
+   "ticker": "TGTX",
+   "reason": "LEADER (rs_leadership 3), rs_rank_pct 89.83, ret_12m 90.56, day_vol 2.98 heavy. Sits at pct_from_pivot -0.35, just under the pivot, a buy-point watch. Caveats: structure_shift 3 (RANGE), sector_trend_state 2 (Fading), Lone Ranger risk.",
+   "fields_cited": ["rs_leadership", "rs_rank_pct", "ret_12m", "day_vol", "pct_from_pivot", "structure_shift", "sector_trend_state"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER), rank 192, rs_rank_pct 89.83 (>=80), gics_sector XLV; position within group not shown", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C13", "C14", "C18"], "observed": "structure 73.7, structure_shift 3 (RANGE), lens null, vcp_tightness_pct 73.8, base_range_pct 20.4, ma_50 55.99. base_measure: structure composite (substitute)", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C16"], "observed": "day_vol 2.98 >= 1.40 (volume_measure: day_vol vs 20d, substitute)", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot -0.35 (not yet through pivot_high 63.6); entry 63.38 vs ma_200 44.69 = +42%, under 70%; sma_distance_pct 13.19", "verdict": "pass", "fields": ["entry", "ma_200", "sma_distance_pct"]},
+    {"step": 5, "canon_ref": ["C20", "C21", "C22"], "observed": "bracket.stop null, bracket.valid False, atr_fallback_stop 60.34 (information only). Own invalidation: close under ma_50 55.99. Eight-week rule flagged", "verdict": "partial", "fields": ["bracket.stop", "bracket.valid", "bracket.atr_fallback_stop", "ma_50"]},
+    {"step": 6, "canon_ref": ["C24", "C25"], "observed": "sector_trend_state 2 (Momentum Fading - Hold, Don't Add): no group confirmation, Lone Ranger risk; lens.sector null; div_state NONE", "verdict": "partial", "fields": ["sector_trend_state", "lens", "div_state"]},
+    {"step": 7, "canon_ref": ["C23"], "observed": "Ranked third: leadership pass, base partial (RANGE), volume pass but group fading. Declared block: fundamentals/base_stage NOT_AVAILABLE, market_gate DELEGATED", "verdict": "pass", "fields": ["rs_leadership"]}
+   ],
+   "falsifier": "No close through pivot_high 63.6 on day_vol >= 1.40, or a close under ma_50 55.99, or the group staying Momentum Fading while it breaks out alone. Valid only into a confirmed uptrend (market_gate DELEGATED)."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "lens", "impact": "lens is null on every packet row, so lens.coil, lens.structure, lens.resistance and lens.sector could not be read; base soundness and overhead supply rest on the structure composite only and group confirmation on sector_trend_state"},
+  {"field": "bracket.stop", "impact": "bracket.stop, bracket.rr and bracket.risk_pct are null on every row; stated as information only, invalidation named from ma_50 / pivot_high instead"},
+  {"field": "bq.bq_base_dur", "impact": "bq.bq_base_dur and bq.bq_range_tight not in the packet; tight_base flag not evaluable, base duration (C12 7-8 weeks) unverified"},
+  {"field": "fundamentals (C, A, S, I letters)", "impact": "No EPS, sales, ROE, sponsor count or absolute volume served; NOT_AVAILABLE, not inferred from price"}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I letters untested)",
+  "base_stage: NOT_AVAILABLE (C19 cannot be enforced)",
+  "market_gate: DELEGATED - every nomination valid only into a confirmed uptrend; if the index is under distribution it is void",
+  "rs_measure: rs_leadership (substitute - no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure: structure composite (substitute)",
+  "lesson check: no ledger memory block supplied; no standing lesson applies"
+ ],
+ "shortfall_reason": null
+}

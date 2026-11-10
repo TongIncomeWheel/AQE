@@ -1,0 +1,47 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "RHI",
+   "reason": "Red giving way: impulse_colour_prior_bar RED -> impulse_colour_last_bar BLUE, force_index_ema_2 -119144.06 dipping under zero while price_ema_slope 0.0669 rises, weekly_trend_direction UP. Trigger is R3 plus R2. Leg unverified: elder_pattern 4 (INTERRUPTED).",
+   "fields_cited": ["impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "elder_5d", "elder_pattern"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 6.0 (ambiguous band); impulse_colour_last_bar BLUE, not RED, so buying is not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [7, 7, 7, 5, 6]; colour prior RED -> last BLUE (red gave way); no >=7 after <=6 bar; elder_pattern 4 INTERRUPTED, mp_state 2", "verdict": "partial", "fields": ["elder_5d", "impulse_colour_prior_bar", "impulse_colour_last_bar", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "price_ema_slope 0.0669 rising; force_index_ema_2 -119144.06 (<0, R3 fires); weekly_trend_direction UP; elder_pattern INTERRUPTED flags trend leg per card", "verdict": "partial", "fields": ["price_ema_slope", "force_index_ema_2", "weekly_trend_direction", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "entry 42.33 under channel_upper 48.57 (R5 ok); channel_lower 32.86. Own invalidation: last daily swing low / value-zone MA, not on my menu; PM to set", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "Transition is colour RED->BLUE, force_index_ema_13 1374818.6 bullish zone; mp 77.0 with mp_state 2 FADING; not a clean >=7 permission bar", "verdict": "partial", "fields": ["force_index_ema_13", "mp", "mp_state", "elder_5d"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "Book flat, no held names; held_review empty", "verdict": "no_data", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED again, or price_ema_slope turns negative, or force_index_ema_2 stays positive without a pullback entry; thesis is wrong on a close under the last daily swing low (own level, not on menu)."
+  },
+  {
+   "ticker": "EPAM",
+   "reason": "Pullback timer in a strong rising trend: force_index_ema_2 -444089.48 under zero while price_ema_slope 2.1464 rises, force_index_ema_13 7638981.94 bullish, weekly_trend_direction UP, mp 93.0. Colour GREEN->BLUE is green giving way (swing-end warning), so conviction is low.",
+   "fields_cited": ["force_index_ema_2", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "impulse_colour_last_bar", "impulse_colour_prior_bar", "elder_5d", "mp", "mp_state"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, not RED; buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [7, 7, 10, 10, 7]; colour prior GREEN -> last BLUE (green giving way, not red); elder_pattern null; no permission event", "verdict": "fail", "fields": ["elder_5d", "impulse_colour_prior_bar", "impulse_colour_last_bar", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "price_ema_slope 2.1464 rising; force_index_ema_2 -444089.48 (<0, R3 fires); weekly_trend_direction UP; force_index_ema_13 7638981.94", "verdict": "pass", "fields": ["price_ema_slope", "force_index_ema_2", "force_index_ema_13", "weekly_trend_direction"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "entry 156.82 under channel_upper 164.07 (R5 ok); channel_lower 110.14. Own invalidation: value-zone MA / last daily swing low, not on my menu; PM to set", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22", "C24"], "observed": "No red-giving-way transition; mp 93.0 mp_state 3 STRONG supports C24-style strength (unsourced); green fading tempers it", "verdict": "partial", "fields": ["mp", "mp_state", "elder_5d"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "Book flat, no held names; held_review empty", "verdict": "no_data", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar prints RED, or price_ema_slope turns negative, or the pullback fails to hold the value zone under entry 156.82 (own level: last daily swing low, not on menu)."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on EPAM and CB; CORRECTION_REENTRY (R8) and INTERRUPTED trend-leg checks could not be read for them"}
+ ],
+ "declarations": [
+  "No ledger memory or standing lessons were injected; none applied.",
+  "Packet columns outside my menu (ma_20, ma_50, choch_state, structure_shift, pin_bar_state, extension_bracket, rs and return fields) were not read or cited.",
+  "Standing aside on the other eight names is a decision (C22): no red-giving-way event paired with the R3 trigger."
+ ],
+ "shortfall_reason": "Only two names combine a non-red impulse colour, a rising price average, force_index_ema_2 under zero and weekly UP. DOCS, INFY, EBAY and CB lack a clean transition or have a weak or flat slope; CCC, VRNS, CAKE and OPCH have force_index_ema_2 above zero (no R3 dip). Standing aside is a decision (C22); no padding."
+}

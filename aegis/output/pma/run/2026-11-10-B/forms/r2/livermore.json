@@ -1,0 +1,456 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "round": 2,
+ "declarations": [
+  "trend_confirmation: PASS/PARTIAL (structure/structure_shift + sma_distance_pct, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x atr), my translation not Livermore's 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "div_state, elder, elder_5d are advisory only to this seat; no vote rests on them. Bracket fields stated as information, never a basis (R1)."
+ ],
+ "data_gaps": [
+  {
+   "field": "structure/mp_state/atr_14d/day_vol",
+   "impact": "Not served for AMPL, BRZE, RHI, EPAM, VEEV (MTF NOT SERVED); abstained rather than invent a read."
+  },
+  {
+   "field": "atr_14d (TECH)",
+   "impact": "atr 0.14 implausible against ma50 72.49; C7 translation unreliable."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "C5 new-high entry: structure 89.5 ABOVE_STRUCTURE, from_52w_hi 0.0%, mp 93.0 STRONG, mp ACCELERATING, rs LEADER, day_vol 1.43, sma_dist 17.37%. Sector Momentum Fading \u2014 Hold, Don't Add tempers it. Danger signal translated via atr 3.05 (my translation, not Livermore's 6 points).",
+   "self_counter": "Sector reads Momentum Fading \u2014 Hold, Don't Add, second-name confirmation is thin, and Valen shows Episodic pivot (delayed) FAILED (9/10).",
+   "falsifier": "Reaction of about 1x atr 3.05 off the day's high, or structure_shift leaves ABOVE_STRUCTURE.",
+   "challenge_reply": "At-high is my C5/C16 entry, not a defect. Difference here: structure 89.5 is the packet's best and sma_dist 17.37% is the least stretched of my three. Overlap: EW, ARHS, XERS are one method's view, so I weight EW highest. Healthcare is one group call, not eight.",
+   "case": {
+    "for": "Established uptrend at its high: from_52w_hi 0.0%, structure 89.5 ABOVE_STRUCTURE, mp 93.0 STRONG/ACCELERATING, rs LEADER spy20 24.47, day_vol 1.43.",
+    "against": "Sector Momentum Fading \u2014 Hold, Don't Add; ext_atr20 4.09; H1 swing HH but LL; Valen Episodic pivot (delayed) FAILED (9/10); bracket INVALID is information only.",
+    "entry_trigger": "h1_close_above high_52w_close with vol_x_ge 1.2; no buy on a dip (C5).",
+    "wrong_if": "Fade of 1x atr 3.05 from the day's high, or close under atr_fallback_stop 101.66, or structure_shift leaves ABOVE_STRUCTURE.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A related Healthcare name failing at its high (C14), or mp_state leaving STRONG.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RLAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend is real: structure 73.7 BULLISH_BOS, rs_rank_pct 93.3, ret_12m 212.25, mp BUILDING/ACCELERATING. But from_52w_hi -1.73% means no new high yet (C5c), rs LAGGARD, elder INTERRUPTED, div BEARISH/1. Low conviction; act only on the new high.",
+   "case": {
+    "for": "structure 73.7 BULLISH_BOS, rs_rank_pct 93.3, ret_12m 212.25, day_vol 1.54, W above EMA9 and 9>21.",
+    "against": "from_52w_hi -1.73% so the new high has not printed; rs LAGGARD spy20 16.67, elder INTERRUPTED, div BEARISH/1, Healthcare Momentum Fading.",
+    "entry_trigger": "close_above high_52w_close; I do not buy the test zone (C5).",
+    "wrong_if": "Daily close under atr_fallback_stop 19.2 or structure_shift falls back to RANGE.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A new high on day_vol above 1.54 lifts me; failure at the high drops me out.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "fade_atr_ge:1"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Close under atr_fallback_stop 19.2 or structure_shift back to RANGE.",
+   "challenge_reply": "Healthcare crowding: one sector call, so I hold RLAY at 2 and not higher; it is not yet at a high, so the lane-extension finding does not apply to it."
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "structure 88.4 BULLISH_BOS, rs LEADER spy20 27.14, mp 96.0 (FADING label is default per R13, not a decay signal) with mp ACCELERATING, day_vol 1.58, W/D swing HH/HL. Not yet a new high: from_52w_hi -12.27% on the packet, 1.4% under 20-day high. Sector Recovering From Weakness.",
+   "case": {
+    "for": "structure 88.4 BULLISH_BOS, weekly and daily HH/HL, rs LEADER, flow 98.7, day_vol 1.58.",
+    "against": "No 52-week high yet (from_52w_hi -12.27%), H1 below EMA9, ret_12m 10.84 is a thin prior run, sector only Recovering.",
+    "entry_trigger": "h1_close_above pivot_high with vol_x_ge 1.2.",
+    "wrong_if": "Close under atr_fallback_stop 41.14 or a fade of 1x atr 1.41 from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Loss of BULLISH_BOS or a failed break of the 20-day high on light volume.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low",
+     "fade_atr_ge:1"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 1.41 off the day's high or close under atr_fallback_stop 41.14."
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Rank 4 leader at its high: from_52w_hi 0.0%, structure 86.7 ABOVE_STRUCTURE, mp 100.0 STRONG/ACCELERATING, rs_rank_pct 99.17, day_vol 1.66. Extension (sma_dist 49.84%, ext_atr20 4.55) is a weight, not a veto (R27). Lone name in its group, no second-name confirmation.",
+   "case": {
+    "for": "Leader at its high: structure 86.7, mp 100.0, rs_rank_pct 99.17, flow 100.0, W and D both HH/HL.",
+    "against": "sma_dist 49.84%, ext_atr20 4.55, run_10d 28.93%; Valen High tight flag FAILED (6/12); sector Momentum Fading; no sibling name.",
+    "entry_trigger": "Only on strength: h1_close_above high_52w_close with vol_x_ge 1.2; never on a dip.",
+    "wrong_if": "Fade of 1x atr 0.73 from the day's high, or close under atr_fallback_stop 14.29.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A second Consumer Discretionary leader confirming raises me; a high-volume reversal bar lowers me.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 0.73 off the day's high or close under atr_fallback_stop 14.29.",
+   "challenge_reply": "At-high is my entry, and the difference is rs_rank_pct 99.17 with mp 100.0, the packet's strongest. But sma_dist 49.84% is real, so I stay at 3. Overlap with EW and XERS is one method repeated, so I do not add conviction for it."
+  },
+  {
+   "ticker": "XERS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At its high: from_52w_hi 0.0%, structure 84.2 ABOVE_STRUCTURE, mp 97.0 STRONG/ACCELERATING, rs_rank_pct 99.34, day_vol 1.97. Extension heavy (sma_dist 62.29%, ext_atr20 6.01, run_10d 55.34%); that is a weight (R27). Divergence is advisory to my seat and I vote on price. Moderate conviction.",
+   "case": {
+    "for": "Price leads: from_52w_hi 0.0%, structure 84.2, mp 97.0, rs_rank_pct 99.34, day_vol 1.97, sibling XLV names EW and REPL show the same read.",
+    "against": "ext_atr20 6.01, run_10d 55.34%, div BEARISH/4, Valen High tight flag FAILED (5/12), sector Momentum Fading.",
+    "entry_trigger": "h1_close_above high_52w_close with vol_x_ge 1.2; no chase after a 55% run.",
+    "wrong_if": "Fade of 1x atr 0.79 from the day's high, or close under atr_fallback_stop 15.07.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A high-volume reversal bar or the XLV siblings losing ABOVE_STRUCTURE.",
+    "cannot_see": [
+     "fill difficulty",
+     "oscillator divergence is advisory only"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 0.79 off the day's high or XLV siblings lose ABOVE_STRUCTURE.",
+   "challenge_reply": "Steenbarger: div BEARISH/4 is advisory only for my seat and I do not vote on it. Price confirms at the high with day_vol 1.97, so internal energy lagging is a warning that shortens my horizon to 10 and caps me at 3. Extension is a weight (R27); the danger signal is my exit."
+  },
+  {
+   "ticker": "ADPT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At its high: from_52w_hi 0.0%, structure 72.0 ABOVE_STRUCTURE, rs_rank_pct 98.76, mp 71.0 BUILDING/ACCELERATING, day_vol 1.3, sma_dist 14.1%. Weekly 1.7% under 20-wk high, not far. Sector Momentum Fading; rs LAGGARD tag noted.",
+   "case": {
+    "for": "structure 72.0 ABOVE_STRUCTURE, from_52w_hi 0.0%, rs_rank_pct 98.76, ret_6m 123.49, flow 96.1, W and H1 HH/HL.",
+    "against": "mp 71.0 is below 75, rs LAGGARD spy20 21.61, D swing LH but HL, Healthcare Momentum Fading \u2014 Hold, Don't Add.",
+    "entry_trigger": "h1_close_above pivot_high with vol_x_ge 1.2.",
+    "wrong_if": "Fade of 1x atr 1.73 off the day's high, or close under atr_fallback_stop 28.53.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "mp_state reaching STRONG lifts me; structure_shift leaving ABOVE_STRUCTURE drops me.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 1.73 off the day's high or close under atr_fallback_stop 28.53.",
+   "challenge_reply": "Healthcare crowding: one sector call, so conviction stays 3. At-high is C5 entry; here the difference is rs_rank_pct 98.76 with structure 72.0 holding ABOVE_STRUCTURE and extension modest (sma_dist 14.1%)."
+  },
+  {
+   "ticker": "PRGO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At its high: from_52w_hi 0.0%, structure 84.2 BULLISH_BOS, rs LEADER, mp 64.0 BUILDING/FLAT, W 0.4% under 20-wk high, ext_atr20 1.27 least stretched here. Weak points: day_vol 1.17, elder INTERRUPTED, div BEARISH/1, D swing LH/LL, sc_mom 70.3.",
+   "case": {
+    "for": "structure 84.2 BULLISH_BOS, from_52w_hi 0.0%, rs LEADER, ret_63d 31.91, ext_atr20 1.27, H1 94% of range.",
+    "against": "mp 64.0 and FLAT, day_vol 1.17 is not heavy, D and H1 swing LH/LL, Valen Undercut and rally FAILED (6/9).",
+    "entry_trigger": "h1_close_above pivot_high with vol_x_ge 1.2.",
+    "wrong_if": "Fade of 1x atr 0.74 off the day's high, or close under atr_fallback_stop 16.21.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "mp_accel_state turning DECELERATING, or the break failing back into the swing.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 0.74 off the day's high or close under atr_fallback_stop 16.21.",
+   "challenge_reply": "Healthcare crowding: one group call, so PRGO is held at 3 and not above. Not extended (ext_atr20 1.27), which is what differs at the high."
+  },
+  {
+   "ticker": "AMPL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The packet carries no structure, mp, atr or day_vol for AMPL and MTF is NOT SERVED. My method reads none of its menu on this name; I invent no read. Abstain, not oppose.",
+   "case": {
+    "for": "Nominator cites pct_from_52w_high -0.69 and rs_rank_pct 99.5, a coiled leader near a high.",
+    "against": "No structure, mp or atr is served, so C5 trend and C7 danger signal cannot be walked; nominator notes structure_shift RANGE and div BEARISH.",
+    "entry_trigger": "Would need a served record plus a close_above high_52w_close new high.",
+    "wrong_if": "Not evaluable without a served record.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A repaired record showing structure ABOVE_STRUCTURE or BULLISH_BOS and a new high.",
+    "cannot_see": [
+     "structure",
+     "structure_shift",
+     "mp_state",
+     "atr_14d",
+     "day_vol",
+     "sma_distance_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "TECH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend intact (structure 72.6 BULLISH_BOS, from_52w_hi 0.0%) but I cannot predetermine the danger signal: atr 0.14 against ma50 72.49 is implausible, so my C7 translation fails. day_vol 0.94 is below normal, rs_spy_20d 3.64 and run_10d 0.19% show no leader move. Abstain, not oppose.",
+   "case": {
+    "for": "At the high with sma_dist 0.46%, structure 72.6 BULLISH_BOS, W and D HH/HL, rs_rank_pct 91.98, adx 46.04.",
+    "against": "day_vol 0.94, atr 0.14 unreliable so C7 cannot be set, rs_spy_20d 3.64, run_10d 0.19%, div BEARISH/4 (advisory), H1 below EMA9.",
+    "entry_trigger": "Would need close_above high_52w_close on vol_x_ge 1.4 and a sane atr to set the danger signal.",
+    "wrong_if": "Close below bar_low on the breakout day, or structure_shift back to RANGE.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A corrected atr_14d and a breakout on day_vol above 1.",
+    "cannot_see": [
+     "reliable atr_14d",
+     "fill difficulty"
+    ]
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The packet carries no structure, mp, atr or day_vol for BRZE and MTF is NOT SERVED. The nominator's own caution is day_vol 0.51 on a structure break (a break without volume is unconfirmed, C2). I cannot walk my checklist; abstain, no invented read.",
+   "case": {
+    "for": "Nominator cites structure_shift BULLISH_BOS, pct_from_52w_high -0.04 and rs_rank_pct 98.59.",
+    "against": "day_vol 0.51 per Steenbarger and the nominator, no served record, sma_distance_pct 40.24 stretched.",
+    "entry_trigger": "Would need a served record and a new high on expanding volume.",
+    "wrong_if": "Not evaluable without a served record.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Repaired record with BULLISH_BOS and a high on volume above normal.",
+    "cannot_see": [
+     "structure",
+     "mp_state",
+     "atr_14d",
+     "day_vol",
+     "sma_distance_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "RHI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The packet carries no structure, mp, atr or day_vol for RHI and MTF is NOT SERVED. The only support is an oscillator timer (elder-lens, advisory to me). A pullback buy is not my method (C5). Abstain.",
+   "case": {
+    "for": "weekly_trend_direction UP per the nominator and the pullback is recovering.",
+    "against": "No served record; it is a pullback entry, which C5 forbids, and the nominator flags elder_pattern 4 INTERRUPTED.",
+    "entry_trigger": "Would need a served record and a close_above high_52w_close new high, not a dip buy.",
+    "wrong_if": "Not evaluable without a served record.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A served record showing a confirmed uptrend making a new high.",
+    "cannot_see": [
+     "structure",
+     "structure_shift",
+     "mp_state",
+     "atr_14d",
+     "day_vol"
+    ]
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At its high on heavy tape: from_52w_hi 0.0%, day_vol 2.98, rs LEADER, rs_rank_pct 89.83, W and D HH/HL, H1 99% of range, Valen U&R MET. Weights: structure 73.7 RANGE, mp 79.0 FADING/DECELERATING (R13 label, not decay), sector Momentum Fading.",
+   "case": {
+    "for": "from_52w_hi 0.0%, day_vol 2.98, rs LEADER, ret_12m 90.56, weekly 0.3% under 20-wk high, U&R MET reclaim day.",
+    "against": "structure_shift RANGE not a BOS, mp_accel_state DECELERATING, D structure inside the swing, Valen Episodic pivot FAILED (6/9), sector fading.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4 to turn RANGE into a break.",
+    "wrong_if": "Fade of 1x atr 3.04 off the day's high, or close under atr_fallback_stop 60.34.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A BULLISH_BOS with volume lifts me; mp falling further drops me.",
+    "cannot_see": [
+     "fill difficulty",
+     "pct_from_52w_high on my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:1",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   },
+   "falsifier": "Fade of 1x atr 3.04 off the day's high or close under atr_fallback_stop 60.34.",
+   "challenge_reply": "Healthcare crowding: one sector call, so conviction stays 3. At-high is C5 entry; difference here is day_vol 2.98, the heaviest tape in the packet, though structure 73.7 is only RANGE."
+  },
+  {
+   "ticker": "EPAM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The packet carries no structure, mp, atr or day_vol for EPAM and MTF is NOT SERVED. The only support is an elder-lens pullback timer with a swing-end warning; a pullback buy is not my method (C5). Abstain, no invented read.",
+   "case": {
+    "for": "Nominator cites mp 93.0 and weekly_trend_direction UP, a strong rising trend.",
+    "against": "No served record for my menu; the nominator flags green giving way and a dip timer, which C5 does not buy.",
+    "entry_trigger": "Would need a served record and a new high, not a dip.",
+    "wrong_if": "Not evaluable without a served record.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A repaired record showing structure ABOVE_STRUCTURE and a new high.",
+    "cannot_see": [
+     "structure",
+     "structure_shift",
+     "atr_14d",
+     "day_vol",
+     "sma_distance_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "VEEV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "The packet carries no structure, mp, atr or day_vol for VEEV and MTF is NOT SERVED. Nominator cites structure_shift RANGE with sma_distance_pct 5.75, a retracement entry; C5 forbids buying the pullback. Abstain, no invented read.",
+   "case": {
+    "for": "Nominator reads an established trend with price near support and sma_distance_pct 5.75.",
+    "against": "No served record, structure_shift RANGE is not a break, it is a retracement buy (C5 says no), and Healthcare is crowded.",
+    "entry_trigger": "Would need a served record and a close_above high_52w_close new high, not a dip buy.",
+    "wrong_if": "Not evaluable without a served record.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A repaired record with BULLISH_BOS and a new high.",
+    "cannot_see": [
+     "structure",
+     "mp_state",
+     "atr_14d",
+     "day_vol",
+     "from_52w_hi"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of1.json",
+   "bytes": 18123,
+   "votes": 14,
+   "sha256": "5300681220e6"
+  }
+ ]
+}

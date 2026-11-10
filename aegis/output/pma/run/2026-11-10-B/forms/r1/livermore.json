@@ -1,0 +1,62 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-10",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "EW",
+   "reason": "Strongest structure in the packet with the least stretch: structure 89.5, structure_shift ABOVE_STRUCTURE, sma_distance_pct 17.37, mp_state STRONG and ACCELERATING. Leader in a group with several confirming names; sector read is fading, so size the doubt in conviction.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d", "sector_trend_state"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 89.5, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 17.37 - not stretched; new-high proximity not on my menu", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 3.05, mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.stop null (stated, not a reason)", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.stop"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLV; sector_trend_state 2 (Momentum Fading); other XLV names in packet also ABOVE_STRUCTURE and STRONG (second-name confirmation)", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; flat book, nothing to pyramid or average; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared: danger signal translated via atr_14d 3.05 (my multiplier, not Livermore's 6 points); day_vol 1.43 is a proxy, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong if a single-day reaction from the day's high reaches about 1x atr_14d 3.05 (my translation of the danger signal, not Livermore's 6 points) or price closes under bracket.atr_fallback_stop 101.66, or structure_shift leaves ABOVE_STRUCTURE."
+  },
+  {
+   "ticker": "ARHS",
+   "reason": "Rank 4 leader: structure 86.7, structure_shift ABOVE_STRUCTURE, mp_state STRONG and ACCELERATING. Very extended (sma_distance_pct 49.84) as a leader at its highs often is; a lone name in its group, so no second-name confirmation. Moderate conviction.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_14d"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 86.7, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 49.84 - far from 50-day; new-high proximity not on my menu", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.73, mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.stop null (stated, not a reason)", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.stop"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 4; gics_sector XLY, sector_trend_state 2 (Momentum Fading); no second XLY name in packet to confirm", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; flat book, nothing to pyramid or average; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared: danger signal translated via atr_14d 0.73 (my multiplier, not Livermore's 6 points); day_vol 1.66 is a proxy, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong if a single-day reaction from the day's high reaches about 1x atr_14d 0.73 (my translation, not Livermore's 6 points) or price closes under bracket.atr_fallback_stop 14.29, or mp_state drops from STRONG."
+  },
+  {
+   "ticker": "XERS",
+   "reason": "Rank 7 leader: structure 84.2, structure_shift ABOVE_STRUCTURE, mp_state STRONG and ACCELERATING, with sibling XLV names (REPL, EW) showing the same read - my two-name group test. Extension is large (sma_distance_pct 62.29) and sector fading; moderate conviction.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "sector_trend_state"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 84.2, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 62.29 - far from 50-day; new-high proximity not on my menu", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.79, mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.stop null (stated, not a reason)", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.stop"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 7; gics_sector XLV, sector_trend_state 2 (Momentum Fading); sibling XLV names REPL, EW also ABOVE_STRUCTURE and STRONG", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; flat book, nothing to pyramid or average; adds only on strength", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared: danger signal translated via atr_14d 0.79 (my multiplier, not Livermore's 6 points); day_vol 1.97 is a proxy, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong if a single-day reaction from the day's high reaches about 1x atr_14d 0.79 (my translation, not Livermore's 6 points) or price closes under bracket.atr_fallback_stop 15.07, or the XLV siblings lose ABOVE_STRUCTURE."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "pct_from_52w_high", "impact": "Not on my menu, so a fresh new high (C5c) cannot be confirmed directly; step 1 rests on structure_shift ABOVE_STRUCTURE and sma_distance_pct and is marked partial where extension is large."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS/PARTIAL (structure/structure_shift + sma_distance_pct, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d, not literal 6pts (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "lesson: none injected for this round; no ledger lesson applies"
+ ],
+ "shortfall_reason": null
+}

@@ -1,0 +1,89 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-10",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:fib_382",
+    "tf": "H1",
+    "plain": "Hourly reclaim of the 38.2% fib after a pullback"
+   },
+   "wrong_if": "Daily close under fib_618 of the thrust swing",
+   "market_void": null,
+   "reason": "RETRACEMENT not yet formed (C2). `sc_momentum` 82.9, `flow` 100.0, `mp` 89.0, `elder` 10.0 are real, but a long at the climax end is not my setup (C19); I take only the first higher-low pullback."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high with price over session VWAP"
+   },
+   "wrong_if": "Daily close under bar_low, the failed-test low",
+   "market_void": null,
+   "reason": "TEST family (C3/C20, approximated), reclaim day. `structure` 81.1 and `energy` 79.0 carry it; `elder` 7.0 and `flow` 71.1 are middling, so a short tactical hold."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:fib_382",
+    "tf": "H1",
+    "plain": "Hourly reclaim of the 38.2% fib after a pullback"
+   },
+   "wrong_if": "Daily close under fib_618 of the swing",
+   "market_void": null,
+   "reason": "RETRACEMENT forming (C2). `structure` 96.8 and `mp` 87.0 strong; `energy` 61.3 is the weak engine and the weekly swing is LH/LL, so I wait for the dip to hold."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under bar_low",
+   "market_void": null,
+   "reason": "TEST (C3, approximated), reclaim day after the trendline undercut. `energy` 82.4 leads; `structure` 63.2 and `mp` 65.0 are mid-range, `elder` 7.0 INTERRUPTED."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:fib_382",
+    "tf": "H1",
+    "plain": "Hourly reclaim of the 38.2% fib after a pullback"
+   },
+   "wrong_if": "Daily close under fib_618 of the swing",
+   "market_void": null,
+   "reason": "Pullback not formed, at the highs on W, D and H1 HH/HL. `flow` 82.9 and `structure` 76.8 support; `energy` 58.0 is weak, so I take only a first pullback that holds."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on volume above normal"
+   },
+   "wrong_if": "Hourly close back under yesterday's low after the break",
+   "market_void": null,
+   "reason": "BREAKOUT by proxy only (C12/C13; bar_range_history not served). `energy` 85.7 and `structure` 69.5 support; `flow` 48.7 is thin and `elder` 8.0 INTERRUPTED, so I need the break to print first."
+  }
+ ],
+ "declarations": [
+  "Declared (C3-C13, R2-R5): adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE.",
+  "answer_pairs is empty: none of my claims was refuted, so answers is []."
+ ]
+}
