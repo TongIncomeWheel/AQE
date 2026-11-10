@@ -107,6 +107,9 @@ report:
     pma_pipeline read the cap from the report), `rank` with every AQE door off as above, then `pma_pipeline.py reuse-a --phase4 phase4.json --a-consensus <report A run dir>/consensus.json
     --date <date>`: a B name Report A has ALREADY deliberated today reuses A's verdict (written to reused_from_a.json, tagged on the brief section) and leaves B's deliberation set, so
     only NEW names run the vote chain. The brief's Sweep B section (contracts/brief_sections.json) is built from B's consensus.json plus reused_from_a.json. B stays non-live.
+    (5c) REPORT C's chain, PM decision 2026-11-10: ONLY aqe-quant NOMINATES (at most six; the registrar rejects round-1 nominations from any other C seat). `rank` runs with every AQE door off (as in 5), then
+    `pma_pipeline.py cset --phase4 phase4.json --a-phase4 <report A run dir>/phase4.json`: C's deliberation set is A's deliberation set (re-voted by all EIGHT seats reading the AQE indicators)
+    plus aqe-quant's new names; phase4 records from_a / quant_new. Everything from VOTE on is the same chain, with the drop rule 4 of 8. The brief's Indicators C section shows the deliberated names that passed. C stays non-live.
     (6) Verdict-ledger rows carry `report`. tools/report_compare.py grades each
     report's picks against SPY and the equal-weight list at 5 and 20 sessions and measures overlap; A's Cards print one line per report
     (report_lines.json) and the brief carries the section.
