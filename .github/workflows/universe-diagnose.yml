@@ -5,6 +5,10 @@ name: Universe diagnose (find the stage that trims the scan universe; writes not
 on:
   workflow_dispatch:
     inputs:
+      module:
+        description: "script under scripts/ to run: universe_diagnose (default) or gate_cut_measure"
+        required: false
+        default: "universe_diagnose"
       args:
         description: "optional: --probe (endpoint probe only) or a scored-rows path then WATCH tickers"
         required: false
@@ -27,4 +31,8 @@ jobs:
       - name: Diagnose
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
-        run: python -u -m scripts.universe_diagnose ${{ github.event.inputs.args }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -u -m scripts.${{ github.event.inputs.module || 'universe_diagnose' }} ${{ github.event.inputs.args }}
