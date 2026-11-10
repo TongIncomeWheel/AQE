@@ -20,7 +20,41 @@ DEFAULT_WATCH = ["ADM", "MCHP", "CPRT", "DXCM", "EQT", "CCJ", "RPRX", "FISV", "V
                  "TD", "TTE", "BNS", "NWG", "BIRK", "GLBE", "G", "SBSW", "LU"]
 
 
+def probe():
+    """Which quote endpoint answers a comma-separated batch? Prints the raw shape of each; changes nothing."""
+    from src.data import fmp_client as F
+    c = F.FMPClient()
+    syms = ["AAPL", "MSFT", "ADM", "MCHP", "TTD"]
+    base = F.FMP_BASE_STABLE
+    tries = [("quote?symbol=a,b,c", f"{base}/quote", {"symbol": ",".join(syms)}),
+             ("quote?symbols=a,b,c", f"{base}/quote", {"symbols": ",".join(syms)}),
+             ("batch-quote?symbols=a,b,c", f"{base}/batch-quote", {"symbols": ",".join(syms)}),
+             ("quote-short?symbol=a,b,c", f"{base}/quote-short", {"symbol": ",".join(syms)}),
+             ("quote?symbol=AAPL (single)", f"{base}/quote", {"symbol": "AAPL"})]
+    for name, url, params in tries:
+        try:
+            r = c._get_json(url, params=dict(params, apikey=c.config.api_key))
+            keys = sorted(r[0].keys())[:14] if isinstance(r, list) and r and isinstance(r[0], dict) else None
+            print(f"[probe] {name}: type={type(r).__name__} len={len(r) if hasattr(r, '__len__') else '-'} "
+                  f"symbols={[x.get('symbol') for x in r][:6] if isinstance(r, list) else None} avgVolume={[x.get('avgVolume') for x in r][:3] if isinstance(r, list) else None} keys={keys}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[probe] {name}: ERROR {type(exc).__name__}: {str(exc)[:160]}")
+    rows = c.get_screener(min_mcap=2_000_000_000, min_price=5.0, min_volume=500_000, exchanges=["NASDAQ", "NYSE"], limit=5)
+    print("[probe] screener row keys:", sorted(rows[0].keys()) if rows else None)
+    for name, extra in (("country=US", {"country": "US"}), ("isAdr=false", {"isAdr": "false"}), ("isFund=false", {"isFund": "false"})):
+        try:
+            params = {"apikey": c.config.api_key, "marketCapMoreThan": "2000000000", "exchange": "NASDAQ,NYSE", "isActivelyTrading": "true",
+                      "isEtf": "false", "volumeMoreThan": "500000", "priceMoreThan": "5", "limit": "5000", **extra}
+            r = c._get_json(f"{base}/company-screener", params=params)
+            import collections
+            print(f"[probe] screener {name}: rows={len(r)} countries={dict(collections.Counter(x.get('country') for x in r).most_common(5))}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[probe] screener {name}: ERROR {exc}")
+
+
 def main(argv):
+    if argv and argv[0] == "--probe":
+        probe(); return 0
     from src.data import universe as U
     from src.data.fmp_client import FMPClient, FMPError
 
@@ -30,61 +64,25 @@ def main(argv):
     print(f"scored universe file: {scored_path} -> {len(scored)} names")
 
     client = FMPClient()
-    raw = client.get_screener(min_mcap=U.SCREEN_MCAP, min_price=5.0, min_volume=500_000, exchanges=U.UNIVERSE_EXCHANGES, limit=5000)
-    print(f"[stage 1] screener rows: {len(raw)}")
-    print("          exchange mix:", dict(collections.Counter(r.get("exchangeShortName") or r.get("exchange") for r in raw)))
-    print("          country mix (top 8):", collections.Counter(r.get("country") for r in raw).most_common(8))
+    raw = client.get_screener(min_mcap=U.SCREEN_MCAP, min_price=0, min_volume=0, exchanges=U.UNIVERSE_EXCHANGES, limit=5000)
+    print(f"[screener] rows: {len(raw)}; exchange mix:", dict(collections.Counter(r.get("exchangeShortName") or r.get("exchange") for r in raw)))
+    print("           country mix (top 8):", collections.Counter(r.get("country") for r in raw).most_common(8))
     by_sym = {(r.get("symbol") or "").upper().strip(): r for r in raw}
-    cand = [s for s in by_sym if s and not any(s.endswith(x) for x in U.EXCLUDED_SUFFIXES) and "." not in s and " " not in s]
-    print(f"[stage 2] candidates after suffix/dot filter: {len(cand)} (dropped {len(by_sym) - len(cand)}: e.g. "
-          f"{[s for s in by_sym if s not in set(cand)][:12]})")
-
-    quotes, failed_chunks, failed_names = {}, 0, []
-    for i in range(0, len(cand), 50):
-        chunk = cand[i:i + 50]
-        try:
-            q = client.get_quotes_batch(chunk, chunk=50)
-        except FMPError as exc:
-            failed_chunks += 1; failed_names += chunk; print(f"          quote chunk {i // 50} FAILED: {exc}"); continue
-        quotes.update(q)
-        if len(q) < len(chunk):
-            failed_names += [c for c in chunk if c not in q]
-    missing = [c for c in cand if c not in quotes]
-    print(f"[stage 3] quotes returned: {len(quotes)} of {len(cand)}; chunks failed: {failed_chunks}; names with NO quote: {len(missing)} {missing[:15]}")
-    no_av = [c for c in cand if c in quotes and quotes[c].get("avg_volume") is None]
-    print(f"          quote present but avgVolume null: {len(no_av)} {no_av[:15]}")
-
-    passed, verify, rej = [], [], []
-    for tk in cand:
-        av = (quotes.get(tk) or {}).get("avg_volume")
-        if av is None:
-            verify.append(tk)
-        elif av >= U.SCREEN_AVG_VOL_HIGH:
-            passed.append(tk)
-        elif av < U.SCREEN_AVG_VOL_PREFILTER:
-            rej.append(tk)
-        else:
-            verify.append(tk)
-    print(f"[stage 4] avgVolume split: admitted unverified {len(passed)} (>= {U.SCREEN_AVG_VOL_HIGH:,}), rejected cheap {len(rej)} (< {U.SCREEN_AVG_VOL_PREFILTER:,}), "
-          f"to verify {len(verify)}; verification cap {U.SCREEN_MAX_BAR_CALLS} -> over the cap: {max(0, len(verify) - U.SCREEN_MAX_BAR_CALLS)}")
-    print(f"          admitted-unverified names NOT in the scored file: {len([t for t in passed if t not in scored])} of {len(passed)}")
-
-    def stage(tk):
-        if tk not in by_sym: return "not in the FMP screener (mcap / price / volume / exchange / activity filter)"
-        if tk not in cand: return "dropped by the symbol filter"
-        if tk not in quotes: return "NO QUOTE returned (chunk failure or symbol absent)"
-        if tk in passed: return f"admitted unverified (avgVolume {quotes[tk]['avg_volume']:,.0f})"
-        if tk in rej: return f"rejected cheap (avgVolume {quotes[tk]['avg_volume']:,.0f})"
-        return f"to verify (avgVolume {quotes[tk].get('avg_volume')})"
-    print("[trace] watch list through pass 1 (country from the screener row):")
+    print("[trace] watch list (the screener row; the build's own split decides admit / verify / reject):")
     for tk in watch:
-        r = by_sym.get(tk) or {}
-        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} | {stage(tk)} | scored: {tk in scored}")
+        r = by_sym.get(tk)
+        if r is None:
+            print(f"   {tk:6} NOT in the screener (mcap / exchange / activity)"); continue
+        av = r.get("avgVolume")
+        band = ("admit (>= %s)" % f"{U.SCREEN_AVG_VOL_HIGH:,}" if av and av >= U.SCREEN_AVG_VOL_HIGH else
+                "reject cheap" if av is not None and av < U.SCREEN_AVG_VOL_PREFILTER else "verify on bars")
+        print(f"   {tk:6} country={r.get('country')} mcap={r.get('marketCap')} avgVolume={av} -> {band if (r.get('country') or '').upper() == U.SCREEN_COUNTRY else 'excluded: non-US'} | scored: {tk in scored}")
 
     print("[real dry run] build_universe(dry_run=True) ...")
     res = U.build_universe(dry_run=True)
     got = set(res.get("tickers") or [])
-    print(f"[result] status={res.get('status')} total={res.get('total')} errors={len(res.get('errors') or [])} {(res.get('errors') or [])[:5]}")
+    print(f"[result] status={res.get('status')} total={res.get('total')} reason={res.get('reason')} errors={len(res.get('errors') or [])} {(res.get('errors') or [])[:5]}")
+    print("[stages]", res.get("stages"))
     print(f"[diff vs scored file] dry run admits {len(got)}; in dry run but NOT scored: {len(got - scored)}; scored but NOT in dry run: {len(scored - got)}")
     print("   dry-run-only (first 40):", sorted(got - scored)[:40])
     print("   scored-only (first 40):", sorted(scored - got)[:40])

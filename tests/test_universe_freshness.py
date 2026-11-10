@@ -136,24 +136,20 @@ def test_verification_bands_bracket_the_liquidity_floor():
     assert U.SCREEN_AVG_VOL_PREFILTER == U.SCREEN_AVG_VOL_10D // 2
 
 
-def test_bars_calls_are_hard_capped():
-    """A bad screener day must not become a thousand-call run.
-
-    Pass 2 costs one call per name against an 80/min cloud limit, so the cap is
-    what bounds the screen's wall-clock time, not just its quota use.
-    """
-    assert U.SCREEN_MAX_BAR_CALLS <= 500
-    per_min_cloud = 80
-    assert U.SCREEN_MAX_BAR_CALLS / per_min_cloud <= 6.0, \
-        "Pass 2 must stay under ~6 minutes at the cloud rate limit"
+def test_there_is_no_verification_cap_and_prior_membership_never_decides():
+    """PM 2026-11-10: the 400-call cap plus 'keep prior members' silently dropped ~400 rule-qualifying names (TTD, ADM, MCHP ...).
+    Every uncertain name is verified; the old membership is only ever used to REPORT what changed."""
+    import inspect
+    assert not hasattr(U, "SCREEN_MAX_BAR_CALLS")
+    src = inspect.getsource(U.build_universe)
+    assert "prior = set(" not in src and "deferred" not in src and "kept on prior" not in src and "passed.extend(kept)" not in src
 
 
-def test_screen_call_budget_is_bounded():
-    """Whole-screen worst case = screener + batch quotes + capped Pass 2."""
-    max_candidates = 5000                      # the screener `limit`
-    batch_quote_calls = max_candidates / 50    # chunk=50
-    worst = 1 + batch_quote_calls + U.SCREEN_MAX_BAR_CALLS
-    assert worst <= 600, f"screen could cost {worst} calls"
+def test_pass_one_is_one_screener_call_and_reads_the_screeners_own_average_volume():
+    """The batch /quote carries no avgVolume and answers one symbol (CI probe 2026-11-10): pass 1 must not depend on it."""
+    import inspect
+    src = inspect.getsource(U.build_universe)
+    assert "get_quotes_batch" not in src and 'row.get("avgVolume")' in src
 
 
 def test_missing_avg_volume_is_verified_not_guessed():

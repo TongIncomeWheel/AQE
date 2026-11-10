@@ -93,7 +93,12 @@ EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
 #
 # v2 (2026-08-04): dropped the price>SMA20 / price>SMA50 trend conditions —
 # membership is an eligibility test, not a screening opinion.
-UNIVERSE_RULE_ID = "v2-mcap2B-vol1.5M-us-notrend"
+#
+# v3 (2026-11-10): the pass-1 volume split read FMP's batch /quote avgVolume, which does not exist (the endpoint answers one symbol and carries
+# no avgVolume): every name fell into "verify", the 400-call cap kept an arbitrary 400 plus prior members, and ~400 rule-qualifying names (TTD,
+# ADM, MCHP ...) were never scored. Pass 1 now reads the screener's own avgVolume, verifies EVERY uncertain name (no cap, no prior membership),
+# admits US-domiciled names only (country == US, no ETFs/funds), and fails loudly below 90% coverage.
+UNIVERSE_RULE_ID = "v3-mcap2B-vol1.5M-us-only-notrend"
 
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
 SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
@@ -123,10 +128,18 @@ SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading
 SCREEN_AVG_VOL_HIGH = SCREEN_AVG_VOL_10D * 2      # 3.0M — admit unverified
 SCREEN_AVG_VOL_PREFILTER = SCREEN_AVG_VOL_10D // 2  # 750k — reject unverified
 
-# Hard ceiling on Pass 2 bars calls, so a bad screener day cannot turn into a
-# thousand-call run. Names beyond the cap keep their previous membership rather
-# than being silently dropped.
-SCREEN_MAX_BAR_CALLS = 400
+# NO CAP (PM 2026-11-10): every name in the uncertain band is verified. A cap was a silent exclusion that depended on screener order, and prior
+# membership must never admit or exclude a name. ~600-900 bar calls at 80/min is acceptable for a nightly screen.
+SCREEN_COUNTRY = "US"                 # US-domiciled operating companies only; ADRs and foreign listings are excluded by the country field
+SCREEN_MIN_COVERAGE = 0.90            # the build FAILS if it admits fewer than 90% of the screener-qualified US names
+FOREIGN_WATCH = ("BIRK", "GLBE", "G", "SBSW", "LU")   # foreign-incorporated NYSE/NASDAQ operating companies, pending the PM's definition
+
+
+def _today_sgt() -> date:
+    """Today in Singapore (the house clock). date.today() is UTC on the runner, so a same-day rebuild was skipped on a UTC stamp."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo("Asia/Singapore")).date()
 
 
 def load_universe(path: Path | None = None, include_benchmark: bool = True) -> list[str]:
@@ -216,12 +229,16 @@ def build_universe(dry_run: bool = False) -> dict:
     names QS is designed to surface. Longlist/Elder apply their own trend view
     downstream via their own thresholds.
 
+    US-only (2026-11-10): `country == US` on the screener row; ADRs, foreign listings, ETFs and funds are excluded and LISTED in the build
+    log (foreign-incorporated BIRK/GLBE/G/SBSW/LU wait for the PM's definition).
+
     Two-pass for API efficiency:
-      Pass 1 — FMP screener + batch quotes (~1 call per 50 names). Pre-filters
-               on the quote's avgVolume at SCREEN_AVG_VOL_PREFILTER, a
-               deliberately generous floor, purely to bound Pass 2's cost.
-      Pass 2 — Fetch ~55 bars per survivor (1 call each) and apply the real
-               10-day average volume test.
+      Pass 1 — FMP screener (one call). Its own `avgVolume` splits the names: admit at SCREEN_AVG_VOL_HIGH, reject below
+               SCREEN_AVG_VOL_PREFILTER, and VERIFY everything between (and anything with no average). No cap; prior membership
+               never admits or excludes a name.
+      Pass 2 — Fetch ~55 bars per uncertain name (1 call each) and apply the real 10-day average volume test.
+
+    Fails (status "error", nothing written) when coverage of the screener-qualified US names is under SCREEN_MIN_COVERAGE or bar calls fail.
 
     Writes universe.txt locally AND uploads the CSV to Drive so it persists
     across container restarts.  Returns a summary dict.
@@ -231,122 +248,128 @@ def build_universe(dry_run: bool = False) -> dict:
     from src.data.fmp_client import FMPClient, FMPError
 
     client = FMPClient()
-    today = date.today()
+    today = _today_sgt()
     from_dt = today - timedelta(days=SCREEN_LOOKBACK_DAYS)
+    stages: dict = {}
 
-    # ── Pass 1: FMP screener → broad candidates ──────────────────────────
-    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, US exchanges...")
+    # ── Pass 1: FMP screener. NO volume / price floor in the call: the screener's `volume` is the LAST SESSION's, so a volume floor dropped
+    # names whose average is high but whose last day was light, and the rule has no price floor. Country, listing and fund filters are
+    # applied below on the returned fields so every exclusion can be listed.
+    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, NASDAQ/NYSE, country {SCREEN_COUNTRY} only...")
     try:
         raw = client.get_screener(
             min_mcap=SCREEN_MCAP,
-            min_price=5.0,
-            min_volume=500_000,            # generous pre-filter
+            min_price=0,
+            min_volume=0,
             exchanges=UNIVERSE_EXCHANGES,
             limit=5000,
         )
     except FMPError as exc:
         return {"status": "error", "reason": f"screener failed: {exc}"}
+    stages["screener_rows"] = len(raw)
 
-    # The screener already returns marketCap and we were throwing it away. Kept
-    # now because the Option Scanner needs to filter by size — without it the
-    # top of a yield-sorted CSP list is all high-beta growth (PM: "i need to
-    # scroll a long time"). Zero extra API cost: same response, one more field.
-    mcap_by_tk = {}
+    excluded: dict[str, list[str]] = {"non_us": [], "etf_fund": [], "symbol_form": [], "no_symbol": []}
+    rows_us: dict[str, dict] = {}
     for r in raw:
-        _sym = (r.get("symbol") or "").upper().strip()
-        _mc = r.get("marketCap") or r.get("marketCapitalization")
-        if _sym and _mc:
-            try:
+        sym = (r.get("symbol") or "").upper().strip()
+        if not sym:
+            excluded["no_symbol"].append("?"); continue
+        if r.get("isEtf") or r.get("isFund"):
+            excluded["etf_fund"].append(sym); continue
+        if (r.get("country") or "").upper() != SCREEN_COUNTRY:
+            excluded["non_us"].append(f"{sym}({r.get('country') or '?'})"); continue
+        if any(sym.endswith(x) for x in EXCLUDED_SUFFIXES) or "." in sym or " " in sym:
+            excluded["symbol_form"].append(sym); continue
+        rows_us[sym] = r
+    # The screener already returns marketCap; kept for the Option Scanner's size filter (zero extra cost).
+    mcap_by_tk = {}
+    for _sym, _r in rows_us.items():
+        _mc = _r.get("marketCap") or _r.get("marketCapitalization")
+        try:
+            if _mc:
                 mcap_by_tk[_sym] = float(_mc)
-            except (TypeError, ValueError):
-                pass
+        except (TypeError, ValueError):
+            pass
+    stages.update(us_candidates=len(rows_us), excluded_non_us=len(excluded["non_us"]), excluded_etf_fund=len(excluded["etf_fund"]),
+                  excluded_symbol_form=len(excluded["symbol_form"]))
+    print(f"[universe] Screener {len(raw)} rows -> {len(rows_us)} US candidates; excluded: {len(excluded['non_us'])} non-US, "
+          f"{len(excluded['etf_fund'])} ETF/fund, {len(excluded['symbol_form'])} symbol form")
+    _fw = [x for x in excluded["non_us"] if x.split("(")[0] in FOREIGN_WATCH]
+    print(f"[universe] Excluded foreign-incorporated operating companies pending the PM's definition: {_fw or 'none seen'}")
+    print(f"[universe] Excluded non-US names (first 60 of {len(excluded['non_us'])}): {excluded['non_us'][:60]}")
+    if not rows_us:
+        return {"status": "error", "reason": "screener returned 0 US candidates", "stages": stages}
 
-    candidates = [
-        r["symbol"].upper().strip()
-        for r in raw
-        if r.get("symbol")
-        and not any(r["symbol"].endswith(s) for s in EXCLUDED_SUFFIXES)
-        and "." not in r["symbol"]
-        and " " not in r["symbol"]
-    ]
-    print(f"[universe] Screener: {len(candidates)} candidates")
-    if not candidates:
-        return {"status": "error", "reason": "screener returned 0 candidates"}
+    # ── Three-way split on the screener's own avgVolume (free: it is in the row). The batch /quote has NO avgVolume. ──
+    def _av(row):
+        try:
+            v = row.get("avgVolume")
+            return float(v) if v is not None else None
+        except (TypeError, ValueError):
+            return None
 
-    # ── Batch quotes: cheap volume pre-filter (~1 call per 50 names) ─────
-    # NOT a trend filter. This exists only to bound Pass 2's per-name bars
-    # cost; the binding liquidity test is the true 10-day mean in Pass 2.
-    try:
-        quotes = client.get_quotes_batch(candidates, chunk=50)
-    except FMPError as exc:
-        return {"status": "error", "reason": f"batch quotes failed: {exc}"}
-
-    # Three-way split on the free avgVolume, so only the uncertain band costs
-    # a bars call. See the SCREEN_AVG_VOL_* band rationale above.
     passed: list[str] = []          # admitted without verification
-    to_verify: list[str] = []       # in the band — needs a real 10-day mean
+    to_verify: list[str] = []       # in the band, or no avgVolume: measured on bars
     rejected_cheap = 0
-    for tk in candidates:
-        q = quotes.get(tk)
-        av = q.get("avg_volume") if q else None
+    qualified_est = 0               # US names whose avgVolume is at or above the rule's floor (the coverage guard's denominator)
+    for tk, row in rows_us.items():
+        av = _av(row)
+        if av is not None and av >= SCREEN_AVG_VOL_10D:
+            qualified_est += 1
         if av is None:
-            # No quote / no avgVolume — do NOT guess in either direction.
-            # Measure it: a missing quote is an FMP gap, not a screening result.
-            to_verify.append(tk)
+            to_verify.append(tk)                    # a missing average is an FMP gap, not a screening result: measure it
         elif av >= SCREEN_AVG_VOL_HIGH:
             passed.append(tk)
         elif av < SCREEN_AVG_VOL_PREFILTER:
             rejected_cheap += 1
         else:
             to_verify.append(tk)
-
-    print(f"[universe] avgVolume split: {len(passed)} admitted "
-          f"(>= {SCREEN_AVG_VOL_HIGH:,}), {rejected_cheap} rejected "
-          f"(< {SCREEN_AVG_VOL_PREFILTER:,}), {len(to_verify)} to verify")
-
-    capped = 0
-    if len(to_verify) > SCREEN_MAX_BAR_CALLS:
-        capped = len(to_verify) - SCREEN_MAX_BAR_CALLS
-        # Verify the most liquid first — those are likeliest to pass, so the
-        # budget buys the most membership.
-        to_verify.sort(key=lambda t: -((quotes.get(t) or {}).get("avg_volume") or 0))
-        deferred, to_verify = to_verify[SCREEN_MAX_BAR_CALLS:], to_verify[:SCREEN_MAX_BAR_CALLS]
-        # Deferred names keep whatever membership they already had, rather than
-        # being silently dropped by an API budget they never knew about.
-        try:
-            prior = set(load_universe(include_benchmark=False))
-        except Exception:  # noqa: BLE001
-            prior = set()
-        kept = [t for t in deferred if t in prior]
-        passed.extend(kept)
-        print(f"[universe] [WARN] {capped} names over the {SCREEN_MAX_BAR_CALLS}-call "
-              f"verification cap — {len(kept)} kept on prior membership, "
-              f"{capped - len(kept)} deferred to the next run")
+    stages.update(admitted_unverified=len(passed), rejected_cheap=rejected_cheap, to_verify=len(to_verify), qualified_est=qualified_est)
+    print(f"[universe] avgVolume split: {len(passed)} admitted (>= {SCREEN_AVG_VOL_HIGH:,}), {rejected_cheap} rejected "
+          f"(< {SCREEN_AVG_VOL_PREFILTER:,}), {len(to_verify)} to verify; screener-qualified US estimate (avgVolume >= {SCREEN_AVG_VOL_10D:,}): {qualified_est}")
 
     est_min = len(to_verify) / max(client.config.rate_limit_per_min, 1)
-    print(f"[universe] Pass 2: {len(to_verify)} bars calls "
-          f"(~{est_min:.1f} min at {client.config.rate_limit_per_min}/min)")
+    print(f"[universe] Pass 2: {len(to_verify)} bars calls, NO cap (~{est_min:.1f} min at {client.config.rate_limit_per_min}/min)")
 
-    # ── Pass 2: fetch bars → true 10-day average volume ──────────────────
+    # ── Pass 2: fetch bars → true 10-day average volume. Every outcome is counted; nothing is dropped silently. ──
     errors: list[str] = []
+    short_history: list[str] = []
+    below_floor = 0
+    verified_in = 0
     for i, tk in enumerate(to_verify):
         if (i + 1) % 100 == 0:
             print(f"[universe] Checking bars {i + 1}/{len(to_verify)}...")
         try:
             bars = client.get_daily_bars(tk, from_date=from_dt, to_date=today)
             if bars is None or bars.empty or len(bars) < 50:
+                short_history.append(tk)
                 continue
             volume = bars["volume"].astype(float)
             avg_vol = float(volume.tail(10).mean())
-
             if avg_vol >= SCREEN_AVG_VOL_10D:
                 passed.append(tk)
+                verified_in += 1
+            else:
+                below_floor += 1
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{tk}: {exc}")
     passed = sorted(set(passed))
+    stages.update(verified_in=verified_in, verified_below_floor=below_floor, short_history=len(short_history), bar_errors=len(errors),
+                  final=len(passed))
+    print(f"[universe] {len(passed)} tickers passed all filters ({verified_in} verified in, {below_floor} below the volume floor, "
+          f"{len(short_history)} under 50 bars, {len(errors)} bar errors)")
+    if short_history:
+        print(f"[universe] Under 50 bars (not scoreable yet): {short_history[:40]}")
 
-    print(f"[universe] {len(passed)} tickers passed all filters"
-          + (f" ({len(errors)} errors)" if errors else ""))
+    # ── The guard: a build that lost names to errors must FAIL, never be reused silently. ──
+    coverage = (len(passed) / qualified_est) if qualified_est else 0.0
+    stages["coverage"] = round(coverage, 3)
+    bad_calls = len(errors)
+    if qualified_est and (coverage < SCREEN_MIN_COVERAGE or bad_calls > max(5, 0.05 * max(len(to_verify), 1))):
+        reason = (f"coverage {coverage:.1%} of {qualified_est} screener-qualified US names is under {SCREEN_MIN_COVERAGE:.0%}"
+                  if coverage < SCREEN_MIN_COVERAGE else f"{bad_calls} of {len(to_verify)} bar calls failed")
+        print(f"[universe] [FAIL] {reason}; the universe file is NOT written")
+        return {"status": "error", "reason": reason, "stages": stages, "total": len(passed), "errors": errors[:20]}
 
     # ── Compare with existing ─────────────────────────────────────────────
     try:
@@ -361,11 +384,12 @@ def build_universe(dry_run: bool = False) -> dict:
     if dry_run:
         return {"status": "dry_run", "total": len(passed),
                 "added": len(added), "removed": len(removed), "kept": len(kept),
-                "tickers": sorted(passed), "errors": errors[:20]}
+                "tickers": sorted(passed), "errors": errors[:20], "stages": stages,
+                "excluded_non_us": excluded["non_us"], "short_history": short_history}
 
     # ── Write + upload ────────────────────────────────────────────────────
     final = sorted(passed)
-    _write_universe(final)
+    _write_universe(final, stages)
     _write_universe_mcap({t: mcap_by_tk[t] for t in final if t in mcap_by_tk})
 
     csv_text = "Symbol\n" + "\n".join(final) + "\n"
@@ -386,6 +410,8 @@ def build_universe(dry_run: bool = False) -> dict:
         "drive_ok": drive_ok,
         "drive_reason": drive_reason,
         "errors": errors[:20],
+        "stages": stages,
+        "excluded_non_us": excluded["non_us"],
     }
     print(f"[universe] Done: {len(final)} tickers "
           f"(+{len(added)} / -{len(removed)} / ={len(kept)})"
@@ -449,11 +475,14 @@ def upload_universe(csv_path_or_bytes) -> dict:
     }
 
 
-def _write_universe(tickers: list[str]) -> None:
-    """Write universe.txt locally, stamped with the date AND the rule used."""
-    lines = [f"# AQE Universe — updated {date.today()}",
+def _write_universe(tickers: list[str], stages: dict | None = None) -> None:
+    """Write universe.txt locally, stamped with the date (SGT), the rule used and the per-stage counts of the build."""
+    lines = [f"# AQE Universe — updated {_today_sgt()}",
              f"# rule: {UNIVERSE_RULE_ID}",
-             f"# {len(tickers)} tickers", "", *tickers, ""]
+             f"# {len(tickers)} tickers"]
+    if stages:
+        lines.append("# stages: " + ", ".join(f"{k}={v}" for k, v in stages.items() if isinstance(v, (int, float, str))))
+    lines += ["", *tickers, ""]
     DEFAULT_UNIVERSE_FILE.parent.mkdir(parents=True, exist_ok=True)
     DEFAULT_UNIVERSE_FILE.write_text("\n".join(lines), encoding="utf-8")
 
@@ -514,7 +543,7 @@ def universe_is_stale(as_of: date | None = None) -> bool:
     if universe_built_rule() != UNIVERSE_RULE_ID:
         return True
     built = universe_built_date()
-    return built is None or built != (as_of or date.today())
+    return built is None or built != (as_of or _today_sgt())
 
 
 def universe_status() -> dict:
@@ -527,7 +556,7 @@ def universe_status() -> dict:
         count = 0
     if rule != UNIVERSE_RULE_ID:
         reason = f"built under rule {rule or 'unstamped'}, current is {UNIVERSE_RULE_ID}"
-    elif built != date.today():
+    elif built != _today_sgt():
         reason = f"built {built}, not today"
     else:
         reason = None
