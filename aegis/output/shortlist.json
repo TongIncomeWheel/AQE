@@ -1,8 +1,8 @@
 {
   "date": "2026-11-10",
-  "refreshed_at": "2026-11-10 14:48:59 SGT",
+  "refreshed_at": "2026-11-10 17:39:58 SGT",
   "regime": {
-    "vix": 19.9,
+    "vix": 20.1,
     "level": "YELLOW"
   },
   "candidates": [
@@ -147,6 +147,66 @@
         },
         "k39_value": {
           "value": 92.48,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "BHC",
+      "levels": {
+        "entry": 8.4,
+        "stop": 7.58,
+        "r_size": 0.82,
+        "be_trigger": 8.81,
+        "target_1r": 9.22,
+        "target_2r": 10.04,
+        "target_3r": 10.86,
+        "shares": 2560,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 73.7,
+        "energy": 74.8,
+        "structure": 86.3,
+        "mp": 97.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.03,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 81.74,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -593,6 +653,66 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
+      "ticker": "FLS",
+      "levels": {
+        "entry": 85.83,
+        "stop": 79.18,
+        "r_size": 6.65,
+        "be_trigger": 89.16,
+        "target_1r": 92.48,
+        "target_2r": 99.13,
+        "target_3r": 105.78,
+        "shares": 315,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 80.3,
+        "energy": 66.4,
+        "structure": 89.5,
+        "mp": 87.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 3.37,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 58.68,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
       "ticker": "ELAN",
       "levels": {
         "entry": 26.84,
@@ -773,66 +893,6 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
-      "ticker": "FLS",
-      "levels": {
-        "entry": 85.83,
-        "stop": 79.18,
-        "r_size": 6.65,
-        "be_trigger": 89.16,
-        "target_1r": 92.48,
-        "target_2r": 99.13,
-        "target_3r": 105.78,
-        "shares": 315,
-        "risk_dollars": 2100.0
-      },
-      "engines": {
-        "flow": 76.3,
-        "energy": 66.4,
-        "structure": 89.5,
-        "mp": 87.0,
-        "elder": 10.0
-      },
-      "mp_state": "FADING",
-      "pipe_rank": 0,
-      "signal": {},
-      "context": {},
-      "subcomp_values": {
-        "roc_zscore": {
-          "value": 3.37,
-          "threshold": 1.94,
-          "engine": "Energy",
-          "label": "ROC Z-Score",
-          "meaning": "Momentum 2sigma above normal",
-          "pass": true
-        },
-        "k39_value": {
-          "value": 58.68,
-          "threshold": 50.0,
-          "engine": "Scoring",
-          "label": "K39 Gate",
-          "meaning": "Composite gate confirmed",
-          "pass": true
-        },
-        "pr_rsi_score": {
-          "value": 20.0,
-          "threshold": 20.0,
-          "engine": "PipeRank",
-          "label": "Relative RSI",
-          "meaning": "RSI outperforms peer universe",
-          "pass": true
-        },
-        "rel_mom_score": {
-          "value": 25.0,
-          "threshold": 18.0,
-          "engine": "Scoring",
-          "label": "Relative Momentum",
-          "meaning": "Trend strength confirmed",
-          "pass": true
-        }
-      },
-      "note": "Passes Precision Edge but not on fresh-signal shortlist"
-    },
-    {
       "ticker": "BEN",
       "levels": {
         "entry": 35.87,
@@ -987,6 +1047,126 @@
         },
         "k39_value": {
           "value": 83.49,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "MMM",
+      "levels": {
+        "entry": 188.63,
+        "stop": 178.04,
+        "r_size": 10.59,
+        "be_trigger": 193.92,
+        "target_1r": 199.22,
+        "target_2r": 209.81,
+        "target_3r": 220.4,
+        "shares": 198,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 69.7,
+        "energy": 70.6,
+        "structure": 75.8,
+        "mp": 97.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.46,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 79.59,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "JHX",
+      "levels": {
+        "entry": 29.94,
+        "stop": 27.53,
+        "r_size": 2.41,
+        "be_trigger": 31.15,
+        "target_1r": 32.35,
+        "target_2r": 34.76,
+        "target_3r": 37.17,
+        "shares": 871,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 100.0,
+        "energy": 62.2,
+        "structure": 64.2,
+        "mp": 75.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.56,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 74.56,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -1373,66 +1553,6 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
-      "ticker": "MMM",
-      "levels": {
-        "entry": 188.63,
-        "stop": 178.04,
-        "r_size": 10.59,
-        "be_trigger": 193.92,
-        "target_1r": 199.22,
-        "target_2r": 209.81,
-        "target_3r": 220.4,
-        "shares": 198,
-        "risk_dollars": 2100.0
-      },
-      "engines": {
-        "flow": 65.8,
-        "energy": 70.6,
-        "structure": 75.8,
-        "mp": 97.0,
-        "elder": 7.0
-      },
-      "mp_state": "STRONG",
-      "pipe_rank": 0,
-      "signal": {},
-      "context": {},
-      "subcomp_values": {
-        "roc_zscore": {
-          "value": 2.46,
-          "threshold": 1.94,
-          "engine": "Energy",
-          "label": "ROC Z-Score",
-          "meaning": "Momentum 2sigma above normal",
-          "pass": true
-        },
-        "k39_value": {
-          "value": 79.59,
-          "threshold": 50.0,
-          "engine": "Scoring",
-          "label": "K39 Gate",
-          "meaning": "Composite gate confirmed",
-          "pass": true
-        },
-        "pr_rsi_score": {
-          "value": 20.0,
-          "threshold": 20.0,
-          "engine": "PipeRank",
-          "label": "Relative RSI",
-          "meaning": "RSI outperforms peer universe",
-          "pass": true
-        },
-        "rel_mom_score": {
-          "value": 25.0,
-          "threshold": 18.0,
-          "engine": "Scoring",
-          "label": "Relative Momentum",
-          "meaning": "Trend strength confirmed",
-          "pass": true
-        }
-      },
-      "note": "Passes Precision Edge but not on fresh-signal shortlist"
-    },
-    {
       "ticker": "CWK",
       "levels": {
         "entry": 14.55,
@@ -1527,6 +1647,126 @@
         },
         "k39_value": {
           "value": 54.17,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "CP",
+      "levels": {
+        "entry": 94.03,
+        "stop": 89.81,
+        "r_size": 4.22,
+        "be_trigger": 96.14,
+        "target_1r": 98.25,
+        "target_2r": 102.47,
+        "target_3r": 106.69,
+        "shares": 497,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 78.9,
+        "energy": 71.4,
+        "structure": 76.8,
+        "mp": 72.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.01,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 77.04,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 22.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "PHM",
+      "levels": {
+        "entry": 135.88,
+        "stop": 126.57,
+        "r_size": 9.31,
+        "be_trigger": 140.53,
+        "target_1r": 145.19,
+        "target_2r": 154.5,
+        "target_3r": 163.81,
+        "shares": 225,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 59.2,
+        "energy": 73.9,
+        "structure": 81.5,
+        "mp": 93.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.91,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 67.84,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -1793,66 +2033,6 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
-      "ticker": "PHM",
-      "levels": {
-        "entry": 135.88,
-        "stop": 126.58,
-        "r_size": 9.3,
-        "be_trigger": 140.53,
-        "target_1r": 145.18,
-        "target_2r": 154.48,
-        "target_3r": 163.78,
-        "shares": 225,
-        "risk_dollars": 2100.0
-      },
-      "engines": {
-        "flow": 51.3,
-        "energy": 73.9,
-        "structure": 81.5,
-        "mp": 93.0,
-        "elder": 7.0
-      },
-      "mp_state": "STRONG",
-      "pipe_rank": 0,
-      "signal": {},
-      "context": {},
-      "subcomp_values": {
-        "roc_zscore": {
-          "value": 2.91,
-          "threshold": 1.94,
-          "engine": "Energy",
-          "label": "ROC Z-Score",
-          "meaning": "Momentum 2sigma above normal",
-          "pass": true
-        },
-        "k39_value": {
-          "value": 67.84,
-          "threshold": 50.0,
-          "engine": "Scoring",
-          "label": "K39 Gate",
-          "meaning": "Composite gate confirmed",
-          "pass": true
-        },
-        "pr_rsi_score": {
-          "value": 20.0,
-          "threshold": 20.0,
-          "engine": "PipeRank",
-          "label": "Relative RSI",
-          "meaning": "RSI outperforms peer universe",
-          "pass": true
-        },
-        "rel_mom_score": {
-          "value": 25.0,
-          "threshold": 18.0,
-          "engine": "Scoring",
-          "label": "Relative Momentum",
-          "meaning": "Trend strength confirmed",
-          "pass": true
-        }
-      },
-      "note": "Passes Precision Edge but not on fresh-signal shortlist"
-    },
-    {
       "ticker": "CUZ",
       "levels": {
         "entry": 30.12,
@@ -1976,12 +2156,12 @@
       "ticker": "GKOS",
       "levels": {
         "entry": 238.74,
-        "stop": 212.07,
-        "r_size": 26.67,
-        "be_trigger": 252.08,
-        "target_1r": 265.41,
-        "target_2r": 292.08,
-        "target_3r": 318.75,
+        "stop": 212.08,
+        "r_size": 26.66,
+        "be_trigger": 252.07,
+        "target_1r": 265.4,
+        "target_2r": 292.06,
+        "target_3r": 318.72,
         "shares": 78,
         "risk_dollars": 2100.0
       },
@@ -2093,16 +2273,76 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
+      "ticker": "ICLR",
+      "levels": {
+        "entry": 207.59,
+        "stop": 189.84,
+        "r_size": 17.75,
+        "be_trigger": 216.47,
+        "target_1r": 225.34,
+        "target_2r": 243.09,
+        "target_3r": 260.84,
+        "shares": 118,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 57.9,
+        "energy": 64.7,
+        "structure": 69.5,
+        "mp": 100.0,
+        "elder": 7.0
+      },
+      "mp_state": "FADING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.0,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 90.62,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
       "ticker": "AXTA",
       "levels": {
         "entry": 37.53,
-        "stop": 35.18,
-        "r_size": 2.35,
+        "stop": 35.19,
+        "r_size": 2.34,
         "be_trigger": 38.7,
-        "target_1r": 39.88,
-        "target_2r": 42.23,
-        "target_3r": 44.58,
-        "shares": 893,
+        "target_1r": 39.87,
+        "target_2r": 42.21,
+        "target_3r": 44.55,
+        "shares": 897,
         "risk_dollars": 2100.0
       },
       "engines": {
@@ -2216,13 +2456,13 @@
       "ticker": "EBC",
       "levels": {
         "entry": 23.35,
-        "stop": 22.25,
-        "r_size": 1.1,
-        "be_trigger": 23.9,
-        "target_1r": 24.45,
-        "target_2r": 25.55,
-        "target_3r": 26.65,
-        "shares": 1909,
+        "stop": 22.24,
+        "r_size": 1.11,
+        "be_trigger": 23.91,
+        "target_1r": 24.46,
+        "target_2r": 25.57,
+        "target_3r": 26.68,
+        "shares": 1891,
         "risk_dollars": 2100.0
       },
       "engines": {
@@ -2576,13 +2816,13 @@
       "ticker": "RLAY",
       "levels": {
         "entry": 20.39,
-        "stop": 18.01,
-        "r_size": 2.38,
-        "be_trigger": 21.58,
-        "target_1r": 22.77,
-        "target_2r": 25.15,
-        "target_3r": 27.53,
-        "shares": 882,
+        "stop": 18.0,
+        "r_size": 2.39,
+        "be_trigger": 21.59,
+        "target_1r": 22.78,
+        "target_2r": 25.17,
+        "target_3r": 27.56,
+        "shares": 878,
         "risk_dollars": 2100.0
       },
       "engines": {
@@ -2683,6 +2923,66 @@
         },
         "rel_mom_score": {
           "value": 18.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "SW",
+      "levels": {
+        "entry": 44.19,
+        "stop": 41.0,
+        "r_size": 3.19,
+        "be_trigger": 45.78,
+        "target_1r": 47.38,
+        "target_2r": 50.57,
+        "target_3r": 53.76,
+        "shares": 658,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 76.3,
+        "energy": 56.3,
+        "structure": 60.0,
+        "mp": 72.0,
+        "elder": 7.0
+      },
+      "mp_state": "FADING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 2.4,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 50.0,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 22.0,
           "threshold": 18.0,
           "engine": "Scoring",
           "label": "Relative Momentum",
@@ -2876,13 +3176,13 @@
       "ticker": "BXP",
       "levels": {
         "entry": 66.19,
-        "stop": 62.59,
-        "r_size": 3.6,
-        "be_trigger": 67.99,
-        "target_1r": 69.79,
-        "target_2r": 73.39,
-        "target_3r": 76.99,
-        "shares": 583,
+        "stop": 62.58,
+        "r_size": 3.61,
+        "be_trigger": 68.0,
+        "target_1r": 69.8,
+        "target_2r": 73.41,
+        "target_3r": 77.02,
+        "shares": 581,
         "risk_dollars": 2100.0
       },
       "engines": {
@@ -3113,6 +3413,66 @@
       "note": "Passes Precision Edge but not on fresh-signal shortlist"
     },
     {
+      "ticker": "ALKS",
+      "levels": {
+        "entry": 46.17,
+        "stop": 42.88,
+        "r_size": 3.29,
+        "be_trigger": 47.82,
+        "target_1r": 49.46,
+        "target_2r": 52.75,
+        "target_3r": 56.04,
+        "shares": 638,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 42.1,
+        "energy": 53.8,
+        "structure": 65.3,
+        "mp": 71.0,
+        "elder": 6.0
+      },
+      "mp_state": "BUILDING",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 1.99,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 65.92,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
       "ticker": "SFNC",
       "levels": {
         "entry": 23.8,
@@ -3331,6 +3691,36 @@
         "target_2r": 135.01,
         "target_3r": 141.49,
         "shares": 324,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "AER",
+      "sc_momentum": 84.2,
+      "sc_momentum_raw": 84.2,
+      "pipe_rank": 84.2,
+      "fip_quality": 80.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 88.2,
+        "energy": 68.1,
+        "structure": 89.5,
+        "mp": 97.0,
+        "elder": 10.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 0.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 175.43,
+        "stop": 166.98,
+        "r_size": 8.45,
+        "be_trigger": 179.66,
+        "target_1r": 183.88,
+        "target_2r": 192.33,
+        "target_3r": 200.78,
+        "shares": 248,
         "risk_dollars": 2100.0
       }
     },
@@ -3661,26 +4051,57 @@
       "pe_qualified": true,
       "levels": {
         "entry": 238.74,
-        "stop": 212.07,
-        "r_size": 26.67,
-        "be_trigger": 252.08,
-        "target_1r": 265.41,
-        "target_2r": 292.08,
-        "target_3r": 318.75,
+        "stop": 212.08,
+        "r_size": 26.66,
+        "be_trigger": 252.07,
+        "target_1r": 265.4,
+        "target_2r": 292.06,
+        "target_3r": 318.72,
         "shares": 78,
         "risk_dollars": 2100.0
       }
     },
     {
+      "ticker": "CP",
+      "sc_momentum": 74.9,
+      "sc_momentum_raw": 74.9,
+      "pipe_rank": 78.6,
+      "fip_quality": 80.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 78.9,
+        "energy": 71.4,
+        "structure": 76.8,
+        "mp": 72.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 94.03,
+        "stop": 89.81,
+        "r_size": 4.22,
+        "be_trigger": 96.14,
+        "target_1r": 98.25,
+        "target_2r": 102.47,
+        "target_3r": 106.69,
+        "shares": 497,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "MGNI",
-      "sc_momentum": 81.7,
-      "sc_momentum_raw": 81.7,
+      "sc_momentum": 82.9,
+      "sc_momentum_raw": 82.9,
       "pipe_rank": 78.0,
       "fip_quality": 50.0,
       "fip_spike_excluded": true,
       "fip_window_effective": 209,
       "engines": {
-        "flow": 96.1,
+        "flow": 100.0,
         "energy": 67.2,
         "structure": 74.7,
         "mp": 89.0,
@@ -3759,6 +4180,36 @@
         "target_2r": 392.14,
         "target_3r": 411.5,
         "shares": 108,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "ROIV",
+      "sc_momentum": 81.0,
+      "sc_momentum_raw": 81.0,
+      "pipe_rank": 77.5,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 100.0,
+        "energy": 66.4,
+        "structure": 84.2,
+        "mp": 71.0,
+        "elder": 10.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 0.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 40.67,
+        "stop": 37.48,
+        "r_size": 3.19,
+        "be_trigger": 42.27,
+        "target_1r": 43.86,
+        "target_2r": 47.05,
+        "target_3r": 50.24,
+        "shares": 658,
         "risk_dollars": 2100.0
       }
     },
@@ -3884,6 +4335,37 @@
       }
     },
     {
+      "ticker": "ICLR",
+      "sc_momentum": 70.7,
+      "sc_momentum_raw": 70.7,
+      "pipe_rank": 75.4,
+      "fip_quality": 60.0,
+      "fip_spike_excluded": true,
+      "fip_window_effective": 209,
+      "engines": {
+        "flow": 57.9,
+        "energy": 64.7,
+        "structure": 69.5,
+        "mp": 100.0,
+        "elder": 7.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 207.59,
+        "stop": 189.84,
+        "r_size": 17.75,
+        "be_trigger": 216.47,
+        "target_1r": 225.34,
+        "target_2r": 243.09,
+        "target_3r": 260.84,
+        "shares": 118,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "EBC",
       "sc_momentum": 69.5,
       "sc_momentum_raw": 69.5,
@@ -3904,13 +4386,13 @@
       "pe_qualified": true,
       "levels": {
         "entry": 23.35,
-        "stop": 22.25,
-        "r_size": 1.1,
-        "be_trigger": 23.9,
-        "target_1r": 24.45,
-        "target_2r": 25.55,
-        "target_3r": 26.65,
-        "shares": 1909,
+        "stop": 22.24,
+        "r_size": 1.11,
+        "be_trigger": 23.91,
+        "target_1r": 24.46,
+        "target_2r": 25.57,
+        "target_3r": 26.68,
+        "shares": 1891,
         "risk_dollars": 2100.0
       }
     },
@@ -4129,6 +4611,37 @@
       }
     },
     {
+      "ticker": "MMM",
+      "sc_momentum": 76.7,
+      "sc_momentum_raw": 76.7,
+      "pipe_rank": 73.4,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 69.7,
+        "energy": 70.6,
+        "structure": 75.8,
+        "mp": 97.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 188.63,
+        "stop": 178.04,
+        "r_size": 10.59,
+        "be_trigger": 193.92,
+        "target_1r": 199.22,
+        "target_2r": 209.81,
+        "target_3r": 220.4,
+        "shares": 198,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "VNT",
       "sc_momentum": 86.0,
       "sc_momentum_raw": 86.0,
@@ -4148,13 +4661,13 @@
       "on_shortlist": false,
       "levels": {
         "entry": 43.88,
-        "stop": 40.88,
-        "r_size": 3.0,
-        "be_trigger": 45.38,
-        "target_1r": 46.88,
-        "target_2r": 49.88,
-        "target_3r": 52.88,
-        "shares": 700,
+        "stop": 41.02,
+        "r_size": 2.86,
+        "be_trigger": 45.31,
+        "target_1r": 46.74,
+        "target_2r": 49.6,
+        "target_3r": 52.46,
+        "shares": 734,
         "risk_dollars": 2100.0
       }
     },
@@ -4178,35 +4691,34 @@
       "on_shortlist": false,
       "levels": {
         "entry": 44.6,
-        "stop": 41.38,
-        "r_size": 3.22,
-        "be_trigger": 46.21,
-        "target_1r": 47.82,
-        "target_2r": 51.04,
-        "target_3r": 54.26,
-        "shares": 652,
+        "stop": 41.37,
+        "r_size": 3.23,
+        "be_trigger": 46.22,
+        "target_1r": 47.83,
+        "target_2r": 51.06,
+        "target_3r": 54.29,
+        "shares": 650,
         "risk_dollars": 2100.0
       }
     },
     {
       "ticker": "FLS",
-      "sc_momentum": 78.1,
-      "sc_momentum_raw": 78.1,
+      "sc_momentum": 79.3,
+      "sc_momentum_raw": 79.3,
       "pipe_rank": 71.9,
       "fip_quality": 60.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 76.3,
+        "flow": 80.3,
         "energy": 66.4,
         "structure": 89.5,
         "mp": 87.0,
         "elder": 10.0
       },
       "mp_state": "FADING",
-      "squeeze": 0,
-      "on_shortlist": true,
-      "pe_qualified": true,
+      "squeeze": 0.0,
+      "on_shortlist": false,
       "levels": {
         "entry": 85.83,
         "stop": 79.18,
@@ -4338,37 +4850,6 @@
         "target_2r": 43.66,
         "target_3r": 46.12,
         "shares": 853,
-        "risk_dollars": 2100.0
-      }
-    },
-    {
-      "ticker": "MMM",
-      "sc_momentum": 75.5,
-      "sc_momentum_raw": 75.5,
-      "pipe_rank": 69.9,
-      "fip_quality": 30.0,
-      "fip_spike_excluded": false,
-      "fip_window_effective": 252,
-      "engines": {
-        "flow": 65.8,
-        "energy": 70.6,
-        "structure": 75.8,
-        "mp": 97.0,
-        "elder": 7.0
-      },
-      "mp_state": "STRONG",
-      "squeeze": 0,
-      "on_shortlist": true,
-      "pe_qualified": true,
-      "levels": {
-        "entry": 188.63,
-        "stop": 178.04,
-        "r_size": 10.59,
-        "be_trigger": 193.92,
-        "target_1r": 199.22,
-        "target_2r": 209.81,
-        "target_3r": 220.4,
-        "shares": 198,
         "risk_dollars": 2100.0
       }
     },
@@ -4544,13 +5025,13 @@
       "on_shortlist": false,
       "levels": {
         "entry": 5.28,
-        "stop": 4.77,
-        "r_size": 0.51,
+        "stop": 4.76,
+        "r_size": 0.52,
         "be_trigger": 5.54,
-        "target_1r": 5.79,
-        "target_2r": 6.3,
-        "target_3r": 6.81,
-        "shares": 4117,
+        "target_1r": 5.8,
+        "target_2r": 6.32,
+        "target_3r": 6.84,
+        "shares": 4038,
         "risk_dollars": 2100.0
       }
     },
@@ -4697,13 +5178,13 @@
       "pe_qualified": true,
       "levels": {
         "entry": 37.53,
-        "stop": 35.18,
-        "r_size": 2.35,
+        "stop": 35.19,
+        "r_size": 2.34,
         "be_trigger": 38.7,
-        "target_1r": 39.88,
-        "target_2r": 42.23,
-        "target_3r": 44.58,
-        "shares": 893,
+        "target_1r": 39.87,
+        "target_2r": 42.21,
+        "target_3r": 44.55,
+        "shares": 897,
         "risk_dollars": 2100.0
       }
     },
@@ -4728,13 +5209,13 @@
       "pe_qualified": true,
       "levels": {
         "entry": 20.39,
-        "stop": 18.01,
-        "r_size": 2.38,
-        "be_trigger": 21.58,
-        "target_1r": 22.77,
-        "target_2r": 25.15,
-        "target_3r": 27.53,
-        "shares": 882,
+        "stop": 18.0,
+        "r_size": 2.39,
+        "be_trigger": 21.59,
+        "target_1r": 22.78,
+        "target_2r": 25.17,
+        "target_3r": 27.56,
+        "shares": 878,
         "risk_dollars": 2100.0
       }
     },
@@ -4765,6 +5246,37 @@
         "target_2r": 36.49,
         "target_3r": 38.4,
         "shares": 1099,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "ALKS",
+      "sc_momentum": 56.0,
+      "sc_momentum_raw": 56.0,
+      "pipe_rank": 66.4,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 42.1,
+        "energy": 53.8,
+        "structure": 65.3,
+        "mp": 71.0,
+        "elder": 6.0
+      },
+      "mp_state": "BUILDING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 46.17,
+        "stop": 42.88,
+        "r_size": 3.29,
+        "be_trigger": 47.82,
+        "target_1r": 49.46,
+        "target_2r": 52.75,
+        "target_3r": 56.04,
+        "shares": 638,
         "risk_dollars": 2100.0
       }
     },
@@ -4850,13 +5362,43 @@
       "on_shortlist": false,
       "levels": {
         "entry": 410.0,
-        "stop": 365.46,
-        "r_size": 44.54,
-        "be_trigger": 432.27,
-        "target_1r": 454.54,
-        "target_2r": 499.08,
-        "target_3r": 543.62,
+        "stop": 365.4,
+        "r_size": 44.6,
+        "be_trigger": 432.3,
+        "target_1r": 454.6,
+        "target_2r": 499.2,
+        "target_3r": 543.8,
         "shares": 47,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "GRAB",
+      "sc_momentum": 75.1,
+      "sc_momentum_raw": 75.1,
+      "pipe_rank": 65.1,
+      "fip_quality": 70.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 88.2,
+        "energy": 71.4,
+        "structure": 62.1,
+        "mp": 74.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 0.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 3.44,
+        "stop": 3.14,
+        "r_size": 0.3,
+        "be_trigger": 3.59,
+        "target_1r": 3.74,
+        "target_2r": 4.04,
+        "target_3r": 4.34,
+        "shares": 7000,
         "risk_dollars": 2100.0
       }
     },
@@ -4971,13 +5513,13 @@
       "on_shortlist": false,
       "levels": {
         "entry": 63.52,
-        "stop": 59.36,
-        "r_size": 4.16,
-        "be_trigger": 65.6,
-        "target_1r": 67.68,
-        "target_2r": 71.84,
-        "target_3r": 76.0,
-        "shares": 504,
+        "stop": 59.37,
+        "r_size": 4.15,
+        "be_trigger": 65.59,
+        "target_1r": 67.67,
+        "target_2r": 71.82,
+        "target_3r": 75.97,
+        "shares": 506,
         "risk_dollars": 2100.0
       }
     },
@@ -5105,6 +5647,37 @@
       }
     },
     {
+      "ticker": "BHC",
+      "sc_momentum": 81.2,
+      "sc_momentum_raw": 81.2,
+      "pipe_rank": 62.9,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 73.7,
+        "energy": 74.8,
+        "structure": 86.3,
+        "mp": 97.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 8.4,
+        "stop": 7.58,
+        "r_size": 0.82,
+        "be_trigger": 8.81,
+        "target_1r": 9.22,
+        "target_2r": 10.04,
+        "target_3r": 10.86,
+        "shares": 2560,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "VLTO",
       "sc_momentum": 82.7,
       "sc_momentum_raw": 82.7,
@@ -5124,13 +5697,13 @@
       "on_shortlist": false,
       "levels": {
         "entry": 118.06,
-        "stop": 112.32,
-        "r_size": 5.74,
-        "be_trigger": 120.93,
-        "target_1r": 123.8,
-        "target_2r": 129.54,
-        "target_3r": 135.28,
-        "shares": 365,
+        "stop": 112.29,
+        "r_size": 5.77,
+        "be_trigger": 120.95,
+        "target_1r": 123.83,
+        "target_2r": 129.6,
+        "target_3r": 135.37,
+        "shares": 363,
         "risk_dollars": 2100.0
       }
     },
@@ -5195,6 +5768,36 @@
       }
     },
     {
+      "ticker": "G",
+      "sc_momentum": 87.4,
+      "sc_momentum_raw": 87.4,
+      "pipe_rank": 62.2,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 98.7,
+        "energy": 69.7,
+        "structure": 88.4,
+        "mp": 96.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 4.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 42.55,
+        "stop": 39.72,
+        "r_size": 2.83,
+        "be_trigger": 43.96,
+        "target_1r": 45.38,
+        "target_2r": 48.21,
+        "target_3r": 51.04,
+        "shares": 742,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "LPX",
       "sc_momentum": 80.4,
       "sc_momentum_raw": 80.4,
@@ -5255,6 +5858,36 @@
       }
     },
     {
+      "ticker": "YUMC",
+      "sc_momentum": 80.7,
+      "sc_momentum_raw": 80.7,
+      "pipe_rank": 61.5,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 82.9,
+        "energy": 70.6,
+        "structure": 84.2,
+        "mp": 89.0,
+        "elder": 7.0
+      },
+      "mp_state": "STRONG",
+      "squeeze": 0.0,
+      "on_shortlist": false,
+      "levels": {
+        "entry": 49.94,
+        "stop": 47.52,
+        "r_size": 2.42,
+        "be_trigger": 51.15,
+        "target_1r": 52.36,
+        "target_2r": 54.78,
+        "target_3r": 57.2,
+        "shares": 867,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "SARO",
       "sc_momentum": 87.8,
       "sc_momentum_raw": 87.8,
@@ -5281,6 +5914,37 @@
         "target_2r": 33.33,
         "target_3r": 35.51,
         "shares": 963,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
+      "ticker": "JHX",
+      "sc_momentum": 76.5,
+      "sc_momentum_raw": 76.5,
+      "pipe_rank": 60.9,
+      "fip_quality": 0.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 100.0,
+        "energy": 62.2,
+        "structure": 64.2,
+        "mp": 75.0,
+        "elder": 10.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 29.94,
+        "stop": 27.53,
+        "r_size": 2.41,
+        "be_trigger": 31.15,
+        "target_1r": 32.35,
+        "target_2r": 34.76,
+        "target_3r": 37.17,
+        "shares": 871,
         "risk_dollars": 2100.0
       }
     },
@@ -5528,6 +6192,37 @@
       }
     },
     {
+      "ticker": "SW",
+      "sc_momentum": 66.2,
+      "sc_momentum_raw": 66.2,
+      "pipe_rank": 58.7,
+      "fip_quality": 30.0,
+      "fip_spike_excluded": false,
+      "fip_window_effective": 252,
+      "engines": {
+        "flow": 76.3,
+        "energy": 56.3,
+        "structure": 60.0,
+        "mp": 72.0,
+        "elder": 7.0
+      },
+      "mp_state": "FADING",
+      "squeeze": 0,
+      "on_shortlist": true,
+      "pe_qualified": true,
+      "levels": {
+        "entry": 44.19,
+        "stop": 41.0,
+        "r_size": 3.19,
+        "be_trigger": 45.78,
+        "target_1r": 47.38,
+        "target_2r": 50.57,
+        "target_3r": 53.76,
+        "shares": 658,
+        "risk_dollars": 2100.0
+      }
+    },
+    {
       "ticker": "BXP",
       "sc_momentum": 63.9,
       "sc_momentum_raw": 63.9,
@@ -5548,13 +6243,13 @@
       "pe_qualified": true,
       "levels": {
         "entry": 66.19,
-        "stop": 62.59,
-        "r_size": 3.6,
-        "be_trigger": 67.99,
-        "target_1r": 69.79,
-        "target_2r": 73.39,
-        "target_3r": 76.99,
-        "shares": 583,
+        "stop": 62.58,
+        "r_size": 3.61,
+        "be_trigger": 68.0,
+        "target_1r": 69.8,
+        "target_2r": 73.41,
+        "target_3r": 77.02,
+        "shares": 581,
         "risk_dollars": 2100.0
       }
     },
@@ -5621,14 +6316,14 @@
     },
     {
       "ticker": "PHM",
-      "sc_momentum": 72.5,
-      "sc_momentum_raw": 72.5,
+      "sc_momentum": 74.8,
+      "sc_momentum_raw": 74.8,
       "pipe_rank": 58.0,
       "fip_quality": 30.0,
       "fip_spike_excluded": false,
       "fip_window_effective": 252,
       "engines": {
-        "flow": 51.3,
+        "flow": 59.2,
         "energy": 73.9,
         "structure": 81.5,
         "mp": 93.0,
@@ -5640,12 +6335,12 @@
       "pe_qualified": true,
       "levels": {
         "entry": 135.88,
-        "stop": 126.58,
-        "r_size": 9.3,
+        "stop": 126.57,
+        "r_size": 9.31,
         "be_trigger": 140.53,
-        "target_1r": 145.18,
-        "target_2r": 154.48,
-        "target_3r": 163.78,
+        "target_1r": 145.19,
+        "target_2r": 154.5,
+        "target_3r": 163.81,
         "shares": 225,
         "risk_dollars": 2100.0
       }
@@ -6553,8 +7248,8 @@
       "pattern_fit": null,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -4.81,
-      "roc5": 2.94,
+      "roc20": -4.78,
+      "roc5": 2.98,
       "divergence": 7.76,
       "above_sma20": false,
       "coverage": "9/9",
@@ -6569,8 +7264,8 @@
         "AI",
         "CRM"
       ],
-      "rrg_rs_ratio": 97.13,
-      "rrg_rs_momentum": 95.23,
+      "rrg_rs_ratio": 97.17,
+      "rrg_rs_momentum": 95.27,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_history": [
@@ -6591,8 +7286,8 @@
           "rs_momentum": 94.05
         },
         {
-          "rs_ratio": 97.13,
-          "rs_momentum": 95.23
+          "rs_ratio": 97.17,
+          "rs_momentum": 95.27
         }
       ]
     },
@@ -6612,7 +7307,7 @@
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
       "roc20": -17.51,
-      "roc5": -4.17,
+      "roc5": -4.16,
       "divergence": 13.35,
       "above_sma20": false,
       "coverage": "15/15",
@@ -6825,8 +7520,8 @@
         "DBX",
         "AKAM"
       ],
-      "rrg_rs_ratio": 91.81,
-      "rrg_rs_momentum": 88.73,
+      "rrg_rs_ratio": 91.8,
+      "rrg_rs_momentum": 88.72,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -6847,8 +7542,8 @@
           "rs_momentum": 89.97
         },
         {
-          "rs_ratio": 91.81,
-          "rs_momentum": 88.73
+          "rs_ratio": 91.8,
+          "rs_momentum": 88.72
         }
       ]
     },
@@ -6888,7 +7583,7 @@
         "RPD"
       ],
       "rrg_rs_ratio": 117.03,
-      "rrg_rs_momentum": 86.36,
+      "rrg_rs_momentum": 86.35,
       "rrg_quadrant": "WEAKENING",
       "rrg_direction": "ENTERING",
       "rrg_history": [
@@ -6910,7 +7605,7 @@
         },
         {
           "rs_ratio": 117.03,
-          "rs_momentum": 86.36
+          "rs_momentum": 86.35
         }
       ]
     },
@@ -7753,8 +8448,8 @@
       "pattern_fit": 0.738,
       "parent_gics": "XLF",
       "parent_grade": "DEPLOY",
-      "roc20": 0.53,
-      "roc5": -0.23,
+      "roc20": 0.54,
+      "roc5": -0.22,
       "divergence": -0.76,
       "above_sma20": true,
       "coverage": "10/10",
@@ -7771,7 +8466,7 @@
         "WFC"
       ],
       "rrg_rs_ratio": 93.02,
-      "rrg_rs_momentum": 103.01,
+      "rrg_rs_momentum": 103.02,
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "EXITING",
       "rrg_history": [
@@ -7793,7 +8488,7 @@
         },
         {
           "rs_ratio": 93.02,
-          "rs_momentum": 103.01
+          "rs_momentum": 103.02
         }
       ]
     },
@@ -7812,9 +8507,9 @@
       "pattern_fit": null,
       "parent_gics": "XLF",
       "parent_grade": "DEPLOY",
-      "roc20": -5.44,
-      "roc5": 0.9,
-      "divergence": 6.34,
+      "roc20": -5.38,
+      "roc5": 0.96,
+      "divergence": 6.35,
       "above_sma20": false,
       "coverage": "9/9",
       "constituents_used": [
@@ -7828,8 +8523,8 @@
         "KEEL",
         "SOFI"
       ],
-      "rrg_rs_ratio": 86.0,
-      "rrg_rs_momentum": 106.41,
+      "rrg_rs_ratio": 86.05,
+      "rrg_rs_momentum": 106.47,
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -7850,8 +8545,8 @@
           "rs_momentum": 105.21
         },
         {
-          "rs_ratio": 86.0,
-          "rs_momentum": 106.41
+          "rs_ratio": 86.05,
+          "rs_momentum": 106.47
         }
       ]
     },
@@ -7990,7 +8685,7 @@
       "pattern_fit": 0.615,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": 10.62,
+      "roc20": 10.63,
       "roc5": -0.26,
       "divergence": -10.88,
       "above_sma20": true,
@@ -8287,7 +8982,7 @@
       "parent_gics": "XLV",
       "parent_grade": "DEPLOY",
       "roc20": 14.95,
-      "roc5": 4.82,
+      "roc5": 4.81,
       "divergence": -10.14,
       "above_sma20": true,
       "coverage": "10/10",
@@ -8468,7 +9163,7 @@
       "parent_gics": "XLC",
       "parent_grade": "TURNING",
       "roc20": -11.52,
-      "roc5": 8.55,
+      "roc5": 8.56,
       "divergence": 20.08,
       "above_sma20": false,
       "coverage": "8/8",
@@ -8483,7 +9178,7 @@
         "GOOG"
       ],
       "rrg_rs_ratio": 91.92,
-      "rrg_rs_momentum": 98.4,
+      "rrg_rs_momentum": 98.41,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_history": [
@@ -8505,7 +9200,7 @@
         },
         {
           "rs_ratio": 91.92,
-          "rs_momentum": 98.4
+          "rs_momentum": 98.41
         }
       ]
     }
@@ -8532,10 +9227,10 @@
     "snapshot_date": "2026-11-10"
   },
   "meta": {
-    "total_universe": 933,
+    "total_universe": 1057,
     "passed_pipeline_rank": 2,
     "on_shortlist": 2,
-    "precision_edge_count": 51,
-    "recipe_match_count": 90
+    "precision_edge_count": 57,
+    "recipe_match_count": 101
   }
 }
