@@ -304,6 +304,9 @@ def validate_round1(form, universe):
         if form.get("voice") not in DECIDERS:
             errs.append(f"voice {form.get('voice')!r} is not a decider seat (R31: {', '.join(DECIDERS)}); "
                         f"the QA seat and benched or stood-down voices do not nominate")
+        if REPORT == "C" and form.get("voice") != QUANT_SEAT and noms:
+            errs.append(f"nominations: under Report C only {QUANT_SEAT} nominates (PM 2026-11-10); {form.get('voice')!r} votes on Report A's deliberation "
+                        f"set plus {QUANT_SEAT}'s names and files no nominations")
         if len(noms) > SHORTLIST_CAP:
             errs.append(f"nominations: {len(noms)} > {SHORTLIST_CAP} -- R33 (PM 2026-10-30): a decider shortlists at "
                         f"most {SHORTLIST_CAP}; fewer is valid and is never padded. Re-file the {SHORTLIST_CAP} your "

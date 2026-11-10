@@ -1,5 +1,5 @@
 """build_universe, PM 2026-11-10: every name meeting mcap >= $2B and 10-day average volume >= 1.5M on a NASDAQ/NYSE listing is admitted, whatever its
-domicile; ADRs are out, identified by FMP's profile isAdr (never by country) plus the PM's override file; nothing is capped or decided by prior
+domicile or share type (ADRs are KEPT, PM v5 ruling); only the PM's override exclude list removes names; nothing is capped or decided by prior
 membership; a build that lost names fails loudly."""
 import pandas as pd
 import pytest
@@ -74,9 +74,9 @@ def universe_rows():
             row("SHOP", 6_000_000, country="CA"), row("SPOT", 3_500_000, country="SE"), row("CCJ", 6_000_000, country="CA"),
             row("ACN", 3_100_000, country="IE"), row("BIRK", 3_000_000, country="GB"), row("GLBE", 3_000_000, country="IL"),
             row("G", 3_000_000, country="BM"),
-            # foreign names FMP flags isAdr but the PM rules in (override include)
+            # ADRs and foreign names: all in (PM v5)
             row("ARM", 7_000_000, country="GB"), row("SBSW", 3_000_000, country="ZA"), row("LU", 3_000_000, country="CN"), row("PDD", 9_000_000, country="IE"),
-            # true ADRs (isAdr) and the PM's ADR list that FMP calls ordinary (override exclude)
+            row("ASML", 2_500_000, country="NL"),
             row("NWG", 3_000_000, country="GB"), row("TCOM", 4_000_000, country="SG"), row("RYAAY", 3_000_000, country="IE"), row("EC", 3_000_000, country="CO"),
             row("TSM", 9_000_000, country="TW"), row("BABA", 9_000_000, country="CN"),
             row("TD", 8_000_000, country="CA"), row("TTE", 3_000_000, country="FR"), row("BNS", 4_000_000, country="CA"),
@@ -85,43 +85,31 @@ def universe_rows():
     return rows
 
 
-def test_every_qualifying_listed_name_is_admitted_adrs_are_not(build):
+def test_every_qualifying_listed_name_is_admitted_adrs_included(build):
     res = build(universe_rows())
     got = set(res["tickers"])
     assert {"TTD", "MOS", "CLF", "KTOS", "HUT", "ADM", "MCHP"} <= got
-    assert {"ARM", "SHOP", "SPOT", "CCJ", "ACN", "BIRK", "GLBE", "G", "SBSW", "LU", "PDD"} <= got, "foreign-domiciled ordinary shares are back in"
-    assert not ({"TD", "TTE", "BNS", "NWG", "TCOM", "JBS", "RYAAY", "TECK", "EC", "TSM", "BABA"} & got), "ADRs are out"
+    assert {"TD", "TTE", "TSM", "ASML", "ARM", "CCJ", "BABA", "NWG", "TCOM", "SHOP", "SPOT", "ACN", "SBSW", "LU", "PDD"} <= got, "ADRs and foreign names are in"
     assert not ({"SPYX", "FUNDX", "WRNT-W", "LOW"} & got)
     assert {"MID1", "MID2"} <= got, "the verification band is measured, and these qualify"
 
 
-def test_adrs_are_identified_by_the_profile_field_not_by_country(build):
+def test_no_profile_call_is_made_and_no_adr_stage_exists(build):
     res = build(universe_rows())
-    assert "TSM" in " ".join(res["excluded_adr"]) and "BABA" in " ".join(res["excluded_adr"])      # FMP isAdr, not on the override list
-    assert "SHOP" not in " ".join(res["excluded_adr"]) and "CCJ" not in " ".join(res["excluded_adr"])        # foreign domicile alone excludes nothing
-    assert set(res["excluded_adr_override"]) >= {"TD", "TTE", "BNS", "JBS", "TECK"}
+    assert not hasattr(FakeClient, "profiled") or FakeClient.profiled == []
+    assert "excluded_adr" not in res and not any("adr" in k for k in res["stages"])
+    assert U.UNIVERSE_RULE_ID.startswith("v5-") and "adrs-in" in U.UNIVERSE_RULE_ID
 
 
-def test_only_foreign_domiciled_names_that_could_be_admitted_are_profiled_and_the_cost_is_reported(build):
+def test_the_pm_override_exclude_list_still_removes_names_and_is_logged(build, monkeypatch, capsys):
+    monkeypatch.setattr(U, "load_universe_overrides", lambda: {"exclude": {"TD"}, "include": set()})
     res = build(universe_rows())
-    assert "AAA" not in FakeClient.profiled and "ADM" not in FakeClient.profiled and "TTD" not in FakeClient.profiled      # US names cost no call
-    assert "LOW" not in FakeClient.profiled
-    assert res["stages"]["adr_profiled"] == len(FakeClient.profiled) > 0
-    assert "TD" not in FakeClient.profiled and "ARM" not in FakeClient.profiled, "override names need no call"
+    assert "TD" not in res["tickers"] and "TSM" in res["tickers"] and res["excluded_override"] == ["TD"]
+    assert "Excluded by the PM's override list" in capsys.readouterr().out
 
 
-def test_the_overrides_and_the_adrs_are_listed_in_the_log(build, capsys):
-    build(universe_rows())
-    out = capsys.readouterr().out
-    assert "ADRs excluded (FMP isAdr)" in out and "TSM" in out and "BABA" in out
-    assert "Excluded by the PM's override list" in out and "TD" in out and "kept by override" in out and "ARM" in out
-
-
-def test_an_unresolved_profile_is_excluded_and_listed_and_too_many_fail_the_build(build):
-    ok = build(universe_rows(), profile_fail={"SHOP"})
-    assert "SHOP" not in ok["tickers"] and ok["stages"]["adr_profile_errors"] == 1
-    bad = build(universe_rows(), profile_fail={"SHOP", "SPOT", "CCJ", "ACN", "BIRK", "GLBE", "G", "TSM", "BABA"})
-    assert bad["status"] == "error" and "profile" in bad["reason"]
+def test_the_shipped_override_file_is_empty_so_nothing_is_excluded_by_it():
+    assert U.load_universe_overrides()["exclude"] == set()
 
 
 def test_nothing_is_capped_a_thousand_uncertain_names_are_all_verified(build):
@@ -154,7 +142,7 @@ def test_the_written_file_carries_the_stage_counts_and_the_sgt_date(build, tmp_p
     assert res["status"] == "ok"
     head = (tmp_path / "universe.txt").read_text().splitlines()[:5]
     assert head[0].startswith("# AQE Universe — updated ") and head[1] == f"# rule: {U.UNIVERSE_RULE_ID}"
-    assert any(l.startswith("# stages:") and "screener_rows=" in l and "final=" in l and "adr_excluded_isadr=" in l for l in head)
+    assert any(l.startswith("# stages:") and "screener_rows=" in l and "final=" in l and "final=" in l for l in head)
     assert U.universe_built_rule(tmp_path / "universe.txt") == U.UNIVERSE_RULE_ID
 
 

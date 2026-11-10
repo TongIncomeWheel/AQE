@@ -99,11 +99,11 @@ EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
 # ADM, MCHP ...) were never scored. Pass 1 now reads the screener's own avgVolume, verifies EVERY uncertain name (no cap, no prior membership),
 # admits US-domiciled names only (country == US, no ETFs/funds), and fails loudly below 90% coverage.
 #
-# v4 (2026-11-10, PM ruling): the country==US domicile rule is DROPPED. The listing requirement stays (NASDAQ/NYSE) and ADRs stay OUT, identified by
-# FMP's own profile `isAdr` field, never by country. Ordinary-share foreign-domiciled operating companies (ARM, SHOP, SPOT, ACN, LIN, ETN, CCJ, BIRK, GLBE ...)
-# are back in. FMP's isAdr does not match the PM's own list on every name (it calls TD/TTE/BNS/TECK/JBS ordinary and ARM/PDD/SBSW/LU ADRs), so a small
-# PM-maintained override file (data/universe_overrides.json) decides the exceptions, and every override is printed in the build log.
-UNIVERSE_RULE_ID = "v4-mcap2B-vol1.5M-listed-noadr-notrend"
+# v4 (2026-11-10, PM ruling): the country==US domicile rule is DROPPED; the NASDAQ/NYSE listing requirement stays.
+# v5 (2026-11-10, PM ruling): ADRs are KEPT. There is no domicile rule and no ADR exclusion at all: a NASDAQ/NYSE listing that meets mcap >= $2B and 10-day average
+# volume >= 1.5M is in, whatever its domicile or share type (TSM, ASML, BABA, HSBC, SONY, TD, TTE ... come in if they pass). Only ETFs/funds and warrants/units are out.
+# data/universe_overrides.json stays as the PM's exclusion mechanism ("exclude": [...]); it is empty today, and every name it drops is printed in the build log.
+UNIVERSE_RULE_ID = "v5-mcap2B-vol1.5M-listed-adrs-in-notrend"
 
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
 SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
@@ -137,12 +137,11 @@ SCREEN_AVG_VOL_PREFILTER = SCREEN_AVG_VOL_10D // 2  # 750k — reject unverified
 # membership must never admit or exclude a name. ~600-900 bar calls at 80/min is acceptable for a nightly screen.
 UNIVERSE_OVERRIDES_FILE = DATA_DIR / "universe_overrides.json"
 SCREEN_MIN_COVERAGE = 0.90            # the build FAILS if it admits fewer than 90% of the screener-qualified US names
-SCREEN_MAX_PROFILE_ERROR_RATE = 0.05  # more than 5% failed profile calls fails the build: an unknown ADR status is never silently resolved
 
 
 def load_universe_overrides(path: Path | None = None) -> dict:
-    """The PM's ADR exceptions: {"exclude": {...}, "include": {...}} (upper-case tickers). A missing file is no overrides; a malformed one is an error
-    (a silent empty override list would quietly re-admit names the PM ruled out)."""
+    """The PM's exclusion list: {"exclude": {...}} (upper-case tickers); "include" is read for old files and ignored. A missing file is no overrides; a malformed one
+    is an error (a silent empty list would quietly re-admit names the PM ruled out)."""
     import json as _json
     f = path or UNIVERSE_OVERRIDES_FILE
     if not f.exists():
@@ -271,7 +270,7 @@ def build_universe(dry_run: bool = False) -> dict:
     # ── Pass 1: FMP screener. NO volume / price floor in the call: the screener's `volume` is the LAST SESSION's, so a volume floor dropped
     # names whose average is high but whose last day was light, and the rule has no price floor. Country, listing and fund filters are
     # applied below on the returned fields so every exclusion can be listed.
-    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, NASDAQ/NYSE listing, no domicile rule, ADRs out (profile isAdr)...")
+    print(f"[universe] Screening: mcap > ${SCREEN_MCAP / 1e9:.0f}B, NASDAQ/NYSE listing, no domicile rule, ADRs kept...")
     try:
         raw = client.get_screener(
             min_mcap=SCREEN_MCAP,
@@ -284,7 +283,7 @@ def build_universe(dry_run: bool = False) -> dict:
         return {"status": "error", "reason": f"screener failed: {exc}"}
     stages["screener_rows"] = len(raw)
 
-    excluded: dict[str, list[str]] = {"etf_fund": [], "symbol_form": [], "not_listed": [], "no_symbol": [], "adr": [], "adr_override": []}
+    excluded: dict[str, list[str]] = {"etf_fund": [], "symbol_form": [], "not_listed": [], "no_symbol": [], "override": []}
     rows_ok: dict[str, dict] = {}
     for r in raw:
         sym = (r.get("symbol") or "").upper().strip()
@@ -313,54 +312,13 @@ def build_universe(dry_run: bool = False) -> dict:
         except (TypeError, ValueError):
             return None
 
-    # ── ADR stage (PM 2026-11-10). A foreign-domiciled name that could still be admitted (avgVolume at or above the reject band, or unknown) is
-    # profiled once: FMP's profile `isAdr` is the real field. US-domiciled names are not profiled (no ADR there). The PM's override file decides
-    # the names FMP gets differently from the PM; every override applied is printed. Profiling happens BEFORE bars so no bar call is spent on an ADR.
+    # ── The PM's exclusion list (data/universe_overrides.json "exclude"; empty today). ADRs are NOT excluded (PM 2026-11-10: keep the ADRs). ──
     over = load_universe_overrides()
-    to_profile = [tk for tk, r in rows_ok.items()
-                  if (r.get("country") or "").upper() != "US" and (_av(r) is None or _av(r) >= SCREEN_AVG_VOL_PREFILTER)
-                  and tk not in over["exclude"] and tk not in over["include"]]
-    adr_flag: dict[str, bool] = {}
-    profile_errors: list[str] = []
-    for i, tk in enumerate(to_profile):
-        if (i + 1) % 100 == 0:
-            print(f"[universe] Profiling {i + 1}/{len(to_profile)} for isAdr...")
-        prof, err = None, f"{tk}: no profile"
-        for _try in range(2):
-            try:
-                prof = client.get_profile(tk)
-                if prof is not None:
-                    break
-                err = f"{tk}: no profile"
-            except Exception as exc:  # noqa: BLE001
-                err = f"{tk}: {exc}"
-        if prof is None:
-            profile_errors.append(err)
-            continue
-        adr_flag[tk] = bool(prof.get("isAdr"))
-    if profile_errors and len(profile_errors) > max(3, SCREEN_MAX_PROFILE_ERROR_RATE * max(len(to_profile), 1)):
-        reason = f"{len(profile_errors)} of {len(to_profile)} profile calls failed: ADR status cannot be trusted"
-        print(f"[universe] [FAIL] {reason}")
-        return {"status": "error", "reason": reason, "stages": stages, "errors": profile_errors[:20]}
-    adr_names = sorted(tk for tk, f in adr_flag.items() if f)
-    excluded["adr"] = [f"{t}({rows_ok[t].get('country')})" for t in adr_names]
-    for tk in over["exclude"]:
-        if tk in rows_ok:
-            excluded["adr_override"].append(tk)
-    included_override = sorted(tk for tk in over["include"] if tk in rows_ok)
-    unresolved = {e.split(":")[0] for e in profile_errors}        # ADR status unknown after a retry: excluded and LISTED, never silently kept
-    drop = set(adr_names) | {t for t in over["exclude"] if t in rows_ok} | unresolved
-    drop -= set(over["include"])
-    for tk in drop:
+    excluded["override"] = sorted(t for t in over["exclude"] if t in rows_ok)
+    for tk in excluded["override"]:
         rows_ok.pop(tk, None)
-    stages.update(adr_profiled=len(to_profile), adr_profile_errors=len(profile_errors), adr_excluded_isadr=len(adr_names),
-                  adr_excluded_override=len(excluded["adr_override"]), adr_included_override=len(included_override))
-    print(f"[universe] ADR stage: {len(to_profile)} foreign-domiciled names profiled ({len(to_profile)} calls), {len(adr_names)} flagged isAdr, "
-          f"{len(excluded['adr_override'])} excluded by override, {len(included_override)} kept by override, {len(profile_errors)} profile errors")
-    print(f"[universe] ADRs excluded (FMP isAdr): {excluded['adr']}")
-    print(f"[universe] Excluded by the PM's override list: {sorted(excluded['adr_override'])}; kept by override despite isAdr or ADR-like: {included_override}")
-    if profile_errors:
-        print(f"[universe] [WARN] profile errors (excluded, unresolved): {profile_errors[:20]}")
+    stages["excluded_override"] = len(excluded["override"])
+    print(f"[universe] Excluded by the PM's override list: {excluded['override'] or 'none (the list is empty)'}; ADRs are kept (no ADR exclusion)")
     rows_us = rows_ok   # (name kept for the code below: the candidate set after listing, fund and ADR filters)
     # The screener already returns marketCap; kept for the Option Scanner's size filter (zero extra cost).
     mcap_by_tk = {}
@@ -373,7 +331,7 @@ def build_universe(dry_run: bool = False) -> dict:
             pass
     stages["candidates"] = len(rows_us)
     foreign_in = sorted(t for t, r in rows_us.items() if (r.get("country") or "").upper() != "US")
-    print(f"[universe] Foreign-domiciled ordinary shares carried in the candidate set: {len(foreign_in)}")
+    print(f"[universe] Foreign-domiciled names (ordinary shares and ADRs) carried in the candidate set: {len(foreign_in)}")
 
     passed: list[str] = []          # admitted without verification
     to_verify: list[str] = []       # in the band, or no avgVolume: measured on bars
@@ -452,7 +410,7 @@ def build_universe(dry_run: bool = False) -> dict:
         return {"status": "dry_run", "total": len(passed),
                 "added": len(added), "removed": len(removed), "kept": len(kept),
                 "tickers": sorted(passed), "errors": errors[:20], "stages": stages,
-                "excluded_adr": excluded["adr"], "excluded_adr_override": excluded["adr_override"], "short_history": short_history}
+                "excluded_override": excluded["override"], "short_history": short_history}
 
     # ── Write + upload ────────────────────────────────────────────────────
     final = sorted(passed)
@@ -478,8 +436,7 @@ def build_universe(dry_run: bool = False) -> dict:
         "drive_reason": drive_reason,
         "errors": errors[:20],
         "stages": stages,
-        "excluded_adr": excluded["adr"],
-        "excluded_adr_override": excluded["adr_override"],
+        "excluded_override": excluded["override"],
     }
     print(f"[universe] Done: {len(final)} tickers "
           f"(+{len(added)} / -{len(removed)} / ={len(kept)})"
