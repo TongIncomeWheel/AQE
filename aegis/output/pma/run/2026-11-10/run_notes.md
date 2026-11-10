@@ -17,3 +17,7 @@
 - PURITY: ranking invariant to every bracket field: PASS.
 - SCORECARD: graded with history exports to 9 Nov; the 30 Oct to 5 Nov exports were not re-pulled, so those runs' rows are ungraded (declared).
 - INBOX-CLEAN: not run this run (declared).
+
+CARDS FALLBACK: the v3 page was NOT published (the plain-words gate FAILED on the v3 page or its words file: the rendered cards still show raw field names: close_above x1, pivot_high x1). The v2 page was published instead.
+
+CARDS FALLBACK: the v3 page was NOT published (the plain-words gate FAILED on the v3 page or its words file: the rendered cards still show raw field names: close_above x1, pivot_high x1). The v2 page was published instead.
