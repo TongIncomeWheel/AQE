@@ -103,6 +103,17 @@ def beat(summary: dict, now_utc: datetime | None = None, source: str | None = No
         "checked": summary.get("checked"), "new_triggers": summary.get("new_triggers"),
         "pma_fresh": (summary.get("pma") or {}).get("fresh"),
     })
+    # The email outcome of THIS cycle, kept where the status check can read it. A
+    # card digest that failed to send used to leave no trace outside a swallowed
+    # summary (state is advanced before the send, so it is never retried).
+    em = ((summary.get("_notice") or {}).get("email"))
+    if em is not None:
+        hb["last_email_attempt_utc"] = stamp
+        hb["last_email_ok"] = em.get("ok")
+        hb["last_email_reason"] = em.get("reason")
+        hb["last_email_subject"] = em.get("subject")
+        if em.get("ok"):
+            hb["last_email_sent_utc"] = stamp
     if source != BACKSTOP_SOURCE:
         hb["last_primary_utc"], hb["primary_source"] = stamp, source
     else:
@@ -111,6 +122,19 @@ def beat(summary: dict, now_utc: datetime | None = None, source: str | None = No
     if err:
         hb["write_error"] = err
     return hb
+
+
+def note_notice_problem(problem: str, now_utc: datetime | None = None) -> None:
+    """Record that this cycle's cockpit notice did not publish (loud, never
+    raises). Written only on a problem, so a healthy cycle costs no extra write."""
+    try:
+        hb, _ = load()
+        hb = dict(hb or {})
+        hb["last_notice_problem"] = problem
+        hb["last_notice_problem_utc"] = _iso(now_utc or datetime.now(timezone.utc))
+        _save(hb)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def deadman_status(hb: dict | None, now_utc: datetime, now_et: datetime | None = None,

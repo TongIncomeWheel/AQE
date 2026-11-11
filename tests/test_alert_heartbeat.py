@@ -111,3 +111,22 @@ def test_crashed_cycle_does_not_count_as_alive(monkeypatch, tmp_path):
     hb = H.beat({"ok": False, "crashed": True, "reason": "cycle crashed: X"}, now_utc=_utc(16, 0), source="hf")
     assert hb["last_primary_utc"] == _utc(14, 50).isoformat() and hb["last_crash_reason"]
     assert H.deadman_status(hb, _utc(16, 1))["stale"] is True
+
+
+def test_beat_records_email_outcome_and_notice_problem(tmp_path, monkeypatch):
+    """A failed card-digest send must leave a trace the status check can read."""
+    monkeypatch.setattr(H, "LOCAL_PATH", tmp_path / "hb.json")
+    monkeypatch.setattr(H, "load", lambda: (__import__("json").loads((tmp_path / "hb.json").read_text())
+                                            if (tmp_path / "hb.json").exists() else None, None))
+    monkeypatch.setattr(H, "_save", lambda hb: (tmp_path / "hb.json").write_text(__import__("json").dumps(hb)) and None)
+    bad = {"ok": True, "_notice": {"email": {"ok": False, "reason": "resend HTTP 403: nope", "subject": "S"}}}
+    hb = H.beat(bad, now_utc=_utc(16, 0), source="hf")
+    assert hb["last_email_ok"] is False and "403" in hb["last_email_reason"]
+    assert "last_email_sent_utc" not in hb
+    good = {"ok": True, "_notice": {"email": {"ok": True, "subject": "S2"}}}
+    hb = H.beat(good, now_utc=_utc(16, 15), source="hf")
+    assert hb["last_email_ok"] is True and hb["last_email_sent_utc"].startswith("2026-11-02T16:15")
+    quiet = H.beat({"ok": True}, now_utc=_utc(16, 30), source="hf")
+    assert quiet["last_email_sent_utc"].startswith("2026-11-02T16:15")     # a quiet cycle keeps the last send
+    H.note_notice_problem("notice publish: {'drive': 'failed: x'}", now_utc=_utc(16, 31))
+    assert "failed" in H.load()[0]["last_notice_problem"]

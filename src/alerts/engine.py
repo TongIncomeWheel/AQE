@@ -343,8 +343,18 @@ def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
         try:
             from src.alerts import notice
             notice.publish_from_summary(summary)
+            _pub = (summary.get("notice") or {}).get("publish") or {}
+            _bad = {k: v for k, v in _pub.items() if v not in ("ok", None, "not configured")}
+            if _bad:
+                from src.alerts import heartbeat as _hb
+                _hb.note_notice_problem(f"notice publish: {_bad}")
         except Exception as exc:  # noqa: BLE001
             summary["notice_error"] = f"{type(exc).__name__}: {exc}"
+            try:
+                from src.alerts import heartbeat as _hb
+                _hb.note_notice_problem(f"notice build/publish raised {summary['notice_error']}")
+            except Exception:  # noqa: BLE001
+                pass
     summary.pop("_notice", None)
     return summary
 
