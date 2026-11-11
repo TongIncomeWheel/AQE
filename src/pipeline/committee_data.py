@@ -63,7 +63,7 @@ MANIFEST_SCHEMA = "committee_data_manifest.v1"
 
 FUND_MAX_AGE_DAYS = 5          # a fully served entry younger than this is carried, with its own date
 MIN_COVERAGE = 0.95            # ONE rule (conductor + engineering 2026-11-03): any file under 95% served = PARTIAL = check.py FAILs (stop and page); at or above it, per-name gaps are declared and the run proceeds
-TIME_BUDGET_S = 900            # stop fetching after this; the rest are declared, not dropped quietly
+TIME_BUDGET_S = 1500           # stop fetching after this; the rest are declared, not dropped quietly. 900 (until 2026-11-11) cut the 11 Nov run after 1,201 calls: 468 names x ~4 calls at 80/min plus the closes scope needs ~1,300+ calls; the job cap is 120 min
 HOURLY_LOOKBACK_DAYS = 45      # ~30 sessions of 1-hour bars (7 per session)
 DAILY_SESSIONS = 300           # for the weekly bars
 DAILY_FETCH_DAYS = 470         # calendar days asked of FMP for a name the panel does not hold
