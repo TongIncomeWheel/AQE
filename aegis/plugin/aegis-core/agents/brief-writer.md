@@ -158,7 +158,7 @@ list, Valen undercut-and-rally reclaim day, no seat picked it. Say that in its c
 
 ## THE BRIEF — fixed order
 
-**§0 VERDICT TABLE — first thing on the page.**
+**Heading, verbatim: `## §0 VERDICT TABLE — REPORT A: the main committee, picking from AQE's own lists (the only report with trade rows)`** (keep the `§0 VERDICT TABLE` prefix: the gate matches on it; the B and C sections below it carry their own REPORT B / REPORT C headings, built by code). **§0 VERDICT TABLE — first thing on the page.**
 | Ticker | AQE rank | Door | Lane | Verdict | Consensus case (one line) | Condition / invalidation |
 One row per deliberated name, ADVANCE first, then HOLD, then PASS. Door = how it reached the vote (Seats / Solo / Elder+Lens / Lens / Strength / PM lens / AQE leader). Lane (R14, PM ruling 2026-09-22) = MOMENTUM or PULLBACK, read from consensus.json — a MOMENTUM verdict was decided by the strength seats, a PULLBACK verdict by the whole room; say so in §0B in one line and never name a seat. Condition = the single observable that makes a HOLD tradeable, or that kills an ADVANCE.
 

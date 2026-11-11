@@ -5,10 +5,10 @@
  "degraded_line": "> Section {title} unavailable: {reason}",
  "insert_before": "the macro section heading (§1); a module sits after the verdict block (§0, §0A, §0B) and before the macro section",
  "modules": [
-  {"id": "sweep_B", "title": "Sweep B (full-universe screens)", "anchor": "§0C", "enabled": true, "run_dir_suffix": "B",
+  {"id": "sweep_B", "title": "REPORT B: the same committee on a full-universe screen, with no AQE gate (scored only, not a trade row)", "anchor": "§0C", "enabled": true, "run_dir_suffix": "B",
    "inputs": ["consensus.json (the B run dir)", "seat_sets.json (the B run dir)", "consensus.json (report A)"],
    "rules": ["every name listed is in the B run's consensus", "only ADVANCE or HOLD-FOR-CONDITIONS names are listed", "the count line is present", "no name is a trade row"]},
-  {"id": "indicators_C", "title": "Indicators C (the committee reading the AQE indicators)", "anchor": "§0D", "enabled": true, "run_dir_suffix": "C",
+  {"id": "indicators_C", "title": "REPORT C: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row)", "anchor": "§0D", "enabled": true, "run_dir_suffix": "C",
    "inputs": ["consensus.json (the C run dir)", "consensus.json (report A)"],
    "rules": ["every name listed is in the C run's consensus", "only ADVANCE or HOLD-FOR-CONDITIONS names are listed", "the count line is present", "no name is a trade row"]}
  ]
