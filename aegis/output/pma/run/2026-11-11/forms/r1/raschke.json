@@ -1,0 +1,80 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "OHI",
+   "reason": "RETRACEMENT (C2): structure_shift ABOVE_STRUCTURE, structure 81.1, price only sma_distance_pct 4.96 off its average (not extended), mp_state STRONG + ACCELERATING. Stop 1 structural level at bracket.stop 47.33.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 81.1; structure_shift ABOVE_STRUCTURE; sma_distance_pct 4.96 -> trend intact, shallow distance from average = retracement shape", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C2"], "observed": "Holy-Grail-shaped first pullback; ADX not served, mp_state STRONG / mp_accel_state ACCELERATING used as declared proxy only", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "sma_distance_pct"]},
+    {"step": 3, "canon_ref": ["C7", "C2"], "observed": "declared: adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 47.33; bracket.stop_type 3; bracket.valid True; bracket.risk_pct 2.81; entry 48.7", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "entry"]}
+   ],
+   "falsifier": "A close below bracket.stop 47.33 (the structural level), or structure_shift turning BEARISH_CHOCH, proves the retracement read wrong."
+  },
+  {
+   "ticker": "HUM",
+   "reason": "RETRACEMENT inside a range (C2): structure 73.7, structure_shift RANGE, sma_distance_pct 7.89, elder_pattern ACCELERATION, div_state BULLISH, day_vol 1.44 participation. Stop bracket.stop 420.85.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "day_vol", "elder_pattern", "div_state", "mp_state", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 73.7; structure_shift RANGE; sma_distance_pct 7.89 -> held inside swing, moderate distance from average = retracement/range shape", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C12"], "observed": "mp_state BUILDING, mp_accel_state DECELERATING; day_vol 1.44; atr_14d 17.04; elder_pattern ACCELERATION and div_state BULLISH are advisory only", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol", "atr_14d"]},
+    {"step": 3, "canon_ref": ["C7", "C12"], "observed": "declared: adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 420.85; bracket.stop_type 4; bracket.valid True; bracket.risk_pct 3.93; entry 438.06", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "entry"]}
+   ],
+   "falsifier": "A close below bracket.stop 420.85, or structure_shift turning BEARISH_CHOCH, proves the setup wrong."
+  },
+  {
+   "ticker": "NYT",
+   "reason": "RETRACEMENT after break of structure (C2): structure 85.3, structure_shift BULLISH_BOS, sma_distance_pct 7.58, elder_pattern ACCELERATION, mp_state BUILDING. bracket.valid False; my own level entry 72.58 less atr_14d 2.44 = 70.14.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "elder_pattern", "atr_14d", "entry", "bracket.valid"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 85.3; structure_shift BULLISH_BOS; sma_distance_pct 7.58 -> broke structure, now a moderate pullback distance from average", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C2"], "observed": "first-pullback-after-fresh-high shape; ADX not served; mp_state BUILDING, mp_accel_state DECELERATING (decelerating pullback momentum) as declared proxy", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "sma_distance_pct"]},
+    {"step": 3, "canon_ref": ["C7", "C2"], "observed": "declared: adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, no bracket.stop in packet; own level = entry 72.58 minus atr_14d 2.44 = 70.14, a volatility level not a swing extreme, stated as mine", "verdict": "partial", "fields": ["bracket.valid", "entry", "atr_14d"]}
+   ],
+   "falsifier": "A close below 70.14 (my own level, entry less atr_14d), or structure_shift turning BEARISH_CHOCH, proves the retracement read wrong."
+  },
+  {
+   "ticker": "HSIC",
+   "reason": "RETRACEMENT (C2): structure_shift BULLISH_BOS, sma_distance_pct 3.08 (price near its average), elder_pattern CORRECTION_REENTRY, mp_state BUILDING + ACCELERATING; structure only 63.2. bracket.valid False; my level entry 88.74 less atr_14d 2.71 = 86.03.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "elder_pattern", "atr_14d", "entry", "bracket.valid"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 63.2; structure_shift BULLISH_BOS; sma_distance_pct 3.08 -> pullback to the average after a break = retracement shape", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C2"], "observed": "ADX not served; mp_state BUILDING, mp_accel_state ACCELERATING as declared proxy; structure 63.2 is middling; elder_pattern CORRECTION_REENTRY advisory", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "sma_distance_pct"]},
+    {"step": 3, "canon_ref": ["C7", "C2"], "observed": "declared: adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, no bracket.stop in packet; own level = entry 88.74 minus atr_14d 2.71 = 86.03, a volatility level not a swing extreme, stated as mine", "verdict": "partial", "fields": ["bracket.valid", "entry", "atr_14d"]}
+   ],
+   "falsifier": "A close below 86.03 (my own level, entry less atr_14d), or structure_shift turning BEARISH_CHOCH, proves the retracement read wrong."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "TIGHTEN", "line": "structure 73.7, structure_shift RANGE, sma_distance_pct 9.06, mp_state FADING, atr_caution True, no stop order; put a structural stop in (my level entry 123.52 less atr_14d 3.85 = 119.67) and protect the open gain (C19)."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "structure 87.4 with structure_shift BULLISH_BOS keeps the thesis, but sma_distance_pct 16.77 is extended and mp_accel_state DECELERATING; no stop order, so place one (my level entry 101.59 less atr_14d 3.71 = 97.88)."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "structure 28.0, sma_distance_pct -2.86 (below its average), div_state BEARISH with div_bear_count 4, atr_caution True; it fits none of my four setup types, so the case for holding is gone."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Not present in my packet; the squeeze quality flag and range-contraction proxy for the breakout family could not be read, so I did not nominate any breakout setup."},
+  {"field": "bracket.stop", "impact": "Null for NYT and HSIC (bracket.valid False); I named my own atr-based level rather than a swing extreme."},
+  {"field": "rank", "impact": "Null for held RBRK; no rank read on that name."},
+  {"field": "lens", "impact": "Null for held RBRK; no lens read on that name."}
+ ],
+ "declarations": [
+  "setup_type: retracement (C2) on every nomination; no test, climax or breakout nominated",
+  "adx: NOT_SERVED (C7, C8)",
+  "stochastic_kd: NOT_SERVED (C6)",
+  "n_day_extreme: sma_distance_pct + structure_shift (substitute, C3/C4)",
+  "bar_range_history: NOT_SERVED (C12, C13)",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16)",
+  "No ledger memory block was supplied; no standing lesson applies."
+ ],
+ "shortfall_reason": "Only four names fit the retracement family with a defensible structure; the rest fit none of the four setup types, fail my structure read, or are extended. Fewer than six, not padded (R33)."
+}

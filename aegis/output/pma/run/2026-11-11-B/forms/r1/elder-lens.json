@@ -1,0 +1,50 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-11",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "GMAB",
+   "reason": "R3 pullback timer in a rising market: force_index_ema_2 -825052.01 under zero while price_ema_slope 0.3856 rises, weekly UP, force_index_ema_13 14609377.06 bullish zone, entry 54.07 inside channel_upper 59.3. No colour transition (C24 plateau 7s), so conviction held down.",
+   "fields_cited": ["elder", "elder_5d", "impulse_colour_last_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "entry", "channel_upper"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "impulse_colour_last_bar BLUE, elder 7.0 (>=7 so not red); weekly_trend_direction UP", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 7, 7, 7] flat, no permission event; colour BLUE/BLUE no change; entry rests on R3 not C4; plateau is C24 (unsourced)", "verdict": "partial", "fields": ["elder_5d"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "price_ema_slope 0.3856 rising; force_index_ema_13 14609377.06 >0; elder_pattern null (not INTERRUPTED, not readable)", "verdict": "pass", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "entry 54.07 vs ma_20 47.73 (extended above value). Own invalidation: ma_20 47.73 value-zone MA, below it the thesis is wrong", "verdict": "partial", "fields": ["elder"]},
+    {"step": 5, "canon_ref": ["C22", "C24"], "observed": "elder_5d [7, 7, 7, 7, 7], mp 96.0, mp_state 2 (FADING label); no transition, so conviction 3 not higher", "verdict": "partial", "fields": ["elder_5d", "mp", "mp_state"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not held; elder_5d[-1] 7 not below elder_5d[-2] 7, no drop trigger", "verdict": "pass", "fields": ["elder_5d"]}
+   ]
+  },
+  {
+   "ticker": "MSFT",
+   "reason": "Textbook value-zone pullback: force_index_ema_2 -141437134.53 under zero, price_ema_slope 0.1167 rising, weekly UP, entry 533.16 at ma_20 531.09, well inside channel_upper 616.02. Weak: mp 28.0, elder_pattern INTERRUPTED, green went to BLUE. Conviction 2.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp", "impulse_colour_last_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "weekly_trend_direction", "entry", "channel_upper"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "impulse_colour_last_bar BLUE (not red); elder 4.0 is ambiguous on its own; weekly_trend_direction UP", "verdict": "pass", "fields": ["elder"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [6, 7, 5, 9, 4] last 4 below prior 9, no permission event; colour GREEN to BLUE; entry rests on R3 (C6) only", "verdict": "partial", "fields": ["elder_5d"]},
+    {"step": 3, "canon_ref": ["C9", "C10"], "observed": "price_ema_slope 0.1167 rising, force_index_ema_13 19990136.75 >0; but elder_pattern 4 = INTERRUPTED so trend leg treated as failed per card", "verdict": "partial", "fields": ["elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "entry 533.16 vs ma_20 531.09, ma_50 517.8. Own invalidation: ma_50 517.8, a close under it breaks value-zone", "verdict": "pass", "fields": ["elder"]},
+    {"step": 5, "canon_ref": ["C22", "C24"], "observed": "mp 28.0 weak, mp_state 2 (FADING label), elder_5d falling to 4; murky tape so conviction 2", "verdict": "partial", "fields": ["mp", "mp_state", "elder_5d"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not held; elder_5d[-1] 4 < elder_5d[-2] 9 is a drop but R7 applies to held names only", "verdict": "pass", "fields": ["elder_5d"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "KEEP", "line": "elder_5d [7, 8, 5, 4, 7] last 7 above prior 4, colour GREEN from BLUE, no single-bar drop; but elder_pattern INTERRUPTED so watch the 5 to 4 weakness; own level ma_50 113.26."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "elder_5d [7, 7, 7, 7, 10] rising, colour GREEN from BLUE, no single-bar drop; entry 101.59 near channel_upper 102.91 so no adds; ma_status PENDING_UNCLEAR deal news is an event risk."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "elder_5d [0, 0, 0, 3, 3] impulse BLUE, price_ema_slope -1.169 falling, force_index_ema_13 -5714520.31 bearish zone, choch_state 1 BEARISH, mp 0.0: slope falling permits shorts only (C10); no stop order exists."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "GMAB elder_pattern null, so the INTERRUPTED/CORRECTION_REENTRY read (R8) could not be made; trend leg rested on price_ema_slope only."}
+ ],
+ "declarations": [
+  "Standing aside on the rest: STGW, VSXY, MRNA fire R3 but sit extended above value or near channel_upper with no permission event; CDNA fires R3 but elder_pattern INTERRUPTED and elder_5d has no last-bar transition.",
+  "BOX shows red giving way (RED to BLUE) but elder 2.0, force_index_ema_2 906540.15 above zero (no R3 dip) and elder_pattern INTERRUPTED: no entry timing.",
+  "No ledger memory block was injected; no standing lesson applies.",
+  "No bracket field was used as a reason for or against any name; own invalidation levels are named from ma_20/ma_50."
+ ],
+ "shortfall_reason": "Two nominations, not three: no other name offers an Elder permission event (last elder_5d >= 7 after <= 6) on a rising average inside value; padding would only add extended or INTERRUPTED tapes."
+}

@@ -1,0 +1,1803 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "Seat reads only AQE composites and subcomponents. Returns, extension, lens, MTF, U&R, setups, brackets and the Steenbarger MA-stack and divergence findings are off my menu and not used as reasons.",
+  "No challenge in the packet names aqe-quant, so challenge_reply is null throughout. The six-names-in-one-band anchor note is read: conviction here traces to named sub-scores, not composite rank.",
+  "sc_m_gates, sc_p_gates and pipe_rank are null on every row; gates are read from sc_m_gate_detail. A gate miss is a reading, never a reject (R1).",
+  "No challenge in the packet names aqe-quant, so challenge_reply is null throughout.",
+  "Held names EBAY, GPN, RBRK carry their R1 verdicts (TIGHTEN, KEEP, EXIT-CASE). A gate miss is a reading, never a reject (R1).",
+  "No challenge in the packet names aqe-quant, so challenge_reply is null throughout. The six-names-in-one-band anchor note is read: AER, LION, STZ, DLTR conviction traces to named sub-scores, not composite rank.",
+  "Round-1 nominations AER 4, LION 4, STZ 3, DLTR 3 are unchanged. A gate miss is a reading, never a reject (R1)."
+ ],
+ "data_gaps": [
+  {
+   "field": "pipe_rank",
+   "impact": "null on every row; path read from subcomponents.pipe.* only"
+  },
+  {
+   "field": "sc_m_gates",
+   "impact": "null on every row; gate read from sc_m_gate_detail"
+  },
+  {
+   "field": "subcomponents.pipe.*",
+   "impact": "BOBS pipe sub-scores and pipe_tier are null (no 12-month history); path quality unread for BOBS"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "`flow` 90.8 and `energy` 84.0, the two heaviest engines, lead; `structure` 73.7 holds and `subcomponents.flow.accum_score` 7.5 shows accumulation. `mp` 48.0 is the one engine under its gate floor (`sc_m_gate_detail` 17) with `subcomponents.mp.abs_mom_score` 10.0 and `mp_accel_state` DECELERATING. Carried with mp named as the weak link.",
+   "case": {
+    "for": "`flow` 90.8, `energy` 84.0, `structure` 73.7, `elder` 10.0; `subcomponents.pipe.pipe_tier` A-TIER.",
+    "against": "`mp` 48.0 fails its floor; `subcomponents.mp.roc_zscore` 0.02 is an ordinary month; `subcomponents.structure.rs_accel` -9.11 lead shrinking.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20, flow still at or over its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp back over its floor with abs_mom_score rising would lift this; flow failing would lower it.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 63.2, `energy` 68.1, `structure` 72.6, `mp` 93.0, `elder` 10.0, all gates pass (`sc_m_gate_detail` 18); `mp_accel_state` ACCELERATING, `subcomponents.mp.abs_mom_score` 26.0. Thin spot: `flow` is the weakest at 63.2 with `subcomponents.flow.flow_score` 9.0 and `subcomponents.flow.ha_quality_count` 4.0 (messy candles).",
+   "case": {
+    "for": "Four engines above floors; `subcomponents.structure.rs_vs_spy` 20.4 beating the market; A-TIER path.",
+    "against": "Flow only just clears with choppy candles; `subcomponents.structure.rs_accel` -1.32 lead flat to shrinking.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20, flow still at or over its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow dropping under its floor, or mp_accel_state turning DECELERATING with rs_accel more negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Broad but thin: `flow` 64.5, `energy` 63.0, `structure` 63.2 each barely clear their floors; `mp` 93.0. `subcomponents.flow.ext_score` -5.0 is a climax penalty, `subcomponents.structure.rs_accel` -11.48 shows the lead shrinking, `mp_accel_state` DECELERATING. Real support, wearing at the edges.",
+   "case": {
+    "for": "All gates pass (`sc_m_gate_detail` 18); `subcomponents.structure.rs_vs_spy` 33.34; `elder` 10.0; A-TIER.",
+    "against": "Three engines near floors, extension penalty -5.0, rs_accel -11.48, decelerating.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 while ext_score is no worse than now.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or any engine loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ext_score back to zero or above and rs_accel turning positive.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad and clean: `flow` 78.9, `energy` 67.2, `structure` 87.4, `mp` 93.0, `elder` 10.0, all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.abs_mom_score` 30.0 at ceiling and `subcomponents.mp.roc_zscore` 2.15 exceptional; `subcomponents.energy.exhaustion_score` 10.0 on a young run (silent); A-TIER.",
+   "case": {
+    "for": "Four engines above floors, ceiling momentum size, accelerating, `subcomponents.pipe.pr_ret_12m` 20.0 path.",
+    "against": "`subcomponents.structure.rs_accel` -3.68 lead eroding; `subcomponents.energy.squeeze_score` 0.0; range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or mp_accel_state DECELERATING with rs_accel more negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel falling further while mp_accel_state turns DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.structure.rs_accel` -3.68 (lead eroding while `subcomponents.structure.rs_vs_spy` 23.0), `subcomponents.energy.squeeze_score` 0.0 no coil, `subcomponents.energy.en_pos50` 99.83 at the range top.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 82.9, `energy` 68.9, `structure` 84.2, `mp` 93.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 17.48 with `subcomponents.structure.rs_accel` 8.11 (strong and improving); `subcomponents.mp.roc_zscore` 2.77 and `subcomponents.mp.rel_mom_score` 25.0 confirm; exhaustion test live (`subcomponents.energy.en_trend_bars` 17.0) and `subcomponents.energy.exhaustion_score` 10.0 clean.",
+   "case": {
+    "for": "R2 broad, R5 strength improving, R9 precision sub-scores confirm, A-TIER.",
+    "against": "`elder` 7.0 is the lowest reading; `subcomponents.energy.squeeze_score` 0.0; near the range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative with DECELERATING, or exhaustion wear appearing.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`elder` 7.0 is the lowest engine reading, `subcomponents.energy.squeeze_score` 0.0 shows no coil, and `subcomponents.energy.en_pos50` 97.38 sits near the range top.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 88.2, `energy` 70.6, `structure` 74.7, `mp` 97.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 25.08; exhaustion test live (`subcomponents.energy.en_trend_bars` 27.0) and `subcomponents.energy.exhaustion_score` 10.0 clean; `subcomponents.mp.roc_zscore` 2.3.",
+   "case": {
+    "for": "Four engines well above floors, accelerating, clean live exhaustion test, B-STRONG path.",
+    "against": "`subcomponents.structure.rs_accel` 0.93 barely positive; `subcomponents.energy.en_pos50` 100.0 at the extreme.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative with DECELERATING, or exhaustion wear appearing.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.structure.rs_accel` 0.93 is barely positive, `subcomponents.energy.en_pos50` 100.0 is the extreme of the 50-day range, and `subcomponents.energy.squeeze_score` 0.0.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "`flow` 100.0 (lifted by `subcomponents.flow.ext_score` 5.0 breakout bonus and `subcomponents.flow.volume_score` 7.5), `energy` 66.4, `structure` 81.5, `mp` 75.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.roc_zscore` 3.15. Weak leg: `subcomponents.mp.mp_adx_score` 0.0 with `subcomponents.mp.adx_val` 18.84, so trend strength is not there yet.",
+   "case": {
+    "for": "Four engines above floors, accelerating, exceptional month, A-TIER.",
+    "against": "mp built on move size and relative momentum only; flow 100.0 partly bonus-lifted; energy weakest at 66.4.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp_adx_score rising off zero would lift this; ext_score turning negative would lower it.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 73.7, `energy` 73.9, `structure` 93.7, `mp` 80.0, all gates pass; `subcomponents.energy.squeeze_score` 12.5 (coiled); `subcomponents.structure.rs_vs_spy` 11.75 with `subcomponents.structure.rs_accel` 1.78. Wear: `subcomponents.energy.en_trend_bars` 26.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 7.0 shows it; `mp_accel_state` DECELERATING.",
+   "case": {
+    "for": "R2 broad, coil 12.5, structure 93.7, R5 strength improving.",
+    "against": "R4 live exhaustion wear (7.0 at 26 bars); decelerating; `subcomponents.mp.roc_zscore` 0.5 ordinary month.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls below 7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score dropping further, or rs_accel turning negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 78.9, `energy` 66.4, `structure` 76.8, `mp` 86.0, `elder` 9.0; all gates pass; exhaustion test live (`subcomponents.energy.en_trend_bars` 24.0) and `subcomponents.energy.exhaustion_score` 10.0 clean; A-TIER. Cautions: `mp_accel_state` DECELERATING and `subcomponents.structure.rs_accel` -3.2 (lead shrinking while `subcomponents.structure.rs_vs_spy` 14.36).",
+   "case": {
+    "for": "R2 broad with a clean live exhaustion test and A-TIER path.",
+    "against": "Decelerating, lead shrinking (R6), `subcomponents.energy.squeeze_score` 4.0 little coil.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel more negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Broad on paper (`flow` 68.4, `energy` 79.0, `structure` 63.2, `mp` 66.0) but three engines sit near floors. `subcomponents.mp.abs_mom_score` 10.0 and `subcomponents.mp.roc_zscore` 0.41 say the month's move is ordinary; `subcomponents.structure.rs_accel` -5.02 and `mp_accel_state` DECELERATING say it is slowing. `subcomponents.energy.squeeze_score` 8.5 coil is the case for.",
+   "case": {
+    "for": "All gates pass; coil 8.5; exhaustion_score 10.0; `elder` 9.0.",
+    "against": "Ordinary momentum size, shrinking lead, decelerating, lowest composite of the group.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 with rs_accel no worse.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or any engine loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "abs_mom_score rising and rs_accel turning positive.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 84.2, `energy` 66.4, `structure` 96.8, `mp` 87.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 8.21 with `subcomponents.structure.rs_accel` 11.28 improving; `subcomponents.mp.abs_mom_score` 30.0, `subcomponents.mp.roc_zscore` 2.27.",
+   "case": {
+    "for": "R2 broad, R5 strength improving, accelerating, ceiling momentum size.",
+    "against": "`subcomponents.energy.squeeze_score` 0.0; `subcomponents.energy.en_pos50` 98.26 at the range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or mp_accel_state DECELERATING with rs_accel negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative with DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.energy.en_trend_bars` 11.0 is under the live threshold, so `subcomponents.energy.exhaustion_score` 10.0 is silence not a clean bill; `subcomponents.energy.squeeze_score` 0.0; `subcomponents.energy.en_pos50` 98.26 at the top.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 65.8, `energy` 84.0, `structure` 63.2, `mp` 80.0; all gates pass; `subcomponents.energy.squeeze_score` 12.5 coil; exhaustion test live (`subcomponents.energy.en_trend_bars` 28.0) and `subcomponents.energy.exhaustion_score` 10.0 clean. Cautions: `subcomponents.flow.accum_score` 1.5, `subcomponents.structure.rs_accel` -9.62, `mp_accel_state` DECELERATING, `elder` 7.0.",
+   "case": {
+    "for": "R2 broad, energy 84.0 with coil, clean live exhaustion test, A-TIER.",
+    "against": "Thin accumulation, shrinking lead (R6), decelerating, `elder` 7.0.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "accum_score staying near zero with rs_accel more negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OHI",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 71.1, `energy` 62.2, `structure` 81.1, `mp` 80.0; all gates pass; B-STRONG with `mp_accel_state` ACCELERATING (R8); `subcomponents.structure.rs_vs_spy` 7.52 with `subcomponents.structure.rs_accel` 3.79. Soft: `energy` 62.2 near its floor, `subcomponents.flow.ha_quality_count` 3.0 choppy candles, `elder` 7.0.",
+   "case": {
+    "for": "R2 broad, R5 and R8 both met, `subcomponents.mp.roc_zscore` 1.86.",
+    "against": "Energy at its floor, choppy candles, lowest-tier composite.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or energy loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "energy dropping under its floor or rs_accel turning negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Broad but thin: `flow` 72.4, `energy` 63.9, `structure` 61.1, `mp` 84.0; all gates pass; `subcomponents.mp.roc_zscore` 2.32. But `subcomponents.structure.rs_vs_spy` 1.93 barely beats the market (`subcomponents.structure.rs_spy_score` 6.0), `mp_accel_state` DECELERATING, and structure and energy sit near floors.",
+   "case": {
+    "for": "All gates pass, exceptional month 2.32, A-TIER path.",
+    "against": "Barely beats the market; decelerating; two engines near floors.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or structure loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_vs_spy widening with mp_accel_state back to ACCELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SYK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Broad: `flow` 77.6, `energy` 63.0, `structure` 64.2, `mp` 67.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_accel` 17.67 improving from `subcomponents.structure.rs_vs_spy` 0.72 (only just beating the market). Path is the soft spot: `subcomponents.pipe.pipe_tier` C-WATCH, `subcomponents.pipe.pr_ret_12m` 4.0; `elder` 7.0.",
+   "case": {
+    "for": "R2 broad, accelerating, rs_accel 17.67 strongly improving.",
+    "against": "Lead is only 0.72 so far; C-WATCH path with a weak 12-month leg; engines near floors; lowest composite tier.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or rs_vs_spy turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_vs_spy widening with rs_accel staying positive.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "`structure` 72.6, `mp` 86.0 and `energy` 64.7 carry; `flow` 56.6 misses its gate floor (`sc_m_gate_detail` 9, flow the one failing engine) with `subcomponents.flow.flow_score` 6.5 and `subcomponents.flow.cmf` -0.14 (closes near the lows). `subcomponents.structure.rs_accel` 4.75 improving; exhaustion test live (`subcomponents.energy.en_trend_bars` 24.0) and `subcomponents.energy.exhaustion_score` 10.0 clean.",
+   "case": {
+    "for": "Three engines above floors, R5 strength improving, clean live exhaustion test, A-TIER.",
+    "against": "Flow, the heaviest engine, fails its floor with negative close-in-range; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 once flow is back at its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow falls further.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow back over its floor with cmf positive.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 96.1, `energy` 66.4, `structure` 92.6, `mp` 75.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 16.6 with `subcomponents.structure.rs_accel` 10.52; `subcomponents.mp.roc_zscore` 2.23; `subcomponents.flow.ext_score` 3.0 breakout bonus; A-TIER.",
+   "case": {
+    "for": "R2 broad, R5 improving, accelerating, breakout bonus on flow.",
+    "against": "`subcomponents.mp.mp_adx_score` 0.0; no coil; young run.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp_adx_score stuck at zero with rs_accel turning negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.mp.mp_adx_score` 0.0 (`subcomponents.mp.adx_val` 18.53: trend strength not yet real), `subcomponents.energy.squeeze_score` 0.0, and `subcomponents.energy.en_trend_bars` 5.0 is a young run so exhaustion_score 10.0 is silence.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 82.9, `energy` 68.9, `structure` 86.3, `mp` 97.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 21.58 with `subcomponents.structure.rs_accel` 4.24; `subcomponents.mp.roc_zscore` 2.57. Stretch flags: `subcomponents.pipe.pr_rsi_score` 10.0 (overbought penalty), `subcomponents.flow.mfi` 93.02, `subcomponents.flow.ha_quality_count` 3.0 (choppy candles).",
+   "case": {
+    "for": "R2 broad, R5 improving, accelerating, B-STRONG path.",
+    "against": "Overbought RSI penalty, hot money-flow index, choppy candles, near the range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or ext_score turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ext_score turning negative or ha_quality_count staying low.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 78.9, `energy` 65.5, `structure` 74.7, `mp` 97.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.roc_zscore` 3.0. Wear: `subcomponents.energy.en_trend_bars` 16.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 7.0 shows it; `subcomponents.structure.rs_accel` -2.23 lead eroding; `subcomponents.pipe.pr_rsi_score` 10.0; `subcomponents.pipe.pipe_tier` C-WATCH.",
+   "case": {
+    "for": "R2 broad, exceptional month 3.0, accelerating, `elder` 10.0.",
+    "against": "R4 live exhaustion wear 7.0, eroding lead (R6), overbought RSI penalty, C-WATCH path.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls below 7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score falling further would flip me to oppose.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and divergence"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 61.8, `energy` 74.8, `structure` 73.7, `mp` 70.0, `elder` 10.0; all gates pass; B-STRONG with `mp_accel_state` ACCELERATING (R8); `subcomponents.energy.squeeze_score` 12.5 coil. Cautions: `subcomponents.structure.rs_accel` -13.68 lead shrinking; `subcomponents.flow.volume_score` 2.0 volume not picking up; flow near its floor.",
+   "case": {
+    "for": "R2 broad, coiled, accelerating on a B-STRONG path.",
+    "against": "Shrinking lead (R6), thin volume, flow barely over its floor, young run.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "volume_score staying low with rs_accel more negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Weak money plus wear: `flow` 52.6 misses its gate floor (`sc_m_gate_detail` 9) with `subcomponents.flow.accum_score` 0.0 and `subcomponents.flow.mfi` 45.85; `subcomponents.energy.en_trend_bars` 19.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 7.0 shows wear; `elder` 7.0, `mp_accel_state` DECELERATING. Support leans on `structure` 75.8 and `mp` 93.0 only.",
+   "opposing_case": "`structure` 75.8, `mp` 93.0, `subcomponents.structure.rs_accel` 16.06 improving, `energy` 67.2 clears, and the gate misses on flow alone.",
+   "case": {
+    "for": "Two strong engines and an improving lead.",
+    "against": "Flow fails with no accumulation, live exhaustion wear, decelerating.",
+    "entry_trigger": "Would need flow back at its floor and exhaustion_score back to 10 before I could support.",
+    "wrong_if": "My oppose is wrong if flow recovers over its floor with accum_score positive while exhaustion_score returns to 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow over its floor with accumulation, and exhaustion wear gone.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "NI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Support is narrow: `flow` 51.3 misses its gate floor (`sc_m_gate_detail` 9) with `subcomponents.flow.accum_score` 0.0 and `subcomponents.flow.volume_score` 0.0, so the move has no money flow behind it; `energy` 61.3 only just clears. `structure` 81.1 and `mp` 89.0 carry the headline; `mp_accel_state` DECELERATING.",
+   "opposing_case": "`structure` 81.1, `mp` 89.0, `subcomponents.mp.adx_val` 49.21 very strong trend, `subcomponents.energy.exhaustion_score` 10.0 clean over 26 bars, `subcomponents.structure.rs_accel` 2.93 positive.",
+   "case": {
+    "for": "Strong trend reading and a clean live exhaustion test.",
+    "against": "No accumulation or volume behind it; flow fails; energy at its floor; decelerating.",
+    "entry_trigger": "Would need flow back over its floor with accum_score and volume_score above zero.",
+    "wrong_if": "My oppose is wrong if flow recovers over its floor with volume_score rising.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "accumulation and volume appearing in the flow sub-scores.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "TGT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "`flow` 73.7 and `energy` 74.8 (heaviest engines) are solid and `structure` 63.2 clears; `mp` 52.0 misses its floor (`sc_m_gate_detail` 17) with `subcomponents.mp.mp_adx_score` 0.0 (`subcomponents.mp.adx_val` 15.95) and `subcomponents.mp.trend_score` 8.0. `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_accel` -0.02 flat.",
+   "case": {
+    "for": "Flow and energy strong, accelerating, A-TIER, `elder` 10.0.",
+    "against": "mp fails its floor, no trend strength, price not aligned over its averages.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 as mp recovers its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow or energy loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp back over its floor with mp_adx_score above zero.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "All gates pass (`sc_m_gate_detail` 18) but margins are thin: `flow` 65.8, `energy` 63.0, `structure` 71.6, `mp` 67.0. `subcomponents.flow.ext_score` -5.0 is a climax penalty; `subcomponents.structure.rs_accel` -60.41 says the lead is shrinking sharply though `subcomponents.structure.rs_vs_spy` 89.21 is large; `subcomponents.mp.roc_zscore` 0.25.",
+   "case": {
+    "for": "All gates pass, accelerating, huge relative strength, `elder` 10.0.",
+    "against": "Extension penalty, lead shrinking sharply (R6), ordinary month on roc_zscore, thin margins.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 with ext_score back to zero.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or any engine loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ext_score back to zero and rs_accel off its lows.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SOLV",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Headline rests on `flow` 88.2; two engines miss their gate floors (`sc_m_gate_detail` 13): `energy` 59.7 and `mp` 48.0 with `subcomponents.mp.mp_adx_score` 0.0 and `subcomponents.mp.trend_score` 8.0. `subcomponents.energy.squeeze_score` 0.0; `structure` 61.1 only just clears; `sc_momentum` 66.2.",
+   "opposing_case": "`flow` 88.2 with `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 5.5, `elder` 10.0, `mp_accel_state` ACCELERATING, `subcomponents.structure.rs_accel` 1.29 positive.",
+   "case": {
+    "for": "Strong money flow and an accelerating, if low, persistence read.",
+    "against": "Two engines under floors, no trend strength, price not aligned, one engine carrying.",
+    "entry_trigger": "Would need energy and mp back over their floors before I could support.",
+    "wrong_if": "My oppose is wrong if mp and energy both recover over their floors.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp over its floor with mp_adx_score above zero.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "NYT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "`flow` 36.8 is the weakest engine by far (`sc_m_gate_detail` 9): `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.skew_score` 0.0, `subcomponents.flow.cmf` -0.16, `subcomponents.flow.mfi` 42.43, so there is no money behind the price; `mp` 58.0 barely clears and `mp_accel_state` DECELERATING. Headline held by `structure` 85.3 and `energy` 76.5.",
+   "opposing_case": "`structure` 85.3, `energy` 76.5, `subcomponents.energy.squeeze_score` 10.0 coil, `elder` 10.0, A-TIER path.",
+   "case": {
+    "for": "Coiled, strong structure, clean elder, A-TIER path.",
+    "against": "Money flow far under its floor with no accumulation; mp barely clears; decelerating.",
+    "entry_trigger": "Would need flow back over its floor with accumulation before I could support.",
+    "wrong_if": "My oppose is wrong if flow recovers over its floor and accum_score turns positive.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "accumulation and positive cmf in the flow sub-scores.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "HSIC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "`flow` 88.2 and `energy` 79.0 are strong and `structure` 63.2 clears; `mp` 52.0 misses its floor (`sc_m_gate_detail` 17) with `subcomponents.mp.mp_adx_score` 0.0, `subcomponents.mp.di_bullish` False (sellers lead directional pressure) and `subcomponents.mp.trend_score` 8.0; `subcomponents.structure.wk_score` 5.0 is a weak weekly trend. `mp_accel_state` ACCELERATING.",
+   "case": {
+    "for": "Flow and energy strong, accelerating, A-TIER, `elder` 10.0.",
+    "against": "mp fails its floor; sellers lead directional pressure; weak weekly trend.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 as mp recovers its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow or energy loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "di_bullish turning True with mp back over its floor.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Held, KEEP-grade: `flow` 84.2, `energy` 68.9, `structure` 87.4, `mp` 93.0, `elder` 10.0, all gates pass; `subcomponents.structure.rs_vs_spy` 15.35 with `subcomponents.structure.rs_accel` 12.33 improving; `subcomponents.mp.abs_mom_score` 30.0, `subcomponents.mp.roc_zscore` 2.38; `subcomponents.energy.exhaustion_score` 10.0.",
+   "case": {
+    "for": "R2 broad, R5 improving, ceiling momentum size, B-STRONG path.",
+    "against": "`mp_accel_state` DECELERATING; exhaustion test not yet live; no coil.",
+    "entry_trigger": "Hold while elder_ge:7 and close_above:ma_20 at the EOD close.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or rs_accel turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`mp_accel_state` DECELERATING; `subcomponents.energy.en_trend_bars` 10.0 is under the live threshold so exhaustion_score 10.0 is silence; `subcomponents.energy.squeeze_score` 0.0.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Held, TIGHTEN-grade carry: `flow` 56.6 misses its gate floor (`sc_m_gate_detail` 9) with `subcomponents.flow.flow_score` 8.5 and `subcomponents.flow.mfi` 55.63; `subcomponents.structure.rs_accel` -15.6 says the lead is shrinking though `subcomponents.structure.rs_vs_spy` 25.31 is positive. `energy` 85.7, `structure` 73.7, `mp` 73.0 still support; exhaustion test live (`subcomponents.energy.en_trend_bars` 25.0), `subcomponents.energy.exhaustion_score` 10.0 clean.",
+   "conviction_change": "R1 held review was TIGHTEN on the same flow and rs_accel read; filed here as a low-conviction SUPPORT carry, not a change of read.",
+   "case": {
+    "for": "Three engines above floors, energy 85.7, coil 12.5, clean live exhaustion test, A-TIER.",
+    "against": "Flow under its floor, lead shrinking sharply (R6), `mp_accel_state` DECELERATING, `elder` 7.0.",
+    "entry_trigger": "Hold while elder_ge:7 and close_above:ma_20 at the EOD close; add nothing until flow is back at its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow falls further.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow back over its floor would lift it; rs_accel falling further would flip me to exit.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Held, EXIT-CASE: `sc_momentum` 28.4 with every engine under its floor (`sc_m_gate_detail` 1): `flow` 37.0, `energy` 39.0, `structure` 28.0, `mp` 0.0, `elder` 3.0; `subcomponents.mp.abs_mom_score` 0.0, `subcomponents.mp.di_bullish` False, `subcomponents.structure.rs_accel` -15.28 shrinking.",
+   "opposing_case": "Only case for: `subcomponents.structure.rs_vs_spy` 11.18 still positive and `subcomponents.pipe.pr_ret_12m` 12.0 shows a strong past year; neither is a current engine reading.",
+   "case": {
+    "for": "Positive three-month relative strength and a strong 12-month leg.",
+    "against": "All five engines fail, zero momentum size, sellers lead, lead shrinking.",
+    "entry_trigger": "No entry; would need at least three engines back over their floors.",
+    "wrong_if": "My oppose is wrong if flow, energy and structure all recover over their floors.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Three or more engines back over their floors with elder_ge:7.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 72.4, `energy` 68.9, `structure` 94.7, `mp` 97.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 7.53 with `subcomponents.structure.rs_accel` 15.64 improving; `subcomponents.mp.roc_zscore` 2.21; exhaustion live (`subcomponents.energy.en_trend_bars` 19.0) and clean at 10.0. Conflict inside flow: `subcomponents.flow.mfi` 30.93 reads sellers in control and `subcomponents.flow.cmf` -0.03, though `subcomponents.flow.accum_score` 7.5 lifts the score.",
+   "case": {
+    "for": "R2 broad, R5 improving, accelerating, clean live exhaustion test, A-TIER.",
+    "against": "Flow headline is held up by accumulation and volume while mfi and cmf read sellers; `elder` 7.0.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 with flow still at or over its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mfi staying under 40 with cmf more negative would lower it.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 84.2, `energy` 84.0, `structure` 74.7, `mp` 76.0; all gates pass; `subcomponents.energy.squeeze_score` 8.5 coil; exhaustion live (`subcomponents.energy.en_trend_bars` 24.0) and clean at 10.0. Cautions: `mp_accel_state` DECELERATING, `subcomponents.structure.rs_accel` -3.43 shrinking lead over `subcomponents.structure.rs_vs_spy` 17.75, `subcomponents.mp.roc_zscore` 0.99, `elder` 7.0.",
+   "case": {
+    "for": "R2 broad with the two heaviest engines at 84, coil, clean live exhaustion test, A-TIER.",
+    "against": "Decelerating, shrinking lead (R6), ordinary month, `elder` 7.0.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel more negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MAC",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 81.6, `energy` 61.3, `structure` 84.2, `mp` 97.0, `elder` 10.0; all gates pass; `subcomponents.structure.rs_vs_spy` 6.84 with `subcomponents.structure.rs_accel` 10.49 improving; `subcomponents.mp.roc_zscore` 2.02; exhaustion live (`subcomponents.energy.en_trend_bars` 16.0) and clean at 10.0; A-TIER. `mp_accel_state` FLAT.",
+   "case": {
+    "for": "R2 broad, R5 improving, clean live exhaustion test, A-TIER path.",
+    "against": "`energy` 61.3 only just clears; `mp_accel_state` FLAT, not accelerating.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or energy loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "energy under its floor or rs_accel turning negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`energy` 61.3 is only just over its floor with `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.energy.atr_score` 1.0; `mp_accel_state` FLAT.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Strength is extreme: `mp` 100.0, `structure` 84.2, `energy` 73.1, `subcomponents.structure.rs_accel` 33.78, `mp_accel_state` ACCELERATING, `subcomponents.mp.roc_zscore` 3.13. But `flow` 51.3 misses its gate floor (`sc_m_gate_detail` 9): `subcomponents.flow.volume_score` 2.0, `subcomponents.flow.ha_quality_count` 1.0 (choppy candles) while `subcomponents.flow.mfi` 90.69 is hot; `subcomponents.energy.en_trend_bars` 12.0 means exhaustion is not yet tested.",
+   "case": {
+    "for": "Three engines strong, accelerating, rs_accel 33.78, B-STRONG path.",
+    "against": "Flow fails with thin volume and choppy candles; `subcomponents.pipe.pr_rsi_score` 10.0 stretched; exhaustion untested.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 once flow is back at its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow falls further.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow back over its floor with volume_score rising.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and extension"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Narrow: `mp` 75.0 is the one strong engine and is a one-month spike (`subcomponents.mp.abs_mom_score` 30.0, `subcomponents.mp.rel_mom_score` 25.0). `structure` 30.5 fails (`subcomponents.structure.rs_spy_score` 0.0, `subcomponents.structure.wk_score` 0.0, `subcomponents.structure.rs_vs_spy` -30.9) and `flow` 51.3 fails (`sc_m_gate_detail` 7); `sc_momentum` 55.9.",
+   "opposing_case": "`mp` 75.0, `elder` 10.0, `subcomponents.structure.rs_accel` 126.23 a violent rebound in relative strength, `energy` 64.7 clears.",
+   "case": {
+    "for": "A one-month surge with elder 10.0 and rebounding relative strength.",
+    "against": "Structure and flow fail, weekly trend score 0.0, trailing the market over three months, narrow support.",
+    "entry_trigger": "Would need structure and flow back over their floors before I could support.",
+    "wrong_if": "My oppose is wrong if structure and flow both recover over their floors with wk_score above zero.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "structure back over its floor with a positive weekly trend score.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "`flow` 46.1 fails its gate floor (`sc_m_gate_detail` 9) with `subcomponents.flow.cmf` -0.25 (closes near the lows on volume) and `subcomponents.flow.accum_score` 1.5, while `mp` 100.0 and `structure` 77.3 are stretched (`subcomponents.pipe.pr_rsi_score` 10.0 overbought penalty; `subcomponents.energy.atr_score` 0.5). `energy` 62.2 only just clears.",
+   "opposing_case": "`mp` 100.0, `structure` 77.3, `subcomponents.mp.adx_val` 59.11, `subcomponents.structure.rs_vs_spy` 89.09, `subcomponents.energy.exhaustion_score` 10.0 clean over 22 bars, A-TIER.",
+   "case": {
+    "for": "Extreme trend strength and relative strength with a clean live exhaustion test.",
+    "against": "Money flow fails with closes near the lows; overbought penalty; energy at its floor.",
+    "entry_trigger": "Would need flow back over its floor with cmf positive before I could support.",
+    "wrong_if": "My oppose is wrong if flow recovers over its floor with cmf positive.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "cmf turning positive and accumulation rising.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and extension"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 88.2, `energy` 68.1, `structure` 86.7, `mp` 100.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_vs_spy` 36.6 with `subcomponents.structure.rs_accel` 36.39; `subcomponents.mp.roc_zscore` 2.77. Wear: `subcomponents.energy.en_trend_bars` 17.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 7.0 shows it.",
+   "case": {
+    "for": "R2 broad, R5 strongly improving, accelerating, exceptional month.",
+    "against": "R4 live exhaustion wear 7.0; `subcomponents.energy.squeeze_score` 0.0.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls below 7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score falling further, or rs_accel turning negative with DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.energy.exhaustion_score` 7.0 at `subcomponents.energy.en_trend_bars` 17.0 is the one live wear reading; `subcomponents.energy.squeeze_score` 0.0; mp_state FADING is a default label (R13) and is not counted.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 88.2, `energy` 69.7, `structure` 84.2, `mp` 100.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.roc_zscore` 2.5; A-TIER. Cautions: `subcomponents.structure.rs_accel` -29.94 (lead shrinking though `subcomponents.structure.rs_vs_spy` 88.74), `subcomponents.pipe.pr_rsi_score` 10.0 and `subcomponents.flow.mfi` 92.95 stretched, `subcomponents.energy.en_trend_bars` 6.0 young run.",
+   "case": {
+    "for": "R2 broad, accelerating, exceptional month, A-TIER.",
+    "against": "Lead shrinking sharply (R6), stretched RSI and money-flow index, exhaustion untested.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or ext_score turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel staying deeply negative with DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and extension"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 80.3, `energy` 68.9, `structure` 77.3, `mp` 100.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.roc_zscore` 2.16; exhaustion live (`subcomponents.energy.en_trend_bars` 19.0) and clean at 10.0. `subcomponents.structure.rs_accel` -0.47 means the lead (`subcomponents.structure.rs_vs_spy` 59.19) has stopped widening; `subcomponents.energy.squeeze_score` 0.0.",
+   "case": {
+    "for": "R2 broad, accelerating, clean live exhaustion test, B-STRONG path.",
+    "against": "Lead has stopped widening; no coil; near the range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning clearly negative.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and extension"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 88.2, `energy` 68.1, `structure` 76.8, `mp` 93.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_accel` 45.2 with `subcomponents.structure.rs_vs_spy` 12.67; `subcomponents.mp.roc_zscore` 3.47. Path is the soft spot: `subcomponents.pipe.pipe_tier` C-WATCH, `subcomponents.pipe.pr_ret_12m` 4.0, so the trend came from one violent month.",
+   "case": {
+    "for": "R2 broad, R5 strongly improving, accelerating, exceptional month.",
+    "against": "C-WATCH path with a weak 12-month leg; the trend is one month old.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or rs_accel turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "pipe tier improving would lift it; rs_accel turning negative would lower it.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "MA stack and extension"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 78.9, `energy` 68.9, `structure` 100.0, `mp` 96.0; all gates pass; `subcomponents.structure.rs_vs_spy` 40.83 with `subcomponents.structure.rs_accel` 12.56; exhaustion live (`subcomponents.energy.en_trend_bars` 21.0) and clean at 10.0. Cautions: `mp_accel_state` DECELERATING, `subcomponents.pipe.pr_rsi_score` 10.0, `elder` 7.0.",
+   "case": {
+    "for": "R2 broad, R5 improving, clean live exhaustion test; structure at its ceiling on `subcomponents.structure.rs_spy_score` 15.0 and `subcomponents.structure.base_score` 15.0.",
+    "against": "Decelerating, overbought RSI penalty, `elder` 7.0, structure at ceiling leaves no headroom.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or rs_accel turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "regime and MA stack"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "`flow` 96.1, `structure` 87.4, `mp` 97.0, `elder` 10.0, `mp_accel_state` ACCELERATING, `subcomponents.structure.rs_accel` 33.18. `energy` 59.7 misses its gate floor by a hair (`sc_m_gate_detail` 14) and `subcomponents.energy.en_trend_bars` 19.0 with `subcomponents.energy.exhaustion_score` 7.0 shows live wear. Pipe sub-scores are null (young listing), so path is unread.",
+   "case": {
+    "for": "Three engines far above floors, accelerating, rs_accel 33.18, `subcomponents.flow.ext_score` 3.0.",
+    "against": "Energy just under its floor, live exhaustion wear, path unread.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 with energy back at its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls below 7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score falling further, or energy dropping further under its floor.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "pipe sub-scores"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "One engine carries it: `mp` 96.0 (`subcomponents.mp.abs_mom_score` 26.0, `subcomponents.mp.rel_mom_score` 25.0). `flow` 57.9 misses its floor (`sc_m_gate_detail` 9) with `subcomponents.flow.accum_score` 1.5 and `subcomponents.flow.volume_score` 0.0; `structure` 55.8 is only at its floor; `subcomponents.structure.rs_accel` -16.13 and `mp_accel_state` DECELERATING.",
+   "opposing_case": "`mp` 96.0, `energy` 71.4, `subcomponents.structure.rs_vs_spy` 67.59, `subcomponents.energy.exhaustion_score` 10.0 clean over 41 bars, A-TIER.",
+   "case": {
+    "for": "Exceptional persistence and relative strength with a clean live exhaustion test.",
+    "against": "Flow fails with no volume, structure at its floor, lead shrinking, decelerating, narrow support.",
+    "entry_trigger": "Would need flow back over its floor and structure clear of its floor before I could support.",
+    "wrong_if": "My oppose is wrong if flow recovers over its floor and rs_accel turns positive.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "volume and accumulation appearing in flow with structure rising.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 88.2, `energy` 63.0, `structure` 87.4, `mp` 89.0, `elder` 10.0; all gates pass; A-TIER. Wear: `subcomponents.energy.en_trend_bars` 24.0 makes the exhaustion test live and `subcomponents.energy.exhaustion_score` 7.0 shows it; `subcomponents.structure.rs_accel` -4.85 shrinking lead over `subcomponents.structure.rs_vs_spy` 30.75; `mp_accel_state` FLAT; `subcomponents.pipe.pr_ret_12m` 4.0.",
+   "case": {
+    "for": "R2 broad, flow 88.2, structure 87.4, A-TIER path.",
+    "against": "R4 live exhaustion wear 7.0, shrinking lead (R6), flat persistence, weak 12-month leg.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score falls below 7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "exhaustion_score falling further would flip me to oppose.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BAM",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad: `flow` 75.0, `energy` 69.7, `structure` 78.7, `mp` 97.0; all gates pass; B-STRONG with `mp_accel_state` ACCELERATING (R8); `subcomponents.structure.rs_vs_spy` 4.69 with `subcomponents.structure.rs_accel` 17.18 improving; `subcomponents.mp.roc_zscore` 2.03 and `subcomponents.mp.rel_mom_score` 25.0 confirm; exhaustion live (`subcomponents.energy.en_trend_bars` 16.0) and clean at 10.0.",
+   "case": {
+    "for": "R2 broad, R5 improving, R8 and R9 met, clean live exhaustion test.",
+    "against": "Modest lead; neutral money-flow index; `elder` 7.0; no coil.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative with DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`subcomponents.structure.rs_vs_spy` 4.69 is only a modest lead; `subcomponents.flow.mfi` 51.23 is neutral; `elder` 7.0; `subcomponents.energy.squeeze_score` 0.0.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 86.8, `energy` 68.9, `structure` 74.5, `mp` 75.0, `elder` 10.0; all gates pass; `mp_accel_state` ACCELERATING; `subcomponents.mp.roc_zscore` 2.37. But `subcomponents.flow.ext_score` 5.0 breakout bonus has thin volume confirmation (`subcomponents.flow.volume_score` 1.0, `subcomponents.pipe.pr_vol_score` 5.0); `subcomponents.mp.mp_adx_score` 0.0; `subcomponents.structure.rs_accel` -2.83.",
+   "case": {
+    "for": "R2 broad, accelerating, exceptional month, breakout bonus on flow.",
+    "against": "Breakout bonus without rising volume, no trend strength, lead eroding slightly.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "volume_score rising would lift it; ext_score turning negative would lower it.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad: `flow` 67.1, `energy` 77.3, `structure` 73.7, `mp` 89.0, `elder` 10.0; all gates pass; A-TIER; exhaustion live (`subcomponents.energy.en_trend_bars` 24.0) and clean at 10.0. Cautions: `mp_accel_state` DECELERATING and `subcomponents.structure.rs_accel` -8.38 shrinking lead over `subcomponents.structure.rs_vs_spy` 27.09; `subcomponents.flow.accum_score` 3.0.",
+   "case": {
+    "for": "R2 broad with a clean live exhaustion test and A-TIER path.",
+    "against": "Decelerating, shrinking lead (R6), thin accumulation.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel more negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Broad on paper: `flow` 84.2, `energy` 70.6, `structure` 71.6, `mp` 68.0 with `subcomponents.energy.squeeze_score` 8.5 coil and `subcomponents.structure.rs_accel` 13.79. But `subcomponents.structure.rs_vs_spy` 0.69 barely beats the market, `subcomponents.mp.trend_score` 8.0 (price not aligned over its averages), `mp_accel_state` FLAT, and the path is weak: C-WATCH, `subcomponents.pipe.pr_ret_12m` 0.0.",
+   "case": {
+    "for": "All gates pass, coiled, flow 84.2, rs_accel 13.79.",
+    "against": "Lead barely positive, poor trend alignment, flat persistence, weak path.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 with rs_vs_spy widening.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or rs_vs_spy turns negative.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "trend_score and pipe tier improving.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "`energy` 85.7, `structure` 82.1, `mp` 83.0, `subcomponents.energy.squeeze_score` 12.5 coil, exhaustion live (`subcomponents.energy.en_trend_bars` 23.0) and clean at 10.0. But `flow` 50.0 misses its floor (`sc_m_gate_detail` 9) with `subcomponents.flow.mfi` 38.75 (sellers in control) and `subcomponents.flow.flow_score` 8.5; `subcomponents.structure.rs_accel` -20.09 shrinking lead; `mp_accel_state` FLAT.",
+   "case": {
+    "for": "Three strong engines, coil 12.5, clean live exhaustion test, A-TIER.",
+    "against": "Flow fails with sellers in control by mfi; lead shrinking sharply (R6); flat persistence.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20 once flow is back at its floor.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow falls further.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow back over its floor with mfi above 55.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AER",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad support: `flow` 88.2, `energy` 69.7, `structure` 86.3, `mp` 97.0, `elder` 10.0, all gates pass; `subcomponents.structure.rs_vs_spy` 19.83 with `subcomponents.structure.rs_accel` 4.49 improving; exhaustion test live (`subcomponents.energy.en_trend_bars` 15.0) and `subcomponents.energy.exhaustion_score` 10.0 clean; `subcomponents.pipe.pipe_tier` A-TIER; `subcomponents.mp.roc_zscore` 2.59, `subcomponents.mp.rel_mom_score` 25.0. `mp_accel_state` FLAT.",
+   "case": {
+    "for": "R2 broad, R5 improving, R9 confirms, A-TIER, clean live exhaustion test.",
+    "against": "`mp_accel_state` FLAT; exhaustion test only just live; no coil.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or exhaustion_score drops under 10.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel negative with mp_accel_state DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`mp_accel_state` FLAT, not accelerating; `subcomponents.energy.en_trend_bars` 15.0 is just at the live threshold so the clean read is barely tested; `subcomponents.energy.squeeze_score` 0.0.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Broad support: `flow` 84.2, `energy` 66.4, `structure` 94.7, `mp` 97.0, `elder` 10.0, all gates pass; `subcomponents.structure.rs_spy_score` 15.0 and `subcomponents.mp.abs_mom_score` 30.0 at ceiling; `subcomponents.structure.rs_vs_spy` 23.2 with `subcomponents.structure.rs_accel` 9.64; exhaustion test live (`subcomponents.energy.en_trend_bars` 16.0) and `subcomponents.energy.exhaustion_score` 10.0 untouched; `mp_accel_state` ACCELERATING.",
+   "case": {
+    "for": "R2 broad, R5 improving, accelerating, ceiling sub-scores, clean live exhaustion test.",
+    "against": "Energy is the weakest engine with no coil; near the range top.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "flow under its floor, or rs_accel negative with DECELERATING.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "author setups"
+    ]
+   },
+   "self_counter": "`energy` 66.4 is the weakest engine with `subcomponents.energy.squeeze_score` 0.0, and `subcomponents.energy.en_pos50` 98.99 sits at the range top.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "STZ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad support: `flow` 76.3, `energy` 80.7, `structure` 94.7, `mp` 89.0, all gates pass; `subcomponents.structure.base_score` 15.0 over `subcomponents.structure.base_days` 17.0; `subcomponents.structure.rs_vs_spy` 14.4 with `subcomponents.structure.rs_accel` 3.74; exhaustion live (`subcomponents.energy.en_trend_bars` 25.0) and clean at 10.0. Cautions: `mp_accel_state` DECELERATING, `subcomponents.pipe.pr_ret_12m` 8.0, `elder` 7.0.",
+   "case": {
+    "for": "R2 broad, formed base, R5 improving, clean live exhaustion test.",
+    "against": "Decelerating, weak 12-month leg, `elder` 7.0; the MA-stack and divergence concern is on fields I cannot read.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or energy loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel negative with DECELERATING persisting.",
+    "cannot_see": [
+     "charts and tape",
+     "MA stack and divergence",
+     "regime and context"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Broad support: `flow` 88.2, `energy` 71.4, `structure` 78.9, `mp` 96.0, `elder` 10.0, all gates pass; `subcomponents.structure.rs_vs_spy` 11.66 and `subcomponents.structure.rs_accel` 13.06 both positive; exhaustion live (`subcomponents.energy.en_trend_bars` 20.0) and clean at 10.0. Cautions: `mp_accel_state` DECELERATING; `subcomponents.structure.earn_score` 7.0 means earnings sit inside 20 days.",
+   "case": {
+    "for": "R2 broad, R5 improving, clean live exhaustion test, B-STRONG path.",
+    "against": "Decelerating; earnings inside 20 days per earn_score 7.0.",
+    "entry_trigger": "EOD close with elder_ge:7 and close_above:ma_20.",
+    "wrong_if": "close_below:ma_20 (en_trend_bars resets), elder_le:6, or flow loses its floor.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "rs_accel turning negative while DECELERATING persists.",
+    "cannot_see": [
+     "charts and tape",
+     "price levels",
+     "earnings date"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "elder_ge:7",
+     "close_above:ma_20"
+    ],
+    "confirm": [
+     "ma_above:ma_20:ma_50"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": "Earnings fall inside 20 days; no engine reads the report."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "aqe-quant.part1of4.json",
+   "bytes": 17766,
+   "votes": 14,
+   "sha256": "c6437e089f15"
+  },
+  {
+   "file": "aqe-quant.part2of4.json",
+   "bytes": 16584,
+   "votes": 14,
+   "sha256": "c2e91f10c40b"
+  },
+  {
+   "file": "aqe-quant.part3of4.json",
+   "bytes": 17746,
+   "votes": 14,
+   "sha256": "fdaa5fb9f17b"
+  },
+  {
+   "file": "aqe-quant.part4of4.json",
+   "bytes": 13973,
+   "votes": 11,
+   "sha256": "e0343d236b97"
+  }
+ ]
+}

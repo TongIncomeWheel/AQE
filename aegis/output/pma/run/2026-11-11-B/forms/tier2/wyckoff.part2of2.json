@@ -1,0 +1,50 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy the hourly close above the prior high only if the break holds outside the Creek on volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref.",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS at the test, H1 at the 20-hr high, W swing HH/HL. D swing HH but LL and a low-volume break read as potential upthrust (C5). Support only with volume confirming."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Wait for a retest of the broken Creek, then buy the hourly close above the prior high (add only)."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (failed break, close back inside value).",
+   "market_void": null,
+   "reason": "Held. BULLISH_BOS being tested: D close 101.59 only 0.3% above the last swing high, W 6.0% above. Extended on the daily ATR scale, so no new entry; the Creek is the line (C3, C7)."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy a daily close above the pivot high once the break holds outside the range on volume (add only)."
+   },
+   "wrong_if": "Daily close under base_low_20d, the danger point from structure.",
+   "market_void": null,
+   "reason": "Held. RANGE label but W and D swing HH/HL, D 3.3% under the 20-day high, H1 0.6% under swing high. Top of the range is not where I buy (C1, C11); add only after a break holds."
+  }
+ ],
+ "declarations": [
+  "No refutations of my claims were in the packet; answers is empty.",
+  "Bracket fields are not used as a reason anywhere in this form (R1)."
+ ]
+}

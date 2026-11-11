@@ -1,0 +1,46 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "elder at or below 1 (red), or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "elder_pattern INTERRUPTED fails my trend leg; D swing HH but LL; permission event two bars old and the tail is flat blue. Not red, not a trigger (C4, C22)."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Held: keep, no add; add only on a pullback into the 20-day value zone with elder at 7 or higher."
+   },
+   "wrong_if": "A single-bar drop in elder_5d (tighten), or elder at or below 1 (exit).",
+   "market_void": null,
+   "reason": "Held KEEP: elder_5d [7, 7, 7, 7, 10] rose on the last bar, no single-bar drop (R7 not fired); W and D above EMA9, 9>21, swing HH/HL. Extended, so no new buying."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Held: keep; add on a pullback into the 20-day value zone with elder at 7 or higher."
+   },
+   "wrong_if": "A single-bar drop in elder_5d (tighten), elder at or below 1 (exit), or a daily close under ma_50.",
+   "market_void": null,
+   "reason": "Held KEEP: elder_5d [7, 8, 5, 4, 7] shows the permission event on the last bar (C4, R2); W and D above EMA9, 9>21, swing HH/HL. elder_pattern INTERRUPTED keeps conviction modest."
+  }
+ ],
+ "declarations": [
+  "Menu fields only; packet carries MTF grids, elder figures taken from my own blind vote. R1-R6 fields unread, never proxied from the elder score.",
+  "No bracket used as a reason; no Valen flags used."
+ ]
+}

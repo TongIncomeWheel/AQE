@@ -1,0 +1,51 @@
+{
+ "voice": "seow",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed daily until it fills."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line.",
+   "market_void": null,
+   "reason": "Position system, fresh break: W swing_class HH/HL, H1 swing_class HH/HL at the 20-hr high, D 3.1% under the 20-day high. D swing_class HH but LL and thin volume are cautions, not rejects."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Hold; add on the next signal via buy stop over yesterday's high (30% then 20%)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line. Or a red bar then a sell below its low.",
+   "market_void": null,
+   "reason": "Held, position system: W, D, H1 swing_class HH/HL, D 0.3% above the last swing high, D last_bar green so no exit flip. Add only on a later signal (C30)."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above the last pivot high before any add."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), the support line. Or a red bar then a sell below its low.",
+   "market_void": null,
+   "reason": "Held, no break yet: D 3.3% under the last swing high, W 0.9% under, all HH/HL, D last_bar green so no exit. Position system needs the break first (C26); add only then."
+  }
+ ],
+ "declarations": [
+  "System picked from each name's own picture: position system (C26-C30, R13-R15); lane not used.",
+  "Declared proxies: swing highs and EMA grid stand in for the resistance line; red D bar = trend-colour flip (R15). cmf and bar_high levels read by field only.",
+  "C21 is a house rule, not Seow's."
+ ]
+}

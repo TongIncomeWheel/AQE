@@ -1,0 +1,102 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "declarations": [
+  "adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16). No answers owed: answer_pairs empty.",
+  "adx NOT_SERVED (C7, C8); bar_range_history NOT_SERVED (C12, C13). No answers owed: answer_pairs empty."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above yesterday's high after the pullback."
+   },
+   "wrong_if": "Daily close below bar_low, or the H1 lower low extends under the last swing low.",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2): D swing HH/HL, W swing HH/HL, close_vs_ema9 above. H1 swing_class LH/LL, ema_order 9<21, so the reclaim must print first. ADX not served."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above yesterday's high after the H1 pullback; no entry at the highs."
+   },
+   "wrong_if": "Daily close below bar_low, or a range-expansion bar that closes weak (C19).",
+   "market_void": null,
+   "reason": "RETRACEMENT by proxy (C2): W and D swing HH/HL, H1 swing_class HH but LL, pos_in_day_range_pct 35.4. Pullback unproven; climax risk (C19) keeps it WAIT."
+  },
+  {
+   "ticker": "SN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Close under ma_20 would end any retracement read.",
+   "market_void": null,
+   "reason": "No pullback to test: D swing HH/HL, dist_to_20bar_high_pct 2.69, H1 pos_in_day_range_pct 53.1. A leader running is outside the four families (R1)."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above yesterday's high after the H1 dip under EMA9."
+   },
+   "wrong_if": "Daily close below bar_low, or structure_shift back to RANGE.",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2): W and D swing HH/HL, D close_vs_ema9 above, H1 close_vs_ema9 below is the pullback. Quiet dip; reclaim must print first."
+  },
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above yesterday's high on better volume."
+   },
+   "wrong_if": "Daily close below bar_low, or the break fails back inside the range.",
+   "market_void": null,
+   "reason": "BREAKOUT by proxy (C2): H1 dist_to_20bar_high_pct 0.0, pos_in_day_range_pct 100.0, W swing HH/HL. D swing_class HH but LL and no volume print, so WAIT. bar_range_history not served."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A range-expansion bar that closes weak, or a close under bar_low (C19).",
+   "market_void": null,
+   "reason": "No setup to enter: D dist_to_20bar_high_pct 1.28 after a run, W close_vs_swing_high_pct 5.96. Extended leader with no pullback; outside the four families (R1)."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Close below bar_low, or a close under ma_20.",
+   "market_void": null,
+   "reason": "No tested extreme: D dist_to_20bar_high_pct 3.3 inside a range. The dip-and-reclaim is a retracement shape but not a live setup of mine."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of2.json",
+   "bytes": 2204,
+   "sha256": "fe60356ae6da"
+  },
+  {
+   "file": "raschke.part2of2.json",
+   "bytes": 1464,
+   "sha256": "d7196fef227c"
+  }
+ ]
+}

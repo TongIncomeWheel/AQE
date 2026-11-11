@@ -1,0 +1,55 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "LTH-livermore-for~elder-lens",
+   "ticker": "LTH",
+   "to": "elder-lens",
+   "text": "\"buys strength 2.5% under the high\": my test is C5, not a dip to value. W swing HH/HL, D swing HH/HL, dist_to_20bar_high_pct 2.45 is the normal reaction already behind it; the buy is the new high, never the dip. H1 LH/LL is only the reaction. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close through the confirmed pivot high: the new high after the reaction."},
+   "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50, or structure_shift turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "W and D swing HH/HL, D ema_order 9>21, dist_to_20bar_high_pct 2.45: a confirmed trend one step under a fresh high (C5). H1 swing LH/LL is the reaction, not the trend. Act only on the close through the high."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close through yesterday's high: the fresh high after the reaction."},
+   "wrong_if": "close_below:pivot_high (back inside the broken pivot), or fade_atr_ge:1.5 off the day's high.",
+   "market_void": null,
+   "reason": "W swing HH/HL, D swing HH/HL with close 1.0% above its last swing high, dist_to_20bar_high_pct 5.54, H1 pos_in_day_range_pct 35.4: the reaction came off the high of the day. I buy only the clear of that high, not the dip."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close through the high after volume returns: no entry on a quiet approach."},
+   "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_20.",
+   "market_void": null,
+   "reason": "W, D and H1 all swing HH/HL, dist_to_20bar_high_pct 2.69, D close 13.03% over its last swing high: extended. Wait for the new high to print; buy strength only, never the pause."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close through the last swing high: the reaction is over."},
+   "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50.",
+   "market_void": null,
+   "reason": "W and D swing HH/HL, dist_to_20bar_high_pct 3.75, H1 close_vs_ema9 below, last_bar red: a normal reaction (C8). I hold the view but do not buy the reaction (C5); the new high is the buy."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (my own multiple), not literal 6 points (C7, C18-C20)",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11)"
+ ]
+}

@@ -1,0 +1,254 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr (fade_atr_ge), not the book's literal points; the multiplier is my own translation (C7, C18-C20).",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11)."
+ ],
+ "answers": [
+  {
+   "pair_id": "BTSG-livermore-for~raschke",
+   "ticker": "BTSG",
+   "to": "raschke",
+   "concede": false,
+   "text": "Quote: 'range-expansion bar, not a contraction break'. My test is a new high after a normal pullback (C5), not a coil: `structure` 87.4, `mp` 93.0 ACCELERATING. Weekly 1.7% under its high, daily 0.0% under, hourly 100% of range: strength at the high is the signal."
+  },
+  {
+   "pair_id": "KO-livermore-for~raschke",
+   "ticker": "KO",
+   "to": "raschke",
+   "concede": false,
+   "text": "Quote: 'breakout needs contraction; squeeze_score 4.0 is thin'. Contraction is not my test; a new high with trend is. Daily 0.5% under its 20-day high, hourly 92% of range. I concede `mp_accel_state` DECELERATING: timing WAIT, conviction low."
+  },
+  {
+   "pair_id": "DAL-livermore-for~raschke",
+   "ticker": "DAL",
+   "to": "raschke",
+   "concede": false,
+   "text": "Quote: 'adx_val 23.82 under my 30 proxy; no pullback, no coil'. `structure` 96.8, `mp` 87.0 ACCELERATING, `flow` 84.2 stand. Hourly 0.3% under its high, daily 0.3%; weekly LH/LL is my caution, so I enter only on a new high."
+  },
+  {
+   "pair_id": "MAC-livermore-for~minervini",
+   "ticker": "MAC",
+   "to": "minervini",
+   "concede": true,
+   "text": "Quote: 'weekly swing is HH but LL, not HH/HL'. Weekly is not clean, so I concede the weekly. But `mp` 97.0 STRONG, `structure` 84.2, daily and hourly HH/HL stand; `mp_accel_state` FLAT, `energy` 61.3. Conviction cut; WAIT for the new high."
+  },
+  {
+   "pair_id": "PRCH-livermore-for~raschke",
+   "ticker": "PRCH",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: 'strength without trend; adx_val 19.46'. I concede the trend is young: `flow` 86.8 is real but `subcomponents.mp.adx_val` 19.46 is weak, and weekly is 19.5% over its swing high. WAIT for a new high; no buy on volume alone."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`flow` 90.8, `energy` 84.0 but `mp` 48.0 BUILDING, daily LH/LL: no confirmed new high yet (C5). Wait for the break."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 87.4 and `mp` 93.0 ACCELERATING at a 0.0% under 20-day high, `flow` 78.9: new high after a pullback (C5). Extended, so no chase."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`flow` 100.0 with `structure` 81.5, `mp` 75.0 ACCELERATING; 1.1% under the 20-day high. `mp` at the floor of STRONG, `energy` 66.4 ordinary."
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 93.7, `sc_momentum` 79.0, `energy` 73.9; 0.9% under its high. `mp` 80.0 FADING is a default label; weekly HH but LL. Wait for the new high."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 76.8, `flow` 78.9 at a 0.5% under the high, but `mp_accel_state` DECELERATING and `squeeze_score` 4.0: wait for the print."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 96.8, `mp` 87.0 ACCELERATING, `flow` 84.2; 0.3% under the high in a leading group. Weekly LH/LL held as caution."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`mp` 80.0 STRONG, `energy` 84.0 but `flow` 65.8 and `elder` 7.0, 3.0% under the high on a pullback. Never buy the dip; wait for the new high."
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`flow` 96.1, `structure` 92.6, `mp` 75.0 ACCELERATING, 0.6% under the high. `adx_val` 18.53 is weak and weekly is HH but LL: held to a modest weight."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`energy` 85.7 and `squeeze_score` 12.5 but `flow` 56.6, `mp_accel_state` DECELERATING; 3.3% under the high. No add until a new high (C6)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 94.7, `mp` 97.0 ACCELERATING, `flow` 72.4; 2.5% under the high with hourly 9<21. Wait for the hourly to recover."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`flow` 84.2, `energy` 84.0, `sc_momentum` 80.6 but `mp_accel_state` DECELERATING, hourly LH/LL. Wait for the new high."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`structure` 84.2, `mp` 97.0 STRONG but `mp_accel_state` FLAT, `energy` 61.3, weekly HH but LL. Wait for the high."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`flow` 86.8 and `elder` 10.0 but `subcomponents.mp.adx_val` 19.46: strength without a mature trend. Wait for the high."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`energy` 85.7, `structure` 82.1, `mp` 83.0 but `flow` 50.0 is neutral and `mp_accel_state` FLAT. 1.6% under the high; wait."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the last confirmed pivot high"
+   },
+   "wrong_if": "Daily close under ma_20, or a fade of 1.5 ATR from the day's high (my C7 translation, not the book's figure)",
+   "market_void": null,
+   "reason": "`mp` 96.0 STRONG, `flow` 88.2, `sc_momentum` 82.9 but `mp_accel_state` DECELERATING, 5.2% under the daily high. Wait for the break."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 6261,
+   "sha256": "6b9ebf13dba2"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 3843,
+   "sha256": "d8029ca715e9"
+  }
+ ]
+}

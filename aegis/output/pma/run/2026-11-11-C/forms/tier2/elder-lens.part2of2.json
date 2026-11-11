@@ -1,0 +1,68 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "EBAY",
+   "stance": "ABSTAIN",
+   "wrong_if": "`elder_pattern` leaves INTERRUPTED with `elder` holding 7 or more.",
+   "market_void": null,
+   "reason": "Held name. `elder` 7.0 shows a 4 to 7 bar on the last session, but the pattern reads INTERRUPTED so the trend leg is failed. `mp` 73.0 and `flow` 56.6 are middling. No single-bar drop, so keep; no add. Standing aside."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "wrong_if": "`elder` prints a 6-or-less bar then a 7-or-more reclaim at value, which would open permission.",
+   "market_void": null,
+   "reason": "`elder` 7.0 on 10, 10, 7, 7, 7 has no 6-or-less bar, so no permission event, only blue. `mp` 97.0 and `structure` 94.7 are strong but are not my trigger; hourly 9<21. Stand aside."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "wrong_if": "`elder` prints a 6-or-less bar then a 7-or-more reclaim, which would open permission.",
+   "market_void": null,
+   "reason": "`elder` 7.0 on 10, 10, 7, 7, 7 shows no permission event. `sc_momentum` 80.6 and `flow` 84.2 are strength, not a transition; `mp` 76.0 FADING default. Hourly swing LH/LL. Stand aside."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Daily pullback into the 20-day average zone, with `elder` holding 7 or more"},
+   "wrong_if": "`elder` falls to 6 or less with no reclaim, or a daily close under the 20-day average less half an ATR.",
+   "market_void": null,
+   "reason": "`elder` 10.0 after a dip only to 7, with `mp` 97.0 STRONG making the re-entry analogue (incomplete). `structure` 84.2 solid. Weekly swing HH but LL and no 6-or-less bar, so conviction stays modest; buy value, not the high."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Daily pullback into the 20-day average zone, with `elder` holding 7 or more"},
+   "wrong_if": "`elder` falls to 6 or less with no reclaim, or a daily close under the 20-day average less half an ATR.",
+   "market_void": null,
+   "reason": "`elder` 10.0 after a dip only to 7, `mp` 75.0 STRONG with the re-entry pattern. `flow` 86.8 and `structure` 74.5 support. Weekly and daily swing HH/HL; no 6-or-less bar and price extended, so wait for value."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Daily pullback into the 20-day average zone, with `elder` holding 7 or more"},
+   "wrong_if": "`elder` falls to 6 or less with no reclaim, or a daily close under the 20-day average less half an ATR.",
+   "market_void": null,
+   "reason": "`elder` 10.0 after a 4 to 8 permission bar two sessions ago. `energy` 85.7 and `structure` 82.1 strong; `mp` 83.0 FADING is a default label and `flow` 50.0 is ordinary, so conviction stays modest. Weekly and daily HH/HL."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Daily pullback into the 20-day average zone, with `elder` holding 7 or more"},
+   "wrong_if": "`elder` falls to 6 or less with no reclaim, or a daily close under the 20-day average less half an ATR.",
+   "market_void": null,
+   "reason": "Best pullback shape: `elder` 10.0 after a dip to 5 then 7 then 10, with `mp` 96.0 STRONG. `flow` 88.2 and `sc_momentum` 82.9 behind it. Daily 5.2% under its swing high; earnings inside 20 days is outside my method."
+  }
+ ],
+ "declarations": [
+  "Weekly tide read from the packet W grid (EMA9 vs EMA21); R1-R6 colour/force/channel fields are not in my packet and are never proxied from `elder`.",
+  "Permission event = an `elder_5d` bar of 6 or less followed by 7 or more. Elder buys the pullback, so every SUPPORT is WAIT for the 20-day average zone."
+ ]
+}

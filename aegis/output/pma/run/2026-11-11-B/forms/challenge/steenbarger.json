@@ -1,0 +1,99 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-11",
+ "seat_kind": "challenge",
+ "names_read": 17,
+ "findings": [
+  {
+   "scope": "Healthcare",
+   "kind": "CROWDING",
+   "canon_ref": ["C12", "C15"],
+   "claim": "Healthcare carries the most nominations in the room: five distinct names (TGTX, ACHC, HUM, GMAB, TECH) and six nominations, drawn from four different seats. Agreement across seats on one sector is a shared exposure, not five independent reads.",
+   "evidence": "gics_sector_name Healthcare: TGTX nomination_count 2, ACHC 1, HUM 1, GMAB 1, TECH 1. TGTX, ACHC, HUM all pct_from_52w_high 0.0.",
+   "addressed_to": "oneil, livermore, elder-lens"
+  },
+  {
+   "scope": "Technology",
+   "kind": "CROWDING",
+   "canon_ref": ["C12", "C17"],
+   "claim": "Technology is the second cluster: four nominated names (WAY, BRZE, BOX, MSFT) from three seats, plus held RBRK in the same sector. A sector-wide move would hit the slate and the book together.",
+   "evidence": "gics_sector_name Technology: WAY nomination_count 1, BRZE 1, BOX 1, MSFT 1; RBRK held true.",
+   "addressed_to": "seow, minervini, elder-lens"
+  },
+  {
+   "scope": "Healthcare",
+   "kind": "EXTENSION",
+   "canon_ref": ["C5", "C12"],
+   "claim": "Three Healthcare names sit exactly at their 52-week high at once, with TGTX also carrying heavy participation. Simultaneous extension inside one sector is a late-move read; the deciders should say what entry they are asking for on a name with no pullback.",
+   "evidence": "TGTX pct_from_52w_high 0.0, day_vol 3.1, ma_50 56.19; ACHC pct_from_52w_high 0.0, ma_50 29.83; HUM pct_from_52w_high 0.0, structure_shift RANGE.",
+   "ticker": "TGTX",
+   "addressed_to": "oneil, livermore"
+  },
+  {
+   "scope": "BRZE",
+   "kind": "EXTENSION",
+   "ticker": "BRZE",
+   "canon_ref": ["C5", "C12"],
+   "claim": "BRZE sits at its 52-week high on the thinnest participation in the room. A break of structure without volume behind it is unconfirmed; the nominating seat owes the evidence that participation arrives.",
+   "evidence": "BRZE pct_from_52w_high 0.0, day_vol 0.34, structure_shift BULLISH_BOS, sc_momentum 59.8, rs_rank_pct 99.0.",
+   "addressed_to": "minervini, oneil"
+  },
+  {
+   "scope": "TTWO",
+   "kind": "PROCESS",
+   "ticker": "TTWO",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Higher-timeframe context is not established for TTWO. The 50-day average sits below both the 100-day and 200-day, and relative strength is mid-table. A conviction-4 nomination needs the seat to name the trend it is entering with, or the fields conflict and abstention applies.",
+   "evidence": "TTWO ma_50 207.06 vs ma_100 224.32 vs ma_200 218.63; rs_rank_pct 43.72; pct_from_52w_high -13.07; structure 61.1; day_vol 2.77.",
+   "addressed_to": "wyckoff, minervini"
+  },
+  {
+   "scope": "LTH",
+   "kind": "PROCESS",
+   "ticker": "LTH",
+   "canon_ref": ["C5", "C17"],
+   "claim": "LTH is the most-agreed name but the agreement comes from two different methods reading a mixed stack: structure is very high while the 50-day sits just under the 100-day. Convergence is only informative if the seats name the same context; the room should see which reading each used.",
+   "evidence": "LTH nomination_count 2 (livermore 4, wyckoff 3); ma_50 41.98 vs ma_100 42.42, ma_200 35.88; structure 94.7; day_vol 2.16; pct_from_52w_high -0.69.",
+   "addressed_to": "livermore, minervini"
+  },
+  {
+   "scope": "TECH",
+   "kind": "OVERLAP",
+   "ticker": "TECH",
+   "canon_ref": ["C16", "C17"],
+   "claim": "TECH carries oscillator conflict: bearish divergence confirmed by four of five oscillators against a bullish break of structure. Fields conflict, so the seat should justify standing in or abstain. Its ATR reads implausibly small for the price level, which should be checked before any volatility-based read is leaned on.",
+   "evidence": "TECH div_state BEARISH, div_bear_count 4, structure_shift BULLISH_BOS, atr_14d 0.13 vs ma_50 72.5, conviction 2 from raschke.",
+   "addressed_to": "raschke, elder-lens"
+  },
+  {
+   "scope": "RBRK",
+   "kind": "OVERLAP",
+   "ticker": "RBRK",
+   "canon_ref": ["C12", "C16"],
+   "claim": "Held RBRK shows internal weakness while price strength persists: very low momentum and structure scores, four-oscillator bearish divergence, and an average stack still rising. The held-book read should address the conflict, not leave it unexamined.",
+   "evidence": "RBRK sc_momentum 28.4, structure 28.0, div_state BEARISH, div_bear_count 4, rs_rank_pct 96.15, pct_from_52w_high -19.6, nomination_count 0, held true.",
+   "addressed_to": "oneil, livermore"
+  },
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "canon_ref": ["C15", "C17"],
+   "claim": "Eleven of fourteen nominated names have a single seat behind them, and the strength-door names (SN, ACHC, WAY, BRZE, TECH, LTH) overlap heavily with high rs_rank_pct. Shared screening inputs can look like independent agreement; the room should not treat door overlap as convergence.",
+   "evidence": "nomination_count 1 on 11 of 14 names; doors STRENGTH on LTH, SN, ACHC, WAY, BRZE, TECH; rs_rank_pct SN 98.08, BRZE 99.0, ACHC 90.46.",
+   "addressed_to": "minervini, seow, raschke"
+  }
+ ],
+ "obligations": [
+  {"seat": "wyckoff", "ticker": "TTWO", "class": "context", "what_is_owed": "Name the higher-timeframe trend TTWO enters with given ma_50 207.06 below ma_100 224.32 and ma_200 218.63, and the observable that proves the case wrong."},
+  {"seat": "minervini", "ticker": "BRZE", "class": "participation", "what_is_owed": "State what confirms the break of structure given day_vol 0.34 at pct_from_52w_high 0.0."},
+  {"seat": "raschke", "ticker": "TECH", "class": "conflict", "what_is_owed": "Reconcile div_state BEARISH with div_bear_count 4 against BULLISH_BOS, or stand aside; confirm the atr_14d 0.13 reading."}
+ ],
+ "declarations": [
+  "Read all 17 room names in the packet. No nomination, no vote. Findings address deciders only; no emotional-state claims (R9)."
+ ],
+ "data_gaps": [
+  {"field": "lens_warnings", "impact": "null on every row; lens-warning crowding could not be read."},
+  {"field": "regime", "impact": "no regime or srm context in the packet; environment match for the room could not be named (R3)."},
+  {"field": "bracket.stop", "impact": "null on most rows; seats must name their own invalidation from structure. Not used as a reason on any name."}
+ ]
+}

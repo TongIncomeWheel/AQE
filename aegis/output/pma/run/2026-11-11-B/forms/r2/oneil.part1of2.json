@@ -1,0 +1,220 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader on volume: rs LEADER, day_vol 2.16, structure 94.7 ABOVE_STRUCTURE, from_52w_hi -0.69. Group Momentum Fading — Hold, Don't Add and coil warn are weights, not vetoes (R27). Distance past the pivot is a weight on a momentum-lane name. Valid only into a confirmed uptrend (market gate delegated).",
+   "conviction_change": "R1: not nominated, pivot distance read as a rejection; R27 makes extension a weight on this lane, so I now support at 3.",
+   "case": {
+    "for": "rs LEADER, day_vol 2.16 clears the 1.40 test, structure 94.7 ABOVE_STRUCTURE, rs_rank_pct 87.45, ret_12m 85.82, sector lens strong.",
+    "against": "sma_dist 12.97, ext_atr20 2.1, coil warn, group Momentum Fading — Hold, Don't Add (Lone Ranger risk), ma50 41.98 under ma100 42.42, no base I can count.",
+    "entry_trigger": "h1_close_above bar_high with vol_x_ge 1.4; no add past +5% over the pivot.",
+    "wrong_if": "close_below ma_50 on heavy volume, or the group turning while it runs alone.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume under 1.40 on the push, group confirmation lost, or a peer showing a completed base I cannot count.",
+    "cannot_see": ["fundamentals C A S I", "pct_from_pivot", "base stage", "market gate"]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:ma_50"],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "LEADER at a fresh high: day_vol 3.1 clears 1.40, structure 63.2 BULLISH_BOS, rs_rank_pct 91.63, from_52w_hi 0.0, ret_12m 99.32. Group Momentum Fading — Hold, Don't Add is the Lone Ranger risk; mp STRONG/DECELERATING tempers it. Valid only into a confirmed uptrend.",
+   "self_counter": "Group state Momentum Fading — Hold, Don't Add and setups Episodic pivot (delayed) FAILED (8/10) both argue against; structure 63.2 is only middling for a base I cannot count.",
+   "falsifier": "A close back under pivot_high on above-normal volume, or under ma_50.",
+   "challenge_reply": "Crowding: Healthcare is one exposure, not five reads; I rank TGTX first on day_vol 3.1 and rs LEADER and would not hold all of them at once (C23). Extension: no pullback exists; I act only on h1_close_above bar_high with vol_x_ge 1.4 and add nothing past +5% over the pivot.",
+   "case": {
+    "for": "day_vol 3.1 is real participation, rs LEADER, rs_rank_pct 91.63, structure_shift BULLISH_BOS, lens leadership strong, structure strong, sector strong.",
+    "against": "Group Momentum Fading — Hold, Don't Add, sma_dist 14.36, ext_atr20 2.1, lens insti_money warn, H1 swing HH but LL, elder CORRECTION_REENTRY is not my field.",
+    "entry_trigger": "h1_close_above bar_high with vol_x_ge 1.4 and above_vwap_s.",
+    "wrong_if": "close_below pivot_high on above-normal volume, or ma_50 lost; void if the index is in distribution.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume falling under 1.40 on new highs, or the group turning down while TGTX runs alone.",
+    "cannot_see": ["fundamentals C A S I", "base stage", "group rank 1-3", "market gate"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:pivot_high"],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  },
+  {
+   "ticker": "TTWO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fails the base and prior-uptrend tests: ma50 207.06 under ma100 224.32 and ma200 218.63, ret_6m -0.6, ret_12m -3.17, from_52w_hi -13.07 (C12). lens leadership warn. day_vol 2.77 and rs LEADER are real, but this is a recovery, not a leader breaking out of a base.",
+   "opposing_case": "Best case: day_vol 2.77, flow 84.2, structure 61.1 ABOVE_STRUCTURE, setups Episodic pivot TRIGGERED (9/9), mp BUILDING/ACCELERATING, lens insti_money strong, D 2.1% under 20-day high.",
+   "falsifier": "ma_50 turning back above ma_100 with a clear of the high on day_vol at or above 1.40.",
+   "case": {
+    "for": "day_vol 2.77, flow 84.2, structure 61.1 ABOVE_STRUCTURE, setups Episodic pivot TRIGGERED (9/9), insti_money strong, resistance strong.",
+    "against": "ma50 207.06 under ma100 224.32 and ma200 218.63, ret_12m -3.17, from_52w_hi -13.07, lens leadership warn, W swing LH: no leader's base.",
+    "entry_trigger": "Need ma_50 back above ma_100 and ma_200, then close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "I am wrong if it clears high_52w_close on day_vol of 1.40 or more with the averages turning up.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A completed base I cannot count, or the 50-day regaining the 100-day with volume.",
+    "cannot_see": ["fundamentals C A S I", "base history", "market gate"]
+   }
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader of the group type: rs LEADER, rs_rank_pct 98.08, ret_12m 145.02, structure 77.9 ABOVE_STRUCTURE, sector lens strong. day_vol 0.86 fails 1.40 today, so I support only the clear of the high on volume; sma_dist 20.84 and ext_atr20 2.73 are weights (R27).",
+   "conviction_change": "R1: not nominated on day_vol 0.86. No breakout has happened yet, so the volume test falls on the clear, not today; supported conditionally.",
+   "case": {
+    "for": "rs LEADER, rs_rank_pct 98.08, ret_12m 145.02, structure 77.9 ABOVE_STRUCTURE, from_52w_hi -1.31, lens resistance strong, sector strong.",
+    "against": "day_vol 0.86 under 1.40, sma_dist 20.84, coil warn, group Momentum Fading — Hold, Don't Add, setups Episodic pivot (delayed) FAILED (9/10).",
+    "entry_trigger": "close_above high_52w_close with vol_x_ge 1.4; no add past +5% over the pivot.",
+    "wrong_if": "close_below ma_20 on heavy volume, or a clear of the high that fails on day_vol under 1.40.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A high on lower volume (C25), or the group state turning down.",
+    "cannot_see": ["fundamentals C A S I", "pct_from_pivot", "base stage", "market gate"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  },
+  {
+   "ticker": "ACHC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "LEADER at a fresh high: day_vol 1.58 clears 1.40, structure 88.4 ABOVE_STRUCTURE, rs_rank_pct 90.46, from_52w_hi 0.0, ret_12m 98.05. Extension (sma_dist 29.55, ext_atr20 3.38, run_10d 29.23%) is a weight on this lane (R27); entry 38.64 vs ma200 26.51 is under the climax line. Fundamentals are off my menu.",
+   "challenge_reply": "Extension: no pullback entry; I buy only a clear of bar_high on vol_x_ge 1.4 and add nothing past +5% over the pivot. Crowding: I count Healthcare as one exposure and would hold at most one or two of its names (C23).",
+   "case": {
+    "for": "day_vol 1.58, rs LEADER, rs_rank_pct 90.46, structure 88.4 ABOVE_STRUCTURE, lens resistance strong, sector strong, from_52w_hi 0.0.",
+    "against": "sma_dist 29.55, ext_atr20 3.38, run_10d 29.23% is where climaxes form (C24); coil warn, insti_money warn; setups Undercut and rally FAILED (5/9).",
+    "entry_trigger": "h1_close_above bar_high with vol_x_ge 1.4; no add past +5% over the pivot.",
+    "wrong_if": "close_below ma_20 on heavy volume, or a new high on lower volume (C25).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume falling under 1.40 on highs, or a largest-gain-of-the-advance day on heaviest volume.",
+    "cannot_see": ["fundamentals C A S I", "pct_from_pivot", "base stage", "market gate"]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:bar_high+2pct",
+    "tf": "1H",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  },
+  {
+   "ticker": "ELF",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Pressing its high: rs_rank_pct 98.24, structure 66.3 BULLISH_BOS, lens coil strong, from_52w_hi -0.7. But rs IN-LINE (not LEADER) and day_vol 0.73 fails 1.40, so unconfirmed; supported only on a clear of the high on volume. elder INTERRUPTED is not my field.",
+   "case": {
+    "for": "rs_rank_pct 98.24, ret_6m 112.92, structure_shift BULLISH_BOS, lens coil strong, structure strong, leadership strong, sector strong.",
+    "against": "rs IN-LINE, day_vol 0.73 under 1.40, flow 43.4, group Momentum Fading — Hold, Don't Add, H1 below EMA9, D 3.8% under 20-day high.",
+    "entry_trigger": "close_above high_52w_close with vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_20, or a clear of the high on day_vol under 1.40.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "rs_leadership turning LAGGARD, or the clear arriving on thin volume.",
+    "cannot_see": ["fundamentals C A S I", "pct_from_pivot", "base stage", "market gate"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4"],
+    "wrong": ["close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  },
+  {
+   "ticker": "LYV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No AQE row is served for LYV (rs, structure, day_vol, ma all None), so leadership, base, volume and extension cannot be tested. The MTF line alone is not my method. No view either way.",
+   "case": {
+    "for": "MTF: W and D above EMA9 with 9>21, D swing HH/HL, H1 0.2% above the last swing high.",
+    "against": "Nothing testable: D 5.1% under the last swing high, W 5.8% under 20-wk high, mp unlabelled, no leadership or volume read.",
+    "entry_trigger": "Need a served row: rs_leadership LEADER, day_vol at or above 1.40 and a clear of the swing high.",
+    "wrong_if": "Not testable until the row is served; a close_below ma_50 would settle it.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A served AQE row showing leadership and volume.",
+    "cannot_see": ["rs_leadership", "day_vol", "structure", "ma_50", "fundamentals C A S I"]
+   }
+  },
+  {
+   "ticker": "WAY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "A breakout nobody bought: day_vol 0.56 fails 1.40 (C16); group Recovering From Weakness — Watch for Entry does not confirm (Lone Ranger, C25); from_52w_hi -20.9 and ret_12m -19.11 show no prior uptrend of canon size. rs LEADER, structure 73.7 BULLISH_BOS and coil strong are real.",
+   "opposing_case": "Best case: rs_rank_pct 91.72, structure 73.7 BULLISH_BOS, lens coil strong, energy 93.3, mp STRONG/ACCELERATING, U&R MET reclaim day, H1 at the 20-hr high.",
+   "falsifier": "A clear of the swing high on day_vol at or above 1.40 with the group turning to Momentum Building.",
+   "case": {
+    "for": "rs LEADER, rs_rank_pct 91.72, structure_shift BULLISH_BOS, lens coil strong and structure strong, energy 93.3, mp STRONG/ACCELERATING.",
+    "against": "day_vol 0.56, group Recovering From Weakness, from_52w_hi -20.9, ret_12m -19.11, lens leadership warn and resistance warn, elder INTERRUPTED not mine.",
+    "entry_trigger": "Need day_vol at or above 1.40 on a clear of the swing high and group confirmation.",
+    "wrong_if": "I am wrong if it runs on day_vol of 1.40 or more with the group state turning to Building.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume arriving on the break, or the group turning to Momentum Building.",
+    "cannot_see": ["fundamentals C A S I", "base stage", "pct_from_pivot", "market gate"]
+   }
+  },
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "LEADER, rs_rank_pct 90.29, ret_12m 73.81, day_vol 1.44 just over 1.40, from_52w_hi 0.0, lens coil strong. structure 73.7 now reads RANGE: no break yet, so I buy the clear of pivot_high on volume, not today. Group Momentum Fading — Hold, Don't Add; valid only into a confirmed uptrend.",
+   "challenge_reply": "Extension: HUM is not extended past a pivot (sma_dist 7.89, structure RANGE); entry is the clear of pivot_high on vol_x_ge 1.4, no pullback buy. Crowding: Healthcare is one exposure; I rank TGTX above HUM and would not hold both at full weight.",
+   "case": {
+    "for": "rs LEADER, rs_rank_pct 90.29, ret_12m 73.81, lens coil strong, leadership strong, sector strong, elder ACCELERATION, flow 90.8.",
+    "against": "day_vol 1.44 is a thin pass, group Momentum Fading — Hold, Don't Add, setups Undercut and rally FAILED (5/9), mp BUILDING/DECELERATING, resistance warn.",
+    "entry_trigger": "close_above pivot_high with vol_x_ge 1.4; no add past +5% over the pivot.",
+    "wrong_if": "close_below ma_20 or a clear that fails on day_vol under 1.40; void if the index is in distribution.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume under 1.40 on the clear, or group confirmation lost.",
+    "cannot_see": ["fundamentals C A S I", "base stage", "market gate"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:pivot_high"],
+    "confirm": ["vol_x_ge:1.4"],
+    "wrong": ["close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings, sales, ROE, sponsorship not served; valid only into a confirmed uptrend (delegated)."
+   }
+  }
+ ],
+ "declarations": [
+  "fundamentals NOT_AVAILABLE: C, A, S, I untested and never inferred; the packet's fundamentals lines are off my data menu.",
+  "base_stage NOT_AVAILABLE (C19); base_measure structure composite (substitute).",
+  "market_gate DELEGATED: every SUPPORT is valid only into a confirmed uptrend; I write no market read of my own.",
+  "volume_measure day_vol vs 20d (substitute for 50d); rs_measure rs_leadership (substitute, no IBD RS Rating).",
+  "No ledger memory block was injected; no standing lesson applies."
+ ]
+}

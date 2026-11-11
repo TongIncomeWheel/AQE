@@ -1,0 +1,102 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the 20-day high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`energy` 85.7 and W/D HH/HL stack; `flow` 56.6 and `mp` 73.0 decelerating cap it at low weight."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`mp` 97.0, `structure` 94.7 and `sc_momentum` 80.7 lead; D 2.5% under high and H1 9<21, so wait for the break."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`flow` 84.2, `energy` 84.0 and `subcomponents.energy.squeeze_score` 8.5 under the high; dry-up unproven, `mp` 76.0 decelerating."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_50",
+   "market_void": null,
+   "reason": "`mp` 97.0, `structure` 84.2 and `flow` 81.6 show trend alignment; ma50 under ma100 and `energy` 61.3 keep it a wait."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above prior-day high after a pause, near the pivot"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`flow` 86.8 and `sc_momentum` 76.6 with day_vol 1.82; `subcomponents.energy.squeeze_score` 0.0 and 23.76% over SMA: do not chase."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high with `flow` recovering"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`structure` 82.1 and `energy` 85.7 clean stack; `flow` 50.0 fails its floor so no money behind it yet."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_50",
+   "market_void": null,
+   "reason": "`flow` 88.2, `mp` 96.0 and `sc_momentum` 82.9; ma50 under ma100, `mp` decelerating, earnings inside 20 days."
+  }
+ ],
+ "declarations": [
+  "Fundamentals, VCP count and IBD RS rank not served; Trend Template read from served averages only.",
+  "Bracket fields never used as a basis."
+ ]
+}

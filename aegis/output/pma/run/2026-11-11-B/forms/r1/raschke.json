@@ -1,0 +1,50 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "TECH",
+   "reason": "BREAKOUT family (C2), by proxy only: structure_shift 2 (BULLISH_BOS) while sma_distance_pct 0.44 sits at the average, atr_14d 0.13 narrow against entry 72.82; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING). Wrong on a close back inside the range.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "bracket.valid", "bracket.stop"],
+   "conviction": 2,
+   "declared": {
+    "setup_type": "breakout (C2)",
+    "adx": "NOT_SERVED (C7, C8)",
+    "stochastic_kd": "NOT_SERVED (C6)",
+    "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)",
+    "bar_range_history": "NOT_SERVED (C12, C13)",
+    "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 75.8; structure_shift 2 (BULLISH_BOS); sma_distance_pct 0.44 -> breakout type, at the average", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.13, atr_caution False, day_vol 1.06 as contraction proxy; no per-bar range series so no ID/NR4/NR7 count", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol"]},
+    {"step": 3, "canon_ref": ["C12", "C13"], "observed": "declared block filed: adx, stochastic_kd, bar_range_history NOT_SERVED; n_day_extreme substituted; mp_state 3, mp_accel_state 1 are proxies only", "verdict": "partial", "fields": ["mp_state", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, bracket.stop null; own level = the broken pivot (structure_shift back to RANGE); engine reference bracket.atr_fallback_stop 72.69", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "structure_shift"]}
+   ],
+   "falsifier": "A close back inside the prior range (structure_shift reverting from 2 to 3 RANGE) or a break of bracket.atr_fallback_stop 72.69. Caution: div_state BEARISH with div_bear_count 4 and elder_pattern 4 (INTERRUPTED) are advisory warnings of a stalled thrust."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "TIGHTEN", "line": "structure_shift 3 (RANGE) with sma_distance_pct 9.06 extended, mp_state 2 (FADING), mp_accel_state 2 (DECELERATING): no live setup; no stop order, so name one at bracket.atr_fallback_stop 119.67 (bracket.valid False, own structural read)."},
+  {"ticker": "GPN", "verdict": "TIGHTEN", "line": "structure_shift 2 (BULLISH_BOS) but sma_distance_pct 16.77 is far extended and mp_accel_state 2 (DECELERATING); C19 climax-risk advisory, lock gains and trail; no stop order, level bracket.atr_fallback_stop 97.88 (bracket.valid False, own read)."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "structure 28.0, structure_shift 3 (RANGE), sma_distance_pct -2.86 below the average, mp_state 2 (FADING): fits none of the four setup families; no stop order, invalidation bracket.atr_fallback_stop 101.41."}
+ ],
+ "data_gaps": [
+  {"field": "lens", "impact": "null on every packet row; no strong/ok/warn read of coil or structure to corroborate the contraction proxy (R4/R5)."},
+  {"field": "energy.squeeze_score", "impact": "absent from the packet; no squeeze read to support the range-contraction proxy for the breakout family."},
+  {"field": "bracket.stop", "impact": "null for TECH; I named my own invalidation from structure and cited bracket.atr_fallback_stop 72.69 as engine reference only. Not a reason against the name (R1)."}
+ ],
+ "declarations": [
+  "setup_type: breakout (C2) for TECH; no other packet name fits test, retracement, climax or breakout (R1)",
+  "adx: NOT_SERVED (C7, C8)",
+  "stochastic_kd: NOT_SERVED (C6)",
+  "n_day_extreme: sma_distance_pct + structure_shift (substitute, C3/C4)",
+  "bar_range_history: NOT_SERVED (C12, C13)",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16)",
+  "visual climax patterns declined (C10, R9)",
+  "ledger memory: none injected into this packet, so no standing lesson applies",
+  "TECH atr_14d 0.13 against entry 72.82 is unusually narrow; I cannot tell from my menu whether this is a genuine contraction or a pinned price, so conviction stays low"
+ ],
+ "shortfall_reason": "Only one of 13 names fits one of the four setup families on the served proxies. The rest are extended (sma_distance_pct high), range-bound with mp_state 2 (FADING) or elder_pattern 4 (INTERRUPTED), or too thin to read as a contraction setup. Nothing padded."
+}

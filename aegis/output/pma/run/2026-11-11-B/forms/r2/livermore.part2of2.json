@@ -1,0 +1,182 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "GMAB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Danger-signal territory, not a new high: structure_shift RANGE (structure 55.8), daily 9.8% under its last swing high and 20-day high, H1 below EMA9 with 9<21, after run_10d 21.04% and sma_dist 35.0. That reaction is bigger than my translated danger size off atr 2.47 (own translation, R2). mp FADING is NOT my reason (R13). No entry before a fresh high (C5).",
+   "conviction_change": null,
+   "opposing_case": "Best case FOR: LEADER, weekly HH/HL, mp 96.0; a 9.8% reaction after a vertical run can be a normal reaction (C8) if day_vol 0.48 stays quiet, and a new high would reinstate the trend.",
+   "falsifier": "A close back above the last swing high on day_vol above 1.4 with structure_shift turning BULLISH_BOS.",
+   "challenge_reply": "Fifth Healthcare name in the room: I oppose it, so it adds no exposure from me. Of the five I support only those making fresh highs with a break (TGTX, ACHC, TECH, C14); the cluster itself is a PM sizing matter.",
+   "case": {
+    "for": "mp 96.0, weekly HH/HL, LEADER tag, day_vol 0.48 makes the reaction a quiet one.",
+    "against": "structure_shift RANGE, 9.8% under the daily swing high, H1 below EMA9 with 9<21, sma_dist 35.0 far from the 50-day.",
+    "entry_trigger": "close_above:pivot_high on vol_x_ge:1.4 after structure_shift turns BULLISH_BOS.",
+    "wrong_if": "I am wrong to oppose if it reclaims its swing high on volume within a few sessions.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A close through the last swing high with structure_shift BULLISH_BOS and day_vol above 1.4.",
+    "cannot_see": ["order-fill difficulty"]
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No engine record: structure, structure_shift, mp_state, atr_14d, day_vol and sma_dist are None for BRZE in my record, so C5 and my danger-size translation cannot be evaluated; declared, not worked around. MTF only: at its highs (daily 0.2% under its 20-day high, H1 93% of the day's range), weekly swing HH but LL and 32.0% above its last weekly swing high.",
+   "conviction_change": null,
+   "case": {
+    "for": "MTF: weekly and daily above EMA9 with 9>21, daily HH/HL, H1 0.2% under its 20-hr high closing at 93% of the day's range.",
+    "against": "32.0% above the last weekly swing high is far from a base (C5: never chase far above the recent high), weekly swing HH but LL; Steenbarger puts day_vol at 0.34, unconfirmed; every menu field is None.",
+    "entry_trigger": "Cannot set one until structure_shift and atr_14d exist; then close_above:high_52w_close with vol_x_ge:1.4.",
+    "wrong_if": "I am wrong to abstain if a repaired record shows ABOVE_STRUCTURE and a new high on day_vol above 1.4.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A repaired record with structure, structure_shift, mp_state and atr_14d.",
+    "cannot_see": ["structure", "structure_shift", "mp_state", "atr_14d", "day_vol", "sma_distance_pct"]
+   }
+  },
+  {
+   "ticker": "TECH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Base-and-break at the high: structure 75.8 BULLISH_BOS, mp STRONG/ACCELERATING, weekly, daily and H1 all HH/HL within 0.1% of their highs, sma_dist 0.44 (flat base, not extended). day_vol 1.06 is only normal. atr 0.13 on entry 72.82 reads implausibly small, so my atr-based danger size cannot be trusted and I cap conviction; div BEARISH/4 is advisory to me, not my vote.",
+   "conviction_change": null,
+   "falsifier": "A close under the 100-day or the 20-day base low, or structure_shift falling back to RANGE.",
+   "challenge_reply": "TECH is the fifth Healthcare name and the only one not extended (sma_dist 0.44 against 12.97 to 35.0 elsewhere), so it is the cleanest of the group on my C5 test. All five still share one sector exposure, a PM sizing matter; I do not count them as independent confirmation.",
+   "case": {
+    "for": "structure 75.8 BULLISH_BOS, mp 80.0 STRONG/ACCELERATING, HH/HL on three timeframes at the highs after a flat base (sma_dist 0.44).",
+    "against": "day_vol 1.06 is no more than normal, atr 0.13 cannot be trusted for the danger size, div BEARISH/4 is a conflict I cannot weigh, sector Momentum Fading — Hold, Don't Add.",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4.",
+    "wrong_if": "close_below:ma_100 or close_below:base_low_20d: the base has failed.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A verified atr_14d that makes the danger size unworkable, or the break failing back into the base on volume.",
+    "cannot_see": ["order-fill difficulty", "reliable atr_14d (0.13 reads implausible)"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:ma_100", "close_below:base_low_20d"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No engine record: structure, structure_shift, mp_state, atr_14d, day_vol and sma_dist are None for BOX, so C5 and my danger-size translation cannot be evaluated; declared gap. MTF only: weekly HH/HL, but daily below EMA9 and 5.2% under its last swing high and 20-day high: a reaction, not a new high, and I never buy the pullback (C5).",
+   "conviction_change": null,
+   "case": {
+    "for": "MTF: weekly above EMA9 with 9>21 and HH/HL, 17.1% above its last weekly swing high; H1 0.9% under its 20-hr high.",
+    "against": "Daily below EMA9 and 5.2% under its swing high with no new high made; every field on my menu is None.",
+    "entry_trigger": "Cannot set one without the record; then close_above:high_52w_close with vol_x_ge:1.4, never the dip.",
+    "wrong_if": "I am wrong to abstain if a repaired record shows ABOVE_STRUCTURE and a new high on day_vol above 1.4.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A repaired record with structure, structure_shift, mp_state and atr_14d.",
+    "cannot_see": ["structure", "structure_shift", "mp_state", "atr_14d", "day_vol", "sma_distance_pct"]
+   }
+  },
+  {
+   "ticker": "MSFT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No engine record: structure, structure_shift, mp_state, atr_14d, day_vol and sma_dist are None for MSFT, so C5 and my danger-size translation cannot be evaluated; declared gap. MTF only: weekly 3.3% under its last swing high, daily below EMA9 and 4.7% under, H1 below EMA9 with 9<21: a reaction in progress; a pullback buy is not a Livermore entry (C5).",
+   "conviction_change": null,
+   "case": {
+    "for": "MTF: weekly above EMA9 with 9>21, 4.7% under its 20-wk high: a large leader inside a normal reaction.",
+    "against": "Daily and H1 both below EMA9, swing HH but LL on all three timeframes, 4.7% under the 20-day high, and every field on my menu is None.",
+    "entry_trigger": "Cannot set one without the record; then close_above:high_52w_close with vol_x_ge:1.4, never the pullback.",
+    "wrong_if": "I am wrong to abstain if a repaired record shows ABOVE_STRUCTURE and a new high on day_vol above 1.4.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A repaired record with structure, structure_shift, mp_state and atr_14d.",
+    "cannot_see": ["structure", "structure_shift", "mp_state", "atr_14d", "day_vol", "sma_distance_pct"]
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Hold, trend intact: structure 87.4 BULLISH_BOS, mp STRONG/DECELERATING, sma_dist 16.77, day_vol 0.98, weekly, daily and H1 HH/HL, daily 1.3% under its 20-day high. Held: keep it, add only on a fresh high on volume (C6), never into weakness (C4). After run_10d 24.76% and ext_atr20 3.32 the danger signal, my translated size off atr 3.71, is the exit.",
+   "conviction_change": null,
+   "falsifier": "A one-day reaction beyond my translated danger size off atr 3.71 from the day's high, or structure_shift turning BEARISH_CHOCH.",
+   "case": {
+    "for": "structure 87.4 BULLISH_BOS, mp 93.0 STRONG, HH/HL on three timeframes near the high; leaders near highs are where moves finish last (C15).",
+    "against": "mp DECELERATING, sma_dist 16.77 with ext_atr20 3.32 after run_10d 24.76% is stretched, sector Momentum Fading — Hold, Don't Add; a danger signal ends it on sight (C7).",
+    "entry_trigger": "Hold; add only on close_above:high_52w_close with vol_x_ge:1.4 (C6).",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high exits at once; close_below:ma_20 ends the trend read.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A danger-size reaction, or a second Financials leader failing its high (C14).",
+    "cannot_see": ["order-fill difficulty", "exact 1940 point thresholds (translated via atr)"]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Hold through a normal reaction, no add: structure_shift RANGE (structure 73.7), mp FADING/DECELERATING is not a decay signal on its own (R13), daily 3.3% under its last swing high on day_vol 0.92, a quiet reaction inside weekly and daily HH/HL (C8). New money only on a fresh high; the danger signal remains my exit (C7).",
+   "conviction_change": null,
+   "falsifier": "A reaction beyond my translated danger size off atr 3.85 from the day's high, or a close under the 50-day.",
+   "case": {
+    "for": "Weekly 0.9% under its last swing high, daily HH/HL, day_vol 0.92 on the reaction, LEADER tag.",
+    "against": "No new high: structure_shift RANGE, mp 73.0 under 75 and decelerating, sector Momentum Fading — Hold, Don't Add.",
+    "entry_trigger": "Hold; add only on close_above:high_52w_close with vol_x_ge:1.4 (C6).",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A reaction that grows past my translated danger size, or structure_shift turning BEARISH_CHOCH.",
+    "cannot_see": ["order-fill difficulty", "exact 1940 point thresholds (translated via atr)"]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_50"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Uptrend failed (C20): structure 28.0 RANGE, sma_dist -2.86 (under the 50-day), mp 0.0 FADING/DECELERATING, rs LAGGARD; the daily swing is 21.9% under its last swing high and run_10d -19.45%, far larger than my translated danger size off atr 7.93. Held since 2026-11-10 at unrealised -247.23: take the first small loss (C3), never average down (C4).",
+   "conviction_change": null,
+   "opposing_case": "Best case FOR: rs_rank_pct 96.15 and ret_6m 80.82 say the leader is intact, weekly swing is still HH/HL 1.3% above its last swing high, and a 21.9% reaction may be a flush if day_vol 0.68 stays quiet.",
+   "falsifier": "A close back above the 50-day on day_vol above 1.4 with structure_shift leaving RANGE.",
+   "challenge_reply": "The conflict: price strength (rs_rank_pct 96.15, weekly HH/HL) is last quarter's tape; this week's tape is a reaction beyond my danger size with structure 28.0 and mp 0.0. The danger signal outranks a slow score (R4), so I act on the tape and treat it as an exit case. div BEARISH/4 is advisory to me, not my reason.",
+   "case": {
+    "for": "rs_rank_pct 96.15 and ret_6m 80.82 show a recent leader; weekly swing still HH/HL.",
+    "against": "structure 28.0 RANGE, below the 50-day (sma_dist -2.86), mp 0.0, daily swing 21.9% under its high, rs LAGGARD, held at a loss of unrealised -247.23.",
+    "entry_trigger": "No add. I would support again only after close_above:ma_50 and a new high on vol_x_ge:1.4.",
+    "wrong_if": "I am wrong if it reclaims the 50-day on volume within a few sessions and structure_shift leaves RANGE.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close above the 50-day on day_vol above 1.4 with mp turning up from 0.0.",
+    "cannot_see": ["order-fill difficulty", "hl_trend and hl_flow limbs of the health score"]
+   }
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (my own multiple), not literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "data_gap: BRZE, BOX and MSFT have no engine record (structure, structure_shift, mp_state, atr_14d, day_vol, sma_dist all None); I abstain rather than substitute a read",
+  "ledger_memory: none injected; no standing lesson applies"
+ ]
+}

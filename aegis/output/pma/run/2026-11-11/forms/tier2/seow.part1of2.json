@@ -1,0 +1,65 @@
+{
+ "voice": "seow",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last confirmed pivot high; that is the resistance break."},
+   "wrong_if": "Daily close below the support line max(fib_swing_low, base_low_20d), or a red candle with elder leaving ACCELERATION.",
+   "market_void": null,
+   "reason": "Position picture armed, not fired: W swing HH/HL, W dist_to_20bar_high_pct 4.04, D swing_class LH/LL. No break yet, so wait for it; extension is not the issue, the missing break is."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Daily close above yesterday's high, confirming the continuation."},
+   "wrong_if": "Daily close below the support line max(fib_swing_low, base_low_20d); cmf negative with a red candle.",
+   "market_void": null,
+   "reason": "Position system, break is an old state. D swing_class HH/HL, H1 dist_to_20bar_high_pct 0.45, but W swing_class LH/LL and D dist_to_20bar_high_pct 3.32; flow is marginal, so let a daily close print first."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Price trades through yesterday's high; the break must hold above the pivot."},
+   "wrong_if": "Daily close back below pivot_high, then below the support line max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system, fresh break not a pullback: W swing_class HH/HL, D swing_class HH/HL, momentum flag true. H1 pos_in_day_range_pct 35.4 is a caution; TIF partial. Strength is the signal."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Price trades through yesterday's high, trailed daily until it fills."},
+   "wrong_if": "Daily close below the support line max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system: D swing_class HH/HL, D dist_to_20bar_high_pct 1.15, H1 swing_class HH/HL. W swing_class LH but HL is a caution; participation on the push carries it. COM unread."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Price trades through yesterday's high, re-placed each session."},
+   "wrong_if": "Daily close below the support line max(fib_swing_low, base_low_20d), or back under structure_shift_ref.",
+   "market_void": null,
+   "reason": "Position system on its own rank test, not the defensive cluster: D swing_class HH/HL, D dist_to_20bar_high_pct 0.49, H1 pos_in_day_range_pct 92.4. Moderate rank, TIF partial."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Price trades through yesterday's high, re-placed each session."},
+   "wrong_if": "Daily close below the support line max(fib_swing_low, base_low_20d); elder falling back under 7.",
+   "market_void": null,
+   "reason": "Position system: W, D and H1 all swing_class HH/HL, momentum flag true, D dist_to_20bar_high_pct 0.45. D last_bar red is a watch item, not an exit; only a close under support or the flip exits."
+  }
+ ],
+ "declarations": [
+  "Proxies named: structure_shift and pivot_high for the resistance line; cmf for COM (not served, so no_data); elder_pattern and elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "System picked from each name's own picture, never the lane tag. Weekly-structure caution is a house rule (C21), not the author's. market_void null: my method has no market-wide condition."
+ ]
+}

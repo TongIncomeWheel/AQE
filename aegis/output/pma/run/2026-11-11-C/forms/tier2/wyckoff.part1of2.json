@@ -1,0 +1,115 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close holds above the pivot high on volume, proving the range break is not an upthrust."
+   },
+   "wrong_if": "Daily close back inside the range under the pivot high, or close_below:pvp_val.",
+   "market_void": null,
+   "reason": "Range break: `structure` 73.7, `flow` 90.8, `energy` 84.0 show buyers in control; `mp` 48.0 BUILDING is soft and daily swing is still LH/LL, so I wait for the break to hold (C5, C6)."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly price pulls back to the broken level (the Creek) before a buy stop above the bar high."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref-0.5atr, or choch_bearish.",
+   "market_void": null,
+   "reason": "Fresh break: `structure` 87.4, `mp` 93.0, `flow` 78.9, `elder` 10.0; H1 closes at 100% of its range at the high and weekly swing is HH but LL, so wait for the test (C3, C7)."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly pullback into the broken level, then follow-through, not a chase."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "`flow` 100.0, `sc_momentum` 81.2, `structure` 81.5, `mp` 75.0 say buyers lead; daily is 4.9% above its swing high and weekly swing is LH but HL, past the test zone (R2, C15)."
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high triggers; enter with a buy stop above that bar."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr, or heavy-volume selling.",
+   "market_void": null,
+   "reason": "Inside the test zone, 3.0% above the swing high: `structure` 93.7, `elder` 10.0, `energy` 73.9, `flow` 73.7 and light volume. Weekly HH but LL is the caution (C7, C12)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above the prior high on at least 1.2x time-of-day volume before acting."
+   },
+   "wrong_if": "reject:pivot_high, or a daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "Break on `flow` 78.9, `mp` 86.0, `structure` 76.8, `elder` 9.0 but `energy` 66.4 only fair and the break volume was light: potential upthrust until it holds (C5)."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly pullback to the broken level, then a buy stop above the bar high."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr; weekly LH/LL persists.",
+   "market_void": null,
+   "reason": "`structure` 96.8, `mp` 87.0, `flow` 84.2, `elder` 10.0 are strong but price is 7.0% above its swing high and weekly swing is LH/LL: away from value, no chase (R2, C15)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high with volume rising, confirming the break."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr, or a failed hold of the broken level.",
+   "market_void": null,
+   "reason": "`energy` 84.0, `mp` 80.0 support it but `structure` 63.2, `flow` 65.8, `elder` 7.0 are modest; break volume was light and weekly swing is LH but HL (C5)."
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly pullback into the broken level, then follow-through."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "`flow` 96.1, `structure` 92.6, `sc_momentum` 82.3, `elder` 10.0 strong; `mp` 75.0 at the floor and price 8.5% above its swing high with weekly HH but LL: wait for the test (R2, C15)."
+  }
+ ],
+ "declarations": [
+  "Method limit: pvp_poc/pvp_vah/pvp_val and structure_shift_ref levels are named by field only, not seen as numbers.",
+  "No bracket field is used as a basis for any decision (R1); danger points are named from structure."
+ ]
+}

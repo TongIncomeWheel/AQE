@@ -1,0 +1,127 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "HUM",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "WATCH is right, but 'on volume' must read `day_vol` at least 1.40 (C16). `mp` 48.0 fails its gate and the D swing is LH/LL. The wrong-if printed is Minervini's; mine is a daily close below pivot_high-8pct.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "BTSG",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger buys a pullback to the Creek with no volume leg; C16 needs `day_vol` at least 1.40 on the break. `structure` 87.4 and `mp` 93.0 are strong, but W and D swing HH with LL, 10.4% over the W swing high (C17 late).",
+   "would_clear": "Replace with an H1 close above pivot_high on `day_vol` at least 1.40."
+  },
+  {
+   "ticker": "EMBJ",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "At 4.9% over the swing high any fill above bar_high is past 5% (C17): a late buy, no add-on. Base is only 4 days, W LH. 'On volume' must read `day_vol` at least 1.40 (2.22 today). `subcomponents.flow.ext_score` 5.0 stands.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "LW",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ADVANCE on an hourly close above bar_high carries no volume leg; under C16 a break below `day_vol` 1.40 is a hard rejection, and `mp` 80.0 is decelerating with no volume yet. `structure` 93.7 and `subcomponents.structure.base_score` 15.0 are strong.",
+   "would_clear": "Add `day_vol` at least 1.40 to the trigger (H1 close above pivot_high), or make the verdict WATCH until it prints."
+  },
+  {
+   "ticker": "KO",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "Trigger accepts 1.2x time-of-day volume; my C16 floor is `day_vol` 1.40. `subcomponents.structure.base_score` 5.0 shows no base to count, so R3 fails despite `structure` 76.8 and `mp` 86.0.",
+   "would_clear": "Raise the volume leg to `day_vol` at least 1.40 on the break of the pivot high."
+  },
+  {
+   "ticker": "DAL",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "A daily close above pivot_high with no volume leg breaks C16. `structure` 96.8 and `sc_momentum` 81.9 are strong, but base is only 11 days and the W swing is LH/LL.",
+   "would_clear": "Add `day_vol` at least 1.40 on that daily close above the pivot high."
+  },
+  {
+   "ticker": "ABBV",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Daily close above pivot_high has no volume leg (C16). `energy` 84.0 and `subcomponents.energy.squeeze_score` 12.5 coil, but `structure` 63.2 is thin and `flow` 65.8 shows no accumulation.",
+   "would_clear": "Add `day_vol` at least 1.40 on that daily close above the pivot high."
+  },
+  {
+   "ticker": "ROIV",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Volume is 1.29 today, under my 1.40 (C16), so 'on volume' must read `day_vol` at least 1.40 and ADVANCE is early for me; W HH but LL. `structure` 92.6 and `subcomponents.structure.base_score` 15.0 stand.",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "EBAY",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "LTH",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Hourly close above the prior bar high has no volume leg and fires inside H1 9<21; `subcomponents.flow.mfi` 30.93 says sellers in control (C25), against `structure` 94.7 and `mp` 97.0.",
+   "would_clear": "Require `day_vol` at least 1.40 on an H1 close above the pivot high."
+  },
+  {
+   "ticker": "ADP",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Daily close above pivot_high has no volume leg (C16), and `subcomponents.bq.bq_vol_dry` 5.0 shows no dry-up (C15). `energy` 84.0 and `sc_momentum` 80.6 are strong; `mp` 76.0 is decelerating.",
+   "would_clear": "Add `day_vol` at least 1.40 on that daily close above the pivot high."
+  },
+  {
+   "ticker": "MAC",
+   "answer": "AGREE",
+   "conviction": 2,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "PRCH",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "Entry 21.95 against `ma_200` 12.47 is 76% above, past the 70% climax line (C24, R7); `sma_distance_pct` 23.76 and `subcomponents.structure.base_score` 3.0 on 5 days. `structure` 74.5 and `sc_momentum` 76.6 are strong; I sell into it.",
+   "would_clear": "A pullback to under 70% above `ma_200` and a fresh base (`subcomponents.structure.base_score` well above 3.0)."
+  },
+  {
+   "ticker": "EL",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "'Buyers showing up' is not a volume test (C16); `flow` 50.0 fails its gate with `subcomponents.flow.mfi` 38.75 (C25), though `structure` 82.1 and `energy` 85.7 are strong.",
+   "would_clear": "State the volume leg as `day_vol` at least 1.40 on the close above the pivot high."
+  },
+  {
+   "ticker": "DLTR",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  }
+ ]
+}

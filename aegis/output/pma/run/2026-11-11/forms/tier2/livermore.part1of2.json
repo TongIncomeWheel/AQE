@@ -1,0 +1,96 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "CAH-livermore-for~oneil",
+   "ticker": "CAH",
+   "to": "oneil",
+   "text": "\"Weekly swing is LH/LL, 11.0% above the last swing high.\" My test is C5, not a base: W above EMA9 with 9>21 and close already past the last W swing high, D HH/HL 3.3% under 20-day high, H1 0.5% under 20-hr high; no danger signal (C7). Thin day_vol 0.85 is a weight I already priced at 3; it moves me to WAIT, not out.",
+   "concede": false
+  },
+  {
+   "pair_id": "TMO-livermore-for~oneil",
+   "ticker": "TMO",
+   "to": "oneil",
+   "text": "\"rs_leadership is IN-LINE, so it fails the L test.\" That is O'Neil's test, not mine. Mine is C5 on the grid: W, D and H1 all HH/HL with 9>21, D 0.5% under 20-day high, W 0.5% under 20-wk high, and group confirmation by CAH and EW (C14). Frame order is the trend; the break is my trigger.",
+   "concede": false
+  },
+  {
+   "pair_id": "MAC-livermore-for~oneil",
+   "ticker": "MAC",
+   "to": "oneil",
+   "text": "\"day_vol 1.03 is under the 1.40 test.\" The 1.40 test is O'Neil's; my day_vol is only a partial fill proxy (R5). My test: D HH/HL 1.2% under 20-day high, H1 HH/HL 0.3% under 20-hr high, W above EMA9 with 9>21. The pivot is the prior-day high, and the trigger waits for it.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-livermore-for~oneil",
+   "ticker": "PRCH",
+   "to": "oneil",
+   "text": "\"past my 70 pct climax line (R7).\" A climax line is not my test; C16 buys a stock making a new high and treats extension as a weight (R27). W HH/HL 1.8% under 20-wk high, D HH/HL 0.1% under the last swing high, H1 HH/HL; no reaction of two atr_14d off the high, so no danger signal (C7).",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly candle closes above the last confirmed pivot high, the new high that ends the base."},
+   "wrong_if": "Daily close below entry-2atr (atr_14d is my translation, not Livermore's points) or structure_shift BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "W and H1 HH/HL with 9>21, D swing LH/LL 0.9% above the last swing high, 1.3% under 20-day high. Trend is established but the new high has not printed; C5 buys the break, not the coil."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above the prior day's high, re-making the 20-day high."},
+   "wrong_if": "Daily close below entry-2atr (atr_14d translation) or fade_atr_ge:2 off the day's high; BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "ABOVE_STRUCTURE, mp STRONG/ACCELERATING, D HH/HL 3.3% under 20-day high. day_vol 0.85 is thin at the high, so I wait for the break to print rather than act on the coil."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above the prior day's high: follow-through after the break."},
+   "wrong_if": "Daily close below pivot_high (the broken pivot) or fade_atr_ge:2 off the day's high; no follow-through is a danger signal (C17).",
+   "market_void": null,
+   "reason": "BULLISH_BOS on day_vol 3.1, W and D HH/HL, D 1.0% above the last swing high. H1 closed at 35% of range, 5.5% under 20-hr high: the reaction must resolve upward first. Conviction 2."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above the prior day's high, a fresh 20-day high on strength."},
+   "wrong_if": "Daily close below entry-2atr (atr_14d translation), fade_atr_ge:2 off the day's high, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "ABOVE_STRUCTURE, mp STRONG/ACCELERATING, D HH/HL 1.1% under 20-day high, H1 HH/HL 72% of range, day_vol 2.22 on the break; DAL confirms the group (C14). Entry on strength."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above the prior day's high, the new high the break points to."},
+   "wrong_if": "Daily close below entry-2atr (atr_14d translation), fade_atr_ge:2 off the day's high, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "BULLISH_BOS, D HH/HL 0.5% under 20-day high, H1 HH/HL 92% of range 0.1% under 20-hr high; sma_dist 7.39 is not extended. mp FADING is the default label, not a veto. Thin day_vol 0.84 holds conviction at 3."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above the prior day's high, a new high with W and D 0.5% away."},
+   "wrong_if": "Daily close below entry-2atr (atr_14d translation), fade_atr_ge:2 off the day's high, or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "ABOVE_STRUCTURE, W, D and H1 all HH/HL with 9>21, D 0.5% under 20-day high; CAH and EW confirm the group (C14). day_vol 0.74 is thin, a weight, so conviction stays 3."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d; fade_atr_ge:2 and entry-2atr are my own translation, not Livermore's 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "Group confirmation (CAH, EW, TMO; EMBJ, DAL) is C14 context; each decision rests on the name's own structure and W/D/H1 grid"
+ ]
+}

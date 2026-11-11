@@ -1,0 +1,1398 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "Market gate DELEGATED (C1-C3). Packet Valen reads RISK OFF / DOWNTREND, quoted not computed by me. Every SUPPORT is a watch-to-buy valid only once the gate confirms; conviction capped at 3.",
+  "Fundamentals NOT_AVAILABLE: C, A, S, I untested. The packet fundamentals line is not on my data menu and was not read; nothing inferred from price or volume.",
+  "Substitutes: rs_leadership for the RS Rating, day_vol vs 20d for the 50d volume test, structure and lens.coil for base soundness. base_stage NOT_AVAILABLE (C19).",
+  "R27 applied: extension and distance past pivot weigh but never veto a MOMENTUM-lane name. R7 (price 70 pct or more above ma200) stays my climax line. R1: no bracket field is a basis for any vote.",
+  "rs_rank_pct is not on my menu and was not used. Pivot distance is served only where another seat quoted pct_from_pivot; elsewhere the MTF distance to the 20-day high is my proxy."
+ ],
+ "data_gaps": [
+  {
+   "field": "pivot_high",
+   "impact": "Not served for most names; MTF distance to the 20-day high is my proxy."
+  },
+  {
+   "field": "ma_200",
+   "impact": "BOBS has none; the R7 climax test and C19 stage cannot run."
+  },
+  {
+   "field": "lens.leadership",
+   "impact": "BOBS reads --; the L test rests on rs_leadership alone."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "LEADER coiled under its pivot: pct_from_pivot -4.04 (pivot_high 456.5), structure 73.7 RANGE, lens coil strong, day_vol 1.44 just clears 1.40 but this is not a breakout day. sma_dist 7.89 is not extended. Group read fading, gate delegated: conviction stays 2.",
+   "challenge_reply": "Sector hidden: rs LEADER, lens coil strong and structure 73.7 are the name's own; the fading group read is a weight against.",
+   "case": {
+    "for": "LEADER, lens coil strong, div BULLISH/0, sma_dist 7.89, entry under pivot_high 456.5.",
+    "against": "Structure RANGE, no BOS yet; D swing LH/LL; day_vol 1.44 barely clears; undercut-and-rally setup FAILED (5/9); group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4; nothing before.",
+    "wrong_if": "Close under ma50 406.02, or a failed break of pivot_high 456.5 on thin volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A volume break of pivot_high lifts me to 3; a group turn down while it breaks alone withdraws me (R9).",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Nothing confirms at the high: day_vol 0.85 is under the 1.40 test and div BEARISH/1 (C25: a high on lighter volume with a bearish oscillator read). pct_from_pivot 6.78 and sma_dist 14.32 are weights only. Group Momentum Fading; gate delegated.",
+   "opposing_case": "LEADER, downday 2.08, structure 72.6 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, lens leadership and insti_money strong: the strongest tape in the group.",
+   "challenge_reply": "Sector hidden: the oppose rests on day_vol 0.85 and div BEARISH/1 in the name itself, not on XLV.",
+   "case": {
+    "for": "LEADER, downday 2.08, structure 72.6, lens leadership strong, mp STRONG/ACCELERATING.",
+    "against": "day_vol 0.85, div BEARISH/1, lens coil ok only (no tight base), D 3.3% under 20-day high.",
+    "entry_trigger": "Support only a close through the 20-day high on vol_x_ge 1.4 with the divergence cleared.",
+    "wrong_if": "Wrong if it clears the 20-day high on 1.4x volume with div NONE.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A decisive high on day_vol of at least 1.40 with the divergence gone.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "I trade this as a breakout at the high, not a pullback: BULLISH_BOS on day_vol 3.1, pct_from_pivot 1.04 over pivot_high 63.6, LEADER, sma_dist 14.36. The hour closed 35% of range and 5.5% under 20-hr high: a fade I count against. Structure 63.2 and group fading hold me at 3.",
+   "challenge_reply": "Steenbarger: breakout through pivot_high 63.6 on day_vol 3.1; the PULLBACK lane is only the label it arrived under. Hold test is a close back under pivot_high. Sector hidden: leadership, BOS and volume are the name's own.",
+   "case": {
+    "for": "LEADER, BULLISH_BOS, day_vol 3.1 far over the 1.40 test, inside the buy zone at pct_from_pivot 1.04, W and D HH/HL.",
+    "against": "structure 63.2, H1 35% of range after a 3.1 volume day, mp STRONG/DECELERATING, delayed EP setup FAILED (8/10), group Momentum Fading.",
+    "entry_trigger": "Hold over pivot_high 63.6; no add past +5pct of it (C21).",
+    "wrong_if": "Close back under pivot_high 63.6 on heavy volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close under pivot_high 63.6 on volume, or XLV turning down while it breaks alone (R9).",
+    "cannot_see": [
+     "EPS/sales",
+     "sponsors",
+     "in-group rank",
+     "base-stage count"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base to buy from: lens coil warn, day_vol 1.13 under the 1.40 test on a new high, div BEARISH/1, ma50 61.24 under ma100 63.47. Structure 87.4 BULLISH_BOS and LEADER are real; sma_dist 18.37 is a weight only.",
+   "opposing_case": "LEADER, structure 87.4 BULLISH_BOS, mp STRONG/ACCELERATING, flow 78.9, D 0.0% under 20-day high: strength at the high.",
+   "challenge_reply": "Sector hidden: coil warn, day_vol 1.13 and the 50/100 stack are the name's own; XLV is a minor weight.",
+   "case": {
+    "for": "LEADER, BULLISH_BOS, structure 87.4, mp STRONG/ACCELERATING.",
+    "against": "lens coil warn, day_vol 1.13, div BEARISH/1, ma50 61.24 under ma100 63.47.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 61.24.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A completed tight base over ma100 63.47 and a 1.4x break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A high on light volume with no base: day_vol 0.76 (C25), lens coil warn, D 17.6% above the last swing high; sma_dist 16.28 is a weight only. LEADER and structure 84.2 are real, but there is no pivot to buy. Group Momentum Fading.",
+   "opposing_case": "LEADER, structure 84.2 ABOVE_STRUCTURE, flow 82.9, mp STRONG/ACCELERATING, 0.6% under 20-day high: a clean uptrend.",
+   "challenge_reply": "Sector hidden: day_vol 0.76 and lens coil warn are the name's own.",
+   "case": {
+    "for": "LEADER, structure 84.2, flow 82.9, mp STRONG/ACCELERATING.",
+    "against": "day_vol 0.76, lens coil warn, sma_dist 16.28, no tight base.",
+    "entry_trigger": "A fresh tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 89.45.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A completed base and a volume break of at least 1.4x.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Vertical with no base: lens coil warn, day_vol 1.03 under the 1.40 test, D 14.4% above the last swing high at its 20-day high (pct_from_pivot 14.38 is a weight only). LEADER, flow 88.2 and mp STRONG/ACCELERATING are real; nothing to buy until it rests and breaks on volume.",
+   "opposing_case": "LEADER, structure 74.7 ABOVE_STRUCTURE, flow 88.2, mp STRONG/ACCELERATING, at its 20-day and 20-wk high: pure strength.",
+   "case": {
+    "for": "LEADER, flow 88.2, structure 74.7, at the high.",
+    "against": "lens coil warn, day_vol 1.03, sma_dist 20.26, no base to define a pivot.",
+    "entry_trigger": "Rest into a tight base, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 18.59.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Volume confirms: day_vol 2.22 passes the 1.40 test, flow 100.0, LEADER, structure 81.5 ABOVE_STRUCTURE, sma_dist 11.18. Weights against: lens coil warn, distance past the pivot, group Momentum Fading. Buy only a pause-and-break; gate delegated.",
+   "conviction_change": "R1 hard-rejected on C17 distance past pivot_high; R27 makes distance a weight and day_vol 2.22 now passes. Support at 2.",
+   "case": {
+    "for": "day_vol 2.22 on the move, flow 100.0, LEADER, structure 81.5, D 1.1% under 20-day high.",
+    "against": "lens coil warn, no countable base (C19 unreadable), D 4.9% above the last swing high, group Momentum Fading.",
+    "entry_trigger": "Close through bar_high on vol_x_ge 1.4 after a tight pause; no add past +5pct.",
+    "wrong_if": "Close under ma50 74.2.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume fading under 1.40 on the next push, or the group turning down (R9).",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "LW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coiled leader at the highs: lens coil strong, lens resistance strong, structure 93.7 ABOVE_STRUCTURE, LEADER. day_vol 0.79 is the C15 drought, not a failure; W and D sit 0.9% under their highs. lens leadership only warn and the group is fading: buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "lens coil strong, resistance strong, structure 93.7, LEADER, volume dry.",
+    "against": "lens leadership warn, sma_dist 14.0, day_vol 0.79 gives no break, mp FADING/DECELERATING (R13 label), group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 50.1.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break that fails on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Best coil in the set: lens coil, structure, resistance and leadership all strong; structure 76.8 BULLISH_BOS, sma_dist 7.39 not extended, W and D 0.5% under their highs, day_vol 0.84 dry. Group fading and the gate delegated hold me at 3; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "All four lenses strong, BULLISH_BOS, sma_dist 7.39, downday 2.28, 0.5% under the 20-day high.",
+    "against": "day_vol 0.84 gives no break yet, mp FADING/DECELERATING (R13 label), group Momentum Fading; KDP is in the same group and in-group rank is unserved.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 90.24.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coiled, dry and near the high: lens coil strong, lens structure strong, insti_money strong, day_vol 0.66 (C15 drought), D 3.1% under 20-day high, sma_dist 7.42. Structure only 63.2 and div BEARISH/1 keep it at 2; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "lens coil strong, structure strong, insti_money strong, LEADER, volume dry.",
+    "against": "structure 63.2, div BEARISH/1, W swing LH/LL, mp FADING/DECELERATING (R13 label), group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 71.53.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 or div_bear_count rising withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base: lens coil warn, day_vol 0.67 under the 1.40 test at the high, pct_from_pivot 7.0 on the extended side (weight only), sma_dist 13.41. LEADER and structure 96.8 ABOVE_STRUCTURE are real, but there is no pivot to buy.",
+   "opposing_case": "LEADER, structure 96.8, flow 84.2, mp STRONG/ACCELERATING, 0.3% under 20-day high: a strong trend at its high.",
+   "case": {
+    "for": "LEADER, structure 96.8, flow 84.2, mp STRONG/ACCELERATING.",
+    "against": "lens coil warn, day_vol 0.67, sma_dist 13.41, group Momentum Fading.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 81.3.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A completed base and a volume break of at least 1.4x.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight base resolving: pct_from_pivot 0.85, lens coil strong, lens structure strong, LEADER, day_vol 0.61 dry, sma_dist 7.47, D 3.0% under 20-day high. Structure 63.2 and the fading group keep it at 2; the U&R reclaim is not my entry.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "challenge_reply": "Sector hidden: lens coil strong, LEADER and day_vol 0.61 are the name's own; XLV fading caps me at 2.",
+   "case": {
+    "for": "lens coil strong, structure strong, LEADER, pct_from_pivot 0.85, volume dry.",
+    "against": "structure 63.2, mp STRONG/DECELERATING, day_vol 0.61 gives no break, group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 273.45.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break that fails on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "OHI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No countable base or proven leadership: weekly swing LH/LL, ma50 46.4, ma100 47.33 and ma200 46.75 flat and tangled, lens leadership only ok, day_vol 0.95 under the 1.40 test. I cannot read a pivot, so I abstain rather than guess.",
+   "case": {
+    "for": "LEADER tag, structure 81.1 ABOVE_STRUCTURE, sma_dist 4.96 not extended, lens resistance strong, 1.3% under 20-day high.",
+    "against": "Weekly LH/LL, tangled averages, lens leadership ok only, day_vol 0.95, group Momentum Fading.",
+    "entry_trigger": "A close through pivot_high on vol_x_ge 1.4 with the weekly making higher highs.",
+    "wrong_if": "Close under ma200 46.75.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high plus a volume break; then I support.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Flat-base candidate: ma20 117.66, ma50 117.15 and ma100 117.6 tangled under entry 123.3, LEADER, lens coil ok, day_vol 0.79 dry, D 4.3% under 20-day high. Structure only 61.1 and lens insti_money warn make this my weakest support; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "LEADER, flat averages (a base in length), sma_dist 5.25, volume dry.",
+    "against": "structure 61.1, insti_money warn, 4.3% under the 20-day high, insurance names share one read, group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 117.15.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me; structure over 70 lifts me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "SYK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend base: ma50 292.18 under ma100 310.58 under ma200 322.56, weekly 9<21, H1 9<21 with swing LH/LL, lens leadership warn; entry 324.29 is only just over ma200. LEADER is a 20-day tag, the wrong horizon for C10. D 7.2% under 20-day high, no completed consolidation.",
+   "opposing_case": "LEADER, downday 1.57, flow 77.6, lens insti_money strong, daily HH/HL and a reclaim of the 9-day average: a sharp recovery.",
+   "challenge_reply": "Sector hidden: the inverted ma50/ma100/ma200 and weekly 9<21 are the name's own; the Healthcare cluster is no part of my reason.",
+   "case": {
+    "for": "LEADER 20-day tag, flow 77.6, insti_money strong, entry back over ma200 322.56.",
+    "against": "Inverted averages, weekly 9<21, lens leadership warn, no base, D 7.2% under 20-day high.",
+    "entry_trigger": "Weekly 9>21, ma50 back over ma200, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if ma50 crosses over ma200 322.56 and it breaks out on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Weekly 9>21 and a completed base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Orderly leader under the high: LEADER, lens leadership and insti_money strong, lens coil ok, structure 72.6 ABOVE_STRUCTURE, day_vol 0.93, D 3.5% under 20-day high, sma_dist 7.41. The trendline reclaim is not my entry; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "LEADER, leadership and insti_money strong, structure 72.6, sma_dist 7.41.",
+    "against": "day_vol 0.93, lens coil ok not strong, H1 below EMA9, mp FADING/DECELERATING (R13 label), group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 117.91.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base and volume short: lens coil warn, lens resistance warn, day_vol 1.29 under the 1.40 test; pct_from_pivot 7.01 is a late-buy warning, a weight only. LEADER, structure 92.6 and flow 96.1 are real.",
+   "opposing_case": "LEADER, structure 92.6 ABOVE_STRUCTURE, flow 96.1, mp STRONG/ACCELERATING, D 0.6% under 20-day high.",
+   "challenge_reply": "Sector hidden: coil warn, resistance warn and day_vol 1.29 are the name's own.",
+   "case": {
+    "for": "LEADER, structure 92.6, flow 96.1, mp STRONG/ACCELERATING.",
+    "against": "lens coil warn, resistance warn, day_vol 1.29, downday 0.4 is thin, group Momentum Fading.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 36.94.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "IBN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "A high on light volume with no base: day_vol 0.83, lens coil warn, sma_dist 19.23 and pct_from_pivot 15.31 (weights only), W and D 0.2% under their highs after a vertical run. A foreign bank, so in-group rank is unreadable. LEADER and structure 86.3 are real.",
+   "opposing_case": "LEADER, structure 86.3 ABOVE_STRUCTURE, flow 82.9, mp STRONG/ACCELERATING, at its highs on every frame.",
+   "case": {
+    "for": "LEADER, structure 86.3, flow 82.9, mp STRONG/ACCELERATING.",
+    "against": "day_vol 0.83, lens coil warn, sma_dist 19.23, no pivot to define.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 29.25.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A completed base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "C25 and C24: a high on day_vol 0.63 with div BEARISH/2, lens leadership warn and coil warn, and entry 39.39 against ma200 17.72 (more than double, past my 70 pct climax line). LEADER is real; distance past pivot is only a weight, the missing volume and base are the reason.",
+   "opposing_case": "LEADER, downday 0.48, mp STRONG/ACCELERATING, structure 74.7 ABOVE_STRUCTURE, 1.7% under 20-day high: a persistent trend.",
+   "challenge_reply": "Steenbarger: rs_rank_pct is not on my menu and I do not use it. My oppose stands on my fields: day_vol 0.63 at the high, div BEARISH/2, lens coil warn, and entry 39.39 vs ma200 17.72 (C24). Sector hidden, unchanged.",
+   "case": {
+    "for": "LEADER, downday 0.48, mp STRONG/ACCELERATING, structure 74.7.",
+    "against": "day_vol 0.63, div BEARISH/2, coil warn, leadership warn, sma_dist 47.71.",
+    "entry_trigger": "A tight base holding over ma50 26.67, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it makes a new high on 1.4x volume with div NONE.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new high on 1.4x volume with the oscillators agreeing, or a base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fails the L test on a pullback-lane name: rs_leadership IN-LINE (downday 0.21), so it moves with its group rather than leading it (R2, C9). The coil is real: lens coil strong, structure 73.7 ABOVE_STRUCTURE, day_vol 0.74 dry, W 0.5% under 20-wk high. If the label turns LEADER I support.",
+   "opposing_case": "lens coil strong, lens leadership strong, structure 73.7, sma_dist 8.04, W and D 0.5% under their highs: a clean coil at the high.",
+   "challenge_reply": "Sector hidden: the oppose is the name's own IN-LINE rs_leadership, not XLV.",
+   "case": {
+    "for": "lens coil strong, leadership strong, structure 73.7, sma_dist 8.04.",
+    "against": "rs_leadership IN-LINE with downday 0.21, day_vol 0.74 gives no break, group Momentum Fading.",
+    "entry_trigger": "rs_leadership LEADER plus a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if the label turns LEADER and it breaks pivot_high on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_leadership turning LEADER with a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "Heavy volume without the break: day_vol 2.54 passes the 1.40 test, LEADER, structure 75.8 BULLISH_BOS. But it sits 4.9% under its 20-day high, H1 is 9<21 and ma50 67.93 is under ma200 71.76 (stack still repairing). Weakest support: I watch the pivot.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40 on my screen). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "challenge_reply": "Sector hidden: day_vol 2.54, BOS and the repairing stack are the name's own.",
+   "case": {
+    "for": "day_vol 2.54, BULLISH_BOS, structure 75.8, LEADER, downday 2.12.",
+    "against": "Not at a pivot, flow 52.6, H1 9<21, ma50 under ma200, lens leadership warn.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 67.93.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 turning back over ma200 with a volume break lifts me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "NI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend base: weekly 9<21 with swing LH/LL, ma50 41.77 under ma100 43.23 under ma200 44.93 (entry 45.29 just over ma200), day_vol 0.57. LEADER and structure 81.1 are real but nothing is completed to buy.",
+   "opposing_case": "LEADER, structure 81.1 ABOVE_STRUCTURE, lens resistance strong, daily HH and a reclaim of the 9-day average.",
+   "case": {
+    "for": "LEADER, structure 81.1, lens resistance strong, D 1.5% under 20-day high.",
+    "against": "Weekly 9<21 LH/LL, inverted averages, day_vol 0.57, flow 51.3.",
+    "entry_trigger": "Weekly 9>21, a base over ma200, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if ma50 crosses over ma200 44.93 and it breaks out on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Weekly 9>21 and a completed base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "TGT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coiled on the 10-week line: every lens strong including coil, LEADER, sma_dist 3.46 (ma50 156.37, ma20 155.1), day_vol 1.02, D 2.8% under 20-day high. Structure only 63.2 and day_vol under 1.40: buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "All lenses strong, LEADER, price on ma50 156.37, sma_dist 3.46.",
+    "against": "structure 63.2, W swing LH/LL, day_vol 1.02, group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 156.37.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fails the L test on a pullback-lane name: rs_leadership LAGGARD (downday -2.37), so it falls with the tape (R2, C9). Also entry 32.41 against ma200 17.21 is past my 70 pct climax line, and day_vol is 0.99.",
+   "opposing_case": "lens leadership strong, structure 71.6 ABOVE_STRUCTURE, mp BUILDING/ACCELERATING, W HH/HL: a very strong run.",
+   "challenge_reply": "Sector hidden: the oppose is the name's own LAGGARD label, downday -2.37.",
+   "case": {
+    "for": "lens leadership strong, structure 71.6, mp BUILDING/ACCELERATING.",
+    "against": "LAGGARD with downday -2.37, entry 32.41 vs ma200 17.21, day_vol 0.99, high tight flag setup FAILED (8/11).",
+    "entry_trigger": "rs_leadership LEADER plus a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if the label turns LEADER and it breaks pivot_high on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_leadership turning LEADER with a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "SOLV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Fresh break not yet stretched: LEADER, structure 61.1 BULLISH_BOS, pct_from_pivot 0.7, sma_dist 2.72, lens coil ok, insti_money strong, flow 88.2. day_vol 0.76 does not confirm and structure is only 61.1: conditional, buy only on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "challenge_reply": "Sector hidden: BOS, pct_from_pivot 0.7 and flow 88.2 are the name's own.",
+   "case": {
+    "for": "LEADER, BULLISH_BOS, pct_from_pivot 0.7, sma_dist 2.72, flow 88.2.",
+    "against": "day_vol 0.76 unconfirmed, structure 61.1, ma20 86.22 under ma50 87.69, D swing LH/LL, group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 87.69.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "NYT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Under the 200-day with a weak stack: entry 72.58 below ma200 73.32, ma50 67.47 under ma100 69.03, weekly 9<21, day_vol 0.62. The coil and structure 85.3 BULLISH_BOS are good, and it is the only Momentum Building - Add group, but no uptrend precedes the base (C12).",
+   "opposing_case": "structure 85.3 BULLISH_BOS, lens coil, resistance and leadership strong, D 0.3% under 20-day high, the only group reading Momentum Building - Add.",
+   "case": {
+    "for": "structure 85.3, BULLISH_BOS, lens coil strong, group Momentum Building - Add.",
+    "against": "entry under ma200 73.32, inverted averages, weekly 9<21, day_vol 0.62, flow 36.8.",
+    "entry_trigger": "A close over ma200 73.32, then pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it closes over ma200 73.32 and breaks pivot_high on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Price over ma200 and weekly 9>21 with a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "HSIC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight cluster at the high: lens coil, structure and leadership strong, LEADER; ma20 85.72, ma50 86.09 and ma100 86.42 stacked together under entry 88.74, day_vol 0.62 dry, sma_dist 3.08, D 1.1% under 20-day high. Structure only 63.2: buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "challenge_reply": "Sector hidden: lens coil strong, LEADER and the tight averages are the name's own; XLV fading caps me at 2.",
+   "case": {
+    "for": "lens coil strong, LEADER, tight averages, sma_dist 3.08, volume dry.",
+    "against": "structure 63.2, day_vol 0.62 gives no break, W swing LH but HL, group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 86.09.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Held: KEEP, no add. LEADER, structure 87.4 BULLISH_BOS, entry 101.59 far over ma50 87.0 so my R8 line is intact. day_vol 0.98 does not confirm an add (C21), lens coil warn and sma_dist 16.77: no new buy.",
+   "case": {
+    "for": "LEADER, BULLISH_BOS, structure 87.4, ma50 87.0 far below price, downday 3.33.",
+    "against": "lens coil warn, sma_dist 16.77, day_vol 0.98, mp STRONG/DECELERATING, no add allowed on volume 0.98.",
+    "entry_trigger": "Hold; add only on a close through pivot_high on vol_x_ge 1.4, none past +5pct.",
+    "wrong_if": "Close under ma50 87.0 on heavy volume ends the hold (R8).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close under ma50 87.0 on heavy volume turns me to exit.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Held book; gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Held: KEEP, no add. LEADER, lens coil strong, insti_money strong, structure 73.7 RANGE, entry 123.52 over ma50 113.26, D 3.3% under 20-day high. day_vol 0.92 does not confirm an add; my R8 line is ma50 113.26.",
+   "case": {
+    "for": "LEADER, lens coil strong, insti_money strong, price well over ma50 113.26.",
+    "against": "structure RANGE with no BOS, day_vol 0.92, mp FADING/DECELERATING (R13 label), group Momentum Fading.",
+    "entry_trigger": "Hold; add only on a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 113.26 on heavy volume ends the hold (R8).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close under ma50 113.26 on heavy volume turns me to exit.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Held book; gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held: EXIT-CASE. LAGGARD (downday -2.5), structure 28.0, sc_mom 28.4, div BEARISH/4, AQE health exit (score 0.0), price under ma20 119.53 and vwap14 121.84. entry 112.430375 sits under ma50 112.56: the 10-week line has failed (R8), though day_vol 0.68 is light, not heavy.",
+   "opposing_case": "Strong relative-strength rank (rs_rank_pct 96.15, not my field) and a recent entry, so the loss is small (unrealised -247.23).",
+   "challenge_reply": "Steenbarger: conflict resolved on my fields. rs_leadership LAGGARD, structure 28.0 and div BEARISH/4 say sell; rs_rank_pct 96.15 is not mine. No stop is written (written stop None): one belongs under ma50 112.56.",
+   "case": {
+    "for": "High rs_rank_pct (not my field), recent entry, small loss at unrealised -247.23.",
+    "against": "LAGGARD, structure 28.0, div BEARISH/4, under ma20 119.53 and vwap14 121.84, health exit.",
+    "entry_trigger": "Exit; re-support only after a base and a close back over ma50 112.56 on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it closes back over ma20 119.53 on 1.4x volume.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A close over ma20 119.53 on 1.4x volume with the divergence easing.",
+    "cannot_see": [
+     "EPS/sales",
+     "sponsors",
+     "in-group rank",
+     "base-stage count"
+    ]
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Volume shows: day_vol 2.16 passes the 1.40 test, LEADER, structure 94.7 ABOVE_STRUCTURE, downday 2.12, W 0.4% above its last swing high. Weights against: lens coil warn, sma_dist 12.97, H1 9<21 LH/LL, D 2.5% under 20-day high. Buy the break only; the U&R reclaim is not my entry.",
+   "conviction_change": "R1 hard-rejected on C17 distance past pivot_high; R27 makes it a weight and day_vol 2.16 passes. Support at 2.",
+   "case": {
+    "for": "day_vol 2.16, LEADER, structure 94.7, downday 2.12.",
+    "against": "lens coil warn, no countable base, sma_dist 12.97, H1 9<21, group Momentum Fading.",
+    "entry_trigger": "Close through the 20-day high on vol_x_ge 1.4 after a tight pause.",
+    "wrong_if": "Close under ma50 41.98.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume fading under 1.40 on the next push withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coiled leader under the high: lens coil strong, LEADER, flow 84.2, energy 84.0, structure 74.7 RANGE, day_vol 0.56 dry, D 1.8% under 20-day high, sma_dist 9.14. div BEARISH/1 and no BOS yet cap it at 2; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "lens coil strong, LEADER, flow 84.2, energy 84.0, volume dry.",
+    "against": "div BEARISH/1, structure RANGE (no BOS), H1 LH/LL, mp FADING/DECELERATING (R13 label), group Momentum Fading.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 279.86.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 or div_bear_count rising withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "MAC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No tight base and no volume: lens coil warn, day_vol 1.03 under the 1.40 test, D 1.2% under 20-day high, W swing HH but LL. LEADER, structure 84.2 and lens resistance strong are real; sma_dist 10.02 is not the issue.",
+   "opposing_case": "LEADER, structure 84.2 ABOVE_STRUCTURE, lens resistance strong, mp STRONG/FLAT, a trendline reclaim: a clean trend near its high.",
+   "case": {
+    "for": "LEADER, structure 84.2, lens resistance strong, sma_dist 10.02.",
+    "against": "lens coil warn, day_vol 1.03, W swing HH but LL, delayed EP setup FAILED (6/10).",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 23.29.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax read with no base: entry 23.28 against ma200 9.78 (more than double, past my 70 pct line), sma_dist 61.79, lens coil warn, day_vol 0.94 under the 1.40 test at the high, D 68.3% above the last swing high. LEADER and mp STRONG/ACCELERATING are real; seated by rule, which is no reason by itself.",
+   "opposing_case": "LEADER, downday 1.91, structure 84.2 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, 0.6% under 20-day high: the strongest tape in the set.",
+   "challenge_reply": "Sector hidden: the climax read, coil warn and day_vol 0.94 are the name's own.",
+   "case": {
+    "for": "LEADER, structure 84.2, mp STRONG/ACCELERATING, at the high.",
+    "against": "entry 23.28 vs ma200 9.78, sma_dist 61.79, coil warn, day_vol 0.94, HTF flag setup FAILED (7/12).",
+    "entry_trigger": "A tight base over ma20 15.81, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Structure broken: structure 30.5 BEARISH_CHOCH, entry 51.4 under ma200 54.5 and far under ma100 64.35, W 9<21 swing LH/LL, day_vol 0.64. A rebound inside a damaged base is repair, not a launchpad (C13). LEADER is a 20-day tag, the wrong horizon.",
+   "opposing_case": "LEADER, downday 4.33, lens coil strong, insti_money strong, D HH/HL 0.6% above the swing high, mp STRONG: a violent rebound.",
+   "challenge_reply": "Sector hidden: BEARISH_CHOCH and the position under ma200 54.5 are the name's own.",
+   "case": {
+    "for": "LEADER, downday 4.33, lens coil strong, insti_money strong, daily HH/HL.",
+    "against": "structure 30.5 BEARISH_CHOCH, under ma200 54.5 and ma100 64.35, weekly 9<21 LH/LL.",
+    "entry_trigger": "A retake of ma200 and ma100 with structure_shift back to BULLISH_BOS, then pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it retakes ma200 54.5 and ma100 64.35 with BULLISH_BOS.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A retake of ma200 and ma100 on volume.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "base-stage count"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax read, no volume: entry 26.73 against ma200 14.92 (past my 70 pct line), sma_dist 61.53, day_vol 1.02 under the 1.40 test, flow 46.1, D 14.4% above the last swing high. LEADER and structure 77.3 are real; lens coil ok is not a tight base.",
+   "opposing_case": "LEADER, structure 77.3 ABOVE_STRUCTURE, lens resistance strong, 1.8% under 20-day high: leader of a powerful move.",
+   "challenge_reply": "Sector hidden: the climax read and day_vol 1.02 are the name's own.",
+   "case": {
+    "for": "LEADER, structure 77.3, lens resistance strong.",
+    "against": "entry 26.73 vs ma200 14.92, sma_dist 61.53, day_vol 1.02, flow 46.1, HTF flag setup FAILED (4/11).",
+    "entry_trigger": "A tight base over ma20 20.33, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base, light volume at the high: lens coil warn, lens leadership warn, day_vol 0.91 under the 1.40 test, sma_dist 38.57, D 34.4% above the last swing high. LEADER, flow 88.2 and structure 86.7 are real; extension is a weight. The delayed EP read is PAST_PIVOT.",
+   "opposing_case": "LEADER, structure 86.7 ABOVE_STRUCTURE, flow 88.2, W and D 0.5% under their highs, mp FADING/ACCELERATING (R13 label).",
+   "challenge_reply": "Sector hidden: coil warn, leadership warn and day_vol 0.91 are the name's own.",
+   "case": {
+    "for": "LEADER, structure 86.7, flow 88.2, at the high on W and D.",
+    "against": "lens coil warn, leadership warn, day_vol 0.91, sma_dist 38.57.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 22.27.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax read, no base: entry 15.83 against ma200 7.69 (more than double), sma_dist 59.57, lens coil warn, day_vol 1.16 under the 1.40 test, D 44.6% above the last swing high. LEADER and mp STRONG/ACCELERATING are real; distance is a weight, the missing base and volume are the reason.",
+   "opposing_case": "LEADER, downday 2.72, structure 84.2 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, 1.7% under 20-day high: a persistent trend.",
+   "challenge_reply": "Sector hidden: the climax read, coil warn and day_vol 1.16 are the name's own.",
+   "case": {
+    "for": "LEADER, downday 2.72, structure 84.2, mp STRONG/ACCELERATING.",
+    "against": "entry 15.83 vs ma200 7.69, sma_dist 59.57, coil warn, day_vol 1.16, HTF flag setup FAILED (5/11).",
+    "entry_trigger": "A tight base over ma20 11.39, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax read, no base: entry 14.89 against ma200 8.43 (past my 70 pct line), sma_dist 46.73, lens coil warn, day_vol 0.93 under the 1.40 test, D 42.1% above the last swing high. LEADER and flow 80.3 are real; distance is a weight, the missing base and volume are the reason.",
+   "opposing_case": "LEADER, downday 2.18, structure 77.3 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, 1.9% under 20-day high.",
+   "case": {
+    "for": "LEADER, downday 2.18, structure 77.3, flow 80.3.",
+    "against": "entry 14.89 vs ma200 8.43, sma_dist 46.73, coil warn, day_vol 0.93, HTF flag setup FAILED (6/11).",
+    "entry_trigger": "A tight base over ma20 11.96, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Three lens warnings: coil warn, resistance warn, leadership warn; day_vol 0.82 under the 1.40 test; D 31.8% above the last swing high and sma_dist 31.87 (weights). LEADER and structure 76.8 are real, but there is no base and there is overhead supply.",
+   "opposing_case": "LEADER, downday 0.63, mp STRONG/ACCELERATING, flow 88.2, structure 76.8 ABOVE_STRUCTURE, 3.1% under 20-day high.",
+   "case": {
+    "for": "LEADER, mp STRONG/ACCELERATING, flow 88.2, structure 76.8.",
+    "against": "lens coil, resistance and leadership warn, day_vol 0.82, sma_dist 31.87, downday only 0.63.",
+    "entry_trigger": "A tight base clearing overhead supply, then pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 21.3.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base, resistance lens turning ok, and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No base after a vertical run: lens coil warn, structure 100.0 RANGE (no BOS), day_vol 0.72 under the 1.40 test, sma_dist 35.31, D 0.9% under 20-day high, H1 below EMA9. LEADER (downday 5.03) is real; extension is a weight.",
+   "opposing_case": "LEADER, downday 5.03, flow 78.9, 0.9% under its highs, and the delayed EP read is READY (9/10).",
+   "case": {
+    "for": "LEADER, downday 5.03, flow 78.9, at the high on W and D.",
+    "against": "lens coil warn, structure RANGE, day_vol 0.72, sma_dist 35.31, mp FADING/DECELERATING (R13 label).",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 7.32.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "I cannot finish my walk: ma200 None and lens leadership '--' (short history), so the 70 pct climax line and the L test cannot run, and the base count is unreadable. Strengths: day_vol 1.57 passes, LEADER, structure 87.4. Weights: lens coil warn, D 28.3% above the last swing high. A declared gap, not a guess.",
+   "case": {
+    "for": "day_vol 1.57 passes the 1.40 test, LEADER, downday 3.42, flow 96.1, structure 87.4.",
+    "against": "ma200 None, lens leadership --, lens coil warn, D 28.3% above the last swing high.",
+    "entry_trigger": "Once ma200 exists and a tight pause forms: close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 15.67.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A readable history and a tight base.",
+    "cannot_see": [
+     "ma_200",
+     "lens.leadership",
+     "pivot_high",
+     "base-stage count"
+    ]
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax read on no volume: entry 54.07 against ma200 31.26 (past my 70 pct line), day_vol 0.48 (C25), structure 55.8 RANGE, sma_dist 35.0, H1 9<21, D 9.8% under 20-day high. LEADER (downday 1.0) is real; there is no base to buy.",
+   "opposing_case": "LEADER, lens leadership strong, W and D swing HH/HL: a very strong advance.",
+   "challenge_reply": "Sector hidden: the climax read and day_vol 0.48 are the name's own.",
+   "case": {
+    "for": "LEADER, lens leadership strong, W and D HH/HL.",
+    "against": "entry 54.07 vs ma200 31.26, day_vol 0.48, structure 55.8 RANGE, H1 9<21.",
+    "entry_trigger": "A tight base over ma20 47.73, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At the pivot with a tight base: lens coil strong, LEADER, structure 87.4 ABOVE_STRUCTURE, W and D 0.3% under their highs, H1 0.3% under its high. day_vol 1.08 does not confirm yet and the group is only Recovering From Weakness (lens sector ok): buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "lens coil strong, LEADER, structure 87.4, 0.3% under every high.",
+    "against": "day_vol 1.08 under 1.40, sma_dist 17.29, Recovering From Weakness group, ma100 34.67 still under ma200 35.38, mp FADING/FLAT (R13 label).",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 36.72.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "BAM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No tight base, light volume: lens coil warn, lens leadership warn, day_vol 0.93 under the 1.40 test, H1 below EMA9, D 2.2% under 20-day high. Averages are flat and tangled (ma20 48.74, ma50 47.24, ma100 48.22, ma200 47.84) with entry 53.49 well off them: a pop out of a long range without volume.",
+   "opposing_case": "LEADER, structure 78.7 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, lens resistance strong, HH/HL on every frame: a range breakout in progress.",
+   "case": {
+    "for": "LEADER, structure 78.7, mp STRONG/ACCELERATING, HH/HL.",
+    "against": "lens coil warn, leadership warn, day_vol 0.93, sma_dist 13.24.",
+    "entry_trigger": "A tight pause, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 47.24.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "The climax line holds even with volume: entry 21.95 against ma200 12.47 (past my 70 pct line), sma_dist 23.76, lens coil warn. day_vol 1.82 passes and LEADER and flow 86.8 are real, but I hold R7 firm: a name that far over its 200-day is sold into, not bought.",
+   "opposing_case": "day_vol 1.82 passes the 1.40 test, LEADER, downday 3.0, flow 86.8, structure 74.5, W and D HH/HL at the highs.",
+   "case": {
+    "for": "day_vol 1.82, LEADER, downday 3.0, flow 86.8.",
+    "against": "entry 21.95 vs ma200 12.47, sma_dist 23.76, lens coil warn, delayed EP setup FAILED (8/10).",
+    "entry_trigger": "A tight base over ma20 19.01, then a close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it builds a tight base and breaks on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base and a 1.4x volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Coiled leader under its high: lens coil, resistance and leadership strong, LEADER, structure 73.7, D 0.8% under 20-day high, sma_dist 13.64, day_vol 0.92. insti_money warn; KO is in the same group and I cannot rank them (C9), so KO carries the higher conviction. Buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "lens coil, resistance, leadership strong, LEADER, structure 73.7, volume dry.",
+    "against": "insti_money warn, day_vol 0.92 gives no break, sma_dist 13.64, mp FADING/DECELERATING (R13 label), same group as KO.",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 33.08.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  },
+  {
+   "ticker": "CAG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No uptrend base: entry 15.19 sits on ma200 15.21, W 9<21 and 9.3% under the 20-wk high, H1 LH/LL, lens leadership warn, day_vol 1.16 under the 1.40 test. lens coil strong and structure 71.6 BULLISH_BOS are good but price has not left the 200-day.",
+   "opposing_case": "lens coil strong, structure strong, LEADER, downday 3.04, D 2.2% under 20-day high, ma20 14.6 over ma50 14.53: a repair that could base.",
+   "case": {
+    "for": "lens coil strong, BULLISH_BOS, LEADER, downday 3.04.",
+    "against": "entry on ma200 15.21, weekly 9<21, leadership warn, day_vol 1.16.",
+    "entry_trigger": "A close clearly over ma200, then pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Wrong if it clears ma200 15.21 and breaks pivot_high on 1.4x volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Weekly 9>21 and a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Staircase uptrend coiled under the high: ma20 107.78 over ma50 101.13 over ma100 94.08 over ma200 91.31, lens coil, leadership and resistance strong, structure 82.1 ABOVE_STRUCTURE, 1.6% under the 20-day and 20-wk high, day_vol 0.93 dry. insti_money warn; buy only the break on volume.",
+   "conviction_change": "R1 not nominated (day_vol under 1.40). Now conditional support: buy only on a 1.4x break (R25/R27 method read).",
+   "case": {
+    "for": "Stacked rising averages, lens coil, leadership, resistance strong, structure 82.1, downday 0.91.",
+    "against": "day_vol 0.93 gives no break, insti_money warn, sma_dist 12.17, flow 50.0, mp FADING/FLAT (R13 label).",
+    "entry_trigger": "Close through pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Close under ma50 101.13.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break on volume under 1.40 withdraws me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales",
+     "sponsors",
+     "in-group rank"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Gate DELEGATED (Valen RISK OFF); EPS and sponsors unseen."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of4.json",
+   "bytes": 15721,
+   "votes": 13,
+   "sha256": "0faf408ab224"
+  },
+  {
+   "file": "oneil.part2of4.json",
+   "bytes": 15126,
+   "votes": 13,
+   "sha256": "4d3fa516df22"
+  },
+  {
+   "file": "oneil.part3of4.json",
+   "bytes": 15121,
+   "votes": 13,
+   "sha256": "8091cfe4ff19"
+  },
+  {
+   "file": "oneil.part4of4.json",
+   "bytes": 11172,
+   "votes": 10,
+   "sha256": "ea4478b8610a"
+  }
+ ]
+}

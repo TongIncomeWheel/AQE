@@ -1,0 +1,65 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "rulings": [
+  {
+   "claim_id": "TGTX-minervini-for",
+   "ticker": "TGTX",
+   "ruling": "CONFIRM",
+   "evidence": "Break holds: D close 64.26 is close_vs_swing_high_pct 1.04 over last_swing_high 63.6 on 3.1x volume; W and D swing HH/HL (C5). Caution: H1 pos_in_day_range_pct 35.4 off high_20bar 68.03, so a test is still owed.",
+   "tf": {
+    "W": "swing HH/HL, close_vs_swing_high_pct 9.06, ema_order 9>21: structure up",
+    "D": "swing HH/HL, close_vs_swing_high_pct 1.04 over 63.6, ema_order 9>21: break holds",
+    "H1": "swing HH but LL, pos_in_day_range_pct 35.4, 5.54 under 20-hr high: closed off the high"
+   },
+   "stance_after": "SUPPORT",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "TTWO-minervini-against",
+   "ticker": "TTWO",
+   "ruling": "CANNOT_SEE",
+   "evidence": "The ma_50/ma_100/ma_200 stack (criterion 4) and rs_rank_pct 43.72 are not Wyckoff tests; ma_100 is not on my menu. The weekly part I do see (ema_order 9<21, 15.53 under 20-wk high) and it is already weighed in my stance.",
+   "tf": {
+    "W": "ema_order 9<21, swing LH but HL, 15.53 under 20-wk high: recovery, not trend",
+    "D": "ema_order 9>21, close_vs_swing_high_pct 5.96 over 212.0, swing LH/LL",
+    "H1": "ema_order 9>21, swing HH but LL, pos_in_day_range_pct 67.9"
+   },
+   "stance_after": "SUPPORT",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "TTWO-oneil-against",
+   "ticker": "TTWO",
+   "ruling": "CONFIRM",
+   "evidence": "Weekly is not a clean uptrend: W ema_order 9<21, swing LH but HL, dist_to_20bar_high_pct 15.53 (C16 top-down). Leader's base is not my test. D close_vs_swing_high_pct 5.96 shows the break held, so this is a caution, not an oppose.",
+   "tf": {
+    "W": "ema_order 9<21, swing LH but HL, 15.53 under 20-wk high: no established trend",
+    "D": "close_vs_swing_high_pct 5.96 over last swing high 212.0, ema_order 9>21: break held",
+    "H1": "swing HH but LL, close_vs_ema9 above, pos_in_day_range_pct 67.9"
+   },
+   "stance_after": "SUPPORT",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "GMAB-minervini-for",
+   "ticker": "GMAB",
+   "ruling": "CANNOT_SEE",
+   "evidence": "A flag needs a defined Creek and range edges; structure_shift_ref and pvp_* are not in my packet. Seen: D swing HH/HL, 9.84 under last_swing_high 59.97 on one light bar (day_vol 0.48). One bar is not a test sequence (R10).",
+   "tf": {
+    "W": "ema_order 9>21, swing HH/HL, 9.84 under 20-wk high: higher frame up",
+    "D": "swing HH/HL, close_vs_ema9 above, last_bar red, 9.84 under swing high: pullback",
+    "H1": "close_vs_ema9 below, ema_order 9<21, pos_in_day_range_pct 46.3: still pulling in"
+   },
+   "stance_after": "ABSTAIN",
+   "changed_mind": false,
+   "what_moved_me": null
+  }
+ ],
+ "declarations": [
+  "My packet carries the MTF grid and claim text only; pvp_*, bar_*, rvol_20d and structure_shift_ref are not served in it, so C5 and R3 grading rests on the grid and figures quoted in the claims."
+ ]
+}

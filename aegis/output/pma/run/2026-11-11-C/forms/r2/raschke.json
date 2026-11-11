@@ -1,0 +1,1405 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "SETUP TYPE (C2): every SUPPORT is a TEST (U&R reclaim), RETRACEMENT or BREAKOUT from contraction; names fitting none are ABSTAIN, and I oppose only on a failed structure or climax evidence.",
+  "ADX: the packet carries subcomponents.mp.adx_val (period and slope not stated); used as a partial proxy for the 30 gate. A true 14-period rising ADX (C7) is NOT_SERVED.",
+  "stochastic_kd NOT_SERVED (C6); n_day_extreme via sma_distance_pct plus structure_shift substitute (C3); bar_range_history NOT_SERVED, subcomponents.energy.squeeze_score used as the range-contraction proxy (C12/C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "Round-1 ballot forms/r1/raschke.json was not present, so conviction_change is null on every name. sc_m_gates and pipe_rank are null in aqe_indicators.tsv; gates read from sc_m_gate_detail.",
+  "Bracket fields are information only (R1); no vote rests on them. Visual climax patterns declined (C10/R9)."
+ ],
+ "votes": [
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT from contraction (C12/C13 proxy): `subcomponents.energy.squeeze_score 12.5` is the maximum coil, `subcomponents.structure.base_days 20.0` a 10-25 day base, `energy 84.0` and `flow 90.8` strong, `sc_momentum 76.8`. Weak `mp 48.0` BUILDING and `subcomponents.mp.adx_val 16.54` mean no trend yet: a base break, not a Holy Grail. Stop is yesterday's low.",
+   "conviction_change": null,
+   "case": {
+    "for": "Maximum coil `subcomponents.energy.squeeze_score 12.5` after a 20-day base with `flow 90.8`; young run (`subcomponents.energy.en_trend_bars 3.0`) so the structural stop sits close.",
+    "against": "`mp 48.0` is below its floor (`sc_m_gate_detail` has mp False); `subcomponents.mp.adx_val 16.54` is no trend; both house setups FAILED.",
+    "entry_trigger": "Hourly close above bar_high, volume above normal, above session VWAP.",
+    "wrong_if": "Daily close below bar_low or ma_20; the coil breaks down.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "ADX reading rising through 25 with `mp` above 75 lifts conviction; a failed hourly close above bar_high drops it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup yet: fresh high (`sc_momentum 72.5`, `mp 93.0` STRONG) but `subcomponents.energy.en_trend_bars 9.0` of run with no pullback; Holy Grail needs the first pullback (C7). `flow 63.2` only fair and `div_state` BEARISH 1. Stand aside until a pullback to ma_20.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 93.0` STRONG/ACCELERATING with `elder 10.0` SUSTAINED; trend-gate proxy passes (`subcomponents.mp.adx_val 31.31`).",
+    "against": "No pullback to buy; price extended above ma_20; `flow 63.2` modest; `div_bear_count` 1.",
+    "entry_trigger": "First pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20 on the pullback.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A pullback that holds ma_20 with `subcomponents.mp.adx_val` staying above 30.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax-down risk, not a pullback entry: `subcomponents.flow.ext_score -5.0` is the extension/climax penalty, `day_vol 3.1` on a bar whose hourly close sits at 35% of range, `energy 63.0` and `flow 64.5` only fair, `sc_momentum 67.5`. C11: a reversal must be visibly established before entry; it is not. Stand off.",
+   "conviction_change": null,
+   "opposing_case": "BULLISH_BOS `structure 63.2`, `mp 83.0` STRONG and elder CORRECTION_REENTRY say the pullback inside a leader may already be done.",
+   "case": {
+    "for": "Leader (rs_rank_pct 91.63) with `mp 83.0` STRONG; the heavy-volume bar could be absorption.",
+    "against": "`subcomponents.flow.ext_score -5.0` climax penalty with `day_vol 3.1` and a weak close; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Hourly close above bar_high after bar_low holds.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close in the top third on lighter volume, or `subcomponents.flow.ext_score` back above 0.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup: run_10d 24.21% into the 20-day high with `sc_momentum 79.9`, `structure 87.4` strong, but `div_state` BEARISH 1 and no pullback or contraction (`subcomponents.energy.squeeze_score 0.0`). C19: do not buy the range-expansion bar; wait for the first pullback.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 93.0` STRONG/ACCELERATING and `structure 87.4` BULLISH_BOS; `subcomponents.energy.exhaustion_score 10.0` shows no wear.",
+    "against": "Parabolic 10-day thrust, `subcomponents.energy.squeeze_score 0.0`, `div_bear_count` 1; no nearby swing extreme.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20 after the pullback.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A contracted pullback with `subcomponents.mp.adx_val` above 30.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup: `mp 93.0` and `structure 84.2` strong (`sc_momentum 81.0`) but price 0.6% under the 20-day high with `subcomponents.energy.squeeze_score 0.0` and no pullback; `elder 7.0` has stepped down from 10. Wait for a pullback to ma_20.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 93.0` STRONG/ACCELERATING, `flow 82.9`, `structure 84.2`.",
+    "against": "No coil (`subcomponents.energy.squeeze_score 0.0`), no pullback, `elder 7.0` fading.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A tight contraction near the high with `elder` back to 10.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup yet: `mp 97.0` STRONG, `subcomponents.mp.adx_val 39.19`, `sc_momentum 82.0`, `subcomponents.energy.exhaustion_score 10.0` shows no wear, but price is at the 20-day high with `subcomponents.energy.squeeze_score 0.0`. The Holy Grail entry is the first pullback to ma_20, not this bar.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 39.19 passes the 30 proxy, `elder 10.0` SUSTAINED, `flow 88.2`.",
+    "against": "20.26% above its SMA, no coil, runner flag; no double stop point near price.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A first pullback that holds ma_20 on lighter volume.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Volume breakout, not a contracted one: `subcomponents.flow.ext_score 5.0` rewards the breakout and `flow 100.0` is full, `sc_momentum 81.2`, but `subcomponents.mp.adx_val 18.84` is no trend and `subcomponents.energy.squeeze_score 0.0` no coil. Neither the Holy Grail nor the ID/NR gate is met.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 100.0`, `structure 81.5`, `mp 75.0` STRONG/ACCELERATING, `day_vol 2.22`.",
+    "against": "ADX reading 18.84 and no coil; buying here is chasing the breakout bar.",
+    "entry_trigger": "Retrace to ma_20 and hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contraction (squeeze_score above 8) after the breakout.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "LW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT from contraction inside a strong trend: `subcomponents.energy.squeeze_score 12.5` coil with `subcomponents.mp.adx_val 38.65`, `structure 93.7`, `energy 73.9`, `flow 73.7`, `sc_momentum 79.0`. `mp_state` FADING is the R13 default label, not decay. Wear is visible (`subcomponents.energy.exhaustion_score 7.0` at `subcomponents.energy.en_trend_bars 26.0`), so conviction stays 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "Maximum coil inside ADX reading 38.65; `structure 93.7`; elder CORRECTION_REENTRY done.",
+    "against": "`subcomponents.energy.exhaustion_score 7.0` at 26 trend bars; price 14.0% above its SMA; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Hourly close above bar_high with volume, above session VWAP.",
+    "wrong_if": "Daily close below bar_low or ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "`subcomponents.energy.exhaustion_score` falling further, or a failed hourly close above bar_high.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the high, not a pullback: `structure 76.8` BULLISH_BOS, `subcomponents.mp.adx_val 30.45`, `sc_momentum 76.2`, `mp 86.0`, but `subcomponents.energy.squeeze_score 4.0` is a thin coil and price is 0.5% under the swing high. Holy Grail waits for the first retrace to ma_20; stand aside today.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 30.45, `structure 76.8` BOS, `elder 9.0`.",
+    "against": "Thin coil (`subcomponents.energy.squeeze_score 4.0`), no retrace; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A contracted retrace holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT in an uptrend: price pulled back (3.1% under the 20-day high) after a fresh high, `subcomponents.mp.adx_val 29.93` at the Holy Grail gate proxy, `subcomponents.energy.squeeze_score 8.5` contraction, `energy 79.0`, `elder 9.0` CORRECTION_REENTRY. `structure 63.2` and `flow 68.4` are modest and `div_bear_count` is 1, so 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "First pullback after a new high, coil 8.5 and elder re-entry; stop under the pullback low.",
+    "against": "`structure 63.2`, `mp 66.0` and `sc_momentum 70.1` are the weakest of the supports; `div_state` BEARISH 1.",
+    "entry_trigger": "Hourly close above bar_high after the retrace holds ma_20.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "ADX reading above 30 and rising lifts it; a close under ma_20 withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup: `structure 96.8` and `sc_momentum 81.9` top-tier but `subcomponents.energy.squeeze_score 0.0`, price 13.41% above its SMA and `subcomponents.mp.adx_val 23.82` under 30; no pullback, no coil. Wait for a retest of ma_20.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure 96.8`, `flow 84.2`, `mp 87.0` STRONG/ACCELERATING.",
+    "against": "No coil, no pullback; ADX reading 23.82 is under the gate.",
+    "entry_trigger": "Retest of ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "ADX reading above 30 with a contracted pullback.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "TEST: dipped under the rising trendline and closed back above it on the last session (U&R MET), a failure test with the stop one tick under the reclaim bar's low (C3/C20 double stop). `subcomponents.energy.squeeze_score 12.5` coil, `energy 84.0`, `subcomponents.mp.adx_val 30.44`, `mp 80.0` STRONG, `sc_momentum 73.6`. `elder 7.0` INTERRUPTED and `flow 65.8` keep it at 4.",
+   "conviction_change": null,
+   "self_counter": "`elder 7.0` INTERRUPTED and `mp_accel_state` DECELERATING say the thrust has stalled; `structure 63.2` is only fair.",
+   "case": {
+    "for": "Reclaim-day failure test with maximum coil and ADX reading 30.44; invalidation sits right under the entry.",
+    "against": "`elder 7.0` INTERRUPTED, `flow 65.8` fair, `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A close back under the trendline reclaim, or `elder` falling further.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OHI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup: `subcomponents.mp.adx_val 20.5` is no trend, `subcomponents.energy.squeeze_score 0.0`; `structure 81.1` and `mp 80.0` fine but `sc_momentum 72.2` and `elder 7.0` ordinary, weekly swing LH/LL. Nothing to test, retrace or break.",
+   "conviction_change": null,
+   "case": {
+    "for": "`structure 81.1`, `mp 80.0` STRONG/ACCELERATING, `flow 71.1`.",
+    "against": "ADX reading 20.5, no coil, rs_rank_pct only 48.66.",
+    "entry_trigger": "A contracted break above bar_high with volume.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 30 or a coil above 8.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Retracement without the trend gate: pulled back inside an uptrend (4.3% under the 20-day high), `elder 9.0` CORRECTION_REENTRY, but `subcomponents.mp.adx_val 23.93` is under 30, `structure 61.1` and `sc_momentum 69.9` are low, `mp_accel_state` DECELERATING. Not clean enough to buy.",
+   "conviction_change": null,
+   "case": {
+    "for": "Orderly pullback, `mp 84.0` STRONG, `elder 9.0` re-entry.",
+    "against": "ADX reading 23.93, `structure 61.1`, `sc_momentum 69.9`; episodic-pivot grade FAILED.",
+    "entry_trigger": "Hourly close above bar_high after a hold of ma_20.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 30 or `structure` above 70.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "SYK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No established trend to retrace within: `subcomponents.mp.adx_val 19.26`, `mp 67.0` BUILDING, `structure 64.2`, `sc_momentum 68.4`; ma_50 under ma_100 under ma_200 and weekly 9<21. The 9-day reclaim (U&R MET) is a shallow test of a broken stack, not a double stop point. Stand off.",
+   "conviction_change": null,
+   "opposing_case": "U&R MET reclaim day, `mp_accel_state` ACCELERATING and `flow 77.6` say a base is turning up; the stop would sit just under the reclaim low.",
+   "case": {
+    "for": "Reclaim of the 9-day average with `flow 77.6` and `mp_accel_state` ACCELERATING; stop is close.",
+    "against": "ADX reading 19.26, 50-day under 200-day, weekly 9<21, 8.0% under the 20-week high; the test has no trend behind it.",
+    "entry_trigger": "Daily close back above ma_50 with the stack repairing.",
+    "wrong_if": "Daily close below bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ma_50 turning up through ma_100 and ADX reading above 25.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST plus retracement: dipped under the rising trendline and closed back above (U&R MET), `subcomponents.mp.adx_val 35.59` clears the 30 gate proxy, `structure 72.6` above structure, `energy 64.7`. `flow 56.6` is below its floor (`sc_m_gate_detail` flow False) and `sc_momentum 68.1` is low, so 3. Stop one tick under the reclaim bar's low.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day failure test inside ADX reading 35.59; invalidation close to entry.",
+    "against": "`flow 56.6` below floor, `sc_momentum 68.1`, hourly below EMA9, `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` recovering above 65 lifts it; a close under the trendline withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No setup: `structure 92.6`, `flow 96.1`, `sc_momentum 82.3` and `subcomponents.flow.ext_score 3.0` breakout credit, but `subcomponents.mp.adx_val 18.53` is no trend and `subcomponents.energy.squeeze_score 0.0` no coil; price is 0.6% under the 20-day high with no pullback. Stand aside.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 96.1`, `structure 92.6`, `mp 75.0` STRONG/ACCELERATING.",
+    "against": "ADX reading 18.53, no coil, no pullback; episodic-pivot grade FAILED.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted base near the high with ADX reading above 25.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "IBN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Parabolic, no stop point near: `mp 97.0`, `sc_momentum 82.2`, `subcomponents.mp.adx_val 38.08` strong, `subcomponents.energy.exhaustion_score 10.0` no wear, but price is 19.23% above its SMA after a 20.61% 10-day run and `subcomponents.flow.mfi 93.02` is stretched. C19: do not buy range expansion; first pullback to ma_20 only.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 97.0` STRONG/ACCELERATING, `elder 10.0` SUSTAINED, `structure 86.3`; AQE sees no exhaustion.",
+    "against": "Range-expansion run, `subcomponents.flow.mfi 93.02`, no coil (`subcomponents.energy.squeeze_score 0.0`).",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A shallow, contracted pullback that holds ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Extension plus divergence: price 47.71% above its SMA, `div_bear_count 2` with `div_state` BEARISH (advisory), `subcomponents.energy.exhaustion_score 7.0` showing wear, `sc_momentum 77.7`, `structure 74.7`, `mp 97.0`. Parabolic bar (C19), no contraction (`subcomponents.energy.squeeze_score 0.0`); a long here has no nearby swing extreme.",
+   "conviction_change": null,
+   "opposing_case": "Leader at rs_rank_pct 99.67 with `mp 97.0` STRONG/ACCELERATING and `elder 10.0` SUSTAINED: momentum can run further, and under R27 extension is a weight.",
+   "challenge_reply": "Steenbarger XNCR EXTENSION: agreed on the arithmetic. I enter only after a pullback to ma_20; at a 52-week high with two bearish oscillators and `day_vol 0.63` there is no double stop point, so I oppose rather than take it.",
+   "case": {
+    "for": "`mp 97.0`, `elder 10.0` SUSTAINED, rs_rank_pct 99.67: a true leader.",
+    "against": "47.71% above its SMA, `div_bear_count 2`, `subcomponents.energy.exhaustion_score 7.0`, no coil.",
+    "entry_trigger": "Pullback to ma_20 with divergence cleared, then hourly close above bar_high.",
+    "wrong_if": "Not applicable long; a daily close above the high with `div_bear_count` back to 0 voids the opposition.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`div_bear_count` back to 0 and a contracted pullback.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT from contraction at the high: `subcomponents.energy.squeeze_score 12.5` maximum coil, `energy 74.8`, `structure 73.7`, `mp 70.0` BUILDING/ACCELERATING, `sc_momentum 69.7`; price 0.5% under the 20-day high. `subcomponents.mp.adx_val 20.55` is a base not a trend and `elder 10.0` is INTERRUPTED, so 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "Maximum coil at the 20-day high; `mp_accel_state` ACCELERATING; weekly at the high.",
+    "against": "ADX reading 20.55, `sc_momentum 69.7`, `elder` INTERRUPTED, large daily range (atr_14d 21.76).",
+    "entry_trigger": "Hourly close above bar_high with volume, above session VWAP.",
+    "wrong_if": "Daily close below bar_low or ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "`mp` above 75 lifts it; a failed hourly close above bar_high drops it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "U&R MET 9-day reclaim and `subcomponents.mp.adx_val 35.36`, `structure 75.8` BOS, but `flow 52.6` is below its floor, `subcomponents.flow.mfi 45.85` thin, `sc_momentum 69.7`, and ma_50 is under ma_200: no established trend for a retracement. The test is present but the trend leg is missing.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day test with ADX reading 35.36 and `structure 75.8` BULLISH_BOS.",
+    "against": "`flow 52.6` below floor, 50-day under 200-day, 15.05% off the high, hourly below EMA9.",
+    "entry_trigger": "Hourly close above bar_high with `flow` improving.",
+    "wrong_if": "Daily close below bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 65 and ma_50 back above ma_200.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "NI",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Reclaim of the 9-day average (U&R MET) and `subcomponents.mp.adx_val 49.21`, `structure 81.1`, but `flow 51.3` below its floor (`sc_m_gate_detail` flow False), `sc_momentum 67.8`, weekly 9<21 and `subcomponents.energy.squeeze_score 0.0`. High ADX on a utility drift; the trend direction is not clean enough.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 49.21 and `structure 81.1`; reclaim-day test.",
+    "against": "`flow 51.3`, `sc_momentum 67.8`, rs_rank_pct 37.74, weekly 9<21.",
+    "entry_trigger": "Hourly close above bar_high with `flow` rising.",
+    "wrong_if": "Daily close below bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 60 and the weekly 9 back above the 21.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "TGT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Near ma_20 and lenses strong, but `subcomponents.mp.adx_val 15.95` and `mp 52.0` BUILDING give no trend gate, `sc_momentum 67.6`, `structure 63.2`, and `subcomponents.structure.earn_score 4.0` puts earnings inside the hold (minimise time, C18). Retracement without trend and with an event; abstain.",
+   "conviction_change": null,
+   "case": {
+    "for": "Pullback to ma_20 with `energy 74.8`, `flow 73.7`, `elder 10.0` re-entry.",
+    "against": "ADX reading 15.95, `mp 52.0`, `subcomponents.structure.earn_score 4.0` earnings near.",
+    "entry_trigger": "Hourly close above bar_high after a hold of ma_20, after earnings.",
+    "wrong_if": "Daily close below ma_50.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` above 75 and earnings passed.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Failed extension: `subcomponents.flow.ext_score -5.0` climax penalty, `subcomponents.structure.rs_accel -60.41` lead eroding fast, `sc_momentum 66.4` the lowest in the extension cluster, price 23.08% above its SMA after a 21.29% 10-day run, rs LAGGARD on down days. No test, retrace or contraction setup.",
+   "conviction_change": null,
+   "opposing_case": "`mp 67.0` BUILDING/ACCELERATING, `elder 10.0` SUSTAINED and rs_rank_pct 99.33 show a still-powerful leader.",
+   "case": {
+    "for": "`elder 10.0` SUSTAINED, `mp_accel_state` ACCELERATING, rs_rank_pct 99.33.",
+    "against": "`subcomponents.flow.ext_score -5.0`, rs_accel -60.41, high-tight-flag grade FAILED, hourly close 37% of range.",
+    "entry_trigger": "Pullback to ma_20 with `subcomponents.flow.ext_score` back above 0.",
+    "wrong_if": "A daily close above the 20-day high on volume voids the opposition.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ext_score back above 0 and `subcomponents.structure.rs_accel` turning positive.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "SOLV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Near ma_20 with `flow 88.2` and `elder 10.0` SUSTAINED, `structure 61.1` BULLISH_BOS, but `energy 59.7` and `mp 48.0` BUILDING are below their floors (`sc_momentum 66.2`), `subcomponents.mp.adx_val 17.94` no trend and `subcomponents.energy.squeeze_score 0.0`. No gate met.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 88.2`, `elder 10.0`, BOS; price tight to ma_20.",
+    "against": "`energy 59.7` and `mp 48.0` below floor; ADX reading 17.94.",
+    "entry_trigger": "Hourly close above bar_high with `energy` improving.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` above 60 and `energy` above 64.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "NYT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT from contraction, low conviction: `subcomponents.energy.squeeze_score 10.0` with `structure 85.3` BULLISH_BOS and `elder 10.0` ACCELERATION, `energy 76.5`. But `flow 36.8` is weak with `subcomponents.flow.mfi 42.43` under 55, `day_vol 0.62` shows no participation, ma_50 is under ma_200 and `sc_momentum 62.6` is low: a base break in a repairing stock, 2.",
+   "conviction_change": null,
+   "case": {
+    "for": "Coil 10.0 plus BOS and an elder swing from 0 to 10; stop under the swing low is close.",
+    "against": "`flow 36.8` selling pressure, `day_vol 0.62`, 50-day under 200-day, 15.47% off the high.",
+    "entry_trigger": "Hourly close above bar_high on volume above normal.",
+    "wrong_if": "Daily close below bar_low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 55 lifts it; a failed breakout on thin volume withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HSIC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Pullback near ma_20 with `flow 88.2`, `energy 79.0`, `elder 10.0` CORRECTION_REENTRY, but `subcomponents.mp.adx_val 17.76` with `subcomponents.mp.di_bullish` False (sellers lead), `mp 52.0` BUILDING and `structure 63.2`; `sc_momentum 73.2`. The retracement has no trend behind it.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 88.2`, `energy 79.0`, elder re-entry; price 3.08% above its SMA.",
+    "against": "ADX reading 17.76, di_bullish False, `mp 52.0`.",
+    "entry_trigger": "Hourly close above bar_high with `subcomponents.mp.di_bullish` True.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`subcomponents.mp.di_bullish` True and `mp` above 65.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held. run_10d 24.76% at the 52-week high: windfall-protection flag (C19), take profit on part and trail the rest, as advice to the PM. `mp 93.0` STRONG but `mp_accel_state` DECELERATING, `sc_momentum 82.0`, `structure 87.4`; no new entry here, first pullback to ma_20 only.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 93.0` STRONG, `structure 87.4` BOS, `flow 84.2`.",
+    "against": "16.77% above its SMA after a 24.76% run; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Pullback to ma_20 then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp_accel_state` back to ACCELERATING on a contracted pullback.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT after reclaim: held; dipped under the 9-day average and closed back above it (U&R MET) inside a `subcomponents.mp.adx_val 40.16` trend, with `subcomponents.energy.squeeze_score 12.5` coil, `energy 85.7`, `structure 73.7`. `flow 56.6` below floor, `elder 7.0` INTERRUPTED, `mp 73.0` FADING (default label), `sc_momentum 72.0`, so 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day test with maximum coil inside ADX reading 40.16; held, so the stop is already structural.",
+    "against": "`flow 56.6` below floor, `elder 7.0` INTERRUPTED, `mp 73.0` under 75, `subcomponents.mp.roc_zscore 0.06` flat momentum.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 65 lifts it; a close under the 9-day average withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held. Fits none of the four setups: `sc_momentum 28.4`, `mp 0.0`, `structure 28.0`, `elder 3.0`, with `subcomponents.flow.mfi 27.64` (sellers in control) and `subcomponents.mp.roc_zscore -1.21`; `div_bear_count 4` of 5 oscillators bearish and price below ma_20 after run_10d -19.45%. A failed trend: exit case (C17/C19); do not average.",
+   "conviction_change": null,
+   "opposing_case": "Entry was yesterday; rs_rank_pct 96.15 and ret_6m 80.82 mark a prior leader, and a bounce back to ma_20 could pay.",
+   "case": {
+    "for": "Prior leader (rs_rank_pct 96.15); weekly still above its swing low.",
+    "against": "`mp 0.0`, `structure 28.0`, `sc_momentum 28.4`, `div_bear_count 4`, AQE health exit; no test, retrace or break.",
+    "entry_trigger": "Not buyable; a daily close back above ma_20 with `mp` above 50 would reopen it.",
+    "wrong_if": "Opposition is wrong if a daily close back above ma_20 holds with `structure` above 50.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp` above 50 and `structure` above 50 with divergence cleared.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST/RETRACEMENT: reclaimed the 9-day average (U&R MET) within a strong trend: `subcomponents.mp.adx_val 33.75`, `mp 97.0` STRONG/ACCELERATING, `structure 94.7`, `sc_momentum 80.7`, `energy 68.9`. Caution: `subcomponents.flow.mfi 30.93` shows sellers in control and `elder 7.0`; conviction 3, stop under the reclaim bar's low.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day test inside ADX reading 33.75 with `structure 94.7` and `mp 97.0`.",
+    "against": "`subcomponents.flow.mfi 30.93` below 40, `flow_score 8.5`, `elder 7.0`, hourly 9<21.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`subcomponents.flow.mfi` back above 50 lifts it; a close under the 9-day average withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST/RETRACEMENT: reclaimed the 9-day average (U&R MET), `subcomponents.energy.squeeze_score 8.5` contraction, `subcomponents.mp.adx_val 29.91` at the gate, `energy 84.0`, `flow 84.2`, `sc_momentum 80.6`. `div_bear_count 1`, `mp_state` FADING/DECELERATING (default label), structure_shift RANGE and `elder 7.0` hold it at 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day test, coil 8.5, `flow 84.2` and `energy 84.0` strong; stop is just under the reclaim low.",
+    "against": "`div_bear_count 1`, `mp_accel_state` DECELERATING, `elder 7.0`, `day_vol 0.56`.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 30 with `mp_accel_state` flat or better lifts it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MAC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST: dipped under the rising trendline and closed back above (U&R MET) with `subcomponents.mp.adx_val 30.97`, `subcomponents.energy.exhaustion_score 10.0` untouched, `mp 97.0` STRONG, `structure 84.2`, `flow 81.6`, `elder 10.0` CORRECTION_REENTRY, `sc_momentum 79.1`. `energy 61.3` is the soft leg and `mp_accel_state` FLAT, so 3; stop one tick under the reclaim low.",
+   "conviction_change": null,
+   "case": {
+    "for": "Reclaim-day failure test, all momentum gates pass, elder re-entry; invalidation right under entry.",
+    "against": "`energy 61.3` soft, `mp_accel_state` FLAT, episodic-pivot grade FAILED.",
+    "entry_trigger": "Hourly close above bar_high, above session VWAP.",
+    "wrong_if": "Daily close below bar_low (reclaim-day low).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`energy` above 66 lifts it; a close back under the trendline withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Parabolic climax risk: run_10d 78.39%, price 61.79% above its SMA, `flow 51.3` below floor (`sc_m_gate_detail` flow False) with `subcomponents.flow.mfi 90.69` stretched, `elder 7.0` stepped down from 10, `subcomponents.mp.adx_val 41.52`, `sc_momentum 74.2`. C19: exit range expansion, never buy it; no swing extreme near price. Extension alone would be a weight; weak flow tips it.",
+   "conviction_change": null,
+   "opposing_case": "`mp 100.0` STRONG/ACCELERATING, `structure 84.2`, `subcomponents.energy.exhaustion_score 10.0` untouched at `subcomponents.energy.en_trend_bars 12.0`: nothing in AQE says the run is tired.",
+   "case": {
+    "for": "`mp 100.0`, `structure 84.2`, rs_rank_pct 99.92: the strongest leader in the room.",
+    "against": "+78.39% in 10 days, `flow 51.3`, `elder 7.0` stepping down, no coil (`subcomponents.energy.squeeze_score 0.0`).",
+    "entry_trigger": "Pullback to ma_20 with `flow` back above 65, then hourly close above bar_high.",
+    "wrong_if": "Opposition is wrong if price keeps making highs on rising `flow` without a pullback.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 65 with `elder` back to 10.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Broken structure, no trend to trade: `structure 30.5` BEARISH_CHOCH, `sc_momentum 55.9`, `subcomponents.structure.rs_vs_spy -30.9`, `subcomponents.flow.cmf -0.17`; price 43.54% off its high with ma_20 under ma_50, weekly 9<21 LH/LL. The trendline reclaim (U&R MET) is a test inside a failed up-structure; `elder 10.0` is a bounce read only.",
+   "conviction_change": null,
+   "opposing_case": "`mp 75.0` STRONG, `elder 10.0` and the U&R reclaim say the bounce has legs; rs_spy_20d 95.33.",
+   "case": {
+    "for": "Reclaim-day test with `mp 75.0` STRONG and rs_spy_20d 95.33.",
+    "against": "BEARISH_CHOCH `structure 30.5`, `sc_momentum 55.9`, cmf negative, far under the 50-day.",
+    "entry_trigger": "Daily close above ma_50 with `structure` back above 50.",
+    "wrong_if": "Opposition is wrong if price closes above ma_50 and `structure_shift` turns BOS.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`structure_shift` back to BOS and `structure` above 50.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax-prone: price 61.53% above its SMA, `subcomponents.mp.adx_val 59.11`, `flow 46.1` below floor with `subcomponents.flow.cmf -0.25` (closes near the lows on volume), `mp_state` FADING/DECELERATING at `mp 100.0`, `sc_momentum 67.9`. C19/C11: top-of-range exhaustion read; no entry with a close stop.",
+   "conviction_change": null,
+   "opposing_case": "`structure 77.3`, `elder 10.0` and 20-day rs 87.32 mark a leader; `subcomponents.energy.exhaustion_score 10.0` is untouched.",
+   "case": {
+    "for": "`mp 100.0`, `structure 77.3`, `elder 10.0`: strong leader.",
+    "against": "`flow 46.1`, cmf -0.25, 61.53% above its SMA, `mp_accel_state` DECELERATING, high-tight-flag grade FAILED.",
+    "entry_trigger": "Pullback to ma_20 with `flow` back above 60.",
+    "wrong_if": "Opposition is wrong if `flow` rises above 60 while price holds the highs.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 60 and cmf positive.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Extended and no pullback: `sc_momentum 84.2`, `flow 88.2`, `structure 86.7`, `mp 100.0` but price is 38.57% above its SMA, `subcomponents.energy.exhaustion_score 7.0` shows wear at `subcomponents.energy.en_trend_bars 17.0`, `subcomponents.energy.squeeze_score 0.0`. The setup is the first pullback to ma_20; today is not it.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger ANCHOR: my read does not trace to the sc_momentum 84.2 rank; it traces to exhaustion_score 7.0 at en_trend_bars 17.0, squeeze_score 0.0 and the distance from ma_20. Conviction null.",
+   "case": {
+    "for": "`flow 88.2`, `structure 86.7`, `mp 100.0`, ACCELERATING.",
+    "against": "38.57% above its SMA, `subcomponents.energy.exhaustion_score 7.0`, no coil.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted pullback holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Parabolic but young: run_10d 51.48%, price 59.57% above its SMA, `subcomponents.structure.rs_accel -29.94` lead fading, yet `flow 88.2`, `structure 84.2`, `mp 100.0` STRONG/ACCELERATING and `subcomponents.energy.en_trend_bars 6.0` young run. No coil (`subcomponents.energy.squeeze_score 0.0`); first pullback only.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 88.2`, `structure 84.2`, `mp 100.0`; `subcomponents.energy.en_trend_bars 6.0` shows a young run.",
+    "against": "59.57% above its SMA, rs_accel -29.94, no coil; high-tight-flag grade FAILED.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted pullback holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Steep trend, no pullback: `subcomponents.mp.adx_val 47.6`, `mp 100.0`, `sc_momentum 80.2`, `flow 80.3`, `structure 77.3`, but 46.73% above its SMA with `subcomponents.energy.squeeze_score 0.0`; high-tight-flag grade FAILED. Wait for ma_20.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 47.6, `mp 100.0` STRONG/ACCELERATING, `elder 10.0`.",
+    "against": "46.73% above its SMA, no coil, no pullback.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted pullback holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Recovery thrust: `mp 93.0` STRONG/ACCELERATING, `flow 88.2`, `elder 10.0` SUSTAINED, `sc_momentum 80.8`, but price is 31.87% above its SMA after run_10d 35.37%, `subcomponents.energy.squeeze_score 0.0`, `subcomponents.mp.adx_val 28.9` under the 30 gate; 21.99% under the 52-week high. No setup yet.",
+   "conviction_change": null,
+   "case": {
+    "for": "`mp 93.0`, `flow 88.2`, `elder 10.0` SUSTAINED.",
+    "against": "31.87% above its SMA, ADX reading 28.9, no coil.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 30 on a contracted pullback.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Climax-risk read: price 35.31% above its SMA, `mp_accel_state` DECELERATING at `mp 96.0`, hourly close 17% of the day's range, `subcomponents.mp.adx_val 51.93`, `sc_momentum 83.6`, `structure 100.0` with structure_shift RANGE, `elder 7.0` flat. No contraction (`subcomponents.energy.squeeze_score 0.0`); a long here has no nearby swing extreme.",
+   "conviction_change": null,
+   "opposing_case": "`subcomponents.energy.exhaustion_score 10.0` untouched, `flow 78.9`, episodic-pivot READY 9/10: a leader that could still run.",
+   "challenge_reply": "Steenbarger ANCHOR: conviction does not come from the sc_momentum 83.6 rank; it comes from mp_accel_state DECELERATING with the weak hourly close and the 35.31% extension.",
+   "case": {
+    "for": "`flow 78.9`, `mp 96.0`, exhaustion_score 10.0 untouched.",
+    "against": "`mp_accel_state` DECELERATING, `elder 7.0` flat, 35.31% above its SMA, no coil.",
+    "entry_trigger": "Pullback to ma_20 with `mp_accel_state` flat, then hourly close above bar_high.",
+    "wrong_if": "Opposition is wrong if price closes above the 20-day high with `mp_accel_state` ACCELERATING.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`mp_accel_state` back to ACCELERATING on a contracted base.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "New listing: `subcomponents.mp.adx_val 36.68`, `mp 97.0`, `flow 96.1`, `structure 87.4`, `sc_momentum 83.6`, but `energy 59.7` below its floor (`sc_m_gate_detail` energy False), `subcomponents.energy.exhaustion_score 7.0`, ma_200 and ret_12m missing, 35.51% above its SMA. Too little history to classify a setup.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 96.1`, `mp 97.0` STRONG/ACCELERATING, `elder 10.0` SUSTAINED.",
+    "against": "`energy 59.7` below floor, short history, `subcomponents.energy.exhaustion_score 7.0`, no ma_200.",
+    "entry_trigger": "Pullback to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`energy` above 64 and a longer price history.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "ma_200 and ret_12m"
+    ]
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Pullback inside a thrust but not at the average: `subcomponents.mp.adx_val 49.31`, `mp 96.0` FADING/DECELERATING, `structure 55.8` RANGE, `flow 57.9`, `subcomponents.structure.rs_accel -16.13`, `day_vol 0.48`, 9.8% under the swing high. Holy Grail waits for ma_20; price is 35.0% above its SMA now.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 49.31 and `mp 96.0`; a dry pullback (`day_vol 0.48`) in a strong trend.",
+    "against": "`structure 55.8` RANGE, `flow 57.9`, rs_accel -16.13, hourly below EMA9, 35.0% above its SMA.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`structure` above 70 and `flow` above 65 on the retrace.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the pivot, not a pullback: `structure 87.4`, `flow 88.2`, `sc_momentum 80.6`, `subcomponents.mp.adx_val 39.99`, `subcomponents.energy.exhaustion_score 7.0` at `subcomponents.energy.en_trend_bars 24.0` showing wear, `subcomponents.energy.squeeze_score 4.0`. 0.3% under the 20-day high: the first retrace to ma_20 is the entry.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 39.99, `structure 87.4`, `flow 88.2`.",
+    "against": "Wear (`subcomponents.energy.exhaustion_score 7.0`), thin coil, 17.29% above its SMA.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted retrace holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "BAM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT forming inside a strong trend: `subcomponents.mp.adx_val 35.07`, `mp 97.0` STRONG/ACCELERATING, `structure 78.7`, `flow 75.0`, `energy 69.7`, `sc_momentum 78.5`, all gates pass; hourly is below EMA9 (35% of the range), 2.2% under the swing high. `elder 7.0` flat and `subcomponents.energy.squeeze_score 0.0` hold it at 3.",
+   "conviction_change": null,
+   "case": {
+    "for": "First retrace in a strong trend with every momentum gate passing; stop under the pullback low.",
+    "against": "`elder 7.0` flat, no coil (`subcomponents.energy.squeeze_score 0.0`), price 13.24% above its SMA.",
+    "entry_trigger": "Retrace toward ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "A contracted retrace lifts it; a close under ma_20 withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Volume breakout with a weak trend: `subcomponents.flow.ext_score 5.0`, `flow 86.8`, `mp 75.0`, `sc_momentum 76.6`, but `subcomponents.mp.adx_val 19.46` no trend, `subcomponents.energy.squeeze_score 0.0`, price 23.76% above its SMA; d/e 53.6. No gate met; wait for the retrace.",
+   "conviction_change": null,
+   "case": {
+    "for": "`flow 86.8`, breakout credit on `day_vol 1.82`, elder re-entry.",
+    "against": "ADX reading 19.46, no coil, 23.76% above its SMA.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 25 on a contracted retrace.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the 52-week high: `subcomponents.mp.adx_val 38.12`, `elder 10.0` CORRECTION_REENTRY, `energy 77.3`, `sc_momentum 75.9`, `mp 89.0` (FADING default label), `subcomponents.energy.squeeze_score 4.0` thin; 0.8% under the swing high. The first retrace to ma_20 is the Holy Grail entry; not today.",
+   "conviction_change": null,
+   "case": {
+    "for": "ADX reading 38.12, `energy 77.3`, `elder 10.0` re-entry.",
+    "against": "At the high, thin coil, `mp_accel_state` DECELERATING, 13.64% above its SMA.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted retrace holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "CAG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Base inside a broken stack: `subcomponents.energy.squeeze_score 8.5`, `structure 71.6` BOS, `flow 84.2`, `energy 70.6`, but `subcomponents.mp.adx_val 21.01`, `mp 68.0`, `sc_momentum 74.4`, ma_50 under ma_200 and weekly 9<21. Contraction without a trend; wait for a break above the swing high.",
+   "conviction_change": null,
+   "case": {
+    "for": "Coil 8.5, BOS and `flow 84.2` near ma_20.",
+    "against": "ADX reading 21.01, 24.13% off the high, 50-day under 200-day.",
+    "entry_trigger": "Hourly close above bar_high with volume.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ADX reading above 25 and ma_50 back above ma_200.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT-from-contraction proxy inside a strong trend: `subcomponents.energy.squeeze_score 12.5` with `subcomponents.mp.adx_val 35.17`, `energy 85.7`, `structure 82.1`, `sc_momentum 73.7`. But `flow 50.0` is below floor and `subcomponents.flow.mfi 38.75` says sellers lead; `mp 83.0` FADING/FLAT. Low conviction 2.",
+   "conviction_change": null,
+   "case": {
+    "for": "Maximum coil inside ADX reading 35.17 with `energy 85.7` and `structure 82.1`.",
+    "against": "`flow 50.0` and `subcomponents.flow.mfi 38.75` show sellers; episodic-pivot read absent; 12.17% above its SMA.",
+    "entry_trigger": "Hourly close above bar_high on volume above normal.",
+    "wrong_if": "Daily close below bar_low or ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`flow` above 60 lifts it; a failed breakout withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AER",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "At the high, no pullback: `sc_momentum 84.0`, `flow 88.2`, `structure 86.3`, `mp 97.0`, `subcomponents.mp.adx_val 39.84`, `subcomponents.energy.exhaustion_score 10.0`, but price is 18.33% above its SMA and `subcomponents.energy.squeeze_score 0.0`; 0.5% under the 20-day high.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger ANCHOR: my abstain does not trace to the sc_momentum 84.0 rank; it traces to the lack of any pullback or contraction: squeeze_score 0.0 and 18.33% above its SMA at the 20-day high.",
+   "case": {
+    "for": "`flow 88.2`, `structure 86.3`, `mp 97.0`, exhaustion_score 10.0 untouched.",
+    "against": "No coil, no pullback, 18.33% above its SMA, `mp_accel_state` FLAT.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A contracted retrace holding ma_20.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Breakout on dead volume: `day_vol 0.46`, price 23.22% above its SMA, `subcomponents.energy.squeeze_score 0.0`, though `sc_momentum 83.5`, `structure 94.7`, `mp 97.0` STRONG/ACCELERATING, `subcomponents.energy.exhaustion_score 10.0`. A trigger without participation and no coil; wait for ma_20.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger ANCHOR: my abstain does not trace to the sc_momentum 83.5 rank; it traces to day_vol 0.46 on the trigger bar, squeeze_score 0.0 and 23.22% extension.",
+   "case": {
+    "for": "`structure 94.7`, `mp 97.0`, episodic pivot TRIGGERED 10/10, exhaustion_score 10.0.",
+    "against": "`day_vol 0.46`, no coil, 23.22% above its SMA, 12.38% under the 52-week high.",
+    "entry_trigger": "Retrace to ma_20, then hourly close above bar_high on volume.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "`day_vol` above 1.2 on the next push.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "STZ",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Recovery thrust inside an inverted stack (ma_50 under ma_100 under ma_200): `structure 94.7`, `energy 80.7`, `sc_momentum 83.8`, `subcomponents.mp.adx_val 35.82` but `div_state` BEARISH 1, `mp_accel_state` DECELERATING, `elder 7.0`. No established uptrend to retrace; thin coil (`subcomponents.energy.squeeze_score 4.0`).",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger ANCHOR: my abstain does not trace to the sc_momentum 83.8 rank; it traces to the inverted MA stack, div_bear_count 1 and DECELERATING mp.",
+   "case": {
+    "for": "`structure 94.7`, `energy 80.7`, ADX reading 35.82; price above all averages.",
+    "against": "Inverted MA stack, `div_bear_count 1`, `mp_accel_state` DECELERATING, `elder 7.0`.",
+    "entry_trigger": "Retrace that holds ma_20 with the stack repairing, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ma_50 above ma_100 and `div_state` NONE.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "RETRACEMENT: pulled back 5.2% under the 20-day high inside a `subcomponents.mp.adx_val 41.59` trend with `subcomponents.energy.exhaustion_score 10.0`; `elder 10.0` CORRECTION_REENTRY, `flow 88.2`, `energy 71.4`, `structure 78.9`, `mp 96.0` STRONG, `sc_momentum 82.9`. `mp_accel_state` DECELERATING and `subcomponents.structure.earn_score 7.0` (earnings inside 20 days) hold it at 3.",
+   "conviction_change": null,
+   "challenge_reply": "Steenbarger ANCHOR: my support does not trace to the sc_momentum 82.9 rank; it traces to the retrace itself, adx_val 41.59 and the elder re-entry, with earn_score 7.0 as the named risk.",
+   "case": {
+    "for": "First retrace after a high inside ADX reading 41.59; elder re-entry; stop under the pullback low.",
+    "against": "`mp_accel_state` DECELERATING, `subcomponents.structure.earn_score 7.0`, price still above ma_20.",
+    "entry_trigger": "Retrace toward ma_20, then hourly close above bar_high.",
+    "wrong_if": "Daily close below ma_20.",
+    "horizon_sessions": 6,
+    "would_change_my_mind": "`mp_accel_state` ACCELERATING lifts it; an earnings gap or a close under ma_20 withdraws it.",
+    "cannot_see": [
+     "ADX slope",
+     "%K/%D",
+     "20-day extreme",
+     "NR4/NR7 history"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+1atr",
+    "tf": "1H",
+    "non_price": "Earnings inside 20 days; a gap on the report is outside any engine."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of4.json",
+   "bytes": 14649,
+   "votes": 14,
+   "sha256": "bb1bd1953099"
+  },
+  {
+   "file": "raschke.part2of4.json",
+   "bytes": 14659,
+   "votes": 14,
+   "sha256": "4ffc98e33fea"
+  },
+  {
+   "file": "raschke.part3of4.json",
+   "bytes": 15738,
+   "votes": 14,
+   "sha256": "e3b3c3c6635f"
+  },
+  {
+   "file": "raschke.part4of4.json",
+   "bytes": 11945,
+   "votes": 11,
+   "sha256": "95f609d6c4b3"
+  }
+ ]
+}

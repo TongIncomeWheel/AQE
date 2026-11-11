@@ -1,0 +1,38 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close through the swing high on real volume."},
+   "wrong_if": "close_below:ma_50, or fade_atr_ge:1.5 off the day's high.",
+   "market_void": null,
+   "reason": "W swing HH/HL, H1 pos_in_day_range_pct 100.0, but D swing HH but LL and dist_to_20bar_high_pct 3.08: the daily trend is not yet clean. Weak support only; the new daily high is the buy."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Daily close through yesterday's high: add only on strength (held name)."},
+   "wrong_if": "fade_atr_ge:1.5 off the day's high exits at once, or close_below:ma_20.",
+   "market_void": null,
+   "reason": "W, D and H1 swing HH/HL, dist_to_20bar_high_pct 1.28, D close 0.27% above its last swing high: trend intact at the high. Keep it; add only at a higher price (C6), never into weakness (C4)."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close through the last swing high: new money only on the fresh high."},
+   "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50.",
+   "market_void": null,
+   "reason": "W, D and H1 swing HH/HL, dist_to_20bar_high_pct 3.3, H1 dist_to_20bar_high_pct 0.62: a normal reaction inside the trend (C8). Hold, no add; the new high is the buy."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (my own multiple), not literal 6 points (C7, C18-C20)",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11)"
+ ]
+}

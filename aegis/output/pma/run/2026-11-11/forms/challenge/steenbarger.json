@@ -1,0 +1,126 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-11",
+ "seat_kind": "challenge",
+ "names_read": 49,
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C15", "C17"],
+   "claim": "Healthcare is the room's dominant cluster. 14 of the 27 nominated tickers are Healthcare, and 20 of the 49 names in the packet. Several seats landing on one sector is convergence on a shared input, not 14 independent reads. Each healthcare case needs a reason that survives with the sector hidden.",
+   "evidence": "gics_sector_name Healthcare: HUM, CAH, TGTX, BTSG, EW, ABBV, SYK, ROIV, XNCR, TMO, ALC, SDGR, SOLV, HSIC nominated; REPL, LQDA, SGRY, VRDN, XERS, GMAB un-nominated. Nominated Healthcare 14 of 27.",
+   "addressed_to": "oneil, minervini, livermore, seow"
+  },
+  {
+   "scope": "lane",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C3", "C17"],
+   "claim": "The elder-lens seat's six nominations all sit in the defensive-income cluster (Staples, Financials, Utilities, Healthcare) in the PULLBACK lane. That is one environment, not several. Its case should be tested against a name from outside the cluster.",
+   "evidence": "elder-lens seats: KO (gics_sector_name Consumer Staples), WRB, PRU, AFL (Financials), NI (Utilities), SYK (Healthcare); all lane PULLBACK, nomination_count 1 each.",
+   "addressed_to": "elder-lens, seow"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12"],
+   "claim": "Financials carries four nominations on separate seats (WRB, PRU, AFL, IBN). They span a US insurer cluster and one foreign bank, with rs_rank_pct ranging 60.59 to 84.02, so they are not one thesis. The insurance trio shares a single sector read.",
+   "evidence": "gics_sector_name Financials nominated: WRB (rs_rank_pct 70.21), PRU (74.81), AFL (60.59), IBN (84.02). Seats elder-lens x3, seow x1.",
+   "addressed_to": "wyckoff, raschke"
+  },
+  {
+   "scope": "CAH",
+   "kind": "EXTENSION",
+   "ticker": "CAH",
+   "canon_ref": ["C5", "C12"],
+   "claim": "CAH is at the 52-week high on below-normal participation with a bearish divergence already showing. Two deciders nominated it as a momentum name. The divergence and the thin volume are a fired caution that the cases must answer in their own terms.",
+   "evidence": "CAH pct_from_52w_high 0.0; day_vol 0.85; div_state BEARISH; div_bear_count 1; structure_shift ABOVE_STRUCTURE; lens_warnings 0. Seats livermore (4), seow (3).",
+   "addressed_to": "livermore, seow"
+  },
+  {
+   "scope": "BTSG",
+   "kind": "OVERLAP",
+   "ticker": "BTSG",
+   "canon_ref": ["C5", "C17"],
+   "claim": "BTSG was nominated by a trend-template seat and by a Wyckoff seat, yet the moving averages are not stacked. The 50-day sits below the 100-day. That is higher-timeframe context a trend-template read must explain, alongside a bearish divergence at the same time.",
+   "evidence": "BTSG ma_50 61.24; ma_100 63.47; ma_200 55.71; div_state BEARISH; div_bear_count 1; structure 87.4; structure_shift BULLISH_BOS. Seats minervini (3), wyckoff (2).",
+   "addressed_to": "minervini, wyckoff"
+  },
+  {
+   "scope": "XNCR",
+   "kind": "EXTENSION",
+   "ticker": "XNCR",
+   "canon_ref": ["C12", "C17"],
+   "claim": "XNCR sits at its 52-week high with the strongest relative-strength rank in the nominated set, yet two of the five oscillators confirm a bearish divergence, the highest count among nominated names. Volume participation is the weakest of the room's high-flyers. The case leans on rs_rank_pct, a field with no measured forward-return separation in this packet.",
+   "evidence": "XNCR pct_from_52w_high 0.0; rs_rank_pct 99.67; div_state BEARISH; div_bear_count 2; lens_warnings 2; day_vol 0.63; ma_50 26.67 vs ma_200 17.72. Seat seow (3).",
+   "addressed_to": "seow, oneil"
+  },
+  {
+   "scope": "TGTX",
+   "kind": "EXTENSION",
+   "ticker": "TGTX",
+   "canon_ref": ["C5", "C12"],
+   "claim": "TGTX is lane-tagged PULLBACK, but the packet shows it at the 52-week high on a volume spike of three times normal. A pullback case and a breakout-at-the-high case are different hypotheses. The two nominating seats must say which one they are trading.",
+   "evidence": "TGTX pct_from_52w_high 0.0; day_vol 3.1; structure_shift BULLISH_BOS; lane PULLBACK; ma_50 56.19, ma_200 44.86. Seats livermore (3), oneil (3).",
+   "addressed_to": "livermore, oneil"
+  },
+  {
+   "scope": "SYK",
+   "kind": "UNPROVEN",
+   "ticker": "SYK",
+   "canon_ref": ["C5"],
+   "claim": "SYK enters below an inverted moving-average stack and far from its high. The longer-timeframe trend runs against the pullback read, so higher-timeframe context is the open question for the seat.",
+   "evidence": "SYK ma_50 292.18; ma_100 310.58; ma_200 322.56; pct_from_52w_high -16.3; rs_rank_pct 62.26; structure_shift ABOVE_STRUCTURE. Seat elder-lens (3).",
+   "addressed_to": "elder-lens, wyckoff"
+  },
+  {
+   "scope": "NYT",
+   "kind": "UNPROVEN",
+   "ticker": "NYT",
+   "canon_ref": ["C5"],
+   "claim": "NYT sits under a fully inverted stack with weak relative strength and the lowest sc_momentum of any nominated name. The higher-timeframe context is a downtrend. The structure break needs a named regime and a named disconfirming observable from the nominating seat.",
+   "evidence": "NYT ma_50 67.47; ma_100 69.03; ma_200 73.32; pct_from_52w_high -15.47; rs_rank_pct 34.39; sc_momentum 62.6; structure_shift BULLISH_BOS. Seat raschke (3).",
+   "addressed_to": "raschke, wyckoff"
+  },
+  {
+   "scope": "RBRK",
+   "kind": "PROCESS",
+   "ticker": "RBRK",
+   "canon_ref": ["C12", "C16"],
+   "claim": "RBRK is a held name that no seat nominated, and its read conflicts. Relative strength is near the top while momentum and structure are weak and four of five oscillators confirm a bearish divergence. This is a conflict of fields, so it belongs in the held review, not in silence.",
+   "evidence": "RBRK rs_rank_pct 96.15; sc_momentum 28.4; structure 28.0; div_state BEARISH; div_bear_count 4; pct_from_52w_high -19.6; structure_shift RANGE; lens_warnings null.",
+   "addressed_to": "oneil, minervini"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C17"],
+   "claim": "Many nominations arrive through the STRENGTH, AQE_LEADER and PM_LENS doors, which are shared AQE inputs. Agreement reached through a shared door is shared-anchor agreement. No forward-return separation for these doors is in the packet, so they are described, never leaned on as edge.",
+   "evidence": "doors on nominated names: STRENGTH on CAH, BTSG, EW, FLYW, EMBJ, DAL, OHI, ROIV, IBN, XNCR; AQE_LEADER on HUM, CAH, FLYW, IBN, XNCR, SOLV, NYT; PM_LENS on LW, KO, DAL, ROIV, IBN, XNCR.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "seow", "ticker": "CAH", "class": "answer", "what_is_owed": "Answer the bearish divergence (div_bear_count 1) and day_vol 0.85 at the 52-week high."},
+  {"seat": "minervini", "ticker": "BTSG", "class": "answer", "what_is_owed": "Explain ma_50 61.24 under ma_100 63.47 within a trend-template read."},
+  {"seat": "livermore", "ticker": "TGTX", "class": "answer", "what_is_owed": "State whether the case is pullback or breakout given day_vol 3.1 at pct_from_52w_high 0.0."},
+  {"seat": "raschke", "ticker": "NYT", "class": "answer", "what_is_owed": "Name the regime and the disconfirming observable under the inverted stack (ma_200 73.32)."}
+ ],
+ "declarations": [
+  "I do not nominate and I do not vote. Every finding above is a crowding, extension, overlap or process read on fields the packet serves.",
+  "No emotional-state reading is made or implied (R9, R10)."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Not in the packet, so no regime label can be tested against any case (R3)."},
+  {"field": "srm", "impact": "Sector rotation grade not in the packet, so sector clustering is read from gics_sector_name only."},
+  {"field": "forward_return_separation", "impact": "No measured edge per door or field reaches me, so every field is UNPROVEN as edge (R1)."},
+  {"field": "ma_200", "impact": "Null for BOBS, so the long-trend context for BOBS cannot be read; no finding filed on it."},
+  {"field": "pct_from_52w_high", "impact": "Null for BOBS, so extension for BOBS cannot be read; no finding filed on it."},
+  {"field": "lens_warnings", "impact": "Null for RBRK, so the lens-warning count for RBRK cannot be read."},
+  {"field": "invalidation_observable", "impact": "Seats' own written disconfirmation is not in the packet, so R5 is raised as a question, not tested."}
+ ]
+}

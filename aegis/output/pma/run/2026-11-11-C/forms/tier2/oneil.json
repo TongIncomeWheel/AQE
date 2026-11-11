@@ -1,0 +1,257 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "declarations": [
+  "Market gate DELEGATED (C1-C3); no market read written. Fundamentals C,A,S,I and base stage NOT_AVAILABLE. pivot_high UNSERVED: triggers use it as a level only.",
+  "Volume test is day_vol vs the 20-day average at 1.40 (declared substitute for the 50-day). No bracket field is used as a reason."
+ ],
+ "answers": [
+  {
+   "pair_id": "EMBJ-oneil-for~raschke",
+   "ticker": "EMBJ",
+   "to": "raschke",
+   "concede": false,
+   "text": "Quote: \"expansion, not contraction.\" Right, and that is the point: at the pivot O'Neil wants expansion on volume (C16); coil belongs to the handle. D HH/HL, 4.9% over the swing high on 2.22x; `subcomponents.flow.ext_score` 5.0. W is LH but HL: noted, not a refutation."
+  },
+  {
+   "pair_id": "ROIV-oneil-for~raschke",
+   "ticker": "ROIV",
+   "to": "raschke",
+   "concede": false,
+   "text": "Quote: \"no compression and no trend.\" Compression is not my test; base soundness is: `structure` 92.6 and `subcomponents.structure.base_score` 15.0 stand. D 0.6% under the 20-day high, H1 HH/HL at 88% of range. W HH but LL keeps this WAIT, not ACT_NOW."
+  },
+  {
+   "pair_id": "EBAY-oneil-for~seow",
+   "ticker": "EBAY",
+   "to": "seow",
+   "concede": true,
+   "text": "Quote: \"D is 3.3% under the 20-day high.\" Correct: my 0.6% was the H1 frame. W HH/HL 3.3% under the 20-wk high and D 3.3% under: no break yet. I concede the distance; the base read holds: `subcomponents.structure.base_score` 15.0, `subcomponents.energy.squeeze_score` 12.5."
+  },
+  {
+   "pair_id": "ADP-oneil-for~elder-lens",
+   "ticker": "ADP",
+   "to": "elder-lens",
+   "concede": true,
+   "text": "Quote: \"volume not dried up.\" `subcomponents.bq.bq_vol_dry` 5.0 on 0-25 says the month's volume never contracted (C15), so dry-up is not shown. I concede it. Leadership stands: W HH/HL, D 1.8% under the high, `energy` 84.0. Volume must still print 1.4x."
+  },
+  {
+   "pair_id": "PRCH-oneil-against~livermore",
+   "ticker": "PRCH",
+   "to": "livermore",
+   "concede": false,
+   "text": "Quote: \"A leader far above its averages... is normal.\" Not in my canon: entry 21.95 against `ma_200` 12.47 is over 70% above (C24, R7). D 1.8% under the high and `mp` 75.0 do not cancel a climax reading. I sell into it. No concession."
+  },
+  {
+   "pair_id": "PRCH-oneil-against~seow",
+   "ticker": "PRCH",
+   "to": "seow",
+   "concede": false,
+   "text": "Quote: \"Extension and over-ma200 are no fault.\" Seow's position system, not mine. W 19.5% over the swing high, `sma_distance_pct` 23.76 and 76% over `ma_200` are my climax test (C24). `flow` 86.8 is advisory only. I hold the OPPOSE."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or a new high on thin volume.",
+   "market_void": null,
+   "reason": "`structure` 73.7 and `energy` 84.0 near the high, `sc_momentum` 76.8; but `mp` 48.0 fails its gate, D swing LH/LL. Short base. Needs the break."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Close back under the broken pivot, or close_below pivot_high-8pct.",
+   "market_void": null,
+   "reason": "`structure` 87.4 and `mp` 93.0, `sc_momentum` 79.9, at the high. Not confirmed: W and D swing HH but LL, 10.4% over the W swing high: extended, so no chase."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the 20-day pivot high; volume already 2.2x."
+   },
+   "wrong_if": "Close back under the break, or a reversal on heavy volume.",
+   "market_void": null,
+   "reason": "Best volume break: `subcomponents.flow.ext_score` 5.0, `structure` 81.5, `sc_momentum` 81.2, `energy` 66.4. Base only 4 days, W LH but HL: smaller conviction."
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`structure` 93.7 and `subcomponents.structure.base_score` 15.0 on a tight base, `sc_momentum` 79.0. `mp` 80.0 decelerating, W HH but LL; no volume yet."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`structure` 76.8 and `sc_momentum` 76.2, `mp` 86.0, 0.5% under the high. Weak: `subcomponents.structure.base_score` 5.0, no base to count. Lowest conviction."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`structure` 96.8 and `subcomponents.structure.base_score` 15.0, `sc_momentum` 81.9, 0.3% under the high. W swing LH/LL and base only 11 days; no volume."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct.",
+   "market_void": null,
+   "reason": "`subcomponents.energy.squeeze_score` 12.5 and `energy` 84.0, `sc_momentum` 73.6, 3.0% under the high. `structure` 63.2 thin, W LH but HL; no volume."
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or a heavy-volume reversal.",
+   "market_void": null,
+   "reason": "`structure` 92.6 and `subcomponents.structure.base_score` 15.0, `sc_momentum` 82.3, `subcomponents.flow.ext_score` 3.0. Volume 1.29x is under 1.40; W HH but LL."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`subcomponents.structure.base_score` 15.0 and `subcomponents.energy.squeeze_score` 12.5, `energy` 85.7, `sc_momentum` 72.0. D 3.3% under the high, no break; `mp` 73.0 decelerating."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the 20-day pivot high; volume already 2.2x."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or a heavy-volume weak close.",
+   "market_void": null,
+   "reason": "`structure` 94.7 and `subcomponents.structure.base_score` 15.0, `mp` 97.0, `sc_momentum` 80.7, `subcomponents.flow.ext_score` 3.0. Caution: `subcomponents.flow.mfi` 30.93 (C25), H1 9<21."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`energy` 84.0 and `subcomponents.energy.squeeze_score` 8.5, `sc_momentum` 80.6, W and D HH/HL, 1.8% under the high. `mp` 76.0 decelerating; dry-up not shown."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or under ma_50.",
+   "market_void": null,
+   "reason": "`structure` 84.2 and `mp` 97.0, `sc_momentum` 79.1, 1.2% under the high. `subcomponents.structure.base_score` 5.0 loose, `subcomponents.energy.squeeze_score` 0.0, W HH but LL."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A volume-confirmed continuation from a fresh base above ma_50.",
+   "market_void": null,
+   "reason": "Entry 21.95 against `ma_200` 12.47 is over 70% above (C24, R7). `sma_distance_pct` 23.76, `subcomponents.structure.base_score` 3.0 on 5 days. `structure` 74.5 and `sc_momentum` 76.6 are strong but I sell into it."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or a heavy-volume weak close.",
+   "market_void": null,
+   "reason": "`structure` 82.1 and `subcomponents.structure.base_score` 15.0, `subcomponents.energy.squeeze_score` 12.5, `energy` 85.7. `flow` 50.0 fails its gate, `subcomponents.flow.mfi` 38.75; W and D HH/HL."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume at least 1.4x normal."
+   },
+   "wrong_if": "Daily close below pivot_high-8pct, or a gap down on earnings.",
+   "market_void": null,
+   "reason": "`structure` 78.9 and `mp` 96.0, `sc_momentum` 82.9, `subcomponents.structure.base_score` 8.0 over 31 days. D 5.2% under the high, W HH but LL, earnings near (`subcomponents.structure.earn_score` 7.0)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of2.json",
+   "bytes": 6347,
+   "sha256": "8943ba749cc9"
+  },
+  {
+   "file": "oneil.part2of2.json",
+   "bytes": 3688,
+   "sha256": "5e5eb1cfd516"
+  }
+ ]
+}

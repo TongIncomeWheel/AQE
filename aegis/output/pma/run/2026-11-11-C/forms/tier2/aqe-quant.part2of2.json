@@ -1,0 +1,97 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow falls further or rs_accel more negative.",
+   "market_void": null,
+   "reason": "`energy` 85.7 and `structure` 73.7 hold, but `flow` 56.6 is under its floor and `subcomponents.structure.rs_accel` -15.6 shows the lead shrinking; wait for flow to recover."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or mfi stays under 40 with cmf more negative.",
+   "market_void": null,
+   "reason": "`structure` 94.7 and `mp` 97.0, `subcomponents.structure.rs_accel` 15.64 improving; flow conflict: `subcomponents.flow.mfi` 30.93 sellers vs `subcomponents.flow.accum_score` 7.5."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel more negative with DECELERATING persisting.",
+   "market_void": null,
+   "reason": "`flow` 84.2 and `energy` 84.0 lead, clean live exhaustion test; but mp_accel_state DECELERATING and `subcomponents.structure.rs_accel` -3.43; wait for a pause."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or energy loses its floor.",
+   "market_void": null,
+   "reason": "`mp` 97.0 and `structure` 84.2 with `subcomponents.structure.rs_accel` 10.49 improving; `energy` 61.3 only just clears its floor; mp_accel_state FLAT."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow loses its floor or ext_score turns negative.",
+   "market_void": null,
+   "reason": "`flow` 86.8 with `subcomponents.flow.ext_score` 5.0 breakout bonus, mp_accel_state ACCELERATING; weak leg `subcomponents.mp.mp_adx_score` 0.0."
+  },
+  {
+   "ticker": "EL",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "flow recovers over its floor with `subcomponents.flow.mfi` back above 55.",
+   "market_void": null,
+   "reason": "`flow` 50.0 under its floor with `subcomponents.flow.mfi` 38.75 (sellers in control) and `subcomponents.structure.rs_accel` -20.09 lead eroding; `energy` 85.7 carries it."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel turns negative with DECELERATING persisting.",
+   "market_void": null,
+   "reason": "`flow` 88.2, `structure` 78.9, `mp` 96.0; `subcomponents.structure.rs_accel` 13.06 improving; `subcomponents.energy.exhaustion_score` 10.0 clean at en_trend_bars 20.0."
+  }
+ ],
+ "declarations": [
+  "Reads only AQE composites and subcomponents; no bracket or Valen flag used as a reason."
+ ]
+}

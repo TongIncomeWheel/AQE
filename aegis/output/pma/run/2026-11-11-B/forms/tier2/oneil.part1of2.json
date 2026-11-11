@@ -1,0 +1,72 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "WAY-oneil-against~seow",
+   "ticker": "WAY",
+   "to": "seow",
+   "text": "Refuter: \"long-horizon reads; my position test is 63-day.\" My test is not horizon: day_vol 0.56 fails 1.40 (C16). W HH/HL is real, but group Recovering From Weakness gives no confirmation (C25). D swing HH but LL, no base I can count. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, leader on volume"
+   },
+   "wrong_if": "close_below:ma_50 on heavy volume, or the group turns while LTH runs alone",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, day_vol 2.16 clears 1.40, structure 94.7 ABOVE_STRUCTURE; W HH/HL, D 2.5% under 20-day high. Group Momentum Fading is a weight."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high (68.03 high day)"
+   },
+   "wrong_if": "close_below:pivot_high on above-normal volume, or ma_50 lost",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, day_vol 3.1, structure_shift BULLISH_BOS; W HH/HL 9.1% above swing high. H1 closed 35% of range, 5.5% under 20-hr high, so wait for the clear."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume"
+   },
+   "wrong_if": "close_below:ma_20 on heavy volume, or a clear on day_vol under 1.40",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, structure 77.9 ABOVE_STRUCTURE, from_52w_hi -1.31. day_vol 0.86 fails 1.40 today, so volume must show on the clear."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume"
+   },
+   "wrong_if": "close_below:ma_20, or a clear on day_vol under 1.40",
+   "market_void": null,
+   "reason": "Low conviction: structure_shift BULLISH_BOS, coil strong, but rs IN-LINE and day_vol 0.73 fails 1.40. Supported only on a clear with volume."
+  }
+ ],
+ "declarations": [
+  "fundamentals NOT_AVAILABLE: C, A, S, I untested, never inferred.",
+  "market_gate DELEGATED: every SUPPORT is valid only into a confirmed uptrend; no market read written.",
+  "volume_measure day_vol vs 20d (substitute for 50d); base_measure structure composite (substitute)."
+ ]
+}

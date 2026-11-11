@@ -1,0 +1,111 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "declarations": [
+  "setup_type: retracement (C2) on every SUPPORT; no test, climax or breakout called. ABSTAIN means no fit to the four (R1), not a veto (R27).",
+  "adx: NOT_SERVED (C7, C8); stochastic_kd: NOT_SERVED (C6); bar_range_history: NOT_SERVED (C12, C13); market_breadth: OUT_OF_SERVED_SCOPE (C16).",
+  "n_day_extreme: MTF swing lines + dist_to_20bar_high_pct (substitute, C3/C4).",
+  "setup_type: none fits the four on these six (R1); ABSTAIN is not a veto (R27)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes above yesterday's high, the hook out of the pullback."
+   },
+   "wrong_if": "Daily close below ma_20, or structure_shift turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Retracement (C2). H1 swing_class HH/HL, 9>21, 2.2% under the last swing high; W HH/HL. D swing_class LH/LL keeps it a wait for the hook, not a buy now."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a dip toward ma_20 holds and hooks, giving a retracement I can classify.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 3.32, extended continuation with no pullback to buy. Not a veto."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes above yesterday's high once the pullback holds the broken pivot."
+   },
+   "wrong_if": "Daily close below structure_shift_ref, the broken pivot high, or the big-volume bar is fully given back.",
+   "market_void": null,
+   "reason": "Retracement after a break (C2). D swing_class HH/HL above EMA9; H1 pos_in_day_range_pct 35.4 is the live pullback. W and D momentum flag true. Climax risk (C11/C19) keeps it WAIT."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a pullback holds ma_20 and hooks, giving a higher low to buy.",
+   "reason": "No setup type (R1). D swing_class HH/HL but dist_to_20bar_high_pct 1.15: a push at the high, no higher low formed. Not a veto."
+  },
+  {
+   "ticker": "KO",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a dry retest of structure_shift_ref holds and hooks.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 0.49: at the high, no retracement; contraction breakout needs bar_range_history, NOT_SERVED."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a dip toward ma_20 holds and hooks, giving a retracement to classify.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 0.45: at the high with no higher low to buy; no range series for a contraction call. Not a veto."
+  },
+  {
+   "ticker": "SDGR",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a controlled retracement holds ma_20 and hooks.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 4.06 after a run far off the average; no base to retrace to (C19 caution). Not a veto."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a first pullback toward ma_20 holds and hooks, giving an add setup.",
+   "reason": "Held. No add setup (R1). D dist_to_20bar_high_pct 1.28, extended range-expansion run; windfall-protection flag to the PM (C19, R7), advisory only."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a deeper dry pullback holds ma_20 and the H1 order returns to 9>21.",
+   "reason": "No setup type (R1). H1 ema_order 9<21, swing_class LH/LL: no hook yet; D pullback is shallow, dist_to_20bar_high_pct 2.45."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if structure_shift prints BULLISH_BOS or a dry dip holds ma_20 and hooks.",
+   "reason": "No setup type (R1). H1 swing_class LH/LL, D dist_to_20bar_high_pct 1.78: neither a clean retracement nor a break; stand aside (C22)."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a dry dip toward ma_20 holds and hooks.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 1.2, W swing_class HH but LL: at the high with no higher low to buy. Not a veto."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "ABSTAIN",
+   "wrong_if": "Wrong to stand aside if a controlled retracement holds ma_20 and hooks.",
+   "reason": "No setup type (R1). D dist_to_20bar_high_pct 1.83, H1 6.8% above the last swing high: extended at the high, no pullback to buy (C19 caution). Not a veto."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of2.json",
+   "bytes": 2776,
+   "sha256": "625d38d3641c"
+  },
+  {
+   "file": "raschke.part2of2.json",
+   "bytes": 2156,
+   "sha256": "3cd9b16d00cd"
+  }
+ ]
+}

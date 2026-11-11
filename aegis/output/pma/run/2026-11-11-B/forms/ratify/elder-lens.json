@@ -1,0 +1,63 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-11",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "LTH",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:pivot_high is a breakout buy in front of price; D close 47.42 is far above ema21 44.3428 and elder_5d [10, 10, 7, 7, 7] shows no transition bar. Elder bids under the average, not at the highs (C4, C10).",
+   "would_clear": "Trigger re-set to a daily pullback into the 20-day value zone with elder at 7 or higher on the close."
+  },
+  {
+   "ticker": "TGTX",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SN",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close buys the extreme: elder_5d [10, 7, 10, 10, 7] lost a bar on the last day (green going away, C4) and D close 226.5 is 13.0% above its last swing high. No pullback, no Elder entry (C10, C22).",
+   "would_clear": "A pullback into the 20-day value zone with elder back at 7 or higher, replacing the 52-week-high breakout trigger."
+  },
+  {
+   "ticker": "ELF",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "elder_pattern INTERRUPTED fails my trend leg, and H1 close_vs_ema9 below with last_bar red is no entry. The red-to-7 permission event is two bars old, not on the last bar; a hold-outside-the-Creek buy is not my test (C4, C22).",
+   "would_clear": "elder_pattern leaves INTERRUPTED and elder_5d prints a fresh not-red permission bar on the last close, with a pullback entry."
+  },
+  {
+   "ticker": "WAY",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "reservation": null,
+   "objection": "elder_pattern INTERRUPTED fails my trend leg; D swing HH but LL, permission event two bars old and the tail is flat blue. The trigger buys a break outside the Creek, which is not a pullback entry (C4, C10, C22).",
+   "would_clear": "elder_pattern leaves INTERRUPTED and D swing returns to HH/HL, with the entry set on a pullback into the value zone."
+  },
+  {
+   "ticker": "GPN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Hold and no-add-before are right (elder_5d [7, 7, 7, 7, 10], R7 not fired), but the trigger h1_close_above:bar_high adds on strength to an extended name; D close is 0.27% above its last swing high. I add only on the pullback (C10).",
+   "would_clear": "Add trigger changed to a daily pullback into the 20-day value zone with elder at 7 or higher."
+  },
+  {
+   "ticker": "EBAY",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Keep is right (elder_5d [7, 8, 5, 4, 7], permission event on the last bar, R2), but the add trigger close_above:pivot_high buys a breakout while elder_pattern INTERRUPTED; I add on the pullback only (C6, C10).",
+   "would_clear": "Add trigger changed to a daily pullback into the 20-day value zone with elder at 7 or higher."
+  }
+ ]
+}

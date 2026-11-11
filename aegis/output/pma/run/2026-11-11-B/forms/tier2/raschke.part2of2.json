@@ -1,0 +1,41 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above yesterday's high on better volume."
+   },
+   "wrong_if": "Daily close below bar_low, or the break fails back inside the range.",
+   "market_void": null,
+   "reason": "BREAKOUT by proxy (C2): H1 dist_to_20bar_high_pct 0.0, pos_in_day_range_pct 100.0, W swing HH/HL. D swing_class HH but LL and no volume print, so WAIT. bar_range_history not served."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A range-expansion bar that closes weak, or a close under bar_low (C19).",
+   "market_void": null,
+   "reason": "No setup to enter: D dist_to_20bar_high_pct 1.28 after a run, W close_vs_swing_high_pct 5.96. Extended leader with no pullback; outside the four families (R1)."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Close below bar_low, or a close under ma_20.",
+   "market_void": null,
+   "reason": "No tested extreme: D dist_to_20bar_high_pct 3.3 inside a range. The dip-and-reclaim is a retracement shape but not a live setup of mine."
+  }
+ ],
+ "declarations": [
+  "adx NOT_SERVED (C7, C8); bar_range_history NOT_SERVED (C12, C13). No answers owed: answer_pairs empty."
+ ]
+}

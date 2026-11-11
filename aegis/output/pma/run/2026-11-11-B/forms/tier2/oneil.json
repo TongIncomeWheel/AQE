@@ -1,0 +1,119 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "declarations": [
+  "fundamentals NOT_AVAILABLE: C, A, S, I untested, never inferred.",
+  "market_gate DELEGATED: every SUPPORT is valid only into a confirmed uptrend; no market read written.",
+  "volume_measure day_vol vs 20d (substitute for 50d); base_measure structure composite (substitute)."
+ ],
+ "answers": [
+  {
+   "pair_id": "WAY-oneil-against~seow",
+   "ticker": "WAY",
+   "to": "seow",
+   "text": "Refuter: \"long-horizon reads; my position test is 63-day.\" My test is not horizon: day_vol 0.56 fails 1.40 (C16). W HH/HL is real, but group Recovering From Weakness gives no confirmation (C25). D swing HH but LL, no base I can count. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, leader on volume"
+   },
+   "wrong_if": "close_below:ma_50 on heavy volume, or the group turns while LTH runs alone",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, day_vol 2.16 clears 1.40, structure 94.7 ABOVE_STRUCTURE; W HH/HL, D 2.5% under 20-day high. Group Momentum Fading is a weight."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high (68.03 high day)"
+   },
+   "wrong_if": "close_below:pivot_high on above-normal volume, or ma_50 lost",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, day_vol 3.1, structure_shift BULLISH_BOS; W HH/HL 9.1% above swing high. H1 closed 35% of range, 5.5% under 20-hr high, so wait for the clear."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume"
+   },
+   "wrong_if": "close_below:ma_20 on heavy volume, or a clear on day_vol under 1.40",
+   "market_void": null,
+   "reason": "rs_leadership LEADER, structure 77.9 ABOVE_STRUCTURE, from_52w_hi -1.31. day_vol 0.86 fails 1.40 today, so volume must show on the clear."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume"
+   },
+   "wrong_if": "close_below:ma_20, or a clear on day_vol under 1.40",
+   "market_void": null,
+   "reason": "Low conviction: structure_shift BULLISH_BOS, coil strong, but rs IN-LINE and day_vol 0.73 fails 1.40. Supported only on a clear with volume."
+  },
+  {
+   "ticker": "WAY",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "It clears the swing high on day_vol of 1.40 or more with the group turning to Momentum Building",
+   "market_void": null,
+   "reason": "day_vol 0.56 fails 1.40 (C16); group Recovering From Weakness does not confirm (C25); from_52w_hi -20.9, ret_12m -19.11 show no prior uptrend. Breakout nobody bought."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high; no add before it"
+   },
+   "wrong_if": "close_below:ma_50 on heavy volume (10-week line fails)",
+   "market_void": null,
+   "reason": "Held leader: rs_leadership LEADER, structure 87.4 BULLISH_BOS, from_52w_hi 0.0. day_vol 0.98 fails 1.40, so hold, no add until volume prints."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume"
+   },
+   "wrong_if": "close_below:ma_50 on heavy volume, or rs_leadership turns LAGGARD",
+   "market_void": null,
+   "reason": "Held, low conviction: rs_leadership LEADER, from_52w_hi -1.3, but day_vol 0.92 fails 1.40 and rs_rank_pct 64.9. Hold, no add."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of2.json",
+   "bytes": 2717,
+   "sha256": "9ad036855bfd"
+  },
+  {
+   "file": "oneil.part2of2.json",
+   "bytes": 1738,
+   "sha256": "3e67712a311d"
+  }
+ ]
+}

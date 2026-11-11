@@ -1,0 +1,213 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-11",
+ "declarations": [
+  "Reads only AQE composites and subcomponents; no bracket or Valen flag used as a reason."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or mp stays under its floor with abs_mom_score not rising.",
+   "market_void": null,
+   "reason": "`flow` 90.8 and `energy` 84.0 lead, but `mp` 48.0 is under its floor with `subcomponents.mp.abs_mom_score` 10.0; wait for mp to recover, trigger follows."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or `subcomponents.structure.rs_accel` -3.68 falls further with DECELERATING.",
+   "market_void": null,
+   "reason": "`structure` 87.4 and `mp` 93.0 with `subcomponents.mp.abs_mom_score` 30.0 at ceiling; `subcomponents.mp.roc_zscore` 2.15 exceptional, mp_accel_state ACCELERATING; exhaustion_score 10.0 on a young run is silence."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow loses its floor or ext_score turns negative.",
+   "market_void": null,
+   "reason": "`flow` 100.0 lifted by `subcomponents.flow.ext_score` 5.0 breakout bonus; `subcomponents.mp.roc_zscore` 3.15 exceptional; weak leg `subcomponents.mp.mp_adx_score` 0.0."
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or exhaustion_score falls below 7.0.",
+   "market_void": null,
+   "reason": "`structure` 93.7 and `energy` 73.9 broad, but `subcomponents.energy.exhaustion_score` 7.0 at `subcomponents.energy.en_trend_bars` 26.0 is live wear, mp_accel_state DECELERATING; wait for a pause."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel more negative with DECELERATING persisting.",
+   "market_void": null,
+   "reason": "Broad: `flow` 78.9, `mp` 86.0, `subcomponents.energy.exhaustion_score` 10.0 clean at en_trend_bars 24.0; but `subcomponents.structure.rs_accel` -3.2 lead shrinking and mp_accel_state DECELERATING."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel turns negative with DECELERATING.",
+   "market_void": null,
+   "reason": "`structure` 96.8 and `flow` 84.2; `subcomponents.structure.rs_accel` 11.28 improving, `subcomponents.mp.abs_mom_score` 30.0, mp_accel_state ACCELERATING; exhaustion test not live (en_trend_bars 11.0)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or accum_score stays near zero with rs_accel more negative.",
+   "market_void": null,
+   "reason": "`energy` 84.0 with `subcomponents.energy.squeeze_score` 12.5 coil, clean live exhaustion test; but `subcomponents.flow.accum_score` 1.5 thin and `subcomponents.structure.rs_accel` -9.62; wait for accumulation."
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow loses its floor or rs_accel turns negative.",
+   "market_void": null,
+   "reason": "`flow` 96.1 and `structure` 92.6 with `subcomponents.structure.rs_accel` 10.52 improving; `subcomponents.mp.roc_zscore` 2.23; weak leg `subcomponents.mp.mp_adx_score` 0.0, young run."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow falls further or rs_accel more negative.",
+   "market_void": null,
+   "reason": "`energy` 85.7 and `structure` 73.7 hold, but `flow` 56.6 is under its floor and `subcomponents.structure.rs_accel` -15.6 shows the lead shrinking; wait for flow to recover."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or mfi stays under 40 with cmf more negative.",
+   "market_void": null,
+   "reason": "`structure` 94.7 and `mp` 97.0, `subcomponents.structure.rs_accel` 15.64 improving; flow conflict: `subcomponents.flow.mfi` 30.93 sellers vs `subcomponents.flow.accum_score` 7.5."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel more negative with DECELERATING persisting.",
+   "market_void": null,
+   "reason": "`flow` 84.2 and `energy` 84.0 lead, clean live exhaustion test; but mp_accel_state DECELERATING and `subcomponents.structure.rs_accel` -3.43; wait for a pause."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or energy loses its floor.",
+   "market_void": null,
+   "reason": "`mp` 97.0 and `structure` 84.2 with `subcomponents.structure.rs_accel` 10.49 improving; `energy` 61.3 only just clears its floor; mp_accel_state FLAT."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or flow loses its floor or ext_score turns negative.",
+   "market_void": null,
+   "reason": "`flow` 86.8 with `subcomponents.flow.ext_score` 5.0 breakout bonus, mp_accel_state ACCELERATING; weak leg `subcomponents.mp.mp_adx_score` 0.0."
+  },
+  {
+   "ticker": "EL",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "flow recovers over its floor with `subcomponents.flow.mfi` back above 55.",
+   "market_void": null,
+   "reason": "`flow` 50.0 under its floor with `subcomponents.flow.mfi` 38.75 (sellers in control) and `subcomponents.structure.rs_accel` -20.09 lead eroding; `energy` 85.7 carries it."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close holds above the 20-day average."
+   },
+   "wrong_if": "close_below:ma_20 on a daily close, or rs_accel turns negative with DECELERATING persisting.",
+   "market_void": null,
+   "reason": "`flow` 88.2, `structure` 78.9, `mp` 96.0; `subcomponents.structure.rs_accel` 13.06 improving; `subcomponents.energy.exhaustion_score` 10.0 clean at en_trend_bars 20.0."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "aqe-quant.part1of2.json",
+   "bytes": 4541,
+   "sha256": "e1583736a44e"
+  },
+  {
+   "file": "aqe-quant.part2of2.json",
+   "bytes": 3643,
+   "sha256": "b15486030a96"
+  }
+ ]
+}

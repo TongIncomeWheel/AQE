@@ -1,0 +1,1647 @@
+{
+ "voice": "seow",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "Proxies named: `subcomponents.structure.rs_vs_spy` stands in for the 63-day-vs-index test (R8) since index_pct_change_63d is not served; cmf/mfi stand in for COM and elder_pattern for TIF (R14).",
+  "Swing five-condition test cannot run: cci_20, bar_low, ma_20_slope_5d_pct are not served, so no swing set-up is asserted; pullback-lane names are judged on the position picture and said so.",
+  "sc_m_gates and pipe_rank are null on the indicator sheet and are not cited; sector_rrg_quadrant is not served, so the market-cycle arrow is unconfirmed on every name.",
+  "VALEN risk-off weather is context only and moves no vote. No Round-1 ballot of mine is on file, so conviction_change is null throughout. Stops are named from structure fields, never from an engine level."
+ ],
+ "data_gaps": [
+  {
+   "field": "cci_20",
+   "impact": "swing set-up untestable"
+  },
+  {
+   "field": "sector_rrg_quadrant",
+   "impact": "market-cycle signal unconfirmed"
+  },
+  {
+   "field": "index_pct_change_63d",
+   "impact": "R8 judged via rs_vs_spy proxy"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: picture is a push at the 52w high on fund flow (from_52w_hi 0.0%). `flow` 90.8, `subcomponents.flow.cmf` 0.31 (COM proxy above 0), `elder` 10.0 ACCELERATION (TIF proxy), `energy` 84.0, `subcomponents.structure.rs_vs_spy` 16.93. Caution: structure_shift RANGE (no confirmed break) and `mp` 48.0 is the weakest engine.",
+   "case": {
+    "for": "Fund flow leads the sheet: flow 90.8, cmf 0.31, elder ACCELERATION, rs_rank_pct 90.29 at the high.",
+    "against": "No resistance break confirmed (structure_shift RANGE); mp 48.0 BUILDING; sector tag reads Momentum Fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d), or the elder impulse turns red.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf turning below 0, or a close under base_low_20d.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high (from_52w_hi 0.0%). `elder` 10.0 SUSTAINED (TIF proxy), `mp` 93.0, `structure` 72.6, `subcomponents.structure.rs_vs_spy` 20.4. Fund flow is thin: `subcomponents.flow.cmf` 0.01, `flow` 63.2, so COM barely confirms and conviction stays at 3.",
+   "case": {
+    "for": "TIF proxy fully on (elder 10.0 SUSTAINED), mp 93.0, rs_rank_pct 92.05, price at the highs.",
+    "against": "COM near zero (cmf 0.01, flow 63.2); div BEARISH/1; ext_atr20 2.82 puts the support line far away.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or cmf below 0 with a red candle.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "flow rising with cmf above 0.10 would lift it; a red candle on volume would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (lane label PULLBACK set aside: the picture is a fresh BULLISH_BOS at the 52w high). `structure` 63.2, `subcomponents.flow.cmf` 0.10, `flow` 64.5, `mp` 83.0, `elder` 10.0 CORRECTION_REENTRY, `subcomponents.structure.rs_vs_spy` 33.34. Modest flow and `sc_momentum` 67.5 cap it at 3.",
+   "case": {
+    "for": "Fresh break with cmf 0.10 above 0, mp 83.0 STRONG, rs_rank_pct 91.63, ret_63d 29.82.",
+    "against": "Flow only 64.5; sc_momentum 67.5 is the lowest of the break names; 1H swing is LL.",
+    "entry_trigger": "Buy stop 1 tick over bar_high; the broken pivot_high should hold as support.",
+    "wrong_if": "Close back below pivot_high or below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf below 0 or a close back inside the old range.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: fresh BULLISH_BOS, 0.0% under the 20-day high. `structure` 87.4, `flow` 78.9, `subcomponents.flow.cmf` 0.16, `mp` 93.0 ACCELERATING, `elder` 10.0, `sc_momentum` 79.9, `subcomponents.structure.rs_vs_spy` 23.0. A 24.21% run in 10 days is a weight, not a veto (R27).",
+   "case": {
+    "for": "Break just happened with COM above 0, structure 87.4, mp 93.0 accelerating, rs_rank_pct 81.42.",
+    "against": "run_10d 24.21% and div BEARISH/1: late in the move; the support line is distant.",
+    "entry_trigger": "Buy stop 1 tick over bar_high only; never at market.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf turning negative, or a red candle that trades under its own low next day.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "The run is 24.21% in 10 days and an oscillator divergence is flagged; entering only on the buy stop limits chasing but not the gap risk.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high. `flow` 82.9, `subcomponents.flow.cmf` 0.14, `structure` 84.2, `mp` 93.0, `sc_momentum` 81.0. TIF proxy is not confirming: `elder` 7.0 carries no SUSTAINED/ACCELERATION pattern and the last bar fell from 10.0, so conviction 3.",
+   "case": {
+    "for": "Flow 82.9 with cmf 0.14, structure 84.2, mp 93.0 accelerating, rs_rank_pct 81.34.",
+    "against": "elder 7.0 with the last bar down from 10.0 is the colour-flip warning; ext_atr20 3.73.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a close under bar_open after the up-run.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "elder back to 10.0 would lift it; elder under 7 would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system, cleanest picture on the sheet: ABOVE_STRUCTURE at the 20-day and 20-week high with fund flow behind it. `flow` 88.2, `subcomponents.flow.cmf` 0.31, `elder` 10.0 SUSTAINED, `mp` 97.0, `structure` 74.7, `sc_momentum` 82.0, `subcomponents.structure.rs_vs_spy` 25.08.",
+   "case": {
+    "for": "COM and TIF both on, mp 97.0 accelerating, rs_rank_pct 83.26, ret_63d 28.01, runner True.",
+    "against": "ext_atr20 3.18 and sma_dist 20.26%: the trade starts far above the support line.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder leaves SUSTAINED with a red candle.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder leaving SUSTAINED.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "Industrials sector tag reads Momentum Fading and the RRG quadrant is not served, so the market-cycle arrow is unconfirmed; the stretch above ma_20 means a larger loss if wrong.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE with fund flow at the sheet maximum. `flow` 100.0, `subcomponents.flow.cmf` 0.14, `structure` 81.5, `mp` 75.0 ACCELERATING, `elder` 10.0 CORRECTION_REENTRY, `sc_momentum` 81.2. Trend is weak-ish: adx 18.84 and `subcomponents.structure.rs_vs_spy` 9.88.",
+   "case": {
+    "for": "Flow 100.0, structure 81.5, mp 75.0 accelerating, rs_rank_pct 85.19.",
+    "against": "adx 18.84 is a drift not a trend; elder pattern is CORRECTION_REENTRY, not SUSTAINED; ret_63d 11.55 modest.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (lane label PULLBACK set aside: structure is above the last confirmed pivot). `structure` 93.7, `subcomponents.flow.cmf` 0.23, `flow` 73.7, `energy` 73.9, `subcomponents.energy.squeeze_score` 12.5 (coiled), `elder` 10.0. Not at the high (from_52w_hi -5.59%) and ret_12m -8.51, so conviction 3.",
+   "case": {
+    "for": "Structure 93.7, COM 0.23, coil at max squeeze score, rs_rank_pct 85.52.",
+    "against": "5.59% under the 52w high; ret_12m -8.51; exhaustion_score 7.0 shows some wear.",
+    "entry_trigger": "Buy stop 1 tick over bar_high; pullback to ma_20 would be a better price but is not required.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or exhaustion_score falling further.",
+    "cannot_see": [
+     "cci_20",
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: fresh BULLISH_BOS at the 52w high. `structure` 76.8, `flow` 78.9, `energy` 66.4, `mp` 86.0, `elder` 9.0 CORRECTION_REENTRY, `subcomponents.flow.cmf` 0.06, `subcomponents.structure.rs_vs_spy` 14.36. COM only just above 0 and rs_rank_pct 75.06 is middling, so 3.",
+   "case": {
+    "for": "Break just happened at the high with flow 78.9 and elder 9.0; ret_63d 11.76.",
+    "against": "cmf 0.06 is marginal confirmation; sc_momentum 76.2; defensive name with a mid-pack rank.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or a close back below pivot_high.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: BULLISH_BOS within 1.63% of the high. `structure` 63.2, `energy` 79.0, `flow` 68.4, `subcomponents.flow.cmf` 0.17, `elder` 9.0 CORRECTION_REENTRY, `mp` 66.0. Weakest strength on the break list: rs_rank_pct 70.21, `sc_momentum` 70.1, div BEARISH/1, so only 2.",
+   "case": {
+    "for": "Break with COM above 0 (cmf 0.17), energy 79.0, subcomponents.structure.rs_vs_spy 13.09.",
+    "against": "Lowest composite among break names; rs_rank_pct 70.21; bearish divergence flagged; 1H and daily swings mixed.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "a close back below pivot_high or cmf under 0.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.3% under the 20-day high. `structure` 96.8, `flow` 84.2, `subcomponents.flow.cmf` 0.10, `mp` 87.0 ACCELERATING, `elder` 10.0 CORRECTION_REENTRY, `sc_momentum` 81.9. Beats the market by `subcomponents.structure.rs_vs_spy` 8.21 but ret_63d is only 2.52 and cmf is faint, so 3.",
+   "case": {
+    "for": "Structure 96.8, flow 84.2, mp 87.0 accelerating, rs_rank_pct 81.26.",
+    "against": "ret_63d 2.52 is a thin absolute return; cmf 0.10 weak confirmation; ext_atr20 3.28.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or rs_vs_spy turning negative.",
+    "cannot_see": [
+     "index_pct_change_63d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (BULLISH_BOS, 0.34% under the 52w high; lane label PULLBACK set aside). `structure` 63.2, `energy` 84.0, `flow` 65.8, `subcomponents.flow.cmf` 0.08, `mp` 80.0, `subcomponents.structure.rs_vs_spy` 20.35. TIF proxy is weak: `elder` 7.0 INTERRUPTED. The reclaim-day read is not a Seow set-up (cci_20 unserved).",
+   "case": {
+    "for": "Fresh break, energy 84.0 and squeeze score 12.5, rs_rank_pct 87.62, ret_63d 18.14.",
+    "against": "elder INTERRUPTED; cmf 0.08 faint; rs_accel -9.62 shows the lead easing.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "elder back to a SUSTAINED pattern would lift it; cmf under 0 would cut it.",
+    "cannot_see": [
+     "cci_20",
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OHI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE with the best COM on the low-rank names. `subcomponents.flow.cmf` 0.30, `structure` 81.1, `mp` 80.0 ACCELERATING, `flow` 71.1, `energy` 62.2, `elder` 7.0 (no pattern). Strength is the problem: rs_rank_pct 48.66 is not high and ret_6m 2.2, so 2.",
+   "case": {
+    "for": "COM 0.30, structure 81.1, mp 80.0 accelerating, subcomponents.structure.rs_vs_spy 7.52 beats the market.",
+    "against": "rs_rank_pct 48.66 fails the high-rank test; ret_6m 2.2; elder 7.0 with no impulse pattern.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_rank_pct rising above 70 would lift it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE but weak strength. `structure` 61.1, `subcomponents.flow.cmf` 0.11, `flow` 72.4, `mp` 84.0, `elder` 9.0 CORRECTION_REENTRY, `subcomponents.structure.rs_vs_spy` 1.93 barely beats the market and ret_63d 0.46. Passes the odds gate by a hair, so 2.",
+   "case": {
+    "for": "COM above 0 (0.11), flow 72.4, mp 84.0, rs_rank_pct 74.81.",
+    "against": "ret_63d 0.46; rs_vs_spy 1.93; sc_momentum 69.9; 4.3% under the 20-day high.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, only after a close above pivot_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_vs_spy turning negative cuts it to no.",
+    "cannot_see": [
+     "index_pct_change_63d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SYK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Closest is the position system (ABOVE_STRUCTURE) but it fails strength and the weekly frame. `subcomponents.structure.rs_vs_spy` 0.72 barely beats the market, ret_63d -6.6, ret_12m -8.91, rs_rank_pct 62.26; weekly EMA9 under EMA21 (C21 house rule). Flow is fine (`subcomponents.flow.cmf` 0.33, `flow` 77.6) but `mp` 67.0 BUILDING and `structure` 64.2 are middling.",
+   "opposing_case": "COM is solid (cmf 0.33, flow 77.6), structure is above the last pivot, and the reclaim-day read (daily EMA9 over EMA21) says a rebound leg is under way.",
+   "case": {
+    "for": "Flow confirms (cmf 0.33, flow 77.6); daily EMA9 above EMA21; reclaim-day setup flagged.",
+    "against": "ret_63d -6.6, rs_vs_spy 0.72, weekly EMA9 below EMA21 (C21), 16.3% under the 52w high, rs_rank_pct 62.26.",
+    "entry_trigger": "Would need a weekly close back above the weekly EMA21 and a buy stop over bar_high.",
+    "wrong_if": "n/a as an oppose: I am wrong if it closes above pivot_high on rising flow.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "rs_vs_spy rising well above 5 and the weekly EMA9 crossing back over EMA21.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "index_pct_change_63d"
+    ]
+   }
+  },
+  {
+   "ticker": "AFL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Position system (ABOVE_STRUCTURE) with no fund-flow confirmation: `subcomponents.flow.cmf` -0.14 (COM below 0, R14), `flow` 56.6, `elder` 9.0 CORRECTION_REENTRY not SUSTAINED. `mp` 86.0 is strong but `subcomponents.structure.rs_vs_spy` 7.62 and rs_rank_pct 60.59 are mediocre, and the 1H is under EMA9.",
+   "opposing_case": "ABOVE_STRUCTURE, mp 86.0, elder 9.0, a reclaim-day read at a rising trendline, and rs_vs_spy 7.62 still beats the market.",
+   "case": {
+    "for": "Structure 72.6 above the last pivot; mp 86.0; reclaim-day U&R MET; beats the market.",
+    "against": "COM negative (cmf -0.14), flow 56.6, rs_rank_pct 60.59, 1H below EMA9, 3.5% under the 20-day high.",
+    "entry_trigger": "Would need cmf back above 0 and a buy stop over bar_high.",
+    "wrong_if": "I am wrong if cmf turns positive and it closes above pivot_high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf above 0 with a close above pivot_high.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.6% under the 20-day high, fund flow near the sheet maximum. `flow` 96.1, `subcomponents.flow.cmf` 0.21, `structure` 92.6, `mp` 75.0 ACCELERATING, `elder` 10.0 CORRECTION_REENTRY, `sc_momentum` 82.3, `subcomponents.structure.rs_vs_spy` 16.6.",
+   "case": {
+    "for": "COM above 0, flow 96.1, structure 92.6, rs_rank_pct 87.11, ret_63d 13.91.",
+    "against": "adx 18.53 is a weak trend reading; elder pattern is CORRECTION_REENTRY not SUSTAINED; ext_atr20 2.85.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder falling under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "adx 18.53 says the trend is not yet directional and the elder pattern has not reached SUSTAINED; the TIF proxy is only partly on.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high with both confirmers on. `subcomponents.flow.cmf` 0.39, `flow` 82.9, `elder` 10.0 SUSTAINED, `mp` 97.0 ACCELERATING, `structure` 86.3, `sc_momentum` 82.2, `subcomponents.structure.rs_vs_spy` 21.58. Extension (ext_atr20 6.07) is a weight, not a veto (R27).",
+   "case": {
+    "for": "COM 0.39 and TIF SUSTAINED, mp 97.0, rs_rank_pct 84.02, ret_63d 16.89.",
+    "against": "ext_atr20 6.07 and sma_dist 19.23%: the support line is a long way down.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder leaves SUSTAINED with a red candle.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder leaving SUSTAINED.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "A stretch of 6.07 ATR above ma_20 means any failed break gives back a lot before the support line trips; the cycle arrow is not served.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high with the strongest rank on the sheet. `elder` 10.0 SUSTAINED, `subcomponents.flow.cmf` 0.22, `flow` 78.9, `mp` 97.0 ACCELERATING, `structure` 74.7, `subcomponents.structure.rs_vs_spy` 73.32. Two bearish oscillator divergences (div BEARISH/2) read as a COM-slope warning, so 3.",
+   "case": {
+    "for": "TIF SUSTAINED, COM 0.22, rs_rank_pct 99.67, ret_63d 69.93.",
+    "against": "div BEARISH/2 and sma_dist 47.71%: steep, late and divergent; sc_momentum 77.7.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or cmf below 0.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 would cut it; a third divergence would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (lane label PULLBACK set aside: ABOVE_STRUCTURE at the 52w high). `structure` 73.7, `energy` 74.8, `flow` 61.8, `subcomponents.flow.cmf` 0.09, `mp` 70.0 BUILDING, `elder` 10.0 INTERRUPTED, `subcomponents.structure.rs_vs_spy` 25.61. Flow is modest and elder INTERRUPTED means TIF is not clean, so 3.",
+   "case": {
+    "for": "At the high, rs_rank_pct 93.14, rs_vs_spy 25.61, squeeze score 12.5 coil, energy 74.8.",
+    "against": "flow 61.8 and cmf 0.09 are thin; elder INTERRUPTED; mp 70.0 only BUILDING; sc_momentum 69.7.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ALC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system (BULLISH_BOS) but strength and flow do not carry it. `flow` 52.6, `subcomponents.flow.cmf` 0.12, `subcomponents.structure.rs_vs_spy` 5.11, ret_63d 0.65, ret_12m 0.12, rs_rank_pct 71.05, 15.05% under the 52w high; `elder` 7.0 shows no pattern. `structure` 75.8 and `mp` 93.0 are fine but not enough.",
+   "opposing_case": "BULLISH_BOS, mp 93.0, rs_spy_20d 21.17, COM above 0 and a reclaim-day read: a break with a positive rank.",
+   "case": {
+    "for": "Break flagged, mp 93.0, structure 75.8, reclaim-day U&R MET.",
+    "against": "flow 52.6, ret_63d 0.65, ret_12m 0.12, 1H below EMA9 with 9<21, elder no pattern.",
+    "entry_trigger": "Would need flow above 65 and a close above pivot_high.",
+    "wrong_if": "I am wrong if it closes above pivot_high with cmf rising.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "flow above 65 with a close above pivot_high.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "index_pct_change_63d"
+    ]
+   }
+  },
+  {
+   "ticker": "NI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Position system (ABOVE_STRUCTURE) but weak rank and a poor weekly frame (weekly EMA9 under EMA21, C21). rs_rank_pct 37.74, ret_6m -4.03, `flow` 51.3, `subcomponents.flow.cmf` 0.10, `energy` 61.3. `structure` 81.1 and `mp` 89.0 are real but a utility with rank 37.74 is not a strength trade.",
+   "opposing_case": "Structure 81.1 above the last pivot, mp 89.0, elder 9.0, subcomponents.structure.rs_vs_spy 9.84 beats the market, reclaim-day read.",
+   "case": {
+    "for": "Above structure, mp 89.0, rs_vs_spy 9.84 beats the market, 1H swing is intact.",
+    "against": "rs_rank_pct 37.74, ret_6m -4.03, flow 51.3, weekly EMA9 below EMA21, 7.72% under the 52w high.",
+    "entry_trigger": "Would need rs_rank_pct above 60 and a weekly EMA9 back over EMA21.",
+    "wrong_if": "I am wrong if flow rises above 65 with a close above pivot_high.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "rank improving above 60 with flow above 65.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "TGT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (BULLISH_BOS; lane label PULLBACK set aside). `subcomponents.flow.cmf` 0.34, `flow` 73.7, `energy` 74.8, `structure` 63.2, `elder` 10.0 CORRECTION_REENTRY, `subcomponents.structure.rs_vs_spy` 10.08. `mp` 52.0 BUILDING and `sc_momentum` 67.6 are the weak legs, so 3.",
+   "case": {
+    "for": "COM 0.34 is strong, energy 74.8, rs_rank_pct 82.68, all five lenses strong.",
+    "against": "mp 52.0 BUILDING; sc_momentum 67.6; ret_63d 5.05; 4.77% under the 52w high.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or mp falling further.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE, `elder` 10.0 SUSTAINED, `subcomponents.flow.cmf` 0.20, `flow` 65.8, `structure` 71.6, `mp` 67.0 ACCELERATING. Strength is huge (`subcomponents.structure.rs_vs_spy` 89.21) but the lead is eroding (rs_accel -60.41), the name tags as a down-day laggard and `sc_momentum` is 66.4, so 3.",
+   "case": {
+    "for": "TIF SUSTAINED, COM 0.20, rs_rank_pct 99.33, ret_63d 73.97, runner True.",
+    "against": "rs_accel -60.41; rs tag LAGGARD on down days; sc_momentum 66.4; 4.1% under the 20-week high.",
+    "entry_trigger": "Buy stop 1 tick over bar_high only after a close above pivot_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 or rs_accel falling further.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "SOLV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: BULLISH_BOS with TIF on, but three engines are soft. `elder` 10.0 SUSTAINED, `flow` 88.2, `subcomponents.flow.cmf` 0.17 versus `mp` 48.0, `energy` 59.7, `structure` 61.1, `sc_momentum` 66.2. `subcomponents.structure.rs_vs_spy` 6.7 only just beats the market, so 2.",
+   "case": {
+    "for": "Flow 88.2 and elder SUSTAINED; fresh break; COM 0.17.",
+    "against": "mp 48.0, energy 59.7, structure 61.1; rs_vs_spy 6.7; 1H and daily swings are LH/LL.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "mp rising above 65 would lift it; a close back under pivot_high would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "NYT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Fund flow denies the break: `subcomponents.flow.cmf` -0.16, `flow` 36.8, `subcomponents.flow.mfi` 42.43. `elder` 10.0 ACCELERATION came off 0.0 bars and rs_rank_pct is 34.39 with ret_6m -6.92; weekly EMA9 under EMA21 (C21). `structure` 85.3 and `energy` 76.5 do not offset COM below 0.",
+   "opposing_case": "BULLISH_BOS, structure 85.3, energy 76.5, elder rebuilt from 0 to 10.0 and a coil (squeeze score 10.0): a young impulse turn.",
+   "case": {
+    "for": "BOS with structure 85.3, energy 76.5, squeeze 10.0, elder ACCELERATION.",
+    "against": "COM -0.16, flow 36.8, rs_rank_pct 34.39, ret_6m -6.92, weekly EMA9 below EMA21, 15.47% under the 52w high.",
+    "entry_trigger": "Would need cmf above 0 and a buy stop over bar_high.",
+    "wrong_if": "I am wrong if cmf turns positive with a close above pivot_high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf above 0 and flow above 55.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "HSIC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: BULLISH_BOS, 2.33% under the 52w high. `flow` 88.2, `energy` 79.0, `subcomponents.flow.cmf` 0.12, `elder` 10.0 CORRECTION_REENTRY, `mp` 52.0 BUILDING, `structure` 63.2. ret_63d is -2.2 and `subcomponents.structure.rs_vs_spy` only 2.07, so the odds gate is thin: 2.",
+   "case": {
+    "for": "Flow 88.2, energy 79.0, rs_rank_pct 80.08, lens coil strong.",
+    "against": "ret_63d -2.2, rs_vs_spy 2.07, mp 52.0, sc_momentum 73.2.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below pivot_high or max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_vs_spy turning negative cuts it to no.",
+    "cannot_see": [
+     "index_pct_change_63d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Held; position system: BULLISH_BOS at the 52w high (from_52w_hi 0.0%). `structure` 87.4, `flow` 84.2, `subcomponents.flow.cmf` 0.11, `elder` 10.0, `mp` 93.0, `sc_momentum` 82.0, `subcomponents.structure.rs_vs_spy` 15.35. Keep, and trail the support line; add only on a new signal (C30).",
+   "case": {
+    "for": "Break confirmed, COM above 0, mp 93.0, rs_rank_pct 90.21, ret_63d 14.75.",
+    "against": "run_10d 24.76% and ext_atr20 3.32; mp now DECELERATING; elder shows no impulse pattern.",
+    "entry_trigger": "Hold; add only on a buy stop over bar_high after a fresh signal.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or bar_close under bar_open after the up-run.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "A 24.76% ten-day run with mp decelerating is where a red candle tends to arrive; the exit is the next session below that candle low, not a hope.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held. Neither system fires: structure_shift RANGE gives no resistance break, and the swing five-condition set-up cannot be verified (cci_20, bar_low unserved). Fund flow does not confirm: `subcomponents.flow.cmf` -0.05, `flow` 56.6, `elder` 7.0 INTERRUPTED. `energy` 85.7 and `structure` 73.7 are sound. Abstain; keep the existing support line.",
+   "case": {
+    "for": "energy 85.7, structure 73.7, subcomponents.structure.rs_vs_spy 25.31, ret_63d 20.73, price near ma_20 on a reclaim-day read.",
+    "against": "COM below 0 (cmf -0.05), elder INTERRUPTED, no break, mp 73.0 only a default FADING label.",
+    "entry_trigger": "Needs cmf above 0 and either a close above pivot_high or all five swing conditions on one bar.",
+    "wrong_if": "Held: close below max(fib_swing_low, base_low_20d) is the exit.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf above 0 with a break above pivot_high.",
+    "cannot_see": [
+     "cci_20",
+     "bar_low",
+     "ma_20_slope_5d_pct"
+    ]
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held; position exit side. Close is under ma_20 (sma_dist -2.86%), COM bearish: `subcomponents.flow.cmf` -0.27, `subcomponents.flow.mfi` 27.64; `elder` 3.0 ACCUMULATION_BASE, `structure` 28.0, `flow` 37.0, `mp` 0.0, `sc_momentum` 28.4, daily EMA9 under EMA21. The sell-side rule (C14) outranks the older strength read.",
+   "opposing_case": "rs_rank_pct 96.15, ret_6m 80.82, ret_63d 13.04 and subcomponents.structure.rs_vs_spy 11.18 are strong, the weekly swing is HH/HL, and the name was only bought on 2026-11-10.",
+   "challenge_reply": "Oscillators vs averages: averages are my tide, but COM and the candle are my exit. With cmf -0.27, mfi 27.64 and a close under ma_20, the exit proxies fire; a strong 6-month rank does not override a failed entry.",
+   "case": {
+    "for": "rs_rank_pct 96.15, ret_6m 80.82, weekly HH/HL still intact.",
+    "against": "COM -0.27, mfi 27.64, elder 3.0, structure 28.0, close under ma_20, 4 of 5 oscillators bearish.",
+    "entry_trigger": "Would need cmf back above 0 and a close back above ma_20.",
+    "wrong_if": "I am wrong if it closes back above ma_20 with cmf above 0.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "cmf above 0 and elder above 7 with a close over ma_20.",
+    "cannot_see": [
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.69% under the 52w high. `structure` 94.7, `mp` 97.0 ACCELERATING, `energy` 68.9, `flow` 72.4, `sc_momentum` 80.7, `subcomponents.structure.rs_vs_spy` 7.53. COM does not confirm: `subcomponents.flow.cmf` -0.03, `subcomponents.flow.mfi` 30.93, and `elder` 7.0 has cooled from 10.0, so only 2.",
+   "case": {
+    "for": "Structure 94.7, mp 97.0 accelerating, rs_rank_pct 87.45, ret_63d 8.22.",
+    "against": "cmf -0.03 and mfi 30.93 say buyers are not in control; elder 7.0 cooling; 1H has EMA9 under EMA21.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, only with cmf back above 0.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder under 7.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf above 0.10 would lift it; elder under 7 would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d",
+     "elder_le:6"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system, pre-break coil at the high (0.81% under it): structure_shift RANGE, so no break yet and the buy is the trigger. `flow` 84.2, `energy` 84.0, `subcomponents.flow.cmf` 0.15, `subcomponents.energy.squeeze_score` 8.5, `mp` 76.0, `elder` 7.0, `subcomponents.structure.rs_vs_spy` 17.75. div BEARISH/1 and no elder pattern hold it at 3.",
+   "case": {
+    "for": "Flow 84.2, energy 84.0, coil, rs_rank_pct 88.2, 1H at the high.",
+    "against": "No break confirmed (RANGE); elder 7.0 with no pattern; div BEARISH/1; mp 76.0 decelerating.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, with a close above pivot_high as the confirmation.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 or a failed break that closes back in the range.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MAC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE, 1.2% under the 20-day swing high. `structure` 84.2, `flow` 81.6, `mp` 97.0 FLAT, `elder` 10.0 CORRECTION_REENTRY, `subcomponents.flow.cmf` 0.09, `energy` 61.3, `subcomponents.structure.rs_vs_spy` 6.84. COM faint and rs_rank_pct 69.79 mid-pack, so 2.",
+   "case": {
+    "for": "Structure 84.2, flow 81.6, mp 97.0, elder 10.0; reclaim-day read.",
+    "against": "cmf 0.09; energy 61.3; rs_rank_pct 69.79; mp FLAT, not accelerating.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf under 0 or energy falling under 55.",
+    "cannot_see": [
+     "cci_20",
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high; COM is the best on the sheet. `subcomponents.flow.cmf` 0.47, `structure` 84.2, `mp` 100.0, `energy` 73.1, `elder` 7.0, `flow` 51.3, `subcomponents.structure.rs_vs_spy` 62.07. The 78.39% ten-day run and ext_atr20 5.88 are weights (R27); flow 51.3 and elder 7.0 cap it at 3.",
+   "case": {
+    "for": "cmf 0.47, mp 100.0, rs_rank_pct 99.92, ret_63d 52.76, at the 20-week high.",
+    "against": "run_10d 78.39%, ext_atr20 5.88, flow 51.3, elder 7.0 with a cooling bar series, pe negative.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or a red candle closing under its low next session.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf under 0 or elder falling under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d",
+     "elder_le:6"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Fails both systems. `structure` 30.5 with structure_shift BEARISH_CHOCH (up-structure failed); `subcomponents.structure.rs_vs_spy` -30.9 and ret_63d -34.76 trade worse than the market (R8: no long); `subcomponents.flow.cmf` -0.17, `sc_momentum` 55.9, weekly swing LH/LL, 43.54% under the 52w high. `elder` 10.0 is a bounce reading only.",
+   "opposing_case": "rs_spy_20d 95.33 and rs_accel 126.23 show a violent 20-day turn, elder is 10.0, mp 75.0, and a reclaim-day read sits at a rising trendline.",
+   "case": {
+    "for": "Violent 20-day turn: rs_spy_20d 95.33, elder 10.0, mp 75.0 STRONG.",
+    "against": "BEARISH_CHOCH, structure 30.5, rs_vs_spy -30.9, cmf -0.17, weekly LH/LL, 43.54% under the high.",
+    "entry_trigger": "Would need a close above pivot_high and rs_vs_spy back above 0.",
+    "wrong_if": "I am wrong if it closes above pivot_high with cmf above 0.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure_shift back to BULLISH_BOS with cmf above 0.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Break at the high with no money behind it: `subcomponents.flow.cmf` -0.25 (COM below 0, R14), `flow` 46.1, `energy` 62.2, while price is 61.53% above ma_20. `structure` 77.3, `mp` 100.0, `elder` 10.0 and `subcomponents.structure.rs_vs_spy` 89.09 are huge, but unconfirmed strength this stretched is distribution risk.",
+   "opposing_case": "ABOVE_STRUCTURE at the high, rs_rank_pct 96.99, ret_63d 74.48, elder 10.0, mp 100.0, adx 59.11: a very strong tape.",
+   "case": {
+    "for": "rs_rank_pct 96.99, ret_63d 74.48, mp 100.0, elder 10.0.",
+    "against": "COM -0.25, flow 46.1, ext_atr20 7.62, high-tight-flag failed, sc_momentum 67.9.",
+    "entry_trigger": "Would need cmf above 0 and flow above 60 on a buy stop over bar_high.",
+    "wrong_if": "I am wrong if cmf turns positive while it holds the high.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf above 0 with flow above 60.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.5% under the 20-week high, both confirmers on. `flow` 88.2, `subcomponents.flow.cmf` 0.31, `elder` 10.0, `structure` 86.7, `mp` 100.0, `energy` 68.1, `subcomponents.structure.rs_vs_spy` 36.6. `subcomponents.energy.exhaustion_score` 7.0 shows wear after 17 bars above ma_20.",
+   "challenge_reply": "Anchor noted. My 4 traces to cmf 0.31, structure 86.7 (above the last pivot), elder 10.0 and flow 88.2 with rs_vs_spy 36.6, not to sc_momentum 84.2 rank; exhaustion_score 7.0 keeps it at 4, not 5.",
+   "case": {
+    "for": "COM 0.31, structure 86.7, mp 100.0, rs_rank_pct 96.32, ret_63d 34.88.",
+    "against": "exhaustion_score 7.0, ext_atr20 4.64, run_10d 28.1%, pe negative; delayed-pivot read already PAST_PIVOT.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or exhaustion_score falling under 5.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "exhaustion_score 7.0 after a 28.1% ten-day run and a delayed-pivot read that is already past its pivot: the move is mature and the cycle arrow is not served.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.19% under the 52w high, textbook confirmation. `flow` 88.2, `subcomponents.flow.cmf` 0.29, `elder` 10.0 ACCELERATION, `mp` 100.0 ACCELERATING, `structure` 84.2, `sc_momentum` 84.2, `subcomponents.structure.rs_vs_spy` 88.74. The 51.48% ten-day run is a weight, not a veto (R27).",
+   "case": {
+    "for": "COM and TIF both on, mp 100.0, rs_rank_pct 99.25, ret_63d 86.45.",
+    "against": "run_10d 51.48%, ext_atr20 5.55, sma_dist 59.57%; the support line is very far below.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d), or elder leaving ACCELERATION with a red candle.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder leaving ACCELERATION.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "A 51.48% ten-day run means the entry is far from any structural support: a failed break gives back a large share before the exit line trips.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.87% under the 52w high, strongest COM among the extended names. `subcomponents.flow.cmf` 0.43, `flow` 80.3, `elder` 10.0 CORRECTION_REENTRY, `mp` 100.0 ACCELERATING, `structure` 77.3, `sc_momentum` 80.2, `subcomponents.structure.rs_vs_spy` 59.19.",
+   "case": {
+    "for": "COM 0.43, mp 100.0, rs_rank_pct 99.16, ret_63d 54.3, price at the 20-week high zone.",
+    "against": "ext_atr20 4.13, sma_dist 46.73%; elder pattern CORRECTION_REENTRY not SUSTAINED.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder falling under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "The entry sits 46.73% above ma_20 and the high-tight-flag read failed; a failed break is a large loss before the exit line trips.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE, 3.1% under the 20-day high, recovering from a deep base. `elder` 10.0 SUSTAINED, `flow` 88.2, `subcomponents.flow.cmf` 0.28, `mp` 93.0 ACCELERATING, `structure` 76.8, `subcomponents.structure.rs_vs_spy` 12.67 with rs_accel 45.2. 21.99% under the 52w high and ret_12m -12.25 keep it at 3.",
+   "case": {
+    "for": "COM and TIF on, mp 93.0, rs_rank_pct 92.8, rs_accel 45.2 widening.",
+    "against": "21.99% under the 52w high; ret_12m -12.25; run_10d 35.37%; pe negative.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 or elder leaving SUSTAINED.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Regime named: position system, coiled at the high, no break yet (structure_shift RANGE; the `structure` 100.0 is a composite, not a break). `flow` 78.9, `subcomponents.flow.cmf` 0.21, `mp` 96.0, `energy` 68.9, `sc_momentum` 83.6, `subcomponents.structure.rs_vs_spy` 40.83. `elder` 7.0 flat with no pattern and decelerating mp keep it at 3.",
+   "challenge_reply": "Process answer: structure 100.0 is distance-to-high plus relative strength, while structure_shift RANGE says no pivot has broken. I read it as a pre-break coil at 0.9% under the high; the flat MA stack does not enter my method. The buy is the break, not the composite.",
+   "case": {
+    "for": "COM 0.21, flow 78.9, mp 96.0, rs_rank_pct 88.87, 0.3% from the 52w high, delayed-pivot read READY.",
+    "against": "No break yet; elder 7.0 flat; mp DECELERATING; ext_atr20 7.26; price near 9.9 means liquidity is unproven.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, confirmed by a close above pivot_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 or a break that closes back inside the range.",
+    "cannot_see": [
+     "elder_context.volume.avg_vol_20d",
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.5% under the 20-day high. `flow` 96.1, `subcomponents.flow.cmf` 0.34, `elder` 10.0 SUSTAINED, `mp` 97.0 ACCELERATING, `structure` 87.4, `sc_momentum` 83.6, `subcomponents.structure.rs_vs_spy` 18.76. Short history (no ret_12m, no ma_200) is a stated limit.",
+   "case": {
+    "for": "COM 0.34 and TIF SUSTAINED, flow 96.1, rs_rank_pct 94.9, ret_63d 15.75, delayed-pivot read PAST_PIVOT.",
+    "against": "New listing with short history; ext_atr20 4.27; energy 59.7 is the soft engine; exhaustion_score 7.0.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder leaving SUSTAINED.",
+    "cannot_see": [
+     "ret_12m",
+     "ma_200",
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "Too little price history to test the weekly frame or a 12-month rank, and energy 59.7 is the soft leg; the strength is real but unproven over a full cycle.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Neither system fires today. No break: structure_shift RANGE with `structure` 55.8 and price 9.8% under the 20-day high; 1H under EMA9 with 9<21; swing set-up unverifiable (cci_20 unserved). Strength is real (`subcomponents.structure.rs_vs_spy` 67.59, `mp` 96.0) and COM is positive (`subcomponents.flow.cmf` 0.18) but `flow` 57.9 and `elder` 7.0 flat show no impulse.",
+   "case": {
+    "for": "rs_rank_pct 97.74, ret_63d 72.09, mp 96.0, cmf 0.18 above 0.",
+    "against": "No resistance break, structure 55.8, elder 7.0 flat, flow 57.9, 1H weak, 9.8% under the high.",
+    "entry_trigger": "Would act on a close above pivot_high with cmf above 0, via a buy stop over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d) removes it.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "a break above pivot_high on rising flow.",
+    "cannot_see": [
+     "cci_20",
+     "bar_low",
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.3% under the 20-day and 20-week high, with fund flow behind it. `flow` 88.2, `subcomponents.flow.cmf` 0.30, `structure` 87.4, `elder` 10.0 (last three bars), `mp` 89.0, `sc_momentum` 80.6, `subcomponents.structure.rs_vs_spy` 30.75. Seated by rule, judged on my own method; ret_12m -3.19 is the stated blemish.",
+   "case": {
+    "for": "COM 0.30, flow 88.2, structure 87.4, rs_rank_pct 85.44, ret_63d 26.86, coil lens strong.",
+    "against": "ret_12m -3.19 and 11.2% under the 52w high; mp FLAT; exhaustion_score 7.0; elder shows no named pattern.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder falling under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "mp reads FLAT and exhaustion_score 7.0 shows wear; the 12-month return is still negative so this is a recovery break, not an established leader.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BAM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE, 2.2% under the 20-day high. `mp` 97.0 ACCELERATING, `structure` 78.7, `flow` 75.0, `subcomponents.flow.cmf` 0.29, `elder` 7.0 (no pattern), `subcomponents.structure.rs_vs_spy` 4.69. Strength is thin: rs_rank_pct 61.59, ret_63d -1.85, ret_12m 0.87, so only 2.",
+   "case": {
+    "for": "mp 97.0, COM 0.29, structure 78.7, beats the market by rs_vs_spy 4.69.",
+    "against": "ret_63d -1.85; rs_rank_pct 61.59; elder 7.0 with no pattern; 1H under EMA9.",
+    "entry_trigger": "Buy stop 1 tick over bar_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "rs_vs_spy turning negative cuts it to no.",
+    "cannot_see": [
+     "index_pct_change_63d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high (from_52w_hi 0.0%), 0.1% under the last swing high. `flow` 86.8, `subcomponents.flow.cmf` 0.16, `elder` 10.0 CORRECTION_REENTRY, `mp` 75.0 ACCELERATING, `structure` 74.5, `sc_momentum` 76.6, `subcomponents.structure.rs_vs_spy` 33.91.",
+   "case": {
+    "for": "Flow 86.8, rs_rank_pct 98.16, ret_63d 35.83, mp 75.0 accelerating, at the high.",
+    "against": "cmf 0.16 is modest; elder pattern CORRECTION_REENTRY not SUSTAINED; ext_atr20 2.41; pe 236.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "COM is only 0.16 against flow 86.8, and the elder pattern has not reached SUSTAINED; the confirmation is good but not clean.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system: ABOVE_STRUCTURE at the 52w high (from_52w_hi 0.0%). `subcomponents.flow.cmf` 0.25, `energy` 77.3, `flow` 67.1, `structure` 73.7, `elder` 10.0 CORRECTION_REENTRY, `mp` 89.0, `subcomponents.structure.rs_vs_spy` 27.09. Flow 67.1 and sc_momentum 75.9 are middling, so 3.",
+   "case": {
+    "for": "COM 0.25, energy 77.3, rs_rank_pct 80.33, ret_63d 27.17, at the high.",
+    "against": "flow 67.1, sc_momentum 75.9; mp FADING is only a default label here; defensive sector.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CAG",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system (BULLISH_BOS) but strength is not there. `subcomponents.structure.rs_vs_spy` 0.69 only just beats the market, ret_63d 1.54, ret_12m -11.38, rs_rank_pct 59.67, 24.13% under the 52w high, weekly EMA9 under EMA21 (C21). COM is strong (`subcomponents.flow.cmf` 0.46, `flow` 84.2) but `mp` 68.0 and `structure` 71.6 are modest.",
+   "opposing_case": "Fresh BULLISH_BOS, the highest COM in this part (cmf 0.46), flow 84.2, energy 70.6 and a coil: money is moving in ahead of the rank.",
+   "case": {
+    "for": "cmf 0.46, flow 84.2, BOS, squeeze score 8.5 coil.",
+    "against": "rs_vs_spy 0.69, ret_12m -11.38, rs_rank_pct 59.67, weekly EMA9 below EMA21, sc_momentum 74.4.",
+    "entry_trigger": "Would need rs_vs_spy above 5 and a weekly EMA9 back over EMA21.",
+    "wrong_if": "I am wrong if it closes well above pivot_high with flow holding above 80.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "rs_vs_spy above 5 with the weekly EMA9 crossing back over EMA21.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "index_pct_change_63d"
+    ]
+   }
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE, 1.6% under the 20-day high. `energy` 85.7, `structure` 82.1, `mp` 83.0, `elder` 10.0 CORRECTION_REENTRY, `subcomponents.structure.rs_vs_spy` 37.44. COM does not confirm: `subcomponents.flow.cmf` 0.01, `flow` 50.0, `subcomponents.flow.mfi` 38.75 (sellers in control per the glossary), so only 2.",
+   "case": {
+    "for": "Energy 85.7, structure 82.1, rs_rank_pct 83.1, ret_63d 29.37, coil score 12.5.",
+    "against": "cmf 0.01, flow 50.0, mfi 38.75: no money behind the break; rs_accel -20.09 shows the lead easing.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, only with cmf above 0.05.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "cmf above 0.10 would lift it; mfi under 35 would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AER",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system (lane label PULLBACK set aside: ABOVE_STRUCTURE at the 52w high). `flow` 88.2, `subcomponents.flow.cmf` 0.24, `structure` 86.3, `mp` 97.0, `elder` 10.0 CORRECTION_REENTRY, `energy` 69.7, `subcomponents.structure.rs_vs_spy` 19.83. Extension (ext_atr20 4.85) is a weight, not a veto (R27).",
+   "challenge_reply": "Anchor noted. My 4 traces to cmf 0.24, structure 86.3, elder 10.0 and flow 88.2 with rs_vs_spy 19.83; rs_rank_pct 75.98 is only middling, so I stop at 4. sc_momentum 84.0 rank is not an input to my method.",
+   "case": {
+    "for": "COM 0.24, flow 88.2, structure 86.3, mp 97.0, ret_63d 17.04, at the high.",
+    "against": "ext_atr20 4.85 and sma_dist 18.33%; rs_rank_pct 75.98; mp FLAT; elder CORRECTION_REENTRY.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "The entry sits 4.85 ATR above ma_20, rs_rank_pct is only 75.98 and mp is FLAT; this is a confirmed break but a stretched one.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:bar_high+3atr",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system: ABOVE_STRUCTURE, 0.3% under the 20-day high, delayed-pivot read TRIGGERED. `structure` 94.7, `subcomponents.flow.cmf` 0.35, `flow` 84.2, `mp` 97.0 ACCELERATING, `elder` 10.0 CORRECTION_REENTRY, `energy` 66.4, `subcomponents.structure.rs_vs_spy` 23.2.",
+   "challenge_reply": "Anchor noted. My 4 traces to cmf 0.35, structure 94.7, mp 97.0 accelerating and flow 84.2; rs_rank_pct 73.64 and the 13.2% gap to the 20-week high hold it at 4. sc_momentum 83.5 is not an input to my method.",
+   "case": {
+    "for": "COM 0.35, structure 94.7, mp 97.0, ret_63d 22.51, ret_12m 109.17.",
+    "against": "rs_rank_pct 73.64; 12.38% under the 52w high; pe negative; ext_atr20 3.41.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf under 0 or elder under 7.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "self_counter": "rs_rank_pct 73.64 is not top-tier and the weekly chart is still 13.2% under its 20-week high; the break is real but this is a recovery leg.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "STZ",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system: ABOVE_STRUCTURE but strength rank is the problem. `structure` 94.7, `energy` 80.7, `flow` 76.3, `subcomponents.flow.cmf` 0.25, `mp` 89.0, `elder` 7.0 (no pattern), `subcomponents.structure.rs_vs_spy` 14.4. rs_rank_pct 48.45, ret_6m 2.09 and div BEARISH/1 keep it at 2.",
+   "challenge_reply": "Anchor noted. My 2 traces to structure 94.7, cmf 0.25, energy 80.7 and elder 7.0 with no pattern, then capped by rs_rank_pct 48.45; the composite rank sc_momentum 83.8 is not my input and does not lift it.",
+   "case": {
+    "for": "Structure 94.7, energy 80.7, COM 0.25, beats the market by rs_vs_spy 14.4.",
+    "against": "rs_rank_pct 48.45, ret_6m 2.09, elder 7.0 with no pattern, div BEARISH/1, 12.7% under the 52w high.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, only after a close above pivot_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "rs_rank_pct above 65 would lift it; elder under 7 would cut it.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (lane label PULLBACK set aside: ABOVE_STRUCTURE, 4.2% under the 52w high). `flow` 88.2, `structure` 78.9, `energy` 71.4, `mp` 96.0, `elder` 10.0 CORRECTION_REENTRY, `subcomponents.flow.cmf` 0.16, `subcomponents.structure.rs_vs_spy` 11.66. Not at the high and earnings sit inside 20 days (earn_score 7.0), so 3.",
+   "challenge_reply": "Anchor noted. My 3 traces to flow 88.2, structure 78.9, cmf 0.16 and elder 10.0; the 5.2% gap to the 20-day high and earn_score 7.0 hold it down. sc_momentum 82.9 rank is not an input to my method.",
+   "case": {
+    "for": "Flow 88.2, mp 96.0, rs_rank_pct 93.39, ret_63d 9.5.",
+    "against": "5.2% under the 20-day high; earn_score 7.0 earnings inside 20 days; cmf 0.16 modest; mp DECELERATING.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, only after a close above pivot_high.",
+    "wrong_if": "Close below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf under 0 or a gap on earnings under base_low_20d.",
+    "cannot_see": [
+     "sector_rrg_quadrant"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [
+     "close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "close_below:base_low_20d"
+    ],
+    "tf": "EOD",
+    "non_price": "Earnings inside 20 days (earn_score 7.0): a gap can skip the support line."
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of4.json",
+   "bytes": 16011,
+   "votes": 14,
+   "sha256": "de5ce324f9a5"
+  },
+  {
+   "file": "seow.part2of4.json",
+   "bytes": 15688,
+   "votes": 14,
+   "sha256": "f8f0f456a1df"
+  },
+  {
+   "file": "seow.part3of4.json",
+   "bytes": 17134,
+   "votes": 14,
+   "sha256": "cfb5802d72de"
+  },
+  {
+   "file": "seow.part4of4.json",
+   "bytes": 13773,
+   "votes": 11,
+   "sha256": "d3641bcee6d3"
+  }
+ ]
+}

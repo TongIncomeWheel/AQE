@@ -1,0 +1,1555 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "Market gate DELEGATED (C1-C3): I write no market read; every SUPPORT is void unless the index is in a confirmed uptrend. The packet's Valen block is cited only as a live condition.",
+  "Fundamentals NOT_AVAILABLE (C,A,S,I). The packet fundamentals line has no stated basis and is not on my menu, so it is unused. base_stage NOT_AVAILABLE (C19). pivot_high and pct_from_pivot UNSERVED (R5).",
+  "Substitutes: rs_leadership for the IBD RS Rating; day_vol vs 20d for the 50d volume test (1.40); `structure` plus `subcomponents.structure.base_score` for base soundness. `pipe_rank` and `sc_m_gates` are null in the sheet, so `sc_m_gate_detail` is read.",
+  "flow, lens.insti_money and rs_spy_20d are context only and never carry a vote. R1: no bracket field is the basis of any OPPOSE. Round-1 ballot file absent: conviction_change null throughout."
+ ],
+ "votes": [
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Healthcare leader at its high: `structure` 73.7 (shift RANGE), `subcomponents.structure.base_score` 15.0 over base_days 20.0 (short of 7-8 weeks), `energy` 84.0, `sc_momentum` 76.8; day_vol 1.44 clears 1.40 (R4, 20d substitute). Weakest of the cluster: `mp` 48.0 fails its gate (`sc_m_gate_detail` 17).",
+   "case": {
+    "for": "rs LEADER; `structure` 73.7 with base_score 15.0; day_vol 1.44 passes R4; from_52w_hi 0.0%.",
+    "against": "structure_shift RANGE, no completed BOS (R3 partial); `mp` 48.0 under floor; base_days 20.0 short of C12; house U&R and EP grades FAILED.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4, within 5% of the pivot.",
+    "wrong_if": "close_below pivot_high-8pct, or a new high on day_vol under 1.0 (C25).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A completed 7-8 week base with a labelled pivot lifts me; mp staying under its gate floor lowers me.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet. I hold HUM on the lowest rung of the cluster; size is the PM's."
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Healthcare leader at a 52-week high: `structure` 72.6 ABOVE_STRUCTURE, `mp` 93.0 STRONG, `elder` 10.0 SUSTAINED, `sc_momentum` 72.5, `subcomponents.structure.rs_vs_spy` 20.4. Base is long and loose (`subcomponents.structure.base_score` 5.0, base_days 102.0); day_vol 0.85 unconfirmed (R4), so buy only a volume break. div BEARISH/1 is a caution.",
+   "case": {
+    "for": "rs LEADER; `structure` 72.6; `mp` 93.0 and `elder` 10.0; from_52w_hi 0.0%.",
+    "against": "day_vol 0.85 under 1.40; base_score 5.0 on base_days 102.0; div BEARISH/1; sma_dist 14.32%, ext_atr20 2.82 stretched.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; heavy-volume close near the day low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume breakout at 1.4x raises it; a bearish divergence count rising lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare counted as one group bet; CAH sits in the middle of my cluster, not the top."
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout bar on heavy volume: day_vol 3.1, `structure` 63.2 BULLISH_BOS, `sc_momentum` 67.5, `mp` 83.0 STRONG. Against: `subcomponents.flow.ext_score` -5.0 flags a stretched or weak-closing bar (H1 closed 35% of its range) and `subcomponents.structure.base_score` 5.0. Lowest structure in the cluster; wait for a hold over the pivot.",
+   "case": {
+    "for": "Pivot broken (BULLISH_BOS) on day_vol 3.1; rs LEADER; from_52w_hi 0.0%.",
+    "against": "ext_score -5.0 climax or weak-close penalty; structure 63.2 is thin; heavy volume with a weak close is a C25 distribution flag.",
+    "entry_trigger": "h1_close_above bar_high with vol_x_ge 1.4 (hold of the break).",
+    "wrong_if": "close_below pivot_high; a second weak close on heavy volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A strong close above the break on repeat volume raises it; a close back inside the base voids it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one bet; TGTX is a low-rung, conditional entry only."
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader through its pivot: `structure` 87.4 BULLISH_BOS, `subcomponents.structure.base_score` 15.0 over base_days 18.0, `sc_momentum` 79.9, `mp` 93.0, from_52w_hi -0.58%. day_vol 1.13 is under 1.40, so the break is not volume-confirmed yet (R4); div BEARISH/1 is a caution.",
+   "case": {
+    "for": "BOS with a scored base (base_score 15.0); rs LEADER; at the high.",
+    "against": "day_vol 1.13 under 1.40; div BEARISH/1; sma_dist 18.37% and run_10d 24.21% mean it is already extended.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4; no add past 5% over it.",
+    "wrong_if": "close_below pivot_high-8pct; close back under the broken pivot.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume at 1.4x on a retest raises it; a second bearish oscillator lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; BTSG is my top-rung name in it with ROIV, not additive."
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader at a 52-week high with no base: `structure` 84.2 ABOVE_STRUCTURE, `sc_momentum` 81.0, `mp` 93.0, but `subcomponents.structure.base_score` 0.0 and day_vol 0.76 (under 1.40); ext_atr20 3.73 is stretched. Weight, not veto (R27). Buy only after a fresh consolidation and a volume breakout.",
+   "case": {
+    "for": "rs LEADER; `structure` 84.2; `mp` 93.0; 0.6% under the 20-day high.",
+    "against": "base_score 0.0 (no base to break from, R3); day_vol 0.76; sma_dist 16.28%; elder 7.0 with no pattern.",
+    "entry_trigger": "After a new handle forms: h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_50; heavy-volume reversal at the high.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A labelled new base with dry-up volume raises it; a close under ma50 voids it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; EW is low rung because it has no base."
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Runner with `structure` 74.7 ABOVE_STRUCTURE, `sc_momentum` 82.0, `mp` 97.0, `elder` 10.0 SUSTAINED and a clean `subcomponents.energy.exhaustion_score` 10.0. No base to buy from: `subcomponents.structure.base_score` 0.0, day_vol 1.03, sma_dist 20.26%. Needs a new handle and 1.4x volume; weight not veto (R27).",
+   "case": {
+    "for": "rs LEADER; mp 97.0; exhaustion_score 10.0 untouched; at the 20-day high.",
+    "against": "base_score 0.0; day_vol 1.03; ext_atr20 3.18 and run_10d 18.63%: late in the move.",
+    "entry_trigger": "After a fresh handle: h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_50; new high on falling volume (C25).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A base of 7+ weeks with dry-up raises it; exhaustion_score falling lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Cleanest O'Neil breakout in the set: day_vol 2.22 clears 1.40, `subcomponents.flow.ext_score` 5.0 (clean breakout on volume), `structure` 81.5 ABOVE_STRUCTURE, `sc_momentum` 81.2, `mp` 75.0, 1.1% under the 20-day high, sma_dist 11.18% not stretched. Base is short: `subcomponents.structure.base_score` 2.4 over base_days 4.0.",
+   "self_counter": "Base is only 4 days and the house EP grade is FAILED (8/9): the pivot may be thin. flow 100.0 is advisory, not sponsor counts.",
+   "case": {
+    "for": "rs LEADER; day_vol 2.22; ext_score 5.0; `structure` 81.5; within 5% of the high.",
+    "against": "base_score 2.4 on base_days 4.0 (C12 fails on length); EP FAILED 8/9; elder CORRECTION_REENTRY is not mine.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; reversal on heavy volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A visible base of 7+ weeks raises it; a close back under the break voids it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "LW",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Coiled base under a high: `structure` 93.7 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 17.0, `subcomponents.energy.squeeze_score` 12.5, `sc_momentum` 79.0; day_vol 0.79 dry-up suits a base (C15). Against: lens leadership warn, ret_12m -8.51, `mp` 80.0 DECELERATING.",
+   "case": {
+    "for": "Tight scored base, structure 93.7, rs LEADER, 0.9% under the 20-day high.",
+    "against": "ret_12m -8.51 (prior advance thin, C12); lens leadership warn; mp DECELERATING; day_vol 0.79 gives no breakout yet.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break from the base raises it; ret_12m staying negative caps it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "KO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Staples name at a 52-week high with BOS: `structure` 76.8 BULLISH_BOS, `sc_momentum` 76.2, `mp` 86.0. But day_vol 0.84, rs_rank_pct 75.06 under O'Neil's 80 line and `subcomponents.structure.base_score` 5.0 on base_days 1498.0 (no usable base). Low conviction: a defensive leader, not a CAN SLIM prototype.",
+   "case": {
+    "for": "BULLISH_BOS at from_52w_hi 0.0%; rs LEADER; lens coil and resistance strong.",
+    "against": "day_vol 0.84; rs_rank_pct 75.06; no measurable base; mp 86.0 DECELERATING.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume breakout from a labelled base raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No prior advance or base: ret_12m 2.48, `structure` 63.2, `sc_momentum` 70.1, `mp` 66.0 FADING, day_vol 0.66, div BEARISH/1; rs_rank_pct 70.21 is under 80. C12 and C10 both fail; house U&R grade FAILED (6/9).",
+   "opposing_case": "Insurance group is leading on the Valen lists, BULLISH_BOS, `energy` 79.0 and lens coil strong, 3.1% under the 20-day high; a quiet breakout can work.",
+   "case": {
+    "for": "BULLISH_BOS; `energy` 79.0; rs LEADER; near the high.",
+    "against": "ret_12m 2.48 (no +30% advance); structure 63.2; day_vol 0.66; div BEARISH/1; rs_rank_pct 70.21.",
+    "entry_trigger": "Would need h1_close_above pivot_high on vol_x_ge 1.4 and a base I can count.",
+    "wrong_if": "Not applicable as a long; a volume break above pivot_high would prove me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A volume breakout plus rising rs_rank_pct above 80.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader near its high: `structure` 96.8 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 11.0, `sc_momentum` 81.9, `mp` 87.0 STRONG, 0.3% under the 20-day high. day_vol 0.67 is unconfirmed (R4) and base_days 11.0 is short of 7-8 weeks.",
+   "case": {
+    "for": "structure 96.8; base_score 15.0; rs LEADER; ret_12m 56.59.",
+    "against": "day_vol 0.67; base 11 days only; ret_63d 2.52 slow; sma_dist 13.41%.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A 1.4x volume break raises it; a reversal day on heavy volume lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Tight coil near highs: `subcomponents.energy.squeeze_score` 12.5, `structure` 63.2 BULLISH_BOS, `sc_momentum` 73.6, `energy` 84.0, from_52w_hi -0.34%; rs LEADER. day_vol 0.61 is a handle dry-up (C15) but breakout volume is absent; `subcomponents.structure.base_score` 5.0 on base_days 91.0. Lowest rung of the Healthcare cluster.",
+   "case": {
+    "for": "Squeeze 12.5, BOS, rs LEADER, 3.0% under the 20-day high.",
+    "against": "day_vol 0.61; structure 63.2 thin; base_score 5.0; elder INTERRUPTED is not mine.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume at 1.4x on the break raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; ABBV is a low-rung, conditional entry."
+  },
+  {
+   "ticker": "OHI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend to base from: ma50 46.4, ma100 47.33, ma200 46.75 are tangled; ret_6m 2.2, ret_12m 11.85 (C12 needs +30%). `structure` 81.1 and `sc_momentum` 72.2 read well but `energy` 62.2 is low and AQE rank is 193. Not a CAN SLIM leader.",
+   "opposing_case": "REITs lead on the Valen lists, `mp` 80.0 STRONG ACCELERATING, structure 81.1 with 1.3% under the 20-day high; a REIT breakout can work.",
+   "case": {
+    "for": "structure 81.1 ABOVE_STRUCTURE; mp 80.0; resistance lens strong.",
+    "against": "Flat, tangled MA stack; ret_12m 11.85; energy 62.2; no advance to base from.",
+    "entry_trigger": "Would need h1_close_above pivot_high on vol_x_ge 1.4 and an advance of +30%.",
+    "wrong_if": "A volume breakout above pivot_high with ma50 turning up proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 rising above ma200 with a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "PRU",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Weak structure and no advance: `structure` 61.1 (near floor), `sc_momentum` 69.9, `subcomponents.structure.rs_vs_spy` 1.93; ret_63d 0.46, ret_12m 16.0 (C12 fails); ma20 117.66, ma50 117.15, ma100 117.6 are flat; day_vol 0.79; 4.3% under the 20-day high.",
+   "opposing_case": "rs LEADER, `mp` 84.0 STRONG, Financials group strong, elder 9.0 CORRECTION_REENTRY; a base breakout is possible.",
+   "case": {
+    "for": "rs LEADER; mp 84.0; group strong.",
+    "against": "structure 61.1; rs_vs_spy 1.93; flat MA stack; ret_12m 16.0.",
+    "entry_trigger": "Would need h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume break above pivot_high proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure rising above 75 with a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "SYK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend to pull back inside: ma50 292.18 is under ma200 322.56, from_52w_hi -16.3%, ret_12m -8.91 (C12 fails). `structure` 64.2, `sc_momentum` 68.4, `mp` 67.0 BUILDING are middling; lens leadership warn. A reclaim day is not my setup.",
+   "opposing_case": "rs LEADER at spy20 18.38, `mp` 67.0 ACCELERATING, flow 77.6, daily swing HH/HL; a base recovery could be starting.",
+   "case": {
+    "for": "rs LEADER; daily HH/HL; mp accelerating.",
+    "against": "ma50 under ma200; 16.3% under the high; ret_12m -8.91; W swing shows 9<21.",
+    "entry_trigger": "Would need ma50 back above ma200 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume breakout above pivot_high with ma50 rising proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 reclaiming ma200 and a base I can count.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Agree: the pullback label has no uptrend behind it (ma50 292.18 under ma200 322.56). I do not buy a reclaim; I need the stack repaired and a volume break. Healthcare crowding also noted."
+  },
+  {
+   "ticker": "AFL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not a leader of a rising base: `sc_m_gate_detail` 9 (flow gate false), `structure` 72.6, `sc_momentum` 68.1, rs_rank_pct 60.59, ret_12m 11.0 (no +30% advance, C12); 3.5% under the 20-day high; day_vol 0.93.",
+   "opposing_case": "Insurance leads on the Valen lists, rs LEADER, `mp` 86.0, elder 9.0 CORRECTION_REENTRY, U&R reclaim day MET.",
+   "case": {
+    "for": "rs LEADER; mp 86.0; near highs; group strong.",
+    "against": "flow gate false; rs_rank_pct 60.59; ret_12m 11.0; day_vol 0.93.",
+    "entry_trigger": "Would need h1_close_above pivot_high on vol_x_ge 1.4 and a base I can count.",
+    "wrong_if": "A volume break above pivot_high proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume breakout with rs_rank_pct above 80.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Healthcare leader through its high: `structure` 92.6 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 10.0, `sc_momentum` 82.3, `mp` 75.0 STRONG, `subcomponents.flow.ext_score` 3.0 (breakout bonus), day_vol 1.29 close to 1.40, rs_rank_pct 87.11, from_52w_hi -1.48%.",
+   "self_counter": "Base is only 10 days; house EP grade FAILED (7/10); day_vol 1.29 still under 1.40; earnings and sales are not served to me.",
+   "case": {
+    "for": "structure 92.6; base_score 15.0; rs LEADER; ext_score 3.0; 0.6% under the 20-day high.",
+    "against": "base_days 10.0 short of C12; day_vol 1.29; lens coil and resistance warn.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; heavy-volume reversal.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume at 1.4x on the break raises it; coil warn persisting lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet. ROIV and BTSG are my two top rungs and I count them as one theme, not two ideas."
+  },
+  {
+   "ticker": "IBN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader at a 52-week high: `structure` 86.3 ABOVE_STRUCTURE, `sc_momentum` 82.2, `mp` 97.0 STRONG, `elder` 10.0 SUSTAINED. But ext_atr20 6.07 and run_10d 20.61% are stretched, day_vol 0.83, `subcomponents.structure.base_score` 5.0 on base_days 131.0, ret_12m 15.38. Weight not veto (R27).",
+   "case": {
+    "for": "rs LEADER; structure 86.3; mp 97.0; 0.2% under the 20-day high.",
+    "against": "ext_atr20 6.07; day_vol 0.83; loose 131-day base; ret_12m 15.38.",
+    "entry_trigger": "After a fresh handle: h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_50; new high on falling volume (C25).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight new handle with dry-up raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax reading: entry 39.39 against ma200 17.72 is over 70% above the 200-day (R7, C24); div BEARISH/2; day_vol 0.63 at a new high (C25). `structure` 74.7, `sc_momentum` 77.7, `mp` 97.0 are strong but I sell into this, not buy it.",
+   "opposing_case": "rs_rank_pct 99.67, ret_6m 216.64, `elder` 10.0 SUSTAINED, `mp` 97.0 ACCELERATING; momentum-lane strength can run on.",
+   "case": {
+    "for": "rs LEADER; mp 97.0; elder 10.0; at the high.",
+    "against": "Over 70% above ma200; div BEARISH/2; day_vol 0.63; lens warnings on leadership and coil.",
+    "entry_trigger": "Would need a fresh base well above ma50 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed new high with oscillators clearing proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A new, tight base and divergence count back to 0.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Extension cluster heard: I take none of SDGR, SGRY, XNCR or REPL. Each sits over the 70% line above ma200 (R7), which is my climax rule; this is not the 20-day extension I treat as a weight. Healthcare crowding noted."
+  },
+  {
+   "ticker": "TMO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fails the L test on my own field: rs IN-LINE (downday 0.21), not LEADER (R2). `structure` 73.7, `sc_momentum` 69.7, `mp` 70.0 BUILDING, `subcomponents.structure.base_score` 5.0; day_vol 0.74; elder INTERRUPTED. A moving-with-the-group name is not the trade.",
+   "opposing_case": "rs_rank_pct 93.14, ret_6m 56.37, at from_52w_hi 0.0%, lens leadership and coil strong, 0.5% under the 20-day high.",
+   "case": {
+    "for": "rs_rank_pct 93.14; coil strong; at the high; mp accelerating.",
+    "against": "rs_leadership IN-LINE; day_vol 0.74; base_score 5.0; sc_momentum 69.7 is mid-pack.",
+    "entry_trigger": "Would need rs_leadership LEADER and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume break with rs LEADER proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_leadership turning LEADER plus a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; I take the stronger names and pass TMO."
+  },
+  {
+   "ticker": "ALC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend: ma50 67.93 under ma200 71.76, from_52w_hi -15.05%, ret_12m 0.12 (C12 fails); `sc_m_gate_detail` 9 (flow gate false). `structure` 75.8 BULLISH_BOS and day_vol 2.54 are the best of it, but `sc_momentum` 69.7 and lens leadership warn do not make a leader.",
+   "opposing_case": "BULLISH_BOS on day_vol 2.54, rs LEADER spy20 21.17, daily HH/HL, U&R reclaim day MET.",
+   "case": {
+    "for": "BOS; day_vol 2.54; rs LEADER; U&R reclaim.",
+    "against": "ma50 under ma200; ret_12m 0.12; flow gate false; 4.9% under the 20-day high; H1 below EMA9.",
+    "entry_trigger": "Would need ma50 above ma200 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A confirmed volume break with ma50 turning up proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 reclaiming ma200 with volume.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Agree: ma50 67.93 under ma200 71.76 leaves no uptrend to pull back inside; I do not buy reclaims. Healthcare crowding noted."
+  },
+  {
+   "ticker": "NI",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not a leader: rs_rank_pct 37.74, ret_6m -4.03, ret_12m 4.0 (C10, C12 fail); `sc_m_gate_detail` 9 (flow gate false); `energy` 61.3, `sc_momentum` 67.8, day_vol 0.57. `structure` 81.1 is the lone strength.",
+   "opposing_case": "`structure` 81.1 ABOVE_STRUCTURE, `mp` 89.0, adx 49.21, rs LEADER on down days; a utility trend can persist.",
+   "case": {
+    "for": "structure 81.1; mp 89.0; adx 49.21; U&R reclaim MET.",
+    "against": "rs_rank_pct 37.74; ret_12m 4.0; flow gate false; 7.72% under the high; day_vol 0.57.",
+    "entry_trigger": "Would need rs_rank_pct above 80 and a volume break over pivot_high.",
+    "wrong_if": "A volume breakout with rs improving proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Relative strength rank above 80.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "TGT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "All six lenses strong and BOS: `structure` 63.2 BULLISH_BOS, `sc_momentum` 67.6, rs LEADER (rs_rank_pct 82.68), ret_12m 77.31, day_vol 1.02. Thin: `mp` 52.0 fails its gate (`sc_m_gate_detail` 17), `subcomponents.structure.earn_score` 4.0 (earnings near).",
+   "case": {
+    "for": "All six lenses strong; BOS; rs LEADER; ret_12m 77.31.",
+    "against": "structure 63.2; mp 52.0 under floor; earn_score 4.0 earnings inside 20 days; day_vol 1.02; base_score 5.0 on base_days 300.0.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_50; gap down on earnings.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break after earnings raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings date near; market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "SDGR",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Two hold-firm rules: rs_leadership LAGGARD (downday -2.37, R2) and entry 32.41 against ma200 17.21 is over 70% above the 200-day (R7). `structure` 71.6, `sc_momentum` 66.4, `mp` 67.0 BUILDING; house HTF and EP grades FAILED.",
+   "opposing_case": "rs_rank_pct 99.33, ret_6m 155.4, `elder` 10.0 SUSTAINED, `mp` 67.0 ACCELERATING; strength can persist.",
+   "case": {
+    "for": "rs_rank_pct 99.33; elder 10.0; mp accelerating.",
+    "against": "LAGGARD on down days; over 70% above ma200; sc_momentum 66.4 lowest of the strong names; HTF FAILED.",
+    "entry_trigger": "Would need rs_leadership LEADER, a fresh base and a volume break.",
+    "wrong_if": "A volume-confirmed new high with rs LEADER proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_leadership turning LEADER and a tight new base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Extension cluster heard: I take none of the four. SDGR also fails R2 (LAGGARD), the clearest canon miss of the cluster. Healthcare crowding noted."
+  },
+  {
+   "ticker": "SOLV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Weak composites: `structure` 61.1, `energy` 59.7 and `mp` 48.0 all under floor (`sc_m_gate_detail` 13), `sc_momentum` 66.2, `subcomponents.structure.rs_vs_spy` 6.7, base_days 168.0 (no tight base); day_vol 0.76.",
+   "opposing_case": "BULLISH_BOS, `elder` 10.0 SUSTAINED, `mp` 48.0 ACCELERATING, rs LEADER, 3.2% under the 20-day high.",
+   "case": {
+    "for": "BOS; elder 10.0; rs LEADER; sma_dist 2.72% not extended.",
+    "against": "Three engines under floor; rs_vs_spy 6.7; loose 168-day base; day_vol 0.76.",
+    "entry_trigger": "Would need engines back over floor and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume break with structure above 75 proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure and energy over their floors.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; SOLV is the weakest case in it."
+  },
+  {
+   "ticker": "NYT",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend and weak leadership: ma50 67.47 under ma200 73.32, from_52w_hi -15.47%, ret_6m -6.92, rs_rank_pct 34.39 (C10, C12 fail); `sc_m_gate_detail` 9 (flow 36.8). `structure` 85.3 BULLISH_BOS and `energy` 76.5 are good but `sc_momentum` 62.6 is low.",
+   "opposing_case": "BOS, elder 10.0 ACCELERATION, sector trend Momentum Building, rs LEADER on down days, 0.3% under the 20-day high.",
+   "case": {
+    "for": "BOS; structure 85.3; sector Momentum Building; coil strong.",
+    "against": "ma50 under ma200; rs_rank_pct 34.39; flow gate false; sc_momentum 62.6; mp 58.0 DECELERATING.",
+    "entry_trigger": "Would need ma50 over ma200 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume breakout with ma50 rising proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 reclaiming ma200 with rs_rank_pct rising.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Agree: ma50 67.47 under ma200 73.32 leaves no uptrend for a pullback to sit inside. The BOS is the one good read; it does not fix the stack."
+  },
+  {
+   "ticker": "HSIC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Thin leadership: `structure` 63.2, `mp` 52.0 under floor (`sc_m_gate_detail` 17), `subcomponents.structure.rs_vs_spy` 2.07, `subcomponents.structure.wk_score` 5.0 (weekly trend weak), `sc_momentum` 73.2; day_vol 0.62; base_score 5.0. House EP grade FAILED (8/10).",
+   "opposing_case": "BULLISH_BOS, rs LEADER at rs_rank_pct 80.08, coil strong, `energy` 79.0, 1.1% under the 20-day high.",
+   "case": {
+    "for": "BOS; coil strong; energy 79.0; near the high.",
+    "against": "rs_vs_spy 2.07; wk_score 5.0; mp 52.0; day_vol 0.62.",
+    "entry_trigger": "Would need h1_close_above pivot_high on vol_x_ge 1.4 with mp over its floor.",
+    "wrong_if": "A volume break with weekly trend turning up proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "wk_score and mp over floor plus a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; HSIC is passed."
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader through its pivot: `structure` 87.4 BULLISH_BOS, `sc_momentum` 82.0, `mp` 93.0 STRONG, rs_rank_pct 90.21, ret_12m 33.62, 1.3% under the 20-day high. Against: `subcomponents.structure.base_score` 5.0 on base_days 83.0, day_vol 0.98, run_10d 24.76% and sma_dist 16.77% stretched.",
+   "case": {
+    "for": "BOS; structure 87.4; rs LEADER with rs_rank_pct 90.21; ret_12m 33.62 meets C12.",
+    "against": "day_vol 0.98 under 1.40; run_10d 24.76%; base_score 5.0; mp DECELERATING.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4; no add past 5% over it.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume at 1.4x on the break raises it; heavy-volume weak close lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Tight base near highs, not stretched: `structure` 73.7 (shift RANGE), `subcomponents.structure.base_score` 15.0 over base_days 18.0, `subcomponents.energy.squeeze_score` 12.5, `energy` 85.7, `sc_momentum` 72.0, ext_atr20 0.66, from_52w_hi -1.3%, rs LEADER. day_vol 0.92 unconfirmed; `sc_m_gate_detail` 9 (flow gate false).",
+   "case": {
+    "for": "Scored base 15.0, squeeze 12.5, rs LEADER, 0.6% under the 20-day high, not extended.",
+    "against": "structure_shift RANGE (no BOS yet); flow gate false; day_vol 0.92; mp 73.0 DECELERATING; rs_rank_pct 64.9.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break raises it; rs_rank_pct falling lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Held name failing every test: `sc_momentum` 28.4, `structure` 28.0, `energy` 39.0, `mp` 0.0, rs LAGGARD (downday -2.5), from_52w_hi -19.6%, run_10d -19.45%, price under vwap14 and level with ma50 112.56. AQE health EXIT (score 0.0) fits my sell rule (R11). Exit case, not an entry.",
+   "opposing_case": "rs_rank_pct 96.15 and ret_6m 80.82 show a prior leader; ma20 119.53 over ma50 112.56 over ma100 98.85, so a base recovery is possible.",
+   "case": {
+    "for": "Prior leader (ret_6m 80.82); rs_rank_pct 96.15.",
+    "against": "Composites at floor; div BEARISH/4; LAGGARD; below vwap14 121.84; ma stack rolling over.",
+    "entry_trigger": "No entry; I would need structure over 60 and a reclaim of the high on vol_x_ge 1.4.",
+    "wrong_if": "A close back above ma20 on heavy volume proves the exit early.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure and mp recovering over their floors.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Textbook breakout: day_vol 2.16 clears 1.40, `subcomponents.flow.ext_score` 3.0 (breakout bonus), `structure` 94.7 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 24.0, `sc_momentum` 80.7, `mp` 97.0, from_52w_hi -0.69%, rs LEADER at rs_rank_pct 87.45, ret_12m 85.82.",
+   "self_counter": "`subcomponents.flow.mfi` 30.93 reads seller-side against heavy volume (C25 risk); the base is 24 days, not 7-8 weeks; elder 7.0 shows no pattern.",
+   "case": {
+    "for": "day_vol 2.16; ext_score 3.0; structure 94.7; base_score 15.0; rs LEADER; ret_12m 85.82.",
+    "against": "mfi 30.93 and cmf -0.03; base short of C12; 2.5% under the 20-day high; H1 swing LH/LL.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; heavy-volume close near the day low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "mfi turning up with the break raises it; a weak close on heavy volume lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader coiled under its high: `structure` 74.7 (shift RANGE), `energy` 84.0, `subcomponents.energy.squeeze_score` 8.5, `sc_momentum` 80.6, rs LEADER at rs_rank_pct 88.2, from_52w_hi -0.81%; day_vol 0.56 is a dry-up (C15). Against: div BEARISH/1, `mp` 76.0 DECELERATING, `subcomponents.structure.base_score` 5.0.",
+   "case": {
+    "for": "rs_rank_pct 88.2; coil strong; dry-up volume under the high; ret_6m 42.86.",
+    "against": "div BEARISH/1; mp DECELERATING; no BOS yet; base_score 5.0 on base_days 185.0.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break raises it; a second bearish oscillator lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "MAC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "REIT leader near highs: `structure` 84.2 ABOVE_STRUCTURE, `sc_momentum` 79.1, `mp` 97.0 STRONG, rs LEADER, ret_12m 42.18, 1.2% under the 20-day high. Soft spots: rs_rank_pct 69.79 under 80, `subcomponents.structure.base_score` 5.0 on base_days 148.0, `subcomponents.energy.squeeze_score` 0.0.",
+   "case": {
+    "for": "structure 84.2; mp 97.0; ret_12m 42.18; resistance lens strong.",
+    "against": "rs_rank_pct 69.79; loose base; no coil; day_vol 1.03; EP FAILED (6/10).",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break with rs_rank_pct over 80 raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Climax: entry 23.28 against ma200 9.78 is far over 70% above the 200-day (R7, C24); run_10d 78.39%, ext_atr20 5.88, ret_6m 469.19. `sc_m_gate_detail` 9 (flow gate false), `sc_momentum` 74.2, `structure` 84.2, `mp` 100.0. I sell into this, not buy it.",
+   "opposing_case": "rs_rank_pct 99.92, `mp` 100.0 ACCELERATING, `structure` 84.2 ABOVE_STRUCTURE, 0.6% under the 20-day high; a leader can run past any average.",
+   "case": {
+    "for": "rs_rank_pct 99.92; mp 100.0; structure 84.2; resistance lens strong.",
+    "against": "Over 70% above ma200; flow gate false; run_10d 78.39%; lens leadership and coil warn.",
+    "entry_trigger": "Would need a new tight base above ma50 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed new base breakout proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh 7-8 week base well above ma50.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Steenbarger asks how far into the move: entry 23.28 vs ma50 14.39 and ma200 9.78 is the late end, past my 70% climax line, so I do not enter. Extension cluster: I take none of the four. Healthcare crowding noted."
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Structure has failed: structure_shift BEARISH_CHOCH, `structure` 30.5, `sc_momentum` 55.9, from_52w_hi -43.54%, ma50 49.65 under ma100 64.35, rs_rank_pct 30.71. A correction past 33% is a repair job (C13). `sc_m_gate_detail` 7 (flow and structure gates false).",
+   "opposing_case": "rs LEADER at spy20 95.33 with a 3-month-low bounce, U&R reclaim MET, lens coil and insti_money strong; a violent recovery can start here.",
+   "case": {
+    "for": "spy20 95.33 bounce; coil strong; U&R reclaim.",
+    "against": "CHoCH; structure 30.5; 43.54% under the high; MA stack inverted.",
+    "entry_trigger": "No entry; I would need structure over 60 and a rebuilt base.",
+    "wrong_if": "A rebuilt base and volume break above pivot_high proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure_shift back to BULLISH_BOS with ma50 rising.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Climax: entry 26.73 against ma200 14.92 is over 70% above the 200-day (R7); ext_atr20 7.62, adx 59.11, run_10d 14.43%. `sc_m_gate_detail` 9 (flow 46.1, gate false), `structure` 77.3, `sc_momentum` 67.9, `mp` 100.0. House HTF grade FAILED (4/11).",
+   "opposing_case": "rs_rank_pct 96.99, `mp` 100.0, `elder` 10.0, resistance lens strong, 1.8% under the 20-day high.",
+   "case": {
+    "for": "rs_rank_pct 96.99; mp 100.0; elder 10.0.",
+    "against": "Over 70% above ma200; flow gate false; ext_atr20 7.62; sc_momentum 67.9 is low for a runner; HTF FAILED.",
+    "entry_trigger": "Would need a fresh base and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed new base breakout proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight new base and flow back over its gate.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Extension cluster heard: I take none of SDGR, SGRY, XNCR or REPL; all four sit over my 70% line above ma200 (R7). Healthcare crowding noted."
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Top composite, late: `sc_momentum` 84.2, `structure` 86.7, `mp` 100.0, rs LEADER, 0.5% under the 20-day high, entry 30.86 under my 70% line over ma200 21.6. Wear shows: `subcomponents.energy.exhaustion_score` 7.0 at en_trend_bars 17.0, `subcomponents.structure.base_score` 2.4, run_10d 28.1%, sma_dist 38.57%. Needs a fresh handle.",
+   "case": {
+    "for": "sc_momentum 84.2; structure 86.7; mp 100.0 ACCELERATING; rs_rank_pct 96.32.",
+    "against": "exhaustion_score 7.0; squeeze_score 0.0; no new base; day_vol 0.91; lens leadership and coil warn.",
+    "entry_trigger": "After a fresh handle: h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below ma_50; heavy-volume weak close at the high.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A base of 7+ weeks raises it; exhaustion_score falling further lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; VRDN is a low-rung, conditional entry only."
+  },
+  {
+   "ticker": "XERS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax: entry 15.83 against ma200 7.69 is over 70% above the 200-day (R7); run_10d 51.48%, ext_atr20 5.55. `sc_momentum` 84.2, `structure` 84.2, `mp` 100.0, `elder` 10.0 ACCELERATION are all strong; I sell into this, not buy it. House HTF grade FAILED (5/11).",
+   "opposing_case": "rs_rank_pct 99.25, AQE rank 4, `flow` 88.2, 1.7% under the 20-day high; strength with no base can still run.",
+   "case": {
+    "for": "Top composites; rs_rank_pct 99.25; mp 100.0.",
+    "against": "Over 70% above ma200; base_score 15.0 but base_days 20.0 is behind a 51% run; lens coil warn.",
+    "entry_trigger": "Would need a new tight base above ma50 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed breakout from a fresh base proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh 7-8 week base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; XERS is passed on the climax rule, not on strength."
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax: entry 14.89 against ma200 8.43 is over 70% above the 200-day (R7); run_10d 28.03%, ext_atr20 4.13. `sc_momentum` 80.2, `structure` 77.3, `mp` 100.0 are strong, but I sell into this, not buy it. House HTF grade FAILED (6/11).",
+   "opposing_case": "rs_rank_pct 99.16, `elder` 10.0, `flow` 80.3, 1.9% under the 20-day high; momentum lane strength can persist.",
+   "case": {
+    "for": "rs LEADER; mp 100.0; sc_momentum 80.2.",
+    "against": "Over 70% above ma200; lens coil warn; day_vol 0.93; HTF FAILED.",
+    "entry_trigger": "Would need a new tight base and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed breakout from a fresh base proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh 7-8 week base well above ma50.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not at new highs, no base: from_52w_hi -21.99%, `subcomponents.structure.base_score` 0.0, `subcomponents.structure.resist_score` 5.0 (overhead supply), lens leadership, coil and resistance warn (C7, R3). `structure` 76.8, `sc_momentum` 80.8, `mp` 93.0 are strong; run_10d 35.37%, ext_atr20 3.75.",
+   "opposing_case": "rs_rank_pct 92.8, `elder` 10.0 SUSTAINED, `mp` 93.0 ACCELERATING, `subcomponents.structure.rs_accel` 45.2; a leader recovering fast.",
+   "case": {
+    "for": "rs improving fast (rs_accel 45.2); mp 93.0; elder 10.0.",
+    "against": "21.99% under the high; base_score 0.0; resist_score 5.0; lens warns; ext_atr20 3.75.",
+    "entry_trigger": "Would need a base and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume break through overhead supply proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base under the old high and a volume break.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Conflicted read: `structure` 100.0 against structure_shift RANGE (no BOS) and a flat stack (ma50 7.32, ma100 7.22, ma200 7.15). day_vol 0.72 after run_10d 44.1% is a new high on lower volume (C25); ext_atr20 7.26; `mp` 96.0 DECELERATING; `subcomponents.pipe.pr_rsi_score` 10.0. `sc_momentum` 83.6.",
+   "opposing_case": "AQE rank 10, rs LEADER at rs_rank_pct 88.87, house EP grade READY (9/10), `subcomponents.structure.base_score` 15.0 over base_days 19.0.",
+   "case": {
+    "for": "sc_momentum 83.6; base_score 15.0; rs LEADER; 0.9% under the 20-day high.",
+    "against": "day_vol 0.72 after a 44% run; ext_atr20 7.26; mp DECELERATING; RANGE shift; price near a flat MA stack.",
+    "entry_trigger": "Would need a new base and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed break with mp re-accelerating proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume at 1.4x on the break and mp turning ACCELERATING.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "New-issue leader: day_vol 1.57 clears 1.40, `structure` 87.4 ABOVE_STRUCTURE, `sc_momentum` 83.6, `mp` 97.0, `elder` 10.0 SUSTAINED, 0.5% under the 20-day high. ma200 and ret_12m are absent so R7 and C12 cannot be tested; `subcomponents.structure.base_score` 3.0, `sc_m_gate_detail` 14 (energy 59.7 gate false).",
+   "case": {
+    "for": "day_vol 1.57; structure 87.4; rs LEADER; mp 97.0; near the high.",
+    "against": "ma200 missing (R7 untestable); base_score 3.0; energy gate false; ext_atr20 4.27; lens leadership --.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; heavy-volume reversal.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A labelled base and ma200 history raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "ma200 history",
+     "EPS/sales (C,A)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "new issue, no 200d history; market gate delegated"
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax and weak structure: entry 54.07 against ma200 31.26 is over 70% above the 200-day (R7); `structure` 55.8 (shift RANGE) is the lowest of the strong-momentum names, `sc_m_gate_detail` 9 (flow 57.9, gate false), `sc_momentum` 69.2, `mp` 96.0 DECELERATING, day_vol 0.48, from_52w_hi -5.62%.",
+   "opposing_case": "rs_rank_pct 97.74, ret_6m 99.59, rs LEADER, `elder` 7.0, lens leadership strong; a leader can keep running.",
+   "case": {
+    "for": "rs_rank_pct 97.74; ret_6m 99.59; leadership lens strong.",
+    "against": "Over 70% above ma200; structure 55.8; flow gate false; day_vol 0.48; 9.8% under the 20-day high; H1 below EMA9.",
+    "entry_trigger": "Would need a new base and h1_close_above pivot_high on vol_x_ge 1.4 with structure over 70.",
+    "wrong_if": "A volume-confirmed new high with structure rising proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure over 70 and a fresh base.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Crowding heard: Healthcare is one group bet; GMAB is passed on the climax rule and weak structure."
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader with a scored base: `structure` 87.4 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 13.0, `sc_momentum` 80.6, `mp` 89.0, rs_rank_pct 85.44, 0.3% under the 20-day high. Against: from_52w_hi -11.2%, `subcomponents.energy.exhaustion_score` 7.0 at en_trend_bars 24.0, day_vol 1.08.",
+   "case": {
+    "for": "structure 87.4; base_score 15.0; rs LEADER; lens coil strong; ret_63d 26.86.",
+    "against": "11.2% under the 52-week high (overhead supply); exhaustion_score 7.0; day_vol 1.08; sector Recovering From Weakness.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break through the old high raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "BAM",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No base and no prior advance: `subcomponents.structure.base_score` 1.8, `subcomponents.structure.rs_vs_spy` 4.69, ret_12m 0.87, rs_rank_pct 61.59 under 80 (C10, C12), lens leadership and coil warn. `structure` 78.7, `sc_momentum` 78.5, `mp` 97.0 are strong but rest on a 14.42% 10-day jump.",
+   "opposing_case": "`mp` 97.0 STRONG ACCELERATING, `structure` 78.7, rs LEADER at spy20 21.87, resistance lens strong, 2.2% under the 20-day high.",
+   "case": {
+    "for": "mp 97.0; structure 78.7; rs LEADER; near the high.",
+    "against": "base_score 1.8; rs_vs_spy 4.69; ret_12m 0.87; tangled ma50 47.24 and ma200 47.84; lens warns.",
+    "entry_trigger": "Would need a base and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume breakout with rs_rank_pct over 80 proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A counted base and rs_rank_pct over 80.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax: entry 21.95 against ma200 12.47 is over 70% above the 200-day (R7); run_10d 24.29%. Breakout evidence is real (day_vol 1.82, `subcomponents.flow.ext_score` 5.0, `structure` 74.5, `sc_momentum` 76.6, `mp` 75.0) but my hold-firm line decides: sell into it.",
+   "opposing_case": "day_vol 1.82 clears 1.40, ext_score 5.0 is a clean breakout, rs_rank_pct 98.16, 1.8% under the 20-day high; this is a volume breakout I would otherwise want.",
+   "case": {
+    "for": "day_vol 1.82; ext_score 5.0; rs_rank_pct 98.16; structure 74.5.",
+    "against": "Over 70% above ma200; lens coil warn; sma_dist 23.76%; base_score 3.0 on base_days 5.0.",
+    "entry_trigger": "Would need a new base above ma50 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume-confirmed continuation from a fresh base proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh 7-8 week base well above ma50.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   }
+  },
+  {
+   "ticker": "KDP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at a 52-week high with a real base: `subcomponents.structure.base_score` 5.0 over base_days 63.0 (about 12 weeks), `structure` 73.7, `energy` 77.3, `sc_momentum` 75.9, `mp` 89.0, ret_12m 44.8, rs_rank_pct 80.33, 0.8% under the 20-day high. Against: day_vol 0.92, `mp` DECELERATING, house EP grade FAILED (8/10).",
+   "case": {
+    "for": "63-day base; structure 73.7; ret_12m 44.8; lens coil, structure, resistance strong.",
+    "against": "day_vol 0.92 under 1.40; mp DECELERATING; sma_dist 13.64%; base_score only 5.0.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break raises it; a heavy-volume weak close lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "CAG",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend: ma50 14.53 under ma200 15.21, from_52w_hi -24.13%, ret_12m -11.38, rs_rank_pct 59.67, `subcomponents.structure.rs_vs_spy` 0.69 (C10, C12). `structure` 71.6 BULLISH_BOS and `subcomponents.structure.base_score` 15.0 over base_days 24.0 are the good reads; `sc_momentum` 74.4.",
+   "opposing_case": "BOS, rs LEADER on down days (downday 3.04), base_score 15.0, coil strong, `flow` 84.2, 2.2% under the 20-day high.",
+   "case": {
+    "for": "BOS; base_score 15.0; coil strong.",
+    "against": "ma50 under ma200; 24.13% under the high; rs_vs_spy 0.69; mp 68.0 FLAT; wk_score 10.0.",
+    "entry_trigger": "Would need ma50 over ma200 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume breakout with ma50 rising proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 reclaiming ma200 with rs_rank_pct rising.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Agree: ma50 14.53 under ma200 15.21 leaves no uptrend for a pullback to sit inside; the BOS and the base score do not repair the stack."
+  },
+  {
+   "ticker": "EL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Coiled leader under its high: `structure` 82.1 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 15.0 over base_days 18.0, `subcomponents.energy.squeeze_score` 12.5, `energy` 85.7, `sc_momentum` 73.7, `subcomponents.structure.rs_vs_spy` 37.44, ret_63d 29.37, 1.6% under the 20-day high. Against: `sc_m_gate_detail` 9 (flow 50.0, gate false), day_vol 0.93.",
+   "case": {
+    "for": "base_score 15.0; squeeze 12.5; rs_vs_spy 37.44; rs LEADER; ma stack rising.",
+    "against": "flow gate false with `subcomponents.flow.mfi` 38.75; day_vol 0.93; mp 83.0 FLAT; rs_accel -20.09 fading.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; heavy-volume weak close.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break with flow recovering raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "AER",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at a 52-week high: `structure` 86.3 ABOVE_STRUCTURE, `sc_momentum` 84.0, `mp` 97.0, ret_12m 32.27, 0.5% under the 20-day high, clean exhaustion (`subcomponents.energy.exhaustion_score` 10.0). Against: ext_atr20 4.85, sma_dist 18.33%, day_vol 1.04, `subcomponents.structure.base_score` 5.0 on base_days 392.0.",
+   "case": {
+    "for": "structure 86.3; year-long range now broken to new highs; rs LEADER; exhaustion_score 10.0.",
+    "against": "day_vol 1.04 under 1.40; ext_atr20 4.85; rs_rank_pct 75.98; mp 97.0 FLAT.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4; no add past 5% over it.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume at 1.4x on the break raises it; a weak close on heavy volume lowers it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader with a scored base: `structure` 94.7 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 10.0 over base_days 9.0, `sc_momentum` 83.5, `mp` 97.0 STRONG ACCELERATING, ret_12m 109.17, 0.3% under the 20-day high; house EP grade TRIGGERED (10/10). Against: day_vol 0.46 (no volume), from_52w_hi -12.38%, rs_rank_pct 73.64.",
+   "case": {
+    "for": "structure 94.7; base_score 10.0; mp 97.0; sector Momentum Building; EP TRIGGERED.",
+    "against": "day_vol 0.46 is no confirmation (C16); 12.38% under the 52-week high; rs_rank_pct 73.64; base 9 days.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; close under ma50.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break raises it; another low-volume day at the high lowers it (C25).",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "market gate delegated; C/A/S/I not served"
+   }
+  },
+  {
+   "ticker": "STZ",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No longer-timeframe uptrend: ma50 126.73 under ma100 130.48 under ma200 141.22, div BEARISH/1, from_52w_hi -12.7%, rs_rank_pct 48.45, ret_6m 2.09 (C10, C12, C13). `structure` 94.7, `sc_momentum` 83.8 and `subcomponents.structure.base_score` 15.0 over base_days 17.0 look fine but sit on a repair, not an advance.",
+   "opposing_case": "`structure` 94.7, `sc_momentum` 83.8, `energy` 80.7, base_score 15.0, rs LEADER on down days (downday 2.84), 2.6% under the 20-day high.",
+   "case": {
+    "for": "structure 94.7; base_score 15.0; energy 80.7.",
+    "against": "Inverted MA stack; div BEARISH/1; rs_rank_pct 48.45; mp 89.0 DECELERATING; ret_6m 2.09.",
+    "entry_trigger": "Would need ma50 back over ma200 and h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "A volume break with the MA stack repairing proves me wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 reclaiming ma200 and the divergence clearing.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "challenge_reply": "Agree with Steenbarger: ma50 126.73 under ma100 130.48 under ma200 141.22 with a bearish divergence has no uptrend or regime to sit inside. A high composite on that stack is a pattern in isolation; my regime read is a decline being repaired (C13)."
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader consolidating under its high: `structure` 78.9 ABOVE_STRUCTURE, `subcomponents.structure.base_score` 8.0 over base_days 31.0, `sc_momentum` 82.9, `mp` 96.0 STRONG, rs_rank_pct 93.39, ret_12m 33.19. Against: 5.2% under the 20-day high, day_vol 0.84, `subcomponents.structure.earn_score` 7.0 (earnings within 20 days), lens coil and resistance warn.",
+   "case": {
+    "for": "rs_rank_pct 93.39; ret_12m 33.19 meets C12; base_days 31.0; structure 78.9.",
+    "against": "No pivot test yet; day_vol 0.84; mp DECELERATING; earnings inside 20 days.",
+    "entry_trigger": "h1_close_above pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "close_below pivot_high-8pct; gap down on earnings.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume break after earnings raises it.",
+    "cannot_see": [
+     "pivot_high",
+     "EPS/sales (C,A)",
+     "sponsor count (I)",
+     "market gate"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high-8pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings inside 20 days; market gate delegated"
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of4.json",
+   "bytes": 17225,
+   "votes": 14,
+   "sha256": "cf1b2df34d68"
+  },
+  {
+   "file": "oneil.part2of4.json",
+   "bytes": 15918,
+   "votes": 14,
+   "sha256": "4985f8e4c6f2"
+  },
+  {
+   "file": "oneil.part3of4.json",
+   "bytes": 16258,
+   "votes": 14,
+   "sha256": "a7bd4b01efdc"
+  },
+  {
+   "file": "oneil.part4of4.json",
+   "bytes": 13396,
+   "votes": 11,
+   "sha256": "834f0f3f9025"
+  }
+ ]
+}

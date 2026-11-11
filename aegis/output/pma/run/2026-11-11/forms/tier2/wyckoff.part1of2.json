@@ -1,0 +1,89 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close through the last pivot high on a wide bar with volume"
+   },
+   "wrong_if": "Daily close under base_low_20d, or back inside the range after the break.",
+   "market_void": null,
+   "reason": "RANGE at the top: D 0.9% above the last swing high, 1.3% under 20-day high. No lower-edge long; the Phase-D break must print wide, with volume, and hold (C5)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Price pulls back into the broken pivot zone, then buy stop above bar_high"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "TREND away from value: D 3.3% under the last swing high, W swing LH/LL 11.0% above its swing high. No chase (C3, C15); join at the test."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Pullback holds the broken level on lighter volume, then buy stop above bar_high"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR: failed break.",
+   "market_void": null,
+   "reason": "Break on heavy volume but H1 35% of the day's range, 5.5% under 20-hr high: effort without result. Join the test, not the spike (C7)."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Test of the broken level on lighter volume, then buy stop above bar_high"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "D HH/HL 4.9% above the last swing high, H1 1.2% under its swing high; nearer the Creek than most runners but W swing LH but HL. Wait for the test (C3)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hold above the break, then hourly close above bar_high on volume"
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (back inside the range).",
+   "market_void": null,
+   "reason": "Break on low volume is a potential upthrust until it holds (C5). D 0.5% under the last swing high, H1 92% of the day's range; volume must confirm."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above bar_high off the test; buy stop, never a resting limit"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "At the test: D 0.9% above the last swing high, W/D/H1 all HH/HL, H1 0.6% under 20-hr high. Needs a wide top-third bar on volume (C12)."
+  }
+ ],
+ "declarations": [
+  "Packet carries no pvp_*, vwap_14d, bar_* or structure_shift_ref rows; read rests on the W/D/H1 grid. High/low-volume nodes NOT_SERVED (R11).",
+  "No refutation of my claims in the packet (answer_pairs empty); answers is []."
+ ]
+}

@@ -1,0 +1,571 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "round": 2,
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,6,7 read from ma_20/50/100/200, sma_dist and from_52w_hi; ma_150 not in the packet; criterion 3 (200-day slope) NOT served; criterion 8 by proxy rs_rank_pct/rs_spy_20d, not IBD RS rank (C3).",
+  "vcp_detail: NOT_SERVED (structure, structure_shift only; no contraction count or depth, C4). volume_signature: day_vol at the current bar only (C6, partial).",
+  "earnings_growth and company_category: NOT_SERVED (C1 element 2, C12, C13, C20). Fundamentals printed in the packet were not read; SEPA's fundamentals leg did not run.",
+  "no_data: LYV packet row is empty (ma_50 None, ma_200 None, rs_rank_pct None); filed ABSTAIN, no template and no pivot to judge.",
+  "committee ANCHOR finding noted: door overlap among STRENGTH names is shared screening, not convergence; every name was run through the template on its own fields.",
+  "R1 honoured: bracket validity, risk_pct and R:R are information only; no vote rests on them. Invalidation levels are my own, from structure.",
+  "vcp_detail: NOT_SERVED (no contraction count or depth, C4). volume_signature: day_vol at the current bar only (C6, partial). earnings_growth and company_category NOT_SERVED (C1 element 2, C12, C13, C20).",
+  "no_data: BOX and MSFT packet rows are empty (ma_50 None, ma_200 None, rs_rank_pct None); filed ABSTAIN. BRZE row is empty too: its figures are from my own round-1 line in the packet.",
+  "Held names (GPN, EBAY, RBRK) are voted as hold-or-exit calls: SUPPORT = keep with a fixed stop, no add; OPPOSE = exit case. Add-on-strength only, never average down (C9)."
+ ],
+ "data_gaps": [
+  {
+   "field": "LYV ma_50/ma_100/ma_200/rs_rank_pct",
+   "impact": "Trend Template could not run, so no support or oppose is possible; abstained."
+  },
+  {
+   "field": "BOX/MSFT ma_50/ma_200/rs_rank_pct",
+   "impact": "Trend Template could not run, so no support or oppose is possible; abstained."
+  },
+  {
+   "field": "BRZE momentum row",
+   "impact": "Row empty; used my own round-1 figures printed in the packet; day_vol is not on my row."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Trend Template: entry 47.42 over ma_200 35.88 and ma_50 41.98, but ma_50 sits just under ma_100 42.42 (ma_150 not in packet), so criterion 4 is partial. from_52w_hi -0.69%, rs_rank_pct 87.45, rs LEADER spy20 23.18, structure 94.7 ABOVE_STRUCTURE, day_vol 2.16. sma_dist 12.97% is no chase. Buy strength on the clear of the pivot.",
+   "challenge_reply": "Context used: advancing stage 2, ma_200 35.88 far below price; ma_50 41.98 a hair under ma_100 42.42 is a shallow dip of the 50, not a downtrend. I read the template, Livermore reads a new high: same name, different tests. ma_150 missing, criterion 4 declared partial.",
+   "case": {
+    "for": "Leader at the highs: from_52w_hi -0.69%, rs_rank_pct 87.45, weekly and daily HH/HL, ABOVE_STRUCTURE with structure 94.7 on day_vol 2.16. U&R MET reclaim day.",
+    "against": "ma_50 41.98 under ma_100 42.42 leaves criterion 4 unproven; sector Momentum Fading - Hold, Don't Add; coil lens warn; H1 swing LH/LL with 9<21; no base count served.",
+    "entry_trigger": "h1_close_above:pivot_high on vol_x_ge 1.4; chase limit pivot_high+5pct.",
+    "wrong_if": "Daily close under structure_shift_ref 41.61, or the clear fails back on light volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A ma_150 above ma_50 (criterion 4 fails, I drop it), or day_vol fading on the break.",
+    "cannot_see": [
+     "ma_150",
+     "200-day slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings, catalyst and sponsorship not served; SEPA elements 2-3 not run."
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Fresh pivot clear: structure_shift BULLISH_BOS on day_vol 3.1 (expansion, C6). entry 64.26 over ma_50 56.19, ma_100 54.79, ma_200 44.86; from_52w_hi 0.0%, rs_rank_pct 91.63, rs LEADER spy20 21.87. sma_dist 14.36% and pct_from_pivot 1.04 keep it inside the buy window. Criteria 1-7 pass, 8 by proxy; sector crowding is the PM's exposure call.",
+   "self_counter": "Sector Momentum Fading - Hold, Don't Add with five Healthcare names in the room; mp STRONG/DECELERATING, structure 63.2 modest, and H1 5.5% under the last swing high: the tape is giving some of the break back.",
+   "case": {
+    "for": "Pivot clear on 3.1x volume with top RS: rs_rank_pct 91.63, ret_12m 99.32, from_52w_hi 0.0%, weekly and daily HH/HL.",
+    "against": "Lone-ranger risk: group Fading-Hold, mp STRONG/DECELERATING, Episodic pivot (delayed) FAILED (8/10), H1 5.5% under the last swing high, lens insti_money warn.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge 1.4; chase limit pivot_high+5pct.",
+    "wrong_if": "Daily close under structure_shift_ref: the break failed back into the base.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume drying up on the hold, or the group turning to Declining.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings and catalyst not served."
+   }
+  },
+  {
+   "ticker": "TTWO",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template fails: ma_50 207.06 sits under ma_100 224.32 and ma_200 218.63 (criterion 4), rs_rank_pct 43.72 misses the rank proxy (criterion 8), ret_63d -7.56, from_52w_hi -13.07%. One sign-of-strength bar (day_vol 2.77) inside a stage 1 repair is prediction, not a confirmed stage 2; weekly swing is LH. Not a leader to buy yet.",
+   "opposing_case": "Best case for: Episodic pivot TRIGGERED (9/9), ABOVE_STRUCTURE, day_vol 2.77, flow 84.2, elder 10.0 CORRECTION_REENTRY, rs LEADER spy20 15.75, price over ma_200 218.63 on a repair.",
+   "challenge_reply": "Trend it enters with: stage 1 repair after a decline, not stage 2 - ma_50 207.06 under ma_100 224.32 and ma_200 218.63, ret_12m -3.17. Proof I am wrong: ma_50 back above both and rs_rank_pct into leader range. Until then the fields conflict and I hold the OPPOSE.",
+   "case": {
+    "for": "Real participation: day_vol 2.77, Episodic pivot TRIGGERED (9/9), ABOVE_STRUCTURE, rs LEADER spy20 15.75, price over ma_200 218.63.",
+    "against": "Fails criterion 4 (ma_50 207.06 under ma_100 224.32 and ma_200 218.63) and the criterion 8 proxy (rs_rank_pct 43.72); weekly 9<21; from_52w_hi -13.07%.",
+    "entry_trigger": "Need ma_50 back over ma_100 and ma_200 on the close, then a clear of pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "OPPOSE is wrong if ma_50 crosses above ma_100 and ma_200 and rs_rank_pct climbs well above 43.72.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A finished trend repair (50 over 100 over 200, 200 rising) plus a base that names a pivot; one strength bar does not move me.",
+    "cannot_see": [
+     "200-day slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 stack: entry 226.5 over ma_50 187.43, ma_100 175.71, ma_200 145.93; from_52w_hi -1.31%, rs_rank_pct 98.08, rs LEADER spy20 23.58, structure 77.9 ABOVE_STRUCTURE. Continuation pivot 232.76 is 2.69 away (pct_from_continuation_pivot -2.69): buy the clear, not here (day_vol 0.86). sma_dist 20.84% is a weight, not a veto (R27). Wrong below 215.09.",
+   "self_counter": "No volume expansion yet (day_vol 0.86), no contraction count served, sector Momentum Fading - Hold, Don't Add, Episodic pivot (delayed) FAILED (9/10); ext_atr20 2.73 means a failed break gives back a lot.",
+   "case": {
+    "for": "Best stack in the set: rs_rank_pct 98.08, ret_6m 108.93, ret_12m 145.02, from_52w_hi -1.31%, all three timeframes HH/HL.",
+    "against": "Extended (sma_dist 20.84%, ext_atr20 2.73), group Fading-Hold, day_vol 0.86 so the pivot is uncleared on volume; H1 2.7% under the last swing high.",
+    "entry_trigger": "Close above high_52w_close on vol_x_ge 1.4, ideally clearing 232.76; chase limit high_52w_close+5pct.",
+    "wrong_if": "Close below 215.09, or a clear of 232.76 that fails back on light volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A break that closes back inside on expanding volume, or the group slipping to Declining.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings and catalyst not served."
+   }
+  },
+  {
+   "ticker": "ACHC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 38.64 over ma_50 29.83, ma_100 30.1, ma_200 26.51; from_52w_hi 0.0%, rs_rank_pct 90.46, rs LEADER spy20 31.43, structure 88.4 ABOVE_STRUCTURE. But no base: run_10d 29.23%, sma_dist 29.55%, ext_atr20 3.38 is a thrust with no flag yet. Weight not veto (R27); held at 2 until a flag forms. Fundamentals not served.",
+   "case": {
+    "for": "Leader at the high on a thrust: rs_rank_pct 90.46, rs_spy_20d 31.43, downday 2.36, mp 93.0 STRONG/ACCELERATING, structure 88.4.",
+    "against": "No base or flag to name a pivot (R2, R5): sma_dist 29.55%, run_10d 29.23%; weekly swing LH/LL; Episodic pivot (delayed) FAILED (7/10); coil and insti_money lenses warn.",
+    "entry_trigger": "Only after a tight flag: h1_close_above:bar_high on vol_x_ge 1.4; nothing to buy at today's extension.",
+    "wrong_if": "Daily close under ma_20 31.99, or the thrust giving back into its prior range.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A visible flag or tight pause on dry volume lifts conviction; a wide loose giveback drops the name.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings not served; fundamentals leg of SEPA not run."
+   }
+  },
+  {
+   "ticker": "ELF",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Stage 2 leader at its pivot: entry 118.51 vs pivot_high 118.29 (pct_from_pivot 0.19); ma_50 106.72, ma_100 95.49, ma_200 82.12 stacked; from_52w_hi -0.7%, rs_rank_pct 98.24, BULLISH_BOS, ext_atr20 0.87, energy 88.2, coil lens strong. Weights: day_vol 0.73 on the break, elder INTERRUPTED. Wrong under 109.68.",
+   "self_counter": "The break has no volume yet (day_vol 0.73), flow 43.4 is the weakest engine, rs label is IN-LINE (downday 0.14), elder INTERRUPTED and H1 below EMA9: a pivot without participation can fail back into the base.",
+   "case": {
+    "for": "Flat-base style break at the high: pct_from_pivot 0.19, from_52w_hi -0.7%, rs_rank_pct 98.24, coil strong, energy 88.2, ext_atr20 0.87 (not extended).",
+    "against": "day_vol 0.73 (no expansion), flow 43.4, rs IN-LINE downday 0.14, elder INTERRUPTED, sector Momentum Fading - Hold, Don't Add, H1 3.0% under the last swing high.",
+    "entry_trigger": "h1_close_above:pivot_high on vol_x_ge 1.4; chase limit pivot_high+5pct.",
+    "wrong_if": "Close below 109.68 (continuation-window low), or a close back under pivot_high on expanding volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Break fails on rising volume, or day_vol stays dry through a second session at the pivot.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:base_low_20d"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings and sponsorship not served."
+   }
+  },
+  {
+   "ticker": "LYV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend Template cannot run: ma_50 None, ma_200 None, rs_rank_pct None, structure None on the packet row. The MTF line (weekly and daily above EMA9, daily HH/HL) is read but cannot stand in for the stack. No data is not a pass: abstain and declare the gap.",
+   "case": {
+    "for": "MTF is constructive: weekly and daily above EMA9 with 9>21, daily swing HH/HL, hourly 0.2% above the last swing high.",
+    "against": "No ma stack, no rs_rank_pct, no structure_shift on the row; weekly swing HH but LL; the template cannot be checked.",
+    "entry_trigger": "Cannot support until the stack and rs_rank_pct are served and pass; then a clear of pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Abstain is wrong if the served stack passes every criterion and pivot_high clears on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Served ma_50, ma_100, ma_150, ma_200 and rs_rank_pct, plus a base description.",
+    "cannot_see": [
+     "ma_50",
+     "ma_200",
+     "rs_rank_pct",
+     "structure_shift"
+    ]
+   }
+  },
+  {
+   "ticker": "WAY",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template: entry 29.3 over ma_50 26.66, ma_100 24.79, ma_200 23.85; rs_rank_pct 91.72, rs LEADER spy20 15.02; structure 73.7 BULLISH_BOS. Soft spots: from_52w_hi -20.9% (criterion 7 passes but is not close) and day_vol 0.56, so the break has no volume. U&R MET reclaim day. Buy only on expansion.",
+   "challenge_reply": "Technology is one exposure (WAY, BRZE, BOX, MSFT), not four reads. I filed WAY 3 and BRZE 2 on trend; BOX and MSFT abstain for no stack. I will not stack the cluster; the PM sizes it, not me.",
+   "case": {
+    "for": "Fresh BULLISH_BOS with rs_rank_pct 91.72, mp 79.0 STRONG/ACCELERATING, energy 93.3 coil, U&R MET reclaim day, H1 at the 20-hr high.",
+    "against": "day_vol 0.56 on the break, from_52w_hi -20.9%, ret_12m -19.11 (young stage 2), elder INTERRUPTED, sector Recovering From Weakness - Watch for Entry.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge 1.4 and above_vwap_s; chase limit bar_high+5pct.",
+    "wrong_if": "Daily close under ma_20 28.45, or back inside the old range under structure_shift_ref.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Another break on dry volume that fails, or volume arriving with the group turning up.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings and sponsorship not served."
+   }
+  },
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: entry 438.06 over ma_50 406.02, ma_100 395.72, ma_200 313.67; from_52w_hi 0.0%, rs_rank_pct 90.29, rs LEADER spy20 7.82; flow 90.8, energy 84.0, coil strong, elder 10.0 ACCELERATION. Price is still under the pivot (pct_from_pivot -4.04, clear of 456.5), structure RANGE: the buy is the clear, not today. day_vol 1.44.",
+   "case": {
+    "for": "Leader coiled at the highs: rs_rank_pct 90.29, from_52w_hi 0.0%, flow 90.8, energy 84.0, coil lens strong, weekly and hourly HH/HL.",
+    "against": "structure 73.7 RANGE (no break), mp 48.0 BUILDING/DECELERATING, sector Momentum Fading - Hold, Don't Add, daily swing LH/LL, Undercut and rally FAILED (5/9), Episodic pivot (delayed) FAILED (7/10).",
+    "entry_trigger": "h1_close_above:pivot_high on vol_x_ge 1.4 (clear of 456.5); chase limit pivot_high+5pct.",
+    "wrong_if": "Daily close under ma_20 420.85, or a failed clear that closes back inside the range.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A failed clear on rising volume, or the range widening into a loose base.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings not served."
+   }
+  },
+  {
+   "ticker": "GMAB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Template passes on served fields: entry 54.07 over ma_50 40.05, ma_100 34.92, ma_200 31.26; from_52w_hi -5.62%, rs_rank_pct 97.74, rs LEADER spy20 51.46. No base yet: structure 55.8 RANGE, sma_dist 35.0%, 9.8% under the last swing high. day_vol 0.48 on the dip is the right signature (volume contracts on pullbacks, C6); mp FADING is R13, not decay. Buy only the recovery.",
+   "case": {
+    "for": "Strongest RS in the set (rs_spy_20d 51.46, rs_rank_pct 97.74, ret_63d 72.09) pulling back on dry volume (day_vol 0.48), 5.62% under the high: a possible flag.",
+    "against": "No identifiable base: structure 55.8 RANGE, sma_dist 35.0%, H1 below EMA9 with 9<21, 9.8% under the last swing high, sector Momentum Fading - Hold, Don't Add. A flag needs time.",
+    "entry_trigger": "Recovery: close_above:high_52w_close on vol_x_ge 1.4; chase limit high_52w_close+5pct.",
+    "wrong_if": "Daily close under ma_20 47.73, or the dip widening on rising volume.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Volume expanding on the decline drops it; a tight pause under the high lifts it.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings not served."
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Stage 2 leader pressing its pivot: entry 46.24 vs pivot_high 45.95 (pct_from_pivot 0.63), from_52w_hi 0.0%, rs_rank_pct 99.0, structure_shift BULLISH_BOS; weekly, daily and hourly HH/HL. Against: sma_distance_pct 39.69, base_range_pct 49.8 wide, and the room's finding is that the break has no participation. Held at 2 until volume arrives. Wrong under 45.23.",
+   "conviction_change": "R1 conviction 3 down to 2: Steenbarger's participation finding is right on C6, a break needs expanding volume; the wide base 49.8 was already a caution.",
+   "challenge_reply": "Obligation (participation): confirmation is a close above pivot_high on vol_x_ge 1.4, i.e. participation well above the thin read. Until it arrives the break is unconfirmed and I do not add. Technology is one exposure (WAY, BRZE, BOX, MSFT), not four reads; the PM sizes the cluster.",
+   "case": {
+    "for": "rs_rank_pct 99.0, from_52w_hi 0.0%, BULLISH_BOS with pct_from_pivot 0.63; all timeframes HH/HL pressing the highs, H1 at 93% of the day's range.",
+    "against": "Thin participation per the room (day_vol not on my row), sma_distance_pct 39.69 extended, base_range_pct 49.8 far wider than a flat base, no contraction count served.",
+    "entry_trigger": "h1_close_above:pivot_high with vol_x_ge 1.4, not before; chase limit pivot_high+5pct.",
+    "wrong_if": "Close under 45.23, or price sliding back into the wide base with the break unconfirmed on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume arriving on the break lifts it; a close back under pivot_high on a heavy day drops it.",
+    "cannot_see": [
+     "day_vol history",
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high-1.5pct"
+    ],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings not served."
+   }
+  },
+  {
+   "ticker": "TECH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Template passes: entry 72.82 over ma_20 72.65, ma_50 72.5, ma_100 71.7, ma_200 63.28; from_52w_hi -0.01%, rs_rank_pct 92.55, rs LEADER spy20 4.08, structure 75.8 BULLISH_BOS. A tight coil at the highs: sma_dist 0.44%, run_10d 0.3%, coil lens strong. div BEARISH/4 and elder INTERRUPTED are advisory cautions only; I do not lean on atr 0.13. day_vol 1.06.",
+   "case": {
+    "for": "Tight stack at the highs (ma_20 72.65, ma_50 72.5, sma_dist 0.44%), flat quarter (ret_63d 0.82) after ret_6m 53.56: a long quiet base with BOS and rs_rank_pct 92.55.",
+    "against": "div_state BEARISH with div_bear_count 4 against the BOS, elder INTERRUPTED, flow 39.5, day_vol 1.06 (no expansion), sector Momentum Fading - Hold, Don't Add.",
+    "entry_trigger": "h1_close_above:bar_high on vol_x_ge 1.4; chase limit bar_high+5pct.",
+    "wrong_if": "Daily close under ma_50 72.5, or a failed break closing back inside the coil on rising volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Volume expanding on a break lifts it; a close under the stack on heavy volume drops it.",
+    "cannot_see": [
+     "VCP count and depth",
+     "200-day slope",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings not served."
+   }
+  },
+  {
+   "ticker": "BOX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend Template cannot run: ma_50 None, ma_200 None, rs_rank_pct None, structure None on the packet row. The MTF line (weekly above EMA9 with HH/HL, 5.2% under the 20-wk high, daily below EMA9) is context only. No data is not a pass: abstain.",
+   "challenge_reply": "Technology is one exposure (WAY, BRZE, BOX, MSFT), not four reads. I filed WAY 3 and BRZE 2 on trend; BOX has no stack to test, so I abstain rather than borrow another seat's numbers.",
+   "case": {
+    "for": "Weekly HH/HL above EMA9 with 9>21, 5.2% under the 20-wk high; H1 0.9% under the 20-hr high at 96% of the day's range.",
+    "against": "Daily below EMA9 and 5.2% under the last swing high; nothing in the row lets me test the criteria.",
+    "entry_trigger": "Cannot support until the stack and rs_rank_pct are served and pass; then a clear of pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Abstain is wrong if the served stack passes every criterion and pivot_high clears on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Served ma_50, ma_100, ma_150, ma_200 and rs_rank_pct, plus a base description.",
+    "cannot_see": [
+     "ma_50",
+     "ma_200",
+     "rs_rank_pct",
+     "structure_shift"
+    ]
+   }
+  },
+  {
+   "ticker": "MSFT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Trend Template cannot run: ma_50 None, ma_200 None, rs_rank_pct None, structure None. The MTF line (weekly 9>21 but swing HH and LL, daily below EMA9, hourly below EMA9 with 9<21, 4.7% under the 20-day high) reads as a pullback in progress, not a pivot. No data is not a pass: abstain and declare the gap.",
+   "challenge_reply": "Technology is one exposure (WAY, BRZE, BOX, MSFT), not four reads. MSFT has no stack in the row, so I abstain; the PM sizes the cluster.",
+   "case": {
+    "for": "Weekly above EMA9 with 9>21, 4.7% under the 20-day high; a large leader that could be a normal pullback.",
+    "against": "Daily and hourly below EMA9, daily swing HH but LL, hourly 9<21; no stack, no rs, no structure to test.",
+    "entry_trigger": "Cannot support until the stack and rs_rank_pct are served and pass; then a clear of pivot_high on vol_x_ge 1.4.",
+    "wrong_if": "Abstain is wrong if the served stack passes every criterion and pivot_high clears on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Served ma_50, ma_100, ma_150, ma_200 and rs_rank_pct, plus a base description.",
+    "cannot_see": [
+     "ma_50",
+     "ma_200",
+     "rs_rank_pct",
+     "structure_shift"
+    ]
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Held, trend intact: entry 101.59 over ma_50 87.0, ma_100 84.79, ma_200 77.74; from_52w_hi 0.0%, rs_rank_pct 90.21, rs LEADER spy20 27.68, structure 87.4 BULLISH_BOS. Keep, do not add: sma_dist 16.77%, ext_atr20 3.32, run_10d 24.76%; an add belongs after the next tight pause. Event items are not mine.",
+   "case": {
+    "for": "Leader at the high: rs_spy_20d 27.68, downday 3.33, rs_rank_pct 90.21, structure 87.4, mp 93.0 STRONG, elder 10.0.",
+    "against": "Extended (sma_dist 16.77%, ext_atr20 3.32, run_10d 24.76%), mp STRONG/DECELERATING, coil lens warn, sector Momentum Fading - Hold, Don't Add, day_vol 0.98.",
+    "entry_trigger": "No fresh buy: hold. An add only on close_above:high_52w_close with vol_x_ge 1.4 after a tight pause.",
+    "wrong_if": "Daily close under ma_20 89.26: trend integrity lost, exit rather than renegotiate (C7).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A heavy-volume close under ma_20, or the stack turning down.",
+    "cannot_see": [
+     "written stop",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Deal and earnings news not served."
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Held: criteria 1-7 intact, entry 123.52 over ma_50 113.26, ma_100 111.4, ma_200 104.98; from_52w_hi -1.3%. Criterion 8 proxy is split: rs_rank_pct 64.9 misses the rank floor while rs LEADER spy20 9.72 passes. structure 73.7 RANGE, elder INTERRUPTED; mp FADING is R13, not decay. U&R MET reclaim day. Keep with a fixed stop, no add.",
+   "case": {
+    "for": "Trend intact within 1.3% of the high, rs LEADER (downday 1.28), leadership, insti_money and coil lenses strong, U&R MET reclaim day on the 9-day average (121.37).",
+    "against": "rs_rank_pct 64.9 fails the rank proxy, structure RANGE, elder INTERRUPTED, mp 73.0 FADING/DECELERATING, sector Momentum Fading - Hold, Don't Add; no pivot cleared.",
+    "entry_trigger": "Hold; add only on close_above:high_52w_close with vol_x_ge 1.4, and not while rs_rank_pct stays under the floor.",
+    "wrong_if": "Daily close under ma_20 120.99, back under the reclaimed 9-day line, ends the hold.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "rs_rank_pct rising through the floor lifts it; a close under ma_50 113.26 ends it.",
+    "cannot_see": [
+     "written stop",
+     "IBD RS rank",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": "Earnings not served."
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template broken: entry 112.430375 is under ma_50 112.56 (criterion 5) and under ma_20 119.53; rs LAGGARD spy20 -4.1 downday -2.5, run_10d -19.45%, from_52w_hi -19.6%, div BEARISH/4, mp 0.0, structure 28.0, daily 9<21. Held since 2026-11-10 at unrealised -247.23 with AQE HEALTH EXIT: a stop-discipline event (C7), not a re-entry on a lower price (C13).",
+   "opposing_case": "Best case for: rs_rank_pct 96.15, ret_6m 80.82, ma_50 112.56 over ma_100 98.85 and ma_200 78.24 still stacked, sector Recovering From Weakness - Watch for Entry, elder ACCUMULATION_BASE: a first dip in a young stage 2.",
+   "case": {
+    "for": "rs_rank_pct 96.15, ret_6m 80.82, 50 over 100 over 200 still stacked, weekly HH/HL, a first dip in a young advance.",
+    "against": "Price under ma_50 112.56 and ma_20 119.53, rs LAGGARD, run_10d -19.45%, div_bear_count 4, mp 0.0, structure 28.0, 21.9% under the 20-day high.",
+    "entry_trigger": "No buy. Re-examine only after a close back over ma_50 and ma_20 on vol_x_ge 1.4 with rs_spy_20d turning positive.",
+    "wrong_if": "OPPOSE is wrong if price closes back over ma_20 119.53 on expanding volume within a few sessions.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A reclaim of ma_20 119.53 on volume with the daily average stack turning up again.",
+    "cannot_see": [
+     "written stop",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 14635,
+   "votes": 9,
+   "sha256": "4d60241f1873"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 12604,
+   "votes": 8,
+   "sha256": "fdb4cdb4a2d0"
+  }
+ ]
+}

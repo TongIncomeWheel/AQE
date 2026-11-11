@@ -1,0 +1,50 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "WAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on expanding volume"
+   },
+   "wrong_if": "Daily close under ma_20, or back inside the old range under structure_shift_ref.",
+   "market_void": null,
+   "reason": "Weekly stack up, BULLISH_BOS, H1 at the 20-hr high (100% of range) but D close 3.08% under the 20-day high and day_vol is thin. Buy only on expansion, not at the extreme."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Held: add only on a daily close above the 52-week closing high after a tight pause"
+   },
+   "wrong_if": "Daily close under ma_20: trend integrity lost, exit rather than renegotiate.",
+   "market_void": null,
+   "reason": "Held, trend intact: D close 101.59 over EMA9, weekly HH/HL, 1.28% under 20-day high. Keep, no add while extended; add only on strength after a pause."
+  },
+  {
+   "ticker": "EBAY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Held: add only on a daily close above the 52-week closing high on expanding volume"
+   },
+   "wrong_if": "Daily close under ma_20, back under the reclaimed 9-day line, ends the hold.",
+   "market_void": null,
+   "reason": "Held, weekly and daily HH/HL, D close 123.52 is 3.3% under the 20-day high. Keep with a fixed stop, no add; rs_rank_pct proxy is split."
+  }
+ ],
+ "declarations": [
+  "trend_template: criteria 1-7 read from ma stack and from_52w_hi; criterion 3 not served; criterion 8 by proxy rs_rank_pct, not IBD RS rank (C3).",
+  "vcp_detail NOT_SERVED (C4); volume_signature partial (C6); earnings_growth and company_category NOT_SERVED (C1, C12, C13, C20)."
+ ]
+}

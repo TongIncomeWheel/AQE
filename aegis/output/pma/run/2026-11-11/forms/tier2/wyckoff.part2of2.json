@@ -1,0 +1,85 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SDGR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "H1",
+    "plain": "Pullback into the 20-day average holds, then buy stop above bar_high"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "D swing LH but HL, last bar red, H1 37% of the day's range, 4.1% under 20-day high: a pullback already under way. Wait for the zone (C3, C15)."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hold outside the break, then hourly close above bar_high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref: failed break, exit case.",
+   "market_void": null,
+   "reason": "Just cleared: D 0.3% above the last swing high, H1 2.1% above its swing high, W/D HH/HL. Held name; the Creek is the danger point (C17). Volume must confirm the hold."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above bar_high confirms the reclaim; buy stop, no limit"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "Shakeout and reclaim (C6) on strong volume; W/D HH/HL, D 2.5% under the last swing high. H1 9<21 so the reclaim needs follow-through today."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under base_low_20d would show the range failing; I would then still not be long.",
+   "market_void": null,
+   "reason": "RANGE near its top (D 1.8% under the last swing high); no edge to fade, no break to join, H1 swing LH/LL. Unclear read: move on (R10, C16)."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above bar_high confirms the reclaim; buy stop, no limit"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "Shakeout and reclaim (C6); D HH/HL 1.2% under the last swing high, H1 0.5% above its swing high. W swing HH but LL keeps conviction modest."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Pullback holds the broken level on lighter volume, then buy stop above bar_high"
+   },
+   "wrong_if": "Daily close under structure_shift_ref minus 0.5 ATR.",
+   "market_void": null,
+   "reason": "Volume with the move, D 0.1% under the last swing high, but W 19.5% above its swing high: extended from value. Wait for the hold (C3, C15)."
+  }
+ ],
+ "declarations": [
+  "Packet carries no pvp_*, vwap_14d, bar_* or structure_shift_ref rows; read rests on the W/D/H1 grid. High/low-volume nodes NOT_SERVED (R11).",
+  "No refutation of my claims in the packet (answer_pairs empty); answers is []."
+ ]
+}

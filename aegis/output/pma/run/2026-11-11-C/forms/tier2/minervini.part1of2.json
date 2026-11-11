@@ -1,0 +1,151 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "EMBJ-minervini-for~raschke",
+   "ticker": "EMBJ",
+   "to": "raschke",
+   "text": "Quote: \"this is chasing\". W/D/H1 all HH/HL, 1.1-1.2% under highs; my test is C5/C6: day_vol 2.22 is breakout volume, `sc_momentum` 81.2 and `flow` 100.0 confirm. `energy.squeeze_score` 0.0 is a missing coil, which I declared, so entry is continuation. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "ROIV-minervini-for~raschke",
+   "ticker": "ROIV",
+   "to": "raschke",
+   "text": "Quote: \"a digest is not a contraction\". Fair on the count: squeeze_score 0.0, so I call no VCP. But W HH, D 0.6% under 20d high, H1 88% of range on `flow` 96.1 and `structure` 92.6 is a leader holding near highs (C11). Stand, low weight on shape.",
+   "concede": false
+  },
+  {
+   "pair_id": "ADP-minervini-for~elder-lens",
+   "ticker": "ADP",
+   "to": "elder-lens",
+   "text": "Quote: \"Volume dry-up fails: bq_vol_dry 5.0\". C6 needs a base-relative dry-up; bq_vol_dry 5.0 of 25 does not show one, so I drop the dry-up claim. `flow` 84.2, `energy` 84.0 and squeeze_score 8.5 stand on W/D HH/HL.",
+   "concede": true
+  },
+  {
+   "pair_id": "MAC-minervini-against~livermore",
+   "ticker": "MAC",
+   "to": "livermore",
+   "text": "Quote: \"energy 61.3 is ordinary, not a trend failure\". Agreed: `mp` 97.0 with trend_score 20.0 and `structure` 84.2, D HH/HL 1.2% under high, is trend alignment my template cares about. ma50 under ma100 stays a caveat; the opposition is withdrawn.",
+   "concede": true
+  },
+  {
+   "pair_id": "PRCH-minervini-for~raschke",
+   "ticker": "PRCH",
+   "to": "raschke",
+   "text": "Quote: \"an expansion bar, not a contraction break\". True: squeeze_score 0.0 and W 19.5% over last swing high make this a thrust. Yet day_vol 1.82 at D 0.1% under swing high with `flow` 86.8 is C5 breakout volume. I keep it but wait, not chase.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last pivot high on rising volume"
+   },
+   "wrong_if": "Daily close under ma_20 or BEARISH_CHOCH",
+   "market_void": null,
+   "reason": "`subcomponents.energy.squeeze_score` 12.5 and `flow` 90.8 coil under the high; but `mp` 48.0 is weak and D swing LH/LL, so wait for the break."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above prior-day high after a tight pause"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`mp` 93.0 and `structure` 87.4 lead, but `subcomponents.energy.squeeze_score` 0.0 and a 24% run: chase (R5), enter only after a pause."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above prior-day high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`flow` 100.0, day_vol 2.22 and `sc_momentum` 81.2 at a high; `mp` 75.0 only at floor."
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`structure` 93.7 with `subcomponents.energy.squeeze_score` 12.5 coil 0.9% under the high; `mp` 80.0 decelerating."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`structure` 76.8 BOS and `flow` 78.9 at a high, but `mp` 86.0 decelerating and a mega-cap defensive: low weight."
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the 20-day high on expanding volume"
+   },
+   "wrong_if": "Daily close under ma_50",
+   "market_void": null,
+   "reason": "`structure` 96.8 and `sc_momentum` 81.9 lead, but ma50 is under ma100, W swing LH/LL and day_vol 0.67 thin."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`subcomponents.energy.squeeze_score` 12.5 coil and `energy` 84.0 under the high; `elder` 7.0 and `mp` 80.0 decelerating."
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on volume"
+   },
+   "wrong_if": "Daily close under ma_20",
+   "market_void": null,
+   "reason": "`flow` 96.1, `structure` 92.6 and `sc_momentum` 82.3 at 0.6% under the high; `mp` 75.0 at floor, no coil."
+  }
+ ],
+ "declarations": [
+  "Fundamentals, VCP count and IBD RS rank not served; Trend Template read from served averages only.",
+  "Bracket fields never used as a basis."
+ ]
+}

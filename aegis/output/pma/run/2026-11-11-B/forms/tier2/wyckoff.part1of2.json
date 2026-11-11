@@ -1,0 +1,63 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:pvp_vah",
+    "tf": "H1",
+    "plain": "Wait for price to come back to the value-area high, then buy the hourly close above the prior high."
+   },
+   "wrong_if": "Daily close under pvp_vah with no reclaim, or under bar_low (danger point).",
+   "market_void": null,
+   "reason": "TREND, D swing HH/HL, W swing HH/HL, but away from value (D close 47.42 vs ema21 44.3428). Do not chase (C3, C15); join at the test of pvp_vah on a buy stop (C7, C12). H1 swing LH/LL, 9<21 says wait."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Wait for a pullback to the broken Creek, then buy the hourly close above the prior high."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (break re-enters the old range), or under bar_low.",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS, W and D swing HH/HL, D close 64.26 only 1.0% above the last swing high but H1 swing HH but LL, 35% of day range. Extended on W (9.1% above swing high): test first (C3, C7)."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Wait for a pullback to the broken Creek, then buy the hourly close above the prior high."
+   },
+   "wrong_if": "Daily close under structure_shift_ref (price back through the old Creek).",
+   "market_void": null,
+   "reason": "TREND on W, D, H1 swing HH/HL, but D close 226.5 is 13.0% above the last swing high and the last bar is red: far from value. The move has left; wait for the next zone (C15)."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy the hourly close above the prior high once the break holds outside the Creek on better volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (re-entry to the old range, upthrust).",
+   "market_void": null,
+   "reason": "Fresh BULLISH_BOS, D close 118.51 vs W swing high 118.29: at the test, not extended. But D bar red, H1 below EMA9, and the break volume was light: potential upthrust until it holds (C5)."
+  }
+ ],
+ "declarations": [
+  "No refutations of my claims were in the packet; answers is empty.",
+  "Bracket fields are not used as a reason anywhere in this form (R1)."
+ ]
+}

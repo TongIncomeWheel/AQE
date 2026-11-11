@@ -1,0 +1,78 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "TGTX-minervini-for~raschke",
+   "ticker": "TGTX",
+   "to": "raschke",
+   "text": "\"Pivot clear did not hold into the close\": weak close is real on D and H1, so I move from act-now to wait-for-hold. Weekly still HH/HL with 9>21 and D 1.04% above swing high; rs_rank_pct is my proxy for criterion 8. Template holds; entry waits.",
+   "concede": false
+  },
+  {
+   "pair_id": "WAY-minervini-for~elder-lens",
+   "ticker": "WAY",
+   "to": "elder-lens",
+   "text": "\"buys a breakout at the extreme\": agreed on chase, so I wait for volume. But D swing HH but LL is not my test; weekly above EMA9, 9>21, HH/HL, 7.4% above swing high is the template. H1 at the high is strength, not weakness.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on expanding volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref, or the clear fails back on light volume.",
+   "market_void": null,
+   "reason": "Trend Template stack holds: D close 47.42 above EMA9 and EMA21, weekly HH/HL. D close is 2.45% under the 20-day high, so the buy is the clear, not today. H1 swing LH/LL: no pivot cleared yet."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high, showing the clear is held"
+   },
+   "wrong_if": "Daily close under structure_shift_ref: the break failed back into the base.",
+   "market_void": null,
+   "reason": "Weekly and daily HH/HL, D close 64.26 is 1.04% above the swing high. But H1 35.4% of the day's range: the pivot clear is not yet held into the close, so wait for the hold."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high on expanding volume"
+   },
+   "wrong_if": "Daily close under ma_20, or a clear that fails back on light volume.",
+   "market_void": null,
+   "reason": "All three frames HH/HL, D close 226.5 is 2.69% under the 20-day high 232.76. Buy the clear, not the approach; volume has not expanded."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on expanding volume"
+   },
+   "wrong_if": "Daily close under base_low_20d, or a close back under pivot_high on expanding volume.",
+   "market_void": null,
+   "reason": "D close 118.51 is only just over the weekly swing high 118.29, H1 below EMA9, D close 3.75% under the 20-day high. A pivot without participation can fail; wait for the volume print."
+  }
+ ],
+ "declarations": [
+  "trend_template: criteria 1-7 read from ma stack and from_52w_hi; criterion 3 not served; criterion 8 by proxy rs_rank_pct, not IBD RS rank (C3).",
+  "vcp_detail NOT_SERVED (C4); volume_signature partial (C6); earnings_growth and company_category NOT_SERVED (C1, C12, C13, C20)."
+ ]
+}

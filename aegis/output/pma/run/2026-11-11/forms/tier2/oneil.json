@@ -1,0 +1,215 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-11",
+ "declarations": [
+  "Market gate DELEGATED (C1-C3); I wrote no market read. Every SUPPORT is valid only into a confirmed uptrend.",
+  "Fundamentals NOT_AVAILABLE: C, A, S, I untested, nothing inferred from price or volume. base_stage NOT_AVAILABLE (C19).",
+  "Substitutes: rs_leadership for RS Rating, day_vol vs 20d for the 50d test, structure and lens.coil for base soundness. pivot_high is mostly unserved.",
+  "Fundamentals NOT_AVAILABLE: C, A, S, I untested. base_stage NOT_AVAILABLE (C19). pivot_high mostly unserved."
+ ],
+ "answers": [
+  {
+   "pair_id": "CAH-oneil-against~seow",
+   "ticker": "CAH",
+   "to": "seow",
+   "text": "\"div BEARISH/1 is a caution, not a veto.\" My C25 test: a high on lighter volume plus a bearish oscillator read is distribution. day_vol 0.85 is under 1.40; W swing LH/LL and D 3.3% under 20-day high show no breakout. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "TGTX-oneil-for~elder-lens",
+   "ticker": "TGTX",
+   "to": "elder-lens",
+   "text": "\"Inside the buy zone at pct_from_pivot 1.04 is a breakout read.\" Agreed, and that is my buy: C17 allows up to 5% past the pivot. Distance from ma20 is value-line language, not my test. W and D HH/HL, day_vol 3.1. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "TMO-oneil-against~wyckoff",
+   "ticker": "TMO",
+   "to": "wyckoff",
+   "text": "\"rs and group state are not my test.\" They are mine: C9 and C10 make leadership a gate. rs_leadership IN-LINE with downday 0.21 is not LEADER, so the L test fails whatever the retest shows. W/D/H1 HH/HL noted. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "SDGR-oneil-against~seow",
+   "ticker": "SDGR",
+   "to": "seow",
+   "text": "\"LAGGARD contradicts rs_rank_pct 99.33, ret_63d 73.97.\" rs_rank_pct is not on my menu. My L test reads rs_leadership: LAGGARD, downday -2.37, falls with the tape. Entry 32.41 vs ma200 17.21 is past my C24 70 pct line. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "SDGR-oneil-against~wyckoff",
+   "ticker": "SDGR",
+   "to": "wyckoff",
+   "text": "\"LAGGARD downday -2.37 is not my test.\" It is mine (C9, C10). Grid: W HH/HL, D LH but HL 4.3% above swing high, H1 37% of range; none repairs LAGGARD. entry 32.41 vs ma200 17.21 is my climax line (C24), not entry location. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "MAC-oneil-against~seow",
+   "ticker": "MAC",
+   "to": "seow",
+   "text": "\"Weekly above EMA9 with 9>21 is not a broken weekly.\" Agreed, I never called it broken. My C16 test fails: day_vol 1.03 is under 1.40 and lens coil warn means no tight base (C12). W swing HH but LL, 4.0% under 20-wk high. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "MAC-oneil-against~wyckoff",
+   "ticker": "MAC",
+   "to": "wyckoff",
+   "text": "\"coil warn is not my test.\" It is mine: R3, no tight base means no pivot. day_vol 1.03 is under 1.40 (C16). D HH/HL 1.2% under high and H1 HH/HL are noted but a drift near highs without volume is not a breakout. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-oneil-against~livermore",
+   "ticker": "PRCH",
+   "to": "livermore",
+   "text": "\"ma200, coil and the setup-grade flag are not my test.\" ma200 and coil are: R7 and R3. entry 21.95 vs ma200 12.47 is 76 pct over, past my 70 pct climax line (C24). Grid HH/HL on W, D, H1 and day_vol 1.82 noted. Held.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-oneil-against~seow",
+   "ticker": "PRCH",
+   "to": "seow",
+   "text": "\"sma_dist 23.76 and entry vs ma200 12.47 are extension, not a fault.\" For C24 it is the fault: a name 70 pct or more over its 200-day is sold into, not bought. D 0.1% under swing high, day_vol 1.82 noted. Held.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close through pivot_high 456.5 on a volume surge"
+   },
+   "wrong_if": "Close under ma_50 406.02, or a failed break of pivot_high 456.5 on thin volume.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "LEADER coiled under pivot_high 456.5 (pct_from_pivot -4.04), lens coil strong. W HH/HL; D LH/LL and day_vol 1.44 only just clears 1.40, so wait for the break. Gate delegated, fundamentals unseen."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if it clears the 20-day high on day_vol of at least 1.40 with div NONE.",
+   "market_void": null,
+   "reason": "Nothing confirms at the high: day_vol 0.85 under 1.40 and div BEARISH/1 (C25). W swing LH/LL, D 3.3% under 20-day high, lens coil ok only. LEADER is real but there is no tight base."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "An hourly close holds over pivot_high 63.6; no add past 5 pct over it"
+   },
+   "wrong_if": "Close back under pivot_high 63.6 on heavy volume.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Breakout read: BULLISH_BOS on day_vol 3.1, pct_from_pivot 1.04 inside the 5 pct buy limit (C17), LEADER, W and D HH/HL. H1 35% of range after the thrust is a fade I count against; conviction 3."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight pause, an hourly close over yesterday's high"
+   },
+   "wrong_if": "Close under ma_50 74.2, or volume fades under 1.40 on the next push.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Volume confirms: day_vol 2.22, LEADER, structure ABOVE_STRUCTURE, D 1.1% under 20-day high. Lens coil warn and D 4.9% above last swing high mean wait for a pause, then the break; no add past 5 pct."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close through pivot_high on at least 1.4x volume"
+   },
+   "wrong_if": "Close under ma_50 90.24, or the break fails on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Best coil in the set: all four lenses strong, BULLISH_BOS, D and W 0.5% under their highs, H1 0.1% under 20-hr high. day_vol 0.84 is dry, not a break yet; buy only the volume break. Conviction 3."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if rs_leadership turns LEADER and it breaks pivot_high on at least 1.4x volume.",
+   "market_void": null,
+   "reason": "Fails the L test (R2, C9): rs_leadership IN-LINE, downday 0.21, so it moves with its group. Coil is real, day_vol 0.74 dry, W and D 0.5% under highs, but no leader label and no volume break."
+  },
+  {
+   "ticker": "SDGR",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if rs_leadership turns LEADER and it breaks pivot_high on at least 1.4x volume.",
+   "market_void": null,
+   "reason": "Fails the L test (R2, C9): LAGGARD, downday -2.37. entry 32.41 vs ma200 17.21 is past my 70 pct climax line (C24); day_vol 0.99 is under 1.40. D swing LH but HL."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close through the 20-day high on at least 1.4x volume (add only then)"
+   },
+   "wrong_if": "Close under ma_50 87.0 on heavy volume ends the hold (R8).",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Held: KEEP, no add. LEADER, BULLISH_BOS, W and D HH/HL, price far over ma_50 87.0. day_vol 0.98 does not confirm an add (C21); lens coil warn."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a tight pause, an hourly close over yesterday's high"
+   },
+   "wrong_if": "Close under ma_50 41.98, or volume fades under 1.40 on the next push.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Volume shows: day_vol 2.16 passes 1.40, LEADER, W and D HH/HL, D 2.5% under 20-day high. Lens coil warn and H1 9<21 LH/LL: wait for a pause, then the break."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close through pivot_high on at least 1.4x volume"
+   },
+   "wrong_if": "Close under ma_50 279.86, or the break fails on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend (C1) voids the entry",
+   "reason": "Coiled leader: lens coil strong, LEADER, W and D HH/HL, D 1.8% under 20-day high, day_vol 0.56 dry. div BEARISH/1 and no BOS yet cap it at 2; buy only the volume break."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if a tight base completes and it breaks pivot_high on at least 1.4x volume.",
+   "market_void": null,
+   "reason": "No tight base and no volume: lens coil warn (R3), day_vol 1.03 under 1.40 (C16). W swing HH but LL, D 1.2% under 20-day high. LEADER and structure are real but there is no pivot."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "OPPOSE",
+   "wrong_if": "Wrong if it builds a tight base and breaks pivot_high on at least 1.4x volume.",
+   "market_void": null,
+   "reason": "Climax line holds (R7, C24): entry 21.95 vs ma200 12.47 is past my 70 pct line. day_vol 1.82 passes and LEADER is real, but a name that far over its 200-day is sold into, not bought. Lens coil warn."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of2.json",
+   "bytes": 6768,
+   "sha256": "f2f3020f6168"
+  },
+  {
+   "file": "oneil.part2of2.json",
+   "bytes": 3120,
+   "sha256": "e7bd44eb5158"
+  }
+ ]
+}

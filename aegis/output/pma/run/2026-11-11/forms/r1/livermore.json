@@ -1,0 +1,96 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "EMBJ",
+   "reason": "Established uptrend, structure_shift ABOVE_STRUCTURE (price cleared its confirmed pivot), mp_state STRONG and ACCELERATING, with day_vol 2.22 showing participation on the break. C5 entry on strength, not on a pullback.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "atr_14d", "entry"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 81.5; structure_shift ABOVE_STRUCTURE; sma_distance_pct 11.18 (extension from 50d, not proximity to a high)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9"], "observed": "entry 82.5; atr_14d 3.06; bracket.stop null, bracket.valid False. My own level: close below entry less 2x atr_14d = 76.38 (my translation, not 6 points)", "verdict": "partial", "fields": ["entry", "atr_14d", "bracket.stop", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI, sector_trend_state Momentum Fading; peers AER, DAL, UAL also show structure_shift ABOVE_STRUCTURE", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; fresh entry only, any add only at higher prices after it works; never into weakness", "verdict": "partial", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C18"], "observed": "declared block filed; thresholds translated via atr_14d 3.06; mp_state STRONG, mp_accel_state ACCELERATING read as analogue; fill difficulty NOT_SERVED (day_vol 2.22 proxy only)", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "day_vol"]}
+   ],
+   "falsifier": "Close below 76.38 (entry less 2x atr_14d, my translation) or structure_shift turning BEARISH_CHOCH ends the long case; a danger-signal reaction from the day's high ends it earlier."
+  },
+  {
+   "ticker": "CAH",
+   "reason": "Healthcare leader-type tape: structure_shift ABOVE_STRUCTURE, structure 72.6, mp_state STRONG and ACCELERATING. Breakout state confirmed by structure, entered on strength; peers in the same group confirm (C14).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "atr_14d", "entry"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 72.6; structure_shift ABOVE_STRUCTURE; sma_distance_pct 14.32", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9"], "observed": "entry 276.79; atr_14d 7.16; bracket.stop null, bracket.valid False. My own level: close below entry less 2x atr_14d = 262.47 (my translation)", "verdict": "partial", "fields": ["entry", "atr_14d", "bracket.stop", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state Momentum Fading; peers EW, TMO, LLY, HNGE, TGTX all show structure_shift ABOVE_STRUCTURE or BULLISH_BOS", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; add only at successively higher prices once profitable", "verdict": "partial", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C18"], "observed": "declared block filed; translation via atr_14d 7.16; mp_state STRONG / mp_accel_state ACCELERATING as analogue; fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state"]}
+   ],
+   "falsifier": "Close below 262.47 (entry less 2x atr_14d, my translation) or BEARISH_CHOCH in structure_shift; peers in healthcare failing to hold their structure also revises the group call."
+  },
+  {
+   "ticker": "EW",
+   "reason": "Structure 84.2 with structure_shift ABOVE_STRUCTURE, mp_state STRONG and ACCELERATING, sma_distance_pct 16.28: a confirmed trend continuing with new strength in a group where several names confirm.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "atr_14d", "entry"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 84.2; structure_shift ABOVE_STRUCTURE; sma_distance_pct 16.28", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9"], "observed": "entry 104.01; atr_14d 2.93; bracket.stop null, bracket.valid False. My own level: close below entry less 2x atr_14d = 98.15 (my translation)", "verdict": "partial", "fields": ["entry", "atr_14d", "bracket.stop", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state Momentum Fading; peers CAH, TMO, LLY, HNGE confirm with ABOVE_STRUCTURE", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; add only on higher prices after it works", "verdict": "partial", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C18"], "observed": "declared block filed; atr_14d 2.93 translation; mp_state STRONG, mp_accel_state ACCELERATING as analogue; fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state"]}
+   ],
+   "falsifier": "Close below 98.15 (entry less 2x atr_14d, my translation) or structure_shift turning BEARISH_CHOCH."
+  },
+  {
+   "ticker": "TMO",
+   "reason": "structure_shift ABOVE_STRUCTURE with structure 73.7 and mp_state BUILDING, mp_accel_state ACCELERATING: trend resuming through its pivot, a leader of the healthcare group confirmed by CAH and EW.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "atr_14d", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 73.7; structure_shift ABOVE_STRUCTURE; sma_distance_pct 8.04", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9"], "observed": "entry 718.2; atr_14d 21.76; bracket.stop null, bracket.valid False. My own level: close below entry less 2x atr_14d = 674.68 (my translation)", "verdict": "partial", "fields": ["entry", "atr_14d", "bracket.stop", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state Momentum Fading; CAH, EW, LLY confirm via ABOVE_STRUCTURE", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; add only at higher prices", "verdict": "partial", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C18"], "observed": "declared block filed; atr_14d 21.76 translation; mp_state BUILDING / mp_accel_state ACCELERATING as analogue; fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state"]}
+   ],
+   "falsifier": "Close below 674.68 (entry less 2x atr_14d, my translation) or BEARISH_CHOCH in structure_shift."
+  },
+  {
+   "ticker": "TGTX",
+   "reason": "structure_shift BULLISH_BOS (close above the confirmed pivot high) on day_vol 3.1, mp_state STRONG. Break on heavy participation is the entry on strength; mp_accel_state DECELERATING and structure 63.2 keep conviction modest.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "atr_14d", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 63.2; structure_shift BULLISH_BOS; sma_distance_pct 14.36", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9"], "observed": "entry 64.26; atr_14d 3.25; bracket.stop null, bracket.valid False. My own level: close below entry less 2x atr_14d = 57.76 (my translation)", "verdict": "partial", "fields": ["entry", "atr_14d", "bracket.stop", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state Momentum Fading; CAH, EW, TMO, LLY confirm with ABOVE_STRUCTURE", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; add only above the break after it works", "verdict": "partial", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C18"], "observed": "declared block filed; atr_14d 3.25 translation; mp_state STRONG, mp_accel_state DECELERATING as analogue; day_vol 3.1 is a proxy only, fill difficulty NOT_SERVED", "verdict": "partial", "fields": ["atr_14d", "mp_state", "mp_accel_state", "day_vol"]}
+   ],
+   "falsifier": "Close below 57.76 (entry less 2x atr_14d, my translation) or a failure to follow through after the break, which is itself a danger signal (C17)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "KEEP", "line": "structure 73.7, structure_shift RANGE (inside the swing, no CHoCH), mp_state FADING and DECELERATING but no danger signal; no stop order, so my own line is close below entry 123.52 less 2x atr_14d 3.85 = 115.82."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "structure 87.4, structure_shift BULLISH_BOS, mp_state STRONG; trend intact, let it run (C15). No stop order: my own line is close below entry 101.59 less 2x atr_14d 3.71 = 94.17; no adds into weakness (C4)."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "structure 28.0, structure_shift RANGE, sma_distance_pct -2.86 under the 50-day, mp_state FADING and DECELERATING: no established uptrend left (C5) and a loss to be taken before it grows (C3); no stop order is on."}
+ ],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null with bracket.valid False on all five nominees; I named my own invalidation from entry less 2x atr_14d instead (my translation)."},
+  {"field": "bracket.stop_type", "impact": "null on all five nominees; no engine stop basis to cite, so the invalidation level is my own."},
+  {"field": "pct_from_52w_high", "impact": "not on my menu (pending from AQE); proximity to a recent high could not be cited, so new-high confirmation rests on structure_shift alone."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS via structure/structure_shift + sma_distance_pct (C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d, not literal 6pts (C7, C18-C20); the 2x atr_14d multiplier is my own translation",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger_lesson: none injected for this round; no standing lesson applies"
+ ],
+ "shortfall_reason": "Five names clear the trend-plus-structure walk with mp_state STRONG or BUILDING and structure_shift at ABOVE_STRUCTURE or BULLISH_BOS; the other at-structure names read mp_state FADING with mp_accel_state DECELERATING, or sit far extended on sma_distance_pct. Not padded."
+}

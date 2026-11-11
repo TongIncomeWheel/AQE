@@ -1,0 +1,63 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "LTH",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "TGTX",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SN",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "ELF",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger h1_close_above:bar_high buys a prior-bar high, not the pivot. With dist_to_20bar_high_pct 3.75 and D close 118.51 only just over the weekly swing high 118.29, that is anticipation, not the clear on volume (C5).",
+   "would_clear": "Trigger h1_close_above:pivot_high on expanding volume, the pivot clear being the buy."
+  },
+  {
+   "ticker": "WAY",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "GPN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "GPN is held and extended (dist_to_20bar_high_pct 1.28, from_52w_hi 0.0). An hourly close above yesterday's high is an add on an extended name; my trigger is a D close above the 52-week closing high after a tight pause.",
+   "would_clear": "Trigger close_above:high_52w_close on D after a tight pause, volume expanding."
+  },
+  {
+   "ticker": "EBAY",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "Add only, never a fresh entry. The wrong-if (close_below:ma_50) is looser than the D close under ma_20 where I would exit a held name; my stop discipline is fixed before entry and executed at once (C7).",
+   "objection": null,
+   "would_clear": null
+  }
+ ]
+}

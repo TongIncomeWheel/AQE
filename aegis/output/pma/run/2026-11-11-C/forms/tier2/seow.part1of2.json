@@ -1,0 +1,122 @@
+{
+ "voice": "seow",
+ "date": "2026-11-11",
+ "answers": [
+  {
+   "pair_id": "BTSG-seow-for~raschke",
+   "ticker": "BTSG",
+   "to": "raschke",
+   "text": "\"A break needs prior contraction... squeeze_score 0.0\" - not my test. Position system C26: the resistance break is the entry, strength is the signal; no coil is asked. On the grid D is 1.9% over the last swing high, H1 at 100% of range, W 1.7% under 20-wk high; `structure` 87.4, `mp` 93.0 stand.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d), or `subcomponents.flow.cmf` under 0",
+   "market_void": null,
+   "reason": "Position system: `flow` 90.8, `subcomponents.flow.cmf` 0.31 (COM proxy) and `elder` 10.0 are strong; `mp` 48.0 is soft and no break is printed (D swing LH/LL, 0.9% over last swing high), so the break must print first.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high, then the buy stop over yesterday's high"
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below pivot_high or the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `structure` 87.4, `mp` 93.0, `flow` 78.9, `subcomponents.flow.cmf` 0.16; D 0.0% under 20-day high, H1 at 100% of range. Strength is the signal.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `flow` 100.0, `subcomponents.flow.cmf` 0.14, `structure` 81.5, `elder` 10.0; D HH/HL, 1.1% under 20-day high. W LH but HL is a caution; `mp` 75.0.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "LW",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `structure` 93.7, `subcomponents.flow.cmf` 0.23, `mp` 80.0, `elder` 10.0; D HH/HL 0.9% under 20-day high, H1 0.2% under swing high. W HH but LL is a caution.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below pivot_high or the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `structure` 76.8, `mp` 86.0, `flow` 78.9, `elder` 9.0; D HH/HL 0.5% under swing high. COM marginal (`subcomponents.flow.cmf` 0.06), so a caution, not a reject.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "DAL",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d); W swing LH/LL persists",
+   "market_void": null,
+   "reason": "Position system: `structure` 96.8, `flow` 84.2, `mp` 87.0, `elder` 10.0, `subcomponents.flow.cmf` 0.10. W swing LH/LL conflicts with C21 (house rule), so wait for the close above the pivot first.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high, then the buy stop over yesterday's high"
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below pivot_high or the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `energy` 84.0, `mp` 80.0, `structure` 63.2, `subcomponents.flow.cmf` 0.08; `elder` 7.0 is TIF-weak and D sits 3.0% under the swing high, so wait for the close above the pivot.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high, then the buy stop over yesterday's high"
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `flow` 96.1, `structure` 92.6, `subcomponents.flow.cmf` 0.21, `elder` 10.0, `mp` 75.0; D 0.6% under 20-day high, H1 at 88% of range. W HH but LL is a caution.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  }
+ ],
+ "declarations": [
+  "Proxies: cmf/mfi stand in for COM, elder for TIF; sector_rrg_quadrant and cci_20 are not served, so no swing set-up is asserted."
+ ]
+}

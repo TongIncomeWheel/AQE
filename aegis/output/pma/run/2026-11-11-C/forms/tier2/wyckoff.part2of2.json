@@ -1,0 +1,98 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "EBAY",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong to abstain if a daily close above pivot_high comes on volume, or a spring under base_low_20d reclaims.",
+   "market_void": null,
+   "reason": "Mid-range, no edge: `energy` 85.7 is high but `flow` 56.6, `elder` 7.0 and `mp` 73.0 are only fair; nothing to fade and no break to join (C2, R10)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above the prior bar high, repairing the H1 9<21 and LH/LL read."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "`structure` 94.7, `mp` 97.0, `sc_momentum` 80.7 strong; `day_vol` 2.16 on a down-leg and H1 swing LH/LL: effort without result, wait for hourly repair (C5)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on volume; do not buy inside the range top."
+   },
+   "wrong_if": "Daily close under pivot_high-0.5atr, or close_below:pvp_poc.",
+   "market_void": null,
+   "reason": "Range top: `flow` 84.2, `energy` 84.0, `sc_momentum` 80.6 strong but `mp` 76.0 at the floor, `elder` 7.0 and dry volume; I need a break that holds (C1, C5)."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly pullback to the broken level, then a buy stop above the bar high."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "`mp` 97.0, `flow` 81.6, `structure` 84.2, `elder` 10.0 strong; `energy` 61.3 is the weak leg and weekly swing is HH but LL, price stretched from ma_20 (C3, C7)."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "H1",
+    "plain": "Hourly pullback into the broken level, then follow-through, not a chase."
+   },
+   "wrong_if": "Daily close under structure_shift_ref-0.5atr.",
+   "market_void": null,
+   "reason": "`flow` 86.8, `elder` 10.0, `sc_momentum` 76.6, `structure` 74.5 strong; `mp` 75.0 at the floor and price far above ma_20 and 19.5% above the weekly swing high (R2, C15)."
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high; enter with a buy stop above that bar."
+   },
+   "wrong_if": "Daily close under ma_20-0.5atr.",
+   "market_void": null,
+   "reason": "Near value, 1.6% under the swing high on light volume: `structure` 82.1, `energy` 85.7, `mp` 83.0, `elder` 10.0; `flow` 50.0 is the soft leg (C7, C12)."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high; enter with a buy stop above that bar."
+   },
+   "wrong_if": "Daily close under ma_20-0.5atr.",
+   "market_void": null,
+   "reason": "Orderly light-volume pullback after impulse: `flow` 88.2, `mp` 96.0, `sc_momentum` 82.9, `structure` 78.9, `elder` 10.0; weekly swing HH but LL is the caution (C7, C12)."
+  }
+ ],
+ "declarations": [
+  "Method limit: pvp_poc/pvp_vah/pvp_val and structure_shift_ref levels are named by field only, not seen as numbers.",
+  "No bracket field is used as a basis for any decision (R1); danger points are named from structure."
+ ]
+}

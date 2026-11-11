@@ -1,0 +1,47 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-11",
+ "round": 2,
+ "tickets": [
+  {
+   "ticker": "EMBJ",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ADVANCE on h1_close_above:bar_high buys a break with D 4.9% above the last swing high and W swing LH; price is away from value. day_vol 2.22 is real strength, but extension sets entry location: WATCH at the test (C3, C15).",
+   "would_clear": "Verdict WATCH with trigger in_zone:structure_shift_ref on lighter volume, then h1_close_above:bar_high on a buy stop."
+  },
+  {
+   "ticker": "KO",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "in_zone:ma_20 is the wrong trigger: structure_shift BULLISH_BOS means the pullback is done (C3, C7), and a zone is not a trigger bar. day_vol 0.84 keeps the break an upthrust risk until it holds (C5).",
+   "would_clear": "Trigger h1_close_above:bar_high read as a wide top-third bar with vol_x_ge:1.2 on a buy stop (C12), no resting limit."
+  },
+  {
+   "ticker": "TMO",
+   "answer": "OBJECT",
+   "conviction": 3,
+   "reservation": null,
+   "objection": "h1_close_above:bar_high carries no volume term; with day_vol 0.74 it can fire on a dry break, a potential upthrust (C5). My trigger needs clv_ge:0.67 with vol_x_ge:1.2 on a buy stop (C12, R6).",
+   "would_clear": "The volume clause (clv_ge:0.67, vol_x_ge:1.2) written into the ticket's trigger."
+  },
+  {
+   "ticker": "MAC",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "in_zone:ma_20 is a zone, not a trigger bar (C12). structure_shift ABOVE_STRUCTURE with D 1.2% under 20-day high; W swing HH but LL and day_vol 1.03 keep the case modest, and it waits on a pullback that may not come.",
+   "would_clear": "Trigger h1_close_above:bar_high with volume (vol_x_ge:1.2) on a buy stop, or W swing resolving."
+  },
+  {
+   "ticker": "PRCH",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "ADVANCE on h1_close_above:pivot_high buys a name W 19.5% above its swing high: away from value, the move has left without me, wait for the next zone (C3, C15). Strength is real, day_vol 1.82; I do not oppose the name.",
+   "would_clear": "Verdict WATCH with in_zone:structure_shift_ref, a hold on lighter volume, then h1_close_above:bar_high on a buy stop."
+  }
+ ]
+}

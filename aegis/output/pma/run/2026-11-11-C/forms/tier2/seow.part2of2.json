@@ -1,0 +1,95 @@
+{
+ "voice": "seow",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "EBAY",
+   "stance": "ABSTAIN",
+   "wrong_if": "Held name: close below the support line max(fib_swing_low, base_low_20d) is the exit",
+   "market_void": null,
+   "reason": "Neither system fires: no resistance break, COM does not confirm (`subcomponents.flow.cmf` -0.05, `flow` 56.6, `elder` 7.0). `energy` 85.7 and `structure` 73.7 are sound; no new entry."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d), or `elder` under 7",
+   "market_void": null,
+   "reason": "Position system: `structure` 94.7, `mp` 97.0, `sc_momentum` 80.7. COM does not confirm (`subcomponents.flow.cmf` -0.03, `subcomponents.flow.mfi` 30.93), so wait for flow to turn before the buy stop.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Pre-break coil: `flow` 84.2, `energy` 84.0, `subcomponents.flow.cmf` 0.15, `sc_momentum` 80.6; `elder` 7.0 no pattern and D 1.8% under swing high, so the break must print first.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high, then the buy stop over yesterday's high"
+   }
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `structure` 84.2, `mp` 97.0, `flow` 81.6, `elder` 10.0; COM faint (`subcomponents.flow.cmf` 0.09), `energy` 61.3, W HH but LL. Thin edge, so wait.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `flow` 86.8, `structure` 74.5, `elder` 10.0, `subcomponents.flow.cmf` 0.16, `sc_momentum` 76.6; D 0.1% under swing high, W HH/HL. `mp` 75.0 steady.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "EL",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d), or `subcomponents.flow.cmf` under 0",
+   "market_void": null,
+   "reason": "Position system: `energy` 85.7, `structure` 82.1, `mp` 83.0, `elder` 10.0 but fund flow is thin (`flow` 50.0, `subcomponents.flow.cmf` 0.01, `subcomponents.flow.mfi` 38.75); wait for COM to firm.",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "wrong_if": "Close below the support line max(fib_swing_low, base_low_20d)",
+   "market_void": null,
+   "reason": "Position system: `flow` 88.2, `mp` 96.0, `structure` 78.9, `elder` 10.0, `subcomponents.flow.cmf` 0.16; H1 0.3% under 20-hr high. D is 5.2% under swing high and W HH but LL: a caution.",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high"
+   }
+  }
+ ],
+ "declarations": [
+  "Proxies: cmf/mfi stand in for COM, elder for TIF; sector_rrg_quadrant and cci_20 are not served, so no swing set-up is asserted."
+ ]
+}

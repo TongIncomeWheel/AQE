@@ -1,0 +1,236 @@
+{
+ "advance": {
+  "EMBJ": {
+   "triggers": [
+    {
+     "id": "EMBJ-buy0",
+     "kind": "close_above",
+     "level": 83.46,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "EMBJ: an hourly candle closes above 83.46 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "EMBJ-touch",
+     "kind": "trade_above",
+     "level": 83.46,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "EMBJ traded through yesterday's intraday high 83.46: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "EMBJ-dead",
+     "kind": "close_below",
+     "level": 66.26,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "EMBJ closed under 66.26, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 83.46; volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "A daily close under 66.26 (2 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "HUM": {
+   "triggers": [
+    {
+     "id": "HUM-buy0",
+     "kind": "close_above",
+     "level": 456.5,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "HUM: an hourly candle closes above 456.5 (4 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "HUM-touch",
+     "kind": "trade_above",
+     "level": 443.03,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HUM traded through yesterday's intraday high 443.03: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "HUM-dead",
+     "kind": "close_below",
+     "level": 420.85,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "HUM closed under 420.85, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above pivot_high 456.5; volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "A daily close under 420.85 (2 analysts' exit line)."
+  },
+  "CAH": {
+   "triggers": [
+    {
+     "id": "CAH-buy0",
+     "kind": "close_above",
+     "level": 278.07,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CAH: an hourly candle closes above 278.07 (1 analyst's not shared (no majority) buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "CAH-touch",
+     "kind": "trade_above",
+     "level": 278.07,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CAH traded through yesterday's intraday high 278.07: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CAH-wait",
+     "kind": "trade_below",
+     "level": 256.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CAH is back in the wait area 256.63-256.63."
+    },
+    {
+     "id": "CAH-dead",
+     "kind": "close_below",
+     "level": 262.47,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CAH closed under 262.47, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "A daily close under 262.47 (1 analyst's exit line)."
+  },
+  "TGTX": {
+   "triggers": [
+    {
+     "id": "TGTX-buy0",
+     "kind": "close_above",
+     "level": 68.03,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "TGTX: an hourly candle closes above 68.03 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "TGTX-touch",
+     "kind": "trade_above",
+     "level": 68.03,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TGTX traded through yesterday's intraday high 68.03: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "TGTX-wait",
+     "kind": "trade_below",
+     "level": 63.6,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TGTX is back in the wait area 57.71-63.6."
+    },
+    {
+     "id": "TGTX-dead",
+     "kind": "close_below",
+     "level": 63.6,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "TGTX closed under 63.6, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 68.03; an hourly candle closes above pivot_high 63.6; volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "A daily close under 63.6 (5 analysts' exit line)."
+  },
+  "GPN": {
+   "triggers": [
+    {
+     "id": "GPN-buy0",
+     "kind": "close_above",
+     "level": 102.91,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "GPN (held): an hourly candle closes above 102.91 (4 analysts' shared add line). ADD question only; your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "GPN-touch",
+     "kind": "trade_above",
+     "level": 102.91,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "GPN traded through yesterday's intraday high 102.91: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "GPN-wait",
+     "kind": "trade_below",
+     "level": 101.32,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "GPN is back in the wait area 101.32-101.32."
+    }
+   ],
+   "confirms": "ADD question: an hourly candle closes above bar_high 102.91; volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "The broker stop None is the exit."
+  },
+  "LTH": {
+   "triggers": [
+    {
+     "id": "LTH-buy0",
+     "kind": "close_above",
+     "level": 47.62,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "LTH: an hourly candle closes above 47.62 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "LTH-touch",
+     "kind": "trade_above",
+     "level": 47.62,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "LTH traded through yesterday's intraday high 47.62: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "LTH-wait",
+     "kind": "trade_below",
+     "level": 45.04,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "LTH is back in the wait area 41.61-45.04."
+    },
+    {
+     "id": "LTH-dead",
+     "kind": "close_below",
+     "level": 43.88,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "LTH closed under 43.88, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 47.62; volume at least 1.4x normal for the time of day; holds above today's VWAP",
+   "kills": "A daily close under 43.88 (1 analyst's exit line)."
+  }
+ },
+ "held": {
+  "GPN": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop None (None None, None).",
+   "against": "Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit."
+  },
+  "EBAY": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop None (None None, None).",
+   "against": "Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit."
+  },
+  "RBRK": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop None (None None, None).",
+   "against": ""
+  }
+ }
+}

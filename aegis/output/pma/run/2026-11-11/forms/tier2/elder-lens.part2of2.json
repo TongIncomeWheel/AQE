@@ -1,0 +1,69 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-11",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SDGR",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "elder 1 or lower, or a close under ma20, would make a long wrong; none is proposed.",
+   "market_void": null,
+   "reason": "elder 10.0 [10, 10, 10, 10, 10] summer plateau (C20), no transition (C4). D swing LH but HL and a red D bar on the last session; nothing to propose."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A single-bar drop in elder_5d, or a close under ma20, makes the hold a tighten or exit case.",
+   "market_void": null,
+   "reason": "Held. elder 10.0 [7, 7, 7, 7, 10]: no single-bar drop, so no R7 tighten. The rise is blue to green, not red giving way; a pinned 10 is summer (C20) and price is far over ma20. Keep, no add."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "elder 1 or lower, or a close under ma20, would make a long wrong; none is proposed.",
+   "market_void": null,
+   "reason": "elder 7.0 [10, 10, 7, 7, 7] blue plateau after green went away three bars back; no event on the last bar. H1 swing LH/LL with 9<21. Not red, nothing forbidden, nothing fresh to propose."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "elder 1 or lower, or a close under ma20, would make a long wrong; none is proposed.",
+   "market_void": null,
+   "reason": "elder 7.0 [10, 10, 7, 7, 7] blue plateau, no event on the last bar. mp 76.0 FADING; H1 swing LH/LL. Trend leg is mixed and there is no transition bar (C9, C22)."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Price pulls back into the 20-day average with elder still at 7 or more."
+   },
+   "wrong_if": "Daily close under ma20, or elder at or below 1.",
+   "market_void": null,
+   "reason": "elder 10.0 [10, 7, 7, 7, 10] CORRECTION_REENTRY, mp 97.0 STRONG: blue to green on the last bar, the R8 analogue (volume half unread). D swing HH/HL, above EMA9, 9>21; W swing HH but LL is a caveat. Buy the dip under the average (C10)."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "elder 1 or lower, or a close under ma20, would make a long wrong; none is proposed.",
+   "market_void": null,
+   "reason": "elder 10.0 [10, 7, 7, 7, 10] CORRECTION_REENTRY, mp 75.0 STRONG: a fresh blue-to-green bar, but price is far over ma20 (ext_atr20 2.41, 0.1% under the D swing high). Elder buys under the average, not at this distance (C10). Wait for the dip."
+  }
+ ],
+ "declarations": [
+  "Read only elder, elder_5d, elder_pattern, mp, mp_state from the card plus the packet MTF grid. Colour, force index, price slope, channel walls and weekly_trend_direction are not served: unread, never proxied from elder (C2).",
+  "ABSTAIN means permission is not withdrawn and I propose nothing (C1, C22). It is not a verdict on momentum quality. No bracket field is used as a reason (R1); no Valen flag is used (R41)."
+ ]
+}

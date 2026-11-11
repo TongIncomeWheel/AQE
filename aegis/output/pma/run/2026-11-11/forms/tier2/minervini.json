@@ -1,0 +1,198 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-11",
+ "declarations": [
+  "trend_template: MAs and distance read directly; criterion 8 via rs_rank_pct and rs_spy_20d, not IBD; criteria 3 and 6 not served (C3, C11)",
+  "vcp_detail NOT_SERVED; earnings_growth NOT_SERVED (R2, R4, R10)",
+  "R1: no bracket field is a reason on any name; invalidation levels are my own, from MA and swing-high structure"
+ ],
+ "answers": [
+  {
+   "pair_id": "HUM-minervini-for~livermore",
+   "ticker": "HUM",
+   "to": "livermore",
+   "text": "\"no new high, the base has not resolved\" - fair. Template holds (W HH/HL, 9>21) but D swing_class LH/LL and 1.34 under 20-bar high: I overstated resolving. It is a base waiting for its break, so WAIT, not buy.",
+   "concede": true
+  },
+  {
+   "pair_id": "TGTX-minervini-for~elder-lens",
+   "ticker": "TGTX",
+   "to": "elder-lens",
+   "text": "\"a breakout chase\" - not by C5. D close 64.26 is 1.04 over last swing high 63.6, inside the few-percent buy zone; W and D swing HH/HL, 9>21. Elder's buy-under-average test is not my method. Only H1 pos_in_day_range_pct 35.4 gives me pause.",
+   "concede": false
+  },
+  {
+   "pair_id": "ADP-minervini-for~wyckoff",
+   "ticker": "ADP",
+   "to": "wyckoff",
+   "text": "\"No break to grade, no value edge\" - agreed no break yet, which is why I wait for it. My test is the template: W 1.8 under 20-wk high, D swing HH/HL 1.8 under 20-day high, stack full. A coil under the high is the setup; H1 LH/LL is noise.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above the 456.5 swing high; never before the break."
+   },
+   "wrong_if": "Daily close under ma_20 420.85, or a break of 456.5 that fails back inside the base.",
+   "market_void": null,
+   "reason": "Template passes, W swing HH/HL, 4.04 under 20-wk high; D swing_class LH/LL means no resolved base yet. Buy the break, not the coil (C5)."
+  },
+  {
+   "ticker": "CAH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high after a tight pause."
+   },
+   "wrong_if": "Daily close under ma_20 256.63, or a new-high try that reverses on rising volume.",
+   "market_void": null,
+   "reason": "Template passes but W swing LH/LL, dist_to_20bar_high_pct 3.32 and day_vol 0.85 at the high: a leader to own on a fresh pivot, past the chase limit now (C5)."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above yesterday's high, confirming follow-through on volume."
+   },
+   "wrong_if": "Daily close back under last swing high 63.6, or ma_20 57.42 lost.",
+   "market_void": null,
+   "reason": "Break on day_vol 3.1, W and D HH/HL, but H1 pos_in_day_range_pct 35.4 and dist_to_20bar_high_pct 5.54: wait for follow-through to rule out churn (C6)."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above yesterday's high; no add far past the pivot."
+   },
+   "wrong_if": "Daily close under ma_20 73.85, or back inside the base on rising volume.",
+   "market_void": null,
+   "reason": "Expansion break on day_vol 2.22 at the 20-day high, dist_to_20bar_high_pct 1.15; W, D and H1 all 9>21 above EMA9. Fresh, not extended (C5, C6)."
+  },
+  {
+   "ticker": "KO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above the 97.39 swing high on rising volume."
+   },
+   "wrong_if": "Daily close under ma_20 93.93.",
+   "market_void": null,
+   "reason": "Template passes, D swing HH/HL 0.49 under 20-bar high, but day_vol 0.84 gives no confirmation and a defensive leader in a weak tape is the R9 rotation warning."
+  },
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above yesterday's high, through the 20-day high, on volume."
+   },
+   "wrong_if": "Daily close under ma_20 692.69.",
+   "market_void": null,
+   "reason": "Cleanest stack, W and D and H1 all HH/HL and 0.45 under the 20-day high, but day_vol 0.74 shows no expansion yet and rs is IN-LINE (C6, C11)."
+  },
+  {
+   "ticker": "SDGR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high after a flag, on volume."
+   },
+   "wrong_if": "Daily close under ma_20 26.77.",
+   "market_void": null,
+   "reason": "Template passes, W HH/HL, rs_rank_pct 99.33, but D swing LH but HL, 4.06 under 20-bar high, red last bar and rs LAGGARD: low conviction, wait for a flag."
+  },
+  {
+   "ticker": "GPN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above yesterday's high on volume; add only while profitable."
+   },
+   "wrong_if": "Daily close under ma_20 89.26.",
+   "market_void": null,
+   "reason": "Held, W D H1 all HH/HL, 0.27 over last swing high, but day_vol 0.98 and run_10d 24.76 after a thrust: add only on follow-through (C8, C9)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above the 48.61 swing high, back over the hourly averages."
+   },
+   "wrong_if": "Daily close under ma_20 43.71, or a break that fails back under 48.61 on heavy volume.",
+   "market_void": null,
+   "reason": "Template passes, W and D HH/HL, day_vol 2.16 into the high, but D 2.45 under 20-bar high and H1 9<21 swing LH/LL: loading under the pivot, not through it."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above the 310.98 swing high on rising volume."
+   },
+   "wrong_if": "Daily close under ma_20 295.85.",
+   "market_void": null,
+   "reason": "Full stack, W and D HH/HL, 1.78 under 20-bar high, rs LEADER spy20 14.32; day_vol 0.56 means unconfirmed until the break prints volume (C5, C6)."
+  },
+  {
+   "ticker": "MAC",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong to sit out if rs_rank_pct clears 70 and ma_50 retakes ma_100 on a volume break of the swing high.",
+   "market_void": null,
+   "reason": "Template all-or-nothing: rs_rank_pct 69.79 is a proxy a hair under the floor, ma50 23.29 under ma100 24.16, W swing HH but LL. Neither back nor oppose a proxy-only miss."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "A completed 1-hour close above the last swing high, on 1.4x volume."
+   },
+   "wrong_if": "Daily close under ma_20 19.01, or a failed break on heavy volume.",
+   "market_void": null,
+   "reason": "Template passes, W and D HH/HL, D 0.1 under last swing high on day_vol 1.82, flow 86.8: the break is the buy. sma_dist_pct 23.76 and W 19.5 over swing high are the weight."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 4487,
+   "sha256": "dacfdfe6f429"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 3292,
+   "sha256": "1114e40b8375"
+  }
+ ]
+}

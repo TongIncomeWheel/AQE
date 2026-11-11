@@ -1,0 +1,464 @@
+{
+ "cap": 24,
+ "admitted": 17,
+ "union": 29,
+ "nomination_floor": [
+  "LTH",
+  "TGTX",
+  "TTWO",
+  "SN",
+  "ACHC",
+  "ELF",
+  "LYV",
+  "WAY",
+  "HUM",
+  "GMAB",
+  "BRZE",
+  "TECH",
+  "BOX",
+  "MSFT",
+  "GPN",
+  "EBAY",
+  "RBRK"
+ ],
+ "nominations_seated": 14,
+ "held_seated": [
+  "GPN",
+  "EBAY",
+  "RBRK"
+ ],
+ "floor_size": 17,
+ "nominations_cut_by_machinery": [],
+ "nominations_off_universe": [],
+ "unr_seats": [],
+ "unr_seat_pool": 3,
+ "strong_seats": [],
+ "strong_seat_rule": "R27 (PM 2026-10-23): the top --strong-seats Longlist/Elder names not otherwise in the room, by 20-day strength vs SPY, are seated and voted in the MOMENTUM lane.",
+ "swing_seats": [],
+ "swing_seat_pool": 2,
+ "swing_seat_rule": "SWING_PIVOT (PM 2026-11-05): up to --swing-seats names with the export's swing_pivot true (weekly and daily HH/HL, daily close within 1 ATR of the latest daily swing high), not otherwise in the room, by AQE rank. Voted, MOMENTUM lane, ADDITIVE after the floor, the held book, R25 and R27.",
+ "unr_seat_rule": "R25 (PM 2026-10-23): up to --unr-seats names with AQE unr_status MET on the Longlist or Elder list, not otherwise in the room, by AQE rank. Voted like any name, PULLBACK lane (whole room).",
+ "machine_additions": [],
+ "informational": [],
+ "informational_rule": "R17 (PM ruling 2026-09-25): a name no seat nominated is FLAGGED FOR THE PM, never seated. It is not voted, gets no verdict, and cannot supersede committee consensus. R26 (2026-10-23): the flag list is every Longlist/Elder name not in the room, ordered by 20-day strength vs SPY > AQE rank.",
+ "watch_pool": 20,
+ "informational_shown": 0,
+ "door_openers_not_on_the_floor": 12,
+ "machine_add_budget": 0,
+ "doors_rule": {
+  "NOMINATED": "R16: nominated by ANY seat at ANY conviction. ADMITTED UNCONDITIONALLY -- never cut, never ordered against a machine find, never subject to the cap.",
+  "HELD": "R16 + R12: a position the PM owns. On the floor unconditionally, so the ADD question is asked and not only the keep/exit question.",
+  "SEATS": "nominated by >=2 seats (a NOMINATED name; the count is kept for ordering and for the lane)",
+  "SOLO": "nominated by 1 seat at conviction >=4 (a NOMINATED name; retained as a label only -- R16 made the second-door requirement moot)",
+  "ELDER+LENS": "elder>=7 on each of last 2 bars AND >=3/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+  "LENS": ">=4/6 lenses strong (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+  "STRENGTH": "rs_spy_20d in top 10% of today's list (>= 58.71) OR mp>=75 AND mp_accel_state ACCELERATING (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+  "SWING_PIVOT": "PM 2026-11-05: export swing_pivot true (weekly AND daily HH/HL, daily close within 1 ATR of the latest daily swing high). SEATED and voted, MOMENTUM lane, up to --swing-seats (default 6) by AQE rank, ADDITIVE after the floor, the held book, R25 and R27.",
+  "PM_LENS": ">=5 of the PM's 6 checks (FLAG ONLY -- R17: surfaces to the PM, never seats a name)",
+  "AQE_LEADER": "elder_pattern SUSTAINED|ACCELERATION AND rs_leadership LEADER (FLAG ONLY -- R17: surfaces to the PM, never seats a name; mp_state not consulted -- R13)"
+ },
+ "lanes_rule": {
+  "MOMENTUM": "opened any of ['STRENGTH', 'AQE_LEADER']; verdict from ['livermore', 'oneil', 'minervini', 'elder-lens', 'detect-lens']",
+  "PULLBACK": "all other admitted names; verdict from all voting seats"
+ },
+ "ranking_key": "R16 (PM ruling 2026-09-24): the NOMINATION FLOOR is admitted whole and first -- every nomination, any conviction, no cap. It is ordered seat_count > conviction_sum > thematic_support > sc_momentum for reading only; ordering never removes a name. R17 (2026-09-25): the doors seat NOBODY. 0 door-openers are FLAGGED for the PM as information, ordered doors_opened > lenses_strong > AQE rank; they are not voted and carry no verdict. The strength reserve is RETIRED.",
+ "deliberation_set": [
+  "LTH",
+  "TGTX",
+  "TTWO",
+  "SN",
+  "ACHC",
+  "ELF",
+  "LYV",
+  "WAY",
+  "HUM",
+  "GMAB",
+  "BRZE",
+  "TECH",
+  "BOX",
+  "MSFT",
+  "GPN",
+  "EBAY",
+  "RBRK"
+ ],
+ "ranked": [
+  {
+   "ticker": "LTH",
+   "doors": [
+    "SEATS",
+    "STRENGTH"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 2,
+   "sumc": 7,
+   "aqe_rank": 43,
+   "srm": "PASS",
+   "sc_m": 80.7,
+   "elder_5d": [
+    10,
+    10,
+    7,
+    7,
+    7
+   ],
+   "elder_pattern": null,
+   "lens_strong": 0
+  },
+  {
+   "ticker": "TGTX",
+   "doors": [
+    "SEATS"
+   ],
+   "lane": "PULLBACK",
+   "seats": 2,
+   "sumc": 7,
+   "aqe_rank": 314,
+   "srm": "PASS",
+   "sc_m": 67.5,
+   "elder_5d": [
+    10,
+    7,
+    7,
+    10,
+    10
+   ],
+   "elder_pattern": "CORRECTION_REENTRY",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "TTWO",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 4,
+   "aqe_rank": 266,
+   "srm": "WATCH",
+   "sc_m": 69.5,
+   "elder_5d": [
+    7,
+    10,
+    10,
+    7,
+    10
+   ],
+   "elder_pattern": "CORRECTION_REENTRY",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "SN",
+   "doors": [
+    "STRENGTH",
+    "SOLO"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 4,
+   "aqe_rank": 67,
+   "srm": "PASS",
+   "sc_m": 79.4,
+   "elder_5d": [
+    10,
+    7,
+    10,
+    10,
+    7
+   ],
+   "elder_pattern": null,
+   "lens_strong": 0
+  },
+  {
+   "ticker": "ACHC",
+   "doors": [
+    "STRENGTH",
+    "SOLO"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 4,
+   "aqe_rank": 113,
+   "srm": "PASS",
+   "sc_m": 76.7,
+   "elder_5d": [
+    7,
+    10,
+    10,
+    10,
+    10
+   ],
+   "elder_pattern": null,
+   "lens_strong": 0
+  },
+  {
+   "ticker": "ELF",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 4,
+   "aqe_rank": 331,
+   "srm": "PASS",
+   "sc_m": 66.8,
+   "elder_5d": [
+    5,
+    0,
+    7,
+    8,
+    10
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "LYV",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 3,
+   "aqe_rank": 450,
+   "srm": "WATCH",
+   "sc_m": 60.4,
+   "elder_5d": [
+    10,
+    7,
+    4,
+    5,
+    5
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "WAY",
+   "doors": [
+    "STRENGTH",
+    "NOMINATED"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 3,
+   "aqe_rank": 74,
+   "srm": "WATCH",
+   "sc_m": 79.0,
+   "elder_5d": [
+    7,
+    7,
+    5,
+    7,
+    7
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "HUM",
+   "doors": [
+    "AQE_LEADER",
+    "NOMINATED"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 3,
+   "aqe_rank": 111,
+   "srm": "PASS",
+   "sc_m": 76.8,
+   "elder_5d": [
+    5,
+    1,
+    7,
+    9,
+    10
+   ],
+   "elder_pattern": "ACCELERATION",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "GMAB",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 3,
+   "aqe_rank": 270,
+   "srm": "PASS",
+   "sc_m": 69.2,
+   "elder_5d": [
+    7,
+    7,
+    7,
+    7,
+    7
+   ],
+   "elder_pattern": null,
+   "lens_strong": 0
+  },
+  {
+   "ticker": "BRZE",
+   "doors": [
+    "STRENGTH",
+    "NOMINATED"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 3,
+   "aqe_rank": 461,
+   "srm": "WATCH",
+   "sc_m": 59.8,
+   "elder_5d": [
+    7,
+    7,
+    5,
+    5,
+    5
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "TECH",
+   "doors": [
+    "STRENGTH",
+    "NOMINATED"
+   ],
+   "lane": "MOMENTUM",
+   "seats": 1,
+   "sumc": 2,
+   "aqe_rank": 374,
+   "srm": "PASS",
+   "sc_m": 64.9,
+   "elder_5d": [
+    6,
+    3,
+    6,
+    8,
+    8
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "BOX",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 2,
+   "aqe_rank": 432,
+   "srm": "WATCH",
+   "sc_m": 61.2,
+   "elder_5d": [
+    7,
+    5,
+    2,
+    1,
+    2
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "MSFT",
+   "doors": [
+    "NOMINATED"
+   ],
+   "lane": "PULLBACK",
+   "seats": 1,
+   "sumc": 2,
+   "aqe_rank": 541,
+   "srm": "WATCH",
+   "sc_m": 56.3,
+   "elder_5d": [
+    6,
+    7,
+    5,
+    9,
+    4
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "GPN",
+   "doors": [
+    "HELD"
+   ],
+   "lane": "PULLBACK",
+   "seats": 0,
+   "sumc": 0,
+   "aqe_rank": null,
+   "srm": "PASS",
+   "sc_m": 82.0,
+   "elder_5d": [
+    7,
+    7,
+    7,
+    7,
+    10
+   ],
+   "elder_pattern": null,
+   "lens_strong": 0
+  },
+  {
+   "ticker": "EBAY",
+   "doors": [
+    "HELD"
+   ],
+   "lane": "PULLBACK",
+   "seats": 0,
+   "sumc": 0,
+   "aqe_rank": null,
+   "srm": "PASS",
+   "sc_m": 72.0,
+   "elder_5d": [
+    7,
+    8,
+    5,
+    4,
+    7
+   ],
+   "elder_pattern": "INTERRUPTED",
+   "lens_strong": 0
+  },
+  {
+   "ticker": "RBRK",
+   "doors": [
+    "HELD"
+   ],
+   "lane": "PULLBACK",
+   "seats": 0,
+   "sumc": 0,
+   "aqe_rank": null,
+   "srm": "WATCH",
+   "sc_m": 28.4,
+   "elder_5d": [
+    0,
+    0,
+    0,
+    3,
+    3
+   ],
+   "elder_pattern": "ACCUMULATION_BASE",
+   "lens_strong": 0
+  }
+ ],
+ "dropped": [
+  "XERS(STRENGTH+AQE_LEADER rank5)",
+  "BOBS(STRENGTH+AQE_LEADER rank10)",
+  "COLD(STRENGTH+AQE_LEADER rank51)",
+  "XNCR(STRENGTH+AQE_LEADER rank90)",
+  "TTD(STRENGTH rank35)",
+  "EMBJ(STRENGTH rank36)",
+  "ARHS(STRENGTH rank50)",
+  "PRCH(STRENGTH rank115)",
+  "REPL(STRENGTH rank153)",
+  "VSXY(STRENGTH rank155)",
+  "LFST(STRENGTH rank199)",
+  "JHX(STRENGTH rank463)"
+ ]
+}

@@ -1,0 +1,233 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-11",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Established uptrend with the reaction behind it: structure 94.7 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, sma_dist 12.97 (not chased), day_vol 2.16. The buy is the new high, not a pullback (C5). Group only partly confirms: Momentum Fading — Hold, Don't Add (C14 partial). Danger size is my own translation off atr 1.77, not a literal 6 points (R2).",
+   "conviction_change": null,
+   "self_counter": "H1 reads swing LH/LL with 9<21 and the sector tag is Momentum Fading; weekly is only 0.4% above its last swing high, so the break is young and a failed break would show as a danger-size fade at once.",
+   "falsifier": "A reaction beyond my translated danger size off atr 1.77 from the day's high, or structure_shift leaves ABOVE_STRUCTURE, or a close under the 50-day (sma_dist below 0).",
+   "challenge_reply": "Context I used: structure 94.7 ABOVE_STRUCTURE with weekly and daily swing HH/HL and mp STRONG, not the average stack. ma50 41.98 under ma100 42.42 is a stale cross, both far under entry 47.42 (sma_dist 12.97 over the 50-day). I read a base-and-break off structure, not off the stack agreeing.",
+   "case": {
+    "for": "structure 94.7 ABOVE_STRUCTURE, mp 97.0 STRONG/ACCELERATING, day_vol 2.16 shows participation; weekly and daily HH/HL, daily 2.5% under its 20-day high. A confirmed trend near its high is the Livermore buy (C5, C16).",
+    "against": "H1 swing LH/LL with 9<21, sector Momentum Fading — Hold, Don't Add, only partial group confirmation (C14), and the weekly break is young at 0.4% above its last swing high.",
+    "entry_trigger": "close_above:high_52w_close with vol_x_ge:1.4; no buy on the dip.",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50, or structure_shift turns BEARISH_CHOCH.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A second Consumer Discretionary leader failing its high (C14), or structure_shift leaving ABOVE_STRUCTURE.",
+    "cannot_see": ["order-fill difficulty", "exact 1940 point thresholds (translated via atr)"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_50"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh break: structure 63.2 BULLISH_BOS through the confirmed pivot high, mp STRONG/DECELERATING, day_vol 3.1, sma_dist 14.36. Weekly and daily HH/HL, so the trend is established and the buy is the new high (C5). Weaker than LTH: structure 63.2 and DECELERATING temper it, group Momentum Fading — Hold, Don't Add.",
+   "conviction_change": null,
+   "falsifier": "Close back inside the broken pivot (structure_shift RANGE), or mp STRONG/DECELERATING rolling to FADING with a reaction beyond my translated danger size off atr 3.25.",
+   "challenge_reply": "Entry I ask for: none now. I buy only a close through the day's high; D is 5.5% under its 20-day high so it has already taken its reaction. TGTX and ACHC both BOS/ABOVE_STRUCTURE is my C14 two-name confirmation, but five Healthcare names are one exposure, a PM sizing matter, not five independent reads.",
+   "case": {
+    "for": "BULLISH_BOS with day_vol 3.1 is participation on the break; weekly and daily HH/HL, daily 1.0% above its last swing high.",
+    "against": "mp DECELERATING, structure 63.2 is the lowest of the names I rate, group Momentum Fading, and D is 5.5% under its 20-day high so a fresh high is not yet made.",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 (a close through yesterday's high); not before.",
+    "wrong_if": "Close back below the broken pivot_high, or fade_atr_ge:1.5 off the day's high.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A second healthcare leader failing its high (C14), or day_vol collapsing on the next push.",
+    "cannot_see": ["order-fill difficulty", "a second group name for Key Price beyond ACHC"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:pivot_high", "fade_atr_ge:1.5"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTWO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No established uptrend (C5a fails): weekly swing LH but HL, daily swing LH/LL, 2.1% under its 20-day high; mp BUILDING/ACCELERATING is a rally off a low. structure 61.1 ABOVE_STRUCTURE and day_vol 2.77 are real strength, but this is a natural rally under its pivotal point, not a trend column (C17, C19). Steenbarger's stack conflict (ma50 207.06 under ma100 224.32) stands.",
+   "conviction_change": null,
+   "opposing_case": "Best case FOR: day_vol 2.77 with ABOVE_STRUCTURE, sma_dist 8.49 over the 50-day and H1 only 2.1% under its 20-hr high; one close through the 20-day high on that volume turns the rally into a trend-resumption candidate.",
+   "falsifier": "A close above ma_100 and a new high on day_vol above 1.4 with the 50-day turning up.",
+   "case": {
+    "for": "day_vol 2.77, structure 61.1 ABOVE_STRUCTURE, mp BUILDING/ACCELERATING, daily 6.0% above its last swing high.",
+    "against": "Weekly swing LH but HL and daily LH/LL; ma50 207.06 below ma100 224.32 and ma200 218.63; sma_dist 8.49 is measured from a falling-to-flat 50-day; no new high.",
+    "entry_trigger": "close_above:ma_100 held two sessions with ma_above:ma_50:ma_100, then close_above:pivot_high on vol_x_ge:1.4.",
+    "wrong_if": "I am wrong to stay out if it clears ma_100 and makes a new high on day_vol above 1.4.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The 50-day crossing above the 100-day and a close through the 20-day high on volume.",
+    "cannot_see": ["order-fill difficulty"]
+   }
+  },
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Established leader: structure 77.9 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, weekly, daily and H1 all HH/HL, daily 2.7% under its 20-day high. sma_dist 20.84 and ext_atr20 2.73 are a weight, not a veto (R27). Participation is thin, day_vol 0.86, so I buy only a new high on volume, not now. Sector Momentum Fading — Hold, Don't Add; group confirmation partial.",
+   "conviction_change": null,
+   "falsifier": "A reaction beyond my translated danger size off atr 7.92 from the day's high, or a close under the 20-day average.",
+   "case": {
+    "for": "mp 92.0 STRONG/ACCELERATING, structure 77.9 ABOVE_STRUCTURE, HH/HL on three timeframes near the high.",
+    "against": "sma_dist 20.84 and 13.0% above the last daily swing high is far from a base; day_vol 0.86 shows no urgency; atr 7.92 makes one reaction large in dollars; sector Momentum Fading.",
+    "entry_trigger": "close_above:high_52w_close with vol_x_ge:1.4.",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A new high printed on day_vol under 1 would read as unconfirmed; a second Consumer Discretionary leader failing its high.",
+    "cannot_see": ["order-fill difficulty", "exact 1940 point thresholds (translated via atr)"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ACHC",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Confirmed uptrend: structure 88.4 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, day_vol 1.58. But sma_dist 29.55 and ext_atr20 3.38 after run_10d 29.23% is a leader running, and the weekly swing reads LH/LL: I buy only a fresh high, never the chase. Lowered from my round-1 conviction 4.",
+   "conviction_change": "R1 conviction 4 to 3: Steenbarger's extension finding; weekly swing LH/LL and sma_dist 29.55 mean no entry today, only a fresh close through the high.",
+   "falsifier": "structure_shift drops to RANGE, mp leaves STRONG, or a reaction beyond my translated danger size off atr 1.97 prints from the day's high.",
+   "challenge_reply": "Entry I ask for: a close above the high on vol_x_ge:1.4, never the extension itself (C5). Crowding: TGTX and ACHC agreeing is my C14 two-name confirmation, but I count five Healthcare names as one bet for the PM's sizing, not independent evidence.",
+   "case": {
+    "for": "mp 93.0 STRONG/ACCELERATING, structure 88.4 ABOVE_STRUCTURE, daily 2.7% under its 20-day high; fresh highs in a confirmed trend are the Livermore buy (C5, C16).",
+    "against": "sma_dist 29.55 is far from any base, weekly swing LH/LL, daily HH but LL, and the sector is Momentum Fading — Hold, Don't Add.",
+    "entry_trigger": "close_above:high_52w_close with vol_x_ge:1.4; no add into weakness (C4).",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_20.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "structure_shift falling to RANGE, or day_vol drying under 1 on a new high.",
+    "cannot_see": ["order-fill difficulty"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_20"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ELF",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Established uptrend (structure 66.3 BULLISH_BOS, weekly and daily HH/HL, mp BUILDING/ACCELERATING, sma_dist 11.04) in a quiet reaction: day_vol 0.73, daily 3.8% under its 20-day high, H1 below EMA9. That is C8's normal pullback: I do not buy it (C5) but support the buy on the new high. mp 70.0 is below 75 and structure 66.3 is only middling.",
+   "conviction_change": null,
+   "falsifier": "A reaction beyond my translated danger size off atr 5.47 from the day's high, or structure_shift falls back to RANGE and a close under the 50-day.",
+   "case": {
+    "for": "BULLISH_BOS held, weekly 0.2% above its last swing high, and the reaction came on day_vol 0.73, the lower-volume pullback C8 says to hold through.",
+    "against": "Today it is 3.8% under its high with H1 below EMA9; mp 70.0 BUILDING is not yet STRONG and the new high is not made.",
+    "entry_trigger": "close_above:high_52w_close with vol_x_ge:1.4; not the dip.",
+    "wrong_if": "fade_atr_ge:1.5 off the day's high, or close_below:ma_50.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "structure_shift back to RANGE, or the reaction deepening past my translated danger size.",
+    "cannot_see": ["order-fill difficulty", "exact 1940 point thresholds (translated via atr)"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:high_52w_close"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_50"],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LYV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No engine record: structure, structure_shift, mp_state, atr_14d, day_vol and sma_dist are all None for LYV, so C5 (trend plus new high) and my danger-size translation cannot be evaluated. Declared gap, no substitute read. MTF only: weekly and daily HH/HL, daily 5.1% under its last swing high, H1 0.2% above its last swing high.",
+   "conviction_change": null,
+   "case": {
+    "for": "MTF: weekly and daily above EMA9 with 9>21 and HH/HL on the daily; H1 0.2% above its last swing high.",
+    "against": "Weekly swing HH but LL, 5.8% under its 20-wk high; daily 5.1% under its swing high: no new high confirmed, and every field on my menu is None.",
+    "entry_trigger": "Cannot set one without structure_shift and atr_14d; once present, close_above:high_52w_close with vol_x_ge:1.4.",
+    "wrong_if": "I am wrong to abstain if a repaired record shows ABOVE_STRUCTURE with day_vol above 1.4 at a new high.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A repaired record carrying structure, structure_shift, mp_state and atr_14d.",
+    "cannot_see": ["structure", "structure_shift", "mp_state", "atr_14d", "day_vol", "sma_distance_pct"]
+   }
+  },
+  {
+   "ticker": "WAY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Short-term uptrend with a fresh BOS: structure 73.7 BULLISH_BOS, mp STRONG/ACCELERATING, sma_dist 9.9, H1 at its 20-hr high (100% of the day's range). But from_52w_hi -20.9% means no multi-year high, day_vol 0.56 shows no participation, and the group is Recovering From Weakness — Watch for Entry, not leading (C12). Weak support only.",
+   "conviction_change": null,
+   "falsifier": "A reaction beyond my translated danger size off atr 1.35 from the day's high, or a close under the 50-day.",
+   "case": {
+    "for": "BULLISH_BOS, mp 79.0 STRONG/ACCELERATING, weekly HH/HL and 7.4% above its last weekly swing high, H1 at the 20-hr high.",
+    "against": "Daily swing HH but LL, 3.1% under its swing high; day_vol 0.56; sector is recovering, not leading; no second Technology name confirming (C14).",
+    "entry_trigger": "close_above:fib_swing_high with vol_x_ge:1.4.",
+    "wrong_if": "close_below:ma_50, or fade_atr_ge:1.5 off the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Volume arriving on the push (day_vol above 1.4) and a second Technology leader making a high would lift it.",
+    "cannot_see": ["order-fill difficulty", "a second group name for Key Price"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["close_above:fib_swing_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["fade_atr_ge:1.5", "close_below:ma_50"],
+    "wait": [],
+    "chase": "close_above:fib_swing_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HUM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Trend not confirmed by my tests: structure_shift RANGE (structure 73.7), no break made; daily swing LH/LL and mp 48.0 BUILDING/DECELERATING. A leader inside a range is a watch, not a buy: the buy is the clear of the pivotal point, not the approach to it (C5, C17). Not a bracket call and not a mp FADING call.",
+   "conviction_change": null,
+   "opposing_case": "Best case FOR: LEADER with day_vol 1.44 above normal, weekly HH/HL 4.0% under its 20-wk high, daily 0.9% above its last swing high; a close through the pivot on day_vol above 1.4 would be a clean Livermore buy.",
+   "falsifier": "A close above pivot_high on day_vol above 1.4 with mp turning up from DECELERATING.",
+   "challenge_reply": "Entry I ask for: a close through pivot_high, not the approach. HUM is the one Healthcare name with structure_shift RANGE, so unlike TGTX and ACHC it has no break to chase; the crowding with them is shared-sector exposure.",
+   "case": {
+    "for": "LEADER tag, day_vol 1.44, weekly HH/HL, H1 HH/HL and 2.2% under its 20-hr high.",
+    "against": "structure_shift RANGE, daily swing LH/LL, mp 48.0 and decelerating, sector Momentum Fading — Hold, Don't Add.",
+    "entry_trigger": "close_above:pivot_high with vol_x_ge:1.4; I would then support.",
+    "wrong_if": "I am wrong to oppose if it closes above pivot_high on day_vol above 1.4 and mp turns from DECELERATING.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "structure_shift turning BULLISH_BOS on volume.",
+    "cannot_see": ["order-fill difficulty"]
+   }
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (my own multiple), not literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only); inside_information: NEVER (C11)",
+  "data_gap: LYV has no engine record (structure, structure_shift, mp_state, atr_14d, day_vol, sma_dist all None); I abstain rather than substitute a read",
+  "ledger_memory: none injected; no standing lesson applies"
+ ]
+}
