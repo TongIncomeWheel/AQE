@@ -3,7 +3,7 @@
  "conditions_schema": "pma_conditions.v1",
  "run_date": "2026-11-11",
  "session": "2026-11-11",
- "generated_at": "2026-11-11T08:20+00:00",
+ "generated_at": "2026-11-11T12:23+00:00",
  "valid_until": "next PMA run, or 16:15 ET on the session date, whichever first",
  "render_only": true,
  "guardrails": [
@@ -3029,6 +3029,12 @@
    "ticker": "EBAY",
    "class": "HELD",
    "qty": 150,
+   "stop_status": "NO STOP AT BROKER",
+   "reference_stop": 119.67,
+   "reference_stop_basis": "extension bracket stop, lower of the window low and 1 daily range under entry",
+   "open_r": 0.19,
+   "pnl_in_committee_1r": 0.15,
+   "action": "SET-STOP",
    "broker_stop": {
     "order": null,
     "stop": null,
@@ -3048,8 +3054,8 @@
      "action": "No stop order at the broker. Repeat every session until an order exists or the position is gone."
     }
    ],
-   "keep_case": "Keep under the broker stop None (None None, None).",
-   "release_case": "Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit.",
+   "keep_case": "No stop order at the broker: SET A STOP. AQE's worked-out reference stop is 119.67 (extension bracket stop, lower of the window low and 1 daily range under entry; reference only, not an order).",
+   "release_case": "",
    "conditions": {
     "shared": {
      "buy": [
@@ -3435,6 +3441,12 @@
    "ticker": "GPN",
    "class": "HELD",
    "qty": 100,
+   "stop_status": "NO STOP AT BROKER",
+   "reference_stop": 93.29,
+   "reference_stop_basis": "extension bracket stop, lower of the window low and 1 daily range under entry",
+   "open_r": -0.06,
+   "pnl_in_committee_1r": -0.09,
+   "action": "SET-STOP",
    "broker_stop": {
     "order": null,
     "stop": null,
@@ -3454,8 +3466,8 @@
      "action": "No stop order at the broker. Repeat every session until an order exists or the position is gone."
     }
    ],
-   "keep_case": "Keep under the broker stop None (None None, None).",
-   "release_case": "Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit.",
+   "keep_case": "No stop order at the broker: SET A STOP. AQE's worked-out reference stop is 93.29 (extension bracket stop, lower of the window low and 1 daily range under entry; reference only, not an order).",
+   "release_case": "",
    "conditions": {
     "shared": {
      "buy": [
@@ -3921,6 +3933,12 @@
    "ticker": "RBRK",
    "class": "HELD",
    "qty": 80,
+   "stop_status": "NO STOP AT BROKER",
+   "reference_stop": 101.41,
+   "reference_stop_basis": "extension bracket stop, lower of the window low and 1 daily range under entry",
+   "open_r": -0.28,
+   "pnl_in_committee_1r": -0.4,
+   "action": "SET-STOP",
    "broker_stop": {
     "order": null,
     "stop": null,
@@ -3940,7 +3958,7 @@
      "action": "No stop order at the broker. Repeat every session until an order exists or the position is gone."
     }
    ],
-   "keep_case": "Keep under the broker stop None (None None, None).",
+   "keep_case": "No stop order at the broker: SET A STOP. AQE's worked-out reference stop is 101.41 (extension bracket stop, lower of the window low and 1 daily range under entry; reference only, not an order).",
    "release_case": "",
    "conditions": {
     "shared": {
