@@ -493,3 +493,31 @@ def test_a_held_name_with_no_stop_order_renders_and_still_writes_card_fields(run
     assert "NO stop order" in t and "unprotected" in t
     assert (run / "card_fields.json").exists() and json.loads((run / "card_fields.json").read_text())["cards"]
     assert "Stop None" not in h and "stop at None" not in t
+
+
+def test_the_real_11_nov_failures_none_numbers_empty_scorecard_and_a_raw_crown_token_all_render_plainly(run):
+    """Conductor 2026-11-11, found one by one on the REAL 11 Nov run files: (1) the book table's R / vs-20-day / stop distance raised on None for a held name with no stop;
+    (2) an empty 'Full-horizon calls only' scorecard table crashed min() of nothing; (3) Crown's divergence list carried the raw token rsi_slope, which the plain-words gate rejects.
+    Each is now a plain word, and the page is the v3 page."""
+    def none_trail(o):
+        for x in (o.get("management") or {}).get("trim_trail") or []:
+            x["dist_from_stop_pct"] = None; x["r_multiple"] = None; x["pct_vs_ma_20"] = None
+    edit(run, "aqe_valen_dashboard.json", none_trail)
+    sc = run / "scorecard.md"
+    md = sc.read_text()
+    head, rest = md.split("## 3 · Full-horizon calls only", 1)
+    tail = rest.split("\n## ", 1)[1] if "\n## " in rest else ""
+    sc.write_text(head + "## 3 · Full-horizon calls only\n\n| Verdict | n | Mean | Median | Hit | Beat SPY |\n|---|---|---|---|---|---|\n" + ("\n## " + tail if tail else ""))
+    def raw_token(o):
+        o["readings"]["divergence"]["which"] = ["rsi", "rsi_slope"]
+    edit(run, "aqe_crown_macro.json", raw_token)
+    h = render(run)
+    t = text(h)
+    assert "no stop" in t and "n/a" in t
+    assert "rsi_slope" not in h and "momentum trends are both falling" in t
+    assert "No full five-session call has completed yet" in t
+
+
+def test_the_default_refresh_dir_resolves_from_the_plugin_tree_not_one_level_too_high():
+    src = TOOL.read_text()
+    assert "def _find_repo" in src and "parents[5]\n" not in src.replace("return here.parents[5]", "")
