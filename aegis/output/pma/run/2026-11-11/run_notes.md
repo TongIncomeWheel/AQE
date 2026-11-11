@@ -13,4 +13,4 @@
 - VOTE_PACKET was about 100KB vs the 70,000-byte guide (declared deviation, packets are trimmed by engineering next).
 
 CARDS FALLBACK: the v3 page was NOT published (pma_cards_v3.py exited 1:              ~~~^^^^^^^^^^^^ TypeError: '<' not supported between instances of 'NoneType' and 'float'). The v2 page was published instead.
-- CARDS: v3 renderer crashed (TypeError NoneType < float, see run); v2 page published; card_fields.json NOT produced so alert emails say card fields not available. Engineering to fix.
+- CARDS: the v3 page crashed on held names with no stop at first publish (v2 page shown 16:28 SGT); engineering fixed it (#87, #88) and the v3 page and card_fields.json were republished the same day.
