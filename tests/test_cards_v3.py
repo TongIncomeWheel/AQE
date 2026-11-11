@@ -322,7 +322,7 @@ def test_the_swing_pivot_list_is_the_fourth_brief_list_and_absent_on_an_export_w
             r["swing_pivot"] = i in (0, 2, 4)
     edit(run, "aqe_daily_export.json", flag)
     t = text(render(run))
-    assert "Swing pivot top 3" in t and "never reached the room" in t
+    assert "Swing pivot top 3" in t and "On which lists" in t and "never reached the room" not in t
     assert "Elder top 15" in t and "AQE top 20" in t and "Detect lens top 15" in t        # the three-list comparisons are untouched
     import importlib.util
     spec = importlib.util.spec_from_file_location("chk_sw", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
