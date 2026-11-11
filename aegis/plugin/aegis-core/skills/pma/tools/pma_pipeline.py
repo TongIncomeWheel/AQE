@@ -3601,18 +3601,38 @@ def cmd_repeat_watch(a):
             out_rows.append({"ticker": t, "date": d, "pct_vs_last_close": pct, "state": vrow.get("verdict"), "gap": None})
             if price is not None:
                 prev_price = price
-    md_lines = ["| Ticker | Date Appeared | % vs last COB | State |", "|---|---|---|---|"]
-    for r in out_rows:
-        pct_s = "— (first appearance)" if r["pct_vs_last_close"] is None and r["gap"] is None and not any(
-            x["ticker"] == r["ticker"] and x["date"] < r["date"] for x in out_rows) else (
-            f"{r['pct_vs_last_close']:+.2f}%" if r["pct_vs_last_close"] is not None else "— (gap, see note)")
-        state_s = r["state"] or f"GAP: {r['gap']}"
-        md_lines.append(f"| **{r['ticker']}** | {r['date']} | {pct_s} | {state_s} |")
+    # COMPACT BRIEF TABLE (PM 2026-11-11): section 4 printed 1,550 rows (every date for every ticker). The brief now carries counts plus ONE row per name that is NEW today or STANDING
+    # (on the latest list and on at least one of the 3 sessions before it); the per-date rows, GAP rows included, stay in the JSON (`rows`, `gaps`) and are not printed.
+    ents = sorted(led.get("entries") or [], key=lambda e: e["date"])
+    ents = [e for e in ents if e["date"] <= a.date] or ents
+    latest = ents[-1] if ents else {"date": a.date, "tickers": []}
+    prior = ents[-4:-1] if len(ents) > 1 else []
+    s_now = set(latest.get("tickers") or [])
+    s_prior = set(t for e in prior for t in (e.get("tickers") or []))
+    new_t, remain_t, left_t = sorted(s_now - s_prior), sorted(s_now & s_prior), sorted(s_prior - s_now)
+    firsts, days_on = {}, {}
+    for e in ents:
+        for t in e.get("tickers") or []:
+            firsts.setdefault(t, e["date"]); days_on[t] = days_on.get(t, 0) + 1
+    def _px(t, d):
+        r = vrows.get((d, t)); return r.get("ref_price") if r else None
+    listed, compact = [], []
+    for t in new_t + remain_t:
+        v_now = vrows.get((latest["date"], t)) or {}
+        p0, p1 = _px(t, firsts[t]), _px(t, latest["date"])
+        pct_first = f"{(p1 - p0) / p0 * 100:+.2f}%" if (p0 and p1 and firsts[t] != latest["date"]) else "— (first day)" if firsts[t] == latest["date"] else "n/a"
+        listed.append(t)
+        compact.append(f"| **{t}** | {firsts[t]} | {days_on[t]} | {v_now.get('verdict') or 'not on the verdict ledger'} | {pct_first} |")
+    md_lines = [f"As of {latest['date']}: **{len(new_t)} NEW** today, **{len(remain_t)} REMAIN** from the last {len(prior)} sessions, **{len(left_t)} LEFT** the list. "
+                f"(Per-date rows and gap rows are kept in repeat_watch.json, not printed.)", "",
+                "| Ticker | First seen | Days on list | Verdict today | % vs first COB |", "|---|---|---|---|---|"] + compact
     markdown = "\n".join(md_lines)
-    result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps}
+    result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps, "listed": listed,
+              "counts": {"new": len(new_t), "remain": len(remain_t), "left": len(left_t), "latest_list_date": latest["date"], "prior_sessions": len(prior)},
+              "new": new_t, "remain": remain_t, "left": left_t}
     save(a.out, result)
     print(markdown)
-    print(f"receipt: {len(out_rows)} rows across {len(repeat_tickers)} repeat ticker(s); "
+    print(f"receipt: {len(out_rows)} per-date rows kept in the JSON across {len(repeat_tickers)} repeat ticker(s); compact table {len(listed)} names (new {len(new_t)}, remain {len(remain_t)}, left {len(left_t)}); "
           f"{len(gaps)} gap(s) with no verdict_ledger match ({', '.join(gaps) if gaps else 'none'})")
 
 def cmd_grade(a):
@@ -3713,8 +3733,12 @@ def cmd_gate(a):
                 rw_tickers = {r["ticker"] for r in rw.get("rows", [])}
                 missing = [t for t in flagged if t not in rw_tickers]
                 chk(not missing, "Q6r", f"repeat_watch.json covers every phase4_ledger repeat flag (missing: {missing or 'none'})")
-                for t in flagged:
+                # the compact table prints only NEW and STANDING names (PM 2026-11-11); a flagged name that LEFT the list is counted in the JSON, not printed
+                _listed = rw.get("listed")
+                for t in (flagged if _listed is None else [x for x in flagged if x in set(_listed)]):
                     chk(t in brief, "Q6r", f"{t}: repeat-flagged ticker appears in brief §4")
+                if _listed is not None:
+                    chk(f"{len(rw.get('counts') and rw['counts'].get('new') or 0)} NEW" in brief or "NEW**" in brief, "Q6r", "the brief §4 carries the NEW / REMAIN / LEFT count line")
     # ---- Q-EXEC: EXECUTIVE FORM (PM ruling 2026-09-05 -- tables and one-liners, never prose;
     # consensus view, never who voted what). Mechanical presence/absence checks only.
     body, _, appendix = brief.partition("APPENDIX A")
@@ -3801,8 +3825,12 @@ def cmd_gate(a):
                        ("§9C", "9C the day's plan")]:
         chk(tok in brief, "Q9D", f"{label} is present")
     if "§9A" in brief:
-        held = brief.split("§9A")[1].split("§9B")[0]
-        acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN") if w in held]
+        # The 9A text = from the FIRST §9A token to the next level-2 heading. Since 2026-11-11 sections 3 and 9A are ONE table under `## §3 / §9A`, so the first token can sit early in the
+        # brief; cutting at the next `## ` heading keeps the check on that section alone (not on everything up to a later §9A pointer or §9B).
+        _i9 = brief.index("§9A")
+        _nxt = re.search(r"\n##\s", brief[_i9:])
+        held = brief[_i9: _i9 + _nxt.start()] if _nxt else brief[_i9:].split("§9B")[0]
+        acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN", "SET-STOP") if w in held]
         # FLAT / HELD BOOK (conductor 2026-11-11), with --export: a FLAT book needs no action word (the section must say it is flat); a HELD book needs EVERY held name on its own
         # row carrying exactly one action word. Without --export the old test stands (some action word present).
         _ex_path = getattr(a, "export", None)
@@ -3815,7 +3843,7 @@ def cmd_gate(a):
             chk(bool(acts) or re.search(r"\b(flat|no (open )?positions?|nothing held|no held)\b", held, re.I) is not None, "Q9D",
                 "9A states the book is FLAT (no held positions) or carries actions")
         else:
-            _words = ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN")
+            _words = ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN", "SET-STOP")
             def _held_row(t):
                 m = re.search(rf"(?m)^\s*\|\s*\*{{0,2}}{re.escape(t)}\*{{0,2}}\s*\|.*$", held)
                 return m.group(0) if m else None

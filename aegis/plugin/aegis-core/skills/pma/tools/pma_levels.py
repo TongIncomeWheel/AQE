@@ -192,6 +192,12 @@ def build(a):
     p4 = _load(a.phase4, {})
     rows = []
     held_set = set(bs) | set(cards.get("held", {}))
+    try:
+        import held_view as _hv
+        _ex_path = getattr(a, "export", None)
+        _held_ref = {x["ticker"]: x for x in _hv.held_view(_load(_ex_path, {}) if _ex_path else {"held_positions": [r for r in uni.values() if r.get("held")]}, {"positions": bs})}
+    except Exception:  # noqa: BLE001 - the reference is render-only: never take the levels file down
+        _held_ref = {}
 
     for c in cons:
         t, v = c["ticker"], c["verdict"]
@@ -234,7 +240,13 @@ def build(a):
                                    + ". Your call whether to act."})
         for i, x in enumerate(card.get("triggers") or []):
             trig.append(_norm_trigger(x, t, f"x{i}"))
+        hv_ = _held_ref.get(t) or {}
         rows.append({"ticker": t, "class": "HELD", "qty": b.get("qty"),
+                     # PM 2026-11-11: AQE's worked-out stop as a REFERENCE (render-only) with its basis; no stop order at the broker = NO STOP AT BROKER, action SET-STOP
+                     "stop_status": hv_.get("broker_stop_status") or ("NO STOP AT BROKER" if b.get("stop") is None else f"broker stop {b.get('stop')}"),
+                     "reference_stop": hv_.get("reference_stop"), "reference_stop_basis": hv_.get("reference_basis"),
+                     "open_r": hv_.get("open_r"), "pnl_in_committee_1r": hv_.get("pnl_in_committee_1r"),
+                     "action": ("SET-STOP" if b.get("stop") is None else None),
                      "broker_stop": {"order": b.get("order"), "stop": b.get("stop"), "limit": b.get("limit"),
                                      "note": b.get("note")},
                      "committee_exit": ce, "committee_exit_range": card.get("committee_exit_range"),

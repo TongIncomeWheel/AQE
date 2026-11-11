@@ -49,6 +49,8 @@ def _n(k):
 
 
 def build_triggers(conditions, export, broker_stops):
+    import held_view as _hv
+    _hview = {x["ticker"]: x for x in _hv.held_view(export, broker_stops)}
     xr = {r["ticker"]: r for r in export.get("daily_list") or []}
     for h in export.get("held_positions") or []:
         xr.setdefault(h["ticker"], h)
@@ -127,11 +129,20 @@ def build_triggers(conditions, export, broker_stops):
         if t in bs:
             stop = bs[t].get("stop")
             ok = [e for e in ex_ if stop is not None and e["value"] >= stop]
+            hv_ = _hview.get(t) or {}
+            if stop is None:
+                # NO STOP ORDER AT THE BROKER (PM 2026-11-11): the old text printed 'broker stop None (None None, None)'. State the gap and AQE's worked-out reference stop.
+                ref_ = hv_.get("reference_stop")
+                for_ = ("No stop order at the broker: SET A STOP. "
+                        + (f"AQE's worked-out reference stop is {ref_:.2f} ({hv_.get('reference_basis')}; reference only, not an order)." if ref_ is not None
+                           else "AQE has no worked-out stop for this name either."))
+                against_ = ("Every analyst exit line sits below AQE's reference stop, so the reference stop is the tighter exit."
+                            if (ex_ and ref_ is not None and all(e["value"] < ref_ for e in ex_)) else "")
+            else:
+                for_ = f"Keep under the broker stop {stop} ({bs[t].get('order')} {bs[t].get('order_qty')}, {bs[t].get('tif')})."
+                against_ = ("Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit." if ex_ and not ok else "")
             held = {"committee_exit": (max(ok, key=lambda e: e["value"])["value"] if ok else None),
-                    "committee_exit_range": None,
-                    "for": f"Keep under the broker stop {stop} ({bs[t].get('order')} {bs[t].get('order_qty')}, {bs[t].get('tif')}).",
-                    "against": ("Every analyst exit line sits below the broker stop, so the broker stop is the tighter exit."
-                                if ex_ and not ok else "")}
+                    "committee_exit_range": None, "for": for_, "against": against_}
             cards["held"][t] = held
             if v == "ADVANCE":
                 # A held name advanced on the ADD question: watch the add triggers, never an exit
