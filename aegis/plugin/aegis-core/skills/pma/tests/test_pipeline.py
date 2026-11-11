@@ -2360,6 +2360,32 @@ def test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_gu
     check("every deliberated name and its data lines survive the trim", all(("### " + t) in b for t in names) and b.count("  momentum:") == a.count("  momentum:"))
 
 
+def test_the_brief_gate_checks_section_9a_for_a_flat_or_held_book(td):
+    """Conductor 2026-11-11: with --export, a FLAT book may say so in 9A; a HELD book needs one row per held name carrying exactly one action word. Without --export the old test stands."""
+    stem = ("# B\n\n## §0 VERDICTS\n\n| T | V |\n|---|---|\n| X | ADVANCE |\n\n"
+            "## §1 MACRO\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n| c | d |\n|---|---|\n| 3 | 4 |\n\n"
+            "## §2 SECTOR\n\n## §3 HELD\n\n## NEAR MISS\n\n## ACTION\n\nCondition: x\n")
+    adv = [c["ticker"] for c in json.load(open(fx("consensus.json"))) if c["verdict"] == "ADVANCE"]
+    adv_rows = "".join(f"| {t} | ref | stop | conf | kill | ctx | Ready now |\n" for t in adv)
+    tail = ("\n## §9B TRADE\n\n| Ticker | Entry | Stop | Confirms | Kills | Sector | Ready |\n|---|---|---|---|---|---|---|\n" + adv_rows + "\n## §9C PLAN\n\nAt the open, do x.\n")
+    def gate(tag, nine_a, held):
+        b = os.path.join(td, f"g9a_{tag}.md"); open(b, "w").write(stem + "\n## §9A OWN\n\n" + nine_a + tail)
+        ex = os.path.join(td, f"g9a_{tag}.json"); json.dump({"daily_list": [], "held_positions": [{"ticker": t} for t in held]}, open(ex, "w"))
+        rc, log = run([PIPE, "gate", "--brief", b, "--consensus", fx("consensus.json"), "--verdict-ledger", fx("verdict_ledger.json"), "--export", ex, "--date", "2026-09-06"])
+        return log
+    ok = lambda log: "[FAIL] Q9D 9A" not in log and "[FAIL] Q9D 9A has one row" not in log and "[FAIL] Q9D 9A states" not in log
+    l = gate("flat", "The book is FLAT: no positions are held today.\n", [])
+    check("a FLAT book that says so passes 9A", ok(l), l[l.find("Q9D"):][:200])
+    l = gate("flat_silent", "Nothing to report.\n", [])
+    check("a flat book that neither says so nor carries an action fails 9A", "[FAIL] Q9D 9A states the book is FLAT" in l, l[l.find("Q9D"):][:200])
+    l = gate("held_ok", "| Name | ACTION |\n|---|---|\n| EBAY | HOLD |\n| GPN | TRIM |\n", ["EBAY", "GPN"])
+    check("a held book with one action word per held row passes", ok(l) and "9A has one row per held name, each with exactly one action word (2 held)" in l, l[l.find("Q9D"):][:200])
+    l = gate("held_missing", "| Name | ACTION |\n|---|---|\n| EBAY | HOLD |\n", ["EBAY", "GPN"])
+    check("a held name with NO row fails 9A and is named", "[FAIL] Q9D 9A has one row per held name" in l and "GPN (no row)" in l, l[l.find("Q9D"):][:200])
+    l = gate("held_two", "| Name | ACTION |\n|---|---|\n| EBAY | HOLD or TRIM |\n", ["EBAY"])
+    check("a held row with two action words fails 9A", "[FAIL] Q9D 9A has one row per held name" in l and "EBAY (action words on its row: ['HOLD', 'TRIM'])" in l, l[l.find("Q9D"):][:200])
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4534,7 +4560,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book, test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book, test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide, test_the_brief_gate_checks_section_9a_for_a_flat_or_held_book, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

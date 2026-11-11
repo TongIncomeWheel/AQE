@@ -3803,7 +3803,32 @@ def cmd_gate(a):
     if "§9A" in brief:
         held = brief.split("§9A")[1].split("§9B")[0]
         acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN") if w in held]
-        chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        # FLAT / HELD BOOK (conductor 2026-11-11), with --export: a FLAT book needs no action word (the section must say it is flat); a HELD book needs EVERY held name on its own
+        # row carrying exactly one action word. Without --export the old test stands (some action word present).
+        _ex_path = getattr(a, "export", None)
+        _held_names = None
+        if _ex_path and os.path.exists(_ex_path):
+            _held_names = sorted({h.get("ticker") for h in (json.load(open(_ex_path)).get("held_positions") or []) if h.get("ticker")})
+        if _held_names is None:
+            chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        elif not _held_names:
+            chk(bool(acts) or re.search(r"\b(flat|no (open )?positions?|nothing held|no held)\b", held, re.I) is not None, "Q9D",
+                "9A states the book is FLAT (no held positions) or carries actions")
+        else:
+            _words = ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN")
+            def _held_row(t):
+                m = re.search(rf"(?m)^\s*\|\s*\*{{0,2}}{re.escape(t)}\*{{0,2}}\s*\|.*$", held)
+                return m.group(0) if m else None
+            bad = []
+            for t in _held_names:
+                row = _held_row(t)
+                if row is None:
+                    bad.append(f"{t} (no row)")
+                else:
+                    n = [w for w in _words if re.search(rf"(?<![A-Z-]){re.escape(w)}(?![A-Z-])", row)]
+                    if len(n) != 1:
+                        bad.append(f"{t} (action words on its row: {n})")
+            chk(not bad, "Q9D", f"9A has one row per held name, each with exactly one action word" + (f" -- {bad}" if bad else f" ({len(_held_names)} held)"))
         chk("monitor" not in held.lower() and "watch closely" not in held.lower(),
             "Q9D", "9A has no unactionable 'monitor' / 'watch closely' rows")
     if "§9B" in brief:
@@ -3954,7 +3979,7 @@ if __name__ == "__main__":
     s.add_argument("--decision", default="decision.json"); s.add_argument("--cap", type=int, default=25)
     s.add_argument("--out", default="slate_plan.json"); s.add_argument("--excluded", default="slate_excluded.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
-    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
+    s = sub.add_parser("gate"); s.add_argument("--export", default=None, help="aqe_daily_export.json: lets the 9A check know whether the book is flat or held (every held name needs its own row with exactly one action word)"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
