@@ -865,6 +865,13 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
                 if not os.path.exists(os.path.join(pk, _need)):
                     fails.append(f"report C packet file MISSING: {_need} (every C seat must read the AQE indicators and the glossary)")
         present = sorted(f for f in os.listdir(pk) if f.endswith(".tsv"))
+        _trim_receipt = None
+        _trp = os.path.join(pk, "packet_trim.json")
+        if os.path.exists(_trp):
+            try:
+                _trim_receipt = json.load(open(_trp, encoding="utf-8"))
+            except ValueError:
+                fails.append("packets/packet_trim.json is not valid JSON -- a declared trim cannot be verified")
         for v in deciders:
             f = os.path.join(pk, f"{v}.tsv")
             if not os.path.exists(f):
@@ -889,13 +896,22 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
                 out = sorted(t for t in tick if t not in uni)
                 if out:
                     fails.append(f"packet {v}.tsv serves {len(out)} ticker(s) not in the candidate set: {out[:5]}")
-                if len(tick) < 0.9 * len(uni):
+                _tr = ((_trim_receipt or {}).get("seats") or {}).get(v)
+                if _tr is not None:
+                    # a DECLARED trim (packet_trim.json, conductor 2026-11-11): the seat must be shown exactly the candidate set minus the omitted names it declared
+                    _want = set(uni) - set(_tr.get("omitted") or [])
+                    if tick != _want:
+                        fails.append(f"packet {v}.tsv disagrees with its declared trim (packet_trim.json): serves {len(tick)}, declares {len(_want)} "
+                                     f"(unlisted: {sorted(tick - _want)[:5]}, dropped without a declaration: {sorted(_want - tick)[:5]})")
+                    else:
+                        notes.append(f"packet {v}: trimmed by declaration ({_tr.get('mode')}): {len(tick)} of {len(uni)} names, {len(_tr.get('omitted') or [])} omitted and listed")
+                elif len(tick) < 0.9 * len(uni):
                     fails.append(f"packet {v}.tsv serves {len(tick)} of {len(uni)} candidate names -- a seat is blind to {len(uni) - len(tick)} (yesterday's packet?)")
             notes.append(f"packet {v}: {len(body) - 1} rows, {len(hdr)} columns, {blank / total:.0%} blank")
         extra = [f for f in present if f[:-4] not in deciders]
         if extra:
             fails.append(f"packets for NON-decider seats present (R31 -- a stray file serves a seat the universe it must not see): {extra}")
-        stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f != "no_technical_coverage.json"]
+        stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f not in ("no_technical_coverage.json", "packet_trim.json")]
         if stray_json:
             fails.append(f"stray packet files (retired macro seats or unknown): {stray_json} (R31)")
     # --- per-voice data coverage (PM 2026-11-03): each charter's required fields against its packet ---

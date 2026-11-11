@@ -2299,6 +2299,67 @@ def test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words(t
         check(f"report {rep}: every quoted reason is the seats' own tier-2 text", ok)
 
 
+def test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book(td):
+    """Conductor 2026-11-11: `packets --max-bytes N` ranks each seat's rows by its OWN screen and stops at the byte budget; held rows are always kept; the cut is declared in the
+    packet (# TRIMMED) and in packet_trim.json (served + omitted == candidates); check.py accepts a declared trim and still FAILs an undeclared drop. Without the flag nothing changes."""
+    ex = os.path.join(HERE, "..", "..", "..", "..", "..", "..", "tests", "fixtures", "cards_v3", "aqe_daily_export.json")
+    if not os.path.exists(ex):
+        return
+    D = json.load(open(ex))
+    u = os.path.join(td, "tu.json"); json.dump({"schema": "aqe_universe_rows.v1", "date": D["date"], "rows": D["daily_list"]}, open(u, "w"))
+    menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
+    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    cs, sets = os.path.join(td, "t_cs.json"), os.path.join(td, "t_sets.json")
+    a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--top", "40", "--out", cs, "--out-sets", sets], capture_output=True, text=True, env=env)
+    check("trim fixture: screens run", a.returncode == 0, (a.stdout + a.stderr)[-300:])
+    if a.returncode != 0:
+        return
+    envA = dict(os.environ); envA.pop("AEGIS_REPORT", None)
+    full, cut = os.path.join(td, "t_full"), os.path.join(td, "t_cut")
+    f = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04", "--outdir", full], capture_output=True, text=True, env=envA)
+    BUDGET = 12000
+    c = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04", "--outdir", cut, "--max-bytes", str(BUDGET)], capture_output=True, text=True, env=envA)
+    check("packets build with and without --max-bytes", f.returncode == 0 and c.returncode == 0, (f.stdout + f.stderr + c.stdout + c.stderr)[-400:])
+    if f.returncode or c.returncode:
+        return
+    check("without the flag there is no receipt and no TRIMMED line", not os.path.exists(os.path.join(full, "packet_trim.json"))
+          and not any("# TRIMMED" in open(os.path.join(full, x)).read() for x in os.listdir(full) if x.endswith(".tsv")))
+    R = json.load(open(os.path.join(cut, "packet_trim.json")))["seats"]
+    import csv
+    held = {h["ticker"] for h in D["held_positions"]}
+    cand = {r["ticker"] for r in json.load(open(cs))["universe"]}
+    ok_size = ok_decl = ok_held = True
+    for seat, rec in R.items():
+        txt = open(os.path.join(cut, seat + ".tsv")).read()
+        rows = list(csv.DictReader([l for l in txt.split("\n") if l and not l.startswith("#")], delimiter="\t"))
+        got = {r["ticker"] for r in rows}
+        ok_decl = ok_decl and "# TRIMMED" in txt and got == cand - set(rec["omitted"]) and rec["served"] == len(got) and rec["candidates"] == len(cand)
+        ok_held = ok_held and held <= got
+        ok_size = ok_size and (len(txt) <= BUDGET * 1.25 or len(got) <= len(held) + 1)
+    check("every trimmed seat: declared in the packet and the receipt, served + omitted == candidates", ok_decl)
+    check("the held book is in every trimmed packet", ok_held)
+    check("each trimmed packet is near its budget (under 1.25x, header included)", ok_size)
+    check("at least one seat was actually cut", any(r["omitted"] for r in R.values()), str({k: v["served"] for k, v in R.items()}))
+
+
+def test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide(td):
+    """Conductor 2026-11-11: VOTE_PACKET ran ~100KB against the 70KB guide. Over --max-bytes the free-text caps tighten in declared rungs; data lines are never cut; the packet says so."""
+    common = ["--export", fx("export.json"), "--phase4", fx("phase4.json"), "--tally", fx("tally.json"), "--fundamentals", fx("fundamentals.json"),
+              "--rogers", fx("challenge_rogers.json"), "--steenbarger", fx("challenge_steenbarger.json"), "--lynch", fx("challenge_lynch.json"),
+              "--detectlens", fx("challenge_detect-lens.json"), "--run-id", "test"]
+    full, small = os.path.join(td, "r2_full.txt"), os.path.join(td, "r2_small.txt")
+    rc1, l1 = run([PIPE, "r2digest"] + common + ["--out", full])
+    size = len(open(full).read())
+    rc2, l2 = run([PIPE, "r2digest"] + common + ["--out", small, "--max-bytes", str(max(1000, size - 1))])
+    check("r2digest builds both ways", rc1 == 0 and rc2 == 0, (l1 + l2)[-300:])
+    a, b = open(full).read(), open(small).read()
+    check("under budget: no trim line, unchanged", "TRIMMED" not in a)
+    if len(b) < len(a):
+        check("over budget: a TRIMMED line says what was tightened, and the packet is smaller", "TRIMMED to fit" in b and "data lines are never cut" in b)
+    names = json.load(open(fx("phase4.json")))["deliberation_set"]
+    check("every deliberated name and its data lines survive the trim", all(("### " + t) in b for t in names) and b.count("  momentum:") == a.count("  momentum:"))
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4473,7 +4534,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book, test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
