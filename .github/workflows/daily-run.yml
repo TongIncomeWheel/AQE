@@ -68,7 +68,11 @@ jobs:
     # 2026-11-03: 75 (was 45). The run is ~24-28 min; Step 8a-4 (the committee's FMP inputs) adds up to its own 15-minute
     # budget and Step 6h-1 (whole-market panel refresh for the breadth) up to its own 20-minute budget: worst case ~63 min.
     # The app's own pipeline cutoff (daily_job._PIPELINE_TIMEOUT) is 75 min too.
-    timeout-minutes: 75
+    # 2026-11-11: 120 (was 75). Run 140 (11 Nov, 05:35 SGT dispatch) was CANCELLED by this very limit at 74.5 min, after the export and the
+    # voice packets published but BEFORE Step 8a-4 (committee data) and the aqe_last_run marker: the job ran 22:08:27Z -> 23:22:57Z. The nightly now
+    # scores the 1,100+ name v5 universe (run 139 took 65 min) and committee data carries Report B's screened names too, and the panel job's own
+    # failure (a dropped FMP connection) leaves Step 6h-1 refreshing the breadth. Worst case is now over 75 min, so the cap sits well above it.
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
