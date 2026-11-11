@@ -27,11 +27,11 @@ def row(t, entry, live, qty, valid=False, bstop=None, ext=None, atr=None, unreal
 # ---------------------------------------------------------------- 1 + 2 the reference stop and P&L in R
 def test_reference_stop_precedence_structural_then_extension_then_atr_fallback_each_labelled():
     s, b = HV.reference_stop(row("A", 10, 10, 1, valid=True, bstop=9.0, ext=8.0, atr=9.5))
-    assert (s, b) == (9.0, "structural bracket")
+    assert (s, b) == (9.0, "structural bracket stop")
     s, b = HV.reference_stop(row("B", 10, 10, 1, valid=False, ext=8.0, atr=9.5))
     assert s == 8.0 and b.startswith("extension bracket")
     s, b = HV.reference_stop(row("C", 10, 10, 1, valid=False, atr=9.5))
-    assert (s, b) == (9.5, "1 ATR fallback")
+    assert (s, b) == (9.5, "one-ATR fallback stop")
     assert HV.reference_stop(row("D", 10, 10, 1)) == (None, "no worked-out stop")
 
 
@@ -45,6 +45,24 @@ def test_p_and_l_in_r_uses_the_reference_stop_and_a_real_broker_stop_replaces_it
     v2 = {x["ticker"]: x for x in HV.held_view(ex, {"positions": {"EBAY": {"stop": 121.0}}}, one_r=620)}
     assert v2["EBAY"]["stop_used"] == 121.0 and v2["EBAY"]["action"] is None and v2["EBAY"]["broker_stop_status"] == "broker stop 121.0"
     assert v2["EBAY"]["open_r"] == pytest.approx((123.52 - 122.9178) / (122.9178 - 121.0), abs=0.005)       # the real stop is used for R
+
+
+def test_acceptance_numbers_r_per_share_open_r_committee_1r_and_entry_to_stop_dollars_with_the_1r_flag_as_a_plain_fact():
+    """The conductor's corrected acceptance numbers for the 10 Nov close: R per share EBAY 3.25, GPN 8.86, RBRK 11.02; open R +0.19 / -0.06 / -0.28; on $620 +0.15 / -0.09 / -0.40;
+    entry-to-stop dollars $487 / $886 / $882 (the last two above $620, said as a fact with no sizing words); GPN's stop is the extension bracket's 93.29, never the 97.88 ATR-fallback field."""
+    ex = {"held_positions": [row("EBAY", 122.9178, 123.52, 150, ext=119.67, atr=119.67, unreal=90.33),
+                             row("GPN", 102.1527, 101.59, 100, ext=93.29, atr=97.88, unreal=-56.27),
+                             row("RBRK", 112.430375, 109.34, 80, ext=101.41, atr=101.41, unreal=-247.23)]}
+    v = {x["ticker"]: x for x in HV.held_view(ex, {"positions": {}}, one_r=620)}
+    assert [round(v[t]["r_per_share"], 2) for t in ("EBAY", "GPN", "RBRK")] == [3.25, 8.86, 11.02]
+    assert [v[t]["open_r"] for t in ("EBAY", "GPN", "RBRK")] == [0.19, -0.06, -0.28]
+    assert [v[t]["pnl_in_committee_1r"] for t in ("EBAY", "GPN", "RBRK")] == [0.15, -0.09, -0.40]
+    assert [round(v[t]["risk_usd"]) for t in ("EBAY", "GPN", "RBRK")] == [487, 886, 882]
+    assert [v[t]["risk_above_committee_1r"] for t in ("EBAY", "GPN", "RBRK")] == [False, True, True]
+    assert v["GPN"]["reference_stop"] == 93.29 and "extension bracket stop" in v["GPN"]["reference_basis"]
+    md = HV.render_table(list(v.values()))
+    assert "$886 (above the committee's fixed 1R of $620)" in md and "$487 |" in md and "Entry-to-stop dollars" in md
+    assert not re.search(r"\b(size|shares to|position size)\b", md.split("not a size")[-1].lower())
 
 
 def test_a_figure_that_cannot_be_computed_is_none_never_a_guess():

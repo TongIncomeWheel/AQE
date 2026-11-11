@@ -743,9 +743,9 @@ def book_table():
         bad_ = x["broker_stop"] is None
         rows_.append([f"<b>{t}</b>", f_(x["qty"], "{:g}"), f_(x["entry"], "{:.2f}"), f_(x["mark"], "{:.2f}"), mins(f_(x["pnl_usd"], "{:+,.2f}")),
                       mins(f_(x["open_r"], "{:+.2f}R")) + f"<span class='sub'>{mins(f_(x['pnl_in_committee_1r'], '{:+.2f}'))} on the committee&rsquo;s fixed 1R of ${ONE_R:,} (not a size)</span>",
-                      (pill("NO STOP AT BROKER", "bad") if bad_ else E(x["broker_stop_status"])), stop,
+                      (pill("NO STOP AT BROKER", "bad") if bad_ else E(x["broker_stop_status"])), stop, E(HV.risk_cell(x)),
                       (pill("SET STOP", "bad") if bad_ else "Hold")])
-    return table(["Name", "Qty", "Entry", "Mark", "P&amp;L $", "P&amp;L in R (own stop)", "Broker stop status", "Worked-out stop (basis)", "Action"], rows_, "sortable") if rows_ else ""
+    return table(["Name", "Qty", "Entry", "Mark", "P&amp;L $", "P&amp;L in R (own stop)", "Broker stop status", "Worked-out stop (basis)", "Entry-to-stop dollars", "Action"], rows_, "sortable") if rows_ else ""
 held_cards = "".join(held_card(t) for t in HELD_ORDER)
 _bp = sorted(pos_b.values(), key=lambda p: -p["beta_adj_exposure_usd"])
 _secname = lambda t: (HELD.get(t, {}).get("gics_sector_name") or HELD.get(t, {}).get("ptj_sector") or "")
@@ -810,7 +810,7 @@ if _rwc:
                 + tile(_rwc["new"], "new on the list today") + tile(_rwc["remain"], f"remaining from the last {_rwc['prior_sessions']} sessions") + tile(_rwc["left"], "left the list")
                 + f'</div><p class="read">The list is the repeat-watch ledger as of {E(str(_rwc["latest_list_date"]))}; the brief carries one row per new or standing name.</p></div>')
 else:
-    chg_html = '<div class="card"><h3>New, remaining and left counts are not available.</h3><p class="read">repeat_watch.json is missing from this run folder or predates the compact table; declared, nothing is invented.</p></div>'
+    chg_html = '<div class="card"><h3>New, remaining and left counts are not available.</h3><p class="read">The repeat-watch file is missing from this run folder or predates the compact table; declared, nothing is invented.</p></div>'
 order = usable + thin
 RH, mx = 50, 5.0
 rh = RH * len(order) + 26

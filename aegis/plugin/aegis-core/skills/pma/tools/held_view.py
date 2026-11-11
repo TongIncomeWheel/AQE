@@ -45,11 +45,11 @@ def reference_stop(row):
     e = row.get("extension_bracket") or {}
     for kind in STOP_ORDER:
         if kind == "bracket" and b.get("valid") and b.get("stop") is not None:
-            return float(b["stop"]), "structural bracket"
+            return float(b["stop"]), "structural bracket stop"
         if kind == "extension_bracket" and e.get("available") and e.get("stop") is not None:
-            return float(e["stop"]), "extension bracket, " + ("lower of the continuation-window low and 1 daily range under entry" if not e.get("stop_basis") else "lower of the window low and 1 daily range under entry")
+            return float(e["stop"]), "extension bracket stop, " + ("lower of the continuation-window low and 1 daily range under entry" if not e.get("stop_basis") else "lower of the window low and 1 daily range under entry")
         if kind == "atr_fallback" and b.get("atr_fallback_stop") is not None:
-            return float(b["atr_fallback_stop"]), "1 ATR fallback"
+            return float(b["atr_fallback_stop"]), "one-ATR fallback stop"
     return None, "no worked-out stop"
 
 
@@ -71,7 +71,10 @@ def held_view(export, broker_stops=None, one_r=None):
         used, used_basis = (real, "broker stop order") if real is not None else (ref, basis)
         r_ps = (entry - used) if (entry is not None and used is not None and entry > used) else None
         open_r = round((mark - entry) / r_ps, 2) if (r_ps and mark is not None) else None
-        out.append({"ticker": t, "qty": qty, "entry": entry, "mark": mark, "pnl_usd": pnl,
+        risk_usd = round(qty * (entry - used), 2) if (qty is not None and entry is not None and used is not None and entry > used) else None
+        out.append({"ticker": t, "qty": qty,
+                    # the dollar distance from entry to the stop used, as a plain fact; flagged when it exceeds the committee's fixed 1R (no sizing words)
+                    "risk_usd": risk_usd, "risk_above_committee_1r": (risk_usd is not None and bool(one_r) and risk_usd > one_r), "entry": entry, "mark": mark, "pnl_usd": pnl,
                     "broker_stop": real, "broker_stop_status": (f"broker stop {real}" if real is not None else "NO STOP AT BROKER"),
                     "reference_stop": ref, "reference_basis": basis, "stop_used": used, "stop_used_basis": used_basis,
                     "r_per_share": round(r_ps, 4) if r_ps else None, "open_r": open_r,
@@ -84,13 +87,20 @@ def _f(v, fmt):
     return "n/a" if v is None else fmt.format(v)
 
 
+def risk_cell(r):
+    """The dollars between entry and the stop used, a plain fact; above the committee's fixed 1R it says so (no sizing words)."""
+    if r.get("risk_usd") is None:
+        return "n/a"
+    return f"${r['risk_usd']:,.0f}" + (f" (above the committee's fixed 1R of ${r['committee_1r_usd']:,.0f})" if r.get("risk_above_committee_1r") else "")
+
+
 def render_table(rows, actions=None):
     """The ONE held-book table (brief sections 3 and 9A, and the Cards 'Your book'): the facts are code-built; the ACTION column is the default (SET-STOP when no stop order
     exists) unless `actions` {ticker: word} carries the committee's own call for a name that already has a stop."""
     actions = actions or {}
     one_r = next((r["committee_1r_usd"] for r in rows if r.get("committee_1r_usd")), None)
-    L = ["| Name | Qty | Entry | Mark | P&L $ | P&L in R (own stop) | P&L in committee 1R" + (f" (${one_r:,.0f}, not a size)" if one_r else "") + " | Broker stop status | Worked-out stop (basis) | Action |",
-         "|---|---|---|---|---|---|---|---|---|---|"]
+    L = ["| Name | Qty | Entry | Mark | P&L $ | P&L in R (own stop) | P&L in committee 1R" + (f" (${one_r:,.0f}, not a size)" if one_r else "") + " | Broker stop status | Worked-out stop (basis) | Entry-to-stop dollars | Action |",
+         "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         stop = (f"{r['reference_stop']:.2f} ({r['reference_basis']}; reference only)" if r["reference_stop"] is not None else "none worked out")
         if r["broker_stop"] is not None:
@@ -98,7 +108,7 @@ def render_table(rows, actions=None):
         act = r["action"] or actions.get(r["ticker"]) or "HOLD"
         L.append("| " + " | ".join([
             f"**{r['ticker']}**", _f(r["qty"], "{:g}"), _f(r["entry"], "{:.2f}"), _f(r["mark"], "{:.2f}"), _f(r["pnl_usd"], "{:+,.2f}"),
-            _f(r["open_r"], "{:+.2f}R"), _f(r["pnl_in_committee_1r"], "{:+.2f}"), r["broker_stop_status"], stop, act]) + " |")
+            _f(r["open_r"], "{:+.2f}R"), _f(r["pnl_in_committee_1r"], "{:+.2f}"), r["broker_stop_status"], stop, risk_cell(r), act]) + " |")
     return "\n".join(L)
 
 
