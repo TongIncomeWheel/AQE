@@ -11,7 +11,7 @@ run actually produced. If a change moves a verdict, this fails and tells you whi
 
 Zero external dependencies. Exits 0 on pass, 1 on any failure.
 """
-import importlib, json, os, re, shutil, subprocess, sys, tempfile, importlib.util
+import glob, importlib, json, os, re, shutil, subprocess, sys, tempfile, importlib.util
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIX = os.path.join(HERE, "fixtures")
@@ -2266,6 +2266,39 @@ def test_the_brief_headings_say_what_reports_a_b_and_c_are(td):
     check("A heading is fixed in the brief-writer card and keeps the gate prefix", "## §0 VERDICT TABLE — REPORT A: the main committee, picking from AQE's own lists (the only report with trade rows)" in card)
 
 
+def test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words(td):
+    """Conductor 2026-11-11: B and C need no hand script. `slate-from-forms` reproduces the 10 Nov B and C slates byte for byte from decision.json + the seats' own
+    tier-2 forms, passes the registrar's slate schema check, and every why_agreed / dissent / wrong_if is a quote of a seat's own tier-2 text."""
+    import shutil
+    root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
+    for rep in ("B", "C"):
+        src = os.path.join(root, "output", "pma", "run", "2026-11-10-" + rep)
+        if not os.path.exists(os.path.join(src, "decision.json")):
+            check(f"slate-from-forms fixture 2026-11-10-{rep} present", False, src); continue
+        d = os.path.join(td, "slate_" + rep); shutil.copytree(src, d)
+        want = open(os.path.join(d, "slate.json"), "rb").read(); os.remove(os.path.join(d, "slate.json"))
+        env = dict(os.environ); env["AEGIS_REPORT"] = rep
+        r = subprocess.run([sys.executable, PIPE, "slate-from-forms", "--dir", d], capture_output=True, text=True, env=env)
+        check(f"report {rep}: slate-from-forms runs", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+        got = open(os.path.join(d, "slate.json"), "rb").read()
+        check(f"report {rep}: identical to the Chair's reference slate", got == want)
+        v = subprocess.run([sys.executable, REG, "validate", "--file", os.path.join(d, "slate.json"), "--kind", "slate", "--decision", os.path.join(d, "decision.json")],
+                           capture_output=True, text=True, env=env, cwd=d)
+        check(f"report {rep}: the registrar's slate schema check passes", v.returncode == 0, (v.stdout + v.stderr)[-300:])
+        slate = json.loads(got)
+        said = " ".join(" ".join(str(x.get(k) or "") for k in ("reason", "wrong_if")) for f in glob.glob(os.path.join(d, "forms", "tier2", "*.json"))
+                        for x in json.load(open(f)).get("decisions", []))
+        said = " ".join(said.split())
+        ok = True
+        for tk in slate["tickets"]:
+            for part in tk["why_agreed"].split(" | "):
+                if '"' in part:
+                    ok = ok and " ".join(part.split('"', 1)[1].rstrip('"').split()) in said
+            for dd in tk["dissent"]:
+                ok = ok and dd["why"] in said
+        check(f"report {rep}: every quoted reason is the seats' own tier-2 text", ok)
+
+
 def test_shortlist_cap_is_six(td):
     """R33 (PM 2026-10-30). A decider shortlists at most six on a ballot dated from 2026-11-01; a seventh
     is REJECTED on arrival. History validates as filed (the 2026-09-25 14-name ballot above still passes).
@@ -4440,7 +4473,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

@@ -363,6 +363,66 @@ def cmd_coverage(a):
     print(f"receipt: coverage: all {len(names)} screened names have fundamentals, a served MTF row and closes")
 
 
+def cmd_slate_from_forms(a):
+    """REPORT B / C (conductor 2026-11-11): the Chair's slate built by CODE from decision.json + the seats' own tier-2 forms (forms/tier2/*.json), so a B or C
+    run needs no hand-written script. Writes NOTHING the seats did not say (R34/R40): `why_agreed` and `dissent` are quotes of the seats' own tier-2 reasons,
+    `wrong_if` is a seat's own line, the trigger is decision.json's. Reads slate_plan.json `keep` when present (only those names get a ticket). Writes slate.json;
+    validate it with `registrar.py validate --file slate.json --kind slate --decision decision.json`. Same output, byte for byte, as the conductor's reference script
+    (aegis/output/pma/run/2026-11-10-C/slate_gen_reference.py)."""
+    import glob, hashlib
+    R = a.dir
+    def sha(p):
+        return hashlib.sha256(open(p, "rb").read()).hexdigest() if os.path.exists(p) else None
+    dec = load(os.path.join(R, "decision.json"), needs=["names", "date"])
+    forms = {}
+    for f in sorted(glob.glob(os.path.join(R, "forms", "tier2", "*.json"))):
+        if ".part" in f:
+            continue
+        d = json.load(open(f))
+        forms[d["voice"]] = {x["ticker"]: x for x in d.get("decisions", [])}
+    plan_path = os.path.join(R, "slate_plan.json")
+    keep = None
+    if os.path.exists(plan_path):
+        pl = json.load(open(plan_path))
+        keep = {(x["ticker"] if isinstance(x, dict) else x) for x in (pl.get("keep") or [])}
+    def q(seat, txt, k=90):
+        txt = " ".join((txt or "").split())
+        return f'{seat}: "{txt[:k]}"'
+    tickets = []
+    for t, n in dec["names"].items():
+        if n.get("proposal") not in ("ADVANCE", "WATCH"):
+            continue
+        if keep is not None and t not in keep:
+            continue
+        sup, opp, trig = n["seats"]["support"], n["seats"]["oppose"], n["trigger"]
+        why = " | ".join(q(s, (forms.get(s, {}).get(t) or {}).get("reason", ""), 95) for s in sup[:3] if forms.get(s, {}).get(t))
+        why = (why or f"{len(sup)} SUPPORT of {len(sup) + len(opp) + len(n['seats']['abstain'])}")[:400]
+        wi = ""
+        for s in (trig.get("seats") or []) + sup:
+            w = (forms.get(s, {}).get(t) or {}).get("wrong_if")
+            if w:
+                w = " ".join(w.split()); wi = f'{s}: "{w[:150]}"'[:200]; break
+        if not wi:
+            wi = "see the seats' own wrong-if lines in the tier-2 forms"
+        dis = []
+        for s in opp:
+            r = (forms.get(s, {}).get(t) or {}).get("reason")
+            if r:
+                dis.append({"voice": s, "why": " ".join(r.split())[:300]})
+        c = n["counts"]
+        tickets.append({"ticker": t, "verdict": n["proposal"], "entry_trigger": trig["plain"][:200],
+                        "trigger": {"word": trig["word"], "tf": trig["tf"], "plain": trig["plain"][:120]},
+                        "timing_count": {k: c[k] for k in ("support", "act_now", "wait", "oppose", "abstain")},
+                        "wrong_if": wi, "horizon_sessions": n["horizon_sessions"], "why_agreed": why, "dissent": dis,
+                        "sources": [f"tier2:{s}" for s in sup[:4]]})
+    slate = {"date": dec["date"], "chair": "chair", "board_sha256": sha(os.path.join(R, "board.json")),
+             "decision_sha256": sha(os.path.join(R, "decision.json")), "tickets": tickets, "market_kill": dec.get("market_kill")}
+    out = a.out or os.path.join(R, "slate.json")
+    json.dump(slate, open(out, "w"), indent=1)
+    print(f"receipt: slate-from-forms: {len(tickets)} tickets ({', '.join(x['ticker'] + ':' + x['verdict'] for x in tickets) or 'none'}) -> {out}; "
+          f"validate with registrar.py validate --file slate.json --kind slate --decision decision.json")
+
+
 def cmd_cset(a):
     """REPORT C (PM 2026-11-10): the C deliberation set = Report A's deliberation set (re-voted by all eight seats with the AQE indicators) UNION
     aqe-quant's own nominations (max 6, ranked by `rank` with every door off). Reads C's phase4.json and A's phase4.json; writes the union back into
@@ -3746,6 +3806,8 @@ if __name__ == "__main__":
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-consensus", required=True, help="Report A's consensus.json for the same date"); s.add_argument("--date", required=True); s.add_argument("--out", default="reused_from_a.json")
     s = sub.add_parser("coverage", help="REPORT B: every name in seat_sets.json has fundamentals + a served MTF row + closes in the committee data, or fail")
     s.add_argument("--seat-sets", default="seat_sets.json"); s.add_argument("--committee-dir", default="aegis/output/committee_data")
+    s = sub.add_parser("slate-from-forms", help="REPORT B/C: the Chair's slate by code from decision.json + the seats' own tier-2 forms (nothing the seats did not say)")
+    s.add_argument("--dir", default=".", help="the run directory (decision.json, forms/tier2/, slate_plan.json, board.json)"); s.add_argument("--out", default=None)
     s = sub.add_parser("cset", help="REPORT C: deliberation set = Report A's set + aqe-quant's own nominations (PM 2026-11-10)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-phase4", required=True, help="Report A's phase4.json for the same date")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
@@ -3841,7 +3903,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "cset": cmd_cset, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "cset": cmd_cset, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
