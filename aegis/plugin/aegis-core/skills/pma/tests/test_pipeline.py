@@ -2158,7 +2158,7 @@ def test_the_brief_sections_registry_isolates_modules_from_the_core_gate(td):
     check("modules sit after the verdict block and before the macro section", out.index("module:sweep_B") > out.index("| AAA | ADVANCE |") and out.index("module:sweep_B") < out.index("# 1 MACRO"))
     check("the B section shows ADVANCE and HOLD names only, with a count line, and is labelled not a trade row",
           "| CCC |" in out and "| DDD |" in out and "| EEE |" not in out and "3 names deliberated" in out and "not a trade row" in out)
-    check("the C degraded module is exactly one loud line", "> Section Indicators C (the committee reading the AQE indicators) unavailable:" in out)
+    check("the C degraded module is exactly one loud line", "> Section REPORT C: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable:" in out)
     check("stripping the modules gives back the core byte for byte", bs.strip_modules(out) == brief)
     check("assemble is idempotent", bs.assemble(out, res) == out)
     fails, notes = bs.check(out, run, "2026-11-10")
@@ -2173,7 +2173,7 @@ def test_the_brief_sections_registry_isolates_modules_from_the_core_gate(td):
     check("with every module off the brief is the core, untouched", off == brief)
     one = bs.render_all(run, "2026-11-10", env="sweep_B")
     check("AEGIS_BRIEF_MODULES picks modules", one["sweep_B"]["status"] == "ok" and one["indicators_C"]["status"] == "off")
-    nodeg = out.replace("> Section Indicators C (the committee reading the AQE indicators) unavailable: ", "")
+    nodeg = out.replace("> Section REPORT C: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable: ", "")
     fails, _ = bs.check(nodeg, run, "2026-11-10")
     check("a degraded block without its one-line note fails", any("lacks its one-line note" in f for f in fails), str(fails))
 
@@ -2254,6 +2254,16 @@ def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committ
     put(["AAA"], ["AAA"], ["AAA", "BBB"])
     r = cov(); out = r.stdout + r.stderr
     check("coverage FAILS and names the uncovered name (fundamentals and mtf)", r.returncode == 1 and "fundamentals: BBB" in out and "mtf: BBB" in out and "topup" in out, out[-300:])
+
+
+def test_the_brief_headings_say_what_reports_a_b_and_c_are(td):
+    """PM 2026-11-11: the brief names the three reports in its headings every day. The B and C module titles come from the contract; A's heading is in the brief-writer card."""
+    reg = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "contracts", "brief_sections.json")))
+    t = {m["id"]: m["title"] for m in reg["modules"]}
+    check("B heading says full-universe screen, no AQE gate, scored only", t["sweep_B"] == "REPORT B: the same committee on a full-universe screen, with no AQE gate (scored only, not a trade row)", t["sweep_B"])
+    check("C heading says AQE's own scores and sub-scores, scored only", t["indicators_C"] == "REPORT C: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row)", t["indicators_C"])
+    card = open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "agents", "brief-writer.md")).read()
+    check("A heading is fixed in the brief-writer card and keeps the gate prefix", "## §0 VERDICT TABLE — REPORT A: the main committee, picking from AQE's own lists (the only report with trade rows)" in card)
 
 
 def test_shortlist_cap_is_six(td):
@@ -4430,7 +4440,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_report_c_only_the_quant_nominates_and_the_set_is_a_plus_the_quants_names, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,
