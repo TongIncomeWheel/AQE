@@ -331,8 +331,8 @@ class FMPClient:
     # instead of the whole run dying.
     _NETWORK_RETRY_DELAYS_S = (5, 15)
 
-    def _get_json(self, url: str, params: dict) -> dict | list:
-        self._throttle()
+    def _get_with_network_retry(self, url: str, params: dict):
+        """session.get with the network retry delays; a call that never gets an HTTP response raises FMPError (never a raw requests exception)."""
         resp = None
         last_exc: Exception | None = None
         for attempt in range(len(self._NETWORK_RETRY_DELAYS_S) + 1):
@@ -345,10 +345,17 @@ class FMPClient:
                 last_exc = exc
         if resp is None:
             raise FMPError(f"network error calling {url}: {last_exc}") from last_exc
+        return resp
+
+    def _get_json(self, url: str, params: dict) -> dict | list:
+        self._throttle()
+        resp = self._get_with_network_retry(url, params)
         if resp.status_code == 429:
-            # FMP rate-limit hit. Back off a full minute and retry once.
+            # FMP rate-limit hit. Back off a full minute and retry once. The retry goes through the SAME network-retry wrapper: until 2026-11-11 it was a
+            # bare session.get, so a dropped connection right after the 429 sleep escaped as a raw requests.ConnectionError, which the MA panel loop did not
+            # catch (it caught FMPError only) -- one dropped connection aborted the whole 30-minute refresh and threw away every bar already pulled.
             time.sleep(60)
-            resp = self._session.get(url, params=params, timeout=self.config.timeout_seconds)
+            resp = self._get_with_network_retry(url, params)
         if resp.status_code in (401, 403):
             if self._ok_count > 0:
                 # Key worked before → likely daily quota, not bad key
