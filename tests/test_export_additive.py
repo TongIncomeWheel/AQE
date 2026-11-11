@@ -137,7 +137,7 @@ def test_v21_record_fields_is_additive_only():
         # M&A flag (PM 2026-11-04), stamped by _attach_ma_flags on every daily_list / held row
         "ma_status", "ma_note", "ma_evidence",
         # Momentum at the pivot (PM 2026-11-05), stamped by valen.swing_pivot.attach_swing_pivot in build_export
-        "swing_pivot", "swing_atr_dist", "swing_high", "swing_high_date", "swing_daily", "swing_weekly",
+        "swing_pivot", "swing_atr_dist", "swing_high", "swing_high_date", "swing_daily", "swing_weekly", "swing_note",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (
