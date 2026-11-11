@@ -585,8 +585,11 @@ turn_k = sorted(gkeys("turn"), key=lambda k: -len(grp[k]))
 _wrong_side = [t for t in ADV if any(b.get("grade") == "AVOID" or b.get("rrg_quadrant") == "LAGGING" for b in (ROWS.get(t, {}).get("thematic_baskets") or []))]
 gr_rows = [(f"{E(k[1])} &middot; " + ", ".join(f"{r['ticker']} {r['rs_spy_20d']:+.0f}%" for r in top3(k)), f"{len(grp[k])} strong names", len(grp[k]), GRAY) for k in turn_k]
 names_cell = lambda k: " ".join(f"<b>{r['ticker']}</b> {r['rs_spy_20d']:+.0f}%" + (f" ({VERD[r['ticker']]})" if r["ticker"] in VERD else "") for r in top3(k, 6)) + (f" +{len(grp[k])-6} more" if len(grp[k]) > 6 else "")
+_grp_tbl = table(["Group", "Strong names", "Tickers (lead over SPY, 20 days)"],
+                 [[f"<b>{E(k[1])}</b> ({k[0].lower()})", len(grp[k]),
+                   " ".join(f"<b>{r['ticker']}</b> {r['rs_spy_20d']:+.0f}%" + (f" ({VERD[r['ticker']]})" if r["ticker"] in VERD else "") for r in sorted(grp[k].values(), key=lambda r: -r["rs_spy_20d"]))] for k in turn_k], "sortable")
 c_grp = card(f"Strong names are turning up with {', '.join(k[1] for k in turn_k[:-1])} and {turn_k[-1][1]}.",
-    hbars(gr_rows, 0, max(r[2] for r in gr_rows), "Strong names per turning group"),
+    hbars(gr_rows, 0, max(r[2] for r in gr_rows), "Strong names per turning group") + _grp_tbl,
     ("That is a place to look, not a list to buy" + (f", and {', '.join(_wrong_side)} {'is' if len(_wrong_side) == 1 else 'are'} among the ADVANCE names whose group is on the wrong side." if _wrong_side else ".")),
     ("Already-leading groups, and how strong is defined",
      table(["Group", "What it is doing", "Strong names", "Strongest vs SPY over 20 days"],
@@ -594,7 +597,7 @@ c_grp = card(f"Strong names are turning up with {', '.join(k[1] for k in turn_k[
      + "<p>A strong name is on the Longlist or Elder list, beating SPY over 20 days and above its 50-day average. Percentages are the lead over SPY in 20 days. "
        "A name can sit under its sector and its theme.</p>"))
 
-hs = collections.Counter(); hs_status = collections.Counter()
+hs = collections.Counter(); hs_status = collections.Counter(); hs_rows = []
 for r in ROWS.values():
     gr = r.get("setups"); gr = gr.get("grades") if isinstance(gr, dict) else gr
     for x in gr or []:
@@ -603,12 +606,23 @@ for r in ROWS.values():
         if "parabolic" in nm or "failed leader" in nm:            # R41: Valen's risk warnings are never printed
             continue
         hs[(x.get("setup"), x.get("status"))] += 1; hs_status[x.get("status")] += 1
+        if x.get("status") in ("TRIGGERED", "READY", "WATCH"):
+            hs_rows.append((r.get("ticker"), x))
+_HS_ORD = {"TRIGGERED": 0, "READY": 1, "WATCH": 2}
+hs_rows.sort(key=lambda tx: (_HS_ORD[tx[1]["status"]], str(tx[0]), str(tx[1].get("setup"))))
+def hs_table():
+    """PM 2026-11-11: the card said 'the triggered or ready ones are in the table below' and the table was a comma list of counts. Ticker | Setup | Status | Pivot | Stop; TRIGGERED, then READY, then WATCH."""
+    if not hs_rows:
+        return ""
+    f_ = lambda v: "&mdash;" if v is None else f"{v:,.2f}"
+    return table(["Ticker", "Setup", "Status", "Pivot", "Stop"],
+                 [[f"<b>{E(str(t))}</b>", E(str(x.get("setup"))), E(str(x.get("status")).title()), f_(x.get("pivot")), f_(x.get("stop"))] for t, x in hs_rows], "sortable")
 n_ready = hs_status.get("TRIGGERED", 0) + hs_status.get("READY", 0)
 ST = [("Triggered or ready", n_ready, CLAY), ("Watch", hs_status.get("WATCH", 0), GRAY), ("Past the pivot", hs_status.get("PAST_PIVOT", 0), GRAY), ("Failed", hs_status.get("FAILED", 0), GRAY)]
 c_hs = card(("No Valen house setup is triggered or ready across the list." if not n_ready else f"{n_ready} Valen house setup grade{'s are' if n_ready != 1 else ' is'} triggered or ready across the list."),
-    hbars([(a, str(b), b, c) for a, b, c in ST], 0, max(b for _, b, _ in ST), "Valen house setups by status"),
+    hbars([(a, str(b), b, c) for a, b, c in ST], 0, max(b for _, b, _ in ST), "Valen house setups by status") + hs_table(),
     f"{sum(hs_status.values())} setup grades across the list" + ("; none is a buy today." if not n_ready else "; the triggered or ready ones are in the table below."),
-    ("Every setup grade", "<p>" + ", ".join(f"{E(a)} {E(str(b).replace('PAST_PIVOT','past the pivot').lower())} &times;{n}" for (a, b), n in sorted(hs.items())) + ".</p>"))
+    ("Every setup grade", "<p>Counts: " + ", ".join(f"{E(a)} {E(str(b).replace('PAST_PIVOT','past the pivot').lower())} &times;{n}" for (a, b), n in sorted(hs.items())) + ".</p>"))
 GRADE_ORDER = {"DEPLOY": 0, "HOLD": 1, "TURNING": 2, "WATCH": 3, "AVOID": 4}
 def basket_card():
     """PM 2026-11-04 ('essential, thin is fine, baskets are a proxy'): AQE's curated theme baskets, their grade, week, month, rotation and strongest members."""
@@ -713,6 +727,25 @@ def held_card(t):
         strip(lo, hi, marks, label=f"{t} levels") + f'<div class="chips">{pill(pill_txt, tone)}' + (f"<span>{tail}</span>" if tail else "") + "</div>", body)
 
 HELD_ORDER = [t for t in bk if t in HELD] + [t for t in HELD if t not in bk]
+import held_view as HV
+_BS = (_opt("broker_stops.json", {}) or {})
+HVIEW = {x["ticker"]: x for x in HV.held_view(D, _BS, ONE_R)}
+def book_table():
+    """PM 2026-11-11: ONE table for the book, the same columns as the brief's section 3 / 9A: Name | Qty | Entry | Mark | P&L $ | P&L in R | Broker stop status | Worked-out stop (basis) | Action."""
+    f_ = lambda v, fmt: "n/a" if v is None else fmt.format(v)
+    rows_ = []
+    for t in HELD_ORDER:
+        x = HVIEW.get(t)
+        if not x:
+            continue
+        stop = (f"{x['broker_stop']:.2f} (broker order)" if x["broker_stop"] is not None
+                else (f"{x['reference_stop']:.2f} <span class='sub'>{E(x['reference_basis'])}; reference only, not an order</span>" if x["reference_stop"] is not None else "none worked out"))
+        bad_ = x["broker_stop"] is None
+        rows_.append([f"<b>{t}</b>", f_(x["qty"], "{:g}"), f_(x["entry"], "{:.2f}"), f_(x["mark"], "{:.2f}"), mins(f_(x["pnl_usd"], "{:+,.2f}")),
+                      mins(f_(x["open_r"], "{:+.2f}R")) + f"<span class='sub'>{mins(f_(x['pnl_in_committee_1r'], '{:+.2f}'))} on the committee&rsquo;s fixed 1R of ${ONE_R:,} (not a size)</span>",
+                      (pill("NO STOP AT BROKER", "bad") if bad_ else E(x["broker_stop_status"])), stop,
+                      (pill("SET STOP", "bad") if bad_ else "Hold")])
+    return table(["Name", "Qty", "Entry", "Mark", "P&amp;L $", "P&amp;L in R (own stop)", "Broker stop status", "Worked-out stop (basis)", "Action"], rows_, "sortable") if rows_ else ""
 held_cards = "".join(held_card(t) for t in HELD_ORDER)
 _bp = sorted(pos_b.values(), key=lambda p: -p["beta_adj_exposure_usd"])
 _secname = lambda t: (HELD.get(t, {}).get("gics_sector_name") or HELD.get(t, {}).get("ptj_sector") or "")
@@ -742,7 +775,7 @@ for t in HELD_ORDER:
     else:
         _clauses.append(f"keep {t} with " + ("NO stop order (unprotected)" if h.get("held_sl") is None else f"its stop at {h['held_sl']}"))
 s4 = section("4 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
-             f'<div class="grid">{held_cards}{c_conc}</div>' if HELD else '<div class="card"><p>No positions are held.</p></div>', "book")
+             book_table() + f'<div class="grid">{held_cards}{c_conc}</div>' if HELD else '<div class="card"><p>No positions are held.</p></div>', "book")
 
 # ------------------------------------------------------------------ 5 THE TICKERS
 chg = {x.split(":")[0]: x for x in T.get("changed") or []}
@@ -769,6 +802,15 @@ chg_html = ('<div class="card"><h3>Since yesterday: ' + (_jn2(_parts) if _parts 
     + f'<div><span class="lab">Left</span>{"".join(pill(t) for t in left)}</div></div>'
     + f'<details><summary>Since when, and by how much</summary><ul class="plainlist">{"".join(f"<li>{E(x)}</li>" for x in T.get("changed") or [])}</ul></details></div>')
 
+# PM 2026-11-11: the 'Since yesterday' pills did not match the text; the strip is ONE new / remaining (last 3 sessions) / left count, from repeat_watch.json (code-built)
+_RWJ = _opt("repeat_watch.json", {}) or {}
+_rwc = _RWJ.get("counts")
+if _rwc:
+    chg_html = (f'<div class="card"><h3>Against the last {_rwc["prior_sessions"]} sessions: {_rwc["new"]} new, {_rwc["remain"]} remaining, {_rwc["left"]} left.</h3><div class="grid">'
+                + tile(_rwc["new"], "new on the list today") + tile(_rwc["remain"], f"remaining from the last {_rwc['prior_sessions']} sessions") + tile(_rwc["left"], "left the list")
+                + f'</div><p class="read">The list is the repeat-watch ledger as of {E(str(_rwc["latest_list_date"]))}; the brief carries one row per new or standing name.</p></div>')
+else:
+    chg_html = '<div class="card"><h3>New, remaining and left counts are not available.</h3><p class="read">repeat_watch.json is missing from this run folder or predates the compact table; declared, nothing is invented.</p></div>'
 order = usable + thin
 RH, mx = 50, 5.0
 rh = RH * len(order) + 26
@@ -1077,14 +1119,26 @@ def oc_cell(x):
     sub = {"DROPPED": "dropped", "NOT_SLATED": "not slated", "CONTESTED": "contested", "AGREED": "agreed", "DEAL_PINNED": "pending takeover"}.get(x["status"], "")
     return pill(w, tone) + (f"<span class='sub'>{sub}</span>" if sub else "")
 fx = lambda v, f: f.format(v) if isinstance(v, (int, float)) else "&mdash;"
-HEAD = ["#", "Name", "Sector", "Theme basket", "Setup", "Over 20-day (ranges)", "Under 20-bar high", "Volume vs avg", "Committee", "Reason"]
+HEAD = ["#", "Ticker", "Sector", "Score", "Committee verdict", "Extended"]
+SCORE_WORD = {"elder": "Elder score", "aqe": "AQE momentum score", "lens": "Strong lenses of 6", "swing": "Daily ranges under swing high"}
+def _score(k, x):
+    r_ = ROWS.get(x["ticker"]) or {}
+    v = {"elder": x.get("elder"), "aqe": r_.get("sc_momentum"), "lens": x.get("lens_positive"), "swing": r_.get("swing_atr_dist")}.get(k)
+    return v
 def list_table(k):
+    """PM 2026-11-11: plain tables, one row per name, sortable columns (rank, ticker, sector, score, committee verdict, extended yes/no); no prose cells."""
     body = []
     for x in FL[k]["rows"]:
-        cells = [x["n"], f"<span class='ph'>#{x['n']} </span><b>{x['ticker']}</b>{ma_pill(ROWS.get(x['ticker']))}", sec_cell(x), theme_cell(x), tag_cell(x), fx(x["stretch"], "{:.1f}"), fx(x["under_hi20"], "{:.1f}%"),
-                 fx(x["volume"], "{:.2f}x"), oc_cell(x), E(x["reason"])]
-        body.append("<tr>" + "".join(f'<td data-l="{E(h)}">{c}</td>' for h, c in zip(HEAD, cells)) + "</tr>")
-    return ('<div class="tbl"><table class="lst"><thead><tr>' + "".join(f"<th>{h}</th>" for h in HEAD) + "</tr></thead><tbody>" + "".join(body) + "</tbody></table></div>")
+        sc_ = _score(k, x)
+        s_ = x["sector"]
+        verdict = "Deal-pinned" if x["status"] == "DEAL_PINNED" else OC_PILL[x["outcome"]][0]
+        cells = [(x["n"], str(x["n"])), (x["ticker"], f"<b>{x['ticker']}</b>{ma_pill(ROWS.get(x['ticker']))}"),
+                 (SHORT.get(s_["sector"], s_["sector"] or ""), E(SHORT.get(s_["sector"], s_["sector"] or "&mdash;"))),
+                 (sc_ if isinstance(sc_, (int, float)) else -1, (f"{sc_:.1f}" if isinstance(sc_, float) else str(sc_)) if sc_ is not None else "&mdash;"),
+                 (verdict, E(verdict)), (0 if x["tag"] != "EXTENDED" else 1, "Yes" if x["tag"] == "EXTENDED" else "No")]
+        body.append("<tr>" + "".join(f'<td data-l="{E(h)}" data-v="{E(str(v))}">{c}</td>' for h, (v, c) in zip(HEAD, cells)) + "</tr>")
+    hd = [h if h != "Score" else SCORE_WORD.get(k, "Score") for h in HEAD]
+    return ('<div class="tbl"><table class="lst sortable"><thead><tr>' + "".join(f"<th>{h}</th>" for h in hd) + "</tr></thead><tbody>" + "".join(body) + "</tbody></table></div>")
 LH3 = {
     "elder": f"Elder top 15, by Elder score then AQE rank: {FL['elder']['tags']['EXTENDED']} are extended, and {FL['elder']['outcomes']['OUT']} never reached the room.",
     "aqe": f"AQE top 20, by AQE rank: {FL['aqe']['tags']['EXTENDED']} are extended, and {FL['aqe']['outcomes']['OUT']} never reached the room.",
@@ -1240,7 +1294,10 @@ page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 <title>Aegis Daily Cards</title><style>{CSS}{CT.TEMPLATE_CSS}</style></head><body><div class="wrap">
 {top}{s1}{s2}{s3}{s4}{s5}{s5b}{s6}{s7}{s8}
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
-</div></body></html>"""
+</div><script>
+document.querySelectorAll("table.sortable").forEach(function(t){{var h=t.tHead.rows[0].cells;Array.prototype.forEach.call(h,function(th,i){{th.style.cursor="pointer";th.title="Click to sort";var asc=true;th.addEventListener("click",function(){{
+var b=t.tBodies[0],rs=Array.prototype.slice.call(b.rows);rs.sort(function(a,c){{var x=a.cells[i].getAttribute("data-v")||a.cells[i].textContent,y=c.cells[i].getAttribute("data-v")||c.cells[i].textContent;var nx=parseFloat(x),ny=parseFloat(y);var r=(!isNaN(nx)&&!isNaN(ny))?nx-ny:String(x).localeCompare(String(y));return asc?r:-r;}});asc=!asc;rs.forEach(function(r){{b.appendChild(r);}});}});}});}});
+</script></body></html>"""
 OUT.write_text(page)
 json.dump({"schema": "card_fields.v1", "date": str(D["date"])[:10], "note": "the ten card fields exactly as printed on the Cards (PM 2026-11-05); the alert emails quote these",
            "cards": CARD_FIELDS}, open(OUT.parent / "card_fields.json", "w"), indent=1)

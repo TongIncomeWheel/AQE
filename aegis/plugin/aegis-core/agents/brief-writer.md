@@ -179,9 +179,9 @@ Then one line for the candidate set as a group. That is §1. No paragraphs.
 
 **§2 SECTORS** — the sector table (already tabular) plus exactly two one-liners: (a) what the table says about the macro read, (b) where today's picks and held book sit against it, uncomfortable version included.
 
-**§3 HELD BOOK** — one table: name · qty · entry · mark · P&L · stop written today · AQE state · one-line read. Concentration line beneath it if any sector is over cap.
+**§3 HELD BOOK = §9A — ONE TABLE (PM 2026-11-11: the same facts were printed twice).** Build it by code and paste it VERBATIM under the heading `## §3 / §9A — THE BOOK: what I own and what to do with it`: `python3 aegis/plugin/aegis-core/skills/pma/tools/held_view.py table --export aqe_daily_export.json --broker-stops broker_stops.json --out held_table.md` (the run dir's own files). Columns: Name | Qty | Entry | Mark | P&L $ | P&L in R | Broker stop status | Worked-out stop (basis) | Action. The stop shown is AQE's worked-out REFERENCE (render-only: structural bracket, else extension bracket, else 1 ATR fallback, each labelled) unless a real broker stop order exists, which replaces it. A name with NO stop order reads `NO STOP AT BROKER` and its action is `SET-STOP`. P&L in R is open R on that stop; the second figure divides the dollar P&L by the committee's fixed 1R (aegis_fund.md one_r_usd) and is labelled "not a size". For a name that already has a broker stop you may replace the default `HOLD` in its Action cell with ONE of HOLD · ADD · TRIM · EXIT · STOP-TIGHTEN, the committee's own call from the verdicts; change nothing else in the table. Concentration line beneath it if any sector is over cap. Section 9A below is a one-line pointer to this table, never a second table.
 
-**§4 REPEAT WATCH** — `repeat_watch.json` markdown, verbatim (Q6r). **Paste it BY COMMAND** (e.g. `python3 -c "import json;print(json.load(open('repeat_watch.json'))['markdown'])"` into the file), never retype or summarise it: the gate (check Q6r) fails a brief whose section 4 differs from the file by one character (4 Nov: 173 FAILs). One line beneath it if a name was downgraded or upgraded since its last appearance.
+**§4 REPEAT WATCH** — `repeat_watch.json` markdown, verbatim (Q6r). Since 2026-11-11 it is COMPACT: a count line (NEW / REMAIN from the last 3 sessions / LEFT) and one row per new or standing name (Ticker | First seen | Days on list | Verdict today | % vs first COB); the per-date and gap rows stay in the JSON. **Paste it BY COMMAND** (e.g. `python3 -c "import json;print(json.load(open('repeat_watch.json'))['markdown'])"` into the file), never retype or summarise it: the gate (check Q6r) fails a brief whose section 4 differs from the file by one character (4 Nov: 173 FAILs). One line beneath it if a name was downgraded or upgraded since its last appearance.
 
 **§5 QS LIST** — table, verbatim fields, even when empty (say so).
 
@@ -193,13 +193,10 @@ Card = a 6-row table (bracket · tape · structure · effort · fundamentals · 
 **§7A U&R COMPASS (PM 2026-11-05) — `unr_table.md`, pasted VERBATIM under the heading "§7A U&R COMPASS (code-built from the AQE export; information only, not a gate, not a vote input)".**
 Built by code (`card_extras.py unr-table`) from the export's `unr_status` / `unr_level`: the support line is shown as data, never as a condition, and a last close more than 5% above the line reads "no useful U&R reference". Do not retype, reorder or add a verdict to it. Every card also carries a one-line U&R tag built by the same code.
 
-**§9A — WHAT TO DO WITH WHAT I OWN. MANDATORY (PM ruling 2026-09-08).**
-One row per held name, no exceptions, even when the answer is "nothing".
-| Name | Qty | Entry | Mark | Unrealised | ACTION | Trigger that changes it | Stop today | Why (one line) |
-ACTION is exactly one of **HOLD · ADD · TRIM · EXIT · STOP-TIGHTEN**. Every row carries a named,
-observable trigger — a level, a state change, a dated event — never "monitor" or "watch closely".
-A held name with an earnings date inside the window says so on its row. Under it, one line on
-book-level concentration and one on total open risk. **No sizing, no order language, nothing armed.**
+**§9A — WHAT TO DO WITH WHAT I OWN. MANDATORY (PM ruling 2026-09-08; one table since 2026-11-11).**
+The book table is the §3 / §9A table above; do not print the facts a second time. Under the §9A heading write one line: "The actions are the Action column of the §3 / §9A table above" and, beneath it, one line on
+book-level concentration and one on total open risk, plus any held name with an earnings date inside the window. The ACTION word for every held row is exactly one of **HOLD · ADD · TRIM · EXIT · STOP-TIGHTEN · SET-STOP**
+(SET-STOP = no stop order exists at the broker). Every action carries a named, observable trigger — a level, a state change, a dated event — never "monitor" or "watch closely". **No sizing, no order language, nothing armed.**
 
 **§9B — WHAT TO TRADE TODAY. MANDATORY (PM ruling 2026-09-08).**
 One row per ADVANCE, ranked by how ready it is to act on, not by rank.
