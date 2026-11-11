@@ -20,7 +20,17 @@ _A, _unknown = _ap.parse_known_args()
 RUN = Path(_A.run_dir)
 _RUN_DATE = None
 OUT = Path(_A.out) if _A.out else RUN / "pma_cards_v3.html"
-_REPO = Path(__file__).resolve().parents[5]
+def _find_repo():
+    """The checkout root = the nearest parent that holds aegis/output. The fixed parents[5] pointed at <repo>/aegis from the plugin tree (and above the repo from the generated runtime
+    copy), so the default refresh dir was wrong unless --refresh-dir was always passed (conductor 2026-11-11)."""
+    here = Path(__file__).resolve()
+    for p in here.parents:
+        if (p / "aegis" / "output").is_dir():
+            return p
+    return here.parents[5]
+
+
+_REPO = _find_repo()
 REF = Path(_A.refresh_dir) if _A.refresh_dir else _REPO / "aegis" / "output"          # refreshed weather, read only
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 SGT, ET = ZoneInfo("Asia/Singapore"), ZoneInfo("America/New_York")
@@ -66,6 +76,11 @@ kl = lambda what: next(k for k in KL if k["what"] == what)
 
 def f2(x): return f"{x:,.2f}"
 def sg(x, d=2): return f"{x:+.{d}f}".replace("-", "&minus;")
+def _nf(v, fmt, none_txt):
+    """A numeric format that survives None (a held name with no stop order has no stop distance; a thin history has no R or 20-day read): the plain word, never a TypeError."""
+    return none_txt if v is None else fmt.format(v)
+
+
 def mins(s): return str(s).replace("-", "&minus;") if str(s).startswith("-") else str(s)
 from card_words import LEVEL_PLAIN, WORD_PLAIN, GENERIC_COND, cond_plain, no_raw_words   # one table; see card_words.py
 
@@ -413,8 +428,10 @@ c_vol = card(f"VIX at {vol['vix']} {VIX_PHRASE}; the single-stock gap is {_gap_s
 dv = V["crown_cockpit"]["divergence"]
 boxes = "".join(f'<rect x="{i*12.5+0.6:.1f}%" y="0" width="11%" height="26" rx="5" fill="{"var(--watch-bg)" if i < dv["count"] else "var(--soft)"}" stroke="var(--line)"/>'
                 for i in range(dv["total"]))
-_DIVW = {"rsi": "momentum is not keeping up with price"}
-_which = [_DIVW.get(x, x) for x in (RD["divergence"].get("which") or [])]
+_DIVW = {"rsi": "momentum is not keeping up with price",
+         "rsi_slope": "the 5-day and 20-day momentum trends are both falling while price rises"}
+# an unmapped Crown token is spelled out in words (underscores to spaces), never printed raw: the plain-words gate rejects raw field names (11 Nov 2026: 'rsi_slope')
+_which = [_DIVW.get(x, str(x).replace("_", " ")) for x in (RD["divergence"].get("which") or [])]
 c_div = card(f"{nword(dv['count'])} of {dv['total']} market-level warnings {'is' if dv['count'] == 1 else 'are'} lit" + (f": {' and '.join(_which)}." if dv["count"] and _which else "."),
     f'<svg class="viz" width="100%" height="30" role="img" aria-label="{dv["count"]} of {dv["total"]} warnings lit">{boxes}</svg>'
     f'<div class="chips"><span>{dv["count"]} of {dv["total"]} market-level types</span><span>{RD["divergence"]["warnings_lit"]} on individual markets</span></div>',
@@ -707,7 +724,8 @@ if _bp:
         f"A 1% market gap costs about ${hbk['loss_per_1pct_gap_usd']:,.0f}" + (f"; a 5% gap about ${_gap5['est_book_loss_usd']:,.0f}." if _gap5.get("est_book_loss_usd") is not None else "."),
         ("Trim and trail facts beside the handbook",
          table(["Name", "R so far (approx.)", "vs 20-day avg", "Stop distance", "Days held"],
-               [[f"<b>{t}</b>", mins(f"{mg[t]['r_multiple']:+.2f}"), mins(f"{mg[t]['pct_vs_ma_20']:+.1f}%"), f"{mg[t]['dist_from_stop_pct']:.1f}%", mg[t]["days_held"]] for t in HELD_ORDER if t in mg])
+               [[f"<b>{t}</b>", mins(_nf(mg[t].get('r_multiple'), '{:+.2f}', 'n/a')), mins(_nf(mg[t].get('pct_vs_ma_20'), '{:+.1f}%', 'n/a')),
+                _nf(mg[t].get('dist_from_stop_pct'), '{:.1f}%', 'no stop'), mg[t].get("days_held") if mg[t].get("days_held") is not None else "n/a"] for t in HELD_ORDER if t in mg])
          + "<p>Gap scenarios: " + ", ".join(f"{k.split('_')[1]} costs ${v['est_book_loss_usd']:,.0f}" for k, v in (hbk.get("gap_scenarios") or {}).items())
          + ". Handbook, quoted: trim into strength; trail the rest on one moving average, daily closes; add only when a winner proves itself again. "
            "R is approximate (current stop as the risk). "
@@ -1106,7 +1124,8 @@ s7 = section("7 &middot; Scorecard", ("ADVANCE calls have not yet beaten HOLD ca
                                     "ADVANCE calls have beaten HOLD calls over full five-session horizons." if (_adv_m is not None and _hold_m is not None) else
                                     "The scorecard does not yet compare ADVANCE and HOLD calls over full five-session horizons."),
     card(f"Mean return of each kind of call over full five-session horizons, as of the {CLOSE_S} close",
-         hbars(sc_rows, min(r[2] for r in sc_rows), max(r[2] for r in sc_rows), "Mean return by verdict"),
+         (hbars(sc_rows, min(r[2] for r in sc_rows), max(r[2] for r in sc_rows), "Mean return by verdict") if sc_rows
+          else "<p>No full five-session call has completed yet, so there is nothing to chart.</p>"),
          f"Yesterday&rsquo;s one-session list returned {mins(y_list)} against SPY {y_spy}. The scorecard is information and changes no verdict.",
          ("Every run, list against SPY", table(runs[0], [[mins(c) for c in r] for r in runs[1:]]))), "scorecard")
 
