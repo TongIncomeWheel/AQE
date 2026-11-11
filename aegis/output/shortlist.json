@@ -1,6 +1,6 @@
 {
   "date": "2026-11-11",
-  "refreshed_at": "2026-11-11 07:06:13 SGT",
+  "refreshed_at": "2026-11-11 09:44:20 SGT",
   "regime": {
     "vix": 19.5,
     "level": "YELLOW"
@@ -207,6 +207,66 @@
         },
         "k39_value": {
           "value": 79.01,
+          "threshold": 50.0,
+          "engine": "Scoring",
+          "label": "K39 Gate",
+          "meaning": "Composite gate confirmed",
+          "pass": true
+        },
+        "pr_rsi_score": {
+          "value": 20.0,
+          "threshold": 20.0,
+          "engine": "PipeRank",
+          "label": "Relative RSI",
+          "meaning": "RSI outperforms peer universe",
+          "pass": true
+        },
+        "rel_mom_score": {
+          "value": 25.0,
+          "threshold": 18.0,
+          "engine": "Scoring",
+          "label": "Relative Momentum",
+          "meaning": "Trend strength confirmed",
+          "pass": true
+        }
+      },
+      "note": "Passes Precision Edge but not on fresh-signal shortlist"
+    },
+    {
+      "ticker": "EMBJ",
+      "levels": {
+        "entry": 82.5,
+        "stop": 76.37,
+        "r_size": 6.13,
+        "be_trigger": 85.56,
+        "target_1r": 88.63,
+        "target_2r": 94.76,
+        "target_3r": 100.89,
+        "shares": 342,
+        "risk_dollars": 2100.0
+      },
+      "engines": {
+        "flow": 100.0,
+        "energy": 66.4,
+        "structure": 81.5,
+        "mp": 75.0,
+        "elder": 10.0
+      },
+      "mp_state": "STRONG",
+      "pipe_rank": 0,
+      "signal": {},
+      "context": {},
+      "subcomp_values": {
+        "roc_zscore": {
+          "value": 3.15,
+          "threshold": 1.94,
+          "engine": "Energy",
+          "label": "ROC Z-Score",
+          "meaning": "Momentum 2sigma above normal",
+          "pass": true
+        },
+        "k39_value": {
+          "value": 78.32,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -627,66 +687,6 @@
         },
         "k39_value": {
           "value": 79.69,
-          "threshold": 50.0,
-          "engine": "Scoring",
-          "label": "K39 Gate",
-          "meaning": "Composite gate confirmed",
-          "pass": true
-        },
-        "pr_rsi_score": {
-          "value": 20.0,
-          "threshold": 20.0,
-          "engine": "PipeRank",
-          "label": "Relative RSI",
-          "meaning": "RSI outperforms peer universe",
-          "pass": true
-        },
-        "rel_mom_score": {
-          "value": 25.0,
-          "threshold": 18.0,
-          "engine": "Scoring",
-          "label": "Relative Momentum",
-          "meaning": "Trend strength confirmed",
-          "pass": true
-        }
-      },
-      "note": "Passes Precision Edge but not on fresh-signal shortlist"
-    },
-    {
-      "ticker": "EMBJ",
-      "levels": {
-        "entry": 82.5,
-        "stop": 76.37,
-        "r_size": 6.13,
-        "be_trigger": 85.56,
-        "target_1r": 88.63,
-        "target_2r": 94.76,
-        "target_3r": 100.89,
-        "shares": 342,
-        "risk_dollars": 2100.0
-      },
-      "engines": {
-        "flow": 100.0,
-        "energy": 66.4,
-        "structure": 70.9,
-        "mp": 75.0,
-        "elder": 10.0
-      },
-      "mp_state": "STRONG",
-      "pipe_rank": 0,
-      "signal": {},
-      "context": {},
-      "subcomp_values": {
-        "roc_zscore": {
-          "value": 3.15,
-          "threshold": 1.94,
-          "engine": "Energy",
-          "label": "ROC Z-Score",
-          "meaning": "Momentum 2sigma above normal",
-          "pass": true
-        },
-        "k39_value": {
-          "value": 78.32,
           "threshold": 50.0,
           "engine": "Scoring",
           "label": "K39 Gate",
@@ -3036,8 +3036,8 @@
     },
     {
       "ticker": "EMBJ",
-      "sc_momentum": 79.1,
-      "sc_momentum_raw": 79.1,
+      "sc_momentum": 81.2,
+      "sc_momentum_raw": 81.2,
       "pipe_rank": 86.7,
       "fip_quality": 100.0,
       "fip_spike_excluded": false,
@@ -3045,7 +3045,7 @@
       "engines": {
         "flow": 100.0,
         "energy": 66.4,
-        "structure": 70.9,
+        "structure": 81.5,
         "mp": 75.0,
         "elder": 10.0
       },
@@ -5655,11 +5655,11 @@
       "grade": "TURNING",
       "trend_state": "Recovering From Weakness \u2014 Watch for Entry",
       "sh": -3,
-      "roc20": -13.93,
-      "roc5": -4.29,
+      "roc20": -13.94,
+      "roc5": -4.31,
       "above_sma20": false,
-      "rrg_rs_ratio": 93.01,
-      "rrg_rs_momentum": 91.5,
+      "rrg_rs_ratio": 93.0,
+      "rrg_rs_momentum": 91.49,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_grade_override": null,
@@ -5681,8 +5681,8 @@
           "rs_momentum": 93.26
         },
         {
-          "rs_ratio": 93.01,
-          "rs_momentum": 91.5
+          "rs_ratio": 93.0,
+          "rs_momentum": 91.49
         }
       ],
       "macro_headwind_score": 0.12,
@@ -6097,8 +6097,8 @@
       "pattern_fit": 0.719,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -7.82,
-      "roc5": -0.26,
+      "roc20": -7.81,
+      "roc5": -0.25,
       "divergence": 7.56,
       "above_sma20": false,
       "coverage": "7/7",
@@ -6111,8 +6111,8 @@
         "META",
         "TSLA"
       ],
-      "rrg_rs_ratio": 99.03,
-      "rrg_rs_momentum": 98.64,
+      "rrg_rs_ratio": 99.04,
+      "rrg_rs_momentum": 98.65,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING",
       "rrg_history": [
@@ -6133,8 +6133,8 @@
           "rs_momentum": 99.53
         },
         {
-          "rs_ratio": 99.03,
-          "rs_momentum": 98.64
+          "rs_ratio": 99.04,
+          "rs_momentum": 98.65
         }
       ]
     },
@@ -6272,8 +6272,8 @@
       "pattern_fit": null,
       "parent_gics": "XLK",
       "parent_grade": "TURNING",
-      "roc20": -17.02,
-      "roc5": -6.5,
+      "roc20": -17.01,
+      "roc5": -6.49,
       "divergence": 10.52,
       "above_sma20": false,
       "coverage": "15/15",
@@ -6295,7 +6295,7 @@
         "ARM"
       ],
       "rrg_rs_ratio": 92.68,
-      "rrg_rs_momentum": 89.39,
+      "rrg_rs_momentum": 89.4,
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING",
       "rrg_history": [
@@ -6317,7 +6317,7 @@
         },
         {
           "rs_ratio": 92.68,
-          "rs_momentum": 89.39
+          "rs_momentum": 89.4
         }
       ]
     },
@@ -8190,10 +8190,10 @@
     "copper_gold_roc5": -4.68,
     "copper_gold_roc20": -3.59,
     "regime_description": "Rising rates, dollar bid, credit tightening, broad tape, gold bid, copper weak (slowing), oil easing, copper/gold deflation tilt (risk-off).",
-    "snapshot_date": "2026-11-10"
+    "snapshot_date": "2026-11-11"
   },
   "meta": {
-    "total_universe": 1136,
+    "total_universe": 1137,
     "passed_pipeline_rank": 2,
     "on_shortlist": 2,
     "precision_edge_count": 46,
