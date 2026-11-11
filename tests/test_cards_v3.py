@@ -479,3 +479,17 @@ def test_the_cards_write_card_fields_json_for_the_alerts_and_the_alert_side_read
         assert cards == {} and "not found" in why
     finally:
         mod._read_repo_text = orig
+
+
+def test_a_held_name_with_no_stop_order_renders_and_still_writes_card_fields(run):
+    """Conductor 2026-11-11: held_sl is None for an unprotected position. min() over a list holding None raised TypeError, v3 fell back to v2 and card_fields.json was never written.
+    The page now says plainly that no stop order is working, draws no stop mark, and card_fields.json is produced."""
+    def strip_stop(o):
+        for h in o["held_positions"]:
+            h["held_sl"] = None
+    edit(run, "aqe_daily_export.json", strip_stop)
+    h = render(run)
+    t = text(h)
+    assert "NO stop order" in t and "unprotected" in t
+    assert (run / "card_fields.json").exists() and json.loads((run / "card_fields.json").read_text())["cards"]
+    assert "Stop None" not in h and "stop at None" not in t
