@@ -1,28 +1,32 @@
 {
   "date": "2026-11-11",
-  "exported_at": "2026-11-11 07:06:11 SGT",
+  "exported_at": "2026-11-11 09:44:19 SGT",
   "basis": "eod",
-  "status": "DEGRADED",
+  "status": "OK",
   "read_me_first": {
-    "headline": "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
+    "headline": "Stance: RISK OFF. SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
     "because": [
       "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
       "SPY sits -1.38 ATRs above its 50-day line (not stretched). QQQ sits -2.78 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.97 \u2014 neither calm nor stressed.",
       "Real leadership this week: Gold Miners, Quantum Computing, Space eVTOL \u2014 strong on both the weekly and monthly read."
     ],
-    "so_what": null,
-    "watch_for": [],
-    "caveats": [
-      "DATA NOT CURRENT (expected session 2026-11-10): breadth_whole_market as of 2026-11-10 [OUR_BUDGET]; dispersion_vixeq as of 2026-11-09 [PUBLISHER_LAG]; dspx as of 2026-11-09 [PUBLISHER_LAG]; vix9d as of 2026-11-09 [PUBLISHER_LAG]; implied_correlation_cor1m as of 2026-11-09 [PUBLISHER_LAG]. Readings that depend on them are older than today's close.",
-      "The one-word stance is not shown: it depends on whole-market breadth (how many stocks are above their 40-day line, how many moved 25%+ this month) that AQE does not yet compute across the full market \u2014 whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    "so_what": "Breadth is against the tape \u2014 build the watchlist, do not push new entries.",
+    "watch_for": [
+      "Stocks above their 40-day line clears 50.0 (now 54.9)",
+      "Monthly big risers (25%+) clears 350 (now 113)",
+      "5-day up/down 4% count clears 1.0 (now 1.51)",
+      "5-day up/down 4% count falls under 0.7 (now 1.51)"
     ],
-    "as_of": "2026-11-10T23:05:59Z",
+    "caveats": [
+      "DATA NOT CURRENT (expected session 2026-11-10): dispersion_vixeq as of 2026-11-09 [PUBLISHER_LAG]; dspx as of 2026-11-09 [PUBLISHER_LAG]. Readings that depend on them are older than today's close."
+    ],
+    "as_of": "2026-11-11T01:44:10Z",
     "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
   },
   "stance": {
-    "word": "\u2014",
-    "status": "DEGRADED",
-    "reason": "whole-market breadth unavailable: pct_above_40d, monthly_risers, five_day_count, daily_count_green"
+    "word": "RISK OFF",
+    "status": "OK",
+    "reason": null
   },
   "trend": [
     {
@@ -68,110 +72,110 @@
       "label": "Today's count green",
       "section": "checklist",
       "kind": "bool",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": false,
+      "reason": null
     },
     {
       "label": "5-day count (1.00+ to pass)",
       "section": "checklist",
       "kind": "ratio_led",
-      "status": "STALE",
-      "value": null,
-      "flag": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 1.51,
+      "flag": true,
+      "reason": null
     },
     {
       "label": "Monthly big risers (25%+ up-count)",
       "section": "checklist",
       "kind": "count",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 113,
+      "reason": null
     },
     {
       "label": "Net High/Net Low (8d vs 20d)",
       "section": "checklist",
       "kind": "bool",
-      "status": "STALE",
-      "value": null,
-      "display": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": true,
+      "display": "44.25 vs 34.4",
+      "reason": null
     },
     {
       "label": "T2108 \u2014 stocks above their 40-day line",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 54.9,
+      "reason": null
     },
     {
       "label": "Stocks above their 20-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%",
+      "status": "OK",
+      "value": 57.9,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Stocks above their 50-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%",
+      "status": "OK",
+      "value": 50.5,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Stocks above their 200-day line (%)",
       "section": "instrument",
       "kind": "pct_0_100",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%",
+      "status": "OK",
+      "value": 55.0,
+      "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
     {
       "label": "Quarterly big risers (25%+ up-count, 3 months)",
       "section": "instrument",
       "kind": "count",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 114,
+      "reason": null
     },
     {
       "label": "5-day up/down 4% count",
       "section": "instrument",
       "kind": "mover_ratio",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 1.51,
+      "reason": null
     },
     {
       "label": "10-day up/down 4% count",
       "section": "instrument",
       "kind": "mover_ratio",
-      "status": "STALE",
-      "value": null,
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+      "status": "OK",
+      "value": 0.75,
+      "reason": null
     }
   ],
   "gex": {
     "status": "OK",
     "ticker": "SPY",
-    "price": 750.01,
-    "flip": 760.77,
+    "price": 749.92,
+    "flip": 761.65,
     "call_wall": 750.0,
     "put_wall": 750.0,
-    "flip_distance_pct": 1.43,
-    "total_gex": -6956998541.25,
+    "flip_distance_pct": 1.56,
+    "total_gex": -7791535021.12,
     "regime": "NEGATIVE",
     "light": "RED",
     "commentary": "Below flip: moves get amplified. Cut size, tighten stops.",
     "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data \u2014 exchange feeds publish open interest, never who is on which side.",
-    "dealer_read": "Volatile market \u2014 dealers are short gamma and amplify moves in both directions: support ~750, breakout level ~761 (reclaiming it calms the market), resistance ~750."
+    "dealer_read": "Volatile market \u2014 dealers are short gamma and amplify moves in both directions: support ~750, breakout level ~762 (reclaiming it calms the market), resistance ~750."
   },
   "crown_cockpit": {
     "breadth_range": {
@@ -224,7 +228,7 @@
     {
       "label": "Stance",
       "kind": "word",
-      "now": null,
+      "now": "RISK_OFF",
       "5d_ago": "RISK_OFF",
       "1mo_ago": "RISK_OFF"
     },
@@ -245,9 +249,9 @@
     {
       "label": "T2108",
       "kind": "number",
-      "now": null,
-      "5d_ago": 46.6,
-      "1mo_ago": 35.7
+      "now": 54.9,
+      "5d_ago": 46.7,
+      "1mo_ago": 35.8
     },
     {
       "label": "SPY ATRs above 50-day",
@@ -264,8 +268,8 @@
         "leg": "breadth_whole_market",
         "as_of": "2026-11-10",
         "expected": "2026-11-10",
-        "reason": "OUR_BUDGET",
-        "detail": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%"
+        "reason": "CURRENT",
+        "detail": "3772/3773 tickers current"
       },
       {
         "leg": "heartbeat_rsp_spy",
@@ -304,17 +308,17 @@
       },
       {
         "leg": "vix9d",
-        "as_of": "2026-11-09",
+        "as_of": "2026-11-10",
         "expected": "2026-11-10",
-        "reason": "PUBLISHER_LAG",
-        "detail": "Cboe posts ~17:31 ET (06:31 SGT)"
+        "reason": "CURRENT",
+        "detail": ""
       },
       {
         "leg": "implied_correlation_cor1m",
-        "as_of": "2026-11-09",
+        "as_of": "2026-11-10",
         "expected": "2026-11-10",
-        "reason": "PUBLISHER_LAG",
-        "detail": "Cboe posts ~17:31 ET (06:31 SGT)"
+        "reason": "CURRENT",
+        "detail": ""
       },
       {
         "leg": "positioning_cot",
@@ -325,15 +329,10 @@
       }
     ],
     "behind": [
-      "breadth_whole_market",
       "dispersion_vixeq",
-      "dspx",
-      "vix9d",
-      "implied_correlation_cor1m"
+      "dspx"
     ],
-    "blocking": [
-      "breadth_whole_market"
-    ]
+    "blocking": []
   },
   "neighbourhood": [
     "On both the week and month lists (real leadership): Gold Miners, Quantum Computing, Space eVTOL, Social Media, Travel Leisure",
@@ -345,11 +344,11 @@
       "name": "Mag7",
       "display_name": "Mag7",
       "parent_gics": "XLK",
-      "since_open_pct": -0.24,
-      "ret_1w_pct": -0.26,
-      "ret_1m_pct": -7.82,
+      "since_open_pct": -0.23,
+      "ret_1w_pct": -0.25,
+      "ret_1m_pct": -7.81,
       "thrust": 7.56,
-      "pct_off_52w_high": -8.08,
+      "pct_off_52w_high": -8.07,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -384,9 +383,9 @@
       "name": "Semiconductors",
       "display_name": "Semiconductors",
       "parent_gics": "XLK",
-      "since_open_pct": 1.91,
-      "ret_1w_pct": -6.5,
-      "ret_1m_pct": -17.02,
+      "since_open_pct": 1.92,
+      "ret_1w_pct": -6.49,
+      "ret_1m_pct": -17.01,
       "thrust": 10.52,
       "pct_off_52w_high": -35.19,
       "rotation_state": "NEITHER",
@@ -893,9 +892,9 @@
       "name": "Semiconductors",
       "display_name": "Semiconductors",
       "parent_gics": "XLK",
-      "since_open_pct": 1.91,
-      "ret_1w_pct": -6.5,
-      "ret_1m_pct": -17.02,
+      "since_open_pct": 1.92,
+      "ret_1w_pct": -6.49,
+      "ret_1m_pct": -17.01,
       "thrust": 10.52,
       "pct_off_52w_high": -35.19,
       "rotation_state": "NEITHER",
@@ -997,11 +996,11 @@
       "name": "Mag7",
       "display_name": "Mag7",
       "parent_gics": "XLK",
-      "since_open_pct": -0.24,
-      "ret_1w_pct": -0.26,
-      "ret_1m_pct": -7.82,
+      "since_open_pct": -0.23,
+      "ret_1w_pct": -0.25,
+      "ret_1m_pct": -7.81,
       "thrust": 7.56,
-      "pct_off_52w_high": -8.08,
+      "pct_off_52w_high": -8.07,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -1369,11 +1368,11 @@
       },
       {
         "stage": "On longlist",
-        "count": 323
+        "count": 324
       },
       {
         "stage": "On longlist AND Elder",
-        "count": 146
+        "count": 147
       },
       {
         "stage": "QS-scored (third lens)",
@@ -1400,6 +1399,10 @@
           {
             "flag": "stretched",
             "label": "4.3 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1413,6 +1416,10 @@
           {
             "flag": "stretched",
             "label": "4.9 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1426,6 +1433,10 @@
           {
             "flag": "stretched",
             "label": "4.3 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1439,6 +1450,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1452,6 +1467,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 4 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1465,6 +1484,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1478,6 +1501,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 3 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1491,6 +1518,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 4 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1504,6 +1535,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 4 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1517,6 +1552,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1530,6 +1569,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 2 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1543,6 +1586,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 3 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1556,6 +1603,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1565,6 +1616,10 @@
           {
             "flag": "stretched",
             "label": "4.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1574,6 +1629,10 @@
           {
             "flag": "stretched",
             "label": "5.2 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1583,6 +1642,10 @@
           {
             "flag": "stretched",
             "label": "5.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1592,6 +1655,10 @@
           {
             "flag": "stretched",
             "label": "4.6 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1601,6 +1668,10 @@
           {
             "flag": "stretched",
             "label": "4.8 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1610,6 +1681,10 @@
           {
             "flag": "stretched",
             "label": "4.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1619,6 +1694,10 @@
           {
             "flag": "stretched",
             "label": "7.3 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1628,6 +1707,10 @@
           {
             "flag": "stretched",
             "label": "4.3 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1637,6 +1720,10 @@
           {
             "flag": "stretched",
             "label": "4.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1646,6 +1733,10 @@
           {
             "flag": "stretched",
             "label": "4.4 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1655,6 +1746,10 @@
           {
             "flag": "stretched",
             "label": "6.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1664,6 +1759,10 @@
           {
             "flag": "stretched",
             "label": "4.4 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1673,6 +1772,10 @@
           {
             "flag": "stretched",
             "label": "4.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1682,6 +1785,10 @@
           {
             "flag": "stretched",
             "label": "4.3 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1691,6 +1798,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1700,6 +1811,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1709,6 +1824,10 @@
           {
             "flag": "stretched",
             "label": "4.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1718,6 +1837,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1727,6 +1850,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 3 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1736,6 +1863,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1745,6 +1876,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 4 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1754,6 +1889,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 5 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1763,6 +1902,10 @@
           {
             "flag": "stretched",
             "label": "4.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1772,6 +1915,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1781,6 +1928,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1790,6 +1941,10 @@
           {
             "flag": "stretched",
             "label": "4.9 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1799,6 +1954,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1808,6 +1967,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1817,6 +1980,10 @@
           {
             "flag": "stretched",
             "label": "4.5 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1826,6 +1993,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1835,6 +2006,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1844,6 +2019,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1853,6 +2032,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1862,6 +2045,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1871,6 +2058,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1880,6 +2071,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1889,6 +2084,10 @@
           {
             "flag": "stretched",
             "label": "4.4 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1898,6 +2097,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1907,6 +2110,10 @@
           {
             "flag": "stretched",
             "label": "5.9 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1916,6 +2123,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1925,6 +2136,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 0 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1934,6 +2149,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1943,6 +2162,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1952,6 +2175,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1961,6 +2188,10 @@
           {
             "flag": "stretched",
             "label": "4.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1970,6 +2201,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1979,6 +2214,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1988,6 +2227,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -1997,6 +2240,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 4 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2006,6 +2253,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2015,6 +2266,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2024,6 +2279,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2033,6 +2292,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2042,6 +2305,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2051,6 +2318,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2060,6 +2331,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2069,6 +2344,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2078,69 +2357,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "CHTR",
-        "flags": [
+          },
           {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "KRMN",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "LI",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "HSY",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "LHX",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "BIRK",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "NEE",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2150,6 +2370,101 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CHTR",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KRMN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LI",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HSY",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LHX",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BIRK",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NEE",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2159,6 +2474,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2168,6 +2487,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2177,6 +2500,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2186,6 +2513,10 @@
           {
             "flag": "stretched",
             "label": "7.6 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2195,6 +2526,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2204,6 +2539,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2213,6 +2552,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 5 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2222,6 +2565,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2231,6 +2578,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2240,6 +2591,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2249,6 +2604,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2258,6 +2617,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2267,6 +2630,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2276,6 +2643,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2285,6 +2656,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 3 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2294,78 +2669,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "ALK",
-        "flags": [
+          },
           {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "HDB",
-        "flags": [
-          {
-            "flag": "stretched",
-            "label": "4.2 daily ranges extended (20-day basis)"
-          }
-        ]
-      },
-      {
-        "ticker": "SF",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "JOBY",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "ELS",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "ADC",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "AQN",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "AMTM",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2375,6 +2682,114 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ALK",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HDB",
+        "flags": [
+          {
+            "flag": "stretched",
+            "label": "4.2 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SF",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "JOBY",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ELS",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ADC",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AQN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMTM",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2384,6 +2799,10 @@
           {
             "flag": "stretched",
             "label": "4.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2393,6 +2812,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2402,6 +2825,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2411,6 +2838,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 0 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2420,6 +2851,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2429,6 +2864,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2438,6 +2877,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2447,6 +2890,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2456,6 +2903,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2465,6 +2916,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2474,6 +2929,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2483,6 +2942,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2492,6 +2955,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2501,6 +2968,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2510,6 +2981,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2519,6 +2994,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2528,33 +3007,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "LAZ",
-        "flags": [
+          },
           {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "QS",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "CENX",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2564,6 +3020,49 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LAZ",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "QS",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CENX",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2573,6 +3072,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2582,6 +3085,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2591,6 +3098,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2600,6 +3111,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2609,6 +3124,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2618,6 +3137,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2627,6 +3150,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2636,6 +3163,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2645,6 +3176,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2654,6 +3189,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2663,6 +3202,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2672,24 +3215,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "EXK",
-        "flags": [
+          },
           {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
-          }
-        ]
-      },
-      {
-        "ticker": "CC",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2699,6 +3228,36 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EXK",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CC",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2708,6 +3267,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2717,6 +3280,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2726,6 +3293,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2735,6 +3306,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2744,6 +3319,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2753,6 +3332,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2762,6 +3345,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2771,6 +3358,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2780,6 +3371,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2789,6 +3384,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2798,6 +3397,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2807,6 +3410,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2816,6 +3423,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2825,6 +3436,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2834,6 +3449,10 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2843,6 +3462,10 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 2 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       },
@@ -2852,6 +3475,2593 @@
           {
             "flag": "earnings_soon",
             "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PCOR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "STZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SWK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LION",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DLTR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PLNT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ROIV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GEHC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SIRI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ADSK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ASO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FLYW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GPN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RCL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DAL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WTRG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BSY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MCD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EMBJ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KIM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CROX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RYN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "YUMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BETA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LTH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ADP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "G",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PENN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CALY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RYAN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "XYZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COLD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BTSG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BF-B",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LOAR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RYTM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FBIN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BRX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BDX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MDLN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MHK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MAC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BILL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VTRS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WAY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SBRA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VLTO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ARES",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RSG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TIC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BAM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EXR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NBIX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RPRX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AEE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AWK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CUBE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "JAN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CCL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BHC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "U",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AHR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SUZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ZBH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WCN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "STGW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VVV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OTIS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VERX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "UAL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PRVA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ELAN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HUM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ACHC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RKT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PRCH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CVNA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CME",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MRSH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PPG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EVRG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "APLE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ACGL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AJG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BAH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MMM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KDP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CDW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GEN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BBIO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MGNI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HCA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FLS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EXLS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GPK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FTV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VMRK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VSXY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "UPS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FSK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HLT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EWTX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OGE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ABBV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BEN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TRU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TOST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HSIC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HNGE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BJ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CHD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OBDC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BUD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LPX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EPAM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BRK-B",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PTC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RDY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ICE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CAH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LNT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PFGC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "REYN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "IR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LFST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PRGO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NDAQ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OHI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EBAY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CNK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SBUX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CCEP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TROW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CHYM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SHW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CARG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RLJ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "YOU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WING",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FERG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BBY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GILD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NVS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RNW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VFC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SPGI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WRB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "M",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CWK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "USFD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LEVI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PRU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SPOT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TMO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ALC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CPB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EXEL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KMB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HOG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TTWO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EXTR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GMAB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DOC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MAS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MDLZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AXGN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SMMT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ICLR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MIR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MDT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RYAAY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LLY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NXPI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SYK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AFL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PYPL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ROST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EFX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OGN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MAR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TGTX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FIGS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GXO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WELL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PEB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VTR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AON",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ELF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SONY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "D",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AXTA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AEO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FDXF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ZETA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SDGR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SOLV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "QSR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KSS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LUV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DHI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PTON",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DXC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TECH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TRVI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BAX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ADPT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AAL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KKR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TEM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "JNJ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "QNT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AEM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FAST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GEO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FROG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ABNB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HIG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ORI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CGAU",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RTX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OUST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WPM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LNC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMZN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WRBY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NEM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GME",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CZR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CRBG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MRVI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "APO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EQH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FLR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NWL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AMRX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NTR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CLOV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RLAY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PCVX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CLBK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VIR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RAL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VSAT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BBVA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BMY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AEG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CSQR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FRVO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PAYO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CNH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ZION",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TNGX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TVTX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MAIR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HONA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ATI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ANET",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TECK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ING",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DFTX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
           }
         ]
       }
@@ -6902,91 +10112,6 @@
         ]
       },
       {
-        "ticker": "ATI",
-        "held": false,
-        "on_longlist": false,
-        "on_elder": true,
-        "on_qs": false,
-        "grades": [
-          {
-            "piece": "11",
-            "setup": "Episodic pivot (delayed)",
-            "status": "FAILED",
-            "pivot": 184.02,
-            "stop": 163.88,
-            "checks": [
-              {
-                "rule": "Neglect before it: no big run in the prior 3 months",
-                "value": "-9.1%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Out of an orderly base, not a falling knife",
-                "value": "-9.1%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The first surprise: no gap like it in 6 months",
-                "value": 0,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap -4.4%, day 5.9% (earnings)",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Volume that proves it: \u2265 3x normal",
-                "value": "2.0x",
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "It holds the gap: upper part of range, above the prior day",
-                "value": null,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Clear air overhead (no 1-year high within 15% above)",
-                "value": "39.2%",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Catalyst",
-                "value": "earnings day",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Delayed EP: pause holds above the gap-day low",
-                "value": "pause low 163.88 vs 153.51",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "20.14 vs ATR 11.13",
-                "result": "FAIL",
-                "hard": false
-              }
-            ],
-            "fails": [
-              "Volume that proves it: \u2265 3x normal: 2.0x",
-              "A stop that fits (pause low within 1.5 daily ranges): 20.14 vs ATR 11.13"
-            ],
-            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
-            "gap_day": "2026-10-29",
-            "as_of": "2026-11-10"
-          }
-        ]
-      },
-      {
         "ticker": "AU",
         "held": false,
         "on_longlist": false,
@@ -7066,90 +10191,6 @@
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-06",
-            "as_of": "2026-11-10"
-          }
-        ]
-      },
-      {
-        "ticker": "BBIO",
-        "held": false,
-        "on_longlist": true,
-        "on_elder": true,
-        "on_qs": false,
-        "grades": [
-          {
-            "piece": "11",
-            "setup": "Episodic pivot (delayed)",
-            "status": "FAILED",
-            "pivot": 75.85,
-            "stop": 73.19,
-            "checks": [
-              {
-                "rule": "Neglect before it: no big run in the prior 3 months",
-                "value": "-11.7%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Out of an orderly base, not a falling knife",
-                "value": "-11.7%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The first surprise: no gap like it in 6 months",
-                "value": 0,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap 3.0%, day 6.0% (earnings)",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Volume that proves it: \u2265 3x normal",
-                "value": "2.3x",
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "It holds the gap: upper part of range, above the prior day",
-                "value": null,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Clear air overhead (no 1-year high within 15% above)",
-                "value": "24.6%",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Catalyst",
-                "value": "earnings day",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Delayed EP: pause holds above the gap-day low",
-                "value": "pause low 73.19 vs 71.90",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "2.66 vs ATR 2.85",
-                "result": "PASS",
-                "hard": false
-              }
-            ],
-            "fails": [
-              "Volume that proves it: \u2265 3x normal: 2.3x"
-            ],
-            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
-            "gap_day": "2026-10-30",
             "as_of": "2026-11-10"
           }
         ]
@@ -7648,92 +10689,6 @@
               "Relative strength still holding: 42.0"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
-            "as_of": "2026-11-10"
-          }
-        ]
-      },
-      {
-        "ticker": "BTSG",
-        "held": false,
-        "on_longlist": true,
-        "on_elder": true,
-        "on_qs": false,
-        "grades": [
-          {
-            "piece": "11",
-            "setup": "Episodic pivot (delayed)",
-            "status": "FAILED",
-            "pivot": 71.12,
-            "stop": 68.33,
-            "checks": [
-              {
-                "rule": "Neglect before it: no big run in the prior 3 months",
-                "value": "0.9%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Out of an orderly base, not a falling knife",
-                "value": "0.9%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The first surprise: no gap like it in 6 months",
-                "value": 0,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap 8.4%, day 11.1% (earnings)",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Volume that proves it: \u2265 3x normal",
-                "value": "2.6x",
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "It holds the gap: upper part of range, above the prior day",
-                "value": null,
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "Clear air overhead (no 1-year high within 15% above)",
-                "value": "10.3%",
-                "result": "FAIL",
-                "hard": false
-              },
-              {
-                "rule": "Catalyst",
-                "value": "earnings day",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Delayed EP: pause holds above the gap-day low",
-                "value": "pause low 64.52 vs 64.21",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "2.79 vs ATR 2.90",
-                "result": "PASS",
-                "hard": false
-              }
-            ],
-            "fails": [
-              "Volume that proves it: \u2265 3x normal: 2.6x",
-              "It holds the gap: upper part of range, above the prior day",
-              "Clear air overhead (no 1-year high within 15% above): 10.3%"
-            ],
-            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
-            "gap_day": "2026-10-30",
             "as_of": "2026-11-10"
           }
         ]
@@ -9089,36 +12044,36 @@
             "piece": "11",
             "setup": "Episodic pivot (delayed)",
             "status": "FAILED",
-            "pivot": 20.57,
-            "stop": 19.93,
+            "pivot": 19.14,
+            "stop": 18.93,
             "checks": [
               {
                 "rule": "Neglect before it: no big run in the prior 3 months",
-                "value": "14.1%",
+                "value": "0.8%",
                 "result": "PASS",
                 "hard": true
               },
               {
                 "rule": "Out of an orderly base, not a falling knife",
-                "value": "14.1%",
+                "value": "0.8%",
                 "result": "PASS",
                 "hard": true
               },
               {
                 "rule": "The first surprise: no gap like it in 6 months",
-                "value": 1,
-                "result": "FAIL",
+                "value": 0,
+                "result": "PASS",
                 "hard": true
               },
               {
                 "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap 1.3%, day 7.3% (earnings)",
+                "value": "gap 10.5%, day 16.3%",
                 "result": "PASS",
                 "hard": false
               },
               {
                 "rule": "Volume that proves it: \u2265 3x normal",
-                "value": "1.7x",
+                "value": "2.2x",
                 "result": "FAIL",
                 "hard": true
               },
@@ -9130,35 +12085,34 @@
               },
               {
                 "rule": "Clear air overhead (no 1-year high within 15% above)",
-                "value": "41.0%",
+                "value": "51.3%",
                 "result": "PASS",
                 "hard": false
               },
               {
                 "rule": "Catalyst",
-                "value": "earnings day",
-                "result": "PASS",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
                 "hard": false
               },
               {
                 "rule": "Delayed EP: pause holds above the gap-day low",
-                "value": "pause low 19.93 vs 18.93",
+                "value": "pause low 18.93 vs 17.60",
                 "result": "PASS",
                 "hard": true
               },
               {
                 "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "0.64 vs ATR 0.92",
+                "value": "0.21 vs ATR 0.92",
                 "result": "PASS",
                 "hard": false
               }
             ],
             "fails": [
-              "The first surprise: no gap like it in 6 months: 1",
-              "Volume that proves it: \u2265 3x normal: 1.7x"
+              "Volume that proves it: \u2265 3x normal: 2.2x"
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
-            "gap_day": "2026-11-02",
+            "gap_day": "2026-10-30",
             "as_of": "2026-11-10"
           }
         ]
@@ -10689,7 +13643,7 @@
       {
         "ticker": "FLY",
         "held": false,
-        "on_longlist": false,
+        "on_longlist": true,
         "on_elder": true,
         "on_qs": false,
         "grades": [
@@ -14421,92 +17375,6 @@
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-04",
-            "as_of": "2026-11-10"
-          }
-        ]
-      },
-      {
-        "ticker": "NWL",
-        "held": false,
-        "on_longlist": false,
-        "on_elder": true,
-        "on_qs": false,
-        "grades": [
-          {
-            "piece": "11",
-            "setup": "Episodic pivot (delayed)",
-            "status": "FAILED",
-            "pivot": 6.05,
-            "stop": 5.37,
-            "checks": [
-              {
-                "rule": "Neglect before it: no big run in the prior 3 months",
-                "value": "-18.6%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Out of an orderly base, not a falling knife",
-                "value": "-18.6%",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "The first surprise: no gap like it in 6 months",
-                "value": 1,
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap 0.2%, day 15.1% (earnings)",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Volume that proves it: \u2265 3x normal",
-                "value": "2.8x",
-                "result": "FAIL",
-                "hard": true
-              },
-              {
-                "rule": "It holds the gap: upper part of range, above the prior day",
-                "value": null,
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "Clear air overhead (no 1-year high within 15% above)",
-                "value": "19.6%",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Catalyst",
-                "value": "earnings day",
-                "result": "PASS",
-                "hard": false
-              },
-              {
-                "rule": "Delayed EP: pause holds above the gap-day low",
-                "value": "pause low 5.37 vs 5.08",
-                "result": "PASS",
-                "hard": true
-              },
-              {
-                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "0.68 vs ATR 0.34",
-                "result": "FAIL",
-                "hard": false
-              }
-            ],
-            "fails": [
-              "The first surprise: no gap like it in 6 months: 1",
-              "Volume that proves it: \u2265 3x normal: 2.8x",
-              "A stop that fits (pause low within 1.5 daily ranges): 0.68 vs ATR 0.34"
-            ],
-            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
-            "gap_day": "2026-11-02",
             "as_of": "2026-11-10"
           }
         ]
@@ -19640,6 +22508,16 @@
         "invalid_reason": null
       },
       {
+        "ticker": "ALC",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
         "ticker": "KMB",
         "trigger": "Pattern triggered (INV_HEAD_SHOULDERS)",
         "volume_confirmed": false,
@@ -19718,16 +22596,6 @@
         "risk_pct": 3.34,
         "bracket_valid": true,
         "invalid_reason": null
-      },
-      {
-        "ticker": "ALC",
-        "trigger": "Break of structure (BULLISH_BOS)",
-        "volume_confirmed": false,
-        "stop": null,
-        "stop_type": null,
-        "risk_pct": null,
-        "bracket_valid": false,
-        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       },
       {
         "ticker": "TGTX",
@@ -20087,7 +22955,7 @@
         "held_sl": null,
         "qty": 150.0,
         "unreal_usd": 90.33,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -20100,7 +22968,7 @@
         "held_sl": null,
         "qty": 100.0,
         "unreal_usd": -56.27,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -20113,7 +22981,7 @@
         "held_sl": null,
         "qty": 80.0,
         "unreal_usd": -247.23,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -20127,8 +22995,14 @@
       "n_considered": 26
     },
     "manage_note": {
-      "status": "UNAVAILABLE",
-      "reason": "panel newest bar 2026-11-10 vs last completed session 2026-11-10; 1600/3769 tickers (42%) carry the 2026-11-10 bar, need 95%",
+      "status": "OK",
+      "state": "ABOVE",
+      "green": true,
+      "avg8": 44.25,
+      "avg20": 34.4,
+      "latest_net": 168,
+      "population": "us_nasdaq_nyse_mcap_gt_2b",
+      "note": "Net new highs: the 8-day average (44.25) is above the 20-day (34.4) -- breakouts are being rewarded; the handbook's management switch is on the open-trades-can-run side. A reading on AQE's panel, not a whole-market count.",
       "doctrine": "Trade management changes when the 8-day average of net new highs crosses back above the 20-day. -- The VIV System (quoted doctrine, not an Aegis rule)",
       "is_decision": false
     },
@@ -20140,7 +23014,7 @@
         "held_sl": null,
         "qty": 150.0,
         "unreal_usd": 90.33,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -20169,7 +23043,7 @@
         "held_sl": null,
         "qty": 100.0,
         "unreal_usd": -56.27,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -20198,7 +23072,7 @@
         "held_sl": null,
         "qty": 80.0,
         "unreal_usd": -247.23,
-        "days_held": 0,
+        "days_held": 1,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
