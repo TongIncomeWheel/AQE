@@ -204,3 +204,35 @@ def test_the_cards_page_has_the_one_book_table_the_valen_ticker_table_the_strong
 def test_a_run_without_repeat_watch_counts_says_so_for_the_strip(run):
     t = _text(_render(run))
     assert "New, remaining and left counts are not available" in t
+
+
+def test_the_gate_reads_a_real_compact_repeat_watch_without_crashing_and_checks_the_count_line_and_the_run_date(tmp_path):
+    """Conductor 2026-11-11: cmd_gate applied len() to an int (counts['new']) and died on today's brief. The compact section 4 is checked with a real repeat_watch.json shape: every NEW /
+    REMAIN / LEFT number must be on the brief's count line; the 'as of' date is the RUN date, not the last ledger date."""
+    led, ver = _ledger(tmp_path)
+    rw = tmp_path / "rw_real.json"
+    r = subprocess.run([sys.executable, str(PIPE), "repeat-watch", "--ledger", str(led), "--verdicts", str(ver), "--date", "2026-11-07", "--out", str(rw)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    d = json.loads(rw.read_text())
+    assert isinstance(d["counts"]["new"], int) and d["markdown"].startswith("As of 2026-11-07:")        # the run date, though the last ledger session is 2026-11-06
+    assert "The list compared is the 2026-11-06 session" in d["markdown"]
+    stem = ("# B\n\n## §0 VERDICTS\n\n| T | V |\n|---|---|\n| X | ADVANCE |\n\n"
+            "## §1 MACRO\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n| c | d |\n|---|---|\n| 3 | 4 |\n\n## §2 SECTOR\n\n")
+    adv = [c["ticker"] for c in json.load(open(PFIX / "consensus.json")) if c["verdict"] == "ADVANCE"]
+    tail = ("\n## §9A BOOK\n\nThe book is FLAT: no positions are held.\n\n## §9B TRADE\n\n| Ticker | Entry | Stop | Confirms | Kills | Sector | Ready |\n|---|---|---|---|---|---|---|\n"
+            + "".join(f"| {t} | r | s | c | k | x | Ready now |\n" for t in adv) + "\n## §9C PLAN\n\nAt the open, do x.\n")
+    ex = tmp_path / "ex.json"
+    ex.write_text(json.dumps({"daily_list": [], "held_positions": []}))
+
+    def gate(brief_text, tag):
+        b = tmp_path / f"brief_{tag}.md"
+        b.write_text(brief_text)
+        g = subprocess.run([sys.executable, str(PIPE), "gate", "--brief", str(b), "--consensus", str(PFIX / "consensus.json"), "--verdict-ledger", str(PFIX / "verdict_ledger.json"),
+                            "--ledger-phase4", str(led), "--repeat-watch", str(rw), "--export", str(ex), "--date", "2026-11-07"], capture_output=True, text=True)
+        return g.stdout + g.stderr
+    ok = gate(stem + "\n## §4 REPEAT WATCH\n\n" + d["markdown"] + "\n" + tail, "ok")
+    assert "Traceback" not in ok and "TypeError" not in ok
+    assert "[PASS] Q6r the brief section 4 carries the count line (2 NEW, 1 REMAIN, 1 LEFT)" in ok
+    assert "[FAIL] Q6r" not in ok
+    bad = gate(stem + "\n## §4 REPEAT WATCH\n\n" + d["markdown"].replace("**2 NEW**", "**9 NEW**") + "\n" + tail, "bad")
+    assert "[FAIL] Q6r the brief section 4 carries the count line" in bad

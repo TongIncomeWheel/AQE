@@ -3623,8 +3623,8 @@ def cmd_repeat_watch(a):
         pct_first = f"{(p1 - p0) / p0 * 100:+.2f}%" if (p0 and p1 and firsts[t] != latest["date"]) else "— (first day)" if firsts[t] == latest["date"] else "n/a"
         listed.append(t)
         compact.append(f"| **{t}** | {firsts[t]} | {days_on[t]} | {v_now.get('verdict') or 'not on the verdict ledger'} | {pct_first} |")
-    md_lines = [f"As of {latest['date']}: **{len(new_t)} NEW** today, **{len(remain_t)} REMAIN** from the last {len(prior)} sessions, **{len(left_t)} LEFT** the list. "
-                f"(Per-date rows and gap rows are kept in repeat_watch.json, not printed.)", "",
+    md_lines = [f"As of {a.date}: **{len(new_t)} NEW** today, **{len(remain_t)} REMAIN** from the last {len(prior)} sessions, **{len(left_t)} LEFT** the list. "
+                f"The list compared is the {latest['date']} session. (Per-date rows and gap rows are kept in repeat_watch.json, not printed.)", "",
                 "| Ticker | First seen | Days on list | Verdict today | % vs first COB |", "|---|---|---|---|---|"] + compact
     markdown = "\n".join(md_lines)
     result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps, "listed": listed,
@@ -3738,7 +3738,9 @@ def cmd_gate(a):
                 for t in (flagged if _listed is None else [x for x in flagged if x in set(_listed)]):
                     chk(t in brief, "Q6r", f"{t}: repeat-flagged ticker appears in brief §4")
                 if _listed is not None:
-                    chk(f"{len(rw.get('counts') and rw['counts'].get('new') or 0)} NEW" in brief or "NEW**" in brief, "Q6r", "the brief §4 carries the NEW / REMAIN / LEFT count line")
+                    _c = rw.get("counts") or {}
+                    chk(all(f"{_c.get(k)} {w}" in brief for k, w in (("new", "NEW"), ("remain", "REMAIN"), ("left", "LEFT"))), "Q6r",
+                        f"the brief section 4 carries the count line ({_c.get('new')} NEW, {_c.get('remain')} REMAIN, {_c.get('left')} LEFT)")
     # ---- Q-EXEC: EXECUTIVE FORM (PM ruling 2026-09-05 -- tables and one-liners, never prose;
     # consensus view, never who voted what). Mechanical presence/absence checks only.
     body, _, appendix = brief.partition("APPENDIX A")
