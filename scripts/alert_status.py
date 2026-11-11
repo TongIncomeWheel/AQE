@@ -41,15 +41,20 @@ def _notice():
 
 def _cond():
     from src.alerts import condition_state
-    st = condition_state.load_condition_state()
-    runs = {}
-    for k, v in (st or {}).items():
-        d = str(k).split("|")[0]
-        runs.setdefault(d, [0, 0])
-        runs[d][0] += 1
-        if isinstance(v, dict) and (v.get("fired") or v.get("last_state") not in (None, "", "QUIET")):
-            runs[d][1] += 1
-    return json.dumps({"entries_by_run_date [total, with a non-quiet state]": runs}, indent=1)
+    st = condition_state.load_condition_state() or {}
+    runs, emailed = {}, {}
+    for k, v in st.items():
+        d, _, tk = str(k).partition(":")
+        r = runs.setdefault(d, {"entries": 0, "past_watching": 0, "emailed": 0})
+        r["entries"] += 1
+        if isinstance(v, dict):
+            if v.get("stage") not in (None, "WATCHING"):
+                r["past_watching"] += 1
+            if v.get("emailed_today"):
+                r["emailed"] += 1
+                emailed.setdefault(d, []).append(f"{tk}:{','.join(v['emailed_today'])}")
+    last = sorted(runs)[-3:]
+    return json.dumps({"by_run_date": {d: runs[d] for d in sorted(runs)}, "names_emailed_on_the_last_3_run_dates": {d: emailed.get(d, []) for d in last}}, indent=1)
 
 
 def main():
