@@ -767,6 +767,7 @@ def cmd_packets(a):
     # --- END PHASE 1 COMPRESSION ---
 
     dead = {}
+    trim_receipt = {}
     total_before = total_after = 0
     for v in nominators:
         menu = menus[v]
@@ -776,6 +777,32 @@ def cmd_packets(a):
             # REPORT B: this seat reads only its own screened names (plus the held book, which is never held out)
             _allowed = set(seat_sets.get(v) or [])
             _vu = [r for r in universe if r["ticker"] in _allowed or r.get("held")]
+        _mode = "seat_set" if seat_sets is not None else None
+        _all_n = len(universe)
+        if getattr(a, "max_bytes", None):
+            # PACKET TRIM (conductor 2026-11-11): no packet may exceed ONE read. Rows are ranked by THIS SEAT'S OWN screen (seat_screens: tests passed, then relative
+            # strength) and kept until the byte budget is spent; the held book is always kept and never counts against the order. Opt-in (--max-bytes), so a run without it is
+            # byte for byte as before. Loud: a `# TRIMMED` line in the packet and the omitted tickers in packet_trim.json (check.py reads that receipt, never a silent blind spot).
+            import seat_screens
+            if v not in seat_screens.SCREENS:
+                raise SystemExit(f"packets: --max-bytes needs a screen for {v} (seat_screens.SCREENS) -- REFUSING to trim a seat by an unknown rule")
+            _hdr_b = sum(len(x) + 1 for x in menu) + 1024
+            def _line_b(r):
+                return sum(len(str(_cell(flat_cache[r["ticker"]].get(f)))) + 1 for f in menu) + 1
+            _ranked = sorted(_vu, key=lambda r: (0 if r.get("held") else 1,) + tuple(
+                (lambda sc: (-sc[0], -(r.get("rs_rank_pct") if isinstance(r.get("rs_rank_pct"), (int, float)) else -1), str(r.get("ticker"))))(seat_screens.score(v, r))))
+            _keep, _used = [], _hdr_b
+            for r in _ranked:
+                _b = _line_b(r)
+                if r.get("held") or _used + _b <= a.max_bytes:
+                    _keep.append(r); _used += _b
+            _vu_before = len(_vu)
+            _vu = [r for r in _vu if r["ticker"] in {k["ticker"] for k in _keep}]
+            _mode = "max_bytes" if len(_vu) < _vu_before or _mode is None else _mode
+        if _mode:
+            _served = {r["ticker"] for r in _vu}
+            trim_receipt[v] = {"mode": _mode, "candidates": _all_n, "served": len(_served),
+                               "omitted": sorted(r["ticker"] for r in universe if r["ticker"] not in _served)}
         rows = [{f: flat_cache[r["ticker"]].get(f) for f in menu} for r in _vu]
         d = [f for f in menu if all(r.get(f) is None for r in rows)]
         if d:
@@ -784,6 +811,10 @@ def cmd_packets(a):
         rng.shuffle(rows)
         p = os.path.join(a.outdir, f"{v}.tsv")
         with open(p, "w", newline="") as f_out:
+            if v in trim_receipt:
+                _t = trim_receipt[v]
+                f_out.write(f"# TRIMMED ({_t['mode']}): this seat is shown {_t['served']} of {_t['candidates']} candidate names, ranked by its own screen; the held book is always shown; "
+                            f"the {len(_t['omitted'])} omitted tickers are listed in packet_trim.json\n")
             if "bracket.targets" in menu:
                 f_out.write(f"# DICT bracket.targets fields (in order): {','.join(target_field_order)}; "
                             f"type codes: {_TARGET_TYPE_CODE}\n")
@@ -819,6 +850,10 @@ def cmd_packets(a):
                              f"served one -- REFUSING. This is the 2026-09-16 defect; it does not "
                              f"get to happen twice.")
 
+    if trim_receipt:
+        save(os.path.join(a.outdir, "packet_trim.json"), {"date": a.date, "seats": trim_receipt,
+             "note": "a seat shown fewer rows than the candidate set is declared here; check.py verifies served + omitted == the candidate set"})
+        print("  receipt: packet trim: " + ", ".join(f"{k} {v['served']}/{v['candidates']}" for k, v in trim_receipt.items()))
     # ---- REPORT C: the plain AQE glossary rides with EVERY seat's packet (PM 2026-11-05). All eight seats read the same page, so a
     # reason that cites an AQE field can be checked against the same words. A missing glossary stops a C run -- an AQE-quant seat
     # without it would be guessing what the fields mean.
@@ -1965,7 +2000,7 @@ def cmd_challenge_packets(a):
         out = os.path.join(a.outdir, f"challenge_{seat}.json"); json.dump(d, open(out, "w"))
         print(f"wrote {out}: {os.path.getsize(out)} bytes, {len(tally)} names")
 
-def cmd_r2digest(a):
+def _r2digest_build(a, reason_chars=None, trimmed_note=None):
     """ROUND-2 PACKET, TOOL-BUILT (v5.3, PM ruling 2026-09-05). One text file every voting seat reads.
 
     Replaces the hand-assembled deliberation brief + raw-JSON challenge paste that ran 183KB on
@@ -1985,8 +2020,10 @@ def cmd_r2digest(a):
     # R39 (PM 2026-11-02): the weekly / daily / 1-hour grid per name, from mtf.json (mtf.py). Without --mtf no line
     # prints (pre-R39 packets are unchanged); with it, a name the file does not serve says MTF NOT SERVED (declared).
     mtf_names, mtf_why = _mtf_names(a.mtf) if getattr(a, "mtf", None) else ({}, None)
-    L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)",
-         f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
+    L = [f"AEGIS {a.run_id} -- ROUND 2 VOTE PACKET (tool-built, identical for every voting seat)"]
+    if trimmed_note:
+        L.append(trimmed_note)
+    L += [f"Deliberation set ({len(ds)}, in rank order): " + " ".join(ds),
          "PM RULING R1 (binding): bracket validity, risk% and R:R are INFORMATION, never a reason to reject. Judge on signals.",
          "DOORS: how each name reached this vote -- SEATS (>=2 nominators) | SOLO (1 nominator at conviction>=4 + a momentum door) | ELDER+LENS (elder>=7 x2 bars AND >=3 lenses strong) | LENS (>=4/6 lenses strong) | STRENGTH (top-decile 20d RS, or mp>=75 accelerating) | PM_LENS (>=5/6) | AQE_LEADER (SUSTAINED/ACCELERATION + LEADER). A name with no SEATS/SOLO door was nominated by nobody.",
          "LANES (PM ruling 2026-09-22 D120; R32 2026-10-30): every name carries lane=MOMENTUM or lane=PULLBACK as a LABEL -- how it reached the room. ALL seven deciders vote on ALL names and every ratification counts on every ticket (R32). No seat list decides a verdict.",
@@ -2048,7 +2085,8 @@ def cmd_r2digest(a):
             f = _flat_fundamentals(f)
             L.append(f"  fundamentals: pe {f.get('pe_ratio')} peg {f.get('peg_ratio')} fwd_peg {f.get('forward_peg')} fcf_yld {f.get('free_cash_flow_yield')} d/e {f.get('debt_to_equity')} net_margin {f.get('net_profit_margin')} rev_g {f.get('revenue_growth_yoy')} eps_g {f.get('eps_growth_yoy')} piotroski {f.get('piotroski_score')} altman {f.get('altman_z')}" + (f" | NOTE: {f['note'][:160]}" if f.get('note') else ""))
         for rs in (x.get("reasons") or []):
-            L.append(f"   R1 [{rs.get('voice')} conv {rs.get('conviction')}] {rs.get('reason')}")
+            _rs_txt = rs.get('reason') if reason_chars is None else str(rs.get('reason') or '')[:reason_chars]
+            L.append(f"   R1 [{rs.get('voice')} conv {rs.get('conviction')}] {_rs_txt}")
         L.append("")
     L.append("=" * 90)
     L.append("CHALLENGE ROUND -- findings and obligations in full; per-name grades one line each; method declarations omitted.")
@@ -2088,11 +2126,29 @@ def cmd_r2digest(a):
     digest("rogers", a.rogers); digest("steenbarger", a.steenbarger); digest("lynch", a.lynch); digest("detect-lens", a.detectlens)
     if getattr(a, "valen", None) is not None:
         L.extend(_valen_lines(a.valen, rows, P4["deliberation_set"]))
-    txt = "\n".join(L); open(a.out, "w").write(txt)
+    return "\n".join(L)
+
+
+def cmd_r2digest(a):
+    """Build the round-2 vote packet; if it exceeds --max-bytes (the 70KB one-read guide), tighten the free-text caps in DECLARED steps (conductor 2026-11-11):
+    rung 0 = as configured; rung 1 = seat reasons 220 chars, challenge claims 250, evidence 150; rung 2 = reasons 140, claims 160, evidence 100. Data lines (momentum, structure,
+    MTF, held book, bracket, fundamentals) are never cut. A trimmed packet says so on its second line; one still over after the last rung WARNs loudly."""
     import hashlib
-    print(f"wrote {a.out}: {len(txt)} bytes, {txt.count(chr(10)) + 1} lines, md5 {hashlib.md5(txt.encode()).hexdigest()}")
+    base = (a.claim_chars, a.evidence_chars)
+    ladder = [(None, base[0], base[1]), (220, min(base[0], 250), min(base[1], 150)), (140, min(base[0], 160), min(base[1], 100))]
+    txt, rung = "", 0
+    for rung, (rc, cc, ec) in enumerate(ladder):
+        a.claim_chars, a.evidence_chars = cc, ec
+        note = None if rung == 0 else (f"TRIMMED to fit {a.max_bytes} bytes (rung {rung}): seat reasons cut to {rc} chars, challenge claims to {cc}, evidence to {ec}; "
+                                       f"data lines are never cut. The full reasons are in each seat's own form.")
+        txt = _r2digest_build(a, rc, note)
+        if len(txt) <= a.max_bytes:
+            break
+    a.claim_chars, a.evidence_chars = base
+    open(a.out, "w").write(txt)
+    print(f"wrote {a.out}: {len(txt)} bytes, {txt.count(chr(10)) + 1} lines, md5 {hashlib.md5(txt.encode()).hexdigest()}" + (f", trimmed to rung {rung}" if rung else ""))
     if len(txt) > a.max_bytes:
-        print(f"WARNING r2digest exceeds --max-bytes {a.max_bytes}: trim per-name reads or findings evidence")
+        print(f"WARNING r2digest exceeds --max-bytes {a.max_bytes} even at the last trim rung: the per-name data lines alone are over the guide; narrow the deliberation set")
 
 
 def cmd_consensus(a):
@@ -3747,7 +3803,32 @@ def cmd_gate(a):
     if "§9A" in brief:
         held = brief.split("§9A")[1].split("§9B")[0]
         acts = [w for w in ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN") if w in held]
-        chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        # FLAT / HELD BOOK (conductor 2026-11-11), with --export: a FLAT book needs no action word (the section must say it is flat); a HELD book needs EVERY held name on its own
+        # row carrying exactly one action word. Without --export the old test stands (some action word present).
+        _ex_path = getattr(a, "export", None)
+        _held_names = None
+        if _ex_path and os.path.exists(_ex_path):
+            _held_names = sorted({h.get("ticker") for h in (json.load(open(_ex_path)).get("held_positions") or []) if h.get("ticker")})
+        if _held_names is None:
+            chk(bool(acts), "Q9D", f"9A carries a named action per held name (found: {acts})")
+        elif not _held_names:
+            chk(bool(acts) or re.search(r"\b(flat|no (open )?positions?|nothing held|no held)\b", held, re.I) is not None, "Q9D",
+                "9A states the book is FLAT (no held positions) or carries actions")
+        else:
+            _words = ("HOLD", "ADD", "TRIM", "EXIT", "STOP-TIGHTEN")
+            def _held_row(t):
+                m = re.search(rf"(?m)^\s*\|\s*\*{{0,2}}{re.escape(t)}\*{{0,2}}\s*\|.*$", held)
+                return m.group(0) if m else None
+            bad = []
+            for t in _held_names:
+                row = _held_row(t)
+                if row is None:
+                    bad.append(f"{t} (no row)")
+                else:
+                    n = [w for w in _words if re.search(rf"(?<![A-Z-]){re.escape(w)}(?![A-Z-])", row)]
+                    if len(n) != 1:
+                        bad.append(f"{t} (action words on its row: {n})")
+            chk(not bad, "Q9D", f"9A has one row per held name, each with exactly one action word" + (f" -- {bad}" if bad else f" ({len(_held_names)} held)"))
         chk("monitor" not in held.lower() and "watch closely" not in held.lower(),
             "Q9D", "9A has no unactionable 'monitor' / 'watch closely' rows")
     if "§9B" in brief:
@@ -3810,7 +3891,7 @@ if __name__ == "__main__":
     s.add_argument("--dir", default=".", help="the run directory (decision.json, forms/tier2/, slate_plan.json, board.json)"); s.add_argument("--out", default=None)
     s = sub.add_parser("cset", help="REPORT C: deliberation set = Report A's set + aqe-quant's own nominations (PM 2026-11-10)")
     s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-phase4", required=True, help="Report A's phase4.json for the same date")
-    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--max-bytes", type=int, default=None, help="trim each seat's packet to about this many bytes (rows ranked by that seat's own screen, held book always kept; declared in the packet and packet_trim.json)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
     s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--consensus", default="consensus.json")
@@ -3898,7 +3979,7 @@ if __name__ == "__main__":
     s.add_argument("--decision", default="decision.json"); s.add_argument("--cap", type=int, default=25)
     s.add_argument("--out", default="slate_plan.json"); s.add_argument("--excluded", default="slate_excluded.json")
     s = sub.add_parser("ledger"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--date", required=True)
-    s = sub.add_parser("gate"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
+    s = sub.add_parser("gate"); s.add_argument("--export", default=None, help="aqe_daily_export.json: lets the 9A check know whether the book is flat or held (every held name needs its own row with exactly one action word)"); s.add_argument("--brief", required=True); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--ledger-phase4", default="phase4_ledger.json"); s.add_argument("--repeat-watch", default="repeat_watch.json"); s.add_argument("--verdict-ledger", dest="verdict_ledger", default="verdict_ledger.json"); s.add_argument("--date", default=None)
     s = sub.add_parser("record-verdicts"); s.add_argument("--consensus", default="consensus.json"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--phase4", default="phase4.json"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--horizon-sessions", type=int, default=5)
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")

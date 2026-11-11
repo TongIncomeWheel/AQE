@@ -116,6 +116,15 @@ report:
     (5c) REPORT C's chain, PM decision 2026-11-10: ONLY aqe-quant NOMINATES (at most six; the registrar rejects round-1 nominations from any other C seat). `rank` runs with every AQE door off (as in 5), then
     `pma_pipeline.py cset --phase4 phase4.json --a-phase4 <report A run dir>/phase4.json`: C's deliberation set is A's deliberation set (re-voted by all EIGHT seats reading the AQE indicators)
     plus aqe-quant's new names; phase4 records from_a / quant_new. Everything from VOTE on is the same chain, with the drop rule 4 of 8. The brief's Indicators C section shows the deliberated names that passed. C stays non-live.
+    (5f) DAILY ORDER FOR THE THREE REPORTS (conductor 2026-11-11; the pma-auto routine reads this block, RUN.yaml wins over the routine prompt). A runs first and finishes through PUBLISH exactly as above. THEN, in the same session and
+    only if A published (a stuck A runs no B or C): REPORT B = `export AEGIS_REPORT=B` -> `registrar.py --manifest run_manifest.json init --date <date> --report B` (run dir <date>-B) -> `screens` -> `coverage --seat-sets seat_sets.json`
+    (on FAIL dispatch the committee-topup workflow, git pull, re-run; never proceed past a FAIL) -> `packets --seat-sets seat_sets.json` -> NOMINATE (cap 3) -> `rank` doors off -> `reuse-a` -> the chain from VOTE with only the new names ->
+    `slate-from-forms` -> RATIFY ... CHECK, writing NO levels and nothing live. REPORT C = `export AEGIS_REPORT=C` -> `init --report C` (<date>-C) -> packets with the AQE indicator files -> NOMINATE (aqe-quant only, cap 6) -> `rank` doors off -> `cset` ->
+    the chain from VOTE with 8 seats -> `slate-from-forms` -> ... CHECK. Both are non-live rerun-kind runs (publishes_live false). Then unset AEGIS_REPORT and WRITE the brief: the core verdict table is A's; Sweep B (§0C) and Indicators C (§0D) are
+    code-built modules from the B and C consensus.json (module-registry; a module that fails is a one-line degraded note, never a blocker). The brief gate is `pma_pipeline.py gate ... --export aqe_daily_export.json`: with the export it checks that §9A has
+    ONE ROW PER HELD NAME carrying exactly one action word (HOLD, ADD, TRIM, EXIT, STOP-TIGHTEN), or states the book is FLAT. A stuck B or C is reported in the DONE post and never delays A's PUBLISH or the Cards.
+    (5g) PACKET TRIM (conductor 2026-11-11): add `--max-bytes 100000` to `packets` to keep every seat's packet to about one read: rows are ranked by that seat's own screen, the held book is always kept, the cut is declared in the packet
+    (`# TRIMMED`) and in packets/packet_trim.json, and check.py verifies served + omitted == the candidate set. `r2digest --max-bytes 70000` (the default) now tightens seat reasons and challenge text in declared rungs instead of only warning; data lines are never cut.
     (6) Verdict-ledger rows carry `report`. tools/report_compare.py grades each
     report's picks against SPY and the equal-weight list at 5 and 20 sessions and measures overlap; A's Cards print one line per report
     (report_lines.json) and the brief carries the section.
@@ -784,7 +793,7 @@ steps:
 
   - name: CHECK
     kind: tool
-    command: "pma_pipeline.py gate --brief pma_brief_<date>.md --consensus consensus.json --verdict-ledger verdict_ledger.json --date <date>"
+    command: "pma_pipeline.py gate --brief pma_brief_<date>.md --consensus consensus.json --verdict-ledger verdict_ledger.json --export aqe_daily_export.json --date <date>"
     then: "check.py cards --text cards_text.json --lines cards_lines.json --html pma_cards_<date>.html   # B3 + the rendered page carries no raw field name; (PM 2026-11-04): FAIL on raw field names, vote tallies, jargon or more than 4 numbers in an ADVANCE card's `reason`"
     barrier: "0 FAIL"
     on_fail: "fix at the owning stage, max 2 loops, residuals declared in the footer"
