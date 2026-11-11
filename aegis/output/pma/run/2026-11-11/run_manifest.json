@@ -1,7 +1,23 @@
 {
  "created": "2026-11-11T02:37:30Z",
  "date": "2026-11-11",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-11T08:22:10Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-11T08:22:11Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  },
+  {
+   "at": "2026-11-11T08:22:11Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  }
+ ],
  "flags": [],
  "run_id": "pma-2026-11-11",
  "seats": {
@@ -286,9 +302,23 @@
     "forms/adopt/seow.json": "e46b8a83f12cfcd475c64d3932479f2cfc22e49bad6ddc61b660398f40fc32af",
     "forms/adopt/wyckoff.json": "271707d45e9cad21e2b2c997161b0b3e5b831ad742d53aa4a360b4e84bd97d35"
    },
+   "finished": "2026-11-11T08:21:58Z",
    "notes": [],
    "started": "2026-11-11T03:06:46Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "BRACKET": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
    "tokens": 0
   },
   "CHALLENGE": {
@@ -300,9 +330,49 @@
    "files": {
     "forms/challenge/steenbarger.json": "6d86d443fbec5887e3517e6831759ac839b89b73a2f21ecb6fd8f1f934063b31"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T02:43:01Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHECK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CLAIMS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CONDITIONS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
    "tokens": 0
   },
   "CROSS": {
@@ -320,9 +390,94 @@
     "forms/cross/seow.json": "ebc7bf1f433542633b08c69a6aca5acfa152b077dc45d0321f0bc99b46478ded",
     "forms/cross/wyckoff.json": "9b702763e04175cfbb37cf570e2e677103eae67b0ec182e5615a315b59fa5375"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T02:56:30Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "FUNNEL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:22:10Z",
+   "notes": [
+    "FORCED done with missing produces: ['data_health.json']",
+    "Data gathered by the AQE nightly run 141 and the conductor's read-only Tiger pull; declared step outputs are not all in the run dir (committee_data names above)"
+   ],
+   "started": "2026-11-11T08:22:10Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:22:11Z",
+   "notes": [
+    "FORCED done with missing produces: ['inbox_clean.json']",
+    "INBOX-CLEAN not run this session (declared in run_notes)"
+   ],
+   "started": "2026-11-11T08:22:11Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "LEVELS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
    "tokens": 0
   },
   "NOMINATE": {
@@ -340,9 +495,78 @@
     "forms/r1/seow.json": "0ec96bd52b09e69c48d1fa3b3d3ffe13f111d37d9fec2464588e866aee9c1e08",
     "forms/r1/wyckoff.json": "3b5091679e5e67d6116c588e07b41e15dc823818d297869e302fba1e8445439a"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T02:41:58Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "PAIR": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "POSITION": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:22:11Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "Packets and menus built by the conductor harness; some declared outputs sit under other names"
+   ],
+   "started": "2026-11-11T08:22:11Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PUBLISH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:22:04Z",
+   "notes": [],
+   "started": "2026-11-11T08:22:04Z",
+   "status": "done",
    "tokens": 0
   },
   "QA": {
@@ -354,9 +578,23 @@
    "files": {
     "forms/qa/steenbarger.json": "41f32fc47e946b08d7bdad978352eac3754788b8b9bdd232fd541aa5751adb15"
    },
+   "finished": "2026-11-11T08:21:58Z",
    "notes": [],
    "started": "2026-11-11T03:02:50Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
    "tokens": 0
   },
   "RATIFY": {
@@ -381,9 +619,88 @@
     "forms/ratify2/seow.json": "6b1d27db4eec23a9c23d2f8c2f4443e1f8c01f0c7ab3516194ee86d003f67c0e",
     "forms/ratify2/wyckoff.json": "25040e2132f5bd828b6e266d0619454e431d1e32181a08f561ec1b44975bde73"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T03:00:01Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIONALE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIONALE-FINAL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "REPEAT-WATCH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "REPORT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "SCORECARD": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "SLATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
    "tokens": 0
   },
   "TIER2": {
@@ -401,9 +718,23 @@
     "forms/tier2/seow.json": "007e3ba9ff3ff9c6aafbfb6a1206452994f0311ef299b7405e650ee282da25ab",
     "forms/tier2/wyckoff.json": "2cfc8d2143a678ee231ae0a6d3247d0036a83d1a25838f81ef5e7587caf6095a"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T02:58:01Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIMING": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:57Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:57Z",
+   "status": "done",
    "tokens": 0
   },
   "VOTE": {
@@ -421,9 +752,23 @@
     "forms/r2/seow.json": "fee564a1fe95357360b94a3615cd5c68cde876e44a111596433eeeeb4a89aad6",
     "forms/r2/wyckoff.json": "77e6055a3a9fa2fe13c5ea83028042a80bb6ff2998207ec1cb69424fe4ab7a43"
    },
+   "finished": "2026-11-11T08:21:57Z",
    "notes": [],
    "started": "2026-11-11T02:52:31Z",
-   "status": "pending",
+   "status": "done",
+   "tokens": 0
+  },
+  "WRITE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-11T08:21:58Z",
+   "notes": [],
+   "started": "2026-11-11T08:21:58Z",
+   "status": "done",
    "tokens": 0
   }
  }
