@@ -176,7 +176,12 @@ def ext_line(r):
     return (f'<p><b>If it runs into open air:</b> targets {f2(t["TP1"]["price"])} (1.272 of its last leg) and {f2(t["TP2"]["price"])} (1.618), stop {f2(eb["stop"])}, '
             f'{t["TP2"]["r"]:.1f}R to the second. A second bracket that ignores nearby resistance, so a far target makes the reward easy to show; it '
             f'{"clears" if eb.get("passed") else "does not clear"} the three bracket checks.</p>')
+def _one_line(read):
+    """PM 2026-11-11 ("stop prose"): a card's read is ONE line, its first sentence; the tables carry the content."""
+    m = re.match(r"(.+?[.!?])(\s|$)", str(read or "").strip(), re.S)
+    return m.group(1) if m else str(read or "").strip()
 def card(h3, visual, read="", more="", cls=""):
+    read = _one_line(read)
     return (f'<div class="card {cls}"><h3>{h3}</h3>{visual}' + (f'<p class="read">{read}</p>' if read else "")
             + (f"<details><summary>{more[0]}</summary>{more[1]}</details>" if more else "") + "</div>")
 def table(head, rows, cls=""):
@@ -644,9 +649,9 @@ def basket_card():
                 ("All baskets: grade, week, month, rotation, strongest members",
                  table(["Basket", "Grade", "1 week", "1 month", "Rotation", "Strongest members (20-day strength vs SPY)"], rows_)))
 c_basket = basket_card()
-s2 = section("2 &middot; Sector and theme strength", (f"Money sits in {_jn2([SHORT.get(x, x) for x in lead_secs])}" if lead_secs else "No sector passes the entry gate")
+s2 = section("5 &middot; Sector and theme strength", (f"Money sits in {_jn2([SHORT.get(x, x) for x in lead_secs])}" if lead_secs else "No sector passes the entry gate")
              + (f"; {_jn2(blocked_lag)} lag." if blocked_lag else "."),
-             f'<div class="grid">{c_sec}{c_th}{c_basket}{c_grp}{c_hs}</div>', "sectors")
+             f'<div class="grid">{c_sec}{c_th}{c_basket}{c_grp}</div>', "sectors")
 
 # ------------------------------------------------------------------ 3 WHAT HAPPENED
 yv = lambda s: float(s.replace("%", ""))
@@ -678,7 +683,7 @@ c_vv = card(f"Near-term fear {'rose' if hv['now'] > hv['1mo_ago'] else 'eased' i
                        (0.82, "0.82 calm", "var(--good)", 1), (1.00, "1.00 stress", "var(--bad)", 1)],
           bands=[(0.82, 1.00, "var(--soft)")], label="VIX against 3-month VIX"),
     "Under 0.82 is calm; over 1.00 means near-term fear has overtaken the 3-month view.")
-s3 = section("3 &middot; What happened", f"SPY {'fell' if D['spy_roc_20d'] < 0 else 'rose'} {abs(D['spy_roc_20d'])}% in 20 days, and on {CLOSE_WD} the list {'lagged' if yv(y_list) < yv(y_spy) else 'led' if yv(y_list) > yv(y_spy) else 'matched'} a {'rising' if yv(y_spy) > 0 else 'falling'} SPY.",
+s3 = section("6 &middot; What happened", f"SPY {'fell' if D['spy_roc_20d'] < 0 else 'rose'} {abs(D['spy_roc_20d'])}% in 20 days, and on {CLOSE_WD} the list {'lagged' if yv(y_list) < yv(y_spy) else 'led' if yv(y_list) > yv(y_spy) else 'matched'} a {'rising' if yv(y_spy) > 0 else 'falling'} SPY.",
              f'<div class="grid">{c_idx}{c_x}{c_vv}</div>', "happened")
 
 # ------------------------------------------------------------------ 4 YOUR BOOK
@@ -774,7 +779,7 @@ for t in HELD_ORDER:
         _clauses.append(f"{t} is an exit case, {'up' if h['unreal_usd'] >= 0 else 'down'} ${abs(h['unreal_usd']):,.0f}")
     else:
         _clauses.append(f"keep {t} with " + ("NO stop order (unprotected)" if h.get("held_sl") is None else f"its stop at {h['held_sl']}"))
-s4 = section("4 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
+s4 = section("3 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
              book_table() + f'<div class="grid">{held_cards}{c_conc}</div>' if HELD else '<div class="card"><p>No positions are held.</p></div>', "book")
 
 # ------------------------------------------------------------------ 5 THE TICKERS
@@ -975,12 +980,12 @@ strong_det = ('<details class="big"><summary>Strong names no reviewer picked, th
     + table(["AQE #", "Name", "Sector", "Sector state", "Committee"], [[r["rank"], f"<b>{r['ticker']}</b>", E(r.get("gics_sector_name") or ""), sstate(r), room(r["ticker"])] for r in top20])
     + "<p>The lens list and the AQE rank are AQE&rsquo;s own orderings; neither overrides the committee, and the committee does not override them.</p></details>")
 
-s5 = section("5 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
+s5 = section("2 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
                                            f"All {n_adv} ADVANCE names pay 1R or more at two targets." if n_adv else "No name is ADVANCE today."),
     chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
     + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>'
        + "".join(tmpl_card(r["t"]) for r in thin) if thin else "")
-    + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + supp_section + strong_det, "tickers")
+    + f'<div class="grid">{c_hs}</div>' + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + supp_section + strong_det, "tickers")
 
 # ------------------------------------------------------------------ 5b THE THREE AQE LISTS AGAINST THE COMMITTEE (lists_vs_committee.py, code only)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -1119,7 +1124,12 @@ def oc_cell(x):
     sub = {"DROPPED": "dropped", "NOT_SLATED": "not slated", "CONTESTED": "contested", "AGREED": "agreed", "DEAL_PINNED": "pending takeover"}.get(x["status"], "")
     return pill(w, tone) + (f"<span class='sub'>{sub}</span>" if sub else "")
 fx = lambda v, f: f.format(v) if isinstance(v, (int, float)) else "&mdash;"
-HEAD = ["#", "Ticker", "Sector", "Score", "Committee verdict", "Extended"]
+HEAD = ["Rank", "Ticker", "Sector", "Score", "Committee verdict", "Extended", "On which lists"]
+LIST_WORD = {"elder": "Elder", "aqe": "AQE", "lens": "Detect lens", "swing": "Swing pivot"}
+ON_LISTS = {}
+for _k in ("elder", "aqe", "lens", "swing"):
+    for _x in (FL.get(_k) or {}).get("rows", []):
+        ON_LISTS.setdefault(_x["ticker"], []).append(LIST_WORD[_k])
 SCORE_WORD = {"elder": "Elder score", "aqe": "AQE momentum score", "lens": "Strong lenses of 6", "swing": "Daily ranges under swing high"}
 def _score(k, x):
     r_ = ROWS.get(x["ticker"]) or {}
@@ -1135,35 +1145,24 @@ def list_table(k):
         cells = [(x["n"], str(x["n"])), (x["ticker"], f"<b>{x['ticker']}</b>{ma_pill(ROWS.get(x['ticker']))}"),
                  (SHORT.get(s_["sector"], s_["sector"] or ""), E(SHORT.get(s_["sector"], s_["sector"] or "&mdash;"))),
                  (sc_ if isinstance(sc_, (int, float)) else -1, (f"{sc_:.1f}" if isinstance(sc_, float) else str(sc_)) if sc_ is not None else "&mdash;"),
-                 (verdict, E(verdict)), (0 if x["tag"] != "EXTENDED" else 1, "Yes" if x["tag"] == "EXTENDED" else "No")]
+                 (verdict, E(verdict)), (0 if x["tag"] != "EXTENDED" else 1, "Yes" if x["tag"] == "EXTENDED" else "No"),
+                 (len(ON_LISTS.get(x["ticker"], [])), E(", ".join(ON_LISTS.get(x["ticker"], []))))]
         body.append("<tr>" + "".join(f'<td data-l="{E(h)}" data-v="{E(str(v))}">{c}</td>' for h, (v, c) in zip(HEAD, cells)) + "</tr>")
     hd = [h if h != "Score" else SCORE_WORD.get(k, "Score") for h in HEAD]
     return ('<div class="tbl"><table class="lst sortable"><thead><tr>' + "".join(f"<th>{h}</th>" for h in hd) + "</tr></thead><tbody>" + "".join(body) + "</tbody></table></div>")
-LH3 = {
-    "elder": f"Elder top 15, by Elder score then AQE rank: {FL['elder']['tags']['EXTENDED']} are extended, and {FL['elder']['outcomes']['OUT']} never reached the room.",
-    "aqe": f"AQE top 20, by AQE rank: {FL['aqe']['tags']['EXTENDED']} are extended, and {FL['aqe']['outcomes']['OUT']} never reached the room.",
-    "lens": f"Detect lens top 15, by strong-lens count: {FL['lens']['tags']['BREAKING OUT']} are breaking out, and {FL['lens']['outcomes']['OUT']} never reached the room.",
-}
+LH3 = {"elder": "Elder top 15", "aqe": "AQE top 20", "lens": "Detect lens top 15"}
 cardsB = "".join(f'<div class="card"><h3>{LH3[k]}</h3>{list_table(k)}</div>' for k in LKEYS)
 if "swing" in FL:      # PM 2026-11-05: the fourth brief list, shown beside the other three; the three-list comparisons above are unchanged
     _sw = FL["swing"]
-    cardsB += (f'<div class="card"><h3>Swing pivot top {len(_sw["rows"])}: weekly and daily higher highs and higher lows, sitting within one daily range of the latest daily swing high: '
-               f'{_sw["outcomes"]["ADVANCE"] + _sw["outcomes"]["HOLD"]} advance or hold, and {_sw["outcomes"]["OUT"]} never reached the room.</h3>{list_table("swing")}</div>')
+    cardsB += (f'<div class="card"><h3>Swing pivot top {len(_sw["rows"])}</h3>{list_table("swing")}</div>')
 
-built = ("How this is built", f"<p>Built by code, with <b>zero model calls</b> at run time: a small script reads the run folder&rsquo;s export, committee record, "
-         f"card words and door log, tags each name and counts; this page only draws the result. It took {F['runtime_s']:.2f} seconds. "
-         "The Elder, AQE and Detect lists and the &ldquo;in the room&rdquo; test are the real page&rsquo;s own definitions. The reason column is the committee&rsquo;s filed line for voted names; "
-         "for the rest it is the first stored fact that applies, in this order: past the pivot line, past the 200-day line, a blocked sector, volume under 1.4x, more than 4 daily ranges over the 20-day. "
-         "This is a diagnostic: it ranks and recommends nothing.</p>")
-s5b = section("5b &middot; The three AQE lists against the committee",
-    f"The room took {FU['n'] - FU['outcomes']['OUT']} of the {FU['n']} list names; {FU['tag_by_outcome']['EXTENDED']['OUT']} of the {FU['outcomes']['OUT']} it never saw are extended past its own chase lines.",
-    cardA + f'<div class="grid">{cardD}{cardE}</div>' + cardsB + f'<details class="big"><summary>{built[0]}</summary>{built[1]}</details>', "lists")
+s5b = section("4 &middot; The AQE lists", "Elder, AQE, Detect lens and Swing pivot, one row per name.", cardsB, "lists")
 # ------------------------------------------------------------------ 6 THE PLAN
 steps = []
 for x in T.get("plan") or []:
     head, body = x.split(": ", 1) if ": " in x else ("", x)
     steps.append(f'<li><span class="when">{E(head)}</span><span>{E(body[0].upper() + body[1:])}</span></li>')
-s6 = section("6 &middot; The plan, Singapore time", f"Nothing can fire before the first hourly close at {FIRST_HOUR_SGT:%H:%M} SGT.",
+s6 = section("7 &middot; The plan, Singapore time", f"Nothing can fire before the first hourly close at {FIRST_HOUR_SGT:%H:%M} SGT.",
              f'<div class="card"><ul class="timeline">{"".join(steps)}</ul></div>', "plan")
 
 # ------------------------------------------------------------------ 7 SCORECARD
@@ -1174,7 +1173,7 @@ def md_table(title):
 full = md_table("## 3 · Full-horizon calls only"); runs = md_table("## 1 · The list vs the market")
 sc_rows = [(f"{r[0]} &middot; {r[5].split('/')[0]} of {r[5].split('/')[1]} beat SPY", f"mean {mins(r[2])}", yv(r[2]), CLAY if r[0] == "Advance" else GRAY) for r in full[1:]]
 _adv_m = next((yv(r[2]) for r in full[1:] if r[0] == "Advance"), None); _hold_m = next((yv(r[2]) for r in full[1:] if r[0].lower().startswith("hold")), None)
-s7 = section("7 &middot; Scorecard", ("ADVANCE calls have not yet beaten HOLD calls over full five-session horizons." if (_adv_m is not None and _hold_m is not None and _adv_m <= _hold_m) else
+s7 = section("8 &middot; Scorecard", ("ADVANCE calls have not yet beaten HOLD calls over full five-session horizons." if (_adv_m is not None and _hold_m is not None and _adv_m <= _hold_m) else
                                     "ADVANCE calls have beaten HOLD calls over full five-session horizons." if (_adv_m is not None and _hold_m is not None) else
                                     "The scorecard does not yet compare ADVANCE and HOLD calls over full five-session horizons."),
     card(f"Mean return of each kind of call over full five-session horizons, as of the {CLOSE_S} close",
@@ -1188,7 +1187,7 @@ s7 = section("7 &middot; Scorecard", ("ADVANCE calls have not yet beaten HOLD ca
 _ENG = re.compile(r"\bR\d{2}\b|\b[0-9a-f]{7}\b|\bRATIONALE-FINAL\b|\bQA review\b")
 cav = [plain(c) for c in T.get("caveats") or [] if not _ENG.search(c)]
 _n_stale = (1 if _stale_b else 0) + (1 if (CR.get("how_current") or {}).get("oldest_source_days_behind", 0) else 0)
-s8 = section("8 &middot; Read with care", ("This is a rerun on frozen votes" if RERUN else "This is the live run")
+s8 = section("9 &middot; Read with care", ("This is a rerun on frozen votes" if RERUN else "This is the live run")
              + (f", and {nword(_n_stale).lower()} data leg{' was' if _n_stale == 1 else 's were'} stale when the committee met." if _n_stale else ", and every data leg was current when the committee met."),
     f'<details class="big"><summary>{len(cav)} caveats on the run, the data, the book and the sizing</summary><ul class="plainlist">{"".join(f"<li>{E(x)}</li>" for x in cav)}</ul>'
     f'<p>{E(MARK["committee_data_status"])}. {E(MARK["ma_panel_refresh"])}.</p></details>'
@@ -1292,7 +1291,7 @@ section#lists>.card{margin-top:14px}
 """
 page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aegis Daily Cards</title><style>{CSS}{CT.TEMPLATE_CSS}</style></head><body><div class="wrap">
-{top}{s1}{s2}{s3}{s4}{s5}{s5b}{s6}{s7}{s8}
+{top}{s1}{s5}{s4}{s5b}{s2}{s3}{s6}{s7}{s8}
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div><script>
 document.querySelectorAll("table.sortable").forEach(function(t){{var h=t.tHead.rows[0].cells;Array.prototype.forEach.call(h,function(th,i){{th.style.cursor="pointer";th.title="Click to sort";var asc=true;th.addEventListener("click",function(){{
