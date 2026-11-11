@@ -409,6 +409,18 @@ def test_the_gate_fails_loudly_when_the_set_is_missing_stale_failed_or_tampered(
     assert any("closes_scorecard.json: MISSING" in x for x in f), f
 
 
+def test_extra_screened_names_beyond_the_export_are_a_note_not_a_failure(tmp_path):
+    """Conductor 2026-11-11: committee data is a SUPERSET of the export (Report B's screened names are added, #77). Only a MISSING export name fails."""
+    C = _check()
+    out, _ = _published(tmp_path)
+    smaller = {"daily_list": EXPORT["daily_list"][:1], "held_positions": []}           # the set holds more names than this export
+    f, n = C.check_committee_data(str(out), RUN_DATE, smaller)
+    assert not f, f
+    assert any("screened names beyond today's export" in x for x in n), n
+    f, n = C.check_committee_data(str(out), RUN_DATE, EXPORT)                           # exactly the export: no extras note
+    assert not f and not any("beyond today's export" in x for x in n), (f, n)
+
+
 def test_the_gate_fails_when_the_set_belongs_to_another_export_or_the_closes_are_stale(tmp_path):
     C = _check()
     out, _ = _published(tmp_path)

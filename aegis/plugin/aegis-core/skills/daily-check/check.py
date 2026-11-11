@@ -445,8 +445,15 @@ def check_committee_data(output_dir, run_date, export=None):
         fails.append(f"committee_data closes: SPY ends {max(C['SPY'])}, the last US close is {last_us_close(run_date)} -- stale closes")
     if export is not None:
         want = sorted({r.get("ticker") for r in (export.get("daily_list") or [])} | {h.get("ticker") for h in (export.get("held_positions") or [])} - {None})
-        if (M.get("scope") or {}).get("requested") != len(want) or sorted(G.get("names") or {}) != want:
-            fails.append(f"committee_data was fetched for {(M.get('scope') or {}).get('requested')} names, today's export has {len(want)} - a different export")
+        # EXTRAS ARE FINE (conductor 2026-11-11): the nightly adds Report B's screened names to committee data (#77), so the set may be a SUPERSET of
+        # the export. It fails only when an export (or held) name is MISSING from the grid or the fundamentals pack - that is a different export.
+        have_g, have_f = set(G.get("names") or {}), set((F.get("tickers") or {}).keys())
+        miss_g, miss_f = sorted(set(want) - have_g), sorted(set(want) - have_f)
+        if miss_g or miss_f or (M.get("scope") or {}).get("requested", 0) < len(want):
+            fails.append(f"committee_data was fetched for {(M.get('scope') or {}).get('requested')} names, today's export has {len(want)} and these are missing from it "
+                         f"(mtf: {miss_g[:8]}, fundamentals: {miss_f[:8]}) - a different export")
+        elif len(have_g) > len(want):
+            notes.append(f"committee data carries +{len(have_g - set(want))} screened names beyond today's export (Report B's screens, by design)")
     if fails:
         return fails, notes
     gc, fc = G["coverage"], F["coverage"]
