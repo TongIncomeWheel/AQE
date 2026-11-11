@@ -111,6 +111,8 @@ report:
     arrive with NO MTF and NO fundamentals and be dropped on a data gap. The nightly now adds the names the seven screens would seat (src/pipeline/committee_topup.py via committee_data extra_rows). After `screens`, run
     `pma_pipeline.py coverage --seat-sets seat_sets.json`: it FAILS (exit 1, names listed) if any screened name lacks fundamentals, a served MTF row or closes. The fix is the "Committee data top-up" workflow
     (workflow_dispatch committee-topup.yml, inputs names + screens=true), which pulls the gap with the same fetchers, merges it into the three files and publishes to main; then `git pull` and re-run `coverage`. Never proceed past a FAIL.
+    (5e) SLATE for B and C (conductor 2026-11-11): after DECIDE-TIMING and the tier-2 forms, `pma_pipeline.py slate-from-forms --dir <run dir>` writes slate.json by code from decision.json + forms/tier2 + slate_plan.json (only the names in `keep`);
+    why_agreed, dissent and wrong_if are quotes of the seats' own tier-2 text, nothing the seats did not say. Then `registrar.py validate --file slate.json --kind slate --decision decision.json`. No hand script.
     (5c) REPORT C's chain, PM decision 2026-11-10: ONLY aqe-quant NOMINATES (at most six; the registrar rejects round-1 nominations from any other C seat). `rank` runs with every AQE door off (as in 5), then
     `pma_pipeline.py cset --phase4 phase4.json --a-phase4 <report A run dir>/phase4.json`: C's deliberation set is A's deliberation set (re-voted by all EIGHT seats reading the AQE indicators)
     plus aqe-quant's new names; phase4 records from_a / quant_new. Everything from VOTE on is the same chain, with the drop rule 4 of 8. The brief's Indicators C section shows the deliberated names that passed. C stays non-live.
