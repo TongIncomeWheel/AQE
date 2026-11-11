@@ -664,24 +664,32 @@ def held_card(t):
     add = re.search(r"daily close above ([\d.]+)", why)
     v_add = float(add.group(1)) if add else None
     up = h["unreal_usd"] >= 0
-    marks_vals = [h["entry"], h["live_px"], h["held_sl"]] + ([v_add] if v_add else []) + ([m["ma_20"]] if (exit_case and m.get("ma_20")) else [])
+    # A HELD NAME WITH NO STOP ORDER (conductor 2026-11-11): held_sl is None. min() over a list holding None raised TypeError, v3 fell back to v2 every run while the book was
+    # unprotected and card_fields.json was never written. Skip every None mark; the missing stop is stated on the card in plain words instead of drawn.
+    _no_stop = h.get("held_sl") is None
+    marks_vals = [x for x in [h["entry"], h["live_px"], h.get("held_sl")] + ([v_add] if v_add else []) + ([m["ma_20"]] if (exit_case and m.get("ma_20")) else []) if x is not None]
     lo, hi = min(marks_vals) * 0.98, max(marks_vals) * 1.02
     if exit_case:
         marks = [(h["live_px"], f"<tspan class='b'>Last {h['live_px']}</tspan>", CLAY, -1), (h["entry"], f"Bought {h['entry']:.2f}", GRAY, -1)]
         if m.get("ma_20"):
             marks.append((m["ma_20"], f"20-day avg {m['ma_20']}", GRAY, -2))
-        marks.append((h["held_sl"], f"Stop {h['held_sl']}", "var(--bad)", 1))
-        title = (f"{t}: an exit case, {'up' if up else 'down'} ${abs(h['unreal_usd']):,.2f} on {int(h['qty'])} shares, with the stop {m.get('dist_from_stop_pct', 0):.2f}% below.")
-        tail = "stop-limit order working at the broker"
+        if not _no_stop:
+            marks.append((h["held_sl"], f"Stop {h['held_sl']}", "var(--bad)", 1))
+        title = (f"{t}: an exit case, {'up' if up else 'down'} ${abs(h['unreal_usd']):,.2f} on {int(h['qty'])} shares, "
+                 + ("with NO stop order at the broker." if _no_stop else f"with the stop {(m.get('dist_from_stop_pct') or 0):.2f}% below."))
+        tail = "NO stop order is working: this position is unprotected" if _no_stop else "stop-limit order working at the broker"
         body = E(_cap1(why.split("; ", 1)[1])) if "; " in why else E(why)
         tone = "bad"
     else:
-        marks = [(h["entry"], f"Bought {h['entry']:.2f}", GRAY, -1), (h["live_px"], f"<tspan class='b'>Last {h['live_px']}</tspan>", CLAY, -1),
-                 (h["held_sl"], f"Stop {h['held_sl']}", "var(--bad)", 1)]
+        marks = [(h["entry"], f"Bought {h['entry']:.2f}", GRAY, -1), (h["live_px"], f"<tspan class='b'>Last {h['live_px']}</tspan>", CLAY, -1)]
+        if not _no_stop:
+            marks.append((h["held_sl"], f"Stop {h['held_sl']}", "var(--bad)", 1))
         if v_add:
             marks.append((v_add, f"Add above {v_add}", "var(--good)", 1))
-        title = f"{t}: keep, {'up' if up else 'down'} ${abs(h['unreal_usd']):,.2f} on {int(h['qty'])} shares, with the stop at {h['held_sl']}."
+        title = f"{t}: keep, {'up' if up else 'down'} ${abs(h['unreal_usd']):,.2f} on {int(h['qty'])} shares, " + ("with NO stop order at the broker." if _no_stop else f"with the stop at {h['held_sl']}.")
         tail = ("reports " + why.split("reports ")[-1].rstrip(".")) if "reports " in why else ""
+        if _no_stop:
+            tail = ("NO stop order is working: this position is unprotected" + (f"; {tail}" if tail else ""))
         body = (E(why.split("; reports")[0]) + ".")
         tone = "good"
     return card(title,
@@ -714,7 +722,7 @@ for t in HELD_ORDER:
     if str(w.get("tone")) == "down":
         _clauses.append(f"{t} is an exit case, {'up' if h['unreal_usd'] >= 0 else 'down'} ${abs(h['unreal_usd']):,.0f}")
     else:
-        _clauses.append(f"keep {t} with its stop at {h['held_sl']}")
+        _clauses.append(f"keep {t} with " + ("NO stop order (unprotected)" if h.get("held_sl") is None else f"its stop at {h['held_sl']}"))
 s4 = section("4 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
              f'<div class="grid">{held_cards}{c_conc}</div>' if HELD else '<div class="card"><p>No positions are held.</p></div>', "book")
 
