@@ -163,6 +163,7 @@ def build_ma_panel(
     new_frames = []
     pulled = 0
     skipped = 0
+    failed = 0
     t_start = time.time()
 
     for ticker in iter_with_progress(tickers, label="ma_bars"):
@@ -190,8 +191,15 @@ def build_ma_panel(
                   f"Saving partial results — next run will continue.")
             break
         except FMPError:
+            failed += 1
+            continue
+        except Exception as exc:  # noqa: BLE001 - one ticker's unexpected error must never discard every bar already pulled (2026-11-10 incident)
+            failed += 1
+            print(f"\n  [MA Scanner] {ticker}: {exc.__class__.__name__}: {str(exc)[:120]} - skipped, the refresh continues")
             continue
 
+    if failed:
+        print(f"  [MA Scanner] {failed} ticker(s) could not be pulled this run (the next run retries them)")
     if new_frames:
         new_bars = pd.concat(new_frames, ignore_index=True)
         if not existing.empty:
