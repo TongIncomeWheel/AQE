@@ -1,0 +1,422 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-12T23:58:10Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-13",
+ "survivors": [
+  "JNJ",
+  "AAPL",
+  "CHYM",
+  "G",
+  "U",
+  "BDX",
+  "EMBJ",
+  "FROG",
+  "CNK",
+  "VRDN",
+  "VNT",
+  "PCOR",
+  "ICE",
+  "ADP"
+ ],
+ "pairs": [
+  {
+   "pair_id": "CHYM-seow-for~oneil",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "All served position steps pass: break held, top ranking, impulse SUSTAINED five bars.",
+   "refute_evidence": "Not every step passes on my checklist: D close_vs_swing_high_pct 6.31 is the 5.1-10% late zone (C17), and D swing HH but LL. The break held and W is HH/HL, but the buy point has passed.",
+   "refute_tf": {
+    "W": "HH/HL, 7.1% under the 20-wk high",
+    "D": "6.31% past the last swing high 31.07: late zone",
+    "H1": "above EMA9, HH/HL, 62% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CHYM-seow-for~elder-lens",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "elder-lens",
+   "claim_text": "All served position steps pass: break held, top ranking, impulse SUSTAINED five bars.",
+   "refute_evidence": "impulse SUSTAINED five bars is elder_5d [10, 10, 10, 10, 10]: a summer plateau, C24 (unsourced) only. Elder's signals are a colour vanishing (C4), and he does not buy summer (C20). D 6.3% above the last swing high is in front of value (C10).",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL: tide up",
+    "D": "9>21, HH but LL, 6.3% above the last swing high: no pullback",
+    "H1": "above EMA9, 9>21, HH/HL, 62% of the day's range"
+   }
+  },
+  {
+   "pair_id": "G-seow-for~minervini",
+   "ticker": "G",
+   "claim_id": "G-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "Weekly and daily up-structure with a top-decile ranking.",
+   "refute_evidence": "W and D swing_class HH/HL is true, but the template is all-or-nothing and my long-stack criterion c2 fails (C3). W close_vs_swing_high_pct 11.02: well past the weekly pivot (C5).",
+   "refute_tf": {
+    "W": "HH/HL, 11.02% above the weekly swing high 38.85: past the pivot",
+    "D": "HH/HL, 2.91% above swing high 41.91",
+    "H1": "below EMA9, 13.4% of the day's range"
+   }
+  },
+  {
+   "pair_id": "G-wyckoff-for~minervini",
+   "ticker": "G",
+   "claim_id": "G-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "minervini",
+   "claim_text": "Creek meets value edge, value stepping up, weekly and daily HH/HL, structure 85.3.",
+   "refute_evidence": "Creek and value edge are not on my menu. The HH/HL part I can see fails my test: template c2 fails on the long stack (C3) and W close_vs_swing_high_pct 11.02 is past the weekly pivot (C5).",
+   "refute_tf": {
+    "W": "HH/HL but 11.02% above the weekly swing high",
+    "D": "HH/HL, close 43.13 above ema21 40.3115",
+    "H1": "below EMA9 43.1506, 13.4% of the range"
+   }
+  },
+  {
+   "pair_id": "G-minervini-against~seow",
+   "ticker": "G",
+   "claim_id": "G-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "ma100 34.97 < ma200 35.36; 11.07% off its high; H1 below EMA9.",
+   "refute_evidence": "I read no 100/200 average (C1). Position test: ABOVE_STRUCTURE, W and D swing HH/HL, D 2.9% above swing high 41.91, rs_rank_pct 90.43, ret_63d 27.38. H1 a hair under EMA9 is not a C14 exit.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 11.0% above last swing high 38.85",
+    "D": "above EMA9, 9>21, HH/HL, 2.9% above swing high 41.91",
+    "H1": "below EMA9 (43.12 vs 43.1506), 9>21, HH/HL, 13% of the day's range"
+   }
+  },
+  {
+   "pair_id": "G-minervini-against~raschke",
+   "ticker": "G",
+   "claim_id": "G-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "ma100 34.97 < ma200 35.36; 11.07% off its high; H1 below EMA9.",
+   "refute_evidence": "H1 below EMA9 inside W and D HH/HL is the first pullback after fresh highs, my RETRACEMENT setup (C2/C7). D higher low 39.32 above 38.35. ma100/ma200 is not my field.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 11.0% above last swing high",
+    "D": "above EMA9, 9>21, HH/HL, higher low 39.32",
+    "H1": "below EMA9, 9>21, HH/HL, 13% of day's range: pullback starting"
+   }
+  },
+  {
+   "pair_id": "U-minervini-for~elder-lens",
+   "ticker": "U",
+   "claim_id": "U-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Full stage 2 stack, top-decile RS, mp 93.0 STRONG/ACCELERATING, flow 84.2.",
+   "refute_evidence": "W swing LH/LL and D swing HH but LL, 7.5% under the last swing high; H1 9<21. elder_5d [10, 10, 10, 7, 7] is a force pullback with no reclaim. mp 93.0 STRONG does not override a soft wave (C9).",
+   "refute_tf": {
+    "W": "9>21 but swing LH/LL",
+    "D": "9>21, HH but LL, 7.5% under the last swing high",
+    "H1": "above EMA9, 9<21, LH/LL"
+   }
+  },
+  {
+   "pair_id": "EMBJ-minervini-for~elder-lens",
+   "ticker": "EMBJ",
+   "claim_id": "EMBJ-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Full stage 2 stack, RS leader (downday 1.19), mp 80.0 STRONG/ACCELERATING, sector Momentum Building.",
+   "refute_evidence": "elder_5d [4, 9, 10, 10, 7]: green going away on the last bar (C4), not acceleration in force. W swing LH but HL; H1 below EMA9 at 7% of the day's range.",
+   "refute_tf": {
+    "W": "9>21, swing LH but HL",
+    "D": "9>21, HH/HL, 4.8% under 20-day high",
+    "H1": "below EMA9, 9>21, 7% of the day's range"
+   }
+  },
+  {
+   "pair_id": "FROG-seow-for~oneil",
+   "ticker": "FROG",
+   "claim_id": "FROG-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Every served position step passes: break, top ranking, impulse, weekly up-structure.",
+   "refute_evidence": "Fails my L test: rs LAGGARD in my blind read (R2). D 7.0% above the last swing high is the late zone (C17), and D swing HH but LL.",
+   "refute_tf": {
+    "W": "HH/HL, 4.6% past the last swing high",
+    "D": "HH but LL, 7.0% past the last swing high",
+    "H1": "LH but HL, 74% of the day's range"
+   }
+  },
+  {
+   "pair_id": "FROG-minervini-for~elder-lens",
+   "ticker": "FROG",
+   "claim_id": "FROG-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Stage 2 stack at its high, top-decile RS rank, insti_money strong, elder ACCELERATION.",
+   "refute_evidence": "elder ACCELERATION was the 5 -> 10 rise four bars back; elder_5d [5, 10, 10, 10, 10] is now a summer plateau (C20), not a live acceleration. D 7.0% above the last swing high is in front of value (C10).",
+   "refute_tf": {
+    "W": "9>21, HH/HL: tide up",
+    "D": "9>21, HH but LL, 7.0% above swing high",
+    "H1": "above EMA9, 9>21, 74% of the day's range"
+   }
+  },
+  {
+   "pair_id": "FROG-oneil-against~seow",
+   "ticker": "FROG",
+   "claim_id": "FROG-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "rs LAGGARD, div BEARISH/4, late zone, day_vol 0.88.",
+   "refute_evidence": "Not a laggard on my ranking: rs_rank_pct 94.87, rs_spy_20d 18.89, ret_63d 15.0. Position system takes the extension (C26); elder_pattern ACCELERATION confirms TIF. day_vol 0.88 is a C25 caution only.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 4.6% above last swing high",
+    "D": "above EMA9, 9>21, HH but LL, 7.0% above swing high",
+    "H1": "above EMA9, 9>21, LH but HL, 74% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CNK-minervini-for~elder-lens",
+   "ticker": "CNK",
+   "claim_id": "CNK-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "Clean stage 2 stack at its high, top-decile RS, coil and insti_money strong.",
+   "refute_evidence": "Not clean on my grid: W swing LH but HL. elder_5d [2, 7, 10, 10, 10] is a summer plateau three bars past its transition (C20), with mp 54.0 FADING. At its high is in front of value (C10).",
+   "refute_tf": {
+    "W": "9>21, swing LH but HL, 6.8% above swing high",
+    "D": "9>21, HH/HL, 2.3% above the last swing high",
+    "H1": "above EMA9, 9>21, LH but HL, 79% of range"
+   }
+  },
+  {
+   "pair_id": "CNK-seow-for~oneil",
+   "ticker": "CNK",
+   "claim_id": "CNK-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Break held, top-decile ranking, impulse confirming.",
+   "refute_evidence": "The break held (D HH/HL, 2.3% above the last swing high), but a new high on day_vol 0.46 is my distribution test (C25): the high is not being bought.",
+   "refute_tf": {
+    "W": "LH but HL, 0.5% under the 20-wk high",
+    "D": "HH/HL, 2.3% past the last swing high",
+    "H1": "LH but HL, 79% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CNK-oneil-against~seow",
+   "ticker": "CNK",
+   "claim_id": "CNK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "New high on day_vol 0.46, div BEARISH/2, mp FADING/DECELERATING.",
+   "refute_evidence": "day_vol 0.46 is a C25 caution, never a reject (R11). Signal and impulse stand: ABOVE_STRUCTURE, D 2.3% above swing high, elder_pattern ACCELERATION, rs_rank_pct 93.16. Divergence is not my instrument.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, LH but HL, 6.8% above last swing high",
+    "D": "above EMA9, 9>21, HH/HL, 2.3% above swing high, 0.5% under 20-day high",
+    "H1": "above EMA9, 9>21, LH but HL, 79% of the day's range"
+   }
+  },
+  {
+   "pair_id": "CNK-oneil-against~wyckoff",
+   "ticker": "CNK",
+   "claim_id": "CNK-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "wyckoff",
+   "claim_text": "New high on day_vol 0.46, div BEARISH/2, mp FADING/DECELERATING.",
+   "refute_evidence": "day_vol 0.46 came on a red D bar 2.3% above the last swing high: light selling at the test (C7), not a failed break. structure_shift ABOVE_STRUCTURE, D HH/HL. div BEARISH/2 is a caution, not a structure break.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, LH but HL",
+    "D": "HH/HL, 2.3% above swing high: near the Creek",
+    "H1": "above EMA9, 9>21, 79% of the day's range"
+   }
+  },
+  {
+   "pair_id": "VRDN-seow-for~oneil",
+   "ticker": "VRDN",
+   "claim_id": "VRDN-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "Top-decile ranking with the weekly up-structure intact.",
+   "refute_evidence": "The weekly up-structure is intact (W HH/HL), but D 32.7% above the last swing high and D swing LH/LL: far past the pivot with no base (C17, R3).",
+   "refute_tf": {
+    "W": "HH/HL, 22.6% past the last swing high",
+    "D": "LH/LL, 32.7% past the last swing high",
+    "H1": "below EMA9, 18% of the day's range"
+   }
+  },
+  {
+   "pair_id": "VNT-livermore-for~minervini",
+   "ticker": "VNT",
+   "claim_id": "VNT-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "Clean HH/HL on both frames, momentum accelerating, structure 72.6.",
+   "refute_evidence": "W and D HH/HL is true, but W sits 18.0% above the last weekly swing high (past the pivot, C5) and my long-stack criterion c2 fails (C3). All eight or none.",
+   "refute_tf": {
+    "W": "HH/HL, 18.0% above the weekly swing high: extended",
+    "D": "HH/HL, 2.4% under 20-day high",
+    "H1": "below EMA9, 1% of the day's range"
+   }
+  },
+  {
+   "pair_id": "VNT-seow-for~minervini",
+   "ticker": "VNT",
+   "claim_id": "VNT-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "Weekly and daily up-structure with a top-decile ranking.",
+   "refute_evidence": "The up-structure and ranking are true; the template is not complete (c2 fails, C3). H1 closing at 1% of the day's range below EMA9 shows no demand at the high.",
+   "refute_tf": {
+    "W": "HH/HL, 18.0% above the weekly swing high",
+    "D": "HH/HL, 2.4% under the swing high",
+    "H1": "below EMA9, LH but HL, 1% of the range"
+   }
+  },
+  {
+   "pair_id": "VNT-minervini-against~livermore",
+   "ticker": "VNT",
+   "claim_id": "VNT-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "ma100 32.8 < ma200 33.9, sma_dist 26.63%, ext_atr20 4.07.",
+   "refute_evidence": "Price over averages (C2): W swing HH/HL 18.0% above swing high and D HH/HL 2.4% under swing high show an established uptrend in a normal pause. Extension is a weight, not a trend failure.",
+   "refute_tf": {
+    "W": "HH/HL, 18.0% above the last swing high: established uptrend",
+    "D": "HH/HL, 2.4% under the last swing high: normal pause",
+    "H1": "below EMA9, 1% of the day's range: weak close"
+   }
+  },
+  {
+   "pair_id": "VNT-minervini-against~wyckoff",
+   "ticker": "VNT",
+   "claim_id": "VNT-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "wyckoff",
+   "claim_text": "ma100 32.8 < ma200 33.9, sma_dist 26.63%, ext_atr20 4.07.",
+   "refute_evidence": "W and D swing HH/HL with structure_shift ABOVE_STRUCTURE: clean top-down trend (C9, C16). ext_atr20 4.07 is extension: it sets the entry at the test, never an oppose (R2). MA order is not my test.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 18.0% above swing high: uptrend",
+    "D": "HH/HL, 2.4% under swing high: first pullback",
+    "H1": "below EMA9, 1% of the day's range: no trigger"
+   }
+  },
+  {
+   "pair_id": "PCOR-seow-against~oneil",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-seow-against",
+   "kind": "against",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "No resistance break; impulse at 7.",
+   "refute_evidence": "No break yet is my pre-pivot wait, not a fault: D HH/HL 3.2% under the last swing high, W HH/HL. Impulse is not my test; a 1.4x breakout decides (C16).",
+   "refute_tf": {
+    "W": "HH/HL, 3.2% under the 20-wk high",
+    "D": "HH/HL, 3.2% under the last swing high",
+    "H1": "below EMA9, HH/HL, 31% of the day's range"
+   }
+  },
+  {
+   "pair_id": "ICE-livermore-for~minervini",
+   "ticker": "ICE",
+   "claim_id": "ICE-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "At the swing high, group confirmation, sma_dist 11.13% moderate.",
+   "refute_evidence": "D at the swing high (0.0% under) is true, but my template fails c2 and c8 (C3). H1 below EMA9 at 3% of the day's range: the test of the high was rejected.",
+   "refute_tf": {
+    "W": "HH/HL, 8.0% above the weekly swing high",
+    "D": "HH/HL, at the swing high, 1.9% under 20-day high",
+    "H1": "below EMA9, 3% of the day's range"
+   }
+  },
+  {
+   "pair_id": "ICE-minervini-against~livermore",
+   "ticker": "ICE",
+   "claim_id": "ICE-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "ma100 153.28 < ma200 154.56, rs_rank_pct 69.02, mp DECELERATING.",
+   "refute_evidence": "Price over averages (C2): W swing HH/HL 8.0% above swing high; D HH/HL 0.0% under the last swing high, at the edge of a new high with CME confirming (C14). mp DECELERATING is a weight.",
+   "refute_tf": {
+    "W": "HH/HL, 8.0% above the last swing high: established trend",
+    "D": "HH/HL, 0.0% under the last swing high: at the new-high edge",
+    "H1": "below EMA9, 3% of the day's range: weak close"
+   }
+  },
+  {
+   "pair_id": "ICE-minervini-against~wyckoff",
+   "ticker": "ICE",
+   "claim_id": "ICE-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "wyckoff",
+   "claim_text": "ma100 153.28 < ma200 154.56, rs_rank_pct 69.02, mp DECELERATING.",
+   "refute_evidence": "W and D swing HH/HL, D 0.0% under the last swing high: structure intact, buyer control at the level (C4, C9). ma100 under ma200, rs_rank_pct 69.02 and mp DECELERATING are not structure tests.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21",
+    "D": "HH/HL at the swing high",
+    "H1": "below EMA9, 9>21, weak close"
+   }
+  },
+  {
+   "pair_id": "ADP-seow-against~oneil",
+   "ticker": "ADP",
+   "claim_id": "ADP-seow-against",
+   "kind": "against",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "No resistance break; impulse flat at 7.",
+   "refute_evidence": "HH/HL on W, D and H1; D 1.0% under the last swing high is at the pivot. No break yet is the setup I wait on with 1.4x volume (C16); impulse is not my test.",
+   "refute_tf": {
+    "W": "HH/HL, 1.3% under the 20-wk high",
+    "D": "HH/HL, 1.0% under the last swing high",
+    "H1": "HH/HL, 18% of the day's range"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 25,
+  "by_author": {
+   "seow": 9,
+   "wyckoff": 1,
+   "minervini": 10,
+   "oneil": 3,
+   "livermore": 2
+  },
+  "by_refuter": {
+   "oneil": 6,
+   "elder-lens": 5,
+   "minervini": 5,
+   "seow": 3,
+   "raschke": 1,
+   "wyckoff": 3,
+   "livermore": 2
+  }
+ }
+}
