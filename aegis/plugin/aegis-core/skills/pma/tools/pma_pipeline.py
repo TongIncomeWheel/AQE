@@ -3604,6 +3604,11 @@ def cmd_repeat_watch(a):
     # COMPACT BRIEF TABLE (PM 2026-11-11): section 4 printed 1,550 rows (every date for every ticker). The brief now carries counts plus ONE row per name that is NEW today or STANDING
     # (on the latest list and on at least one of the 3 sessions before it); the per-date rows, GAP rows included, stay in the JSON (`rows`, `gaps`) and are not printed.
     ents = sorted(led.get("entries") or [], key=lambda e: e["date"])
+    # 2026-11-12 (conductor): the phase-4 ledger command is in RUN.yaml RANK 'must_also' and nothing enforced it; on 11 Nov it was skipped and the published
+    # NEW/REMAIN counts were built without their own day. No row for the run date = no repeat watch, said loudly, never a count that omits today.
+    if not any(e.get("date") == a.date for e in ents):
+        raise SystemExit(f"repeat-watch: REFUSED -- {a.ledger} has no row for {a.date}. Run `pma_pipeline.py ledger --ledger {a.ledger} --phase4 phase4.json --date {a.date}` first "
+                         "(RANK must_also); the counts would otherwise leave out today's own list.")
     ents = [e for e in ents if e["date"] <= a.date] or ents
     latest = ents[-1] if ents else {"date": a.date, "tickers": []}
     prior = ents[-4:-1] if len(ents) > 1 else []
@@ -3623,8 +3628,9 @@ def cmd_repeat_watch(a):
         pct_first = f"{(p1 - p0) / p0 * 100:+.2f}%" if (p0 and p1 and firsts[t] != latest["date"]) else "— (first day)" if firsts[t] == latest["date"] else "n/a"
         listed.append(t)
         compact.append(f"| **{t}** | {firsts[t]} | {days_on[t]} | {v_now.get('verdict') or 'not on the verdict ledger'} | {pct_first} |")
-    md_lines = [f"As of {a.date}: **{len(new_t)} NEW** today, **{len(remain_t)} REMAIN** from the last {len(prior)} sessions, **{len(left_t)} LEFT** the list. "
-                f"The list compared is the {latest['date']} session. (Per-date rows and gap rows are kept in repeat_watch.json, not printed.)", "",
+    md_lines = [f"As of {a.date}: **{len(new_t)} NEW** today, **{len(remain_t)} REMAIN** from the last {len(prior)} sessions, **{len(left_t)} LEFT** the list. " +
+                (f"Today's list ({latest['date']}) is compared with the {len(prior)} session{'s' if len(prior) != 1 else ''} before it ({prior[0]['date']} to {prior[-1]['date']}). " if prior
+                 else f"Today's list ({latest['date']}) has no earlier session on the ledger to compare with. ") + "(Per-date rows and gap rows are kept in repeat_watch.json, not printed.)", "",
                 "| Ticker | First seen | Days on list | Verdict today | % vs first COB |", "|---|---|---|---|---|"] + compact
     markdown = "\n".join(md_lines)
     result = {"as_of": a.date, "rows": out_rows, "markdown": markdown, "gaps": gaps, "listed": listed,
@@ -3724,6 +3730,9 @@ def cmd_gate(a):
     # to be right, because the point is the source, not just the output looking correct today.
     if os.path.exists(a.ledger_phase4):
         p4l = load(a.ledger_phase4)
+        if getattr(a, "date", None):          # 2026-11-12: the ledger must carry the run's own day before §4 can be trusted
+            chk(any(e.get("date") == a.date for e in p4l.get("entries", [])), "Q6r",
+                f"phase4_ledger.json has a row for {a.date} (run `pma_pipeline.py ledger --date {a.date}` before repeat-watch)")
         flagged = [f["ticker"] for f in p4l.get("repeat_flags", [])]
         if flagged:
             if not os.path.exists(a.repeat_watch):

@@ -65,17 +65,23 @@ def held_view(export, broker_stops=None, one_r=None):
         entry, mark, qty, pnl = pick("entry"), pick("live_px"), pick("qty"), pick("unreal_usd")
         if pnl is None and None not in (entry, mark, qty):
             pnl = round((mark - entry) * qty, 2)
+        short = qty is not None and qty < 0          # 2026-11-12: a short's stop is a BUY order ABOVE entry; every distance below flips sign
         ref, basis = reference_stop(h)
+        if short:                                    # AQE's brackets are long-side: a stop under a short's entry is not its stop
+            ref, basis = None, "no worked-out stop for a short (AQE brackets are long-side)"
         b = bs.get(t) or {}
         real = b.get("stop")
         used, used_basis = (real, "broker stop order") if real is not None else (ref, basis)
-        r_ps = (entry - used) if (entry is not None and used is not None and entry > used) else None
-        open_r = round((mark - entry) / r_ps, 2) if (r_ps and mark is not None) else None
-        risk_usd = round(qty * (entry - used), 2) if (qty is not None and entry is not None and used is not None and entry > used) else None
+        dist = None if (entry is None or used is None) else ((used - entry) if short else (entry - used))
+        r_ps = dist if (dist is not None and dist > 0) else None
+        move = None if (entry is None or mark is None) else ((entry - mark) if short else (mark - entry))
+        open_r = round(move / r_ps, 2) if (r_ps and move is not None) else None
+        risk_usd = round(abs(qty) * dist, 2) if (qty is not None and dist is not None and dist > 0) else None
         out.append({"ticker": t, "qty": qty,
                     # the dollar distance from entry to the stop used, as a plain fact; flagged when it exceeds the committee's fixed 1R (no sizing words)
                     "risk_usd": risk_usd, "risk_above_committee_1r": (risk_usd is not None and bool(one_r) and risk_usd > one_r), "entry": entry, "mark": mark, "pnl_usd": pnl,
-                    "broker_stop": real, "broker_stop_status": (f"broker stop {real}" if real is not None else "NO STOP AT BROKER"),
+                    "broker_stop": real, "side": "short" if short else "long",
+                    "broker_stop_status": ((f"broker buy stop {real}" if short else f"broker stop {real}") if real is not None else "NO STOP AT BROKER"),
                     "reference_stop": ref, "reference_basis": basis, "stop_used": used, "stop_used_basis": used_basis,
                     "r_per_share": round(r_ps, 4) if r_ps else None, "open_r": open_r,
                     "pnl_in_committee_1r": (round(pnl / one_r, 2) if (pnl is not None and one_r) else None), "committee_1r_usd": one_r,
