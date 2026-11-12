@@ -6,6 +6,16 @@
    "at": "2026-11-12T00:36:09Z",
    "note": "declared produces absent: ['data_health.json']",
    "step": "GATHER"
+  },
+  {
+   "at": "2026-11-12T01:23:16Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-12T01:23:16Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
   }
  ],
  "flags": [],
@@ -419,12 +429,30 @@
     "spawns": 0
    },
    "files": {},
-   "finished": "2026-11-12T00:36:09Z",
+   "finished": "2026-11-12T01:23:16Z",
    "notes": [
     "FORCED done with missing produces: ['data_health.json']",
-    "run dir assembled by the conductor from main (declared produces not all present as named)"
+    "run dir assembled by the conductor from main (declared produces not all present as named)",
+    "FORCED done with missing produces: ['data_health.json']",
+    "GATHER: run dir assembled by the conductor from main; INBOX-CLEAN not run (declared)"
    ],
    "started": "2026-11-12T00:36:09Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T01:23:16Z",
+   "notes": [
+    "FORCED done with missing produces: ['inbox_clean.json']",
+    "INBOX-CLEAN: run dir assembled by the conductor from main; INBOX-CLEAN not run (declared)"
+   ],
+   "started": "2026-11-12T01:23:16Z",
    "status": "done",
    "tokens": 0
   },
@@ -521,11 +549,25 @@
     "spawns": 0
    },
    "files": {},
-   "finished": "2026-11-12T00:36:09Z",
+   "finished": "2026-11-12T01:23:16Z",
    "notes": [
-    "run dir assembled by the conductor from main (declared produces not all present as named)"
+    "run dir assembled by the conductor from main (declared produces not all present as named)",
+    "PREPARE: run dir assembled by the conductor from main; INBOX-CLEAN not run (declared)"
    ],
    "started": "2026-11-12T00:36:09Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PUBLISH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T01:23:16Z",
+   "notes": [],
+   "started": "2026-11-12T01:23:16Z",
    "status": "done",
    "tokens": 0
   },
