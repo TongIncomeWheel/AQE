@@ -1,0 +1,1214 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-13",
+ "round": 2,
+ "declarations": [
+  "Setup block on every vote: setup_type per C2 named in the reason; adx NOT_SERVED on my menu (C7/C8; the packet prints an adx figure but it is not my field, so I do not gate on it); stochastic_kd NOT_SERVED (C6); n_day_extreme via sma_dist + structure_shift (C3/C4); bar_range_history NOT_SERVED (C12/C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "Committee PROCESS/UNPROVEN: thin day_vol is a weight I state per name; no field I use carries a measured edge, so my convictions stay at 2-3. Horizon 5 sessions by C18.",
+  "R1: no vote here rests on a bracket. Memory: no ledger lesson injected this round.",
+  "Setup block on every vote: setup_type per C2 named in the reason; adx NOT_SERVED on my menu (C7/C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via sma_dist + structure_shift (C3/C4); bar_range_history NOT_SERVED (C12/C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "Utilities CROWDING: I accept PEG/DTE/BIPC/ES are one correlated bet; I cut DTE and BIPC accordingly (C21).",
+  "R1: no vote here rests on a bracket. Held review: RBRK EXIT-CASE, SPCX TIGHTEN.",
+  "Extended names (sma_dist above ~25%) are ABSTAIN, not OPPOSE: R27 makes extension a weight; my canon (C19) treats parabolic as an exit, so I wait for the first pullback.",
+  "R1: no vote here rests on a bracket."
+ ],
+ "votes": [
+  {
+   "ticker": "JNJ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "BREAKOUT family (C2): structure 84.2 BULLISH_BOS, mp STRONG/ACCELERATING, sma_dist 6.3% so not stretched. Engine bracket invalid (info only, R1); my own stop sits beyond the breakout bar's low (C17).",
+   "challenge_reply": "OVERLAP: my read is the C2 classification of the BULLISH_BOS plus the C17 swing-extreme stop, not elder or volume. We all read the same BOS, so I count mine as one structural read, not independent corroboration.",
+   "case": {
+    "for": "Fresh break of structure at the 52w high with momentum accelerating; tight to its average.",
+    "against": "day_vol 1.02 is ordinary participation for a breakout; H1 swing HH but LL shows a wobble on the hour.",
+    "entry_trigger": "hourly close above yesterday's high",
+    "wrong_if": "daily close back below yesterday's low, i.e. the BOS fails back into range (C23)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "structure_shift reverting to RANGE or BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "bar_range_history",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "DAL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C2): structure 83.2 BULLISH_BOS, mp FADING/ACCELERATING, sma_dist 5.84%. MTF shows D below EMA9 and H1 at 3% of the day's range: the breakout is being tested, not extending.",
+   "conviction_change": "3 to 2: the MTF line (D below EMA9, H1 6.0% under the last swing high) shows the BOS under test; I want the reclaim first.",
+   "case": {
+    "for": "BOS from a base close to its average; momentum accelerating; ma20 stop is a structural level.",
+    "against": "Daily slipped under EMA9 the session after the break; weak close in the day's range.",
+    "entry_trigger": "hourly close back above yesterday's high (reclaim of the test)",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a close back above the 9-day average with the H1 above EMA9",
+    "cannot_see": [
+     "adx",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "AMX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT/test family (C2): structure 94.7 BULLISH_BOS, sma_dist 9.99%, swing_low stop is exactly C17. Low conviction: mp FADING/FLAT and day_vol 0.55.",
+   "challenge_reply": "My 2 vs the other seat's 4: the shape is a clean BOS with a swing-low stop (C17/C20), but mp FLAT and day_vol 0.55 say no thrust behind it. The falling long MA stack is not a test in my canon; it is why I stay at 2.",
+   "case": {
+    "for": "Highest structure score in the set on a fresh BOS; a swing-low invalidation sits close.",
+    "against": "Momentum flat, participation thin, W still 10.4% under its last swing high.",
+    "entry_trigger": "hourly close above yesterday's high",
+    "wrong_if": "daily close below the swing low (bar_low of the test)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "mp_accel_state turning ACCELERATING on a volume day",
+    "cannot_see": [
+     "adx",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "PEG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, mp BUILDING/ACCELERATING, sma_dist 4.89% near the 20-day, U&R SETUP. But W 9<21 LH/LL: the daily pullback is not inside an aligned higher-timeframe trend.",
+   "conviction_change": "3 to 2: the weekly line (9<21, LH/LL) breaks the C6 two-timeframe alignment the retracement setup rests on.",
+   "challenge_reply": "Higher timeframe: W is 9<21 with LH/LL, so this is a daily retracement against a weekly downtrend, which C6 says resolves poorly. PEG, DTE and BIPC are one utilities bet, not three; the PM should size them as one (C21).",
+   "case": {
+    "for": "First pullback to the 20-day with momentum building; reclaim day is next session.",
+    "against": "Weekly trend down; utilities cluster is one correlated exposure.",
+    "entry_trigger": "reclaim of ma_20 on the hour",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "weekly EMA9 crossing above EMA21",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "AAPL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C2): structure 71.6 BULLISH_BOS, sma_dist 4.85%, mp BUILDING/ACCELERATING, W HH/HL. mp 43.0 is a weak thrust; D 0.1% under the last swing high, so the break is still being tested.",
+   "case": {
+    "for": "BOS close to its average with weekly HH/HL; impulse accelerating.",
+    "against": "mp 43.0 low for a breakout; H1 at 7% of the day's range; Valen U&R FAILED.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "mp rising through 75",
+    "cannot_see": [
+     "adx",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "XEL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "day_vol 2.45 expansion bar ABOVE_STRUCTURE, but mp FADING/DECELERATING. Without a range series I cannot tell a contraction breakout (C12) from a climax bar (C19), and I decline to call climaxes (R9).",
+   "case": {
+    "for": "Range-expansion day on heavy volume above structure; coil strong.",
+    "against": "Momentum decelerating; inverted long MA stack; part of the utilities cluster.",
+    "entry_trigger": "would need a narrow-range day then an hourly close above yesterday's high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a contraction day after the expansion holding above the bar",
+    "cannot_see": [
+     "bar_range_history",
+     "adx"
+    ]
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2), Holy-Grail shape: ABOVE_STRUCTURE, mp BUILDING/ACCELERATING, elder SUSTAINED, but sma_dist 10.34% and D 6.3% above the last swing high. I buy the first pullback to the 20-day, not here.",
+   "case": {
+    "for": "Strong trend with sustained impulse; a pullback would be the low-risk entry (C7).",
+    "against": "Extended off its average now; W 7.1% under its last swing high.",
+    "entry_trigger": "pullback into ma_20 then hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "structure_shift turning BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "SWKS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure 50.5 RANGE, D swing LH/LL, elder INTERRUPTED: none of my four setups is formed. A range-top test may come, but not yet.",
+   "case": {
+    "for": "Near the top of its range 0.5% under the last swing high; energy 85.7, momentum accelerating.",
+    "against": "Range, not trend; lowest structure in the set.",
+    "entry_trigger": "hourly close above the pivot high (range breakout)",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "structure_shift turning BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, structure 89.5, mp STRONG/DECELERATING at the 52w high, sma_dist 17.46%. Wait for the first pullback (C7), not the extension.",
+   "case": {
+    "for": "Leader in a strong trend; deceleration may give the first pullback.",
+    "against": "D 19.7% above the last swing high; extended, coil warn.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a range-expansion down bar (C19 climax)",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 62.54% is parabolic: C19 treats that as a climax exit condition, not an entry. mp STRONG/ACCELERATING and no pullback has started, so no setup of mine exists yet.",
+   "case": {
+    "for": "Strongest name in the room, mp 100.0, elder SUSTAINED.",
+    "against": "Parabolic extension; D 52.0% above the last swing high.",
+    "entry_trigger": "a first pullback to fib_382 with an hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "an orderly first pullback holding fib_382",
+    "cannot_see": [
+     "adx",
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE at the 52w high, mp STRONG/ACCELERATING, sma_dist 19.84%. I want the first pullback (C7) to fib_382, not the extension.",
+   "case": {
+    "for": "Strong trend, accelerating momentum, at highs.",
+    "against": "D 13.5% above the last swing high; D swing LH/LL.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_618",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "structure_shift BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE structure 85.3, D HH/HL, mp FADING/DECELERATING with H1 below EMA9: a first pullback is starting. sma_dist 16.72%, so I wait for the 20-day.",
+   "case": {
+    "for": "Strong structure with HH/HL on W and D; pullback under way.",
+    "against": "Still extended; W 11.0% above last swing high.",
+    "entry_trigger": "pullback into ma_20 then hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "daily swing turning LL",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, mp STRONG/ACCELERATING, D 7.5% under the last swing high: a pullback after fresh highs. sma_dist 16.22%; I wait for the 20-day.",
+   "case": {
+    "for": "Momentum strong and accelerating while price pulls back.",
+    "against": "Three lens warnings; D HH but LL.",
+    "entry_trigger": "pullback into ma_20 then hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "BDX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE at the 52w high, W and D HH/HL, mp FADING/DECELERATING, sma_dist 13.34%. The first pullback to the 20-day is the trade (C7).",
+   "case": {
+    "for": "Clean HH/HL on both timeframes at highs.",
+    "against": "div BEARISH/1 (advisory); momentum decelerating.",
+    "entry_trigger": "pullback into ma_20 then hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a range-expansion down bar",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "CME",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST family (C2/C20): BULLISH_BOS only 0.9% above the last swing high, H1 below EMA9. A retest of the broken pivot is the double stop point, my lowest-risk entry. mp FADING/DECELERATING keeps it at 2.",
+   "case": {
+    "for": "Fresh break with coil and structure strong; the retest puts trigger and invalidation together.",
+    "against": "Momentum decelerating; div BEARISH/1 (advisory).",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "close back inside the range (failed BOS)",
+    "cannot_see": [
+     "adx",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "WRB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure 68.4 RANGE with D HH but LL and mp BUILDING/DECELERATING: no test, retracement or breakout is formed. I decline (R1).",
+   "case": {
+    "for": "Near the range top, 2.7% under the last swing high, coil strong.",
+    "against": "Range, low participation day_vol 0.5, div BEARISH/4 (advisory).",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "EMBJ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TEST family (C2/C20): ABOVE_STRUCTURE, mp STRONG/ACCELERATING, sma_dist 6.59%, D 1.1% above the last swing high with H1 below EMA9: a retest of the broken level, my lowest-risk entry location.",
+   "case": {
+    "for": "Momentum strong and accelerating, close to its average, retesting the breakout.",
+    "against": "day_vol 0.58 thin; W only 0.7% above its last swing high.",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "close back below the broken pivot",
+    "cannot_see": [
+     "adx",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "DTE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT/test family (C2): structure 72.6 BULLISH_BOS, sma_dist 6.7%, mp STRONG/FLAT, swing-low stop is the C17 rule. Weekly 9<21 LH/LL means the daily break runs against the higher timeframe.",
+   "conviction_change": "3 to 2: weekly 9<21 LH/LL, and I concede PEG/DTE/BIPC are one utilities exposure, not three ideas.",
+   "case": {
+    "for": "BOS off a base with a swing-low invalidation close by (C20 double stop point).",
+    "against": "Weekly downtrend; utilities cluster; H1 at 7% of the day's range.",
+    "entry_trigger": "hourly close above yesterday's high",
+    "wrong_if": "daily close below the swing low (bar_low of the test)",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "weekly EMA9 crossing above EMA21",
+    "cannot_see": [
+     "adx",
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "OMC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST family (C2/C20): BULLISH_BOS 0.7% above the last swing high, H1 below EMA9 9<21: the break is being retested. mp FADING/DECELERATING keeps conviction at 2.",
+   "case": {
+    "for": "Fresh BOS with insti_money and structure strong; retest gives a close invalidation.",
+    "against": "Momentum decelerating; day_vol 0.62.",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "failed BOS back into range",
+    "cannot_see": [
+     "adx",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "FROG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE at the 52w high, mp BUILDING/ACCELERATING, W HH/HL, sma_dist 17.14%. I wait for the first pullback to the broken level.",
+   "case": {
+    "for": "Trend intact at highs, impulse accelerating.",
+    "against": "div BEARISH/4 (advisory), rs LAGGARD, D 7.0% above the last swing high.",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a range-expansion down bar",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ES",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST family (C2/C3): BEARISH_CHOCH then U&R MET, dipped below the rising trendline and closed back above: a failed breakdown, Turtle-Soup shaped. Weekly 9<21 limits it to 2.",
+   "case": {
+    "for": "A breakdown that failed to hold is the test my canon trades; reclaim day is now.",
+    "against": "Character change on the swing; weekly downtrend; utilities cluster.",
+    "entry_trigger": "hourly close above yesterday's high",
+    "wrong_if": "daily close below yesterday's low (the test fails)",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "a new close under the trendline",
+    "cannot_see": [
+     "exact_20day_extreme",
+     "adx"
+    ]
+   },
+   "conditions": {
+    "lane": "SPRING",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TEST family (C2/C20): ABOVE_STRUCTURE at the 52w high, D 2.3% above the last swing high. mp FADING/DECELERATING and day_vol 0.46: I buy only a retest of the broken level.",
+   "case": {
+    "for": "All of leadership/coil/insti_money strong; trend HH/HL.",
+    "against": "Thin participation; div BEARISH/2 (advisory).",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "GEO",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Mixed shape: ABOVE_STRUCTURE but structure 57.9, D swing LH/LL, ma20 under ma50. I cannot classify it into one of my four setups (R1).",
+   "case": {
+    "for": "mp STRONG/ACCELERATING, insti_money strong.",
+    "against": "Daily swing LH/LL; H1 at 3% of the day's range.",
+    "entry_trigger": "daily swing turning HH/HL, then hourly close above yesterday's high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "FIGS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "BULLISH_BOS but sma_dist 33.93% and D 57.7% above the last swing high: climax territory (C19), which I do not buy. mp FADING/DECELERATING, H1 below EMA9.",
+   "case": {
+    "for": "Strong trend, BOS, leadership strong.",
+    "against": "Extension is a climax-exit condition in my canon.",
+    "entry_trigger": "first pullback to ma_20 with hourly reclaim",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "an orderly pullback holding ma_20",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "LNG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure 55.8 RANGE, elder ACCUMULATION_BASE, D HH but LL: no setup of mine is formed (R1).",
+   "case": {
+    "for": "mp BUILDING/ACCELERATING, W HH/HL.",
+    "against": "Range; low structure.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "ROIV",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, mp STRONG/ACCELERATING, D 5.3% under the 20-day high, H1 below EMA9 9<21: first pullback after fresh highs.",
+   "case": {
+    "for": "Momentum strong while price pulls back toward the broken level.",
+    "against": "rs LAGGARD; W HH but LL.",
+    "entry_trigger": "pullback into structure_shift_ref then hourly reclaim",
+    "wrong_if": "daily close below structure_shift_ref",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BEARISH_CHOCH",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:structure_shift_ref"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "BIPC",
+   "vote": "SUPPORT",
+   "conviction": 1,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, mp BUILDING/ACCELERATING, sma_dist 5.82%, near the 20-day. W 9<21 and 13.3% under its last swing high: no aligned higher trend.",
+   "conviction_change": "2 to 1: weekly not aligned (C6), and it is the third leg of one utilities bet.",
+   "case": {
+    "for": "Pullback to the 20-day with momentum building.",
+    "against": "Weekly downtrend; correlated with PEG/DTE.",
+    "entry_trigger": "reclaim of ma_20 on the hour",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "weekly EMA9 crossing above EMA21",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:ma_20"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT (qty -68.0). structure 17.0 BEARISH_CHOCH supports the short, but there is no written stop. TIGHTEN: C17 wants a buy-stop just beyond the last swing high. Not a long setup.",
+   "case": {
+    "for": "Short thesis structurally intact: CHOCH, W below EMA9.",
+    "against": "Unprotected short; price ABOVE vwap14.",
+    "entry_trigger": "none (held short): place the protective stop",
+    "wrong_if": "daily close above ma_20",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "last swing high level"
+    ]
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Held: fits none of my four setups. structure 29.0 RANGE, D below EMA9 9<21, 21.1% under the 20-day high, AQE HEALTH EXIT. C18: minimise time in a position that has no setup.",
+   "opposing_case": "W still HH/HL and rs_rank_pct 95.38 with ret_6m 75.76: this may be a deep retracement inside a longer uptrend, and written stop 99.45 still defines the risk.",
+   "case": {
+    "for": "Weekly HH/HL; strong 6-month record.",
+    "against": "No test, retracement or breakout; div BEARISH/4 (advisory).",
+    "entry_trigger": "would need a daily close back above ma_20",
+    "wrong_if": "daily close above ma_20 with structure leaving RANGE upward",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "TSN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, U&R MET, dipped under the 9-day average and closed back above. Reclaim day. Weekly 9<21 and mp FADING/DECELERATING cap it at 2.",
+   "case": {
+    "for": "Shallow pullback reclaimed; D HH/HL.",
+    "against": "Weekly downtrend; leadership warn.",
+    "entry_trigger": "hourly close above yesterday's high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "close back under the 9-day average",
+    "cannot_see": [
+     "stochastic_kd",
+     "adx"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "REYN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "U&R MET, but structure 57.9 RANGE and W 9<21: a reclaim inside a range is not a retracement in trend. mp FADING/DECELERATING.",
+   "case": {
+    "for": "Reclaim of the 9-day average; coil and insti_money strong.",
+    "against": "Range; D 7.8% under the last swing high.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "OPCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C12 proxy): RANGE at structure 84.2, 0.7% under the 20-day high, atr 0.29 small for the price, U&R MET on the rising trendline. A contraction at highs; I take the break.",
+   "case": {
+    "for": "Tight range near highs, coil strong, trendline reclaimed.",
+    "against": "mp FADING/FLAT; div BEARISH/3 (advisory).",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a close under the trendline again",
+    "cannot_see": [
+     "bar_range_history",
+     "adx"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 50.23% and D 58.9% above the last swing high: parabolic, which C19 treats as a climax exit, not an entry. mp STRONG/ACCELERATING; no pullback yet.",
+   "case": {
+    "for": "mp 100.0, strongest RS in the room.",
+    "against": "Parabolic extension; H1 9<21.",
+    "entry_trigger": "first pullback to fib_382 with an hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "an orderly pullback holding fib_382",
+    "cannot_see": [
+     "bar_range_history",
+     "adx"
+    ]
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "structure 33.7 BEARISH_CHOCH under a falling stack (ma20 below ma50 below ma100): the up-structure failed and this rally is counter-trend. A climax bottom I decline to call (R9); none of my four setups.",
+   "opposing_case": "elder [7, 10, 10, 10, 10], mp STRONG/DECELERATING and D HH/HL 13.7% above the last swing high: the rebound has real thrust and may be a reversal in progress.",
+   "case": {
+    "for": "Daily HH/HL with strong impulse; leadership, coil, insti_money strong.",
+    "against": "Character change down; W 9<21 LH/LL; 36% off its high.",
+    "entry_trigger": "would need BULLISH_BOS and a test of the broken pivot",
+    "wrong_if": "daily close above the pivot high with structure turning BULLISH_BOS",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "BULLISH_BOS",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "XNCR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 40.53%: climax-zone extension (C19). H1 below EMA9 9<21 hints a first pullback is starting, but it has not reached a level I can name a structural stop under.",
+   "case": {
+    "for": "mp STRONG/ACCELERATING, mp 100.0.",
+    "against": "Extended; div BEARISH/2 (advisory).",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 34.93%, mp FADING/DECELERATING, D swing LH/LL: an extended name losing thrust. Not a retracement in trend yet; climax-exit zone (C19).",
+   "case": {
+    "for": "W HH/HL, strong 63-day return.",
+    "against": "Daily LH/LL; leadership and coil warn.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "daily swing back to HH/HL",
+    "cannot_see": [
+     "adx"
+    ]
+   }
+  },
+  {
+   "ticker": "AXGN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): ABOVE_STRUCTURE, mp STRONG/ACCELERATING, D HH/HL, H1 7.2% under the hourly swing high on day_vol 1.54: a first pullback after fresh highs. sma_dist 28.57% still extended.",
+   "case": {
+    "for": "Strong trend with a pullback starting on participation.",
+    "against": "Extension off the 20-day; W HH but LL.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_618",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a range-expansion down bar",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "reclaim:fib_382"
+    ],
+    "wrong": [
+     "close_below:fib_618"
+    ],
+    "wait": [
+     "fib_382"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ADT",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C12 proxy): structure 100.0 RANGE, 1.0% under the 20-day high, atr 0.2 small for the price: a tight range at highs. sma_dist 33.36% and mp FADING/DECELERATING keep it at 2.",
+   "case": {
+    "for": "Contraction at highs is the setup that precedes trend days.",
+    "against": "Extended off the 20-day; insti_money warn.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "close back under ma_20",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "HAYW",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE at structure 87.4 with sma_dist 24.33% and mp FADING/DECELERATING; D 3.3% under the last swing high. Neither a clean contraction nor a first pullback to a level I can stop under.",
+   "case": {
+    "for": "day_vol 1.36, D HH/HL, Valen U&R trendline WATCH.",
+    "against": "Extended, all lenses warn but sector.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "narrowing range then a break",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "FLY",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift is null, so I cannot classify the setup (R1). Counter-trend rally 56.96% off its high under a falling ma200.",
+   "case": {
+    "for": "mp STRONG/ACCELERATING, run_10d 27.38%.",
+    "against": "rs LAGGARD; W 9<21 LH/LL.",
+    "entry_trigger": "structure_shift served and BULLISH_BOS",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "a served structure_shift showing BOS",
+    "cannot_see": [
+     "structure_shift"
+    ]
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "ABOVE_STRUCTURE but D 40.2% above the last swing high after a 54% run_10d, under a falling ma200: a climax rebound I decline to call (R9).",
+   "case": {
+    "for": "mp 97.0, elder thrust, flow 71.1.",
+    "against": "W 9<21 LH/LL; far off its high.",
+    "entry_trigger": "first pullback to fib_382 with an hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "sma_dist 30.15%, D 24.6% above the last swing high: climax-zone extension (C19). H1 below EMA9 but no level reached yet.",
+   "case": {
+    "for": "mp FADING/ACCELERATING, flow 88.2.",
+    "against": "Extended; coil and resistance warn.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "adx"
+    ]
+   }
+  },
+  {
+   "ticker": "VNT",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "mp STRONG/ACCELERATING and HH/HL on W and D, but sma_dist 26.63%: extended. H1 at 1% of the day's range: a pullback may be starting; no level reached.",
+   "case": {
+    "for": "mp 100.0, clean swing structure, leadership strong.",
+    "against": "Extension off the 20-day.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "adx",
+     "stochastic_kd"
+    ]
+   }
+  },
+  {
+   "ticker": "PCOR",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE at structure 92.6 but sma_dist 31.48% and mp FADING/FLAT: a pause high above its average, not a contraction I can stop under. div BEARISH/2 (advisory).",
+   "case": {
+    "for": "HH/HL on W and D, near the 20-day high.",
+    "against": "Extended; low day_vol 0.45.",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "ICE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT/test family (C2): ABOVE_STRUCTURE, D HH/HL sitting 0.0% under the last swing high, sma_dist 11.13%, mp STRONG/DECELERATING. Trigger and invalidation sit close (C20).",
+   "case": {
+    "for": "At the swing high with clean HH/HL and resistance strong.",
+    "against": "Momentum decelerating; H1 at 3% of the day's range.",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "rejection at the pivot high",
+    "cannot_see": [
+     "adx",
+     "exact_20day_extreme"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "EPAM",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "RANGE, sma_dist 30.56%, mp FADING/FLAT: extended pause, 26.0% off its 52w high. Not one of my four setups at this location.",
+   "case": {
+    "for": "HH/HL on W and D; strong 63-day return.",
+    "against": "Extended; div BEARISH/2 (advisory).",
+    "entry_trigger": "pullback to fib_382 then hourly reclaim",
+    "wrong_if": "daily close below fib_500",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "orderly pullback holding fib_382",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   }
+  },
+  {
+   "ticker": "KR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "RETRACEMENT family (C2): D HH/HL, U&R SETUP, dipped below the rising trendline and closed 1.3% under it; reclaim day is next. RANGE and mp FADING/DECELERATING keep it at 2.",
+   "case": {
+    "for": "Shallow pullback in a HH/HL daily trend.",
+    "against": "Structure RANGE; div BEARISH/2 (advisory).",
+    "entry_trigger": "hourly close above yesterday's high (the reclaim)",
+    "wrong_if": "daily close below yesterday's low",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "no reclaim within 2 sessions",
+    "cannot_see": [
+     "stochastic_kd",
+     "adx"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "wrong": [
+     "close_below:bar_low"
+    ],
+    "tf": "1H"
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "BREAKOUT family (C2): RANGE at the 52w high, 1.0% under the last swing high, coil strong, HH/HL on W, D and H1. mp FADING/DECELERATING keeps it at 2.",
+   "case": {
+    "for": "Range at highs with clean swing structure on every timeframe.",
+    "against": "Momentum decelerating; div BEARISH/1 (advisory).",
+    "entry_trigger": "hourly close above the pivot high",
+    "wrong_if": "daily close below ma_20",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "rejection at the pivot high",
+    "cannot_see": [
+     "bar_range_history"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "tf": "1H"
+   }
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "structure_shift (FLY)",
+   "impact": "null, so I cannot classify FLY's setup type"
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of3.json",
+   "bytes": 13176,
+   "votes": 16,
+   "sha256": "2a7760bace91"
+  },
+  {
+   "file": "raschke.part2of3.json",
+   "bytes": 11496,
+   "votes": 16,
+   "sha256": "ce520375c295"
+  },
+  {
+   "file": "raschke.part3of3.json",
+   "bytes": 10171,
+   "votes": 16,
+   "sha256": "36be312d8d04"
+  }
+ ]
+}

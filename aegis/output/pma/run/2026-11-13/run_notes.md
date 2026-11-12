@@ -9,3 +9,4 @@
 - NOMINATE seow: packet too large to read whole; read rows matching its screens plus RBRK and SPCX. Declared. raschke: validator flags BRACKET_MENTION DTE, PEG, JNJ, DAL, AMX, BIPC (flags, not rejections).
 - livermore: flags BRACKET_MENTION DAL, AMX.
 - minervini: packet too large; read first 48 columns of all 307 rows plus every column of 6 nominated and 2 held rows. Declared.
+- VOTE_PACKET 97,667 bytes, over the 70,000 guide even at the last trim rung (per-name data lines alone are over): declared, same as 12 Nov.
