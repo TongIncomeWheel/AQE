@@ -325,6 +325,17 @@ def _held_events(fresh: list[dict], fresh_pma: list[dict]) -> list[dict]:
 
 def run_alert_cycle(send_email: bool = True, force: bool = False) -> dict:
     """One poll cycle plus its heartbeat (see `_run_alert_cycle`). Never raises."""
+    try:                                          # PM order 2026-11-12: one switch pauses every alert path (src/alerts/pause.py)
+        from src.alerts import pause as _pause
+        _ps = _pause.status()
+    except Exception as exc:  # noqa: BLE001 -- a broken switch must not turn the alerts off
+        _ps = {"paused": False, "problem": f"{type(exc).__name__}: {exc}"}
+    if _ps.get("paused"):
+        print(f"[alerts] PAUSED ({_ps.get('why') or 'PM order'}; since {_ps.get('since')}): no quotes pulled, nothing emailed or published", flush=True)
+        return {"ok": True, "paused": True, "in_window": False, "checked": 0, "new_triggers": 0, "emailed": False,
+                "triggers": [], "reason": f"alerts PAUSED by the PM ({_ps.get('why') or 'order'}), since {_ps.get('since')}"}
+    if _ps.get("problem"):
+        print(f"[alerts] WARNING pause flag not readable, running as NOT paused: {_ps['problem']}", flush=True)
     try:
         summary = _run_alert_cycle(send_email=send_email, force=force)
     except Exception as exc:  # noqa: BLE001

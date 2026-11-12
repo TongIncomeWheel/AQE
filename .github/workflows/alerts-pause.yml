@@ -1,0 +1,38 @@
+name: AQE alerts pause / resume
+
+# The ONE switch for every alert path (PM order 2026-11-12). Dispatch with action = status | pause | resume.
+# It writes aqe_alerts_paused.json on the pinned Drive folder; the in-app poller, alerts.yml and the dead-man check all read it.
+# Pausing never touches the daily AQE run or the committee.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "status, pause or resume"
+        type: choice
+        options: [status, pause, resume]
+        default: status
+      reason:
+        description: "Why (kept in the flag file)"
+        type: string
+        default: ""
+
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Pause / resume / status (reads the flag back from Drive)
+        env:
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          ACTION: ${{ inputs.action }}
+          REASON: ${{ inputs.reason }}
+        run: |
+          if [ -n "$REASON" ]; then python -m scripts.alerts_pause "$ACTION" --reason "$REASON"; else python -m scripts.alerts_pause "$ACTION"; fi
