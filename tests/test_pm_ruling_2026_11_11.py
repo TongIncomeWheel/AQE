@@ -212,10 +212,12 @@ def test_the_gate_reads_a_real_compact_repeat_watch_without_crashing_and_checks_
     led, ver = _ledger(tmp_path)
     rw = tmp_path / "rw_real.json"
     r = subprocess.run([sys.executable, str(PIPE), "repeat-watch", "--ledger", str(led), "--verdicts", str(ver), "--date", "2026-11-07", "--out", str(rw)], capture_output=True, text=True)
+    assert r.returncode != 0 and "REFUSED" in (r.stderr + r.stdout)        # 2026-11-12: a run date the ledger has no row for is refused, never counted without its own day
+    r = subprocess.run([sys.executable, str(PIPE), "repeat-watch", "--ledger", str(led), "--verdicts", str(ver), "--date", "2026-11-06", "--out", str(rw)], capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     d = json.loads(rw.read_text())
-    assert isinstance(d["counts"]["new"], int) and d["markdown"].startswith("As of 2026-11-07:")        # the run date, though the last ledger session is 2026-11-06
-    assert "The list compared is the 2026-11-06 session" in d["markdown"]
+    assert isinstance(d["counts"]["new"], int) and d["markdown"].startswith("As of 2026-11-06:")
+    assert "compared with the 3 sessions before it (2026-11-03 to 2026-11-05)" in d["markdown"]
     stem = ("# B\n\n## §0 VERDICTS\n\n| T | V |\n|---|---|\n| X | ADVANCE |\n\n"
             "## §1 MACRO\n\n| a | b |\n|---|---|\n| 1 | 2 |\n\n| c | d |\n|---|---|\n| 3 | 4 |\n\n## §2 SECTOR\n\n")
     adv = [c["ticker"] for c in json.load(open(PFIX / "consensus.json")) if c["verdict"] == "ADVANCE"]
@@ -228,7 +230,7 @@ def test_the_gate_reads_a_real_compact_repeat_watch_without_crashing_and_checks_
         b = tmp_path / f"brief_{tag}.md"
         b.write_text(brief_text)
         g = subprocess.run([sys.executable, str(PIPE), "gate", "--brief", str(b), "--consensus", str(PFIX / "consensus.json"), "--verdict-ledger", str(PFIX / "verdict_ledger.json"),
-                            "--ledger-phase4", str(led), "--repeat-watch", str(rw), "--export", str(ex), "--date", "2026-11-07"], capture_output=True, text=True)
+                            "--ledger-phase4", str(led), "--repeat-watch", str(rw), "--export", str(ex), "--date", "2026-11-06"], capture_output=True, text=True)
         return g.stdout + g.stderr
     ok = gate(stem + "\n## §4 REPEAT WATCH\n\n" + d["markdown"] + "\n" + tail, "ok")
     assert "Traceback" not in ok and "TypeError" not in ok

@@ -118,7 +118,9 @@ def cmd_stops(a):
                   "mark": p.get("market_price"), "order": None, "stop": None, "limit": None}
     for o in orders:
         t = o.get("symbol")
-        if t not in pos or o.get("sec_type") not in (None, "STK") or o.get("action") != "SELL":
+        # a long is protected by a SELL stop, a short (negative quantity) by a BUY stop above its entry (2026-11-12)
+        want = "BUY" if (pos.get(t, {}).get("qty") or 0) < 0 else "SELL"
+        if t not in pos or o.get("sec_type") not in (None, "STK") or o.get("action") != want:
             continue
         if o.get("order_type") not in ("STP", "STP_LMT", "TRAIL", "TRAIL_LIMIT"):
             continue
@@ -129,10 +131,14 @@ def cmd_stops(a):
         notes = []
         if p["stop"] is None:
             notes.append("NO STOP ORDER")
-        if p.get("limit") is not None and p.get("stop") is not None and p["limit"] > p["stop"]:
-            notes.append(f"limit {p['limit']} sits ABOVE stop {p['stop']}: on a drop it only fills if price recovers")
-        if p.get("order_qty") is not None and p.get("qty") is not None and p["order_qty"] < p["qty"]:
-            notes.append(f"stop covers {p['order_qty']} of {p['qty']} shares")
+        short = (p.get("qty") or 0) < 0
+        if p.get("limit") is not None and p.get("stop") is not None:
+            if short and p["limit"] < p["stop"]:
+                notes.append(f"limit {p['limit']} sits BELOW buy stop {p['stop']}: on a rise it only fills if price falls back")
+            elif not short and p["limit"] > p["stop"]:
+                notes.append(f"limit {p['limit']} sits ABOVE stop {p['stop']}: on a drop it only fills if price recovers")
+        if p.get("order_qty") is not None and p.get("qty") is not None and abs(p["order_qty"]) < abs(p["qty"]):
+            notes.append(f"stop covers {abs(p['order_qty'])} of {abs(p['qty'])} shares")
         if notes:
             p["note"] = "; ".join(notes)
     out = {"source": f"broker read-only ({a.broker}), pulled {datetime.now(timezone.utc).isoformat(timespec='minutes')}; "
