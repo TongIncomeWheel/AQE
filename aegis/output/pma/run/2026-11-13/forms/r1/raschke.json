@@ -1,0 +1,108 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DTE",
+   "reason": "BREAKOUT/test family (C2): structure_shift 3 (BULLISH_BOS) off a base only sma_distance_pct 6.7 above average, mp_state 3 (STRONG); swing-low stop is exactly C17: bracket.stop 135.76 (swing_low_2), double-stop-point shape (C20). Wrong below 135.76.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "structure", "mp_state", "mp_accel_state", "day_vol", "bracket.stop", "bracket.stop_type", "bracket.valid", "div_state"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (BULLISH_BOS), structure 72.6, sma_distance_pct 6.7", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C3"], "observed": "range-contraction breakout read via atr_14d 2.62, day_vol 0.94, mp_state 3, mp_accel_state 3 (FLAT); no NR4/NR7 count served", "verdict": "partial", "fields": ["atr_14d", "day_vol", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C7"], "observed": "bar_range_history NOT_SERVED; adx NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 135.76, bracket.stop_type swing_low_2, bracket.valid True, bracket.risk_pct 2.47", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 135.76 (the swing_low_2 extreme) voids the breakout; a BOS that fails back into range within 2-3 sessions is also a failed breakout (C23)."
+  },
+  {
+   "ticker": "PEG",
+   "reason": "RETRACEMENT family (C2): Holy-Grail-shaped first pullback — structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 4.89 near the 20-MA, mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING), elder_pattern 3; stop on the MA: bracket.stop 72.93 (ma20). ADX not served.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "structure", "mp_state", "mp_accel_state", "elder_pattern", "bracket.stop", "bracket.stop_type", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 1 (ABOVE_STRUCTURE), structure 72.6, sma_distance_pct 4.89", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING) as ADX proxy; elder_pattern 3 advisory", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C7", "C6", "C3"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.stop 72.93, bracket.stop_type ma20, bracket.valid True, bracket.risk_pct 2.5", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 72.93 (ma20) means the pullback is a reversal, not a retracement in trend."
+  },
+  {
+   "ticker": "JNJ",
+   "reason": "BREAKOUT family (C2): structure_shift 3 (BULLISH_BOS) with structure 84.2, sma_distance_pct 6.3, mp_state 3 (STRONG) + mp_accel_state 1 (ACCELERATING), day_vol 1.02. No engine structural stop (bracket.valid False) — my own level: bracket.atr_fallback_stop 276.68.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "bracket.valid", "bracket"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (BULLISH_BOS), structure 84.2, sma_distance_pct 6.3", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12"], "observed": "breakout read via atr_14d 6.84, day_vol 1.02, mp_state 3, mp_accel_state 1; elder_pattern 3 advisory", "verdict": "partial", "fields": ["atr_14d", "day_vol", "mp_state", "mp_accel_state", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C7"], "observed": "bar_range_history NOT_SERVED; adx NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; named own level bracket.atr_fallback_stop 276.68 under entry 283.52", "verdict": "partial", "fields": ["bracket", "bracket.valid", "entry"]}
+   ],
+   "falsifier": "A close back below 276.68 (bracket.atr_fallback_stop, below the breakout bar) means the BOS failed."
+  },
+  {
+   "ticker": "DAL",
+   "reason": "BREAKOUT family (C2): structure_shift 3 (BULLISH_BOS) with structure 83.2, sma_distance_pct 5.84, mp_accel_state 1 (ACCELERATING) though mp_state 2 (FADING); atr_caution True = wider swings. Structural stop bracket.stop 82.67 (ma20).",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_caution", "bracket.stop", "bracket.stop_type", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (BULLISH_BOS), structure 83.2, sma_distance_pct 5.84", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12"], "observed": "breakout read via atr_14d 3.24, atr_caution True, day_vol 0.92, mp_state 2 (FADING), mp_accel_state 1", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C7"], "observed": "bar_range_history NOT_SERVED; adx NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.stop 82.67, bracket.stop_type ma20, bracket.valid True, bracket.risk_pct 4.48", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 82.67 (ma20) voids the breakout."
+  },
+  {
+   "ticker": "AMX",
+   "reason": "BREAKOUT/test family (C2): structure_shift 3 (BULLISH_BOS) at structure 94.7, sma_distance_pct 9.99; swing-low stop is the C17 rule: bracket.stop 24.75 (swing_low). Momentum is mp_state 2 (FADING), mp_accel_state 3 (FLAT), day_vol 0.55 — lower conviction.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "bracket.stop", "bracket.stop_type", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (BULLISH_BOS), structure 94.7, sma_distance_pct 9.99", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12"], "observed": "breakout read via atr_14d 0.59, day_vol 0.55, mp_state 2 (FADING), mp_accel_state 3 (FLAT)", "verdict": "partial", "fields": ["atr_14d", "day_vol", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C7"], "observed": "bar_range_history NOT_SERVED; adx NOT_SERVED; n_day_extreme approximated by sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.stop 24.75, bracket.stop_type swing_low, bracket.valid True, bracket.risk_pct 2.98", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 24.75 (the swing low) voids it."
+  },
+  {
+   "ticker": "BIPC",
+   "reason": "RETRACEMENT family (C2): pullback in trend — structure_shift 1 (ABOVE_STRUCTURE), structure 71.6, sma_distance_pct 5.82, mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING); stop on the MA: bracket.stop 38.02 (ma20). ADX/stochastic not served.",
+   "fields_cited": ["structure_shift", "structure", "sma_distance_pct", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 1 (ABOVE_STRUCTURE), structure 71.6, sma_distance_pct 5.82", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C6"], "observed": "Holy Grail/Anti shape: mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING) as proxy; day_vol 0.86", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C7", "C6", "C3"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct + structure_shift", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.stop 38.02, bracket.stop_type ma20, bracket.valid True, bracket.risk_pct 3.03", "verdict": "pass", "fields": ["bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"]}
+   ],
+   "falsifier": "A close below bracket.stop 38.02 (ma20) turns the retracement into a reversal."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Fits none of my four setups now: structure 29.0, structure_shift 4 (RANGE), sma_distance_pct -2.65, mp_state 2 (FADING), div_state BEARISH with div_bear_count 4; minimise time in the market (C18) — working stop 99.45 stays as the floor if held."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short thesis structurally intact (structure 17.0, structure_shift 2 (BEARISH_CHOCH), sma_distance_pct -6.15) but UNPROTECTED: C17 demands a stop one or two ticks beyond the last swing high — place one at the broker today; swing-high level not on my menu."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Absent from the packet; the squeeze quality flag (range-contraction strength) could not be read for any breakout-family name, so the C12/C13 read rests on atr_14d/day_vol alone."},
+  {"field": "swing high / structure_shift_ref (short-side stop for SPCX)", "impact": "No swing-high level on my menu, so I cannot name the exact C17 buy-stop level for the unprotected SPCX short."}
+ ],
+ "declarations": [
+  {"ticker": "DTE", "setup_type": "breakout (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "PEG", "setup_type": "retracement (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "JNJ", "setup_type": "breakout (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "DAL", "setup_type": "breakout (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "AMX", "setup_type": "breakout (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "BIPC", "setup_type": "retracement (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"}
+ ],
+ "shortfall_reason": null
+}

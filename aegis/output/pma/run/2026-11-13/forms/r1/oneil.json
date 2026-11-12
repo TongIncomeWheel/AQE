@@ -1,0 +1,50 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "XEL",
+   "reason": "Leader (rs_leadership 3, rank 25) out of a sound structure (structure 84.2, structure_shift 1) on decisive volume (day_vol 2.45). Late buy: pct_from_pivot 5.76 is past the 5% line; sector_trend_state 2 (Fading) is a Lone Ranger watch. Valid only into a confirmed uptrend (market gate DELEGATED).",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "lens", "day_vol", "pct_from_pivot", "sma_distance_pct", "ma_50", "ma_200", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "declared": {
+    "fundamentals": "NOT_AVAILABLE (C, A, S, I letters untested: no EPS, sales, ROE, share volume, sponsor counts served)",
+    "base_stage": "NOT_AVAILABLE (C19 cannot be enforced)",
+    "market_gate": "DELEGATED (valid only into a confirmed uptrend; if the index is under distribution this is void)",
+    "rs_measure": "rs_leadership (substitute - no IBD RS Rating)",
+    "volume_measure": "day_vol vs 20-day (substitute - canon says 50-day)",
+    "base_measure": "structure composite (substitute)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER), rank 25, gics_sector XLU; group position 1-3 not served; rs_spy_20d 10.39 reported only (20d horizon)", "verdict": "partial", "fields": ["rs_leadership", "rank", "gics_sector", "rs_spy_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "structure 84.2, structure_shift 1 (ABOVE_STRUCTURE), lens 113 (coil s, structure o, resistance s); base_measure substitute; base stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "day_vol 2.45 (>= 1.40 test, 20d substitute); handle dry-up (C15) not served", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot 5.76 (5.1-10% late-buy warning); sma_distance_pct 8.2 context; bracket.price 81.5 vs ma_200 78.44, far under the 70% climax line", "verdict": "partial", "fields": ["pct_from_pivot", "sma_distance_pct", "bracket.price", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C21", "C22"], "observed": "bracket.valid False, bracket.atr_fallback_stop 80.01 (information only); own line ma_50 75.33, ~7-8% under 81.5; no add-ons (past +5%); 8-week rule flagged", "verdict": "pass", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "ma_50", "bracket.price"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "sector_trend_state 2 (Fading - Hold), lens sector s; div_state NONE; no climax reading", "verdict": "partial", "fields": ["sector_trend_state", "lens", "gics_sector", "div_state"]},
+    {"step": 7, "canon_ref": ["C1", "C4", "C6", "C8", "C11", "C23"], "observed": "declared block filed: fundamentals NOT_AVAILABLE (C, A, S, I), market_gate DELEGATED; sole survivor, ranked 1", "verdict": "partial", "fields": ["sc_momentum", "structure"]}
+   ],
+   "falsifier": "A close back below ma_50 75.33 on heavy volume (or roughly 7-8% under bracket.price 81.5), or the group failing to confirm while XEL runs alone, proves the breakout false."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "rs_leadership 2 (LAGGARD), structure 29.0, price under ma_50 113.39 (sma_distance_pct -2.65), div_state BEARISH, held_book.hl_state EXIT: relative strength has decayed (C10) - sold; working stop 99.45 stays until exit."},
+  {"ticker": "SPCX", "verdict": "EXIT-CASE", "line": "Short 68 with NO working stop violates C20 (every position carries an automatic stop); held_book.hl_state EXIT, structure 17.0, rs_leadership 2; CAN SLIM has no short-side canon to defend it - close or protect at once (ma_50 149.12 overhead)."}
+ ],
+ "data_gaps": [
+  {"field": "bq.bq_base_dur", "impact": "absent from packet: base duration (C12 7-8 week test) cannot be read; base integrity rests on the structure substitute"},
+  {"field": "bq.bq_range_tight", "impact": "absent from packet: base tightness / handle depth (C14) unreadable"},
+  {"field": "rvol", "impact": "absent; day_vol used (same measure, 20d not 50d)"},
+  {"field": "ma_200", "impact": "null for MBGL and SPCX (and some others): R7 climax test not computable for those rows"},
+  {"field": "fundamental layer (EPS, sales, ROE, sponsor counts, share volume)", "impact": "C, A, S, I letters untested on every name (declared NOT_AVAILABLE)"}
+ ],
+ "declarations": [
+  "No ledger memory block was injected for this run; no standing lesson applies.",
+  "market_gate: DELEGATED on every nomination - I write no market read.",
+  "fundamentals: NOT_AVAILABLE (C, A, S, I); base_stage: NOT_AVAILABLE; rs_measure: rs_leadership substitute; volume_measure: day_vol vs 20-day substitute; base_measure: structure composite substitute.",
+  "Screen walked over every packet row: leadership (rs_leadership 3) then breakout volume (day_vol >= 1.40) left 8 names; 7 removed on canon grounds named in shortfall_reason."
+ ],
+ "shortfall_reason": "Only one name survives the checklist. Of the 8 leaders with day_vol >= 1.40: AXGN (pct_from_pivot 17.87), SUZ (13.53), REZI (12.95), MBGL (19.47) are more than 10% past the pivot (C17 hard rejection); INGM (structure 48.4) and WRBY (structure 48.8) lack a sound base (R3); PAYO is a pending acquisition target (event-driven, not mine). All other rows fail leadership (R2) or volume (R4)."
+}

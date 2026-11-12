@@ -5,3 +5,7 @@
 - CLOSED SINCE YESTERDAY (journal 12 Nov, source broker_fill): EBAY 150 stopped out at 119.48 (entry 122.92, -$515.70); GPN 100 stopped out at 95.09 (entry 102.15, -$706.10). Both were protected by their broker stops, which filled.
 - INBOX-CLEAN: not run (declared).
 - ALERTS: paused by PM order 12 Nov (flag aqe_alerts_paused.json); published levels will not be loaded into live alerts until the PM resumes.
+- NOMINATE oneil: packet too large to read whole (324 lines); seat read header + 16 rows, grep-filtered steps 1 and 3, read 8 matched rows plus RBRK and SPCX. Declared.
+- NOMINATE seow: packet too large to read whole; read rows matching its screens plus RBRK and SPCX. Declared. raschke: validator flags BRACKET_MENTION DTE, PEG, JNJ, DAL, AMX, BIPC (flags, not rejections).
+- livermore: flags BRACKET_MENTION DAL, AMX.
+- minervini: packet too large; read first 48 columns of all 307 rows plus every column of 6 nominated and 2 held rows. Declared.

@@ -1,0 +1,117 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DAL",
+   "reason": "Established uptrend that has just made its new high out of a normal pullback (BULLISH_BOS), close to its base not chased (sma_distance_pct 5.84), in the leading group (XLI Momentum Building) with EMBJ confirming. Wrong below bracket.stop 82.67.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "sector_trend_state", "gics_sector", "bracket.stop", "entry"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 83.2; structure_shift BULLISH_BOS; sma_distance_pct 5.84", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 86.55; bracket.stop 82.67 (ma20, bracket.valid True); atr_14d 3.24; mp_state FADING, mp_accel_state ACCELERATING", "verdict": "partial", "fields": ["entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLI; sector_trend_state Momentum Building; second XLI name EMBJ ABOVE_STRUCTURE confirms; rank 122", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held; any add only above entry 86.55 on further new highs, never on weakness", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 3.24, my translation not the literal 6 points; day_vol 0.92 is no fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.stop 82.67 (ma20), or a single-day reaction from the day's high larger than atr_14d 3.24 (my translated danger signal, C7), ends the trend verdict."
+  },
+  {
+   "ticker": "AMX",
+   "reason": "Strongest structure in the leading XLC group (structure 94.7) and a fresh new high out of its pullback (BULLISH_BOS) without chasing (sma_distance_pct 9.99); OMC breaking out in the same group is the second-name Key Price confirmation. Wrong below bracket.stop 24.75.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "sector_trend_state", "gics_sector", "bracket.stop", "entry"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 94.7; structure_shift BULLISH_BOS; sma_distance_pct 9.99", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 25.51; bracket.stop 24.75 (swing_low, bracket.valid True); atr_14d 0.59; mp_state FADING, mp_accel_state FLAT", "verdict": "partial", "fields": ["entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLC; sector_trend_state Momentum Building; OMC in XLC also BULLISH_BOS; rank 112", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "not held; add only above entry 25.51 on further strength", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 0.59, my translation; day_vol 0.55 is no fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below bracket.stop 24.75 (swing_low), or a one-day reaction from the high beyond atr_14d 0.59 (my translated danger signal), ends it."
+  },
+  {
+   "ticker": "OMC",
+   "reason": "Second XLC name making a fresh new high (BULLISH_BOS) out of a base, structure 69.5, sma_distance_pct 8.85 not stretched; together with AMX it is the two-stock group confirmation my Key Price rule asks for. Momentum state is softer, so lower conviction.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "sector_trend_state", "bracket.valid", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 69.5; structure_shift BULLISH_BOS; sma_distance_pct 8.85", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 86.84; bracket.valid False, bracket.stop null; atr_14d 2.59; mp_state FADING, mp_accel_state DECELERATING", "verdict": "partial", "fields": ["entry", "bracket.valid", "bracket.stop", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLC; sector_trend_state Momentum Building; AMX also BULLISH_BOS; rank 129", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "not held; add only above entry 86.84", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 2.59, my translation; day_vol 0.62 no fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Engine bracket is invalid, so my own level: a one-day reaction from the high beyond atr_14d 2.59, or a close back under bracket.atr_fallback_stop 84.25, means the breakout failed (C20)."
+  },
+  {
+   "ticker": "EMBJ",
+   "reason": "Leading XLI group, trading above structure with the momentum state STRONG and ACCELERATING, only sma_distance_pct 6.59 off its 50-day; DAL breaking out alongside confirms the group. Not a fresh break today, so held at 3.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "sector_trend_state", "bracket.valid", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 74.7; structure_shift ABOVE_STRUCTURE (not a fresh BOS today); sma_distance_pct 6.59", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 79.48; bracket.valid False, bracket.stop null; atr_14d 3.01; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["entry", "bracket.valid", "bracket.stop", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLI; sector_trend_state Momentum Building; DAL BULLISH_BOS in XLI; rank 106", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "not held; add only on successively higher prices above entry 79.48", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 3.01, my translation; day_vol 0.58 no fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Bracket invalid, so my own level: a close under bracket.atr_fallback_stop 76.47 or a one-day reaction from the high beyond atr_14d 3.01 (translated danger signal) ends it."
+  },
+  {
+   "ticker": "JNJ",
+   "reason": "A heavy leader making a fresh new high (BULLISH_BOS) with structure 84.2, momentum STRONG and ACCELERATING, not stretched (sma_distance_pct 6.3), day_vol 1.02; BTSG breaking out in the same group confirms. Sector state is only Fading, so 3.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "sector_trend_state", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 84.2; structure_shift BULLISH_BOS; sma_distance_pct 6.3", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 283.52; bracket.valid False, bracket.stop null; atr_14d 6.84; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["entry", "bracket.valid", "bracket.stop", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLV; sector_trend_state Momentum Fading; BTSG in XLV also BULLISH_BOS; rank 206", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "not held; add only above entry 283.52", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 6.84, my translation; day_vol 1.02 is a proxy only, fill difficulty not served", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Bracket invalid, so my own level: a close under bracket.atr_fallback_stop 276.68 or a one-day reaction from the high beyond atr_14d 6.84 ends the new-high thesis."
+  },
+  {
+   "ticker": "AAPL",
+   "reason": "The market's most active leader making a fresh new high (BULLISH_BOS) right off its base (sma_distance_pct 4.85), momentum BUILDING and ACCELERATING, in a recovering XLK. Second-name confirmation in XLK is only partial, so 3.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "sector_trend_state", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 71.6; structure_shift BULLISH_BOS; sma_distance_pct 4.85", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "entry 354.88; bracket.valid False, bracket.stop null; atr_14d 8.39; mp_state BUILDING, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["entry", "bracket.valid", "bracket.stop", "atr_14d", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLK; sector_trend_state Recovering From Weakness; XLK peers U, VNT, EXTR ABOVE_STRUCTURE but no second clean BOS; rank 211", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "not held; add only above entry 354.88", "verdict": "pass", "fields": ["entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger signal translated via atr_14d 8.39, my translation; day_vol 0.63 no fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Bracket invalid, so my own level: a close under bracket.atr_fallback_stop 346.49, or a one-day reaction from the high beyond atr_14d 8.39, means the new high failed (C20)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "No Livermore uptrend: structure 29.0, structure_shift RANGE, sma_distance_pct -2.65 under the 50-day, mp_state FADING. A position going against me gets cut as the first small loss (C3, C22), not hoped on. The 99.45 broker stop is the backstop, not the plan; never add (C4)."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "The short is with the tape: structure 17.0, structure_shift BEARISH_CHOCH, sma_distance_pct -6.15. But there is NO working stop, which breaks C9 (max loss set at entry). Put a buy-stop in now, e.g. one atr_14d 8.27 above entry 139.94 (my translation). Add only lower (C6)."}
+ ],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null (bracket.valid False) for OMC, EMBJ, JNJ, AAPL; I named my own invalidation from bracket.atr_fallback_stop and atr_14d instead. Context only, never a reason against (R1)."},
+  {"field": "rank", "impact": "null for held RBRK and SPCX; the leadership read for the held names rests on structure and sector_trend_state alone."},
+  {"field": "structure_shift", "impact": "null on some packet rows (e.g. ROL, CEG, TLK, FLY, MBGL, PEP, PWR), so I could not test the new-high confirmation (C5) on them and did not nominate them."}
+ ],
+ "declarations": [
+  "lesson_check: no ledger memory block was injected this round; no standing lesson applies",
+  "trend_confirmation: PASS/FAIL per name via structure/structure_shift + sma_distance_pct (C5); sma_distance_pct read as extension from the 50-day, not distance from a high",
+  "danger_signal_threshold: TRANSLATED via atr_14d, not literal 6pts (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "concentration: nominations sit in XLI and XLC (Momentum Building) with two names each where possible; this is deliberate (C12, R7)",
+  "off_menu: the packet carries columns outside my data menu (e.g. pct_from_52w_high, held_book.*, lens, ma_*); I did not use them"
+ ],
+ "shortfall_reason": null
+}
