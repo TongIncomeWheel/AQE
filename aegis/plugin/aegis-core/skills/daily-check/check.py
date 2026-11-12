@@ -752,6 +752,35 @@ def _legs_from_marker(line):
     return out
 
 
+def _weekdays_behind(leg, run_date):
+    """Weekdays between the leg's date and the session the run expected (the weekday before the run date unless the row carries `expected`)."""
+    from datetime import date, timedelta
+    e = leg.get("expected")
+    if e:
+        e = date.fromisoformat(e)
+    else:
+        e = date.fromisoformat(run_date) - timedelta(days=1)
+        while e.weekday() >= 5:
+            e -= timedelta(days=1)
+    n, x = 0, date.fromisoformat(leg["as_of"])
+    while x < e:
+        x += timedelta(days=1)
+        n += x.weekday() < 5
+    return n
+
+
+def _structural_one_session_lag(prev, cur, prev_run=None, cur_run=None):
+    """PM/conductor 2026-11-12: Cboe posts VIXEQ ~10:11 SGT and DSPX ~10:41 SGT, after the 06:26 run, so those legs are one session behind EVERY night.
+    Two nights of PUBLISHER_LAG, each exactly one weekday behind, is that timing: WARN. Anything else (OUR_BUDGET, SOURCE_DOWN, a mix, two or more
+    sessions behind, a missing date) still FAILS. A holiday makes the gap two weekdays and so stays a FAIL: loud, never a silent pass."""
+    try:
+        if prev.get("reason") != "PUBLISHER_LAG" or cur.get("reason") != "PUBLISHER_LAG":
+            return False
+        return _weekdays_behind(prev, prev_run) == 1 and _weekdays_behind(cur, cur_run) == 1
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return False
+
+
 def check_macro_legs(VA, FT, fallbacks=None):
     """Every macro leg with its REASON CODE (PM 2026-11-04). FAIL: OUR_BUDGET / SOURCE_DOWN (we are slow or the source is down: the
     committee would vote on stale weather), a missing table (a leg that cannot be audited is not passed), and ANY leg behind two
@@ -784,6 +813,10 @@ def check_macro_legs(VA, FT, fallbacks=None):
                 continue
             prev = next((x for x in hist[-2]["legs"] if x.get("leg") == cur.get("leg")), None)
             if prev and prev.get("reason") not in ("CURRENT", "PUBLISHER_CADENCE"):
+                if _structural_one_session_lag(prev, cur, hist[-2].get("run_date"), hist[-1].get("run_date")):
+                    notes.append(f"WARN macro leg {cur.get('leg')} is one session behind again (PUBLISHER_LAG two nights running, as of {cur.get('as_of')}): "
+                                 "the publisher posts after our morning run every night, so this is its timing, not a stale feed; the committee reads this leg one session old")
+                    continue
                 fails.append(f"macro leg {cur.get('leg')} has been behind two nights running ({prev.get('reason')} then {cur.get('reason')}) -- someone must own this leg's freshness")
     return fails, notes
 

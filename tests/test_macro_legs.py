@@ -159,3 +159,21 @@ def test_the_published_valen_copy_now_carries_the_legs_table(tmp_path, monkeypat
     C = _check_module()
     f, _ = C.check_macro_legs(pub, None)
     assert f == []
+
+
+def test_cboe_publisher_timing_two_nights_running_is_a_warn_but_real_staleness_still_fails():
+    """Conductor 2026-11-12: Cboe posts VIXEQ/DSPX ~10:11/10:41 SGT, after the 06:26 run, so they are one session behind EVERY night.
+    The feed_timing history rows carry leg/as_of/reason and the entry's run_date only (no `expected`), exactly as written by feed_timing.record."""
+    C = _check_module()
+    L = lambda leg, as_of, rc="PUBLISHER_LAG": {"leg": leg, "as_of": as_of, "reason": rc}
+    H = lambda a, b: {"history": [{"run_date": a[0], "legs": [a[1]]}, {"run_date": b[0], "legs": [b[1]]}]}
+    cur = {"data_freshness": {"legs_table": [{"leg": "dspx", "as_of": "2026-11-10", "expected": "2026-11-11", "reason": "PUBLISHER_LAG", "detail": "d"}]}}
+    # the real 11 and 12 Nov history: leg one session behind both nights
+    f, n = C.check_macro_legs(cur, H(("2026-11-11", L("dspx", "2026-11-09")), ("2026-11-12", L("dspx", "2026-11-10"))))
+    assert f == [] and any("one session behind again" in x for x in n)
+    # Monday run: expected Friday, leg Thursday: one session (a weekend is not a session)
+    assert C.check_macro_legs(cur, H(("2026-11-05", L("dspx", "2026-11-03")), ("2026-11-09", L("dspx", "2026-11-05"))))[0] == []
+    # two sessions behind, a budget miss, a mix, or no date: still a FAIL
+    assert len(C.check_macro_legs(cur, H(("2026-11-11", L("dspx", "2026-11-06")), ("2026-11-12", L("dspx", "2026-11-09"))))[0]) == 1
+    assert len(C.check_macro_legs(cur, H(("2026-11-11", L("dspx", "2026-11-09", "OUR_BUDGET")), ("2026-11-12", L("dspx", "2026-11-10"))))[0]) == 1
+    assert len(C.check_macro_legs(cur, H(("2026-11-11", {"leg": "dspx", "reason": "PUBLISHER_LAG"}), ("2026-11-12", L("dspx", "2026-11-10"))))[0]) == 1
