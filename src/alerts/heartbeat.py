@@ -176,6 +176,14 @@ def check_and_alarm(send: bool = True, now_utc: datetime | None = None) -> dict:
     record into the notice feed (PM 2026-11-02: never an email). The cockpit
     reader prints it as the engine-silent headline."""
     now_utc = now_utc or datetime.now(timezone.utc)
+    try:                                          # a PAUSED poller is silent on purpose: no alarm, said so
+        from src.alerts import pause as _pause
+        _ps = _pause.status()
+        if _ps.get("paused"):
+            return {"stale": False, "paused": True, "alarm_sent": False, "age_min": None, "problem": None,
+                    "reason": f"alerts PAUSED by the PM (since {_ps.get('since')}): no cycle is expected"}
+    except Exception:  # noqa: BLE001
+        pass
     hb, problem = load()
     st = deadman_status(hb, now_utc, load_problem=problem)
     st["alarm_sent"] = False
