@@ -1,0 +1,1562 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-12",
+ "round": 2,
+ "declarations": [
+  "Translation: my danger-signal threshold is fade_atr_ge via atr_14d (1.5 ATR, 2 ATR on extended names). That multiplier is my own translation, not Livermore's literal 6 points (C7, C18-C20).",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18). fill_difficulty NOT_SERVED (day_vol is a proxy only). inside_information NEVER (C11).",
+  "No round-1 ballot file existed for livermore at forms/r1/livermore.json, so conviction_change is null on every name.",
+  "sc_m_gates and pipe_rank are null on every row of the indicator sheet; my cases rest on sc_momentum, flow, energy, structure, mp and subcomponents instead.",
+  "R1: no bracket field is the basis of any vote; the packet's brackets are information only. Market weather in the packet reads DOWNTREND, so I cap conviction at 4.",
+  "Translation: my danger-signal threshold is fade_atr_ge via atr_14d (1.5 ATR). That multiplier is my own translation, not Livermore's literal 6 points (C7, C18-C20).",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18). fill_difficulty NOT_SERVED. inside_information NEVER (C11).",
+  "No round-1 ballot file existed for livermore, so conviction_change is null on every name.",
+  "sc_m_gates and pipe_rank are null on every row of the sheet; cases rest on sc_momentum, flow, energy, structure, mp and subcomponents.",
+  "R1: no bracket field is the basis of any vote. Market weather reads DOWNTREND, so conviction is capped at 4.",
+  "R1: no bracket field is the basis of any vote. Held-book lines: EBAY no add (C4), RBRK EXIT-CASE (C3, C7), SPCX short is the PM's call. Market weather reads DOWNTREND: conviction capped at 4."
+ ],
+ "votes": [
+  {
+   "ticker": "ROIV",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Established uptrend at its high: `structure` 82.1 ABOVE_STRUCTURE, `mp` 87.0 STRONG/ACCELERATING, `flow` 88.2, `sc_momentum` 79.2; from_52w_hi 0.0%, daily 0.9% under the 20-day high is a normal reaction (C8). Thin day_vol 0.98 is a weight (R27).",
+   "self_counter": "Weakest link: `subcomponents.structure.base_score` 0.0 and run_10d 12.77% with no consolidation to test; day_vol 0.98 gives no volume proof at the high.",
+   "challenge_reply": "Crowding: 18 of 53 are Healthcare. I read that as concentration in a leading group (C12, R7), not a flaw; ROIV is supported on its own `structure` and `mp`, and a second Healthcare name (EW, XERS) holding highs is the C14 confirmation.",
+   "case": {
+    "for": "C5 sequence: uptrend, a 0.9% daily reaction, new high one step away; `mp` 87.0 accelerating, `flow` 88.2.",
+    "against": "`sma_distance_pct` 12.84, daily swing HH but LL, no base, day_vol 0.98 at the high.",
+    "entry_trigger": "Daily close above high_52w_close with volume at least 1.2x normal.",
+    "wrong_if": "Reaction of 1.5 ATR off a day's high (atr 1.57; my translation of C7), or daily close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close back under the last swing high with `mp` falling, or Healthcare peers failing to hold highs.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TMO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stacked uptrend (ma20 695.11, ma50 667.17, ma100 615.22, ma200 554.38), `structure` 71.6 ABOVE_STRUCTURE, from_52w_hi -0.54%, daily 1.4% under the 20-day high. Momentum is only middling: `mp` 48.0 FADING/ACCELERATING, `sc_momentum` 66.2, `flow` 61.8.",
+   "case": {
+    "for": "Trend established and a 1.4% reaction from the high; `energy` 79.0 coiled (`subcomponents.energy.squeeze_score` 12.5).",
+    "against": "`mp` 48.0 is the weakest persistence read in my set; `sc_momentum` 66.2 and day_vol 0.75 do not show a leader.",
+    "entry_trigger": "Daily close above high_52w_close, volume 1.2x normal.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 21.25) or daily close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` rolling over below 48.0 on a new high, or a failed break (close back under the pivot).",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ELF",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader in a stacked uptrend: `structure` 66.3 BULLISH_BOS, `mp` 70.0 BUILDING/ACCELERATING, `energy` 88.2, rs_rank_pct 98.15; daily 3.8% under the last swing high is a normal reaction. `flow` 40.8 is weak and holds conviction at 3.",
+   "case": {
+    "for": "BOS broke a confirmed pivot; weekly HH/HL and 9>21; `energy` 88.2 coiled.",
+    "against": "`flow` 40.8 says money is not flowing in; day_vol 0.85; `sc_momentum` 66.0.",
+    "entry_trigger": "Daily close above pivot_high, not before (never buy the pullback, C5).",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 5.39) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`flow` rising above 60 on the break would lift me; a failed break would end it.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "XERS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Top leader at a new high: `mp` 100.0 STRONG/ACCELERATING, `structure` 84.2, `flow` 88.2, `sc_momentum` 85.2, rs_rank_pct 99.41. Extension is real (`sma_distance_pct` 63.86, run_10d 55.26%), so conviction is held at 3.",
+   "challenge_reply": "Price is 16.52 vs ma50 10.08, 63.86% over it (about 8 atr 0.8). No normal pullback exists (daily 50.9% above the last swing high), so this is continuation of a spike, not C5's pullback entry; I buy only a further closing high and size to the translated danger signal.",
+   "case": {
+    "for": "C16: a brand-new high on a leader is sound to buy; all five engines clear (`elder` 10.0 SUSTAINED).",
+    "against": "No consolidation to test; ext_atr20 5.99 means a 1.5 ATR fade is a small number against the run.",
+    "entry_trigger": "Daily close above high_52w_close; no chase beyond 3% above it.",
+    "wrong_if": "2 ATR fade off a day's high (atr 0.8) or close under bar_low after a red bar.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A danger signal day (fade of 2 ATR) with `mp` falling would end the thesis at once.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:bar_low"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "DLTR",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Leader in a clean uptrend (ma20 131.49, ma50 123.02, ma200 117.0): `structure` 78.9 ABOVE_STRUCTURE, `mp` 92.0 STRONG, `flow` 84.2, `sc_momentum` 80.4; daily 3.8% under the last swing high is a normal reaction. `mp_accel_state` DECELERATING trims it.",
+   "self_counter": "Weakest: `mp` is STRONG but DECELERATING; weekly swing HH but LL and 3.8% under the 20-week high, so no new high is in yet.",
+   "case": {
+    "for": "C5 setup complete except the trigger: uptrend, 3.8% reaction, rs_rank_pct 94.03.",
+    "against": "`mp_accel_state` DECELERATING; day_vol 0.91; no new high yet.",
+    "entry_trigger": "Daily close above pivot_high.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 5.62) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A second reaction that undercuts the last reaction low, or `mp` dropping under 75.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ERAS",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Step 1 fails: `structure` 40.0 beside `sc_momentum` 72.8; weekly 9<21 with LH/LL, from_52w_hi -25.23%, ma20 14.66 under ma50 14.98 under ma100 16.6. `flow` 100.0 on day_vol 2.96 is one bar, not a trend (C5, C16).",
+   "opposing_case": "ret_12m 633.62, `energy` 73.9, `mp` 63.0 BUILDING/ACCELERATING and rs_rank_pct 93.19: a volume day through the daily swing could start a new leg.",
+   "challenge_reply": "Is day_vol 2.96 an event day? I do not read causes (C11, R9); on price it is a one-day spike with daily swing LH but HL. `sc_momentum` 72.8 is carried by `flow` 100.0; `structure` 40.0 says there is no base-and-break, so the composite overstates trend.",
+   "case": {
+    "for": "`flow` 100.0, `energy` 73.9 and `mp` 63.0 accelerating after a 2.96x day.",
+    "against": "`structure` 40.0, no established uptrend, a stack that is not aligned, 25.23% under the high.",
+    "entry_trigger": "Would need a weekly higher high and ma20 over ma50 before I could support.",
+    "wrong_if": "Not applicable as a long; a close over ma100 16.6 on volume would flip me.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Structure repair: `structure` above 60 with a BULLISH_BOS and the stack turning up.",
+    "cannot_see": [
+     "event cause",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "CTAS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stacked uptrend, `structure` 74.7 BULLISH_BOS, from_52w_hi -0.77%, daily 2.7% under the last swing high. `mp` 80.0 FADING/DECELERATING, `flow` 59.2 and day_vol 0.64 are the soft side, so 3.",
+   "case": {
+    "for": "BOS confirmed, weekly and daily HH/HL, `energy` 72.3 coiled (squeeze_score 4.0).",
+    "against": "`mp` 80.0 FADING/DECELERATING, `flow` 59.2, `elder` 7.0 INTERRUPTED (advisory).",
+    "entry_trigger": "Daily close above pivot_high.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 5.2) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` falling below 60 before a new high, or a close back under the BOS pivot.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AMRX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "At its high (from_52w_hi 0.0%, `structure` 77.9 BULLISH_BOS) but money is not behind it: `flow` 30.3, `sc_momentum` 59.5, day_vol 0.57, `subcomponents.flow.accum_score` 1.5. A new high without flow or composite support is not the confirmation C5 wants.",
+   "opposing_case": "Weekly and daily HH/HL, `mp` 67.0 BUILDING/ACCELERATING, rs_rank_pct 95.21 and a BOS through a confirmed pivot: price action alone meets C5.",
+   "challenge_reply": "Extension finding: at the high on day_vol 0.57. I weigh thin volume against it (R27 weight, not veto) and would need a new closing high on 1.2x volume with `flow` rising.",
+   "case": {
+    "for": "Price meets C5: uptrend, BOS, new high, `mp` 67.0 accelerating.",
+    "against": "`flow` 30.3 and `sc_momentum` 59.5 are weak; day_vol 0.57 at the high.",
+    "entry_trigger": "Closing high on 1.2x volume with `flow` above 50.",
+    "wrong_if": "As a long I would be wrong on a 1.5 ATR fade (atr 0.83) from the high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`flow` above 50 with volume on the next high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "EW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "New-high leader: `structure` 89.5 ABOVE_STRUCTURE, `mp` 97.0 STRONG/ACCELERATING, `flow` 84.2, `sc_momentum` 82.2; from_52w_hi 0.0%, daily 0.2% under the 20-day high. Engine shows wear: `subcomponents.energy.exhaustion_score` 7.0.",
+   "self_counter": "Weakest: exhaustion_score 7.0 (wear on a long run), `sma_distance_pct` 17.86, day_vol 0.87 at the high, and no normal pullback in run_10d 15.29%.",
+   "challenge_reply": "Extension finding: at the high on day_vol 0.87. I treat it as a weight (R27); the trigger is a new closing high, and the 1.5 ATR danger signal ends the trade at once if volume fails to follow.",
+   "case": {
+    "for": "C16 new high on a leader; all gates clear; weekly 0.2% under the 20-week high.",
+    "against": "exhaustion_score 7.0, extension 17.86% over the 50-day, day_vol 0.87, `elder` 7.0.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 3.02) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`subcomponents.energy.exhaustion_score` dropping below 5 or `mp` turning DECELERATING.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ABBV",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stacked uptrend at the high (from_52w_hi 0.0%, `structure` 71.6 BULLISH_BOS, `energy` 82.4); daily 2.6% under the last swing high. `mp` 61.0 FADING/DECELERATING, `flow` 63.2 and day_vol 0.57 keep it at 3.",
+   "challenge_reply": "Extension finding: day_vol 0.57 at the high is a weight (R27); I act only on a new closing high with volume.",
+   "case": {
+    "for": "BOS confirmed, weekly HH but LL, `energy` 82.4 and squeeze_score 12.5 coiled.",
+    "against": "`mp` 61.0 decelerating, `sc_momentum` 70.2, day_vol 0.57.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 7.17) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` below 50 before a new high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTWO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Step 1 fails: ma20 205.75 under ma50 207.36 under ma100 224.23, from_52w_hi -10.49%, weekly 9<21 with LH. `structure` 61.1 and `mp` 63.0 BUILDING describe a rally off a downtrend (a natural rally, C18), not an upward trend with a pullback. run_10d 18.44%.",
+   "opposing_case": "Episodic pivot TRIGGERED 10/10, day_vol 1.69, `flow` 75.0 and `elder` 10.0 CORRECTION_REENTRY: a gap-and-hold can start a new trend.",
+   "case": {
+    "for": "`flow` 75.0, `mp` 63.0 accelerating, a 1.69x volume day.",
+    "against": "No established uptrend: inverted short stack and weekly LH; 10.49% under the high.",
+    "entry_trigger": "Weekly higher high and ma20 above ma50 before I could support.",
+    "wrong_if": "A close over ma100 224.23 on volume would flip me.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The stack turning up (ma20 over ma50 over ma100) with a BOS.",
+    "cannot_see": [
+     "event cause",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Sustained leader at its high: `mp` 97.0 STRONG/ACCELERATING, `structure` 78.9, `flow` 88.2, `sc_momentum` 83.3; from_52w_hi 0.0%, daily 1.6% under the 20-day high. Extended (ext_atr20 3.72) so 4, not 5.",
+   "self_counter": "Weakest: `sma_distance_pct` 19.75 and run_10d 34.18% with no real pullback; day_vol 0.91; `subcomponents.structure.base_score` 0.0.",
+   "challenge_reply": "Extension finding: at the high on day_vol 0.91 is a weight (R27). I want a new closing high, and the 2 ATR danger signal as the exit.",
+   "case": {
+    "for": "C16 new high on a leader, rs_rank_pct 98.57, `energy` 72.3, `mp` accelerating.",
+    "against": "34.18% in 10 days, no base, day_vol 0.91.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 1.37) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A fade of 2 ATR with `mp` turning down.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FLYW",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Leader near its high: `mp` 100.0 STRONG/ACCELERATING, `flow` 90.8, `structure` 75.8, `sc_momentum` 82.6; from_52w_hi -0.45%, daily 1.5% under the 20-day high; `subcomponents.flow.ext_score` 3.0 is a breakout credit.",
+   "self_counter": "Weakest: exhaustion_score 7.0, `sma_distance_pct` 19.2, daily swing EH but HL, run_10d 17.54%.",
+   "case": {
+    "for": "C5/C16: uptrend, 1.5% reaction, volume read day_vol 1.3, ext_score 3.0 breakout credit.",
+    "against": "exhaustion_score 7.0 and extension; `elder` 7.0 with the last bar down from 10 (advisory).",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 0.85) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`mp` below 85 or exhaustion_score under 5.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HUM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Uptrend with a 1.0% daily reaction from the high: `structure` 82.1 RANGE, `flow` 100.0, `energy` 85.7, `sc_momentum` 81.7. `mp` 48.0 BUILDING/DECELERATING is the weak engine and holds it at 3; no new high is in yet (structure_shift RANGE).",
+   "case": {
+    "for": "Stack aligned (ma20 421.55, ma50 406.95, ma200 314.83); weekly 2.2% under the high; `flow` 100.0.",
+    "against": "`mp` 48.0 decelerating; structure_shift RANGE not BOS; `sc_m_gate_detail` shows the mp gate failing.",
+    "entry_trigger": "Daily close above high_52w_close, structure_shift turning BULLISH_BOS.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 17.67) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` rising above 60 on the break.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Leader at its high: `structure` 84.2 ABOVE_STRUCTURE, `mp` 89.0 STRONG/ACCELERATING, `flow` 73.7, `sc_momentum` 77.4; from_52w_hi -0.4%, daily 1.2% under the 20-day high, weekly 1.5% under. Uptrend stack aligned (ma20 64.36, ma50 61.51, ma200 55.87).",
+   "self_counter": "Weakest: `subcomponents.flow.ha_quality_count` 3.0 (choppy candles), run_10d 22.13% with no real pullback, day_vol 0.77.",
+   "case": {
+    "for": "C5/C16: leader at the high after a small reaction; rs_rank_pct 80.04; `mp` accelerating.",
+    "against": "ha_quality_count 3.0, `sma_distance_pct` 18.06, day_vol 0.77.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 2.87) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`flow` falling under 60 or `mp` turning DECELERATING on the break.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not yet an established uptrend on the weekly: weekly 9<21 with swing HH but LL, 7.9% under the 20-week high, from_52w_hi -7.43%, ma100 29.63 and ma200 29.71 over ma50 28.35. `structure` 82.1 BULLISH_BOS and `mp` 94.0 are daily only; rs_rank_pct 48.99 is not a leader (C12).",
+   "opposing_case": "Daily BOS through a confirmed pivot, `mp` 94.0, `flow` 68.4 and `sc_momentum` 75.9; Valen lists REITs as leading from their own highs.",
+   "case": {
+    "for": "`structure` 82.1 BOS, `mp` 94.0, price above all averages.",
+    "against": "Weekly 9<21, 7.9% under the weekly high, rs_rank_pct 48.99, `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Weekly close above the 20-week high with the 9-week back over the 21.",
+    "wrong_if": "As a long I would be wrong on a 1.5 ATR fade (atr 0.57) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Weekly 9>21 and a new 52-week closing high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "CAH",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Sustained leader at its high: `mp` 86.0 FADING/ACCELERATING (default label, R13), `flow` 78.9, `sc_momentum` 75.1, `structure` 66.3 ABOVE_STRUCTURE; from_52w_hi 0.0%, daily 3.1% under the last swing high. Weekly and daily HH/HL.",
+   "self_counter": "Weakest: `structure` 66.3 is the lowest engine, day_vol 0.51 at the high, `sma_distance_pct` 14.23.",
+   "challenge_reply": "Extension finding: at the high on day_vol 0.51 is a weight (R27), not a veto; I buy only a close through the last swing high with volume.",
+   "case": {
+    "for": "Trend aligned (ma20 258.11, ma50 242.88, ma200 224.42); rs_rank_pct 89.83; all engines clear.",
+    "against": "`structure` 66.3, day_vol 0.51, extension.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 6.86) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` below 70 or a close back under ma_20.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "COR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stacked uptrend (ma20 338.33, ma50 326.47, ma100 317.77, ma200 316.69) with BOS: `structure` 63.2 BULLISH_BOS, `energy` 82.4, `flow` 78.9, `sc_momentum` 74.2; daily 3.9% under the last swing high. `mp` 66.0 BUILDING/DECELERATING keeps it at 3.",
+   "case": {
+    "for": "BOS confirmed, weekly HH/HL, `energy` 82.4 coiled.",
+    "against": "`structure` 63.2 low; `mp_accel_state` DECELERATING; from_52w_hi -6.64%.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 9.19) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` falling under 55 before a new high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "A recovery, not an established uptrend: from_52w_hi -36.17%, ret_12m -27.84, ma100 17.81 about equal to ma200 17.86. `structure` 87.4 BULLISH_BOS and `mp` 89.0 STRONG are real but young; `flow` 61.8, `sc_momentum` 74.0, weekly HH but LL. Livermore does not buy a low-priced rebound (C16).",
+   "opposing_case": "`structure` 87.4 BOS, `mp` 89.0, rs_rank_pct 90.0 and 4.4% under the 20-day high: price is rebuilding a base and may confirm soon.",
+   "case": {
+    "for": "BOS, `mp` 89.0 STRONG, price over all averages.",
+    "against": "36.17% under the high, year return negative, `mp_accel_state` DECELERATING, `flow` 61.8.",
+    "entry_trigger": "A weekly new high above the prior swing, with ma100 over ma200.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 1.11) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A 52-week closing high or ma100 clearly over ma200.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "DTE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Step 1 fails: ma50 130.39 under ma100 137.39 under ma200 141.01, price 139.69 under the 200-day, weekly 9<21 with LH/LL, from_52w_hi -9.54%, rs_rank_pct 40.59. `mp` 82.0 STRONG and `structure` 74.7 BOS are a rally inside a falling stack, not a leader (C12, C18).",
+   "opposing_case": "`mp` 82.0 STRONG, `sc_momentum` 73.8, BOS and `energy` 73.1; price is 0.1% under the 20-day high and may take the 200-day.",
+   "case": {
+    "for": "BOS, `mp` 82.0 STRONG, near the daily high.",
+    "against": "Falling stack, price under ma200, weekly 9<21, rs_rank_pct 40.59, `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Close over ma200 141.01 with ma50 turning up.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 2.69) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly 9>21 and a close above ma200.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "CNK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "New-high name, stacked uptrend (ma20 39.6, ma50 37.48, ma200 31.95): `structure` 76.8 BULLISH_BOS, `energy` 87.4, `sc_momentum` 73.3, rs_rank_pct 92.61; from_52w_hi 0.0%, 0.8% under the 20-day high. `mp` 54.0 FADING/DECELERATING and day_vol 0.48 hold it at 3.",
+   "challenge_reply": "Extension finding: at the high on the lowest day_vol in the room (0.48). Livermore weighs that against it (R27 weight); price must make a new closing high with volume at least 1.2x before I act, and div_bear_count 2 is advisory only for me.",
+   "case": {
+    "for": "BOS, `energy` 87.4, `subcomponents.energy.squeeze_score` 12.5 coil, a 0.8% reaction.",
+    "against": "`mp` 54.0 decelerating, day_vol 0.48, `flow` 69.7.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 1.4) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Another high on day_vol under 0.6 would cut me to a pass.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KR",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not a leader at a high: from_52w_hi -8.08%, rs_rank_pct 52.77, ma50 62.31 under ma200 63.86 (stack not aligned). `mp` 83.0 FADING/DECELERATING, `flow` 57.9, `structure` 66.3 BOS and `sc_momentum` 67.1 are mid-pack; day_vol 0.54 (C12).",
+   "opposing_case": "Weekly and daily HH/HL, BOS, price over all averages, 3.0% under the high and a U&R SETUP at the trendline.",
+   "case": {
+    "for": "BOS, weekly HH/HL, `mp` 83.0.",
+    "against": "`sc_momentum` 67.1, `flow` 57.9, rs_rank_pct 52.77, stack not aligned.",
+    "entry_trigger": "Close through the last swing high on volume with ma50 over ma200.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 1.91) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "ma50 crossing over ma200 and a new weekly high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "DUOL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No uptrend on the weekly: swing LH/LL, 6.5% under the 20-week high, from_52w_hi -21.5%, ret_12m -14.88. `structure` 67.4 RANGE, `flow` 36.8, `sc_momentum` 63.6 are weak; `mp` 83.0 STRONG/ACCELERATING is a rebound (C5, C16).",
+   "opposing_case": "`mp` 83.0 STRONG/ACCELERATING, rs_rank_pct 92.18, run_10d 21.38%: a sharp recovery with the stack turning up.",
+   "case": {
+    "for": "`mp` 83.0 accelerating; price over every average.",
+    "against": "`flow` 36.8, `structure` 67.4 RANGE, weekly LH/LL, 21.5% under the high.",
+    "entry_trigger": "A BULLISH_BOS and a weekly higher high.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 10.26) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`flow` above 55 with a BOS.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "CRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Price 15.13 is under ma200 15.8, from_52w_hi -44.72%, ret_12m -35.97: a downtrend bounce, not an uptrend (C5, C16). `sc_momentum` 56.7, `mp` 46.0, `flow` 36.8 are the weakest reads in my set.",
+   "opposing_case": "Daily 0.6% under the 20-day high, `energy` 77.3, `mp_accel_state` ACCELERATING and rev_g 0.538 (fundamentals are not my method); a base may be forming.",
+   "case": {
+    "for": "Daily HH/HL, `energy` 77.3, `mp` accelerating from a low base.",
+    "against": "Under ma200, 44.72% under the high, `sc_momentum` 56.7, `flow` 36.8.",
+    "entry_trigger": "Close over ma200 and a weekly 9>21 first.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 0.64) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly 9>21 with price over ma200.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "WM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader-grade composites: `sc_momentum` 79.6, `energy` 82.4, `flow` 73.7, `structure` 77.9 RANGE, `mp` 86.0 FADING/DECELERATING (default label, R13); from_52w_hi -2.52%, daily 2.9% under the last swing high, weekly HH but LL. ma50 220.49 under ma100 224.47 under ma200 225.71 is a young stack, so 3.",
+   "case": {
+    "for": "Price 240.29 over every average, `energy` 82.4 coiled, rs_rank_pct 62.52.",
+    "against": "Averages still inverted; structure_shift RANGE not BOS; `mp_accel_state` DECELERATING; day_vol 0.6.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 5.31) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close back under ma_100 or `mp` below 70 before a new high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BIPC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Step 1 fails: ma50 37.0 under ma100 38.43 under ma200 40.74, price 39.84 under the 200-day, weekly 9<21, from_52w_hi -21.88%, rs_rank_pct 39.96. `structure` 82.1 and `flow` 88.2 are strong but `energy` 58.0 misses its floor and the trend is not established (C5, C12).",
+   "opposing_case": "`flow` 88.2, `structure` 82.1, `mp_accel_state` ACCELERATING, daily 1.1% under the 20-day high: money is coming in.",
+   "case": {
+    "for": "`flow` 88.2, `structure` 82.1, accelerating `mp`.",
+    "against": "Falling stack, price under ma200, weekly 9<21, `energy` 58.0.",
+    "entry_trigger": "Close over ma200 40.74 with weekly 9>21.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 1.01) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Weekly 9>21 and a close over ma200.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "ADMA",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Rebound, not an established uptrend: from_52w_hi -35.28%, ret_12m -10.33, ma200 10.76 over ma50 10.42. `mp` 93.0 STRONG/ACCELERATING and rs_rank_pct 92.02 are strong, but `flow` 48.7 and `sc_momentum` 69.5 do not confirm, and `structure` 69.5 is middling (C5, C16).",
+   "opposing_case": "`mp` 93.0 STRONG/ACCELERATING, ret_63d 40.17, weekly HH/HL and 4.2% under the 20-week high: a fast leg that may reach a new high.",
+   "case": {
+    "for": "`mp` 93.0 accelerating, rs_rank_pct 92.02, weekly HH/HL.",
+    "against": "35.28% under the high, `flow` 48.7, `sc_momentum` 69.5.",
+    "entry_trigger": "A close above the weekly high with `flow` over 60.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 0.66) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`flow` over 60 and a weekly new high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "XEL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not a leader: rs_rank_pct 46.22, ma50 75.21 under ma100 77.14 under ma200 78.42, weekly swing LH/LL, `mp` 76.0 FADING/DECELERATING, `flow` 57.9, `sc_momentum` 68.9. `structure` 82.1 ABOVE_STRUCTURE alone does not make a leader (C12).",
+   "opposing_case": "`structure` 82.1, `elder` 9.0, price 81.1 over all averages and 0.8% under the 20-day high: a Utilities stack is turning up.",
+   "case": {
+    "for": "`structure` 82.1 and price over every average.",
+    "against": "Inverted stack, rs_rank_pct 46.22, `mp` decelerating, `flow` 57.9.",
+    "entry_trigger": "Weekly 9>21 and ma50 over ma200 before a new high.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 1.53) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The stack turning up with a new 52-week high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "EBAY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Held long 150 @ 122.9178, unrealised -35.67: C4 forbids adding into a loss, and the engines are soft: `flow` 46.0, `mp` 68.0 FADING/DECELERATING, `sc_momentum` 67.1, `structure` 74.0 RANGE (not BOS), `elder` 4.0 INTERRUPTED (advisory). Trend is intact (stack aligned, 4.0% under the high), so this is a no-add, not a danger signal.",
+   "opposing_case": "Weekly and daily HH/HL, `energy` 83.0 with squeeze_score 12.5, rs LEADER, price above vwap14 121.22 and 4.0% under the 20-day high.",
+   "case": {
+    "for": "Uptrend stack (ma20 121.28, ma50 113.61, ma200 105.12); `energy` 83.0.",
+    "against": "`flow` 46.0, `mp` decelerating, held at a small loss (C4), structure_shift RANGE.",
+    "entry_trigger": "No add until price is profitable and closes above pivot_high (C6).",
+    "wrong_if": "Daily close under ma_20, or a 1.5 ATR fade (atr 3.76) from a day's high on the held lot.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close above the last swing high with `flow` above 60.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "GPN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Leader in an aligned uptrend: `structure` 87.2 RANGE, `mp` 97.0 STRONG/DECELERATING, `flow` 78.9, `sc_momentum` 82.7; from_52w_hi -1.34%, daily 1.1% under the last swing high. Waiting for the new high; a held name may be added only on strength (C6).",
+   "self_counter": "Weakest: structure_shift RANGE not BOS, `mp_accel_state` DECELERATING, `sma_distance_pct` 14.94, and the 1-hour chart sits under its EMA9 at 25% of the day's range.",
+   "case": {
+    "for": "C5: uptrend, 1.1% reaction, rs_rank_pct 90.17; all five engines clear.",
+    "against": "No BOS yet, decelerating `mp`, a weak hourly close.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 3.58) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` below 85 or a close back under ma_20 90.23.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "Danger signal fired: run_10d -19.66%, price under ma20 119.17 (`sma_distance_pct` -3.25), from_52w_hi -19.66%, weekly and daily under EMA9. `sc_momentum` 28.1, `structure` 25.0, `mp` 3.0, `flow` 33.0 all collapsed. Held long at -253.63 is an EXIT-CASE (C3, C4, C7); never add.",
+   "opposing_case": "rs_rank_pct 96.22, ret_6m 83.69 and price still over ma100 99.21 and ma200 78.46; weekly HH/HL could hold as a normal reaction.",
+   "case": {
+    "for": "Long-term stack still up; a reaction can end at ma100.",
+    "against": "A 19.66% drop in 10 days, `structure` 25.0, `mp` 3.0: abnormal, not normal (C8).",
+    "entry_trigger": "None; a new base and a fresh high would be needed.",
+    "wrong_if": "Wrong if price reclaims ma20 119.17 on volume within 3 sessions.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A daily close back over ma20 with `structure` over 50.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "As a long it fails: `structure` 14.0 BEARISH_CHOCH, `mp` 0.0, `sc_momentum` 27.8, `flow` 47.0, price under ma20 142.88 and ma50 149.13, weekly 9<21 with no clear swing structure, 15.9% under the daily swing high. The held short (-68, +24.59) is the PM's book, not a long idea.",
+   "opposing_case": "The held short is working and `elder` 5.0 ACCUMULATION_BASE with price above vwap14 139.34 and the 1-hour 9>21 shows a bounce is possible.",
+   "case": {
+    "for": "A bounce off the lows; hourly 9>21; short squeezes happen.",
+    "against": "CHoCH, `mp` 0.0, `structure` 14.0: the up-structure failed.",
+    "entry_trigger": "None as a long; a new swing high and BOS needed.",
+    "wrong_if": "Wrong if price closes over ma50 149.13 with structure_shift turning bullish.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A BULLISH_BOS and `structure` above 50.",
+    "cannot_see": [
+     "fill difficulty",
+     "ma200 history"
+    ]
+   }
+  },
+  {
+   "ticker": "AJG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Aligned uptrend (ma20 270.04, ma50 251.06, ma200 233.23), `structure` 78.9 ABOVE_STRUCTURE, `mp` 89.0 FADING/DECELERATING (default label, R13), `flow` 76.3, `sc_momentum` 76.9; from_52w_hi -2.21%, daily 4.2% under the last swing high. A 4.2% reaction is normal (C8) but the high is not yet taken.",
+   "case": {
+    "for": "Weekly and daily HH/HL; rs_rank_pct 89.16; all engines clear.",
+    "against": "`mp_accel_state` DECELERATING, day_vol 0.67, 4.2% from the trigger.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 8.13) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` below 75 before the new high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADSK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Recovery, not an established uptrend: from_52w_hi -16.19%, ret_12m -12.96, ma200 233.82 over ma50 233.31 (flat stack), weekly 6.9% under the high. `structure` 83.2 BULLISH_BOS is real but `mp` 80.0 FADING/FLAT and `sc_momentum` 76.6 are not leader-grade (C5, C12).",
+   "opposing_case": "BOS, `flow` 75.0, rs LEADER, `subcomponents.energy.squeeze_score` 8.5 coil and price 11.44% over the 50-day.",
+   "case": {
+    "for": "BOS through a confirmed pivot; `flow` 75.0.",
+    "against": "16.19% under the high, flat 50/200, `mp` 80.0 flat.",
+    "entry_trigger": "Close over the weekly high with ma50 clearly over ma200.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 8.87) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly higher high and `mp` accelerating.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "TSN",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not a leader: rs_rank_pct 26.97, ret_6m -10.49, from_52w_hi -12.92%, ma50 54.18 under ma100 56.03 under ma200 59.54 with price 59.87 at the 200-day. `structure` 68.4 (no shift read), `mp` 86.0 FADING/DECELERATING, `flow` 82.9, `sc_momentum` 76.2 is a rally inside a falling stack (C12, C18).",
+   "opposing_case": "`flow` 82.9 and `sc_momentum` 76.2 are strong, daily HH/HL, 2.8% under the 20-day high.",
+   "case": {
+    "for": "`flow` 82.9, daily HH/HL.",
+    "against": "Falling stack, rs_rank_pct 26.97, weekly 9<21.",
+    "entry_trigger": "Close clearly over ma200 59.54 with ma50 turning up.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 1.38) from the day's high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A weekly 9>21 and rs_rank_pct above 60.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "REPL",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "The engines disagree: `mp` 100.0 STRONG/ACCELERATING against `flow` 38.2, `subcomponents.flow.ext_score` -5.0, `subcomponents.flow.ha_quality_count` 1.0 and `sc_momentum` 68.3. Price is in a reaction (7.5% under the 20-day high, 1-hour at 1% of range). Extension alone is a weight (R27); the poor flow and candles carry this.",
+   "opposing_case": "rs_rank_pct 99.83, ret_6m 310.94, `mp` 100.0, `structure` 74.7 and a leader's reaction that C8 calls normal.",
+   "case": {
+    "for": "Best relative strength in the room; `mp` 100.0 accelerating.",
+    "against": "`flow` 38.2, ext_score -5.0, ha_quality_count 1.0, a 57.5% extension over the swing high.",
+    "entry_trigger": "Close above pivot_high-equivalent (20-day high) with `flow` over 55.",
+    "wrong_if": "A 2 ATR fade (atr 1.31) from a day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "`flow` rising above 55 and a new high on volume.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "SGRY",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "New high without sponsorship: day_vol 0.35, `flow` 40.8, `sc_momentum` 65.0, `mp` 96.0 FADING/DECELERATING, `subcomponents.flow.accum_score` 1.5. `sma_distance_pct` 58.79 and run with no normal reaction (daily 14.1% above the last swing high) means no C5 pullback-then-high sequence (C5).",
+   "opposing_case": "rs_rank_pct 96.55, ret_63d 75.51, `structure` 70.9 ABOVE_STRUCTURE, adx 61.24, and 2.1% under both highs: a leader in strong trend.",
+   "challenge_reply": "The relative-strength readings are real price action (C2), so I read the strength as genuine. But the composites do not back it: `sc_momentum` 65.0 and `flow` 40.8 on day_vol 0.35. I act on price, and price has not made the new closing high on volume.",
+   "case": {
+    "for": "Strong relative strength; weekly and daily 2.1% under highs.",
+    "against": "day_vol 0.35, `flow` 40.8, `sc_momentum` 65.0, decelerating `mp`.",
+    "entry_trigger": "Closing high on 1.2x volume with `flow` over 55.",
+    "wrong_if": "As a long, a 2 ATR fade (atr 0.81) from the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "day_vol above 1.2 on the next high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Leader 1.2% under both the 20-day and 20-week highs: `structure` 86.7 ABOVE_STRUCTURE, `mp` 100.0 FADING/FLAT (default label, R13), `flow` 84.2, `sc_momentum` 82.3; aligned stack. A new high after a normal 1.2% reaction is the C5 entry.",
+   "self_counter": "Weakest: `sma_distance_pct` 39.29, exhaustion_score 7.0, from_52w_hi -7.49%, and `mp_accel_state` FLAT.",
+   "case": {
+    "for": "All engines clear; rs_rank_pct 96.05; `mp` 100.0.",
+    "against": "Extension 39.29% over the 50-day, exhaustion_score 7.0, `mp` flat.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 1.39) or close under bar_low after a red bar.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`mp` below 90 or exhaustion_score under 5.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "AXGN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "New-high leader on volume: day_vol 2.42, `subcomponents.flow.ext_score` 5.0 breakout credit, `structure` 89.5, `mp` 97.0 STRONG/FLAT, `flow` 77.6, `sc_momentum` 81.0; from_52w_hi 0.0%, 1.8% under the 20-day high. Extended (ext_atr20 5.01) so 4.",
+   "self_counter": "Weakest: `subcomponents.flow.accum_score` 0.0, `sma_distance_pct` 36.51, run_10d 19.05%, `mp_accel_state` FLAT.",
+   "case": {
+    "for": "C16 new high on volume 2.42x; rs_rank_pct 88.4; all engines clear.",
+    "against": "accum_score 0.0, extension 36.51%, no pullback.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 2.86) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Volume drying up on the next high or `mp` turning down.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LQDA",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Up-structure failed: structure_shift BEARISH_CHOCH, `structure` 33.7, weekly LH/LL 26.1% under the last swing high, from_52w_hi -39.35%, ma50 49.42 under ma100 64.15. `sc_momentum` 57.3, `flow` 51.3, `mp` 71.0 FADING/DECELERATING. A bounce off a low, not a leader at a high (C5, C16).",
+   "opposing_case": "rs_rank_pct only 36.47 but excess 63.94 in 20 days, `elder` 10.0, daily HH/HL 2.8% under the 20-day high: a violent recovery.",
+   "case": {
+    "for": "Daily HH/HL, `energy` 69.7, a sharp rebound.",
+    "against": "CHoCH, `structure` 33.7, weekly LH/LL, 39.35% under the high.",
+    "entry_trigger": "A BULLISH_BOS above the last swing high first.",
+    "wrong_if": "As a long, a 1.5 ATR fade (atr 4.02) from the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "structure_shift turning BULLISH_BOS and `structure` above 55.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "BOBS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Fresh leader: `flow` 96.1, `structure` 87.4 ABOVE_STRUCTURE, `mp` 97.0 FADING/ACCELERATING, `sc_momentum` 83.6, `subcomponents.flow.ext_score` 3.0 breakout credit; 1.6% under the 20-day and weekly highs. A new listing: no 52-week high and no 200-day exist, and `energy` 59.7 sits under its 60 floor, so 3.",
+   "case": {
+    "for": "Strong money flow, daily and weekly near highs, rs_rank_pct 95.13.",
+    "against": "Short history (from_52w_hi and ma200 are None), `energy` 59.7, extension 35.71% over the 50-day.",
+    "entry_trigger": "Daily close above bar_high with volume 1.2x normal, then a new high.",
+    "wrong_if": "2 ATR fade off a day's high (atr 1.04) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close under ma_20 or `flow` below 70.",
+    "cannot_see": [
+     "52-week high",
+     "ma200",
+     "fill difficulty"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BETA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Weekly is not an uptrend: weekly swing LH/LL, 12.6% above the last weekly swing high but 4.4% under the 20-week high, from_52w_hi -23.02%, ret_12m -18.64. `mp` 97.0 STRONG/ACCELERATING and `sc_momentum` 78.6 are strong but `subcomponents.flow.ext_score` -5.0 flags climax, and the 1-hour sits at 0% of the day's range.",
+   "opposing_case": "`mp` 97.0 accelerating, `flow` 75.0, rs_rank_pct 90.25, run_10d 38.74%: a leader's first leg.",
+   "case": {
+    "for": "`mp` 97.0 accelerating, `flow` 75.0, daily HH/HL.",
+    "against": "Weekly LH/LL, 23.02% under the high, ext_score -5.0, a weak hourly close.",
+    "entry_trigger": "Weekly close above the 20-week high.",
+    "wrong_if": "As a long, a 2 ATR fade (atr 1.76) from the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A weekly new high and ext_score back above 0.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "ARHS",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader in an aligned trend: `mp` 100.0 FADING/ACCELERATING (default label, R13), `structure` 79.4 ABOVE_STRUCTURE, `sc_momentum` 75.9, rs_rank_pct 99.24; weekly 4.0% under the high. `flow` 61.8, `subcomponents.flow.ext_score` -5.0 and `sma_distance_pct` 41.75 hold it at 3.",
+   "case": {
+    "for": "C16: leader 3.06% under its high after a normal reaction; weekly and daily HH/HL.",
+    "against": "`flow` 61.8, ext_score -5.0 (stretch penalty), the 1-hour under EMA9 at 6% of range, extension 41.75%.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 0.7) or close under ma_20.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "ext_score staying at -5.0 on a new high, or `mp` turning DECELERATING.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "FLY",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "No uptrend: ma20 18.89 under ma50 20.55 under ma100 22.07 under ma200 26.82, from_52w_hi -54.75%, ret_6m -32.41, rs_rank_pct 11.01, weekly 9<21 with LH/LL. `mp` 87.0 STRONG, `flow` 98.7 and `sc_momentum` 81.2 are a violent bounce (run_10d 34.06%), a natural rally inside a downtrend (C5, C16, C18).",
+   "opposing_case": "`flow` 98.7, `mp` 87.0 STRONG/ACCELERATING, `sc_momentum` 81.2, `elder` 10.0 and daily 0.4% under the 20-day high: a strong volume-led bounce.",
+   "case": {
+    "for": "`flow` 98.7, `mp` accelerating, near the daily high.",
+    "against": "Inverted stack, 54.75% under the high, rs_rank_pct 11.01, weekly LH/LL.",
+    "entry_trigger": "Close over ma200 26.82 with the stack turning up.",
+    "wrong_if": "As a long, a 2 ATR fade (atr 2.02) from the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Price over ma100 22.07 and a weekly 9>21.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "APP",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Trend state is a natural rally in a downtrend, not an upward trend: ma20 292.5 under ma50 298.73 under ma100 350.41 under ma200 407.34, weekly 9<21 with LH/LL, from_52w_hi -44.82%, ret_12m -37.85. `structure` 84.2, `mp` 97.0, `flow` 88.2 and `sc_momentum` 84.6 are real but price (404.77) has not cleared ma200.",
+   "opposing_case": "AQE rank 5, `elder` 10.0 SUSTAINED, `mp` 97.0 STRONG/ACCELERATING, 2.1% under the 20-day high; a rally of 55.7% in 10 days that clears 407.34 would flip it.",
+   "challenge_reply": "Reconcile `sc_momentum` 84.6 with ma50 298.73 under ma200 407.34: the composite measures rate of change over weeks; my read is trend state. The weekly is LH/LL and the pivotal level is ma200 407.34, which price has not cleared by a margin. Until it does I stand aside (R27 weight, not a veto, but the trend is not established).",
+   "case": {
+    "for": "`mp` 97.0 accelerating, `flow` 88.2, a 55.7% leg, price 2.1% under the daily high.",
+    "against": "Falling stack, weekly LH/LL, 44.82% under the high, price under ma200.",
+    "entry_trigger": "Daily close above ma200 407.34 and a weekly higher high.",
+    "wrong_if": "As a long, a 2 ATR fade (atr 22.36) from the day's high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A daily close clearly above ma200 407.34 on volume.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   }
+  },
+  {
+   "ticker": "PCOR",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Best structure in the room: `structure` 97.9 ABOVE_STRUCTURE, `mp` 96.0 STRONG/ACCELERATING, `flow` 85.5, `sc_momentum` 85.1; from_52w_hi -1.69%, daily 2.9% under the last swing high, weekly 2.9% under. Aligned stack (ma20 65.6, ma50 58.39, ma200 53.64).",
+   "self_counter": "Weakest: day_vol 0.58 and run_10d 24.93% with `sma_distance_pct` 32.77: extended and not on volume.",
+   "challenge_reply": "Extension finding: thin day_vol 0.58 is a weight (R27); the trigger is a new high on volume 1.2x.",
+   "case": {
+    "for": "C5: uptrend, 2.9% normal reaction, rs_rank_pct 94.45; `subcomponents.structure.base_score` 15.0.",
+    "against": "day_vol 0.58, extension 32.77%, `elder` 7.0 (advisory).",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 2.92) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close under the reaction low or `mp` below 85.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ICE",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "At a new high on above-normal volume: from_52w_hi 0.0%, day_vol 1.17, 0.1% under the 20-day high, 1-hour at the 20-hour high. `structure` 83.2 ABOVE_STRUCTURE, `mp` 93.0 STRONG/DECELERATING, `flow` 73.7, `sc_momentum` 76.2; aligned stack.",
+   "self_counter": "Weakest: `mp_accel_state` DECELERATING, `energy` 63.0 near its floor, `sma_distance_pct` 13.12, ext_atr20 3.48.",
+   "case": {
+    "for": "C16 new high with volume; weekly and daily HH/HL; all engines clear.",
+    "against": "Decelerating `mp`, `energy` 63.0, extension.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 4.19) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`mp` below 80 or day_vol under 0.8 on the next high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ADP",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Aligned uptrend (ma20 297.16, ma50 280.31, ma200 242.17), from_52w_hi -0.51%, daily 1.5% under the last swing high. `structure` 74.7 RANGE, `energy` 79.0, `flow` 73.7, `sc_momentum` 76.0; `mp` 76.0 FADING/DECELERATING (default label, R13) keeps it at 3.",
+   "case": {
+    "for": "Weekly and daily HH/HL, 1.5% reaction, `energy` 79.0 with squeeze_score 8.5.",
+    "against": "structure_shift RANGE not BOS, `mp_accel_state` DECELERATING, day_vol 0.65.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 7.39) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`mp` under 65 before the high.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "New-high leader: from_52w_hi 0.0%, `structure` 81.1 ABOVE_STRUCTURE, `mp` 87.0 STRONG/ACCELERATING, `sc_momentum` 75.3, rs_rank_pct 98.07; 0.9% under the 20-day high. `flow` 68.4 and day_vol 0.51 hold it at 3.",
+   "challenge_reply": "Extension finding: at the high on day_vol 0.51 is a weight (R27); I need a new closing high on 1.2x volume.",
+   "case": {
+    "for": "C16 leader at the high; weekly 1.0% under; `mp` accelerating.",
+    "against": "day_vol 0.51, `flow` 68.4, `sma_distance_pct` 24.16, run_10d 35.83%.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 1.18) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Another high on day_vol under 0.6.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+3pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LTH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Best base read in the set: `structure` 94.7 ABOVE_STRUCTURE (`subcomponents.structure.base_score` 15.0), `mp` 93.0 FADING/FLAT (default label, R13), `sc_momentum` 75.2; from_52w_hi -0.48%, daily 2.2% under the last swing high. `flow` 56.6 misses the flow floor, so 3.",
+   "case": {
+    "for": "C5: aligned uptrend, 2.2% normal reaction, rs_rank_pct 86.13.",
+    "against": "`flow` 56.6 below the gate, `mp_accel_state` FLAT, day_vol 0.84.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 1.72) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "`flow` rising above 65 would lift it; `mp` below 80 would end it.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TGTX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "At its high (from_52w_hi 0.0%) in an aligned trend: `mp` 87.0 STRONG/ACCELERATING, `flow` 76.3, `sc_momentum` 74.2, rs_rank_pct 91.51; weekly 3.3% under the high. `structure` 66.3 is the weak engine, so 3.",
+   "case": {
+    "for": "C16 leader at the high; weekly and daily HH/HL; `mp` accelerating.",
+    "against": "`structure` 66.3, `sc_momentum` 74.2 mid-pack, a 3.3% daily reaction not yet recovered.",
+    "entry_trigger": "Daily close above high_52w_close on 1.2x volume.",
+    "wrong_if": "1.5 ATR fade off a day's high (atr 3.26) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "`mp` below 75 or a close under ma_20 57.99.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "fade_atr_ge:1.5"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MSI",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "The cleanest leader: `mp` 100.0 STRONG/ACCELERATING, `structure` 84.2, `flow` 88.2, `energy` 76.5, `sc_momentum` 86.2 (AQE rank 2), all engines clear; from_52w_hi 0.0%, daily and weekly 2.4% under the high is a normal reaction (C8). Capped at 4 by the DOWNTREND market weather and ext_atr20 3.8.",
+   "self_counter": "Weakest: day_vol 0.73, extension (`sma_distance_pct` 13.75, run_10d 10.72%) and a market weather reading of DOWNTREND with SPY and QQQ buy signals off.",
+   "case": {
+    "for": "C5 in full: uptrend, 2.4% reaction, rs_rank_pct 83.03, `elder` 10.0 SUSTAINED.",
+    "against": "The market key is down (Valen DOWNTREND), day_vol 0.73, extension.",
+    "entry_trigger": "Daily close above pivot_high on 1.2x volume.",
+    "wrong_if": "2 ATR fade off a day's high (atr 11.86) or close under ma_20.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close under ma_20 490.13 or `mp` below 85.",
+    "cannot_see": [
+     "fill difficulty",
+     "index market key"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LION",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader at the daily high: `structure` 94.7 ABOVE_STRUCTURE, `mp` 97.0 STRONG/ACCELERATING, `flow` 84.2, `sc_momentum` 82.5; 1-hour at the 20-hour high, daily 0.1% under the 20-day high. Weekly is 12.3% under its high and from_52w_hi -11.52%, `energy` 63.0 near its floor, day_vol 0.48: so 3.",
+   "case": {
+    "for": "Aligned stack (ma20 12.57, ma50 11.73, ma200 11.79); rs_rank_pct 68.99; all engines clear.",
+    "against": "Weekly swing LH but HL, 12.3% under the weekly high, day_vol 0.48, `energy` 63.0.",
+    "entry_trigger": "Daily close above bar_high, then a weekly close over the 20-week high.",
+    "wrong_if": "2 ATR fade off a day's high (atr 0.56) or close under ma_20.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Failing to take the weekly high within 5 sessions.",
+    "cannot_see": [
+     "fill difficulty",
+     "pivotal point level"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of4.json",
+   "bytes": 17401,
+   "votes": 14,
+   "sha256": "15813f669072"
+  },
+  {
+   "file": "livermore.part2of4.json",
+   "bytes": 14527,
+   "votes": 14,
+   "sha256": "284001af4d25"
+  },
+  {
+   "file": "livermore.part3of4.json",
+   "bytes": 15015,
+   "votes": 14,
+   "sha256": "daafa785b8d3"
+  },
+  {
+   "file": "livermore.part4of4.json",
+   "bytes": 12865,
+   "votes": 11,
+   "sha256": "4d20031586d4"
+  }
+ ]
+}

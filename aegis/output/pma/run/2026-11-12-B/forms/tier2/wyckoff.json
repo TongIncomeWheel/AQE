@@ -1,0 +1,58 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Price pulls back to within 0.25 ATR of the broken Creek, then I buy strength with a buy stop."
+   },
+   "wrong_if": "A daily close back under structure_shift_ref (price inside the old range), or choch_bearish.",
+   "market_void": null,
+   "reason": "Trend: W swing_class HH/HL, D swing_class HH/HL, D close 226.93 is 13.2% above the last swing high, away from value. H1 close_vs_ema9 below, so no chase (C3, C15). Wait for the test of the Creek (C7)."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Price backs up to within 0.25 ATR of the broken Creek and holds, then a buy stop above the trigger bar."
+   },
+   "wrong_if": "A daily close back under structure_shift_ref, inside the old range: the break was an upthrust.",
+   "market_void": null,
+   "reason": "W swing_class HH/HL and H1 swing_class HH/HL, but D swing_class LH/LL with D dist_to_20bar_high_pct 1.87: at the edge, not in the test zone. Break not yet proven by a hold (C5), so I wait (C3, C15)."
+  },
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:pvp_vah",
+    "tf": "D",
+    "plain": "Price comes back to within 0.25 ATR of the value area high and holds, then a buy stop above the trigger bar."
+   },
+   "wrong_if": "A daily close back under structure_shift_ref: the break was an upthrust and price is back inside the old range.",
+   "market_void": null,
+   "reason": "Trend: W swing_class HH/HL, D dist_to_20bar_high_pct 0.63, H1 pos_in_day_range_pct 93.8. D swing_class LH/LL and a spike this size can be climactic (C14), so I wait for a hold at value (C7, C11)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of2.json",
+   "bytes": 1182,
+   "sha256": "f2e1019f9457"
+  },
+  {
+   "file": "wyckoff.part2of2.json",
+   "bytes": 638,
+   "sha256": "01937389ab0f"
+  }
+ ]
+}

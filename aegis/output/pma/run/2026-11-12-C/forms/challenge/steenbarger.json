@@ -1,0 +1,193 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-12",
+ "seat_kind": "challenge",
+ "names_read": 53,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "\"date\": \"2026-11-12\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"ROIV\", \"nomination_count\": 0"},
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C15", "C17"],
+   "claim": "18 of the 53 room names are Healthcare (ROIV, TMO, XERS, ERAS, AMRX, EW, ABBV, HUM, BTSG, CAH, COR, ADMA, REPL, SGRY, VRDN, AXGN, LQDA, TGTX). One sector bet is entering the vote under many tickers, so agreement across them is one read repeated, not eighteen independent reads. Deciders should say which Healthcare names they would hold together.",
+   "evidence": "gics_sector_name Healthcare on 18 of 53 names. Next largest: Technology 7 (KVYO, DUOL, RBRK, ADSK, APP, PCOR, MSI), Industrials 7 (CTAS, FLYW, WM, SPCX, BETA, FLY, ADP).",
+   "addressed_to": "oneil, minervini, seow, livermore"
+  },
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "The tally credits nominations to one seat only: aqe-quant, 6 names, each nomination_count 1. Support for those 6 traces to one set of AQE composites, so a decider repeating the same composite number is not independent confirmation. Independent confirmation has to come from the decider's own method.",
+   "evidence": "nomination_count 1, seats aqe-quant: MSI (conviction 5), EW (4), MGNI (4), PCOR (4), FLYW (3), LION (3). The other 47 names show nomination_count 0.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C16"],
+   "claim": "17 names carry the NOMINATED door while their nomination_count is 0, so the packet does not show who nominated them or how. I cannot test the pattern behind those names and have not counted them as independent support. The Chair should confirm what NOMINATED means before the board is read.",
+   "evidence": "doors NOMINATED with nomination_count 0: ERAS, ABBV, TTWO, HUM, BTSG, BRX, CAH, COR, KVYO, DTE, CNK, KR, DUOL, CRK, WM, BIPC, ADMA, XEL (list in packet). Only 6 names show nomination_count above 0.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C17", "C15"],
+   "claim": "The doors are not independent lenses. STRENGTH, AQE_LEADER, ELDER+LENS, LENS and STRONG_SEAT all read the same five engines that sc_momentum already averages (flow, energy, structure, mp, elder). A name on four doors is one reading counted four times, and a decider who cites door count is citing breadth, not depth.",
+   "evidence": "ROIV doors SEATS, ELDER+LENS, STRENGTH, PM_LENS; MGNI STRENGTH, AQE_LEADER, PM_LENS, NOMINATED; LQDA ELDER+LENS, LENS, STRENGTH, STRONG_SEAT. sc_momentum is the weighted average of flow, energy, structure, mp, elder (card field meaning).",
+   "addressed_to": "elder-lens, oneil, minervini, seow"
+  },
+  {
+   "scope": "committee",
+   "kind": "EXTENSION",
+   "ticker": null,
+   "canon_ref": ["C12"],
+   "claim": "14 names sit at their 52-week high and 10 of them did so on below-normal participation. Price at the high without volume behind it is a weaker read than the composite scores suggest. Deciders should read participation by condition, not in aggregate.",
+   "evidence": "pct_from_52w_high 0.0 on 14 names. day_vol below 1: ROIV 0.98, AMRX 0.57, EW 0.87, MGNI 0.91, ABBV 0.57, CAH 0.51, CNK 0.48, PRCH 0.51, TGTX 0.98, MSI 0.73. At or above 1: XERS 1.14, HUM 1.72, AXGN 2.42, ICE 1.17.",
+   "addressed_to": "wyckoff, livermore, raschke"
+  },
+  {
+   "scope": "XERS",
+   "kind": "EXTENSION",
+   "ticker": "XERS",
+   "canon_ref": ["C5", "C12"],
+   "claim": "XERS is at its high after a very large lead over the market. The case must say how far price is from its own 50-day average and whether the thesis is continuation or the spike itself. The ma_50, ma_100 and ma_200 stack is rising, so context is present; the open question is how extended the entry is.",
+   "evidence": "pct_from_52w_high 0.0; rs_vs_spy 87.66; excess_return 70.36; roc_zscore 2.96; ma_50 10.08, ma_100 9.2, ma_200 7.74; day_vol 1.14; sc_momentum 85.2.",
+   "addressed_to": "oneil, minervini, livermore"
+  },
+  {
+   "scope": "REPL",
+   "kind": "EXTENSION",
+   "ticker": "REPL",
+   "canon_ref": ["C12", "C16"],
+   "claim": "REPL shows an extreme one-month move with the engine's own extension adjustment negative and almost no clean candles. Fields point in two directions (strong persistence, poor candle quality). A decider should either explain the conflict or stand aside.",
+   "evidence": "excess_return 92.49; rs_vs_spy 40.79; subcomponents.flow.ext_score -5.0; subcomponents.flow.ha_quality_count 1.0; sc_momentum 68.3; lens_warnings 2; pct_from_52w_high -6.44.",
+   "addressed_to": "seow, raschke, wyckoff"
+  },
+  {
+   "scope": "SGRY",
+   "kind": "EXTENSION",
+   "ticker": "SGRY",
+   "canon_ref": ["C12", "C17"],
+   "claim": "SGRY's relative-strength readings are very large while the day's participation is the thinnest in the room and sc_momentum is below most of the board. The strength readings and the participation reading disagree; the case needs one deep reason, not a pile of strength fields.",
+   "evidence": "rs_vs_spy 88.21; excess_return 81.04; day_vol 0.35; sc_momentum 65.0; pct_from_52w_high -0.26; ma_50 16.79, ma_100 16.11, ma_200 14.97.",
+   "addressed_to": "oneil, wyckoff, livermore"
+  },
+  {
+   "scope": "CNK",
+   "kind": "EXTENSION",
+   "ticker": "CNK",
+   "canon_ref": ["C12"],
+   "claim": "CNK is at its high on the lowest day_vol in the room while 2 of 5 oscillators confirm bearish divergence, so the quality flag bearish_divergence applies. BTSG, CAH and ADP also carry BEARISH with div_bear_count 1; CNK is the strongest case. The case must say what price and volume would have to do to clear it.",
+   "evidence": "div_state BEARISH; div_bear_count 2; pct_from_52w_high 0.0; day_vol 0.48; sc_momentum 73.3; ma_50 37.48.",
+   "addressed_to": "wyckoff, raschke, elder-lens"
+  },
+  {
+   "scope": "Utilities",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C5"],
+   "claim": "DTE, BIPC and XEL all have the 50-day average below the 100-day below the 200-day. A momentum or pullback pattern inside a falling longer-term stack is a pattern in isolation until the case names the longer-timeframe trend it is meant to exploit. Three utilities also add to the same-sector overlap.",
+   "evidence": "DTE ma_50 130.39, ma_100 137.39, ma_200 141.01; BIPC ma_50 37.0, ma_100 38.43, ma_200 40.74; XEL ma_50 75.21, ma_100 77.14, ma_200 78.42. DTE and BIPC lane MOMENTUM.",
+   "addressed_to": "minervini, oneil, seow"
+  },
+  {
+   "scope": "APP",
+   "kind": "PROCESS",
+   "ticker": "APP",
+   "canon_ref": ["C5", "C16"],
+   "claim": "APP has the highest-ranked momentum read of the inverted-stack names, yet its averages are stacked downward and it sits far under its high. The momentum composite and the longer-timeframe context disagree. The case must name its higher-timeframe context or the name stands aside.",
+   "evidence": "sc_momentum 84.6; ma_50 298.73, ma_100 350.41, ma_200 407.34; pct_from_52w_high -44.82; rs_rank_pct 26.43; div_state BULLISH.",
+   "addressed_to": "minervini, oneil, livermore"
+  },
+  {
+   "scope": "FLY",
+   "kind": "PROCESS",
+   "ticker": "FLY",
+   "canon_ref": ["C5", "C16"],
+   "claim": "FLY is in the MOMENTUM lane with a high composite, but its averages are stacked downward, it is far under its high and its relative-strength rank is the lowest in the room. Same disagreement as APP: the composite is high and the longer-timeframe context is weak. The case must name that context.",
+   "evidence": "sc_momentum 81.2; ma_50 20.55, ma_100 22.07, ma_200 26.82; pct_from_52w_high -54.75; rs_rank_pct 11.01; day_vol 1.83.",
+   "addressed_to": "minervini, oneil, seow"
+  },
+  {
+   "scope": "LQDA",
+   "kind": "PROCESS",
+   "ticker": "LQDA",
+   "canon_ref": ["C16", "C5"],
+   "claim": "LQDA is on the STRENGTH door and STRONG_SEAT while its structure read has already failed: the up-structure anchor broke and the 50-day average is under the 100-day. Fields conflict, which is an abstain condition. A decider who backs it must answer the failed structure read first.",
+   "evidence": "structure_shift BEARISH_CHOCH; structure 33.7; ma_50 49.42, ma_100 64.15, ma_200 54.56; rs_rank_pct 36.47; sc_momentum 57.3; excess_return 63.94; lens_warnings 2.",
+   "addressed_to": "elder-lens, wyckoff, raschke"
+  },
+  {
+   "scope": "ERAS",
+   "kind": "PROCESS",
+   "ticker": "ERAS",
+   "canon_ref": ["C16", "C5"],
+   "claim": "ERAS shows a very large volume day beside a weak structure read and an unaligned average stack. This looks like a single-day event. I have no event field in the packet, so I cannot rule it in or out. Momentum and structure conflict; the case needs a stated reason and the event question answered.",
+   "evidence": "day_vol 2.96; structure 40.0; sc_momentum 72.8; ma_50 14.98, ma_100 16.6, ma_200 15.2; pct_from_52w_high -25.23; lens_warnings 0.",
+   "addressed_to": "livermore, wyckoff, oneil"
+  },
+  {
+   "scope": "held",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C16", "C7"],
+   "claim": "Two held names read weak on every engine I can see. RBRK has 4 of 5 oscillators confirming bearish divergence; SPCX has a failed structure read and no 200-day average yet. The held review should state the invalidation observable for each in the seat's own words, not rely on the engine level.",
+   "evidence": "RBRK div_state BEARISH; div_bear_count 4; structure 25.0; sc_momentum 28.1. SPCX structure_shift BEARISH_CHOCH; structure 14.0; sc_momentum 27.8; ma_200 null.",
+   "addressed_to": "wyckoff, raschke, minervini"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C2"],
+   "claim": "Nothing in the packet measures forward-return separation for sc_momentum or any engine score. Every case leaning on these numbers as edge is UNPROVEN under my test. The fields may be described and used as context, but a decider must find the edge in their own method, not in the composite.",
+   "evidence": "No per-field edge statistic in the seat packet or the AQE indicator sheet. sc_momentum is a weighted average of flow, energy, structure, mp, elder (card). sc_m_gates is null on every row read.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C3", "C4"],
+   "claim": "The packet names no regime or sector-rotation context, so I cannot test any case for a named environment today. Every decider must name the regime their case is valid inside, in their own words. A case with no regime label has no size justification from environment match.",
+   "evidence": "Fields regime and srm are not in the seat packet or the indicator sheet. Packet rows carry only ticker-level fields; the lanes shown are MOMENTUM and PULLBACK.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "oneil", "ticker": "XERS", "class": "EXTENSION", "what_is_owed": "State how far price is from ma_50 10.08 and whether the case is continuation or the spike."},
+  {"seat": "minervini", "ticker": "DTE", "class": "PROCESS", "what_is_owed": "Name the higher-timeframe trend the case exploits given ma_50 130.39 under ma_200 141.01."},
+  {"seat": "minervini", "ticker": "APP", "class": "PROCESS", "what_is_owed": "Reconcile sc_momentum 84.6 with ma_50 298.73 under ma_200 407.34; name the context or stand aside."},
+  {"seat": "wyckoff", "ticker": "CNK", "class": "EXTENSION", "what_is_owed": "Say what price and volume must do to clear div_bear_count 2 with day_vol 0.48 at the high."},
+  {"seat": "elder-lens", "ticker": "LQDA", "class": "PROCESS", "what_is_owed": "Answer structure_shift BEARISH_CHOCH before citing any strength field."},
+  {"seat": "seow", "ticker": "REPL", "class": "EXTENSION", "what_is_owed": "Explain ext_score -5.0 and ha_quality_count 1.0 beside excess_return 92.49, or abstain."},
+  {"seat": "livermore", "ticker": "ERAS", "class": "PROCESS", "what_is_owed": "Say whether day_vol 2.96 is an event day and reconcile structure 40.0 with sc_momentum 72.8."}
+ ],
+ "declarations": [
+  "Challenge only: no nomination and no vote.",
+  "No claim about emotional state is made (R9, C18-C21 are PM-facing).",
+  "Figures are written as field value exactly as the packet and indicator sheet give them.",
+  "Each flagged name is flagged on the named fields only."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Not in the packet; R3 (regime named) cannot be tested before the vote."},
+  {"field": "srm", "impact": "Not in the packet; sector rotation context unavailable to me."},
+  {"field": "forward-return separation", "impact": "No per-field edge statistic is served; every composite is UNPROVEN (R1)."},
+  {"field": "sc_m_gates", "impact": "null on every indicator row read, so the momentum gate result is not available."},
+  {"field": "nomination reasons", "impact": "Packet carries counts and seats only; R4, R5 and R12 cannot be tested on any voice's case."},
+  {"field": "NOMINATED door", "impact": "17 names carry it with nomination_count 0; origin not shown."},
+  {"field": "ma_200", "impact": "null for SPCX and BOBS; long-term context not readable for them."},
+  {"field": "lens_warnings", "impact": "null for EBAY, RBRK, SPCX."},
+  {"field": "pct_from_52w_high", "impact": "null for BOBS and SPCX; extension at the high not readable."},
+  {"field": "rs_rank_pct", "impact": "null for SPCX."},
+  {"field": "structure_shift", "impact": "null for TSN; structure break not readable."},
+  {"field": "subcomponents.pipe", "impact": "null for BOBS and SPCX; pipeline parts not readable."},
+  {"field": "event calendar", "impact": "No event field, so a one-day volume event (ERAS) cannot be ruled in or out."}
+ ]
+}

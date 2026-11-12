@@ -1,0 +1,502 @@
+{
+ "date": "2026-11-12",
+ "chair": "chair",
+ "board_sha256": "275bb10c7fc55114ec1f95c8ff3f29284e689284898dc62c5c9de23a24677739",
+ "decision_sha256": "1ce2b730d01d6c98b1c2ed685b7a4f5c98e9c1392e64ba8bd948bf19cf793888",
+ "tickets": [
+  {
+   "ticker": "TMO",
+   "verdict": "WATCH",
+   "entry_trigger": "An hourly candle closes above yesterday's high, while the last hour sits at 11% of its range.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes above yesterday's high, while the last hour sits at 11% of its range."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 1,
+    "wait": 6,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "raschke: \"Daily close below bar_low of the setup bar or below ma_20.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Coil base: `subcomponents.energy.squeeze_score` 12.5, `energy` 79.0, `structure` 71.6, W and D \" | minervini: \"`energy` 79.0 with `subcomponents.energy.squeeze_score` 12.5 is a full coil under the high (C4 \" | livermore: \"W/D HH/HL, 1.4% under the high; `structure` 71.6, `energy` 79.0 coiled (`subcomponents.energy.s\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "DLTR",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 2,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close below ma_50 123.02, or a break of the 20-day high that fails on day_vol under 1.40.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"LEADER with `structure` 78.9, `subcomponents.structure.base_score` 8.0, `sc_momentum` 80.4, 3.8\" | minervini: \"`flow` 84.2 and `mp` 92.0 show sponsorship and trend, but `subcomponents.energy.squeeze_score` \" | livermore: \"`mp` 92.0 STRONG, `structure` 78.9, `flow` 84.2; D HH/HL, 3.8% under the high is a normal react\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "CTAS",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 2
+   },
+   "wrong_if": "oneil: \"Close below ma_50 207.85, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"LEADER; `structure` 74.7 BULLISH_BOS, 2.7% under 20-day high, D HH/HL. Against: `mp` 80.0 decel\" | minervini: \"`structure` 74.7 BULLISH_BOS, but `subcomponents.energy.squeeze_score` 4.0 is a thin coil and `\" | livermore: \"`structure` 74.7, `energy` 72.3; D HH/HL 2.7% under the high. `mp` 80.0 FADING/DECELERATING and\"",
+   "dissent": [
+    {
+     "voice": "seow",
+     "why": "Fund flow and trend impulse do not confirm. `flow` 59.2, `subcomponents.flow.cmf` 0.07, `elder` 7.0 INTERRUPTED, `sc_m_gate_detail` 9 (flow floor missed). W swing LH/LL breaks my weekly house test (C21)."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "ABBV",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close over the last confirmed pivot high; the break is the position signal.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close over the last confirmed pivot high; the break is the position signal."
+   },
+   "timing_count": {
+    "support": 8,
+    "act_now": 1,
+    "wait": 7,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close below ma_50 274.15, or a break of the 20-day high on thin day_vol.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"LEADER with `subcomponents.energy.squeeze_score` 12.5, `energy` 82.4, `structure` 71.6 BOS, 2.6\" | minervini: \"`energy` 82.4 with `subcomponents.energy.squeeze_score` 12.5 is coiled, and `sc_m_gate_detail` \" | livermore: \"`energy` 82.4 (`subcomponents.energy.squeeze_score` 12.5) and `structure` 71.6; 2.6% under the \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "HUM",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for a daily close above the swing high that then holds outside the range.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above the swing high that then holds outside the range."
+   },
+   "timing_count": {
+    "support": 8,
+    "act_now": 3,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "livermore: \"Fade of 1.5 ATR off a day's high (atr 17.67, my translation) or a close under ma_20.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"Fresh base: `subcomponents.structure.base_score` 15.0, `subcomponents.energy.squeeze_score` 12.\" | minervini: \"`flow` 100.0 and `subcomponents.flow.ext_score` 5.0 show confirmed buying; `energy` 85.7 with `\" | livermore: \"`flow` 100.0, `energy` 85.7, `structure` 82.1; W HH/HL 2.2% under the high. `mp` 48.0 and D swi\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "BTSG",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "oneil: \"Close below ma_50 61.51, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"LEADER; `structure` 84.2, `subcomponents.structure.base_score` 15.0, `mp` 89.0 accelerating, `s\" | minervini: \"`structure` 84.2 and `mp` 89.0 are strong at the high, but `subcomponents.energy.squeeze_score`\" | livermore: \"`structure` 84.2, `mp` 89.0 STRONG, `sc_momentum` 77.4; W/D/H1 above EMA9 stacked, 1.2% under t\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "COR",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 8,
+    "act_now": 3,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"`structure` slips under 60, or close below ma_50 326.47.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"LEADER; `energy` 82.4, `subcomponents.energy.squeeze_score` 8.5, 3.9% under 20-day high, W and \" | minervini: \"`energy` 82.4 with `subcomponents.energy.squeeze_score` 8.5 is coiled and `flow` 78.9 is sound;\" | livermore: \"W and D HH/HL, `energy` 82.4, `flow` 78.9. `structure` 63.2 and `mp` 66.0 DECELERATING are mode\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "WM",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close over the last confirmed pivot high turns RANGE into a break.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close over the last confirmed pivot high turns RANGE into a break."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close below ma_200 225.71, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"LEADER; `structure` 77.9, `energy` 82.4, `subcomponents.energy.squeeze_score` 8.5, 2.9% under 2\" | elder-lens: \"Permission event on the last bar: `elder` 7.0 after 4 (elder_5d 10,7,6,4,7), U&R MET. `energy` \" | seow: \"Swing dip near the 20MA with the break pending. `energy` 82.4, `flow` 73.7, `subcomponents.flow\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Gate fails: 50/100/200 stack inverted (criterion 4, C3). `mp_accel_state` DECELERATING and `subcomponents.pipe.pr_ret_12m` 12.0 show a young advance; `energy` 82.4 and `flow` 73.7 are sound but cannot override the gate."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:elder-lens",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "AJG",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 8,
+    "act_now": 3,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close below ma_50 251.06, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"LEADER; `structure` 78.9, `sc_momentum` 76.9, 4.2% under 20-day high, D HH/HL. Against: `mp` 89\" | minervini: \"`mp` 89.0 and `flow` 76.3 are sound, but `subcomponents.energy.squeeze_score` 0.0 is no coil an\" | livermore: \"`structure` 78.9, `mp` 89.0, `flow` 76.3; D HH/HL, 4.2% under the high and H1 9<21. `mp_accel_s\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "AXGN",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Daily close above the last confirmed pivot high",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 3,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 2
+   },
+   "wrong_if": "livermore: \"Fade of 1.5 ATR off a day's high (my translation of C7) or a close under ma_20.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"`structure` 89.5 and `mp` 97.0 lead; `subcomponents.flow.ext_score` 5.0 is breakout credit with\" | livermore: \"`structure` 89.5, `mp` 97.0 STRONG, `subcomponents.flow.ext_score` 5.0 breakout credit; D HH/HL\" | seow: \"Position system. `structure` 89.5, `mp` 97.0, `elder` 10.0, `flow` 77.6, `subcomponents.flow.cm\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Late: D 11.2% above the last swing high (past C17's 10% line, the same proxy I applied to MGNI and FLYW), sma_dist 36.51%, `subcomponents.structure.base_score` 10.0 short base. `subcomponents.flow.ext_score` 5.0 and day_vol 2.42 are real; `structure` 89.5 and `mp` 97.0 are the run."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "PCOR",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 2,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close below ma_50 58.39, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"Top structure: `structure` 97.9 with `subcomponents.structure.base_score` 15.0, `mp` 96.0, `sc_\" | minervini: \"`structure` 97.9 with `subcomponents.structure.base_score` 15.0 is a formed base; `mp` 96.0 STR\" | livermore: \"`structure` 97.9, `mp` 96.0, `sc_momentum` 85.1; W and D HH/HL, 2.9% under the high. A normal r\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "ICE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Daily close above yesterday's high",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Daily close above yesterday's high"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"Fade of 1.5 ATR off a day's high (my translation of C7) or a close under ma_20.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"LEADER at the high: `structure` 83.2, `mp` 93.0, `sc_momentum` 76.2, D 0.1% under 20-day high; \" | minervini: \"At the high on W, D and H1, 0.1% under the 20-day high: `mp` 93.0 and `structure` 83.2 agree. `\" | livermore: \"`structure` 83.2, `mp` 93.0 STRONG; W/D/H1 HH/HL at the high, 0.1% under it. `energy` 63.0 and \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "ADP",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 8,
+    "act_now": 4,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Close below ma_50 280.31, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"LEADER; `energy` 79.0, `subcomponents.energy.squeeze_score` 8.5, `structure` 74.7 RANGE, D 1.5%\" | minervini: \"`energy` 79.0 with `subcomponents.energy.squeeze_score` 8.5 and `subcomponents.flow.volume_scor\" | livermore: \"`energy` 79.0, `structure` 74.7, `flow` 73.7; W/D/H1 HH/HL, 1.5% under the high. `mp` 76.0 is m\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "PRCH",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy stop above the prior day's high once an hourly bar closes over it.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop above the prior day's high once an hourly bar closes over it."
+   },
+   "timing_count": {
+    "support": 4,
+    "act_now": 4,
+    "wait": 0,
+    "oppose": 1,
+    "abstain": 3
+   },
+   "wrong_if": "wyckoff: \"Daily close under the broken level by half an ATR.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "livermore: \"`structure` 81.1, `mp` 87.0, `flow` 70.6; W/D/H1 HH/HL, 1.0% under the high. Strength to buy on\" | seow: \"Position system, W D H1 HH/HL. `structure` 81.1, `mp` 87.0, `elder` 10.0, `subcomponents.flow.c\" | wyckoff: \"Daily HH/HL is 0.8% above its swing high and H1 0.9% under its high: a quiet test (C7). `mp` 87\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "No base, climax: `subcomponents.structure.base_score` 0.0 (R3), entry 22.14 is 76.6% above ma_200 12.54 (past R7's 70%), day_vol 0.51. `structure` 81.1 and `mp` 87.0 are the run, not a pivot."
+    }
+   ],
+   "sources": [
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:wyckoff",
+    "tier2:aqe-quant"
+   ]
+  },
+  {
+   "ticker": "LTH",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 0,
+    "wait": 6,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close below ma_50 42.09, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"Cleanest base: `structure` 94.7, `subcomponents.structure.base_score` 15.0 (about 5 weeks), LEA\" | minervini: \"`structure` 94.7 with `subcomponents.structure.base_score` 15.0 is a formed base near the pivot\" | livermore: \"`structure` 94.7, `mp` 93.0; W/D HH/HL, 2.2% under the high. `flow` 56.6 is weak and H1 is HH b\"",
+   "dissent": [
+    {
+     "voice": "seow",
+     "why": "Structure leads but fund flow does not confirm (R14). `flow` 56.6, `subcomponents.flow.mfi` 38.95 (sellers in control), `subcomponents.flow.cmf` 0.07, `elder` 7.0, `sc_m_gate_detail` 9 (flow floor missed). `structure` 94.7 alone is not a fund-flow signal."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "TGTX",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 3
+   },
+   "wrong_if": "oneil: \"`structure` slips under 60, or close below ma_50 56.39.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"LEADER; `mp` 87.0 accelerating, `structure` 66.3, 3.3% under 20-day high, W and D HH/HL. Agains\" | minervini: \"`mp` 87.0 and `subcomponents.flow.volume_score` 5.5 show trend and participation at the 52-week\" | seow: \"Flow confirms, structure is mid. `flow` 76.3, `subcomponents.flow.cmf` 0.12, `mp` 87.0, `elder`\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:seow",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "MSI",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the pivot high, on day_vol at or above 1.40",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high, on day_vol at or above 1.40"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 3,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Close below ma_50 470.5, or a break of the 20-day high on day_vol under 1.40.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"LEADER on every engine: `sc_momentum` 86.2, `structure` 84.2, `mp` 100.0, `energy` 76.5, `elder\" | minervini: \"`mp` 100.0, `flow` 88.2 and `structure` 84.2 agree: the broadest read. But `subcomponents.energ\" | livermore: \"`mp` 100.0 STRONG, `structure` 84.2, `sc_momentum` 86.2; W/D/H1 HH/HL, H1 at 96% of range, 2.4%\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 15
+ }
+}

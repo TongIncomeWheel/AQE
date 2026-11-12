@@ -1,0 +1,37 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high until it fills."
+   },
+   "wrong_if": "Daily close below base_low_20d, or below structure_shift_ref, voids the break (C14, C29).",
+   "market_void": null,
+   "reason": "Position system: W close_vs_ema9 above, ema_order 9>21, swing_class HH/HL; D swing_class HH/HL, close_vs_swing_high_pct 13.24. Strength is the signal (C26). H1 close_vs_ema9 below is a ripple, not the tide; cmf unread."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high until it fills."
+   },
+   "wrong_if": "Daily close below structure_shift_ref 35.75 voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+   "market_void": null,
+   "reason": "Position system: W swing_class HH/HL, ema_order 9>21; H1 swing_class HH/HL, dist_to_20bar_high_pct 1.77. D swing_class LH/LL is a caution, but close_vs_swing_high_pct 15.03 shows price already through the last high. TIF unconfirmed, cmf unread."
+  }
+ ],
+ "declarations": [
+  "Proxies declared: structure_shift/pivot_high for the resistance line; flow cmf for COM (not served, unread); elder_pattern/elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "No refutation of my claims in the packet: answers empty."
+ ]
+}

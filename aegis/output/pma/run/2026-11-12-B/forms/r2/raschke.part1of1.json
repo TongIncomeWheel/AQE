@@ -1,0 +1,238 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Retracement inside an established trend (C2): structure 77.9 ABOVE_STRUCTURE, mp STRONG/ACCELERATING; D swing HH/HL, 2.5% under 20-day high while H1 is below EMA9: the first intraday pullback after fresh highs (Holy Grail shape, ADX not gated by me). sma_dist 20.41% is extension, a weight (R27), not a veto. day_vol 0.88 is thin.",
+   "conviction_change": "Round 1: not nominated. Applying my method to a seated name (R25/R27): retracement fits, so SUPPORT at modest conviction.",
+   "falsifier": "Daily close under bar_low or a BEARISH_CHOCH in structure_shift.",
+   "case": {
+    "for": "Retracement type: W and D swing HH/HL, structure 77.9 ABOVE_STRUCTURE, mp STRONG/ACCELERATING; H1 below EMA9, 2.6% under 20-hr high, puts it on the pullback leg.",
+    "against": "sma_dist 20.41% and ext_atr20 2.6 leave price far from ma20 206.93, so not the textbook pullback to the EMA; day_vol 0.88 shows no participation on the dip; Episodic pivot (delayed) FAILED.",
+    "entry_trigger": "Hourly close above bar_high after the dip, above session VWAP.",
+    "wrong_if": "Daily close under bar_low (my swing extreme) or structure_shift turning BEARISH_CHOCH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A BEARISH_CHOCH, or a turn up on volume below normal, drops me to ABSTAIN; a hourly turn through bar_high on rising participation lifts conviction.",
+    "cannot_see": ["adx (not on my menu)", "stochastic_kd", "n_day_extreme", "bar_range_history"]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["above_vwap_s", "vol_x_ge:1.0"],
+    "wrong": ["close_below:bar_low", "choch_bearish"],
+    "wait": [],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ZETA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout family through a broken structure level (C2/C12): bar_close 37.74 over structure_shift_ref 35.75 on day_vol 1.66, structure 55.8 ABOVE_STRUCTURE, H1 swing HH/HL. Contraction is unproven (bar_range_history not served). D swing LH/LL, elder INTERRUPTED and sma_dist 18.21% make it a weak SUPPORT; the broken level sits close under price (C20).",
+   "conviction_change": "Round 1: not nominated. Seated by door STRENGTH/SOLO; applying my method, the break fits the breakout family at low conviction.",
+   "falsifier": "Daily close back under structure_shift_ref inside two sessions.",
+   "case": {
+    "for": "Close over structure_shift_ref 35.75 on day_vol 1.66, W and H1 swing HH/HL, mp STRONG/ACCELERATING; the broken level is a double stop point (C20).",
+    "against": "D swing LH/LL conflicts with the break; elder INTERRUPTED; sma_dist 18.21% and ext_atr20 2.52 mean a one-bar break far from the average; fresh-high breaks fail often (C3 logic), no contraction proof.",
+    "entry_trigger": "Hourly close above bar_high with price held above structure_shift_ref; no chase.",
+    "wrong_if": "Daily close back under structure_shift_ref 35.75 within a couple of sessions (C11, C23).",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "A fast failure back under the broken level voids it; a hold on the retest with day_vol above normal lifts it.",
+    "cannot_see": ["adx (not on my menu)", "bar_range_history", "n_day_extreme", "stochastic_kd"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["above_vwap_s", "vol_x_ge:1.4"],
+    "wrong": ["close_below:structure_shift_ref"],
+    "wait": ["structure_shift_ref"],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Declined (R1). structure, structure_shift, sma_dist and atr are null on my row, so no setup type can be classified. The MTF line shows a daily pullback in HH/HL, but W reads swing HH but LL, and the challenge note carries structure_shift RANGE and div_state BEARISH. A retracement in an established trend is not shown. Nothing nominated, nothing opposed.",
+   "conviction_change": null,
+   "falsifier": "A daily close above the last swing high with structure_shift BULLISH_BOS would give me a setup to test.",
+   "case": {
+    "for": "D above EMA9, 9>21, swing HH/HL, 6.8% under the last swing high: a plain pullback leg inside a daily uptrend.",
+    "against": "W swing HH but LL; structure_shift RANGE and div_state BEARISH per the challenge note; H1 below EMA9; no engine row for my menu.",
+    "entry_trigger": "Would need an hourly close above bar_high with the weekly swing repaired; until then stand aside (C22).",
+    "wrong_if": "Daily close under base_low_20d would end any retracement read.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "Populated structure and sma_dist fields showing a retracement at support, or a BULLISH_BOS.",
+    "cannot_see": ["structure", "structure_shift", "sma_dist", "atr_14d", "lens", "bracket"]
+   }
+  },
+  {
+   "ticker": "SONO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "The label says pullback, the fields say a fresh break: ABOVE_STRUCTURE, structure 57.9, bar_close 19.06 near bar_high 19.18, day_vol 4.46, H1 at 94% of the day's range: a range-expansion bar (C19 flag, not a pattern call, R9). I do not buy the expansion bar; the retracement after it is my setup (C7 shape, ADX not gated). Entry waits for the dip toward structure_shift_ref 17.89.",
+   "conviction_change": "Round 1: not nominated. Applying my method: the retest of the broken level after the expansion bar fits retracement; low conviction.",
+   "falsifier": "Daily close under structure_shift_ref, or an immediate fade of the expansion bar.",
+   "case": {
+    "for": "Break through structure_shift_ref 17.89 on day_vol 4.46; lens coil strong and insti_money strong; W and H1 swing HH/HL; the retest of the broken level is a double stop point (C20).",
+    "against": "day_vol 4.46 with the close near the high is a climax candidate (C19): chasing it is the error; D swing LH/LL, elder INTERRUPTED, Undercut and rally FAILED; mp 48.0 BUILDING is not yet strong.",
+    "entry_trigger": "Dip toward structure_shift_ref, then an hourly close above bar_high; never the expansion bar itself.",
+    "wrong_if": "Daily close under structure_shift_ref 17.89.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "No dip and a gap higher on fading volume turns it into a chase I decline; a clean retest hold lifts conviction.",
+    "cannot_see": ["adx (not on my menu)", "bar_range_history", "n_day_extreme", "stochastic_kd"]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["above_vwap_s", "vol_x_ge:1.2"],
+    "wrong": ["close_below:structure_shift_ref"],
+    "wait": ["structure_shift_ref"],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Declined (R1): a new high on day_vol 0.31 (thin) with sma_distance_pct 39.26, and structure, atr and sma_dist are null on my row. It is not a test or a retracement, and with no contraction read it is not a breakout I can prove. C3: breaks of fresh extremes are the high-failure population. A weight, not an oppose (R27).",
+   "conviction_change": null,
+   "falsifier": "A retest of pivot_high that holds, or a break on day_vol well above normal, gives me a setup.",
+   "case": {
+    "for": "BULLISH_BOS at a new 52w high, structure 94.7; W and D above EMA9, 9>21; H1 0.1% under 20-hr high at 92% of the day's range.",
+    "against": "day_vol 0.31 means the break has no participation; sma_distance_pct 39.26 is extreme; no retest level close by and no fit to the four families; failed breaks are the Turtle Soup population.",
+    "entry_trigger": "A dip to a broken level that holds (retracement, C20), or an hourly close above bar_high on day_vol above normal.",
+    "wrong_if": "Daily close back under pivot_high would make this the failed-breakout case.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A hold on a retest of pivot_high, or participation arriving on the next break.",
+    "cannot_see": ["structure", "atr_14d", "sma_dist", "bar_range_history", "lens"]
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Retracement in an established trend (C2): D above EMA9, 9>21, swing HH/HL, 8.2% under 20-day high; H1 below EMA9, 3.6% under the last swing high. structure 71.6 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, day_vol 1.96: first pullback after fresh highs (Holy Grail shape, ADX not gated by me). My structural level is ma20 13.2, named from structure.",
+   "conviction_change": "Round 1: not nominated. Applying my method to a seated name: the pullback leg fits retracement; SUPPORT at moderate conviction.",
+   "falsifier": "Daily close under ma_20, or an H1 low-volume drift that keeps making lower lows.",
+   "case": {
+    "for": "Pullback leg inside HH/HL on W and D, structure 71.6 ABOVE_STRUCTURE, mp STRONG/ACCELERATING, day_vol 1.96; ma20 13.2 is where the retracement ends, a close structural level (C17).",
+    "against": "sma_dist 12.79% is still extended; H1 swing LH/LL is still falling; flow 50.0 and lens insti_money warn show no big-money bid; sector tag Momentum Fading.",
+    "entry_trigger": "Hourly close above bar_high after the dip holds ma_20, above session VWAP.",
+    "wrong_if": "Daily close under ma20 13.2, the swing and average support.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A daily close under ma_20 voids it; a turn up on day_vol above normal lifts it.",
+    "cannot_see": ["adx (not on my menu)", "stochastic_kd", "n_day_extreme", "bar_range_history"]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["above_vwap_s"],
+    "wrong": ["close_below:ma_20"],
+    "wait": ["ma_20", "fib_382"],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OPCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Round-1 nomination held: breakout family, C12 proxy. structure 84.2 RANGE, D 0.6% under the last swing high, H1 0.1% above its swing high at 94% of the day's range; atr 0.3 and day_vol 1.55 as the contraction proxy. div_state BEARISH/3 is advisory and caps me at 2. mp FADING is a label only (R13). Invalidation: setup-bar low, own level about 31.4.",
+   "conviction_change": null,
+   "falsifier": "Daily close under bar_low, or a break that fails back inside the range within a couple of sessions (C11, C23).",
+   "challenge_reply": "Standing on structure, not on sc_momentum: structure 84.2 RANGE (0.6% under 20-day high) plus atr 0.3 and day_vol 1.55 as contraction proxy (C12). sc_momentum 77.1 is not my field. div_state BEARISH with div_bear_count 3 is advisory: it cannot carry or kill the vote, it holds me at 2. Own invalidation: bar_low, about 31.4.",
+   "obligations": {
+    "o_a_hard_or_soft": null,
+    "o_a_note": null,
+    "o_b_stop_honored": null,
+    "o_c_invalidation": "A breakout hour with day_vol below normal: no participation voids the read."
+   },
+   "case": {
+    "for": "Tight atr 0.3 with day_vol 1.55, structure 84.2, D 0.6% under the last swing high, H1 0.1% above its last swing high: a range-contraction breakout shape (C12 proxy).",
+    "against": "div_state BEARISH/3; D swing HH but LL and W swing LH/LL; from_52w_hi -13.36%; mp FADING/DECELERATING (label, R13); no NR4/NR7 series, so contraction is unproven.",
+    "entry_trigger": "Hourly close above pivot_high on day_vol above normal; stop one or two ticks under bar_low.",
+    "wrong_if": "Daily close under bar_low, about 31.4, or a failed break back inside the range (C11, C23).",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A breakout with no participation, or div_bear_count rising past 3, drops me to ABSTAIN.",
+    "cannot_see": ["adx (not on my menu)", "bar_range_history", "stochastic_kd", "n_day_extreme"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["h1_close_above:pivot_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:bar_low"],
+    "wait": [],
+    "chase": "close_above:pivot_high+3pct",
+    "tf": "1H",
+    "non_price": "A failed first break flips the read (C23): treat a quick return inside the range as information."
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Retracement resolving inside an established trend (C2): W and D swing HH/HL above EMA9, 9>21; D is 1.1% above the last swing high after a pullback, a retest zone of broken pivot_high 179.13 (double stop point, C20), BULLISH_BOS, day_vol 1.41. Second field beyond the BOS: the W and D swing structure itself. H1 below EMA9 with 9<21 and structure 55.8 are the caution.",
+   "conviction_change": "Round 1: not nominated. Applying my method: the retest of a broken pivot fits retracement; low conviction because H1 is weak.",
+   "falsifier": "Daily close back under pivot_high.",
+   "case": {
+    "for": "Through pivot_high 179.13 with BULLISH_BOS and day_vol 1.41; W and D swing HH/HL; a stop under the broken pivot is close (C17).",
+    "against": "H1 below EMA9, 9<21, swing LH but HL; structure 55.8 and sc_momentum 57.5 are low; day_vol 1.41 barely clears; D 8.5% under 20-day high; no engine row for my menu.",
+    "entry_trigger": "Retest of pivot_high holds, then an hourly close above bar_high above session VWAP.",
+    "wrong_if": "Daily close back under pivot_high 179.13.",
+    "horizon_sessions": 4,
+    "would_change_my_mind": "A close under the broken pivot ends it; the H1 stack repairing with 9>21 lifts it.",
+    "cannot_see": ["structure", "sma_dist", "atr_14d", "lens", "bracket"]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": ["h1_close_above:bar_high"],
+    "confirm": ["above_vwap_s", "vol_x_ge:1.2"],
+    "wrong": ["close_below:pivot_high"],
+    "wait": ["pivot_high"],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Declined (R1). D is below EMA9 with swing HH but LL, 9.9% under the last swing high; W swing LH but HL; H1 below EMA9, 9<21. The last bar was red on rvol_20d 4.25 with elder_pattern INTERRUPTED: a heavy-volume down bar. Not a retracement in an established trend, not a test, and I do not call a climax from a composite (R9). No engine row for my menu.",
+   "conviction_change": null,
+   "falsifier": "A daily reclaim of EMA9 with an hourly close above bar_high would give a retracement turn to test.",
+   "case": {
+    "for": "BULLISH_BOS at pct_from_pivot 0.91, sector LEADING, W above EMA9, 9>21 with a higher low.",
+    "against": "D below EMA9 and swing HH but LL; red bar on rvol_20d 4.25; elder INTERRUPTED; H1 9<21; 9.9% under 20-day high.",
+    "entry_trigger": "Daily back above EMA9, then an hourly close above bar_high; until then stand aside (C22).",
+    "wrong_if": "Daily close under base_low_20d 33.56 ends any retracement read.",
+    "horizon_sessions": 3,
+    "would_change_my_mind": "A reclaim of bar_high on an hourly close after a quiet down-volume dip.",
+    "cannot_see": ["structure", "structure_shift", "sma_dist", "atr_14d", "lens", "bracket"]
+   }
+  }
+ ],
+ "declarations": [
+  "setup_type: retracement SN LFST ABNB (SONO retracement after an expansion bar); breakout ZETA OPCH; NONE CNX BRZE TTEK (declined, R1).",
+  "adx: NOT_SERVED (C7, C8): the packet carries adx but it is not on my menu; no ADX gate claimed. stochastic_kd: NOT_SERVED (C6).",
+  "bar_range_history: NOT_SERVED (C12, C13); n_day_extreme: sma_distance_pct + structure_shift substitute (C3/C4).",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16); visual climax patterns declined (C10, R9).",
+  "CNX, BRZE, ABNB, TTEK carry null engine fields for my menu; read from the MTF line and challenge evidence only, at the stated conviction.",
+  "R1: no vote rests on a bracket field; levels named from structure (bar_low, ma_20, structure_shift_ref, pivot_high). Memory: none injected."
+ ],
+ "data_gaps": [
+  {"field": "structure/atr_14d/sma_dist", "impact": "Null for CNX, BRZE, ABNB, TTEK: setup type read from the MTF line only."}
+ ]
+}

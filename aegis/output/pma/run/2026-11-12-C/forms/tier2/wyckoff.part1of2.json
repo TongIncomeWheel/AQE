@@ -1,0 +1,127 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "answers": [
+  {
+   "pair_id": "PRCH-wyckoff-for~oneil",
+   "ticker": "PRCH",
+   "to": "oneil",
+   "text": "\"Nearness to a broken level is not a base\": a base is O'Neil's test, mine is the Creek test. Daily HH/HL 0.8% above its swing high and H1 HH/HL at 82% of range is a quiet test (C7); weekly 20.5% above its high is why timing waits for the H1 trigger. No concession.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above the prior day's high after the test holds."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "Daily HH/HL sits 0.8% above its swing high, a test (C7); `structure` 71.6 and `subcomponents.energy.squeeze_score` 12.5 show a coil. But H1 is below EMA9 at 11% of range and `flow` 61.8 is mid: wait for H1 to recover."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "n/a: an unclear read is not forced.",
+   "market_void": null,
+   "reason": "Daily swing is HH but LL, 3.8% under the high; `flow` 40.8 with `subcomponents.flow.cmf` -0.34 says supply meets rallies against `energy` 88.2. Effort and result disagree and the frames are unclear (C16, R10)."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to come back to the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`flow` 84.2, `mp` 92.0 and `structure` 78.9 show markup; daily HH/HL pulls back 3.8% under its high, a normal reaction. Weekly is HH but LL and H1 is only 0.1% above its swing high: join at the test, not here (C3)."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "n/a: weekly context unclear.",
+   "market_void": null,
+   "reason": "Weekly swing is LH/LL (top-down unconfirmed, C16) while daily and H1 are HH/HL; `structure` 74.7 and `energy` 72.3 are decent but `elder` 7.0 and `mp` 80.0 give no thrust. A break I cannot place on the weekly is skipped (R10)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above the prior day's high while price holds the test."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "Daily is 2.6% under its high at the test on light volume; `energy` 82.4 with `subcomponents.energy.squeeze_score` 12.5 is a coil. Swings are messy on all three frames and `flow` 63.2 is mid: wait for a sign-of-strength bar (C12)."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above the swing high that then holds outside the range."
+   },
+   "wrong_if": "Daily close back under the swing high by half an ATR after a break.",
+   "market_void": null,
+   "reason": "RANGE top: `structure` 82.1 beside `flow` 100.0, `energy` 85.7 and `subcomponents.energy.squeeze_score` 12.5 is a coil with effort. Daily swing is LH/LL, so the range edge is not a buy until a break holds (C5, C11)."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to return to the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`structure` 84.2 with `subcomponents.structure.base_score` 15.0 (long base) and `mp` 89.0: buyers control. Weekly is HH but LL and H1 is 5.3% above its swing high, away from value: join on the test (C3, C7)."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop above the prior day's high once an hourly bar closes over it."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "All three frames HH/HL, daily 3.9% under its high and H1 0.1% under: at the test. `energy` 82.4 with `subcomponents.energy.squeeze_score` 8.5 and `flow` 78.9 back it; `structure` 63.2 is the soft leg."
+  },
+  {
+   "ticker": "WM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above the swing high that then holds."
+   },
+   "wrong_if": "Daily close under the 20-day base low, or back under the reclaimed level.",
+   "market_void": null,
+   "reason": "RANGE near the top: `structure` 77.9, `energy` 82.4 and `subcomponents.energy.squeeze_score` 8.5 coil; `flow` 73.7. Weekly is HH but LL and daily is 2.9% under its high: no break yet, so no entry before it holds (C5, C6)."
+  }
+ ],
+ "declarations": [
+  "No vote rests on a bracket field (R1). Level words are fields, never numbers. structure_shift_ref is not in my packet; I read the Creek from the swing-high figure on the grid."
+ ]
+}

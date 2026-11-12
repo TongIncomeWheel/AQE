@@ -1,0 +1,91 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-12",
+ "seat_kind": "challenge",
+ "names_read": 9,
+ "findings": [
+  {
+   "scope": "Technology",
+   "kind": "CROWDING",
+   "canon_ref": ["C12", "C15"],
+   "claim": "Three of the nine room names are Technology (ZETA, SONO, BRZE), nominated by wyckoff (two) and minervini. One sector holds a third of the room; the case for each should stand without leaning on the sector tape.",
+   "evidence": "gics_sector_name Technology on ZETA, SONO, BRZE; rs_rank_pct 98.82, 81.01, 98.99; pct_from_52w_high 0.0, -0.52, 0.0",
+   "addressed_to": "oneil, minervini, wyckoff"
+  },
+  {
+   "scope": "ZETA",
+   "kind": "EXTENSION",
+   "ticker": "ZETA",
+   "canon_ref": ["C5", "C1"],
+   "claim": "At the 52-week high with ma_50 well above ma_200: the trend is intact but the name sits at its extreme. Edge for entering here is UNPROVEN in the packet; the seat nominating should say what the case adds beyond relative strength.",
+   "evidence": "pct_from_52w_high 0.0; rs_rank_pct 98.82; ma_50 31.93; ma_200 22.96; atr_14d 1.95; day_vol 1.66",
+   "addressed_to": "livermore, minervini"
+  },
+  {
+   "scope": "BRZE",
+   "kind": "EXTENSION",
+   "ticker": "BRZE",
+   "canon_ref": ["C5", "C12"],
+   "claim": "A new high and a BULLISH_BOS read on very thin participation. Structure is strong but the volume that should confirm the break is absent; the deciding seat should name why a break on this volume is trustworthy.",
+   "evidence": "day_vol 0.31; structure 94.7; structure_shift BULLISH_BOS; pct_from_52w_high 0.0; rs_rank_pct 98.99",
+   "addressed_to": "minervini, oneil"
+  },
+  {
+   "scope": "SN",
+   "kind": "OVERLAP",
+   "ticker": "SN",
+   "canon_ref": ["C15", "C17"],
+   "claim": "Two seats (livermore, minervini) landed on SN with the same visible anchors: top relative strength and a stack near highs. Agreement here may be one shared anchor, not two independent reads; ask each for a distinct reason. Also extended: ma_50 188.47 over ma_200 146.46, volume below normal.",
+   "evidence": "rs_rank_pct 98.24; sc_momentum 78.6; pct_from_52w_high -1.12; day_vol 0.88; ma_50 188.47; ma_200 146.46",
+   "addressed_to": "livermore, minervini"
+  },
+  {
+   "scope": "CNX",
+   "kind": "UNPROVEN",
+   "ticker": "CNX",
+   "canon_ref": ["C5", "C7", "C16"],
+   "claim": "Higher-timeframe context is mixed, not clean: ma_50 sits below ma_200, structure is RANGE, three of five oscillators confirm a bearish divergence. The nominating seat should name its higher-timeframe context and its own disconfirming observable, or this reads as a pattern in isolation.",
+   "evidence": "ma_50 35.02; ma_200 36.39; structure_shift RANGE; div_state BEARISH; div_bear_count 3; rs_rank_pct 48.24; sc_momentum 54.1",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "OPCH",
+   "kind": "UNPROVEN",
+   "ticker": "OPCH",
+   "canon_ref": ["C5", "C7"],
+   "claim": "Strong composite and relative strength, but the oscillator read disagrees and price sits well off its high inside a RANGE. Fields conflict; the seat should state whether it is standing on the composite or on structure, and name its own invalidation level.",
+   "evidence": "sc_momentum 77.1; rs_rank_pct 93.11; div_state BEARISH; div_bear_count 3; structure_shift RANGE; pct_from_52w_high -13.36; ma_100 25.22; ma_200 26.15",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "SONO",
+   "kind": "ANCHOR",
+   "ticker": "SONO",
+   "canon_ref": ["C12", "C17"],
+   "claim": "Filed in the PULLBACK lane, but the name is within half a percent of its 52-week high on a volume spike. Lane label and fields disagree; the seat should say what is being pulled back, and whether the day_vol surge is the case or the exit risk.",
+   "evidence": "pct_from_52w_high -0.52; day_vol 4.46; structure_shift ABOVE_STRUCTURE; sc_momentum 71.7; ma_50 16.85",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "ABNB",
+   "kind": "ANCHOR",
+   "ticker": "ABNB",
+   "canon_ref": ["C5", "C17"],
+   "claim": "Pullback lane name carried on a low composite while a BULLISH_BOS prints; the case rests on structure_shift alone. Ask the seat for the second, deeper field supporting conviction.",
+   "evidence": "sc_momentum 57.5; structure 55.8; structure_shift BULLISH_BOS; pct_from_52w_high -4.92; rs_rank_pct 83.91",
+   "addressed_to": "oneil"
+  }
+ ],
+ "obligations": [
+  {"seat": "elder-lens", "ticker": "CNX", "class": "UNPROVEN", "what_is_owed": "Name the higher-timeframe context and a disconfirming observable given ma_50 35.02 under ma_200 36.39 and div_bear_count 3."},
+  {"seat": "raschke", "ticker": "OPCH", "class": "UNPROVEN", "what_is_owed": "Reconcile sc_momentum 77.1 with div_state BEARISH and structure_shift RANGE; name your own invalidation level."},
+  {"seat": "minervini", "ticker": "BRZE", "class": "EXTENSION", "what_is_owed": "Say why a BULLISH_BOS on day_vol 0.31 is trustworthy."},
+  {"seat": "livermore", "ticker": "SN", "class": "OVERLAP", "what_is_owed": "Give a reason distinct from the shared rs_rank_pct 98.24 anchor."}
+ ],
+ "declarations": "No nomination and no vote filed. R9: no emotional-state claims. Findings read the packet fields only.",
+ "data_gaps": [
+  {"field": "lens_warnings", "impact": "null on all nine names; lens-agreement crowding could not be read"},
+  {"field": "regime", "impact": "not in the packet; regime named by no row, so environment match could not be tested"},
+  {"field": "srm", "impact": "not in the packet; sector rotation context unavailable for the sector clustering read"}
+ ]
+}

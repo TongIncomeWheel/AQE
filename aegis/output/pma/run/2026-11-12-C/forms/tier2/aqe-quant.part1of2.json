@@ -1,0 +1,130 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-12",
+ "answers": [
+  {
+   "pair_id": "WM-aqe-quant-for~minervini",
+   "ticker": "WM",
+   "to": "minervini",
+   "concede": false,
+   "text": "\"the gate fails: ma50 under ma100 under ma200\" - that is a stage-2 test, not mine. My gate is `sc_m_gate_detail` 17, all five engines pass; `energy` 82.4, `flow` 73.7, `structure` 77.9, `mp` 86.0. `rs_rank_pct` 62.52 is mid-rank, so the lead is modest, as I said (`subcomponents.structure.rs_vs_spy` 8.47). Weekly/daily grid unread by me. Not conceded."
+  },
+  {
+   "pair_id": "MSI-aqe-quant-for~raschke",
+   "ticker": "MSI",
+   "to": "raschke",
+   "concede": false,
+   "text": "\"exhaustion_score 10.0 reads no exhaustion yet\" - not so: `subcomponents.energy.en_trend_bars` 20.0 is past 15, so the test is live and a 10.0 is a real clean read. `subcomponents.energy.squeeze_score` 0.0 is no coil; MSI is running, not early. `subcomponents.structure.rs_accel` 4.76 is positive, lead widening. Not conceded."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "ABSTAIN",
+   "wrong_if": "`mp` clears 55 with `subcomponents.structure.rs_accel` above 0.",
+   "market_void": null,
+   "reason": "Mixed engines. `energy` 79.0 and `flow` 61.8 clear, but `mp` 48.0 fails (gate code 16) and `subcomponents.structure.rs_accel` -14.96 shows the lead eroding. No clean case either way."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "wrong_if": "`flow` recovers over 60 with `subcomponents.flow.cmf` above 0.",
+   "market_void": null,
+   "reason": "Headline carried by `energy` 88.2 while `flow` 40.8 fails (gate code 9): `subcomponents.flow.accum_score` 0.0, `subcomponents.flow.cmf` -0.34. `subcomponents.structure.rs_accel` -18.22: lead eroding."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`energy` or `flow` drops under its 60 floor, or `subcomponents.energy.exhaustion_score` falls under 10.0.",
+   "market_void": null,
+   "reason": "Broad: `flow` 84.2, `energy` 69.7, `structure` 78.9, `mp` 92.0, all gates pass. `subcomponents.energy.exhaustion_score` 10.0 at `subcomponents.energy.en_trend_bars` 21.0 is clean. `mp_accel_state` DECELERATING is the caution."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `flow` over 60, then Daily close above the 20-day average, keeping `en_trend_bars` run alive."
+   },
+   "wrong_if": "`flow` slides further under 60 while `mp_accel_state` stays DECELERATING.",
+   "market_void": null,
+   "reason": "Three engines clear: `energy` 72.3, `structure` 74.7, `mp` 80.0, but `flow` 59.2 misses its floor by 0.8 (gate code 9). `subcomponents.structure.rs_accel` -4.74 and DECELERATING keep this thin."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `mp` to hold over 55 as it turns up, then a daily close above the 20-day average."
+   },
+   "wrong_if": "`mp` under 55 or `flow` under 60.",
+   "market_void": null,
+   "reason": "Energy-led: `energy` 82.4, `subcomponents.energy.squeeze_score` 12.5, clean run at 29.0 bars. But `mp` 61.0 is thin: `subcomponents.mp.abs_mom_score` 5.0, `subcomponents.structure.rs_accel` -9.59, DECELERATING."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `mp` to clear 55, then Daily close above the 20-day average, keeping `en_trend_bars` run alive."
+   },
+   "wrong_if": "`structure` or `energy` falls under its floor, or `mp` falls further under 55.",
+   "market_void": null,
+   "reason": "`flow` 100.0, `energy` 85.7, `structure` 82.1, a real base (`subcomponents.structure.base_score` 15.0). `mp` 48.0 fails (gate code 16): `subcomponents.mp.mp_adx_score` 0.0, `subcomponents.structure.rs_accel` -12.13."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`flow` under 60, or `subcomponents.structure.rs_accel` falls further under -7.14.",
+   "market_void": null,
+   "reason": "Broad: `flow` 73.7, `energy` 68.9, `structure` 84.2, `mp` 89.0, gates pass, `mp_accel_state` ACCELERATING. Real base `subcomponents.structure.base_score` 15.0. Cautions: `subcomponents.structure.rs_accel` -7.14, run young at 9.0 bars."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `mp_accel_state` to leave DECELERATING, then a daily close above the 20-day average."
+   },
+   "wrong_if": "`mp` under 55 or `flow` under 60.",
+   "market_void": null,
+   "reason": "Energy and flow carry it: `energy` 82.4, `flow` 78.9, but `structure` 63.2 and `mp` 66.0 are modest, `subcomponents.mp.abs_mom_score` 10.0, `subcomponents.structure.rs_accel` -6.32."
+  },
+  {
+   "ticker": "WM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 7.0 now."
+   },
+   "wrong_if": "`elder` at 6 or lower, or `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Broad: `flow` 73.7, `energy` 82.4, `structure` 77.9, `mp` 86.0, gates pass. `subcomponents.energy.exhaustion_score` 10.0 at 23.0 bars, `subcomponents.structure.rs_accel` 4.18. DECELERATING is the caution."
+  }
+ ],
+ "declarations": [
+  "Method limit: only AQE composites and sub-components cited; price, levels, patterns and the MTF grid are unread context. No bracket used (R1)."
+ ]
+}

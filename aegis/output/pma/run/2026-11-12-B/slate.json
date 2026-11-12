@@ -1,0 +1,104 @@
+{
+ "date": "2026-11-12",
+ "chair": "chair",
+ "board_sha256": "6e4ac0e4187825f0879018dc9fac9d47318760169efe256e7314896d14c6b7dc",
+ "decision_sha256": "59d5a63c4f94adc1611813d9b8d3ccb136b473260501b65090ec86b311b6c359",
+ "tickets": [
+  {
+   "ticker": "SN",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close at a new closing high; no entry inside the reaction.",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close at a new closing high; no entry inside the reaction."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"Daily close under structure_shift_ref, or a one-day fade from the high beyond my translated multiple of atr_14d.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"LEADER (rs_leadership 3, rs_spy_20d 23.07), W/D HH/HL, 2.5% under the 20-day high. day_vol 0.88\" | minervini: \"Stage 2 leader: W swing_class HH/HL, D swing_class HH/HL, D ema_order 9>21, dist_to_20bar_high_\" | livermore: \"Established uptrend with a normal reaction (C5, C8): W and D swing HH/HL, D dist_to_20bar_high_\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "ZETA",
+   "verdict": "WATCH",
+   "entry_trigger": "After a pause or tight day, an hourly candle closes over the prior day's high on expanding volume.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pause or tight day, an hourly candle closes over the prior day's high on expanding volume."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"A close back under structure_shift_ref 35.75, or follow-through day_vol under 1.40.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "oneil: \"Volume break today: day_vol 1.66, from_52w_hi 0.0%, W HH/HL. L is a weight (rs_leadership LAGGA\" | minervini: \"W swing_class HH/HL, ema_order 9>21 on W, D and H1; leader stack. But close_vs_swing_high_pct 5\" | livermore: \"Fresh high on 11 Nov: D dist_to_20bar_high_pct 1.87, H1 close_vs_ema9 above and swing HH/HL, W \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "SONO",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the 11 Nov high on follow-through volume.",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 11 Nov high on follow-through volume."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 2,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "livermore: \"Daily close back under structure_shift_ref, or a fade from the high beyond my translated multiple of atr_14d.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"W swing_class HH/HL, ema_order 9>21 on W, D and H1; dist_to_20bar_high_pct 0.63 so entry is at \" | livermore: \"Break on 11 Nov: D dist_to_20bar_high_pct 0.63, H1 pos_in_day_range_pct 93.8, W swing HH/HL, ti\" | elder-lens: \"elder_5d [3, 3, 5, 5, 10]: red gave way on the last bar, the permission event (C3, C4); weekly \"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "L fails: rs_leadership LAGGARD (downday -0.8), lens leadership warn, rs_rank_pct 81.01 barely over the 80 gate; group Recovering From Weakness. day_vol 4.46 and coil strong are real, but a laggard on a break is the trade C9 and C10 warn against."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index not in a confirmed uptrend (C1-C3): trade void.",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 2
+ }
+}

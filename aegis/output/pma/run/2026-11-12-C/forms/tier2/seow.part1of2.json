@@ -1,0 +1,100 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [
+  {
+   "pair_id": "DLTR-seow-for~raschke",
+   "ticker": "DLTR",
+   "to": "raschke",
+   "text": "Refuter: \"not a first pullback to the average\". Agreed, it is no swing set-up and I withdraw that wording. I ran the position system: D HH/HL above EMA9 9>21, `flow` 84.2, `subcomponents.flow.cmf` 0.15, `elder` 10.0 ACCELERATION. The dip under the swing high is context, not my entry. W HH but LL is my caution.",
+   "concede": true
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Trades through yesterday's high, a new 20-day high (position entry)."},
+   "wrong_if": "Daily close below base_low_20d, or elder leaves ACCELERATION on a red bar.",
+   "market_void": null,
+   "reason": "Position system. `structure` 71.6 and `energy` 79.0 with `elder` 10.0 ACCELERATION; W and D HH/HL, 9>21. `flow` 61.8 and `subcomponents.flow.cmf` 0.07 only just confirm; `mp` 48.0 is the soft leg."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if subcomponents.flow.cmf turns above 0 and flow rises over 55 as price breaks the daily swing high.",
+   "market_void": null,
+   "reason": "Fund flow fails the position test (R14). `flow` 40.8 and `subcomponents.flow.cmf` -0.34 are negative; `sc_m_gate_detail` 9 shows the flow floor missed. `energy` 88.2 and `elder` 10.0 do not buy negative flow; D is HH but LL."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below base_low_20d, or elder under 7 or subcomponents.flow.cmf below 0.",
+   "market_void": null,
+   "reason": "Position system. `flow` 84.2, `subcomponents.flow.cmf` 0.15, `elder` 10.0 ACCELERATION, `sc_momentum` 80.4, `sc_m_gate_detail` 17. `mp` 92.0 STRONG but slowing and W HH but LL are the cautions."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if elder returns to 10.0 with flow over 65 and the weekly swing turns HH/HL.",
+   "market_void": null,
+   "reason": "Fund flow and trend impulse do not confirm. `flow` 59.2, `subcomponents.flow.cmf` 0.07, `elder` 7.0 INTERRUPTED, `sc_m_gate_detail` 9 (flow floor missed). W swing LH/LL breaks my weekly house test (C21)."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close over the last confirmed pivot high; the break is the position signal."},
+   "wrong_if": "Daily close below ma_40.",
+   "market_void": null,
+   "reason": "Break not yet printed; D HH but LL, W LH but HL. `energy` 82.4, `structure` 71.6, `flow` 63.2, `subcomponents.flow.cmf` 0.12 are positive; `mp` 61.0 and `elder` 7.0 do not confirm, so I wait for the break."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close over the last confirmed pivot high; no break yet (RANGE)."},
+   "wrong_if": "Daily close below base_low_20d, or elder loses ACCELERATION.",
+   "market_void": null,
+   "reason": "Fund flow leads, the break is pending. `flow` 100.0, `energy` 85.7, `elder` 10.0 ACCELERATION, `structure` 82.1 RANGE; `subcomponents.flow.cmf` 0.09 and `mp` 48.0 are the soft legs. W HH/HL, 1.0% under the daily high."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, at the 20-day high."},
+   "wrong_if": "Daily close below base_low_20d, or choch_bearish.",
+   "market_void": null,
+   "reason": "Position system. `structure` 84.2, `mp` 89.0, `flow` 73.7, `subcomponents.flow.cmf` 0.14, `sc_m_gate_detail` 17; D HH/HL. `elder` 10.0 has no ACCELERATION label and W is HH but LL, so size is the PM's."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed daily."},
+   "wrong_if": "Daily close below base_low_20d, or choch_bearish.",
+   "market_void": null,
+   "reason": "Position system, W D H1 all HH/HL. `energy` 82.4, `flow` 78.9, `subcomponents.flow.cmf` 0.24, `elder` 10.0 ACCELERATION, `sc_m_gate_detail` 17. `structure` 63.2 and `mp` 66.0 are modest."
+  },
+  {
+   "ticker": "WM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close over the last confirmed pivot high turns RANGE into a break."},
+   "wrong_if": "Daily close below ma_40.",
+   "market_void": null,
+   "reason": "Swing dip near the 20MA with the break pending. `energy` 82.4, `flow` 73.7, `subcomponents.flow.cmf` 0.23, `structure` 77.9 RANGE; `elder` 7.0 INTERRUPTED and `mp` 86.0 FADING do not confirm. W HH but LL."
+  }
+ ],
+ "declarations": [
+  "Position system for breaks at highs; swing system for dips. Proxies: structure and pivot for resistance, subcomponents.flow.cmf for COM, elder for TIF.",
+  "No 50/100/200 average, no bracket field and no Valen flag is used. Weekly structure is my house test (C21), not the author's."
+ ]
+}

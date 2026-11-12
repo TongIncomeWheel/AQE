@@ -1,0 +1,31 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "SN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close buys a new closing high while price is away from value (D close 226.93, 13.2% above the last swing high). That chases the move (C3, C15); the entry is the test of the Creek (C7).",
+   "would_clear": "Trigger in_zone:structure_shift_ref (D): price back within 0.25 ATR of the Creek and holding, then a buy stop above the trigger bar."
+  },
+  {
+   "ticker": "ZETA",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "WATCH and wrong-if (close under structure_shift_ref 35.75) match my read. The hourly close over the prior high is my C12 trigger bar; yes once the pause is shown holding above structure_shift_ref, since D dist_to_20bar_high_pct 1.87 is not yet a hold (C5).",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "SONO",
+   "answer": "OBJECT",
+   "conviction": 1,
+   "objection": "Trigger close_above:high_52w_close buys the spike day's high follow-through. D swing_class is LH/LL and a 4.46 day_vol spike can be climactic (C14); that is a chase, not a test (C3, C7).",
+   "would_clear": "Trigger in_zone:pvp_vah (D): price back within 0.25 ATR of the value area high and holding, then a buy stop above the trigger bar.",
+   "reservation": null
+  }
+ ]
+}

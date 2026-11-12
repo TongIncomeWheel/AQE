@@ -1,0 +1,54 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-12",
+ "declarations": [
+  "Impulse colour, force index, channel and weekly_trend_direction are not in the packet: R1, R3, R5, R6 unread, never proxied from the elder score.",
+  "Trend leg unverified: elder_pattern INTERRUPTED and daily swing LH/LL; weekly_trend_direction unread."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "I am wrong if a fresh dip bar at or under 6 then elder 7 or more prints on a pullback toward ma_20 with the weekly still up.",
+   "market_void": null,
+   "reason": "Permission is on, elder 7.0, but elder_5d [7, 10, 10, 7, 7] is a plateau stepping down: green giving way, an exit-side read not an entry (C4, C24). Daily close 226.93 is ext_atr20 2.6 from value; no transition, so I stand aside (C22)."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "I am wrong if the daily swing returns to HH/HL, elder_pattern stops reading INTERRUPTED, and a fresh dip-and-lift prints in elder_5d.",
+   "market_void": null,
+   "reason": "elder_5d [0, 3, 5, 8, 10] lifted permission two bars ago and now sits at elder 10.0, summer, not the buying season (C20). elder_pattern INTERRUPTED and the daily swing LH/LL fail the trend leg (C9). Tally support_refute 2: murky tape, stand aside (C22)."
+  },
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy only on a pullback into the 20-day average with elder still 7 or more, never at the high."
+   },
+   "wrong_if": "elder at or under 6 on the close, a RED print, or a daily close under ma_20-0.5atr.",
+   "market_void": null,
+   "reason": "elder_5d [3, 3, 5, 5, 10]: red gave way on the last bar, the permission event (C3, C4); weekly swing HH/HL. But elder 10.0 is summer (C20) and elder_pattern INTERRUPTED with daily swing LH/LL leaves the trend leg weak, so wait for the dip, no chase."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of2.json",
+   "bytes": 1202,
+   "sha256": "70bb3424f677"
+  },
+  {
+   "file": "elder-lens.part2of2.json",
+   "bytes": 771,
+   "sha256": "eb4f7d3d9f15"
+  }
+ ]
+}

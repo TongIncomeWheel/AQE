@@ -1,0 +1,31 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "SN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close (D) is not my entry. Position system buys a stop 1 tick over bar_high, trailed to each prior-day high (C27, R15); it does not wait for a closing high. Verdict WATCH also defers a break I read as live.",
+   "would_clear": "Trigger trade_above:bar_high (D), a buy stop one tick over yesterday's high, trailed daily until it fills."
+  },
+  {
+   "ticker": "ZETA",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger h1_close_above:bar_high (H1) needs an hourly close plus a pause and expanding volume. My entry is a buy stop 1 tick over bar_high on price alone (C5, C27), never a confirmation close; WATCH also delays a break already through structure_shift_ref 35.75.",
+   "would_clear": "Trigger trade_above:bar_high (D), a buy stop one tick over yesterday's high, trailed daily until it fills."
+  },
+  {
+   "ticker": "SONO",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close (D) waits for a daily close on follow-through volume; my entry is a buy stop 1 tick over bar_high (C27, R15). Picture is also thin: D swing_class LH/LL, elder_pattern INTERRUPTED, cmf unread.",
+   "would_clear": "Trigger trade_above:bar_high (D), a buy stop one tick over yesterday's high, with a close below structure_shift_ref 17.89 as the exit."
+  }
+ ]
+}

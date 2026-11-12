@@ -1,0 +1,78 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above yesterday's high; H1 is at 96% of the day's range."},
+   "wrong_if": "Close below bar_low of the reclaim day or below ma_20.",
+   "market_void": null,
+   "reason": "Retracement: first pullback to the short average reclaimed, W and D swing HH/HL on the daily. `structure` 78.9, `flow` 76.3, `energy` 68.1. Against: `mp` 89.0 FADING/DECELERATING (label), `elder` 7.0, `subcomponents.energy.squeeze_score` 0.0."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a tight pause holds ma_20 after the breakout and an hourly close above bar_high follows.",
+   "market_void": null,
+   "reason": "Post-breakout chase, the trade Turtle Soup fades (C3): `subcomponents.flow.ext_score` 5.0 shows the volume breakout, `subcomponents.energy.squeeze_score` 0.0 no coil. `structure` 89.5 and `mp` 97.0 are real, but D is 11.2% over its last swing high."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if an ma_20 retracement holds, or a tight coil forms under the high before an hourly close above pivot_high.",
+   "market_void": null,
+   "reason": "No setup shown: `structure` 97.9, `mp` 96.0 and `flow` 85.5 are strong, but `subcomponents.energy.squeeze_score` 0.0 gives no contraction, and no test or pullback has printed; D 2.9% under the high, H1 swing LH but HL."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a multi-day tight pause forms under the high, or a pullback holds ma_20.",
+   "market_void": null,
+   "reason": "At the high with no contraction: `subcomponents.energy.squeeze_score` 0.0, `energy` 63.0. `structure` 83.2 and `mp` 93.0 are real, but D is 0.1% under the 20-day high and H1 0.0% under: buying the high is a chase, not a test."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly candle closes above the last confirmed pivot high; H1 is 0.1% under its 20-hour high."},
+   "wrong_if": "Daily close below bar_low of the setup bar or below ma_20.",
+   "market_void": null,
+   "reason": "Contraction under the high: `subcomponents.energy.squeeze_score` 8.5, `energy` 79.0, `structure` 74.7, `flow` 73.7; W and D swing HH/HL, D 1.5% under the 20-day high. `mp` 76.0 DECELERATING and `elder` 7.0 temper it."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a tight pause forms over the pivot, or a pullback holds ma_20 before an hourly close above bar_high.",
+   "market_void": null,
+   "reason": "Already through the pivot (D 0.8% above the last swing high), no coil: `subcomponents.energy.squeeze_score` 0.0, `flow` 68.4. `structure` 81.1 and `mp` 87.0 are real, but this is a breakout close, not a retest."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if flow rises over its floor on a pullback that holds ma_20, then an hourly close above bar_high.",
+   "market_void": null,
+   "reason": "No setup: `structure` 94.7 and `mp` 93.0 are real but `flow` 56.6 is under its floor and `subcomponents.energy.squeeze_score` 0.0; `mp_accel_state` FLAT. H1 swing HH but LL, D 2.2% under the high: no test, no coil."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a coil forms under the high or a pullback holds ma_20 before an hourly close above pivot_high.",
+   "market_void": null,
+   "reason": "No contraction: `subcomponents.energy.squeeze_score` 0.0, `energy` 68.9. `mp` 87.0 and `flow` 76.3 are good, `structure` 66.3 only mid; D 3.3% under the 20-day high with H1 3.4% under its high is no trigger."
+  },
+  {
+   "ticker": "MSI",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a tight multi-day pause forms under the high, or a pullback holds ma_20 and turns.",
+   "market_void": null,
+   "reason": "Strength without a setup: `mp` 100.0, `flow` 88.2, `structure` 84.2 are top readings, but `subcomponents.energy.squeeze_score` 0.0 shows no coil and D is 2.4% under the high with no test or retracement. Stand aside."
+  }
+ ],
+ "declarations": [
+  "Setup typing (C2): SUPPORT only on a test, retracement or contraction breakout; no setup = ABSTAIN. Stops are structural swing lows I name, never a percentage (C17).",
+  "NOT_SERVED: ADX, %K/%D stochastic, rolling 20-day extreme, NR4/NR7 bar-range history; squeeze_score and MTF under-20-day-high lines are declared substitutes only."
+ ]
+}

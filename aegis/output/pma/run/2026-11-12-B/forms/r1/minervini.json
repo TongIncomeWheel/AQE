@@ -1,0 +1,56 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "SN",
+   "reason": "Stage 2 leader: full MA stack, rs_leadership 3 (LEADER), rs_spy_20d 23.07, within 1.12% of the 52w high and just under continuation_pivot 232.76. Entry near a pivot, not a chase. Wrong below 215.09 (extension stop). VCP count not served.",
+   "fields_cited": ["ma_50", "ma_200", "sma_distance_pct", "rs_leadership", "rs_spy_20d", "structure", "structure_shift", "day_vol", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "sma_distance_pct 20.41; entry 226.93 vs low_52w 84.57 (+168%); structure_shift 1 (ABOVE_STRUCTURE)", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift", "entry"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "ma_200 146.46, ma_150 157.15, ma_50 188.47, entry 226.93; pct_from_52w_high -1.12; rs_rank_pct 98.24; 200d slope not served", "verdict": "partial", "fields": ["ma_50", "ma_100", "ma_200", "sma_distance_pct", "entry"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership 3 (LEADER); rs_spy_20d 23.07; rs_down_day_20d 1.39 (beats SPY on down days)", "verdict": "pass", "fields": ["rs_leadership", "rs_spy_20d", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "structure 77.9; base_range_pct 22.8, vcp_tightness_pct 34.6 (loose); day_vol 0.88; contraction count not served", "verdict": "partial", "fields": ["structure", "structure_shift", "day_vol", "flow", "energy"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "continuation_pivot 232.76, pct_from_continuation_pivot -2.5, continuation_state BELOW; pivot_high 200.39 is 13.24 behind; bracket.valid null, own level extension stop 215.09", "verdict": "partial", "fields": ["entry", "bracket", "sma_distance_pct"]},
+    {"step": 6, "canon_ref": ["C1", "C12", "C13"], "observed": "earnings_growth, company_category, sponsorship not served; SEPA fundamentals leg did not run", "verdict": "no_data", "fields": ["ticker"]}
+   ]
+  },
+  {
+   "ticker": "BRZE",
+   "reason": "Fresh BULLISH_BOS at a new 52w high (pct_from_52w_high 0.0), full MA stack, rs_leadership 3, rs_spy_20d 65.8, pct_from_pivot 1.15. Caution: day_vol 0.31 shows no breakout volume, sma_distance_pct 39.26 extended. Wrong below 45.52.",
+   "fields_cited": ["ma_50", "ma_200", "sma_distance_pct", "rs_leadership", "rs_spy_20d", "structure", "structure_shift", "day_vol", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift 3 (BULLISH_BOS); entry 46.48 vs low_52w 15.79 (+194%); sma_distance_pct 39.26", "verdict": "pass", "fields": ["structure_shift", "sma_distance_pct", "entry"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "ma_200 25.45, ma_150 27.39, ma_50 33.38, entry 46.48; pct_from_52w_high 0.0; rs_rank_pct 98.99; 200d slope not served", "verdict": "partial", "fields": ["ma_50", "ma_100", "ma_200", "sma_distance_pct", "entry"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership 3 (LEADER); rs_spy_20d 65.8; rs_down_day_20d 0.84", "verdict": "pass", "fields": ["rs_leadership", "rs_spy_20d", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "structure 94.7; vcp_tightness_pct 3.3, base_range_pct 50.1 (wide); day_vol 0.31 (no breakout expansion); count not served", "verdict": "partial", "fields": ["structure", "structure_shift", "day_vol", "flow", "energy"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "pivot_high 45.95, pct_from_pivot 1.15 (near pivot); extension_atr_20 3.12; bracket.valid null, own level extension stop 45.52", "verdict": "partial", "fields": ["entry", "bracket", "sma_distance_pct", "structure_shift"]},
+    {"step": 6, "canon_ref": ["C1", "C12", "C13"], "observed": "earnings_growth, company_category, sponsorship not served; next_earnings_date 7 (2026-12-08); fundamentals leg did not run", "verdict": "no_data", "fields": ["ticker"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "TIGHTEN", "line": "Stack intact (ma_50 113.61, ma_200 105.12) but rs_rank_pct 58.91 is under the 70 floor, hl_state TIGHTEN hl_score 45, structure_shift 4 (RANGE); raise the stop toward held_sl 119.49."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "Trend Template stack and rs_rank_pct 90.17 hold, rs_leadership 3, hl_state HOLD hl_score 61, structure_shift 4 (RANGE); keep working stop held_sl 97.45, add nothing until above 102.91."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Entry 109.26 sits under ma_20 119.17 and ma_50 112.93 (criterion 5 fails), hl_state EXIT hl_score 4, div_bear_count 4; broken trend, honour the stop at held_sl 99.45."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short outside my long-only canon: below ma_50 149.13 with structure_shift 2 (BEARISH_CHOCH), ma_200 null; hl_state EXIT hl_score 9 argues for a tighter buy stop than 148.15 (strict C7)."}
+ ],
+ "data_gaps": [
+  {"field": "ma_200 slope (1-month trend)", "impact": "Trend Template criterion 3 could not be tested, so step 2 reads partial for every name."},
+  {"field": "earnings growth / EPS acceleration / company category", "impact": "SEPA fundamentals leg (C1 element 2, C12, C13, C20) not run; no fundamentals read on any name."},
+  {"field": "VCP contraction count and per-contraction depth", "impact": "Cannot call a VCP or count Ts; bases read only as plausibly valid from structure and vcp_tightness_pct."},
+  {"field": "ma_200 (SPCX)", "impact": "SPCX 200-day average is null, so its Trend Template stack cannot be fully read."}
+ ],
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,6,7,8 read from MA stack, high_52w/low_52w and rs_rank_pct; criterion 3 (200d rising) NOT_SERVED",
+  "vcp_detail: NOT_SERVED (structure/structure_shift/vcp_tightness_pct are a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20)",
+  "rs_proxy: rs_leadership + rs_spy_20d (substitute for IBD RS rank, C3/C11); rs_rank_pct is Aegis-native, not IBD-identical",
+  "volume_signature: day_vol at the current bar only (C6, partial)",
+  "No lessons injected for this seat; none apply."
+ ],
+ "shortfall_reason": "Only two names clear the checklist: XERS (sma_distance_pct 63.86), PRCH (pct_from_pivot 18.08), REPL (pct_from_pivot 57.48) and MRNA are extended or chases (C5); NTSK, AMPL, CDNA and AMC show no base or weak structure; fewer than three is valid, no padding."
+}

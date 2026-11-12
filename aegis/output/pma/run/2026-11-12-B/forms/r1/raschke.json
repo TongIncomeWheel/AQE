@@ -1,0 +1,83 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "OPCH",
+   "reason": "Breakout family (C12 proxy): atr_14d 0.3 on entry 31.7 is tight, day_vol 1.55 shows participation, structure 84.2, elder_pattern 2. Caution: div_state BEARISH, div_bear_count 3. Invalidation: below the setup-bar low (own level, ~31.4).",
+   "fields_cited": ["structure", "structure_shift", "atr_14d", "day_vol", "entry", "elder_pattern", "div_state", "div_bear_count", "bracket.valid"],
+   "conviction": 2,
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": ["C2"],
+     "observed": "structure 84.2, structure_shift 4, sma_distance_pct 14.13: inside the swing (RANGE), no BOS and no CHoCH; fits only the range-contraction breakout family",
+     "verdict": "partial",
+     "fields": ["structure", "structure_shift", "sma_distance_pct"]
+    },
+    {
+     "step": 2,
+     "canon_ref": ["C12", "C13"],
+     "observed": "atr_14d 0.3 vs entry 31.7 (about 1 pct) and day_vol 1.55 are a partial proxy for ID/NR4 contraction; no per-bar range series, so no actual NR4/NR7 or 6/100 HV ratio",
+     "verdict": "partial",
+     "fields": ["atr_14d", "day_vol", "atr_caution"]
+    },
+    {
+     "step": 3,
+     "canon_ref": ["C5", "C6", "C7", "C12"],
+     "observed": "declared: setup_type breakout; adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme substitute sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; market_breadth OUT_OF_SERVED_SCOPE",
+     "verdict": "pass",
+     "fields": ["sma_distance_pct", "structure_shift", "atr_14d"]
+    },
+    {
+     "step": 4,
+     "canon_ref": ["C17", "C20"],
+     "observed": "bracket.valid False, bracket.stop null; own structural level is just below the setup-bar low (not served), about 1 ATR under entry 31.7, to be fixed by PM at entry",
+     "verdict": "partial",
+     "fields": ["bracket.valid", "bracket.stop", "atr_14d", "entry"]
+    }
+   ],
+   "falsifier": "A close back inside the prior range below the setup-bar low, or the breakout failing within 1-2 sessions (C11, C23), voids the breakout read."
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "EBAY",
+   "verdict": "KEEP",
+   "line": "structure 74.0, sma_distance_pct 7.98, structure_shift 4 (RANGE): a retracement inside an intact swing; the working broker stop sits below the swing (C17); no parabolic bar, no windfall to protect."
+  },
+  {
+   "ticker": "GPN",
+   "verdict": "KEEP",
+   "line": "mp_state 3 (STRONG) with mp_accel_state 2 (DECELERATING), sma_distance_pct 14.94, structure 87.0: a first pullback in strength (retracement; ADX not served); the working stop holds; tighten if the swing low breaks."
+  },
+  {
+   "ticker": "RBRK",
+   "verdict": "EXIT-CASE",
+   "line": "structure 25.0, sma_distance_pct -3.25, div_state BEARISH with div_bear_count 4: fits none of the four setups and is below its average; the working stop stays, and C18 says do not give it more time."
+  },
+  {
+   "ticker": "SPCX",
+   "verdict": "KEEP",
+   "line": "Short: structure 14.0, structure_shift 2 (BEARISH_CHOCH), sma_distance_pct -6.29 support the short; the buy stop at 148.15 is the structural invalidation; cover quickly into any range-expansion bar (C19)."
+  }
+ ],
+ "data_gaps": [
+  {"field": "adx", "impact": "Not served: Holy Grail and ADX Gapper (C7, C8) cannot be gated; mp_state is only a weak proxy."},
+  {"field": "stochastic_kd", "impact": "Not served: the Anti (C6) cannot be tested."},
+  {"field": "n_day_extreme", "impact": "No rolling 20-day high/low: Turtle Soup / TS+1 (C3) approximated only through sma_distance_pct and structure_shift."},
+  {"field": "bar_range_history", "impact": "No per-bar range series: ID/NR4/NR7 and the 6/100 HV ratio (C12, C13) cannot be computed; atr_14d and day_vol are single-bar proxies."},
+  {"field": "lens", "impact": "lens is null for every packet row, so no short-cycle pullback read (R4) was available."}
+ ],
+ "declarations": [
+  "setup_type: breakout (C2, C12) for OPCH; names fitting none of the four were not nominated",
+  "adx: NOT_SERVED (C7, C8)",
+  "stochastic_kd: NOT_SERVED (C6)",
+  "n_day_extreme: sma_distance_pct + structure_shift (substitute, C3/C4)",
+  "bar_range_history: NOT_SERVED (C12, C13)",
+  "market_breadth: OUT_OF_SERVED_SCOPE (C16)",
+  "visual climax patterns declined (C10, R9); ledger memory: none injected, no lesson applies"
+ ],
+ "shortfall_reason": "Only one name fits a named setup family. Every other candidate shows structure_shift 4 (RANGE) with fading or no momentum proof and no contraction-plus-participation read, or sits on very low atr_14d with day_vol well under 1. Padding to three would breach the method."
+}

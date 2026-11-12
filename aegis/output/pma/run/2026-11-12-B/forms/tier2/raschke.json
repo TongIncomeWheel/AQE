@@ -1,0 +1,61 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "declarations": [
+  "setup_type: retracement SN SONO; breakout ZETA. adx: NOT_SERVED (C7, C8). stochastic_kd: NOT_SERVED (C6). bar_range_history: NOT_SERVED (C12, C13). n_day_extreme: sma_distance_pct + structure_shift substitute (C3/C4). No pair answers: none of my claims was refuted. No trade reason rests on a bracket field."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high ends the dip and resumes the trend."
+   },
+   "wrong_if": "Daily close under bar_low, or structure_shift turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "Retracement (C2): W and D swing HH/HL, D 2.5% under 20-day high at close 226.93; H1 close 226.8 below EMA9 227.061 is the pullback leg. Tier-1 tally 3 confirm, 0 refute. Wait for the hourly turn, never chase. ADX not gated (NOT_SERVED)."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high while price holds over the broken level."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref within two sessions.",
+   "market_void": null,
+   "reason": "Breakout family (C2/C12) at low conviction: W swing HH/HL, H1 swing HH/HL, D 1.9% under 20-day high at close 37.74, but D swing LH/LL and contraction unproven (bar_range_history NOT_SERVED). Tally 2 confirm, 2 refute: I wait for the hold, no chase."
+  },
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a dip toward the broken level holds, an hourly close above yesterday's high."
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "Retracement after an expansion bar (C19 flag, not a pattern call): D close 19.06 is 0.6% under 20-day high, H1 at 94% of day range. I do not buy the expansion bar; the retest of the broken level is my setup. Tally 4 confirm, 0 refute, 2 against-refute."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of2.json",
+   "bytes": 1634,
+   "sha256": "d5b14ee90dce"
+  },
+  {
+   "file": "raschke.part2of2.json",
+   "bytes": 1015,
+   "sha256": "b31c5e2ddf1f"
+  }
+ ]
+}

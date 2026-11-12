@@ -1,0 +1,234 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "round": 2,
+ "votes": [
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "POSITION system by picture: structure_shift ABOVE_STRUCTURE, rs_rank_pct 98.24, ret_63d 20.33, rs_spy_20d 23.07. Strength is the signal; extension (ext_atr20 2.6) is a weight, not a fault here. TIF proxy elder_5d [7, 10, 10, 7, 7] has slipped off 10; cmf not served so COM unread. sector_trend_state Momentum Fading — Hold, Don't Add is a caution. Buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on SN; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "Top-decile strength over the position horizon (rs_rank_pct 98.24, ret_63d 20.33), mp 96.0 STRONG, close above the pivot (structure_shift ABOVE_STRUCTURE), weekly and daily swing HH/HL. The position system buys strength (C26, R13).",
+    "against": "elder_5d [7, 10, 10, 7, 7] is off its peak, day_vol 0.88 is below normal, H1 is below EMA9 and 2.6% under the last swing high, sector_trend_state Momentum Fading — Hold, Don't Add; cmf unread so COM is unconfirmed (C28).",
+    "entry_trigger": "trade_above:bar_high: buy stop 1 tick over yesterday's high, trailed to each new prior-day high until it fills (C27).",
+    "wrong_if": "Daily close below base_low_20d (support-line proxy, C14/C29), or a close below structure_shift_ref, which voids the break.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "cmf below 0 or elder_5d falling under 7 cuts conviction; cmf above 0 with elder_pattern SUSTAINED lifts it.",
+    "cannot_see": ["subcomponents.flow.cmf", "elder_pattern", "base_low_20d", "bar_high", "sector_rrg_quadrant", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.2", "above_vwap_s"],
+    "wrong": ["close_below:base_low_20d", "close_below:structure_shift_ref", "elder_le:5"],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ZETA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "POSITION system: structure_shift ABOVE_STRUCTURE, fresh break (bar_close 37.74 over structure_shift_ref 35.75, rvol_20d 1.59). rs_rank_pct 98.82, ret_63d 27.41, rs_spy_20d 18.22 pass. elder_pattern INTERRUPTED with elder_5d [0, 3, 5, 8, 10]: TIF proxy does not confirm; cmf not served. Extension (ext_atr20 2.52, from_52w_hi 0.0%) is a weight in this system. Buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on ZETA; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "Fresh resistance break on rvol_20d 1.59, ret_63d 27.41, rs_rank_pct 98.82, mp 79.0 STRONG, weekly swing HH/HL. The position system buys the break (C26, R13).",
+    "against": "elder_pattern INTERRUPTED, daily swing LH/LL, rs LAGGARD tag against rs_spy_20d 18.22, entry sits at the 52w high (from_52w_hi 0.0%) so edge beyond relative strength is unproven; cmf unread.",
+    "entry_trigger": "trade_above:bar_high: buy stop 1 tick over yesterday's high, trailed daily until it fills (C27).",
+    "wrong_if": "Daily close below structure_shift_ref 35.75 voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "cmf above 0 with elder_pattern back to SUSTAINED lifts it; a red bar on heavy volume closing back under structure_shift_ref 35.75 ends it.",
+    "cannot_see": ["subcomponents.flow.cmf", "base_low_20d", "bar_high", "sector_rrg_quadrant", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.2", "above_vwap_s"],
+    "wrong": ["close_below:structure_shift_ref", "close_below:base_low_20d", "elder_le:5"],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CNX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Neither system can be run: ma_20, ma_40, cci_20, bar_low, structure_shift and every strength field print None, so R1 is no_data, declared and not assumed. Only the MTF line is served: weekly swing HH but LL, daily 6.8% under the last swing high, H1 below EMA9. Four of five is not a set-up, and an unread five is no set-up. Abstain.",
+   "conviction_change": null,
+   "case": {
+    "for": "MTF: daily above EMA9, 9>21, swing HH/HL, and weekly above EMA9, 9>21. A dip inside an up-trend is the swing picture.",
+    "against": "Weekly swing HH but LL, daily 6.8% under the last swing high, H1 below EMA9. rs_rank_pct and ret_63d print None, so the C6 odds gate is unread.",
+    "entry_trigger": "Only if cci_20 below -100, bar_low at or under ma_20 and bar_close above ma_40 print on one bar; then a buy stop over bar_high (C3, C5).",
+    "wrong_if": "Close below ma_40 (R7) or weekly structure breaking (C21, house rule).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Served ma_20, ma_40, ma_20_slope_5d_pct and cci_20 showing all five set-up conditions, with ret_63d above the index.",
+    "cannot_see": ["ma_20", "ma_40", "ma_20_slope_5d_pct", "cci_20", "bar_low", "bar_close", "ret_63d", "rs_rank_pct", "structure_shift"]
+   }
+  },
+  {
+   "ticker": "SONO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "POSITION system by picture despite the PULLBACK tag: structure_shift ABOVE_STRUCTURE, from_52w_hi -0.52%, break through structure_shift_ref 17.89 on rvol_20d 3.84. rs_rank_pct 81.01, ret_63d 14.89, rs_spy_20d 9.57 pass. elder_pattern INTERRUPTED (TIF unconfirmed), cmf not served. Nothing is being pulled back; the volume surge is the signal and also the exhaustion risk. Buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on SONO; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "Break of structure_shift_ref 17.89 on rvol_20d 3.84, bar_close 19.06 near bar_high 19.18, rs_rank_pct 81.01, weekly swing HH/HL. The position system buys a break on volume.",
+    "against": "elder_pattern INTERRUPTED, daily swing LH/LL, rs LAGGARD tag, mp only 48.0 BUILDING (under 75), ext_atr20 2.3. A volume spike at the highs may be exhaustion; cmf unread.",
+    "entry_trigger": "trade_above:bar_high: buy stop 1 tick over bar_high 19.18, trailed daily until it fills (C27).",
+    "wrong_if": "Daily close below structure_shift_ref 17.89 voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf above 0 with elder_pattern SUSTAINED lifts it; a red bar on heavy volume closing back under structure_shift_ref 17.89 ends it.",
+    "cannot_see": ["subcomponents.flow.cmf", "base_low_20d", "sector_rrg_quadrant", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.2", "above_vwap_s"],
+    "wrong": ["close_below:structure_shift_ref", "close_below:base_low_20d", "elder_le:5"],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "POSITION system: fresh BULLISH_BOS at a new 52w high (pct_from_52w_high 0.0, pct_from_pivot 1.15, rs_spy_20d 65.8): buy signal present (R13). Confirmation absent: day_vol 0.31 shows no breakout volume, cmf and elder_pattern not served so COM/TIF are unread (C28, R14). sma_distance_pct 39.26 extended is a weight. Low conviction until flow confirms; buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on BRZE; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "New 52w high with BULLISH_BOS, pct_from_pivot 1.15 inside the buy zone, rs_spy_20d 65.8, weekly and H1 pinned at their highs. Resistance is broken.",
+    "against": "The break came on day_vol 0.31, no volume behind it. sma_distance_pct 39.26 is extended, cmf and elder_pattern are unread so fund flow is unconfirmed, and the weekly swing is HH but LL.",
+    "entry_trigger": "trade_above:bar_high with vol_x_ge:1.4 confirmation; a thin-volume break is not bought on a touch alone.",
+    "wrong_if": "Daily close back under pivot_high voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "A close on vol_x_ge:1.4 with cmf above 0 lifts it; a red bar closing back under pivot_high ends it.",
+    "cannot_see": ["subcomponents.flow.cmf", "elder_pattern", "base_low_20d", "bar_high", "ret_63d", "sector_rrg_quadrant", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:pivot_high", "close_below:base_low_20d"],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "POSITION system: structure_shift ABOVE_STRUCTURE, rs_rank_pct 95.46, ret_63d 17.59, rs_spy_20d 16.05, mp 89.0 STRONG. No fresh break: H1 is swing LH/LL at 18% of the day's range and elder_5d [7, 7, 10, 10, 7] is off its peak; elder_pattern and cmf not served. sector_trend_state Momentum Fading — Hold, Don't Add is a caution. Support at low conviction; buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on LFST; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "Leader by rs_rank_pct 95.46 and ret_63d 17.59, mp 89.0 STRONG, structure_shift ABOVE_STRUCTURE, weekly and daily swing HH/HL. Strength is the position system's signal (C26).",
+    "against": "Daily and weekly sit 8.2% under their highs, H1 is LH/LL below EMA9, elder_5d [7, 7, 10, 10, 7] is fading, sector_trend_state Momentum Fading — Hold, Don't Add; cmf unread so COM is unconfirmed.",
+    "entry_trigger": "trade_above:bar_high: buy stop 1 tick over yesterday's high, trailed daily until it fills (C27).",
+    "wrong_if": "Daily close below base_low_20d or below fib_swing_low (support-line proxy, C14/C29); elder_5d under 7 on a red bar.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "cmf above 0 with elder_pattern SUSTAINED and a retake of the 20-day high lifts it; a close under base_low_20d ends it.",
+    "cannot_see": ["subcomponents.flow.cmf", "elder_pattern", "base_low_20d", "bar_high", "sector_rrg_quadrant", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.2", "above_vwap_s"],
+    "wrong": ["close_below:base_low_20d", "close_below:fib_swing_low", "elder_le:5"],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "OPCH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Neither system fires on served fields: structure_shift RANGE gives no resistance-line signal (R13), and there is no pullback (entry 31.7 sits ext_atr20 0.73 over the 20-day); cci_20 and ma_40 are not served so R1 is no_data. Strength is real (rs_rank_pct 93.11, ret_63d 31.7). Abstain, not oppose: a break of the high would hand me the position signal.",
+   "conviction_change": null,
+   "case": {
+    "for": "rs_rank_pct 93.11, ret_63d 31.7, daily swing 0.6% under the 20-day high, elder_pattern ACCUMULATION_BASE; a break of that high would be a position-system entry.",
+    "against": "structure_shift RANGE, from_52w_hi -13.36%, weekly swing LH/LL, mp FADING/DECELERATING (a label, R13), no break yet. The swing system cannot be read without cci_20.",
+    "entry_trigger": "Only once structure_shift reads BULLISH_BOS or ABOVE_STRUCTURE with cmf above 0; then trade_above:bar_high.",
+    "wrong_if": "Close below base_low_20d, or a close under ma_40, removes any pullback reading.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "structure_shift turning BULLISH_BOS, or cci_20 below -100 with bar_low at or under ma_20 and bar_close above ma_40.",
+    "cannot_see": ["cci_20", "ma_40", "bar_low", "base_low_20d", "subcomponents.flow.cmf", "structure_shift_ref"]
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "POSITION system: BULLISH_BOS through pivot_high 179.13 (pct_from_pivot 1.12, buy zone), rs_rank_pct 83.91, day_vol 1.41: signal present (R13). Unconfirmed: cmf, elder_pattern, sector_rrg_quadrant and ret_63d not served, so COM, TIF and top-down are unread (C28, C24); H1 is below EMA9 with 9<21. Low conviction; buy stop over bar_high.",
+   "conviction_change": "R1 filed no pick on ABNB; now judged by the position system on the packet's served fields.",
+   "case": {
+    "for": "BULLISH_BOS over pivot_high 179.13 with pct_from_pivot 1.12, rs_rank_pct 83.91, weekly and daily above EMA9 with swing HH/HL. The position system takes the break (C26, C31).",
+    "against": "Weekly is 8.5% under its 20-wk high and 6.4% under its last swing high, H1 is swing LH but HL with 9<21, day_vol 1.41 barely clears, structure 55.8; a second confirming field is absent.",
+    "entry_trigger": "trade_above:bar_high: buy stop 1 tick over yesterday's high, trailed daily until it fills (C27).",
+    "wrong_if": "Daily close back under pivot_high 179.13 voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "cmf above 0 with elder_pattern SUSTAINED and sector_rrg_quadrant LEADING or IMPROVING lifts it; a close under pivot_high 179.13 ends it.",
+    "cannot_see": ["subcomponents.flow.cmf", "elder_pattern", "sector_rrg_quadrant", "ret_63d", "base_low_20d", "bar_high", "elder_context.volume.avg_vol_20d"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.4", "above_vwap_s"],
+    "wrong": ["close_below:pivot_high", "close_below:base_low_20d"],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "POSITION system, as filed in R1: BULLISH_BOS (pct_from_pivot 0.91), sector_rrg_quadrant LEADING, subcomponents.flow.cmf 0.09 confirms. Caution: last bar red on rvol_20d 4.25 (flip proxy fires) and elder_pattern INTERRUPTED; daily is below EMA9 and 9.9% under the last swing high, so price must retake bar_high 40.33 first. Support base_low_20d 33.56. Conviction unchanged at 2.",
+   "conviction_change": null,
+   "case": {
+    "for": "BULLISH_BOS with pct_from_pivot 0.91, sector_rrg_quadrant LEADING, subcomponents.flow.cmf 0.09 above zero (COM proxy), weekly above EMA9 with 9>21. Strength is the position system's signal.",
+    "against": "bar_close under bar_open on rvol_20d 4.25 is the flip proxy firing (R15), elder_pattern INTERRUPTED, daily below EMA9 and 9.9% under the last swing high, H1 9<21. The break is already being sold.",
+    "entry_trigger": "trade_above:bar_high: buy stop over bar_high 40.33, trailed daily until it fills (C27).",
+    "wrong_if": "Daily close below base_low_20d 33.56 is the support-line exit; a close below structure_shift_ref voids the break (C14, C29).",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "elder_pattern back to SUSTAINED or ACCELERATION with cmf holding above 0 lifts it; a close below base_low_20d 33.56 ends it.",
+    "cannot_see": ["elder_5d", "structure_shift_ref", "fib_swing_low", "ma_20", "ma_40", "cci_20"]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": ["trade_above:bar_high"],
+    "confirm": ["vol_x_ge:1.2", "above_vwap_s"],
+    "wrong": ["close_below:base_low_20d", "close_below:structure_shift_ref"],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "declarations": [
+  "Proxies declared: structure_shift/pct_from_pivot/pivot_high for the TradersGPS resistance line; subcomponents.flow.cmf for COM; elder_pattern/elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "System picked from each name's own picture, never the lane tag: position system on SN ZETA SONO BRZE LFST ABNB TTEK; swing system not runnable on CNX and OPCH (cci_20, ma_40 not served).",
+  "subcomponents.flow.cmf, sector_rrg_quadrant and elder_context.volume.avg_vol_20d are not served for most names; COM and the liquidity read (R11) are declared unread, never assumed.",
+  "No ledger memory block supplied; no standing lesson applies. Steenbarger challenges named no obligation on this seat."
+ ],
+ "data_gaps": [
+  {"field": "subcomponents.flow.cmf", "impact": "Not served on 8 of 9 names (TTEK only): COM fund-flow confirmation unread, support held at low conviction."},
+  {"field": "cci_20", "impact": "Not served: swing-system R1 set-up cannot be tested on CNX or OPCH."},
+  {"field": "ma_40", "impact": "Not served: 20MA over 40MA trend test and the close-above-40MA condition unread."},
+  {"field": "base_low_20d", "impact": "Not served: support-line proxy named by field only, level read by the tool."},
+  {"field": "elder_context.volume.avg_vol_20d", "impact": "Not served: liquidity caution (R11) cannot be sized."}
+ ]
+}

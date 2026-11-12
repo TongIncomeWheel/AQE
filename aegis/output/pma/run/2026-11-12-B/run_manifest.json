@@ -1,0 +1,539 @@
+{
+ "created": "2026-11-12T02:04:21Z",
+ "date": "2026-11-12",
+ "degradations": [
+  {
+   "at": "2026-11-12T02:07:30Z",
+   "note": "declared produces absent: ['pm_lens.json']",
+   "step": "PM-LENS"
+  },
+  {
+   "at": "2026-11-12T02:07:30Z",
+   "note": "declared produces absent: ['phase4_ledger.json']",
+   "step": "RANK"
+  },
+  {
+   "at": "2026-11-12T02:15:49Z",
+   "note": "declared produces absent: ['forms/qa/steenbarger.json']",
+   "step": "QA"
+  },
+  {
+   "at": "2026-11-12T02:15:49Z",
+   "note": "declared produces absent: ['verdict_ledger.json']",
+   "step": "DECIDE"
+  }
+ ],
+ "flags": [],
+ "report": "B",
+ "rerun": {
+  "of": "pma-2026-11-12",
+  "publishes_live": false,
+  "run_dir": "aegis/output/pma/run/2026-11-12-B",
+  "suffix": "B"
+ },
+ "reuse_from_report_a": {
+  "does_not_rerun": [
+   "weather",
+   "macro",
+   "sector",
+   "held-book sections"
+  ],
+  "reuses": [
+   "data pull",
+   "packets base",
+   "market kill",
+   "macro context",
+   "held review"
+  ],
+  "run_dir": "aegis/output/pma/run/2026-11-12"
+ },
+ "run_id": "pma-2026-11-12-B",
+ "seats": {
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "4bd46446da629f0b32696663c2c143ccda1a4fec1f7564dcaa2b87e0b0b668a0",
+   "status": "committed"
+  },
+  "CROSS/elder-lens": {
+   "file": "forms/cross/elder-lens.json",
+   "flags": [],
+   "sha256": "e771373d2d1a44c891c7bb328d7aba91b4420d7d31cfd16acbf526402e216eb3",
+   "status": "committed"
+  },
+  "CROSS/livermore": {
+   "file": "forms/cross/livermore.json",
+   "flags": [],
+   "sha256": "fde29f753396b9fdfe43c4bee228e8d5220ea93403f209a001f7f51251dc9499",
+   "status": "committed"
+  },
+  "CROSS/minervini": {
+   "file": "forms/cross/minervini.json",
+   "flags": [],
+   "sha256": "05b6601ab90951e955c83e4a400101bce992c7812976d4708ff7bb599f931750",
+   "status": "committed"
+  },
+  "CROSS/oneil": {
+   "file": "forms/cross/oneil.json",
+   "flags": [],
+   "sha256": "769bdd2cc265f2b7df2df8d6c711201dccfaabab56aaa7dd062d90a67c106c8a",
+   "status": "committed"
+  },
+  "CROSS/raschke": {
+   "file": "forms/cross/raschke.json",
+   "flags": [],
+   "sha256": "d2ca7d92ae3abd89bad597be956794cdcd0ed902ae357482c240e45719d151ec",
+   "status": "committed"
+  },
+  "CROSS/seow": {
+   "file": "forms/cross/seow.json",
+   "flags": [],
+   "sha256": "3f5763d2a4dd26212599eb21ac486a400e3cfd37e903f7d6a34a0e3f91d2585e",
+   "status": "committed"
+  },
+  "CROSS/wyckoff": {
+   "file": "forms/cross/wyckoff.json",
+   "flags": [],
+   "sha256": "985cdef0b535568e807d8ce14fb32ef7a4b6eab41e2a79773bd71c0d5155b4e1",
+   "status": "committed"
+  },
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "3ee541439f437c69d87a6e1767dc2594827097347c94b7c5124243b38187536d",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "27527ddc75994d8abf85dedb64d0dc4c706b25fb218066723dd9a6bbbbd6d3ff",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "95ee9ac77c4bbb46f66531d77bd66ae2f5cd6e5d72a7addcecfbcaf113afe206",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "814a9d1a6c730fdde04462e835c383cc18f48c58b620b83079213f256253ce9b",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "9102e203af3a09b77a12f86da6e1a1d2080e241df44f97632e79c8774aa04ccf",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "fcc810ec6fc7929eb8330c5198337451ca56d5f338ef49f27afd00f302fc4a29",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "d7f27f94b986577caeb1e302d9bb0595f8c3c24c40ba62bd456a47e014f99d70",
+   "status": "committed"
+  },
+  "RATIFY/elder-lens": {
+   "file": "forms/ratify/elder-lens.json",
+   "flags": [],
+   "sha256": "114632dc95b233523180657755c58beedb5c258cbebe5c1d98ade670578efe86",
+   "status": "committed"
+  },
+  "RATIFY/livermore": {
+   "file": "forms/ratify/livermore.json",
+   "flags": [],
+   "sha256": "a0223df289ab2ea74f2cd988e61bb29913550f4afc4962727c65d5d190b7cab4",
+   "status": "committed"
+  },
+  "RATIFY/minervini": {
+   "file": "forms/ratify/minervini.json",
+   "flags": [],
+   "sha256": "c7da4aefe611a8f44633ef826e5fa2ed9b95778d4d9cef170ab58ded6d0b82ac",
+   "status": "committed"
+  },
+  "RATIFY/oneil": {
+   "file": "forms/ratify/oneil.json",
+   "flags": [],
+   "sha256": "c7620749ef7a321ead9473eeb9437f90e0227d82e8bc896bc06178e345641a13",
+   "status": "committed"
+  },
+  "RATIFY/raschke": {
+   "file": "forms/ratify/raschke.json",
+   "flags": [],
+   "sha256": "c9d1fb2bfdb9ce0c3442a16002c56ab6bec16cdb46c9c9860d98e0f92d614787",
+   "status": "committed"
+  },
+  "RATIFY/seow": {
+   "file": "forms/ratify/seow.json",
+   "flags": [],
+   "sha256": "81e6abf6dbffe9e40ebfa2dab2b20f8d45ae60f74119c13735d971323c73c573",
+   "status": "committed"
+  },
+  "RATIFY/wyckoff": {
+   "file": "forms/ratify/wyckoff.json",
+   "flags": [],
+   "sha256": "e6d67306f801ceb4b672cbd545eebf7058486cdff1683ee2c97e214763f101ec",
+   "status": "committed"
+  },
+  "TIER2/elder-lens": {
+   "file": "forms/tier2/elder-lens.json",
+   "flags": [],
+   "sha256": "d1fe13956b63cf8304bcbc56ecb5103b20665fc490e7e00f12f2822ae0c71ecd",
+   "status": "committed"
+  },
+  "TIER2/livermore": {
+   "file": "forms/tier2/livermore.json",
+   "flags": [],
+   "sha256": "852e36a1c896e3db5158c5015657f54a1d7b785577d7194985bb914f13adc194",
+   "status": "committed"
+  },
+  "TIER2/minervini": {
+   "file": "forms/tier2/minervini.json",
+   "flags": [],
+   "sha256": "dc40322e12692dbcb0206fae93e9744678d645506bdc0b42349f6d6a0580a22e",
+   "status": "committed"
+  },
+  "TIER2/oneil": {
+   "file": "forms/tier2/oneil.json",
+   "flags": [],
+   "sha256": "1f0651564820df01248ba1b8ad022cd87aec468797a715d9fa833a8379ae45c3",
+   "status": "committed"
+  },
+  "TIER2/raschke": {
+   "file": "forms/tier2/raschke.json",
+   "flags": [],
+   "sha256": "bb309cb1b30ccbf3a53411bede2b72777481eb55ee29cfdafe430dae9c4e2e52",
+   "status": "committed"
+  },
+  "TIER2/seow": {
+   "file": "forms/tier2/seow.json",
+   "flags": [],
+   "sha256": "d9d0d22c327e83f680c0a9a6c4c66c1a806c5f166485580a8485b3ca9283191c",
+   "status": "committed"
+  },
+  "TIER2/wyckoff": {
+   "file": "forms/tier2/wyckoff.json",
+   "flags": [],
+   "sha256": "174f6fc8f1458bca6f0f4d92bddb0e9ec326565e603aa7adeb49de30c5db2eec",
+   "status": "committed"
+  },
+  "VOTE/elder-lens": {
+   "file": "forms/r2/elder-lens.json",
+   "flags": [],
+   "sha256": "bc75e6f63601ed3275652a3f49292f4868943a1eb55e93b69e86a1be874ff1c6",
+   "status": "committed"
+  },
+  "VOTE/livermore": {
+   "file": "forms/r2/livermore.json",
+   "flags": [],
+   "sha256": "45be5341c75e0a098b5720cb0054509a98962b592e0ca4697a2b077fde4982a5",
+   "status": "committed"
+  },
+  "VOTE/minervini": {
+   "file": "forms/r2/minervini.json",
+   "flags": [],
+   "sha256": "08feac6d064e56363f27b6e4621142995eb9ff5bd333e8f60185e2281d1d2901",
+   "status": "committed"
+  },
+  "VOTE/oneil": {
+   "file": "forms/r2/oneil.json",
+   "flags": [],
+   "sha256": "b0efabdba351e0be6faa6429cfe97c144783908b7e760caf50578a551c3dabb0",
+   "status": "committed"
+  },
+  "VOTE/raschke": {
+   "file": "forms/r2/raschke.json",
+   "flags": [],
+   "sha256": "5e1465f0cd681a80a90001e3866ad30098b7e53b90f73c1f72609e3ec0b2bf8c",
+   "status": "committed"
+  },
+  "VOTE/seow": {
+   "file": "forms/r2/seow.json",
+   "flags": [],
+   "sha256": "fbb3cb0dde587fc25d5eed57d0246dc4e7b960a997ac85fc405d58b899581286",
+   "status": "committed"
+  },
+  "VOTE/wyckoff": {
+   "file": "forms/r2/wyckoff.json",
+   "flags": [],
+   "sha256": "3b2c34700a9670393af0099c037b30dd8c5f76dedc22173a3a2c630ebb0679a3",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 5479,
+    "spawns": 0
+   },
+   "files": {
+    "forms/challenge/steenbarger.json": "4bd46446da629f0b32696663c2c143ccda1a4fec1f7564dcaa2b87e0b0b668a0"
+   },
+   "finished": "2026-11-12T02:08:14Z",
+   "notes": [],
+   "started": "2026-11-12T02:08:14Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CLAIMS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:12:22Z",
+   "notes": [],
+   "started": "2026-11-12T02:12:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CROSS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 38757,
+    "spawns": 0
+   },
+   "files": {
+    "forms/cross/elder-lens.json": "e771373d2d1a44c891c7bb328d7aba91b4420d7d31cfd16acbf526402e216eb3",
+    "forms/cross/livermore.json": "fde29f753396b9fdfe43c4bee228e8d5220ea93403f209a001f7f51251dc9499",
+    "forms/cross/minervini.json": "05b6601ab90951e955c83e4a400101bce992c7812976d4708ff7bb599f931750",
+    "forms/cross/oneil.json": "769bdd2cc265f2b7df2df8d6c711201dccfaabab56aaa7dd062d90a67c106c8a",
+    "forms/cross/raschke.json": "d2ca7d92ae3abd89bad597be956794cdcd0ed902ae357482c240e45719d151ec",
+    "forms/cross/seow.json": "3f5763d2a4dd26212599eb21ac486a400e3cfd37e903f7d6a34a0e3f91d2585e",
+    "forms/cross/wyckoff.json": "985cdef0b535568e807d8ce14fb32ef7a4b6eab41e2a79773bd71c0d5155b4e1"
+   },
+   "finished": "2026-11-12T02:14:05Z",
+   "notes": [],
+   "started": "2026-11-12T02:14:05Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:15:49Z",
+   "notes": [
+    "FORCED done with missing produces: ['verdict_ledger.json']",
+    "Report B: no QA hold run (non-live)"
+   ],
+   "started": "2026-11-12T02:15:49Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "FUNNEL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:14:05Z",
+   "notes": [],
+   "started": "2026-11-12T02:14:05Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:07:31Z",
+   "notes": [
+    "Report B rerun-kind; declared produces not all present"
+   ],
+   "started": "2026-11-12T02:07:31Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 47964,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "3ee541439f437c69d87a6e1767dc2594827097347c94b7c5124243b38187536d",
+    "forms/r1/livermore.json": "27527ddc75994d8abf85dedb64d0dc4c706b25fb218066723dd9a6bbbbd6d3ff",
+    "forms/r1/minervini.json": "95ee9ac77c4bbb46f66531d77bd66ae2f5cd6e5d72a7addcecfbcaf113afe206",
+    "forms/r1/oneil.json": "814a9d1a6c730fdde04462e835c383cc18f48c58b620b83079213f256253ce9b",
+    "forms/r1/raschke.json": "9102e203af3a09b77a12f86da6e1a1d2080e241df44f97632e79c8774aa04ccf",
+    "forms/r1/seow.json": "fcc810ec6fc7929eb8330c5198337451ca56d5f338ef49f27afd00f302fc4a29",
+    "forms/r1/wyckoff.json": "d7f27f94b986577caeb1e302d9bb0595f8c3c24c40ba62bd456a47e014f99d70"
+   },
+   "finished": "2026-11-12T02:07:30Z",
+   "notes": [
+    "Report B rerun-kind; declared produces not all present"
+   ],
+   "started": "2026-11-12T02:07:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PAIR": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:14:06Z",
+   "notes": [],
+   "started": "2026-11-12T02:14:05Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:07:30Z",
+   "notes": [
+    "FORCED done with missing produces: ['pm_lens.json']",
+    "Report B rerun-kind; declared produces not all present"
+   ],
+   "started": "2026-11-12T02:07:30Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "QA": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:15:49Z",
+   "notes": [
+    "FORCED done with missing produces: ['forms/qa/steenbarger.json']",
+    "Report B: no QA hold run (non-live)"
+   ],
+   "started": "2026-11-12T02:15:49Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:07:30Z",
+   "notes": [
+    "FORCED done with missing produces: ['phase4_ledger.json']",
+    "Report B rerun-kind; declared produces not all present"
+   ],
+   "started": "2026-11-12T02:07:30Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIFY": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 8370,
+    "spawns": 0
+   },
+   "files": {
+    "forms/ratify/elder-lens.json": "114632dc95b233523180657755c58beedb5c258cbebe5c1d98ade670578efe86",
+    "forms/ratify/livermore.json": "a0223df289ab2ea74f2cd988e61bb29913550f4afc4962727c65d5d190b7cab4",
+    "forms/ratify/minervini.json": "c7da4aefe611a8f44633ef826e5fa2ed9b95778d4d9cef170ab58ded6d0b82ac",
+    "forms/ratify/oneil.json": "c7620749ef7a321ead9473eeb9437f90e0227d82e8bc896bc06178e345641a13",
+    "forms/ratify/raschke.json": "c9d1fb2bfdb9ce0c3442a16002c56ab6bec16cdb46c9c9860d98e0f92d614787",
+    "forms/ratify/seow.json": "81e6abf6dbffe9e40ebfa2dab2b20f8d45ae60f74119c13735d971323c73c573",
+    "forms/ratify/wyckoff.json": "e6d67306f801ceb4b672cbd545eebf7058486cdff1683ee2c97e214763f101ec"
+   },
+   "finished": "2026-11-12T02:15:49Z",
+   "notes": [
+    "Report B: no QA hold run (non-live)"
+   ],
+   "started": "2026-11-12T02:15:48Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "SLATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:15:03Z",
+   "notes": [],
+   "started": "2026-11-12T02:15:03Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIER2": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 18555,
+    "spawns": 0
+   },
+   "files": {
+    "forms/tier2/elder-lens.json": "d1fe13956b63cf8304bcbc56ecb5103b20665fc490e7e00f12f2822ae0c71ecd",
+    "forms/tier2/livermore.json": "852e36a1c896e3db5158c5015657f54a1d7b785577d7194985bb914f13adc194",
+    "forms/tier2/minervini.json": "dc40322e12692dbcb0206fae93e9744678d645506bdc0b42349f6d6a0580a22e",
+    "forms/tier2/oneil.json": "1f0651564820df01248ba1b8ad022cd87aec468797a715d9fa833a8379ae45c3",
+    "forms/tier2/raschke.json": "bb309cb1b30ccbf3a53411bede2b72777481eb55ee29cfdafe430dae9c4e2e52",
+    "forms/tier2/seow.json": "d9d0d22c327e83f680c0a9a6c4c66c1a806c5f166485580a8485b3ca9283191c",
+    "forms/tier2/wyckoff.json": "174f6fc8f1458bca6f0f4d92bddb0e9ec326565e603aa7adeb49de30c5db2eec"
+   },
+   "finished": "2026-11-12T02:15:03Z",
+   "notes": [],
+   "started": "2026-11-12T02:15:02Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIMING": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T02:15:03Z",
+   "notes": [],
+   "started": "2026-11-12T02:15:03Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "VOTE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 117495,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r2/elder-lens.json": "bc75e6f63601ed3275652a3f49292f4868943a1eb55e93b69e86a1be874ff1c6",
+    "forms/r2/livermore.json": "45be5341c75e0a098b5720cb0054509a98962b592e0ca4697a2b077fde4982a5",
+    "forms/r2/minervini.json": "08feac6d064e56363f27b6e4621142995eb9ff5bd333e8f60185e2281d1d2901",
+    "forms/r2/oneil.json": "b0efabdba351e0be6faa6429cfe97c144783908b7e760caf50578a551c3dabb0",
+    "forms/r2/raschke.json": "5e1465f0cd681a80a90001e3866ad30098b7e53b90f73c1f72609e3ec0b2bf8c",
+    "forms/r2/seow.json": "fbb3cb0dde587fc25d5eed57d0246dc4e7b960a997ac85fc405d58b899581286",
+    "forms/r2/wyckoff.json": "3b2c34700a9670393af0099c037b30dd8c5f76dedc22173a3a2c630ebb0679a3"
+   },
+   "finished": "2026-11-12T02:12:21Z",
+   "notes": [],
+   "started": "2026-11-12T02:12:21Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
+}

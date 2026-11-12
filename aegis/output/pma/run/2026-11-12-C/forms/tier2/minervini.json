@@ -1,0 +1,313 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-12",
+ "declarations": [
+  "Fundamentals leg of SEPA NOT run; VCP contraction count NOT_SERVED. AQE fields are read as readings; edge unproven.",
+  "Trend Template proxy: ma100 for the unserved ma150, rs_rank_pct for IBD RS rank; 52-week low distance not served."
+ ],
+ "answers": [
+  {
+   "pair_id": "ELF-minervini-for~aqe-quant",
+   "ticker": "ELF",
+   "to": "aqe-quant",
+   "concede": true,
+   "text": "Quote: \"`flow` 40.8 fails (gate code 9)\". Conceded: `flow` 40.8 and `subcomponents.flow.cmf` -0.34 mean no volume sponsorship (C6); `subcomponents.structure.rs_accel` -18.22 shows the lead eroding (C11). Held: W 0.1% above swing high, 9>21; `energy` 88.2 with `subcomponents.energy.squeeze_score` 12.5 is a coil. Timing moves to WAIT for a break on volume."
+  },
+  {
+   "pair_id": "CTAS-minervini-for~raschke",
+   "ticker": "CTAS",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"BULLISH_BOS and H1 at 20-hr high make no setup\". Conceded on the coil: `subcomponents.energy.squeeze_score` 4.0 is thin and `mp_accel_state` DECELERATING, so no entry yet (WAIT). Weekly LH/LL is a lagging fractal: W close is 11.1% above that swing high, 9>21, `structure` 74.7. I make no VCP claim (R2)."
+  },
+  {
+   "pair_id": "WM-minervini-against~livermore",
+   "ticker": "WM",
+   "to": "livermore",
+   "concede": false,
+   "text": "Quote: \"Weekly is not LH/LL\". Weekly label corrected: W is 9>21, HH but LL. My stand never rested on it: the Trend Template gate fails on the inverted 50/100/200 stack (criterion 4), which the grid cannot repair. `mp_accel_state` DECELERATING and `subcomponents.pipe.pr_ret_12m` 12.0 say a young advance. Stay OPPOSE."
+  },
+  {
+   "pair_id": "WM-minervini-against~seow",
+   "ticker": "WM",
+   "to": "seow",
+   "concede": false,
+   "text": "Quote: \"Grid shows weekly swing HH but LL\". Agreed on the weekly and the orderly daily HH/HL. `energy` 82.4 and `flow` 73.7 are sound but they are not my gate: the Trend Template needs 50 over 100 over 200 and the stack is inverted. `mp` 86.0 slowing is a weight; the stack is the failure. Stay OPPOSE."
+  },
+  {
+   "pair_id": "AXGN-minervini-for~raschke",
+   "ticker": "AXGN",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"`ext_score` 5.0 is breakout credit: price is through\". Conceded on chase: D is 11.2% over its swing high with `subcomponents.energy.squeeze_score` 0.0 and `mp_accel_state` FLAT, too far from a pivot (C5, R5): WAIT for a fresh pause. Held: `subcomponents.flow.ext_score` 5.0 with day_vol 2.42 is breakout-day volume (C6); `structure` 89.5."
+  },
+  {
+   "pair_id": "PCOR-minervini-for~raschke",
+   "ticker": "PCOR",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"A pivot 2.9% away is no trigger without contraction\". Conceded: `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.bq.bq_vol_dry` 0.0 show no contraction or dry-up (C4, C6), so no anticipation: WAIT for the close above the pivot on volume. Held: `structure` 97.9 with `subcomponents.structure.base_score` 15.0 is a formed base; W and D HH/HL."
+  },
+  {
+   "pair_id": "PRCH-minervini-for~raschke",
+   "ticker": "PRCH",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"Buying a pivot 1.0% away needs contraction\". Conceded: `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.structure.base_score` 0.0 mean no base and no coil under the high after a 35.83% ten-day run (C4, C5, R2). I call no pivot; stance moves to ABSTAIN. `structure` 81.1 is trend, not a setup."
+  },
+  {
+   "pair_id": "LTH-minervini-for~raschke",
+   "ticker": "LTH",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"Entry near a pivot needs contraction\". Partly conceded: `subcomponents.energy.squeeze_score` 0.0 is no coil and `flow` 56.6 with `subcomponents.flow.mfi` 38.95 is weak sponsorship (C6): WAIT. Held: `structure` 94.7 with `subcomponents.structure.base_score` 15.0 is a formed base, W and D HH/HL, 2.2% under the high (C5)."
+  },
+  {
+   "pair_id": "TGTX-minervini-for~raschke",
+   "ticker": "TGTX",
+   "to": "raschke",
+   "concede": true,
+   "text": "Quote: \"Near the high without a coil\". Conceded: `subcomponents.energy.squeeze_score` 0.0 and `structure` 66.3 mid mean no tight base to buy (C4, C5): WAIT for an expanding-volume close above the pivot. Held: `mp` 87.0 and `subcomponents.flow.volume_score` 5.5 show real participation; W and D HH/HL at the 52-week high."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or a break that falls back under the pivot on rising volume.",
+   "market_void": null,
+   "reason": "`energy` 79.0 with `subcomponents.energy.squeeze_score` 12.5 is a full coil under the high (C4 proxy); `mp` 48.0 is the weak leg and fails its floor. W and D HH/HL, tier-1 3-0. Buy the break, not the wait (C5)."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high with volume showing real sponsorship"
+   },
+   "wrong_if": "Daily close below ma_20, or a break on thin volume that fades back under the pivot.",
+   "market_void": null,
+   "reason": "`energy` 88.2 with `subcomponents.energy.squeeze_score` 12.5 is coiled; but `flow` 40.8 and `subcomponents.flow.cmf` -0.34 show no volume sponsorship (C6). Needs the break on volume to prove it."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20 or ma_50.",
+   "market_void": null,
+   "reason": "`flow` 84.2 and `mp` 92.0 show sponsorship and trend, but `subcomponents.energy.squeeze_score` 0.0 is no coil and `mp_accel_state` DECELERATING; D is 3.8% under its high, so no entry yet (C5)."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or a break on thin volume that fades back under the pivot.",
+   "market_void": null,
+   "reason": "`structure` 74.7 BULLISH_BOS, but `subcomponents.energy.squeeze_score` 4.0 is a thin coil and `flow` 59.2 is below its floor: no volume signature yet (C6). Low conviction; wait for the break."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot on higher volume.",
+   "market_void": null,
+   "reason": "`energy` 82.4 with `subcomponents.energy.squeeze_score` 12.5 is coiled, and `sc_m_gate_detail` 17 passes every engine; `mp` 61.0 is slowing. Orderly 2.6% under the high, tier-1 3-0; the break on volume is the entry (C5)."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on above-normal volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back inside yesterday's range on rising volume.",
+   "market_void": null,
+   "reason": "`flow` 100.0 and `subcomponents.flow.ext_score` 5.0 show confirmed buying; `energy` 85.7 with `subcomponents.energy.squeeze_score` 12.5 is coiled 1.0% under the high. `mp` 48.0 is the weak leg. Tier-1 4-0; W and H1 HH/HL."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`structure` 84.2 and `mp` 89.0 are strong at the high, but `subcomponents.energy.squeeze_score` 0.0 and price is far above its 50-day after a run: no tight pivot, so wait for the close above it (R5)."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the 200-day stays flat and price loses the 50-day.",
+   "market_void": null,
+   "reason": "`energy` 82.4 with `subcomponents.energy.squeeze_score` 8.5 is coiled and `flow` 78.9 is sound; `mp` 66.0 is young and the 200-day is flat, so this stage-2 is early. WAIT for the break on volume."
+  },
+  {
+   "ticker": "WM",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if the 50-day crosses above the 100 and 200 and the 200 turns up: Trend Template reclaimed.",
+   "market_void": null,
+   "reason": "Gate fails: 50/100/200 stack inverted (criterion 4, C3). `mp_accel_state` DECELERATING and `subcomponents.pipe.pr_ret_12m` 12.0 show a young advance; `energy` 82.4 and `flow` 73.7 are sound but cannot override the gate."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`mp` 89.0 and `flow` 76.3 are sound, but `subcomponents.energy.squeeze_score` 0.0 is no coil and D is 4.2% under its high: no pivot to buy yet. Tier-1 4-0; wait for the break (C5)."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above a fresh pivot high after a pause, on volume"
+   },
+   "wrong_if": "Daily close below ma_20, or a close back under the breakout level on rising volume.",
+   "market_void": null,
+   "reason": "`structure` 89.5 and `mp` 97.0 lead; `subcomponents.flow.ext_score` 5.0 is breakout credit with real volume. But D is 11.2% over its swing high and `subcomponents.energy.squeeze_score` 0.0: chase (R5). Wait for a fresh pause."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`structure` 97.9 with `subcomponents.structure.base_score` 15.0 is a formed base; `mp` 96.0 STRONG. But `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.bq.bq_vol_dry` 0.0: no contraction or dry-up yet (C6)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on above-normal volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot on rising volume.",
+   "market_void": null,
+   "reason": "At the high on W, D and H1, 0.1% under the 20-day high: `mp` 93.0 and `structure` 83.2 agree. `subcomponents.energy.squeeze_score` 0.0 and `mp_accel_state` DECELERATING keep it a weight, not a veto. Buy the break only on volume (C5)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the pivot high on above-normal volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot on rising volume.",
+   "market_void": null,
+   "reason": "`energy` 79.0 with `subcomponents.energy.squeeze_score` 8.5 and `subcomponents.flow.volume_score` 0.0 is the tight, dry final contraction (C4, C6), 1.5% under the high. Tier-1 4-0. Entry is the break on volume (C5)."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong to stand aside if a fresh tight base forms and price closes above its pivot on volume.",
+   "market_void": null,
+   "reason": "`structure` 81.1 is trend, but `subcomponents.structure.base_score` 0.0 and `subcomponents.energy.squeeze_score` 0.0: no base and no coil after a 35.83% run. Leadership is real, so no OPPOSE; nothing to buy (R2, R5)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`structure` 94.7 with `subcomponents.structure.base_score` 15.0 is a formed base near the pivot (C5). `flow` 56.6 and `subcomponents.energy.squeeze_score` 0.0 mean no sponsorship or coil yet, so wait for the break on volume."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on expanding volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`mp` 87.0 and `subcomponents.flow.volume_score` 5.5 show trend and participation at the 52-week high; `structure` 66.3 is mid and `subcomponents.energy.squeeze_score` 0.0 means no tight base. Low conviction; wait for the break."
+  },
+  {
+   "ticker": "MSI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the pivot high on above-average volume"
+   },
+   "wrong_if": "Daily close below ma_20, or the break fails back under the pivot.",
+   "market_void": null,
+   "reason": "`mp` 100.0, `flow` 88.2 and `structure` 84.2 agree: the broadest read. But `subcomponents.energy.squeeze_score` 0.0 and the pivot is 2.4% away, price extended: wait for the break on volume, no chase (C5, R5)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 9018,
+   "sha256": "eb77f66bcece"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 5110,
+   "sha256": "1415a0cde505"
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "TTEK",
+   "reason": "POSITION system: break above resistance (structure_shift BULLISH_BOS, pct_from_pivot 0.91), sector_rrg_quadrant LEADING, subcomponents.flow.cmf 0.09. Caution: last bar red on rvol_20d 4.25, elder_pattern INTERRUPTED. Buy stop over bar_high 40.33; support base_low_20d 33.56.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "pivot_high", "sector_rrg_quadrant", "subcomponents.flow.cmf", "elder_pattern", "rvol_20d", "bar_high", "base_low_20d", "ret_63d", "rs_rank_pct"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2720407; entry 37.61; liquid, no caution needed", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C24", "C6"], "observed": "ret_63d 3.24 vs index_pct_change_63d -2.32; rs_rank_pct 85.29; sector_rrg_quadrant LEADING; sector_trend_state Momentum Fading (caution)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant", "sector_trend_state"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift BULLISH_BOS; structure_shift_ref 37.27; pct_from_pivot 0.91; pivot_high 37.27 (declared proxy for the resistance line)", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot", "pivot_high"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.09 confirms; elder_pattern INTERRUPTED does not confirm; elder_5d [7, 7, 7, 7, 5]", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C29", "C14"], "observed": "buy stop over bar_high 40.33; support base_low_20d 33.56; bar_close 37.61 under bar_open 40.17 fires flip proxy; prior_bar_high 41.02", "verdict": "partial", "fields": ["bar_high", "base_low_20d", "fib_swing_low", "bar_close", "bar_open", "prior_bar_high"]}
+   ],
+   "falsifier": "A daily close below structure_shift_ref 37.27 voids the break; a close below base_low_20d 33.56 is the support-line exit (C14, C29). Also wrong if price never trades above bar_high 40.33 and elder_pattern stays INTERRUPTED."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "TIGHTEN", "line": "bar_close 122.68 under bar_open 122.73 with elder_pattern INTERRUPTED and subcomponents.flow.cmf -0.11: R15 flip proxy fires, arm sell below bar_low 121.44 next session; support base_low_20d 115.76 intact, working stop held_book.held_sl 119.49 sits far below."},
+  {"ticker": "GPN", "verdict": "TIGHTEN", "line": "bar_close 100.23 under bar_open 100.68 and back under pivot_high 101.32 after prior_bar_high 102.91: arm sell below bar_low 99.72; elder_pattern absent so TIF unread; support base_low_20d 80.85 far, held_book.held_sl 97.45."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "bar_open 115.3 to bar_close 109.26 red, ma_20_slope_5d_pct -2.34, close under ma_20 119.17 and ma_40 117.71, subcomponents.flow.cmf -0.29: sell next session below bar_low 109.17; support fib_swing_low 106.92 not yet closed under."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short is out of scope for this long-only seat (C32); no mirror rule applied and no judgment given; bar_close 139.75, buy stop 148.15 stays as set."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on GPN: trend-impulse (TIF) proxy and the leaving-SUSTAINED flip test could not be read; the exit read rests on bar_close vs bar_open only."},
+  {"field": "ma_200", "impact": "null on SPCX: no long-term average read; no effect because the short is out of scope (C32)."}
+ ],
+ "declarations": [
+  "Proxies declared: structure_shift/pct_from_pivot/pivot_high stand in for the TradersGPS resistance line; subcomponents.flow.cmf for COM; elder_pattern/elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "Position system judged TTEK by its own picture (break above resistance), not by a lane tag; swing system tested on every name and no name met all five conditions.",
+  "No ledger memory block was supplied; no standing lesson applies.",
+  "SPCX is a short: out of scope for this seat (C32), declared and not applied."
+ ],
+ "shortfall_reason": "Only TTEK carries a position-system buy signal (structure_shift BULLISH_BOS). No other candidate has structure_shift BULLISH_BOS or ABOVE_STRUCTURE or pct_from_pivot above 0, and no pullback name has all five swing conditions: cci_20 is -74.16 on CTSH, -11.24 on IOT, -6.78 on PK, -0.25 on NCNO; BSP bar_close 40.5 sits under ma_40 40.86. Not padding."
+}

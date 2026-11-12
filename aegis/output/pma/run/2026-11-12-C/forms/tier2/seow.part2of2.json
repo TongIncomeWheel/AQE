@@ -1,0 +1,92 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high; the set-up stays live."},
+   "wrong_if": "Daily close below ma_40.",
+   "market_void": null,
+   "reason": "Dip inside an uptrend with flow behind it. `flow` 76.3, `subcomponents.flow.cmf` 0.29, `structure` 78.9, `sc_m_gate_detail` 17; D HH/HL. `mp` 89.0 FADING and `elder` 7.0 are cautions."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below base_low_20d, or elder leaves SUSTAINED on a red bar.",
+   "market_void": null,
+   "reason": "Position system. `structure` 89.5, `mp` 97.0, `elder` 10.0, `flow` 77.6, `subcomponents.flow.cmf` 0.27, `sc_m_gate_detail` 17. Extension is a weight here; W HH but LL is the caution."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed daily."},
+   "wrong_if": "Daily close below base_low_20d, or choch_bearish.",
+   "market_void": null,
+   "reason": "Position system, W and D HH/HL. `structure` 97.9, `mp` 96.0, `flow` 85.5, `subcomponents.flow.cmf` 0.28, `sc_momentum` 85.1, `sc_m_gate_detail` 17. `elder` 7.0 is the TIF caution."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, at the 20-day high."},
+   "wrong_if": "Daily close below base_low_20d, or elder leaves ACCELERATION on a red bar.",
+   "market_void": null,
+   "reason": "Position system at the high, W D H1 HH/HL. `subcomponents.flow.cmf` 0.45, `structure` 83.2, `mp` 93.0, `elder` 10.0, `flow` 73.7. `energy` 63.0 is the thin leg."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed daily."},
+   "wrong_if": "Daily close below base_low_20d, or choch_bearish.",
+   "market_void": null,
+   "reason": "Position system, W D H1 HH/HL. `flow` 73.7, `subcomponents.flow.cmf` 0.24, `energy` 79.0, `structure` 74.7, `sc_m_gate_detail` 17. `elder` 7.0 has no label and `mp` 76.0 is mid."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed daily."},
+   "wrong_if": "Daily close below base_low_20d, or elder under 7 on a red bar.",
+   "market_void": null,
+   "reason": "Position system, W D H1 HH/HL. `structure` 81.1, `mp` 87.0, `elder` 10.0, `subcomponents.flow.cmf` 0.29, `sc_m_gate_detail` 17. `subcomponents.flow.mfi` 88.71 is stretched; `flow` 68.4 is mid."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if flow rises over 65 with subcomponents.flow.mfi over 55 and elder reaches 10.0.",
+   "market_void": null,
+   "reason": "Structure leads but fund flow does not confirm (R14). `flow` 56.6, `subcomponents.flow.mfi` 38.95 (sellers in control), `subcomponents.flow.cmf` 0.07, `elder` 7.0, `sc_m_gate_detail` 9 (flow floor missed). `structure` 94.7 alone is not a fund-flow signal."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close over yesterday's high; price sits under its 20-hour high."},
+   "wrong_if": "Daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "Flow confirms, structure is mid. `flow` 76.3, `subcomponents.flow.cmf` 0.12, `mp` 87.0, `elder` 10.0, `sc_m_gate_detail` 17; `structure` 66.3 is modest and `subcomponents.flow.mfi` 85.45 stretched. D HH/HL, 3.3% under the high."
+  },
+  {
+   "ticker": "MSI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below base_low_20d, or elder leaves ACCELERATION on a red bar.",
+   "market_void": null,
+   "reason": "Position system, W D H1 HH/HL. `flow` 88.2, `subcomponents.flow.cmf` 0.3, `structure` 84.2, `mp` 100.0, `elder` 10.0, `sc_momentum` 86.2, `sc_m_gate_detail` 17. Only `energy` 76.5 is a step lower."
+  }
+ ],
+ "declarations": [
+  "Position system for breaks at highs; swing system for dips. Proxies: structure and pivot for resistance, subcomponents.flow.cmf for COM, elder for TIF.",
+  "No 50/100/200 average, no bracket field and no Valen flag is used."
+ ]
+}

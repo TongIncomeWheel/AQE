@@ -1,0 +1,128 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-12",
+ "answers": [
+  {
+   "pair_id": "CTAS-oneil-for~raschke",
+   "ticker": "CTAS",
+   "to": "raschke",
+   "text": "\"2.7% under the 20-day high is no trigger.\" Agreed, the pivot has not broken: that is why I file WAIT. Weekly closes above EMA9>21, 11.1% over its last swing high; `structure` 74.7 BULLISH_BOS and the LEADER read hold on D. `mp` 80.0 decelerating costs conviction; `flow` 59.2 is advisory to me.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-oneil-against~livermore",
+   "ticker": "PRCH",
+   "to": "livermore",
+   "text": "\"Distance above ma_200 is not distance from the high.\" Not my test. R7: entry 22.14 is 76.6% above `ma_200` 12.54, past the 70% climax line; `subcomponents.structure.base_score` 0.0 is no base, so no pivot (R3); day_vol 0.51 fails R4. A daily 0.8% over the swing high is a spike.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-oneil-against~seow",
+   "ticker": "PRCH",
+   "to": "seow",
+   "text": "\"base_score 0.0 and far above ma_200 are no faults.\" Base is my gate: `subcomponents.structure.base_score` 0.0 means no completed base and nothing downstream rescues it (R3). `subcomponents.flow.cmf` 0.29 and `structure` 81.1 are real, but they are the run itself.",
+   "concede": false
+  },
+  {
+   "pair_id": "LTH-oneil-for~raschke",
+   "ticker": "LTH",
+   "to": "raschke",
+   "text": "\"no coil or test prints 2.2% under the high.\" Coil is timing; my test is base soundness: `structure` 94.7, `subcomponents.structure.base_score` 15.0, LEADER, W 0.6% over swing high. Fair hit: `subcomponents.energy.squeeze_score` 0.0 shows no tightness (R3), so WAIT, not a buy.",
+   "concede": false
+  },
+  {
+   "pair_id": "MSI-oneil-for~raschke",
+   "ticker": "MSI",
+   "to": "raschke",
+   "text": "\"'Not stretched' fails: my blind ext_atr20 3.8.\" ext_atr20 is an ATR-from-mean read, not mine. C17 measures from the pivot: close 2.4% UNDER the 20-day high, W and D HH/HL; R7 sma_dist 13.75% is far from 70%. `mp` 100.0 and `structure` 84.2 stand; zero squeeze keeps it WAIT.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_50 667.17, or a break of the 20-day high on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "Coil base: `subcomponents.energy.squeeze_score` 12.5, `energy` 79.0, `structure` 71.6, W and D HH/HL, 1.4% under 20-day high. Fails strict L (rs_leadership IN-LINE), `mp` 48.0 weak, `subcomponents.structure.base_score` 5.0 stale: conditional."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A LEADER read plus a close above the 20-day high on day_vol at or above 1.40 with `subcomponents.flow.cmf` turning positive.",
+   "market_void": null,
+   "reason": "Closes near lows: `subcomponents.flow.cmf` -0.34 and `flow` 40.8 read distribution (C25); D swing HH but LL, `subcomponents.structure.base_score` 5.0 stale, rs_leadership IN-LINE fails L. `energy` 88.2 and `structure` 66.3 BOS are not a sound base."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_50 123.02, or a break of the 20-day high that fails on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER with `structure` 78.9, `subcomponents.structure.base_score` 8.0, `sc_momentum` 80.4, 3.8% under 20-day high (inside 5%). `mp` 92.0 decelerating, day_vol 0.91 misses 1.40, base about 6 weeks: buy only on the volume break."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_50 207.85, or a break of the 20-day high on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER; `structure` 74.7 BULLISH_BOS, 2.7% under 20-day high, D HH/HL. Against: `mp` 80.0 decelerating, `elder` 7.0 INTERRUPTED, `subcomponents.energy.squeeze_score` 4.0 thin coil, day_vol 0.64; volume must confirm."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_50 274.15, or a break of the 20-day high on thin day_vol.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER with `subcomponents.energy.squeeze_score` 12.5, `energy` 82.4, `structure` 71.6 BOS, 2.6% under 20-day high. `mp` 61.0 decelerating, day_vol 0.57 is dry-up not a buy, `subcomponents.structure.base_score` 5.0 stale."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "A completed 1-hour close above the pivot high; day_vol already 1.72"},
+   "wrong_if": "Close below ma_50 406.95, or a heavy-volume reversal off the 20-day high.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "Fresh base: `subcomponents.structure.base_score` 15.0, `subcomponents.energy.squeeze_score` 12.5, `structure` 82.1, `sc_momentum` 81.7, 1.0% under 20-day high; day_vol 1.72 already clears 1.40. Against: `mp` 48.0 weak, base about 4 weeks, D LH/LL."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_50 61.51, or a break of the 20-day high on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER; `structure` 84.2, `subcomponents.structure.base_score` 15.0, `mp` 89.0 accelerating, `sc_momentum` 77.4, 1.2% under 20-day high. Against: sma_dist 18.06%, run_10d 22.13%, div BEARISH/1, day_vol 0.77 misses 1.40."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "`structure` slips under 60, or close below ma_50 326.47.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER; `energy` 82.4, `subcomponents.energy.squeeze_score` 8.5, 3.9% under 20-day high, W and D HH/HL. Against: `structure` 63.2 only moderate, `mp` 66.0 decelerating, `subcomponents.structure.base_score` 5.0 stale, day_vol 0.57: thinnest case here."
+  },
+  {
+   "ticker": "WM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the pivot high, on day_vol at or above 1.40"},
+   "wrong_if": "Close below ma_200 225.71, or a break of the 20-day high on day_vol under 1.40.",
+   "market_void": "Index not in a confirmed uptrend: 4-5 distribution days in 4-5 weeks voids buys",
+   "reason": "LEADER; `structure` 77.9, `energy` 82.4, `subcomponents.energy.squeeze_score` 8.5, 2.9% under 20-day high, price above all averages. Against: ma_50 under ma_100 under ma_200, `mp` 86.0 decelerating, `subcomponents.flow.volume_score` 0.0, W HH but LL."
+  }
+ ],
+ "declarations": [
+  "Fundamentals NOT_AVAILABLE (C, A, S, I); base_stage NOT_AVAILABLE; market_gate DELEGATED: every SUPPORT is void unless the index is in a confirmed uptrend.",
+  "Substitutes: rs_leadership for the IBD RS Rating; day_vol vs 20d for the 50d volume test; pct_from_pivot unserved, so the 20-day-high distance stands in. sc_m_gates and pipe_rank are null: not cited."
+ ]
+}

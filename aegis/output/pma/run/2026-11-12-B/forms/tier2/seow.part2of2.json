@@ -1,0 +1,24 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high until it fills."
+   },
+   "wrong_if": "Daily close below structure_shift_ref 17.89 voids the break; close below base_low_20d is the support-line exit (C14, C29).",
+   "market_void": null,
+   "reason": "Position system: W swing_class HH/HL, dist_to_20bar_high_pct 0.63; H1 pos_in_day_range_pct 93.8. D swing_class LH/LL and elder_pattern INTERRUPTED hold conviction low; volume spike may be exhaustion. cmf unread."
+  }
+ ],
+ "declarations": [
+  "Proxies declared: structure_shift/pivot_high for the resistance line; flow cmf for COM (not served, unread); elder_pattern/elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "No refutation of my claims in the packet: answers empty."
+ ]
+}

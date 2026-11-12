@@ -1,0 +1,299 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-12",
+ "round": 2,
+ "declarations": [
+  "Impulse colour, force index, channel and price_ema_slope fields are not in the packet except where quoted in CNX's line; those tests read as unread, never proxied from the elder score.",
+  "BRZE, ABNB and TTEK carry null elder, elder_5d, elder_pattern and mp in the packet; an MTF line alone cannot grant Impulse permission, so I abstain on all three.",
+  "ma_50, ma_200 and div fields cited by Steenbarger are outside my menu: named in replies, never my basis.",
+  "Ledger memory was not injected; no standing lesson applied."
+ ],
+ "data_gaps": [
+  {
+   "field": "elder_5d",
+   "impact": "null on BRZE, ABNB, TTEK: permission and transition unreadable."
+  },
+  {
+   "field": "impulse_colour_last_bar",
+   "impact": "absent from the packet for all but CNX: R1 and R2 unread, red not excluded."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "SN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Permission is on (elder 7.0, not red) but there is no transition: elder_5d [7, 10, 10, 7, 7] peaked and stepped down, green giving way, which is an exit-side read and no fresh entry (C4, C24). ext_atr20 2.6 puts value far below; Elder bids under the average, he does not chase. Standing aside is the decision (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Weekly and daily above EMA9 with swing HH/HL, mp 96.0 STRONG, from_52w_hi -1.12%. Permission is on (elder 7.0). H1 below EMA9 is a small dip inside an intact trend.",
+    "against": "elder_5d [7, 10, 10, 7, 7] is a sustained reading rolling over (C24 exit-side), not a red-to-not-red transition. ext_atr20 2.6 puts the C10 buy-under-the-average out of reach.",
+    "entry_trigger": "A dip bar at or under 6 then elder_ge 7 on a pullback in_zone ma_20, weekly still up.",
+    "wrong_if": "elder at or under 1 (red), or a daily close under ma_20 with the weekly swing leaving HH/HL.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A fresh permission event after a real dip below 7 while price pulls back toward ma_20.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction",
+     "elder_pattern"
+    ]
+   }
+  },
+  {
+   "ticker": "ZETA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder_5d [0, 3, 5, 8, 10]: permission lifted on the bar before last and the score is now pinned at elder 10.0, summer, not Elder's buying season (C20). elder_pattern INTERRUPTED reads the trend leg failed and the daily swing is LH/LL. A spent transition plus a failed trend leg is murky tape: stand aside (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Score climbed from 0 to 10 across the window with weekly swing HH/HL, mp 79.0 STRONG, from_52w_hi 0.0, H1 above EMA9.",
+    "against": "INTERRUPTED and daily swing LH/LL fail the trend leg (C9). The score at the top is summer. ext_atr20 2.52 is far from value; Impulse cannot supply the edge at an extreme Steenbarger asks about.",
+    "entry_trigger": "INTERRUPTED clears and a pullback toward ma_20 prints a bar at or under 6 then elder_ge 7.",
+    "wrong_if": "elder at or under 1 (red), or a daily close under ma_20.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "The daily swing returning to HH/HL with the pattern no longer INTERRUPTED, then a fresh dip-and-lift in elder_5d.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   }
+  },
+  {
+   "ticker": "CNX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission event on the last bar: elder_5d [0, 0, 3, 5, 7], not red (impulse_colour_last_bar GREEN). R3 fires: force_index_ema_2 -114168.75 under zero while price_ema_slope 0.0195 rises. Screen one is mixed (weekly swing HH but LL), so conviction trimmed. The Impulse permits and times; it does not propose on its own.",
+   "conviction_change": "Round 1 conviction 4 rested on weekly UP; the packet MTF line shows weekly swing HH but LL and Steenbarger flags the 50-day average under the 200-day, so screen one is mixed: trimmed to 3.",
+   "falsifier": "elder_5d falls back to 6 or below, or impulse_colour_last_bar prints RED, or a daily close under ma_20-0.5atr.",
+   "challenge_reply": "Higher timeframe: weekly above EMA9, swing HH but LL, 4.8% under the last swing high, so mixed, not clean; daily swing HH/HL. The 50-day under the 200-day and the bearish divergence count sit outside my menu: noted, not my basis. Disconfirming observable: elder_5d back at 6 or below, or a RED print; non-price, pullback volume failing to contract.",
+   "obligations": {
+    "o_a_hard_or_soft": null,
+    "o_a_note": null,
+    "o_b_stop_honored": null,
+    "o_c_invalidation": "Volume expanding on the down bars of the pullback (C23), the losing side still turning up."
+   },
+   "case": {
+    "for": "elder_5d [0, 0, 3, 5, 7] prior 5 then 7 is red giving way (C3, C4); R3 dip of force_index_ema_2 -114168.75 under zero while price_ema_slope 0.0195 rises; weekly and daily above EMA9; H1 below EMA9 is the dip.",
+    "against": "Weekly swing HH but LL, 6.8% under 20-wk high and 20-day high; elder at exactly 7 is the bare minimum for not red; Steenbarger's 50-day under 200-day (outside my menu) says the larger frame is unproven.",
+    "entry_trigger": "in_zone ma_20 on the pullback with elder_ge 7 holding; bid under the average, no chase.",
+    "wrong_if": "elder_le 6 on the close, a RED print, or a daily close under ma_20-0.5atr.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Weekly swing resolving to HH/HL raises me; a red print or elder_5d back at 6 or below removes me.",
+    "cannot_see": [
+     "elder_pattern",
+     "mp_state",
+     "channel_upper",
+     "up_bar_vol_ratio"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": "Pullback volume contracting (C23); force_index_ema_2 under zero while price_ema_slope rises (R3); weekly stays above its averages."
+   }
+  },
+  {
+   "ticker": "SONO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Permission event on the last bar: elder_5d [3, 3, 5, 5, 10], prior 5 at or under 6 then 10, so red giving way (C3, C4). But elder_pattern INTERRUPTED reads the trend leg failed, the daily swing is LH/LL and mp 48.0 is only BUILDING. Transition real, trend leg broken: low conviction, and no chase at elder 10.0 (summer, C20).",
+   "conviction_change": null,
+   "falsifier": "elder_5d back at 6 or below, a RED print, or a daily close under ma_20-0.5atr.",
+   "case": {
+    "for": "elder_5d [3, 3, 5, 5, 10] steps from 5 to 10 on the last bar; weekly above EMA9, swing HH/HL, 0.6% under 20-wk high; H1 above EMA9; mp BUILDING/ACCELERATING.",
+    "against": "INTERRUPTED (trend leg failed); daily swing LH/LL; day_vol 4.46 with the bar at 94% of range is a chase, and elder 10.0 is summer, not the buying season.",
+    "entry_trigger": "Pullback in_zone ma_20 with elder_ge 7; never at the high.",
+    "wrong_if": "elder_le 6 on the close, a RED print, or a daily close under ma_20.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Daily swing turning HH/HL (INTERRUPTED clearing) raises me; elder_5d back at 6 or below drops me to abstain.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "up_bar_vol_ratio"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": "Pullback volume contracting (C23); the day_vol surge fading, not distribution; weekly trend stays up."
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Every menu field is null in the packet: elder None, elder_5d None, elder_pattern None, mp None. I cannot read permission or a transition, and an MTF line cannot say not red. Declared unread, never proxied from price. Noted only: day_vol 0.31 is thin (C23). Standing aside (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Weekly and daily above EMA9 with swing HH/HL, 0.0% under 20-day high, H1 above EMA9.",
+    "against": "No Impulse reading exists so the censor cannot clear it; weekly swing HH but LL; day_vol 0.31 is thin.",
+    "entry_trigger": "Needs elder_5d on the row: a bar at or under 6 then elder_ge 7 near ma_20.",
+    "wrong_if": "elder at or under 1 (red) once it is readable.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A populated elder_5d showing a red-to-not-red transition with the weekly up.",
+    "cannot_see": [
+     "elder",
+     "elder_5d",
+     "elder_pattern",
+     "mp",
+     "mp_state",
+     "impulse_colour_last_bar"
+    ]
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Permission is on (elder 7.0, not red) but elder_5d [7, 7, 10, 10, 7] is a sustained high that just stepped down: green giving way, Elder's profit-taking bar, not a buy (C4, C24). H1 below EMA9 with swing LH/LL is the dip in progress, but no red-to-not-red transition exists to time it. Stand aside (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Weekly and daily above EMA9 with swing HH/HL, mp 89.0 STRONG, from_52w_hi -1.58%; permission is on.",
+    "against": "elder_5d [7, 7, 10, 10, 7] rolling over from a plateau is the exit-side read; daily is 8.2% under the last swing high and H1 swings LH/LL.",
+    "entry_trigger": "A bar at or under 6 then elder_ge 7 near ma_20, weekly still up.",
+    "wrong_if": "elder at or under 1 (red), or the weekly leaving swing HH/HL.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A fresh permission event after a real dip below 7 with the daily swing back to HH/HL.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "elder_pattern"
+    ]
+   }
+  },
+  {
+   "ticker": "OPCH",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Permission event on the last bar: elder_5d [4, 4, 4, 4, 7], prior 4 at or under 6 then 7, out of elder_pattern ACCUMULATION_BASE; not red (elder 7.0). Weekly swing LH/LL and daily HH but LL leave screen one mixed. mp_state FADING is not a decay signal (R13), not used; div BEARISH is outside my menu. Clean transition, trend leg unverified: low conviction.",
+   "conviction_change": null,
+   "falsifier": "elder_5d back at 6 or below, a RED print, or a daily close under ma_20-0.5atr.",
+   "case": {
+    "for": "Four flat bars then elder_5d lands at 7 out of an ACCUMULATION_BASE; weekly and daily above EMA9; H1 above EMA9; 0.6% under 20-day high.",
+    "against": "Weekly swing LH/LL and daily HH but LL leave the trend leg unproven (C9, C21); elder 7.0 is the bare minimum for not red; mp 58.0 DECELERATING gives no force confirmation.",
+    "entry_trigger": "in_zone ma_20 pullback with elder_ge 7 holding; no chase at the high.",
+    "wrong_if": "elder_le 6 on the close, or a daily close under ma_20-0.5atr with the weekly still LH/LL.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Weekly swing turning HH/HL raises me; a second bar at or over 7 after a dip raises me; a RED print removes me.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20"
+    ],
+    "confirm": [
+     "elder_ge:7"
+    ],
+    "wrong": [
+     "elder_le:6",
+     "close_below:ma_20-0.5atr"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+3pct",
+    "tf": "EOD",
+    "non_price": "Pullback volume contracting (C23); a weekly higher high would clear the mixed first screen."
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Every menu field is null in the packet: elder None, elder_5d None, elder_pattern None, mp None. Permission and transition are unreadable, so the censor cannot clear it. The MTF shape (weekly and daily above EMA9 with swing HH/HL, H1 dip) is what Elder buys, but only once the Impulse is not red. Declared unread; stand aside (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Weekly and daily above EMA9 with swing HH/HL; H1 below EMA9 is a pullback inside a rising trend, the shape Elder buys.",
+    "against": "No Impulse reading exists; weekly is 8.5% under 20-wk high; H1 EMA9 under EMA21 and LH.",
+    "entry_trigger": "Needs elder_5d on the row: a bar at or under 6 then elder_ge 7 near ma_20.",
+    "wrong_if": "elder at or under 1 (red) once readable.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A populated elder_5d showing red giving way with the weekly still up.",
+    "cannot_see": [
+     "elder",
+     "elder_5d",
+     "elder_pattern",
+     "mp",
+     "mp_state",
+     "impulse_colour_last_bar"
+    ]
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Every menu field is null in the packet: elder None, elder_5d None, elder_pattern None, mp None. Permission unreadable. The MTF line also fails my trend leg: daily below EMA9 with swing HH but LL, 9.9% under the last swing high, weekly swing LH but HL. No clear trend, no permission: stand aside (C22).",
+   "conviction_change": null,
+   "case": {
+    "for": "Weekly above EMA9 with swing LH but HL; the daily dip sits under a rising weekly structure.",
+    "against": "Daily below EMA9 and swing HH but LL; H1 EMA9 under EMA21; no Impulse reading at all.",
+    "entry_trigger": "Needs elder_5d on the row, and the daily back above its EMA9, then elder_ge 7.",
+    "wrong_if": "elder at or under 1 (red) once readable, or the weekly leaving its structure.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A populated elder_5d showing red giving way together with the daily reclaiming EMA9.",
+    "cannot_see": [
+     "elder",
+     "elder_5d",
+     "elder_pattern",
+     "mp",
+     "mp_state",
+     "impulse_colour_last_bar"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of1.json",
+   "bytes": 14087,
+   "votes": 9,
+   "sha256": "9999fd506805"
+  }
+ ]
+}

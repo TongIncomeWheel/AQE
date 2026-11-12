@@ -1,0 +1,127 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Wait for the daily pullback to settle at the 20-day average."
+   },
+   "wrong_if": "Daily close under the 20-day average by half an ATR.",
+   "market_void": null,
+   "reason": "First pullback in a daily HH/HL, 4.2% under its high: `structure` 78.9, `mp` 89.0, `flow` 76.3. Weekly is HH but LL and H1 is 9<21, so the pullback is not finished: join at the zone (C7)."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to come back to the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`structure` 89.5, `mp` 97.0 and `flow` 77.6 show imbalance up, but daily is 11.2% and H1 15.1% above their swing highs: away from value. Extension sets the entry, not an oppose (C3, C15)."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to come back to the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`structure` 97.9, `mp` 96.0 and `flow` 85.5: the strongest legs. Weekly is 19.6% above its swing high, away from value, though daily HH/HL is 2.9% under its high: wait for the corrective wave (C3, C15)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to settle at the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "All frames HH/HL, daily 1.5% above its swing high at the 52-week high; `structure` 83.2 and `mp` 93.0. But `energy` 63.0 is near its floor and `flow` 73.7 is only decent: take the test, not the high (C7)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above the swing high that then holds."
+   },
+   "wrong_if": "Daily close back under the swing high by half an ATR after a break.",
+   "market_void": null,
+   "reason": "RANGE top with a coil: `energy` 79.0, `subcomponents.energy.squeeze_score` 8.5, `flow` 73.7, `structure` 74.7. Daily is 1.5% under its high on HH/HL frames; the edge is for a break that holds, not a buy (C5, C11)."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy stop above the prior day's high once an hourly bar closes over it."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "Daily HH/HL is 0.8% above its swing high and H1 0.9% under its high: a quiet test (C7). `mp` 87.0 and `structure` 81.1 with `elder` 10.0. Weekly is 20.5% above its high and `subcomponents.structure.base_score` 0.0: no base, so the test is the whole case."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hourly close above the prior day's high at the weekly test."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`structure` 94.7 and `mp` 93.0; weekly is only 0.6% above its swing high, a weekly test (C7). `flow` 56.6 is mid and H1 is HH but LL: wait for an hourly sign of strength (C12)."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to come back to the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`mp` 87.0 and `flow` 76.3 with all frames HH/HL, but `structure` 66.3 and `energy` 68.9 are mid and daily is 3.4% above its swing high. Tier-1 was split 1 to 1: no entry before a test (C3)."
+  },
+  {
+   "ticker": "MSI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for price to settle at the broken level on the daily chart."
+   },
+   "wrong_if": "Daily close under the broken level by half an ATR.",
+   "market_void": null,
+   "reason": "`mp` 100.0, `flow` 88.2 and `structure` 84.2; all frames HH/HL, daily 2.4% under its high. Weekly is 8.2% above its swing high, away from value: join on the pullback, no chase (C3, C15)."
+  }
+ ],
+ "declarations": [
+  "No vote rests on a bracket field (R1). Level words are fields, never numbers. structure_shift_ref is not in my packet; I read the Creek from the swing-high figure on the grid."
+ ]
+}

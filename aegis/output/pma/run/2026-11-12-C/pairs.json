@@ -1,0 +1,426 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-12T02:26:19Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-12",
+ "survivors": [
+  "TMO",
+  "ELF",
+  "DLTR",
+  "CTAS",
+  "ABBV",
+  "HUM",
+  "BTSG",
+  "COR",
+  "WM",
+  "AJG",
+  "AXGN",
+  "PCOR",
+  "ICE",
+  "ADP",
+  "PRCH",
+  "LTH",
+  "TGTX",
+  "MSI"
+ ],
+ "pairs": [
+  {
+   "pair_id": "ELF-minervini-for~aqe-quant",
+   "ticker": "ELF",
+   "claim_id": "ELF-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "aqe-quant",
+   "claim_text": "Top-tier relative strength (rs_rank_pct 98.15), BULLISH_BOS, `energy` 88.2, weekly 0.1% above its last swing high.",
+   "refute_evidence": "`energy` 88.2 is one engine carrying `sc_momentum` 66.0: `flow` 40.8 fails (gate code 9), `subcomponents.flow.cmf` -0.34, `subcomponents.structure.rs_accel` -18.22 (lead eroding). `rs_rank_pct` is not on my sheet.",
+   "refute_tf": {
+    "W": "`subcomponents.structure.wk_score` 15.0 of 15: weekly trend up; swing and EMAs unread",
+    "D": "`flow` 40.8 fails (gate code 9); `energy` 88.2 strong; `mp` 70.0 passes",
+    "H1": "not served: AQE scores are end-of-day, no hourly field"
+   }
+  },
+  {
+   "pair_id": "ELF-livermore-for~aqe-quant",
+   "ticker": "ELF",
+   "claim_id": "ELF-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "aqe-quant",
+   "claim_text": "BOS broke a confirmed pivot; weekly HH/HL and 9>21; `energy` 88.2 coiled.",
+   "refute_evidence": "BOS and weekly swing are unread. The one AQE field offered, `energy` 88.2 (`subcomponents.energy.squeeze_score` 12.5), is real but narrow: `flow` 40.8 fails its floor and `subcomponents.flow.accum_score` is 0.0.",
+   "refute_tf": {
+    "W": "`subcomponents.structure.wk_score` 15.0 of 15: weekly trend up; swing and EMAs unread",
+    "D": "`flow` 40.8 fails (gate code 9); `energy` 88.2 coiled but alone",
+    "H1": "not served: AQE scores are end-of-day, no hourly field"
+   }
+  },
+  {
+   "pair_id": "DLTR-livermore-for~raschke",
+   "ticker": "DLTR",
+   "claim_id": "DLTR-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "C5 setup complete except the trigger: uptrend, 3.8% reaction, rs_rank_pct 94.03.",
+   "refute_evidence": "A 3.8% dip under the swing high never reached ma20 (sma_distance_pct 16.16): not a retracement. `mp_accel_state` DECELERATING, `subcomponents.energy.squeeze_score` 0.0: no pullback, no coil, no trigger for me.",
+   "refute_tf": {
+    "W": "HH but LL, 3.8% under 20-wk high: not a first pullback to the average",
+    "D": "HH/HL, 3.8% under swing high, well above EMA21: shallow dip, no ma20 test",
+    "H1": "LH but HL, 90% of range, 0.2% under 20-hr high: bounce, no setup bar"
+   }
+  },
+  {
+   "pair_id": "DLTR-seow-for~raschke",
+   "ticker": "DLTR",
+   "claim_id": "DLTR-seow-for",
+   "kind": "for",
+   "author": "seow",
+   "refuter": "raschke",
+   "claim_text": "rs_rank_pct 94.03, `flow` 84.2, `elder` 10.0 ACCELERATION; a daily pullback inside a rising trend.",
+   "refute_evidence": "'Pullback inside a rising trend' fails: price held sma_distance_pct 16.16 over its average, no ma20 retest. `mp_accel_state` DECELERATING; `flow` 84.2 is strength and `elder` 10.0 is advisory. rs_rank_pct not my field.",
+   "refute_tf": {
+    "W": "HH but LL, 3.8% under 20-wk high: not a first pullback to the average",
+    "D": "HH/HL, 3.8% under swing high, well above EMA21: shallow dip, no ma20 test",
+    "H1": "LH but HL, 90% of range, 0.2% under 20-hr high: bounce, no setup bar"
+   }
+  },
+  {
+   "pair_id": "CTAS-oneil-for~raschke",
+   "ticker": "CTAS",
+   "claim_id": "CTAS-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "LEADER; `structure` 74.7 BOS; within 2.7% of 20-day high.",
+   "refute_evidence": "`structure` 74.7 BULLISH_BOS is real, but 2.7% under the 20-day high is no trigger. `flow` 59.2 fails its floor, `mp_accel_state` DECELERATING, `subcomponents.energy.squeeze_score` 4.0 is a thin coil; weekly LH/LL.",
+   "refute_tf": {
+    "W": "LH/LL, 2.7% under 20-wk high: weekly not an established uptrend",
+    "D": "HH/HL, 2.7% under swing high: no retest or inside bar printed",
+    "H1": "HH/HL, 95% of range, 0.1% under 20-hr high: no setup bar yet"
+   }
+  },
+  {
+   "pair_id": "CTAS-minervini-for~raschke",
+   "ticker": "CTAS",
+   "claim_id": "CTAS-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "Quality leader near its high, BULLISH_BOS, daily 2.7% under the 20-day high, hourly 0.1% under its 20-hr high.",
+   "refute_evidence": "BULLISH_BOS on `structure` 74.7 and H1 at the 20-hr high make no setup: `mp` 80.0 FADING, `subcomponents.energy.squeeze_score` 4.0 (low coil), `elder` 7.0 INTERRUPTED. Weekly LH/LL; no retest or breakout bar.",
+   "refute_tf": {
+    "W": "LH/LL, 2.7% under 20-wk high: weekly not an established uptrend",
+    "D": "HH/HL, 2.7% under swing high: no retest or inside bar printed",
+    "H1": "HH/HL, 95% of range, 0.1% under 20-hr high: no setup bar yet"
+   }
+  },
+  {
+   "pair_id": "BTSG-livermore-for~raschke",
+   "ticker": "BTSG",
+   "claim_id": "BTSG-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "C5/C16: leader at the high after a small reaction; rs_rank_pct 80.04; `mp` accelerating.",
+   "refute_evidence": "`subcomponents.energy.squeeze_score` 0.0 means no coil under the high; `subcomponents.structure.base_score` 15.0 is base credit that fades after a breakout. Hourly 5.3% over its last swing high, my blind div_bear_count 1: no setup bar.",
+   "refute_tf": {
+    "W": "HH but LL, 1.5% under 20-wk high, 10.6% over swing high",
+    "D": "HH/HL, 2.1% over swing high, 1.2% under 20-day high: no coil",
+    "H1": "HH/HL, 62% of range, 5.3% over last swing high: extended"
+   }
+  },
+  {
+   "pair_id": "WM-aqe-quant-for~minervini",
+   "ticker": "WM",
+   "claim_id": "WM-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "minervini",
+   "claim_text": "Four engines above floors; clean 23-bar run; coil; `subcomponents.mp.adx_val` 30.74.",
+   "refute_evidence": "`subcomponents.mp.adx_val` 30.74 and coil are strength readings; the gate fails: ma50 220.49 under ma100 224.47 under ma200 225.71, rs_rank_pct 62.52. Clean run after a rebound is not a stage 2 stack.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH but LL, 2.9% under 20-wk high",
+    "D": "above EMA9, 9>21, HH/HL, 2.9% under 20-day high",
+    "H1": "above EMA9, 9>21, HH/HL, 97% of day range"
+   }
+  },
+  {
+   "pair_id": "WM-livermore-for~minervini",
+   "ticker": "WM",
+   "claim_id": "WM-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "Price 240.29 over every average, `energy` 82.4 coiled, rs_rank_pct 62.52.",
+   "refute_evidence": "Price over every average only after a rebound: ma50 220.49 under ma100 224.47 under ma200 225.71, rs_rank_pct 62.52 under 70. `energy` 82.4 coil does not repair an inverted long stack (C3).",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH but LL, 2.9% under 20-wk high",
+    "D": "above EMA9, 9>21, HH/HL, 2.9% under 20-day high",
+    "H1": "above EMA9, 9>21, HH/HL, 97% of day range"
+   }
+  },
+  {
+   "pair_id": "WM-minervini-against~livermore",
+   "ticker": "WM",
+   "claim_id": "WM-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "ma50 under ma100 under ma200, rs_rank_pct 62.52, `mp` DECELERATING, weekly LH/LL.",
+   "refute_evidence": "Weekly is not LH/LL: W is 9>21, HH but LL, 2.9% under the 20-wk high; daily HH/HL. The inverted averages are a young stack I weigh at conviction 3; `mp` 86.0 FADING/DECELERATING is a weight, not a veto.",
+   "refute_tf": {
+    "W": "9>21, HH but LL, 2.8% under last swing high: not LH/LL",
+    "D": "9>21, HH/HL, 2.9% under 20-day high: normal reaction",
+    "H1": "HH/HL, 97% of range, 0.1% under 20-hr high"
+   }
+  },
+  {
+   "pair_id": "WM-minervini-against~seow",
+   "ticker": "WM",
+   "claim_id": "WM-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "ma50 under ma100 under ma200, rs_rank_pct 62.52, `mp` DECELERATING, weekly LH/LL.",
+   "refute_evidence": "Grid shows weekly swing HH but LL with 9>21, not LH/LL, and daily HH/HL. `energy` 82.4, `flow` 73.7 and `subcomponents.flow.cmf` 0.23 are sound. Right that `mp` 86.0 is slowing; I read no 50/100/200 average (C1).",
+   "refute_tf": {
+    "W": "9>21, swing HH but LL, 2.9% under 20-wk high: not LH/LL",
+    "D": "9>21 HH/HL, 2.9% under swing high: orderly dip",
+    "H1": "above EMA9, HH/HL, 97% of day range: firm"
+   }
+  },
+  {
+   "pair_id": "AXGN-minervini-for~raschke",
+   "ticker": "AXGN",
+   "claim_id": "AXGN-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "The only name at the high with real volume: day_vol 2.42, `structure` 89.5, `mp` 97.0 STRONG.",
+   "refute_evidence": "`subcomponents.flow.ext_score` 5.0 is breakout credit: price is through, and buying that close is what Turtle Soup fades (C3). `mp_accel_state` FLAT, `subcomponents.energy.squeeze_score` 0.0, daily 11.2% over its swing high.",
+   "refute_tf": {
+    "W": "HH but LL, 1.8% under 20-wk high, 10.8% over swing high",
+    "D": "HH/HL, 11.2% over swing high: through the level, extended",
+    "H1": "LH but HL, 15.1% over swing high, 88% of range: crowd entry"
+   }
+  },
+  {
+   "pair_id": "AXGN-livermore-for~raschke",
+   "ticker": "AXGN",
+   "claim_id": "AXGN-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "C16 new high on volume 2.42x; rs_rank_pct 88.4; all engines clear.",
+   "refute_evidence": "Volume 2.42x on a new high is the crowd's entry, which C3 fades. `subcomponents.flow.ext_score` 5.0 and `mp_accel_state` FLAT with `subcomponents.energy.squeeze_score` 0.0: no coil, and hourly is LH but HL 15.1% over its swing high.",
+   "refute_tf": {
+    "W": "HH but LL, 1.8% under 20-wk high, 10.8% over swing high",
+    "D": "HH/HL, 11.2% over swing high: through the level, extended",
+    "H1": "LH but HL, 15.1% over swing high, 88% of range: crowd entry"
+   }
+  },
+  {
+   "pair_id": "PCOR-minervini-for~raschke",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "Weekly and daily higher highs and higher lows with `structure` 97.9, `mp` 96.0 STRONG, `flow` 85.5; pivot 2.9% away.",
+   "refute_evidence": "`structure` 97.9, `mp` 96.0, `flow` 85.5 are broad strength, but `subcomponents.energy.squeeze_score` 0.0: no coil, and my blind day_vol 0.58. A pivot 2.9% away is no trigger without contraction or a ma20 retest.",
+   "refute_tf": {
+    "W": "HH/HL, 2.9% under 20-wk high",
+    "D": "HH/HL, 2.9% under swing high: dip never reached EMA21",
+    "H1": "LH but HL, 92% of range, 0.4% under 20-hr high: no setup bar"
+   }
+  },
+  {
+   "pair_id": "PCOR-livermore-for~raschke",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "C5: uptrend, 2.9% normal reaction, rs_rank_pct 94.45; `subcomponents.structure.base_score` 15.0.",
+   "refute_evidence": "A 2.9% 'normal reaction' under the high never reached ma20 (my blind ext_atr20 4.08): not a retracement. `subcomponents.structure.base_score` 15.0 is base credit that fades once through; `subcomponents.energy.squeeze_score` 0.0.",
+   "refute_tf": {
+    "W": "HH/HL, 2.9% under 20-wk high",
+    "D": "HH/HL, 2.9% under swing high: dip never reached EMA21",
+    "H1": "LH but HL, 92% of range, 0.4% under 20-hr high: no setup bar"
+   }
+  },
+  {
+   "pair_id": "ICE-livermore-for~raschke",
+   "ticker": "ICE",
+   "claim_id": "ICE-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "C16 new high with volume; weekly and daily HH/HL; all engines clear.",
+   "refute_evidence": "H1 closes at 99% of range on the 20-hr high: through the level, which C3 fades. `mp_accel_state` DECELERATING, `subcomponents.energy.squeeze_score` 0.0, `energy` 63.0 low in the room: no coil, no pullback.",
+   "refute_tf": {
+    "W": "HH/HL, 0.1% under 20-wk high",
+    "D": "HH/HL, 1.5% over swing high, 0.1% under 20-day high: through the level",
+    "H1": "HH/HL, 99% of range at 20-hr high: breakout close C3 fades"
+   }
+  },
+  {
+   "pair_id": "PRCH-wyckoff-for~oneil",
+   "ticker": "PRCH",
+   "claim_id": "PRCH-wyckoff-for",
+   "kind": "for",
+   "author": "wyckoff",
+   "refuter": "oneil",
+   "claim_text": "Near the broken level with all frames HH/HL, `mp` 87.0 and rs_rank_pct 98.07; a quiet test is the preferred entry.",
+   "refute_evidence": "Nearness to a broken level is not a base: `subcomponents.structure.base_score` 0.0 and `subcomponents.structure.base_days` 0.0. `subcomponents.structure.rs_vs_spy` 33.73 and `mp` 87.0 are the run; weekly is 20.5% above its last swing high.",
+   "refute_tf": {
+    "W": "HH/HL, 20.5% above last swing high: extended, no weekly base",
+    "D": "HH/HL, 0.8% above last swing high: near level, no base behind it",
+    "H1": "HH/HL, 82% of range: a quiet test is timing, not a pivot"
+   }
+  },
+  {
+   "pair_id": "PRCH-minervini-for~raschke",
+   "ticker": "PRCH",
+   "claim_id": "PRCH-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "All timeframes in higher highs and higher lows, rs_rank_pct 98.07, pivot 1.0% away.",
+   "refute_evidence": "Buying a pivot 1.0% away needs contraction: `subcomponents.energy.squeeze_score` 0.0, my blind run_10d 35.83% and day_vol 0.51 at the high. HH/HL on all frames is trend, not a setup bar; `structure` 81.1 and `mp` 87.0 are strength.",
+   "refute_tf": {
+    "W": "HH/HL, 1.0% under 20-wk high, 20.5% over swing high",
+    "D": "HH/HL, 0.8% over last swing high: near the broken level",
+    "H1": "HH/HL, 82% of range, 0.9% under 20-hr high: test not yet printed"
+   }
+  },
+  {
+   "pair_id": "PRCH-oneil-against~livermore",
+   "ticker": "PRCH",
+   "claim_id": "PRCH-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "livermore",
+   "claim_text": "Far above ma_200 12.54; no base; day_vol 0.51.",
+   "refute_evidence": "Distance above ma_200 is not distance from the high (C5): daily is 0.8% over the last swing high, `structure` 81.1 and `mp` 87.0 hold. No base is no bar. day_vol 0.51 is the one true weight, already in my conviction of 3.",
+   "refute_tf": {
+    "W": "9>21, HH/HL, 1.0% under 20-wk high: uptrend",
+    "D": "9>21, HH/HL, 0.8% over last swing high, 1.0% under 20-day high",
+    "H1": "HH/HL, 82% of range, 0.9% under 20-hr high"
+   }
+  },
+  {
+   "pair_id": "PRCH-oneil-against~seow",
+   "ticker": "PRCH",
+   "claim_id": "PRCH-oneil-against",
+   "kind": "against",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "Far above ma_200 12.54; no base; day_vol 0.51.",
+   "refute_evidence": "`subcomponents.structure.base_score` 0.0 and far above ma_200 are no faults in the position system (C26, C1). `flow` 70.6 and `subcomponents.flow.cmf` 0.29 confirm; `subcomponents.flow.volume_score` 0.0 is the fair caution on day_vol 0.51.",
+   "refute_tf": {
+    "W": "9>21 HH/HL, 1.0% under 20-wk high: tide up",
+    "D": "9>21 HH/HL, 0.8% over last swing high: break in place",
+    "H1": "above EMA9, HH/HL, 82% of day range: firm"
+   }
+  },
+  {
+   "pair_id": "LTH-oneil-for~raschke",
+   "ticker": "LTH",
+   "claim_id": "LTH-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Structure 94.7; base score 15.0; LEADER; 2.2% under the high.",
+   "refute_evidence": "`flow` 56.6 fails its floor, `mp_state` FADING with `mp_accel_state` FLAT, `subcomponents.energy.squeeze_score` 0.0: `structure` 94.7 and base_score 15.0 are base credit, but no coil or test prints 2.2% under the high.",
+   "refute_tf": {
+    "W": "HH/HL, 0.6% over swing high, 2.2% under 20-wk high",
+    "D": "HH/HL, 2.2% under swing high: no coil printed",
+    "H1": "HH but LL, 65% of range, 0.7% under 20-hr high: no trigger bar"
+   }
+  },
+  {
+   "pair_id": "LTH-minervini-for~raschke",
+   "ticker": "LTH",
+   "claim_id": "LTH-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "`structure` 94.7 with price close to its pivot and only ext_atr20 2.0 extension: entry near the pivot as C5 asks.",
+   "refute_evidence": "Entry near a pivot needs contraction; my blind ext_atr20 2.0 is not a coil: `subcomponents.energy.squeeze_score` 0.0, `flow` 56.6 below floor. `structure` 94.7 is strength; H1 gives no setup bar.",
+   "refute_tf": {
+    "W": "HH/HL, 0.6% over swing high, 2.2% under 20-wk high",
+    "D": "HH/HL, 2.2% under swing high: no coil printed",
+    "H1": "HH but LL, 65% of range, 0.7% under 20-hr high: no trigger bar"
+   }
+  },
+  {
+   "pair_id": "TGTX-minervini-for~raschke",
+   "ticker": "TGTX",
+   "claim_id": "TGTX-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "At the 52-week high with `mp` 87.0 and `flow` 76.3; weekly and daily HH/HL.",
+   "refute_evidence": "Near the high without a coil: `subcomponents.energy.squeeze_score` 0.0, my blind ext_atr20 2.38, day_vol 0.98. `mp` 87.0 and `flow` 76.3 are strength; `structure` 66.3 is mid. W and D HH/HL is trend, not a setup.",
+   "refute_tf": {
+    "W": "HH/HL, 3.3% under 20-wk high",
+    "D": "HH/HL, 3.4% over swing high, 3.3% under 20-day high: no coil",
+    "H1": "HH/HL, 90% of range, 3.4% under swing high: no trigger"
+   }
+  },
+  {
+   "pair_id": "MSI-aqe-quant-for~raschke",
+   "ticker": "MSI",
+   "claim_id": "MSI-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "raschke",
+   "claim_text": "All four engines above floors with `mp` 100.0; clean live exhaustion test; lead widening; A-TIER path.",
+   "refute_evidence": "`subcomponents.energy.exhaustion_score` 10.0 reads no exhaustion yet, so there is no exhaustion test to call clean. H1 at 96% of range, 0.1% under 20-hr high, `subcomponents.energy.squeeze_score` 0.0: no coil, no pullback. 'Lead widening' not mine.",
+   "refute_tf": {
+    "W": "HH/HL, 2.4% under 20-wk high",
+    "D": "HH/HL, 2.4% under swing high: no retest or inside bar",
+    "H1": "HH/HL, 96% of range, 0.1% under 20-hr high: at the high, no pullback"
+   }
+  },
+  {
+   "pair_id": "MSI-oneil-for~raschke",
+   "ticker": "MSI",
+   "claim_id": "MSI-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Leader on all engines; within 2.4% of the high; not stretched.",
+   "refute_evidence": "'Not stretched' fails: my blind ext_atr20 3.8 at the high, `subcomponents.energy.squeeze_score` 0.0, `subcomponents.energy.en_pos50` 87.81. `mp` 100.0 and `structure` 84.2 are strength; no contraction or retracement to time.",
+   "refute_tf": {
+    "W": "HH/HL, 2.4% under 20-wk high",
+    "D": "HH/HL, 2.4% under swing high: no retest or inside bar",
+    "H1": "HH/HL, 96% of range, 0.1% under 20-hr high: at the high, no pullback"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 25,
+  "by_author": {
+   "minervini": 9,
+   "livermore": 7,
+   "seow": 1,
+   "oneil": 5,
+   "aqe-quant": 2,
+   "wyckoff": 1
+  },
+  "by_refuter": {
+   "aqe-quant": 2,
+   "raschke": 16,
+   "minervini": 2,
+   "livermore": 2,
+   "seow": 2,
+   "oneil": 1
+  }
+ }
+}

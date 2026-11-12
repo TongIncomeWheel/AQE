@@ -1,0 +1,68 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "SN",
+   "reason": "Leader in a trend, now ABOVE_STRUCTURE: structure_shift 1 with structure 77.9, mp_state 3 (STRONG) and mp_accel_state 1 (ACCELERATING). Consumer Discretionary peers DLTR and MHK also sit ABOVE_STRUCTURE (second-name confirmation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "entry"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 77.9; structure_shift 1 (ABOVE_STRUCTURE, price above confirmed pivot high); sma_distance_pct 20.41 (extended from 50d but at the high, not a pullback)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 7.68, entry 226.93; my translated danger signal = reaction of ~1.5x atr_14d (about 11.5) from the day's high; my invalidation = close under 211.6 (entry less 2x atr_14d)", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLY, DLTR and MHK (same sector) both structure_shift 1; sector_trend_state 2 (Momentum Fading - Hold, Don't Add) is a caution on the group", "verdict": "partial", "fields": ["gics_sector", "structure_shift", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "not held; fresh entry only on strength, no averaging; any add only at higher prices once profitable", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "thresholds translated via atr_14d (my multiplier, not Livermore's 6 points); fill_difficulty NOT_SERVED (day_vol 0.88 is only a proxy); no inside information used", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Close under 211.6 (entry 226.93 less 2x atr_14d 7.68), or structure_shift turning BEARISH_CHOCH, or a one-day reaction of ~1.5x atr_14d from the high."
+  },
+  {
+   "ticker": "TGTX",
+   "reason": "Healthcare leader breaking out: structure_shift 1 (ABOVE_STRUCTURE), structure 66.3, mp_state 3 (STRONG) and mp_accel_state 1 (ACCELERATING); day_vol 0.98. Group confirmed by VTRS, AXGN, XERS, LFST all ABOVE_STRUCTURE.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "day_vol", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 66.3; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 16.63, not a pullback entry", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 3.26, entry 65.76; translated danger signal ~1.5x atr_14d (about 4.9) from the day's high; my invalidation = close under 59.2 (entry less 2x atr_14d), structure-based, my own level", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV: VTRS, AXGN, XERS, LFST, TGTX all structure_shift 1 (multi-name confirmation); sector_trend_state 2 (Momentum Fading - Hold, Don't Add) a caution", "verdict": "pass", "fields": ["gics_sector", "structure_shift", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "not held; fresh entry only on strength; adds only at higher prices", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation is mine; fill_difficulty NOT_SERVED (day_vol 0.98 proxy only); no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Close under 59.2 (entry 65.76 less 2x atr_14d 3.26), or structure_shift falling back to RANGE/BEARISH_CHOCH while peers keep structure_shift 1."
+  },
+  {
+   "ticker": "LFST",
+   "reason": "Trend name above structure: structure_shift 1 (ABOVE_STRUCTURE), structure 71.6, mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING), day_vol 1.96 (participation). XLV group confirmation from TGTX, VTRS, XERS, AXGN.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "day_vol", "gics_sector", "entry"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 71.6; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 12.79, moderate extension", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.68, entry 14.37; translated danger signal ~1.5x atr_14d (about 1.0) from the day's high; my invalidation = close under 13.0 (entry less 2x atr_14d)", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV: five names with structure_shift 1; sector_trend_state 2 (Momentum Fading - Hold, Don't Add) a caution", "verdict": "pass", "fields": ["gics_sector", "structure_shift", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "not held; fresh entry only on strength; adds only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "atr_14d translation is mine; fill_difficulty NOT_SERVED (day_vol 1.96 proxy only); no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Close under 13.0 (entry 14.37 less 2x atr_14d 0.68), or structure_shift losing ABOVE_STRUCTURE while XLV peers hold."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "TIGHTEN", "line": "mp_state 2 (FADING) with mp_accel_state 2 (DECELERATING), structure_shift 4 (RANGE), structure 74.0: trend losing energy, no new high; keep the working stop and add nothing."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "structure 87.0, mp_state 3 (STRONG), sma_distance_pct 14.94; structure_shift 4 (RANGE) and mp_accel_state 2 (DECELERATING) are a watch, no danger signal fired; hold, no adds."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "structure 25.0, structure_shift 4 (RANGE), sma_distance_pct -3.25 (under the 50d), mp_state 1 (BUILDING) only: not a trend and no new high; exit case on the failed trend, the working stop is the hard line."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "short: structure 14.0, structure_shift 2 (BEARISH_CHOCH), sma_distance_pct -6.29, mp_state 2 (FADING): downtrend intact; add only lower, cover on the buy stop 148.15 or a rally reclaiming structure."}
+ ],
+ "data_gaps": [
+  {"field": "pct_from_52w_high", "impact": "Cannot measure proximity to the high directly; new-high confirmation read only via structure_shift ABOVE_STRUCTURE and sma_distance_pct."},
+  {"field": "pivotal_point_level", "impact": "No pivotal-point price (C17) on the menu; invalidation levels are my own atr_14d translation."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS via structure/structure_shift + sma_distance_pct (C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d, not literal 6pts (C7, C18-C20); multiplier is my own",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11)",
+  "ledger_lesson: no ledger memory injected; no standing lesson applies"
+ ],
+ "shortfall_reason": null
+}

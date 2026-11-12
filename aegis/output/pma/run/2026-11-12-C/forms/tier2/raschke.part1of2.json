@@ -1,0 +1,87 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above yesterday's high, while the last hour sits at 11% of its range."},
+   "wrong_if": "Daily close below bar_low of the setup bar or below ma_20.",
+   "market_void": null,
+   "reason": "Breakout from a coil: `subcomponents.energy.squeeze_score` 12.5 and `energy` 79.0, `elder` 10.0; W and D swing HH/HL, D 1.4% under the 20-day high. `mp` 48.0 is weak and H1 is under EMA9, so WAIT. Bar-range history NOT_SERVED."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above yesterday's high after the failed dip under the trendline."},
+   "wrong_if": "Close below bar_low of the reclaim day: the test failed.",
+   "market_void": null,
+   "reason": "Test type, double stop point (C20): `energy` 88.2 with `subcomponents.energy.squeeze_score` 12.5, `structure` 66.3. Against: `flow` 40.8 with `subcomponents.flow.cmf` -0.34, D swing HH but LL, H1 under EMA9. Needs the hourly turn first."
+  },
+  {
+   "ticker": "DLTR",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if price pulls back to ma_20 and holds, or closes above pivot_high with mp re-accelerating.",
+   "market_void": null,
+   "reason": "No setup of mine: `structure` 78.9 and `mp` 92.0 are real but `mp_accel_state` DECELERATING, `subcomponents.energy.squeeze_score` 0.0 (no coil); W swing HH but LL and the dip never reached ma_20, so no retracement."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if elder returns to 10 and flow clears its floor on a close above pivot_high.",
+   "market_void": null,
+   "reason": "Mixed read: `elder` 7.0 and `flow` 59.2 sit under their floors, `mp` 80.0 is FADING/DECELERATING, `subcomponents.energy.squeeze_score` 4.0 is no real coil; W swing LH/LL. Daily 2.7% under the 20-day high is no trigger."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above yesterday's high; the last hour closed at 91% of its range."},
+   "wrong_if": "Close below bar_low of the reclaim day or below ma_20.",
+   "market_void": null,
+   "reason": "Retracement: first shallow dip reclaimed, `energy` 82.4 and `subcomponents.energy.squeeze_score` 12.5 coil, `structure` 71.6. Against: `mp` 61.0 FADING/DECELERATING (label), `flow` 63.2, `elder` 7.0, D swing HH but LL. Size is the PM's."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly candle closes above the last confirmed pivot high; H1 is 0.9% under its 20-hour high."},
+   "wrong_if": "Daily close below bar_low of the setup bar, or a fade of 1 ATR from the high.",
+   "market_void": null,
+   "reason": "Range-contraction breakout shape: `subcomponents.energy.squeeze_score` 12.5, `energy` 85.7, `flow` 100.0, `structure` 82.1; D 1.0% under the 20-day high. Caveat: `mp` 48.0 below its floor, D swing LH/LL, so a small idea."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "ABSTAIN",
+   "wrong_if": "I am wrong if a tight pause forms under the high, or an ma_20 retracement holds on an hourly close above bar_high.",
+   "market_void": null,
+   "reason": "Stretched, no entry shape: `subcomponents.energy.squeeze_score` 0.0, `energy` 68.9, W swing HH but LL. `structure` 84.2 and `mp` 89.0 are real, but buying here is chasing, not a test or a retracement."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly candle closes above the last confirmed pivot high; H1 sits at 96% of the day's range."},
+   "wrong_if": "Daily close below ma_20 or below bar_low of the setup bar.",
+   "market_void": null,
+   "reason": "Retracement resumption: W and D swing HH/HL, D 3.9% under the swing high, `energy` 82.4, `flow` 78.9, `subcomponents.energy.squeeze_score` 8.5. `structure` 63.2 modest, `mp` 66.0 BUILDING/DECELERATING."
+  },
+  {
+   "ticker": "WM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly candle closes above yesterday's high; H1 is at 97% of the day's range."},
+   "wrong_if": "Close below bar_low of the reclaim day, the failed-dip low.",
+   "market_void": null,
+   "reason": "Test type: dipped under the rising trendline and closed back above. `energy` 82.4, `flow` 73.7, `structure` 77.9 with `subcomponents.energy.squeeze_score` 8.5. Against: `elder` 7.0, `mp` 86.0 DECELERATING, W swing HH but LL."
+  }
+ ],
+ "declarations": [
+  "Setup typing (C2): SUPPORT only on a test, retracement or contraction breakout; no setup = ABSTAIN. Stops are structural swing lows I name, never a percentage (C17).",
+  "NOT_SERVED: ADX, %K/%D stochastic, rolling 20-day extreme, NR4/NR7 bar-range history; squeeze_score and MTF under-20-day-high lines are declared substitutes only.",
+  "No answers filed: none of my claims was refuted in this packet (answer_pairs empty)."
+ ]
+}

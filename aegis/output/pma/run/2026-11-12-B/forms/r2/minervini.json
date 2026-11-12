@@ -1,0 +1,312 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-12",
+ "round": 2,
+ "declarations": [
+  "trend_template: criteria 1,2,4,5,6,7,8 read from MA stack, from_52w_hi and rs_rank_pct where served; criterion 3 (200d rising) NOT_SERVED on every name",
+  "no MA fields in the packet for CNX, BRZE, ABNB, TTEK; CNX read from Steenbarger's cited ma_50/ma_200; ABNB and TTEK template untestable, declared",
+  "vcp_detail: NOT_SERVED (structure is a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20); fundamentals leg not run on any name",
+  "rs_proxy: rs_rank_pct + rs_leadership + rs_spy_20d (substitute for IBD RS rank, C3/C11); volume_signature: day_vol at the current bar only (C6)",
+  "No lessons injected for this seat; none apply."
+ ],
+ "votes": [
+  {
+   "ticker": "SN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stage 2 leader: ma20 206.93, ma50 188.47, ma100 176.6, ma200 146.46 stacked under entry 226.93; rs_rank_pct 98.24, rs LEADER spy20 23.07 downday 1.39 (beats SPY on down days, C11); from_52w_hi -1.12% under continuation_pivot 232.76, so entry is near the pivot, not a chase (C5). day_vol 0.88 reads as dry-up into the pivot; the break still needs expansion. ext_atr20 2.6 and sma_dist 20.41% are weights (R27).",
+   "conviction_change": null,
+   "challenge_reply": "Distinct from livermore's structure/mp read: mine is the C3 stack plus C11 resilience (downday 1.39) and C5 pivot location (under continuation_pivot 232.76). Volume is a C6 dry-up read at day_vol 0.88, not a breakout read.",
+   "case": {
+    "for": "Full MA stack, rs_rank_pct 98.24, LEADER with downday 1.39, from_52w_hi -1.12%, structure 77.9 ABOVE_STRUCTURE, mp 96.0 STRONG. Textbook stage 2 leader sitting just under its pivot.",
+    "against": "ext_atr20 2.6, sma_dist 20.41%, sector Momentum Fading - Hold, Don't Add, day_vol 0.88 shows no participation yet, setups Episodic pivot (delayed) FAILED (9/10). Base shape and 200-day slope are not visible to me.",
+    "entry_trigger": "h1_close_above:high_52w_close with vol_x_ge:1.4; continuation_pivot 232.76 is the pivot. No buy while it stays under it.",
+    "wrong_if": "Daily close under ma_20 206.93, or structure_shift turns BEARISH_CHOCH.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A breakout that closes back inside the base on day_vol under 1, or a peer showing the base contraction count is loose.",
+    "cannot_see": [
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth",
+     "sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:high_52w_close"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "1H",
+    "non_price": "earnings growth, company category and sponsorship not served; SEPA fundamentals leg not run"
+   }
+  },
+  {
+   "ticker": "ZETA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stack passes on served MAs: ma20 32.82, ma50 31.93, ma100 28.01, ma200 22.96; rs_rank_pct 98.82, from_52w_hi 0.0%. Break today on day_vol 1.66, the C6 expansion leg, bar_close 37.74 over structure_shift_ref 35.75. Against: rs LAGGARD downday -0.43, daily swing LH/LL, elder INTERRUPTED, sma_dist 18.21%, ext_atr20 2.52 (weights, R27). No VCP read; count not served.",
+   "conviction_change": null,
+   "challenge_reply": "Beyond RS the case adds the C6 leg: a breakout bar on day_vol 1.66 at from_52w_hi 0.0%. Against it, downday -0.43 means this is up-day RS only. Technology crowding: ZETA stands on its own stack, not the sector tape (sector is Recovering From Weakness).",
+   "case": {
+    "for": "Stack in order, rs_rank_pct 98.82, new high with day_vol 1.66 and flow 100.0, mp 79.0 STRONG. Break over structure_shift_ref 35.75 on expanding volume.",
+    "against": "At the extreme: ext_atr20 2.52, sma_dist 18.21%. Daily swing LH/LL, elder INTERRUPTED, rs LAGGARD on down days (downday -0.43), setups Undercut and rally FAILED (6/9).",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 and above_vwap_s; not above bar_high+5pct.",
+    "wrong_if": "Daily close under structure_shift_ref 35.75 (the broken level), or volume dries to under 1 on the next push.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close back under structure_shift_ref 35.75 on day_vol over 1.4 (failed break), or a base showing loose contractions.",
+    "cannot_see": [
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth",
+     "sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings growth and sponsorship not served; fundamentals leg not run"
+   }
+  },
+  {
+   "ticker": "CNX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Template fails on the challenge round's cited fields: ma_50 under ma_200 (criterion 4) and rs_rank_pct under the 70 floor (criterion 8); structure_shift RANGE, div_bear_count 3. Stage 2 is not confirmed; a base under the 200 is stage 1/3 and a low price is not the thesis (C2, C11). Fundamentals not served.",
+   "conviction_change": null,
+   "opposing_case": "elder-lens: elder_5d [0, 0, 3, 5, 7] is a rising permission event, impulse GREEN, weekly UP, D above EMA9, 9>21 with swing HH/HL; rev_g 0.48866481238417975 is strong. This could be an early stage 2 turn.",
+   "falsifier": "A close back above ma_200 with ma_50 turning over it and rs_rank_pct above 70.",
+   "case": {
+    "for": "D above EMA9, 9>21, swing HH/HL; weekly above EMA9, 9>21; elder_5d [0, 0, 3, 5, 7] rising. Growth fields are strong but are not mine.",
+    "against": "ma_50 under ma_200, rs_rank_pct under 70, structure_shift RANGE, div_state BEARISH, H1 below EMA9, W swing HH but LL. Fails criteria 4 and 8.",
+    "entry_trigger": "Would need ma_50 back over ma_200 and rs_rank_pct over 70, then a pivot break on volume.",
+    "wrong_if": "Daily close over ma_200 with ma_50 crossing above it and rs_rank_pct over 70.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A renewed template pass: ma_50 over ma_200, rising 200-day, rs_rank_pct at 70 or better, plus a fresh base.",
+    "cannot_see": [
+     "own MA fields for CNX",
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  },
+  {
+   "ticker": "SONO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stack intact: ma20 17.15, ma50 16.85, ma100 15.94, ma200 15.32; rs_rank_pct 81.01 clears the 70 floor (not 80s-90s), from_52w_hi -0.52%. Pivot break on day_vol 4.46, the C6 expansion leg, with lens coil strong and bar_close 19.06 near bar_high 19.18. Against: rs LAGGARD downday -0.8, daily swing LH/LL, elder INTERRUPTED, ext_atr20 2.3 (weights, R27). Criterion 3 and VCP count not served.",
+   "conviction_change": null,
+   "challenge_reply": "Technology crowding: SONO stands on its own stack and pivot break, not the sector tape. day_vol 4.46 is the case (C6 expansion) and also the exit risk if it closes back under structure_shift_ref 17.89.",
+   "case": {
+    "for": "Break through structure_shift_ref 17.89 on day_vol 4.46, flow 98.7, near the 52w high at from_52w_hi -0.52%, coil strong, insti_money strong.",
+    "against": "rs_rank_pct 81.01 is middling for a leader, downday -0.8, mp 48.0 only BUILDING, ext_atr20 2.3, setups Undercut and rally FAILED (5/9), 21-day average not rising per Valen.",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 and above_vwap_s; not above bar_high+5pct.",
+    "wrong_if": "Daily close back under structure_shift_ref 17.89, the break reversed on the surge volume.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "A close under structure_shift_ref 17.89 on heavy volume, or evidence the day_vol 4.46 was a one-off event print.",
+    "cannot_see": [
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth",
+     "sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings growth and sponsorship not served; cause of the volume surge unknown to me"
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Served in R1: full MA stack, rs_spy_20d 65.8, rs_rank_pct 98.99, pct_from_52w_high 0.0, structure_shift BULLISH_BOS. But C6 needs the break on expanding volume: day_vol 0.31 gives no confirmation, and sma_distance_pct 39.26 is extended (weight, R27). Conviction cut to 2; I act only if volume shows up.",
+   "conviction_change": "R1 conviction 3, now 2: Steenbarger's BRZE challenge stands; day_vol 0.31 gives no C6 confirmation, so the buy is gated on volume.",
+   "challenge_reply": "I cannot call a BULLISH_BOS on day_vol 0.31 trustworthy: C6 treats a break without expanding volume as not a valid setup. I keep the name only because the BOS structure and rs_rank_pct 98.99 are real, and I gate the buy on vol_x_ge:1.4. Technology crowding: the case rests on the stack, not the sector.",
+   "case": {
+    "for": "New high at pct_from_52w_high 0.0, BULLISH_BOS, rs_rank_pct 98.99, W and D above EMA9 with 9>21.",
+    "against": "day_vol 0.31 is no breakout volume, sma_distance_pct 39.26, weekly 32.7% above the last swing high. Wide base per R1 (base_range_pct 50.1).",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 and above_vwap_s; no buy on the current thin volume.",
+    "wrong_if": "Daily close under pivot_high 45.95, or my own level 45.52, the break failed.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Volume expansion on the break lifts me; a close back inside the base on thin volume drops me to an oppose.",
+    "cannot_see": [
+     "own MA fields for BRZE",
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings growth not served; next earnings 2026-12-08 is a gap risk I cannot size"
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Stack ma20 13.2, ma50 12.74, ma100 12.01, ma200 9.6; rs_rank_pct 95.46, rs LEADER spy20 16.05 downday 0.4, ret_12m 123.48, from_52w_hi -1.58%, mp 89.0 accelerating, elder 7.0. Against: H1 below EMA9 with swing LH/LL, daily 8.2% under the last swing high, day_vol 1.96 on a H1 close at 18% of the day's range warns on pullback volume (C6), flow 50.0. Buy the turn up, not the low (C9).",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "above_vwap_s",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_50"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "earnings growth and sponsorship not served; fundamentals leg not run"
+   },
+   "conviction_change": null,
+   "case": {
+    "for": "Leader in a clean stack: rs_rank_pct 95.46, downday 0.4, mp 89.0 STRONG/ACCELERATING, structure 71.6 ABOVE_STRUCTURE, lens leadership strong, within from_52w_hi -1.58%.",
+    "against": "sma_dist 12.79% and ext_atr20 1.72 are weights; the real worry is a pullback on above-normal volume (day_vol 1.96) with H1 LH/LL and daily 8.2% under the last swing high. Sector Momentum Fading - Hold, Don't Add.",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 and above_vwap_s: the turn back up, never the low (C9).",
+    "wrong_if": "Daily close under ma_50 12.74, or day_vol stays over 1.4 on further down bars.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Distribution volume on a second down day lowers me; a volume-backed recovery over bar_high lifts me.",
+    "cannot_see": [
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth",
+     "sponsorship"
+    ]
+   }
+  },
+  {
+   "ticker": "OPCH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Template unproven and leaning fail: ma_100 25.22 sits under ma_200 26.15, so the 150 over the 200 (criterion 2) and a rising 200 (criterion 3) cannot be shown. from_52w_hi -13.36%, structure RANGE, weekly swing LH/LL. rs_rank_pct 93.11 clears the floor. Reads as a recovering name, not a confirmed stage 2 leader (C2, R6). div BEARISH/3 is advisory only.",
+   "conviction_change": null,
+   "opposing_case": "rs_rank_pct 93.11, ret_63d 31.7, LEADER downday 1.33, atr 0.3 tight with day_vol 1.55, price 0.6% under the 20-day high, elder ACCUMULATION_BASE: a tight coil that may be stage 2 forming.",
+   "falsifier": "Evidence the 150-day sits over a rising 200-day, plus a close over the last swing high on day_vol over 1.4.",
+   "case": {
+    "for": "rs_rank_pct 93.11, sc_mom 77.1, energy 83.2, ret_63d 31.7, tight atr 0.3, W above EMA9 and 0.6% under the 20-wk high.",
+    "against": "ma_100 25.22 under ma_200 26.15, sma_dist 14.13%, structure_shift RANGE, weekly swing LH/LL, daily HH but LL, mp FADING/DECELERATING (R13 label, not a veto).",
+    "entry_trigger": "A confirmed template pass, then h1_close_above:bar_high with vol_x_ge:1.4 near the last swing high.",
+    "wrong_if": "My oppose is wrong if the 200-day is shown rising with the 150 above it and a volume break clears the swing high.",
+    "horizon_sessions": 15,
+    "would_change_my_mind": "Served ma_150 and ma_200 slope showing criteria 2 and 3 pass; a peer supplying the base contraction shape.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  },
+  {
+   "ticker": "ABNB",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Template cannot be run: no ma_50, ma_150 or ma_200 in the packet for this name, only EMA9/21 on three timeframes. Served: rs_rank_pct 83.91 over the floor, BULLISH_BOS through pivot_high 179.13 on day_vol 1.41, barely over the bar. Against: low composite and structure, group fading, H1 9<21. Hard gate not testable, so no vote.",
+   "conviction_change": null,
+   "falsifier": "Served MA stack showing ma_50 over ma_150 over ma_200 with a rising 200-day would turn this to a support.",
+   "case": {
+    "for": "rs_rank_pct 83.91, BULLISH_BOS over pivot_high 179.13, W and D above EMA9 with 9>21.",
+    "against": "low composite and structure, rank 502, group fading, H1 below EMA9 with 9<21, day_vol 1.41 is barely participation.",
+    "entry_trigger": "Template pass first; then h1_close_above:bar_high with vol_x_ge:1.4.",
+    "wrong_if": "Daily close back under pivot_high 179.13 on day_vol over 1.4.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "The served MA stack and a 200-day slope; a base shape from a peer.",
+    "cannot_see": [
+     "ma_50",
+     "ma_150",
+     "ma_200",
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  },
+  {
+   "ticker": "TTEK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No MA stack served, so the template is untestable. Served: daily below EMA9 and 9.9% under the 20-day high, W swing LH but HL, H1 9<21; the packet line shows a red last bar on rvol_20d 4.25 with elder INTERRUPTED, a heavy-volume reversal (C6 warning). Price now sits 9.9% under its high, so there is no pivot to buy near (C5, R5).",
+   "conviction_change": null,
+   "opposing_case": "seow: BULLISH_BOS, pct_from_pivot 0.91, sector_rrg_quadrant LEADING, cmf 0.09; W above EMA9 with 9>21. A shakeout at the final pivot area can be valid (C16).",
+   "falsifier": "A volume-backed close back over the 20-day high, with the template stack shown.",
+   "case": {
+    "for": "BULLISH_BOS with pct_from_pivot 0.91, W above EMA9 with 9>21, sector LEADING, sc fields not served.",
+    "against": "D below EMA9, 9.9% under the 20-day high, H1 below EMA9 with 9<21, red bar on rvol_20d 4.25, elder INTERRUPTED, no MA stack served.",
+    "entry_trigger": "Template pass shown, then h1_close_above:bar_high with vol_x_ge:1.4 over the 20-day high.",
+    "wrong_if": "My oppose is wrong if price recovers over the 20-day high on expanding volume within a few sessions.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served MA fields showing a full template pass and a volume-backed recovery of the last swing high.",
+    "cannot_see": [
+     "ma_50",
+     "ma_150",
+     "ma_200",
+     "ma_200 slope",
+     "VCP count and depth",
+     "earnings growth"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of1.json",
+   "bytes": 16510,
+   "votes": 9,
+   "sha256": "4beff4424a65"
+  }
+ ]
+}

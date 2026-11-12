@@ -1,0 +1,127 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 7.0 now."
+   },
+   "wrong_if": "`flow` under 60 or `subcomponents.energy.exhaustion_score` under 10.0.",
+   "market_void": null,
+   "reason": "Broad: `flow` 76.3, `energy` 68.1, `structure` 78.9, `mp` 89.0, gates pass. Clean at 21.0 bars (`subcomponents.energy.exhaustion_score` 10.0), lead improving (`subcomponents.structure.rs_accel` 5.7)."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`flow` under 60, or `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Broad: `structure` 89.5, `mp` 97.0, `flow` 77.6, `energy` 68.1, gates pass. Lead widening hard: `subcomponents.structure.rs_accel` 50.31. Cautions: `subcomponents.flow.accum_score` 0.0, `mp_accel_state` FLAT."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 7.0 now."
+   },
+   "wrong_if": "`mp_accel_state` flips to DECELERATING while `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Broadest structure: `structure` 97.9, `flow` 85.5, `energy` 68.9, `mp` 96.0, gates pass, `subcomponents.structure.base_score` 15.0. Clean at 28.0 bars, `subcomponents.structure.rs_accel` 9.34."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`energy` under its 60 floor, or `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Broad: `flow` 73.7, `energy` 63.0, `structure` 83.2, `mp` 93.0, gates pass. `energy` 63.0 is near its floor, `subcomponents.structure.rs_accel` only 1.07, DECELERATING."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `mp_accel_state` to leave DECELERATING, then a daily close above the 20-day average."
+   },
+   "wrong_if": "`mp` under 55 or `flow` under 60.",
+   "market_void": null,
+   "reason": "Broad: `flow` 73.7, `energy` 79.0, `structure` 74.7, `mp` 76.0, gates pass, but momentum small and slowing: `subcomponents.mp.roc_zscore` 0.79, `subcomponents.structure.rs_accel` -4.19."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`subcomponents.structure.rs_accel` turns negative or `mp_accel_state` leaves ACCELERATING.",
+   "market_void": null,
+   "reason": "Broad: `flow` 68.4, `energy` 70.6, `structure` 81.1, `mp` 87.0, gates pass, ACCELERATING, `subcomponents.structure.rs_vs_spy` 33.73. Weak: `subcomponents.flow.volume_score` 0.0, `subcomponents.mp.adx_val` 20.33."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Wait for `flow` over 60, then Daily close above the 20-day average, keeping `en_trend_bars` run alive."
+   },
+   "wrong_if": "`flow` slides further under 56.6 or `energy` under 60.",
+   "market_void": null,
+   "reason": "`structure` 94.7 with base (`subcomponents.structure.base_score` 15.0), `mp` 93.0, `energy` 68.9, but `flow` 56.6 misses its floor (gate code 9): `subcomponents.flow.flow_score` 8.5."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`structure` under 55 or `flow` under 60.",
+   "market_void": null,
+   "reason": "Broad: `flow` 76.3, `energy` 68.9, `structure` 66.3, `mp` 87.0, gates pass, ACCELERATING. `structure` is thinnest: `subcomponents.structure.rs_accel` -9.61, `subcomponents.structure.base_score` 5.0."
+  },
+  {
+   "ticker": "MSI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:ma_20",
+    "tf": "D",
+    "plain": "Daily close above the 20-day average, keeping `en_trend_bars` run alive; it reads `elder` 10.0 now."
+   },
+   "wrong_if": "`mp_accel_state` flips to DECELERATING while `subcomponents.structure.rs_accel` turns negative.",
+   "market_void": null,
+   "reason": "Top of the sheet: `mp` 100.0, `flow` 88.2, `structure` 84.2, `energy` 76.5, `sc_momentum` 86.2, gates pass. Clean live test: `subcomponents.energy.exhaustion_score` 10.0 at 20.0 bars; `subcomponents.structure.rs_accel` 4.76."
+  }
+ ],
+ "declarations": [
+  "Method limit: only AQE composites and sub-components cited; price, levels, patterns and the MTF grid are unread context. No bracket used (R1)."
+ ]
+}

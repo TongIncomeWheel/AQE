@@ -1,0 +1,62 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-12",
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d, not literal 6pts (C7, C18-C20); the multiple is my own.",
+  "fill_difficulty NOT_SERVED; inside_information NEVER (C11). No refutations of my claims in the packet, so answers is empty."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close at a new closing high; no entry inside the reaction."
+   },
+   "wrong_if": "Daily close under structure_shift_ref, or a one-day fade from the high beyond my translated multiple of atr_14d.",
+   "market_void": null,
+   "reason": "Established uptrend with a normal reaction (C5, C8): W and D swing HH/HL, D dist_to_20bar_high_pct 2.5, tier-1 support_confirm 3 and support_refute 0. H1 close_vs_ema9 below, so the new high has not printed; I wait for it, I do not buy the reaction."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 11 Nov high, a higher close than today."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, or a one-day fade from the high beyond my translated multiple of atr_14d.",
+   "market_void": null,
+   "reason": "Fresh high on 11 Nov: D dist_to_20bar_high_pct 1.87, H1 close_vs_ema9 above and swing HH/HL, W swing HH/HL. D swing_class LH/LL and tier-1 support_refute 2 keep it a weight, not a veto. Act only on the higher close (C5, C16)."
+  },
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 11 Nov high on follow-through volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, or a fade from the high beyond my translated multiple of atr_14d.",
+   "market_void": null,
+   "reason": "Break on 11 Nov: D dist_to_20bar_high_pct 0.63, H1 pos_in_day_range_pct 93.8, W swing HH/HL, tier-1 support_confirm 4. D swing_class LH/LL, so I want the next higher close to confirm, not the break bar itself (C5, C17)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 1483,
+   "sha256": "23dab7728860"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 748,
+   "sha256": "a1958938bdfc"
+  }
+ ]
+}

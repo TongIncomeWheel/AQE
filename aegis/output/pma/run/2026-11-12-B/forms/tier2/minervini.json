@@ -1,0 +1,72 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-12",
+ "declarations": [
+  "trend_template: MA-stack criteria read as served; criterion 3 (200d rising) NOT_SERVED; criterion 8 proxied by rs fields, not IBD rank",
+  "vcp_detail: NOT_SERVED (structure is a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20); fundamentals leg not run",
+  "volume_signature: day_vol at the current bar only (C6, partial)"
+ ],
+ "answers": [
+  {
+   "pair_id": "ZETA-minervini-for~elder-lens",
+   "ticker": "ZETA",
+   "to": "elder-lens",
+   "text": "\"D swing_class LH/LL contradicts the trend leg\": my trend leg is the MA stack, not a 3-bar fractal. D ema_order 9>21, close_vs_ema9 above; W swing_class HH/HL, W ema_order 9>21. The daily fractal lags a break. Chase point stands: close_vs_swing_high_pct 5.57 on W, so I wait.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "An hourly candle closes over the 52-week closing high: the pivot break, not the anticipation."
+   },
+   "wrong_if": "Daily close under ma_20, or the break closes back inside the base on thin volume.",
+   "market_void": null,
+   "reason": "Stage 2 leader: W swing_class HH/HL, D swing_class HH/HL, D ema_order 9>21, dist_to_20bar_high_pct 2.5 so entry sits near the pivot (C5). H1 close_vs_ema9 below is the quiet pause (C6). Tier-1 support_confirm 3, support_refute 0. Earnings, VCP count, 200d slope not served."
+  },
+  {
+   "ticker": "ZETA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pause or tight day, an hourly candle closes over the prior day's high on expanding volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, the broken level, on heavy volume.",
+   "market_void": null,
+   "reason": "W swing_class HH/HL, ema_order 9>21 on W, D and H1; leader stack. But close_vs_swing_high_pct 5.57 on W is already past a few percent over the pivot, a chase (C5); D swing_class LH/LL not yet confirmed. Wait for a tight pause, buy the turn up. Tier-1 support_confirm 2, support_refute 2."
+  },
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes over the prior day's high: the pivot break on expanding volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, the break reversed.",
+   "market_void": null,
+   "reason": "W swing_class HH/HL, ema_order 9>21 on W, D and H1; dist_to_20bar_high_pct 0.63 so entry is at the pivot, no chase (C5). D swing_class LH/LL is the base's prior drift, not a failure. Tier-1 support_confirm 4, against_refute 2. Earnings, VCP count, 200d slope not served."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 2258,
+   "sha256": "aa804a5668d0"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 1055,
+   "sha256": "62f53c6a9c20"
+  }
+ ]
+}

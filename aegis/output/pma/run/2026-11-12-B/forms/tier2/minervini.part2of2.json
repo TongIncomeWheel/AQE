@@ -1,0 +1,25 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "SONO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly candle closes over the prior day's high: the pivot break on expanding volume."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, the break reversed.",
+   "market_void": null,
+   "reason": "W swing_class HH/HL, ema_order 9>21 on W, D and H1; dist_to_20bar_high_pct 0.63 so entry is at the pivot, no chase (C5). D swing_class LH/LL is the base's prior drift, not a failure. Tier-1 support_confirm 4, against_refute 2. Earnings, VCP count, 200d slope not served."
+  }
+ ],
+ "declarations": [
+  "trend_template: MA-stack criteria read as served; criterion 3 (200d rising) NOT_SERVED; criterion 8 proxied by rs fields, not IBD rank",
+  "vcp_detail: NOT_SERVED (structure is a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20); fundamentals leg not run"
+ ]
+}
