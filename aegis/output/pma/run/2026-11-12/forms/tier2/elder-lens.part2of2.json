@@ -1,0 +1,83 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "KVYO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Price pulls back to the 20-day average with permission still on"},
+   "wrong_if": "Colour prints RED again, or elder falls to 6 or less, or daily close under ma_20 less 1 ATR.",
+   "market_void": null,
+   "reason": "Red gave way on the last bar; W above EMA9, 9>21, D HH/HL, ext_atr20 0.9. First permission bar whipsaws, so wait for a second bar and the dip."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Price eases back to the 20-day average with blue still permitting"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "Green went away, blue held and still permits (C3). W above EMA9, 9>21 but swing HH but LL; D HH/HL 4.2% under swing high. Low conviction."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstain is wrong if price returns to ma_20 with elder holding 7 or more.",
+   "market_void": null,
+   "reason": "ext_atr20 5.01 is a chase; elder_5d re-green on the last bar is not a permission event. W swing HH but LL, H1 LH but HL. Nothing at this price."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Only a pullback to the 20-day average; ext_atr20 3.48 means no chase"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "W, D and H1 all HH/HL above EMA9, 9>21, but elder_5d re-green is no transition and price is at the high (H1 99% of range). Pullback only."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Price eases back to the 20-day average with blue still permitting"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "W, D, H1 all HH/HL above EMA9, 9>21; elder_5d blue held three bars (C3). D 1.5% under swing high. No chase at H1 94% of range."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Only a pullback to the 20-day average; ext_atr20 2.41 means no chase"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "W, D, H1 all HH/HL; elder_5d plateau with no 6-or-less bar is C24 (unsourced). Low conviction, pullback entry only."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Price eases back to the 20-day average with blue still permitting"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "W and D HH/HL above EMA9, 9>21; elder_5d blue held (C3). D 2.2% under swing high; H1 HH but LL is soft. Pullback only."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Only a pullback to the 20-day average; ext_atr20 2.38 means no chase"},
+   "wrong_if": "Daily close under ma_20 less 1 ATR, or elder falls to 6 or less.",
+   "market_void": null,
+   "reason": "W, D, H1 all HH/HL above EMA9, 9>21; elder_5d plateau with no 6-or-less bar is C24 (unsourced). Low conviction, pullback only."
+  }
+ ],
+ "declarations": [
+  "Packet carries no impulse_colour, force_index, price_ema_slope, channel or weekly_trend_direction fields; weekly tide read from the W grid line as a labelled proxy.",
+  "Steenbarger committee UNPROVEN (owed elder-lens): my basis is the elder_5d bar and permission gate; no forward separation is proven."
+ ]
+}

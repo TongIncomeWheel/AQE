@@ -1,0 +1,331 @@
+{
+ "advance": {},
+ "hold": {
+  "TMO": {
+   "triggers": [
+    {
+     "id": "TMO-buy0",
+     "kind": "close_above",
+     "level": 721.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "TMO: an hourly candle closes above 721.63 (3 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "TMO-touch",
+     "kind": "trade_above",
+     "level": 727.56,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TMO traded through yesterday's intraday high 727.56: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "TMO-wait",
+     "kind": "trade_below",
+     "level": 710.97,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TMO is back in the wait area 694.33-710.97."
+    },
+    {
+     "id": "TMO-dead",
+     "kind": "close_below",
+     "level": 695.11,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "TMO closed under 695.11, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above high_52w_close 721.63; holds above today's VWAP",
+   "kills": "A daily close under 695.11 (2 analysts' exit line)."
+  },
+  "CTAS": {
+   "triggers": [
+    {
+     "id": "CTAS-buy0",
+     "kind": "close_above",
+     "level": 229.03,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CTAS: an hourly candle closes above 229.03 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "CTAS-touch",
+     "kind": "trade_above",
+     "level": 227.45,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CTAS traded through yesterday's intraday high 227.45: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CTAS-wait",
+     "kind": "trade_below",
+     "level": 226.69,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CTAS is back in the wait area 220.89-226.69."
+    },
+    {
+     "id": "CTAS-dead",
+     "kind": "close_below",
+     "level": 226.69,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CTAS closed under 226.69, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above high_52w_close 229.03; an hourly candle closes above pivot_high 226.69; holds above today's VWAP",
+   "kills": "A daily close under 226.69 (2 analysts' exit line)."
+  },
+  "AMRX": {
+   "triggers": [
+    {
+     "id": "AMRX-buy0",
+     "kind": "close_above",
+     "level": 22.01,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "AMRX: an hourly candle closes above 22.01 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "AMRX-touch",
+     "kind": "trade_above",
+     "level": 22.01,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "AMRX traded through yesterday's intraday high 22.01: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "AMRX-wait",
+     "kind": "trade_below",
+     "level": 21.68,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "AMRX is back in the wait area 20.49-21.68."
+    },
+    {
+     "id": "AMRX-dead",
+     "kind": "close_below",
+     "level": 21.68,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "AMRX closed under 21.68, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 22.01; closes above high_52w_close 21.71; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 21.68 (2 analysts' exit line)."
+  },
+  "HUM": {
+   "triggers": [
+    {
+     "id": "HUM-buy0",
+     "kind": "close_above",
+     "level": 451.0,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "HUM: an hourly candle closes above 451.0 (4 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "HUM-touch",
+     "kind": "trade_above",
+     "level": 451.0,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "HUM traded through yesterday's intraday high 451.0: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "HUM-dead",
+     "kind": "close_below",
+     "level": 421.55,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "HUM closed under 421.55, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 451; holds above today's VWAP; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 421.55 (3 analysts' exit line)."
+  },
+  "COR": {
+   "triggers": [
+    {
+     "id": "COR-buy0",
+     "kind": "close_above",
+     "level": 374.75,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "COR: an hourly candle closes above 374.75 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "COR-touch",
+     "kind": "trade_above",
+     "level": 350.17,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "COR traded through yesterday's intraday high 350.17: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "COR-wait",
+     "kind": "trade_below",
+     "level": 345.46,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "COR is back in the wait area 338.33-345.46."
+    },
+    {
+     "id": "COR-dead",
+     "kind": "close_below",
+     "level": 345.46,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "COR closed under 345.46, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above high_52w_close 374.75; holds above today's VWAP",
+   "kills": "A daily close under 345.46 (2 analysts' exit line)."
+  },
+  "PRCH": {
+   "triggers": [
+    {
+     "id": "PRCH-buy0",
+     "kind": "close_above",
+     "level": 22.25,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PRCH: an hourly candle closes above 22.25 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PRCH-touch",
+     "kind": "trade_above",
+     "level": 22.25,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PRCH traded through yesterday's intraday high 22.25: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "PRCH-wait",
+     "kind": "trade_below",
+     "level": 19.3,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PRCH is back in the wait area 18.75-19.3."
+    },
+    {
+     "id": "PRCH-dead",
+     "kind": "close_below",
+     "level": 19.3,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PRCH closed under 19.3, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 22.25; holds above today's VWAP; volume at least 1.4x normal for the time of day; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 19.3 (2 analysts' exit line)."
+  },
+  "LTH": {
+   "triggers": [
+    {
+     "id": "LTH-buy0",
+     "kind": "close_above",
+     "level": 47.75,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "LTH: an hourly candle closes above 47.75 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "LTH-touch",
+     "kind": "trade_above",
+     "level": 47.84,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "LTH traded through yesterday's intraday high 47.84: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "LTH-wait",
+     "kind": "trade_below",
+     "level": 44.08,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "LTH is back in the wait area 41.61-44.08."
+    },
+    {
+     "id": "LTH-dead",
+     "kind": "close_below",
+     "level": 44.08,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "LTH closed under 44.08, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above high_52w_close 47.75; holds above today's VWAP",
+   "kills": "A daily close under 44.08 (2 analysts' exit line)."
+  },
+  "TGTX": {
+   "triggers": [
+    {
+     "id": "TGTX-buy0",
+     "kind": "close_above",
+     "level": 66.07,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "TGTX: an hourly candle closes above 66.07 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "TGTX-touch",
+     "kind": "trade_above",
+     "level": 66.07,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TGTX traded through yesterday's intraday high 66.07: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "TGTX-wait",
+     "kind": "trade_below",
+     "level": 63.6,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "TGTX is back in the wait area 57.99-63.6."
+    },
+    {
+     "id": "TGTX-dead",
+     "kind": "close_below",
+     "level": 57.99,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "TGTX closed under 57.99, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 66.07; holds above today's VWAP; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 57.99 (2 analysts' exit line)."
+  }
+ },
+ "held": {
+  "EBAY": {
+   "committee_exit": 121.44,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 119.49 (STP 150, GTC).",
+   "against": ""
+  },
+  "GPN": {
+   "committee_exit": 99.72,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 97.45 (STP 100, GTC).",
+   "against": ""
+  },
+  "RBRK": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 99.45 (STP 80, GTC).",
+   "against": ""
+  },
+  "SPCX": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "No stop order at the broker: SET A STOP. AQE's worked-out reference stop is 131.60 (one-ATR fallback stop; reference only, not an order).",
+   "against": ""
+  }
+ }
+}

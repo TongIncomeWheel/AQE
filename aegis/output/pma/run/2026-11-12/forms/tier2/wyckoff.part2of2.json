@@ -1,0 +1,83 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "KVYO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high of 22.20"},
+   "wrong_if": "D closes under the last swing low 19.47.",
+   "market_void": null,
+   "reason": "D HH/HL 4.4% under its high, but W is HH but LL and H1 LH but HL: repairing structure; wait for the D high to break."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high of 294.53"},
+   "wrong_if": "D closes under the last swing low 255.75.",
+   "market_void": null,
+   "reason": "D HH/HL 4.2% under its high, W HH but LL, H1 9<21: pulled back into a zone but not yet re-firing; need the D high to break."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:vwap_14d", "tf": "D", "plain": "Price pulls back into the 14-day VWAP value zone, then a demand bar"},
+   "wrong_if": "D closes under the last swing high that is now support, or W loses HH/HL structure.",
+   "market_void": null,
+   "reason": "D is 11.2% and H1 15.1% above last swing highs: far from value. Not an oppose; wait for the next trading zone, no chase."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, buy stop above the bar"},
+   "wrong_if": "D closes back under the last swing high, losing the break.",
+   "market_void": null,
+   "reason": "W and D HH/HL, D 1.5% above last swing high, 0.1% under 20-day high, H1 at 99% of range: at the Creek with strength."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day range top, on volume"},
+   "wrong_if": "D closes under the last swing low.",
+   "market_void": null,
+   "reason": "Range read: D 1.5% under the 20-day high, W 1.5% under 20-wk high. At the top edge no range long; the break through it is the trigger."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, buy stop above the bar"},
+   "wrong_if": "D closes back under the last swing high, losing the Creek.",
+   "market_void": null,
+   "reason": "W and D HH/HL, D 0.8% above last swing high, H1 0.9% under its own: at the Creek. Act only on the demand bar, never a limit."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, buy stop above the bar"},
+   "wrong_if": "W closes back under its last swing high, losing the Creek.",
+   "market_void": null,
+   "reason": "W 0.6% above its swing high, D HH/HL 2.2% under its own, H1 0.7% under: at the Creek. Volume bar is the trigger."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, buy stop above the bar"},
+   "wrong_if": "D closes back under the last swing high, losing the Creek.",
+   "market_void": null,
+   "reason": "W 11.6% and D 3.4% above swing highs, all HH/HL, H1 at 90% of range: near the Creek; take the buy-stop trigger, no resting limit."
+  }
+ ],
+ "declarations": [
+  "Value-area fields (pvp_*) and bar fields are not in my tier-2 packet; trend/range read from the W/D/H1 grid only.",
+  "Valen flags were not used. No bracket field was used as a reason."
+ ]
+}

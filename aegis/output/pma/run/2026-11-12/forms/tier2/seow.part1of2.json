@@ -1,0 +1,84 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red bar with elder_pattern leaving ACCELERATION.",
+   "market_void": null,
+   "reason": "Position system: break picture. W swing_class HH/HL, D swing_class HH/HL, momentum flag true, D close_vs_swing_high_pct 0.82 (fresh break, not stretched). H1 below EMA9 is a ripple (C7). support_confirm 4, support_refute 0."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last swing high clears the resistance line."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or the daily low leg keeps making lower lows.",
+   "market_void": null,
+   "reason": "Position system: W swing_class HH/HL, W close_vs_swing_high_pct 0.14 but D swing_class HH but LL and D close_vs_swing_high_pct -3.79: the daily break is not yet cleared, so wait for it. Fund flow unread (declared)."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high confirms the break is being bought."},
+   "wrong_if": "Daily close back under pivot_high, or close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system, small: D swing_class HH/HL, H1 pos_in_day_range_pct 95.4, but W swing_class LH/LL and TIF proxy not confirming (support_refute 1). Signal present, confirmation partial, so wait for the hourly close."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high shows volume joining the new high."},
+   "wrong_if": "Daily close back under pivot_high, or close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system: W swing_class HH/HL, D swing_class LH but HL, D dist_to_20bar_high_pct 1.36 (new high). TIF proxy partial, volume light, fund flow unread; confirm on the hourly first. support_refute 1."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last swing high turns a shallow break into a cleared one."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "Position system, small: D dist_to_20bar_high_pct 2.62, D swing_class HH but LL, W swing_class LH but HL, elder_pattern only ACCUMULATION_BASE. Strength is real (support_confirm 4) but the break and TIF are not confirmed; wait."
+  },
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red bar with elder_pattern leaving SUSTAINED.",
+   "market_void": null,
+   "reason": "Position system: W swing_class HH/HL, D close_vs_swing_high_pct 12.95 (broken out and holding), D dist_to_20bar_high_pct 1.55, elder SUSTAINED. Extension is weight in this system. Single confirm (support_confirm 1), so first tranche only."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly close above the last swing high is the resistance break I buy."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red bar with elder_pattern leaving ACCELERATION.",
+   "market_void": null,
+   "reason": "Position system, pre-break: W swing_class HH/HL, W dist_to_20bar_high_pct 2.23, H1 swing_class HH/HL, D swing_class LH/LL. No buy signal printed yet; the break is the entry, so wait for it. support_refute 1."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close back under pivot_high, or close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system: momentum flag true, W and D swing_class HH/HL, H1 pos_in_day_range_pct 95.6, H1 dist_to_20bar_high_pct 0.07. Fresh break pressing highs on all three frames. support_confirm 4, support_refute 0. Fund flow unread (declared)."
+  }
+ ],
+ "declarations": [
+  "Position system picked from each name's own picture (R10); swing set-up needs cci_20, bar_low, ma_20_slope_5d_pct, not served.",
+  "Declared proxies: structure_shift for resistance, elder_pattern for TIF, support = max(fib_swing_low, base_low_20d). cmf not served, fund flow unread.",
+  "No answers filed: answer_pairs is empty, none of my claims was refuted. No bracket field used as a reason (R1)."
+ ]
+}

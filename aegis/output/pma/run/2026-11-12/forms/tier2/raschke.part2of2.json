@@ -1,0 +1,92 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "KVYO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Act when an hour closes above yesterday's high"
+   },
+   "wrong_if": "Daily close under bar_low, the dip bar",
+   "market_void": null,
+   "reason": "Retracement: D swing HH/HL, H1 pos_in_day_range_pct 94.7, close_vs_ema9 above; W swing HH but LL keeps it small."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Wait for an hour to close above yesterday's high"
+   },
+   "wrong_if": "Daily close under bar_low, the dip bar",
+   "market_void": null,
+   "reason": "Retracement: D swing HH/HL, H1 ema_order 9<21 not yet healed, W swing HH but LL; wait for the hour to print."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under ma20",
+   "market_void": null,
+   "reason": "Parabolic range-expansion: D close 11.2% above the last swing high, H1 15.1% above. Exit-side signal, not an entry (C19)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under the last swing high 177.94",
+   "market_void": null,
+   "reason": "Pressing a high, not failing at it: D 0.1% under 20-day high, no dip to buy. A retest of the swing is the entry."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under bar_low",
+   "market_void": null,
+   "reason": "Contraction unproven, bar_range_history NOT_SERVED; a breakout needs participation first."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under ma20",
+   "market_void": null,
+   "reason": "Extended on thin volume, no test or retracement; no family fits."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under ma20",
+   "market_void": null,
+   "reason": "Extended, H1 swing HH but LL, no dip to buy; no family fits."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Daily close under ma20",
+   "market_void": null,
+   "reason": "Extended, D close 3.4% above the last swing high, H1 3.4% under its swing high; no test or retracement."
+  }
+ ],
+ "declarations": [
+  "Setup family per name or abstain. adx NOT_SERVED, stochastic_kd NOT_SERVED, bar_range_history NOT_SERVED, market_breadth OUT_OF_SERVED_SCOPE.",
+  "n_day_extreme substituted by MTF swing lines and 20-bar high distance, never the literal count.",
+  "Decided on my method only; no bracket or Valen flag used as a reason."
+ ]
+}

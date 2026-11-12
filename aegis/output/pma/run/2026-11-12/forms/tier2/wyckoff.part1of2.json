@@ -1,0 +1,91 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "answers": [
+  {
+   "pair_id": "KVYO-wyckoff-for~minervini",
+   "ticker": "KVYO",
+   "to": "minervini",
+   "text": "\"bounce off a low: from_52w_hi -36.17 fails criterion 7\". My test is structure, not a 52-week template. W is HH but LL, 1.5% above the last swing high; D HH/HL, 4.4% under the 20-day high; H1 0.1% under its swing high. Structure is repairing, not clean: I keep SUPPORT but WAIT for a volume close over the D high.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high, a demand bar after the H1 dip under EMA9"},
+   "wrong_if": "D closes under the last swing low 661.60, or W loses its HH/HL (last swing low 635.32).",
+   "market_void": null,
+   "reason": "Trend, at the test: W and D HH/HL, D 0.8% above last swing high, H1 below EMA9 at 11% of day range. Buy stop only."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high once price holds the 20-day average"},
+   "wrong_if": "D closes under the last swing low 105.36, or W closes under last swing high 118.29 again.",
+   "market_void": null,
+   "reason": "W HH/HL 0.1% above its swing high, but D is HH but LL and H1 is below EMA9: the break needs to hold before a demand bar counts."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high, proving the weekly LH/LL is being broken"},
+   "wrong_if": "D closes under the last swing low 220.16.",
+   "market_void": null,
+   "reason": "D HH/HL and H1 at highs, but W is LH/LL: no weekly trend yet, so I wait for the daily close that breaks the weekly lower-high."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high of 22.01 on better volume"},
+   "wrong_if": "D closes under the last swing low 19.02.",
+   "market_void": null,
+   "reason": "W HH/HL, D LH but HL and 5.4% above last swing high: a break not yet proven; wait for the close through the D high."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high of 302.93"},
+   "wrong_if": "D closes under the last swing low 281.07.",
+   "market_void": null,
+   "reason": "All three frames above EMA9 with 9>21, but W is LH but HL, D HH but LL, H1 LH/LL: swings unconfirmed, so wait for the D high to break."
+  },
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:vwap_14d", "tf": "D", "plain": "Price pulls back into the 14-day VWAP value zone, then a demand bar"},
+   "wrong_if": "D closes under the last swing low 20.88, or W loses HH/HL (last swing low 23.09).",
+   "market_void": null,
+   "reason": "D is 12.9% above last swing high and swings LH/LL: away from value. Extension sets entry, not an oppose; do not chase."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the 20-day high of 451.00 out of the range"},
+   "wrong_if": "D closes under the last swing low 399.35.",
+   "market_void": null,
+   "reason": "Range read: D LH/LL, 1.0% under the 20-day high, W HH/HL. At the top edge there is no range long; a break through it is the trigger."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close above yesterday's high, buy stop above the bar"},
+   "wrong_if": "D closes under the last swing low 332.67.",
+   "market_void": null,
+   "reason": "W, D and H1 all HH/HL with 9>21; H1 0.1% under its swing high at 96% of range. At the test; follow-through required."
+  }
+ ],
+ "declarations": [
+  "Value-area fields (pvp_*) and bar fields are not in my tier-2 packet; trend/range read from the W/D/H1 grid only.",
+  "Valen flags were not used. No bracket field was used as a reason."
+ ]
+}

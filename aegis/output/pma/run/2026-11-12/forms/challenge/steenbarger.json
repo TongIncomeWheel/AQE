@@ -1,0 +1,105 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-12",
+ "seat_kind": "challenge",
+ "names_read": 51,
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C15"],
+   "claim": "Healthcare is the room's dominant cluster: 12 of the 28 nominated names, spread over 6 different seats. Several seats landing on one sector is a sector read, not 12 independent ideas; deciders should say which Healthcare names they would hold together.",
+   "evidence": "gics_sector_name Healthcare on ROIV, TMO, XERS, ERAS, AMRX, EW, ABBV, HUM, BTSG, CAH, COR, ADMA (nomination_count >0); 18 of 51 room rows are Healthcare.",
+   "addressed_to": "oneil, seow, livermore, minervini"
+  },
+  {
+   "scope": "XERS",
+   "kind": "EXTENSION",
+   "ticker": "XERS",
+   "canon_ref": ["C5", "C12"],
+   "claim": "Long-trend gap is very wide at the 52-week high: the 50-day sits about 30% above the 200-day. The case needs a stated entry point that is not at the extreme, and a named level for where it is proven wrong.",
+   "evidence": "ma_50 10.08, ma_200 7.74, pct_from_52w_high 0.0, day_vol 1.14, sc_momentum 85.2, rs_rank_pct 99.41.",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "MGNI",
+   "kind": "EXTENSION",
+   "ticker": "MGNI",
+   "canon_ref": ["C5", "C12"],
+   "claim": "Stretched against the long trend: the 50-day is about 35% above the 200-day, price at the 52-week high on below-normal volume. Participation is not confirming the extension.",
+   "evidence": "ma_50 24.39, ma_200 18.05, pct_from_52w_high 0.0, day_vol 0.91, sc_momentum 83.3.",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "CNK",
+   "kind": "ANCHOR",
+   "ticker": "CNK",
+   "canon_ref": ["C12", "C17"],
+   "claim": "Bearish oscillator divergence (2 of 5 confirming) sits on a name at its 52-week high on the thinnest volume in the room. A nomination must answer this directly instead of resting on momentum and rank alone.",
+   "evidence": "div_state BEARISH, div_bear_count 2, pct_from_52w_high 0.0, day_vol 0.48, lens_warnings 0, sc_momentum 73.3.",
+   "addressed_to": "seow, raschke"
+  },
+  {
+   "scope": "BTSG",
+   "kind": "PROCESS",
+   "ticker": "BTSG",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Fields conflict: nominated as a momentum name, but the 50-day is below the 100-day and a bearish divergence is confirmed. The higher-timeframe context has to be named and the conflict answered, or the seat should abstain.",
+   "evidence": "ma_50 61.51, ma_100 63.52, ma_200 55.87, div_state BEARISH, div_bear_count 1, structure 84.2.",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "ERAS",
+   "kind": "PROCESS",
+   "ticker": "ERAS",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Higher-timeframe context is weak and unnamed: structure is the lowest of the nominated names, the 50-day sits under the 100-day, and price is far off its high. A volume spike alone is a pattern in isolation.",
+   "evidence": "structure 40.0, ma_50 14.98, ma_100 16.6, ma_200 15.2, pct_from_52w_high -25.23, day_vol 2.96.",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "TTWO",
+   "kind": "PROCESS",
+   "ticker": "TTWO",
+   "canon_ref": ["C5", "C3"],
+   "claim": "Trend context is not established: 50-day below both the 100-day and 200-day, relative strength mid-pack. The seat should name the regime and higher-timeframe context this is valid inside.",
+   "evidence": "ma_50 207.36, ma_100 224.23, ma_200 218.56, rs_rank_pct 47.06, pct_from_52w_high -10.49, structure 61.1.",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C5", "C3"],
+   "claim": "Three nominated names sit with the 50-day under the 200-day and weak relative strength, well off their highs. Each needs its higher-timeframe context and regime named explicitly, not inferred from a short-term structure break.",
+   "evidence": "DTE ma_50 130.39, ma_200 141.01, rs_rank_pct 40.59. BIPC ma_50 37.0, ma_200 40.74, rs_rank_pct 39.96. CRK ma_50 13.9, ma_200 15.8, pct_from_52w_high -44.72.",
+   "addressed_to": "raschke, wyckoff"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C12"],
+   "claim": "Lane label disagrees with the fields: two names filed under PULLBACK are sitting at their 52-week highs, so there is no pullback to speak of. The nominating seat should say what it is buying.",
+   "evidence": "AMRX lane PULLBACK, pct_from_52w_high 0.0, day_vol 0.57. ABBV lane PULLBACK, pct_from_52w_high 0.0, day_vol 0.57.",
+   "addressed_to": "minervini"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C17"],
+   "claim": "Reasons across the room lean on the same few ranking fields (momentum composite, relative-strength rank, proximity to high). None has a forward-return separation measured in the packet, so they are described, not edge. Convergence on shared anchors is not independent confirmation.",
+   "evidence": "sc_momentum, rs_rank_pct and pct_from_52w_high present on every row; no forward-return or per-field edge statistic served in the packet.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "not in packet; regime label for each case cannot be checked, so environment match is not assessable here"},
+  {"field": "srm", "impact": "not in packet; sector rotation context unavailable for the Healthcare clustering read"},
+  {"field": "lens_warnings", "impact": "null for EBAY, RBRK, SPCX; no warning-count read on those held names"},
+  {"field": "ma_200", "impact": "null for SPCX and BOBS; long-trend context not readable"},
+  {"field": "structure_shift", "impact": "null for TSN; structure read incomplete"}
+ ]
+}

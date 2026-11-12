@@ -1,0 +1,70 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "ERAS",
+   "reason": "Trend, imbalance up: structure_shift ABOVE_STRUCTURE, pvp_position ABOVE_VALUE. Sign-of-strength bar: range 1.76 vs atr_14d 1.15, close in top third, rvol_20d 2.69, squeeze BREAKOUT_UP volume-confirmed. Entry by buy stop above bar_high 17.34; danger point under bar_low 15.58.",
+   "fields_cited": ["structure_shift", "pvp_position", "pvp_vah", "bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "squeeze_breakout_state", "squeeze_breakout_volume_confirmed", "structure_shift_ref", "vwap_14d", "avwap_structure"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift ABOVE_STRUCTURE (state, not fresh BOS); bar range 1.76 >= atr_14d 1.15; CLV 0.69; rvol_20d 2.69; squeeze_breakout_volume_confirmed True", "verdict": "pass", "fields": ["structure_shift", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "squeeze_breakout_volume_confirmed"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position ABOVE_VALUE; bar_close 16.8 > pvp_poc 14.77; > vwap_14d 15.04; vwap_5d slope RISING; > avwap_structure 15.09", "verdict": "pass", "fields": ["pvp_position", "pvp_poc", "vwap_14d", "elder_context.vwap_5d.slope_5d", "avwap_structure", "bar_close"]},
+    {"step": 3, "canon_ref": ["C3", "C7"], "observed": "entry 16.8: 0.35 over pvp_vah 16.45 (0.3 ATR) but 1.33 over structure_shift_ref 15.47 (1.16 ATR); pct_from_pivot 8.6", "verdict": "partial", "fields": ["entry", "pvp_vah", "structure_shift_ref", "atr_14d", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_close 16.8 > bar_open 15.78, range >= ATR, CLV 0.69, rvol_20d 2.69 >= 1.2 (R6 met); buy stop above bar_high 17.34", "verdict": "pass", "fields": ["bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop null (own level): danger point under bar_low 15.58, structure_shift_ref 15.47, vwap_14d 15.04; last_pivot_high.price 15.47 is below price, next bracket.targets R 19.22", "verdict": "partial", "fields": ["bar_low", "structure_shift_ref", "vwap_14d", "bracket.stop", "last_pivot_high.price", "bracket.targets"]}
+   ],
+   "falsifier": "Close back under structure_shift_ref 15.47 (inside the old range) or under bar_low 15.58 invalidates the breakout; no follow-through above bar_high 17.34 means a failed thrust."
+  },
+  {
+   "ticker": "CRK",
+   "reason": "Fresh BULLISH_BOS at the test: entry 15.13 is 0.10 over structure_shift_ref 15.03 and at pvp_vah 15.14. Wide bar (0.83 vs atr_14d 0.64), CLV 0.89, rvol_20d 1.19; value stepping up (vwap_14d 14.14, 5d VWAP RISING). pvp_position INSIDE_VALUE keeps it partial.",
+   "fields_cited": ["structure_shift", "pvp_position", "pvp_vah", "structure_shift_ref", "bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "vwap_14d", "avwap_structure", "elder_context.vwap_5d.slope_5d"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift BULLISH_BOS; bar range 0.83 >= atr_14d 0.64; CLV 0.89; rvol_20d 1.19 >= 1.0 (genuine-looking, R3)", "verdict": "pass", "fields": ["structure_shift", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position INSIDE_VALUE (bar_close 15.13 vs pvp_vah 15.14); > vwap_14d 14.14; > avwap_structure 14.09; vwap_5d slope RISING", "verdict": "partial", "fields": ["pvp_position", "pvp_vah", "vwap_14d", "avwap_structure", "elder_context.vwap_5d.slope_5d", "bar_close"]},
+    {"step": 3, "canon_ref": ["C7"], "observed": "entry 15.13 vs structure_shift_ref 15.03 (0.1 over, 0.16 ATR) and pvp_vah 15.14: AT THE TEST, within 1 ATR", "verdict": "pass", "fields": ["entry", "structure_shift_ref", "pvp_vah", "atr_14d"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_close 15.13 > bar_open 14.85, range >= ATR, CLV 0.89, but rvol_20d 1.19 just under the 1.2 stand-in; buy stop above bar_high 15.22", "verdict": "partial", "fields": ["bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop null (own level): danger point under vwap_14d 14.14 / bar_low 14.39; atr_fallback_stop 14.49; last_pivot_high.price 15.03 below price, bracket.targets R 15.22 then R 16.12", "verdict": "partial", "fields": ["bar_low", "vwap_14d", "bracket.stop", "bracket.atr_fallback_stop", "last_pivot_high.price", "bracket.targets"]}
+   ],
+   "falsifier": "A close back under structure_shift_ref 15.03 and then under vwap_14d 14.14 means the break was an upthrust; so does a failure to hold above bar_high 15.22 on the next bars."
+  },
+  {
+   "ticker": "TTWO",
+   "reason": "Trend: structure_shift ABOVE_STRUCTURE, pvp_position ABOVE_VALUE, value stepping up. Wide bullish bar (range 12.2 vs atr_14d 8.92, rvol_20d 1.62) but CLV only 0.5 and entry 231.31 is 1.75 ATR over structure_shift_ref 215.66. Vote HOLD-FOR-CONDITIONS: in_zone:pvp_vah then h1_close_above:bar_high.",
+   "fields_cited": ["structure_shift", "pvp_position", "pvp_vah", "structure_shift_ref", "entry", "bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d", "vwap_14d", "avwap_structure", "elder_context.vwap_5d.slope_5d", "bracket.stop"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure_shift ABOVE_STRUCTURE (state); bar range 12.2 >= atr_14d 8.92; CLV 0.5 (< 0.67); rvol_20d 1.62", "verdict": "partial", "fields": ["structure_shift", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 2, "canon_ref": ["C9", "C10"], "observed": "pvp_position ABOVE_VALUE; bar_close 231.31 > vwap_14d 209.63; > avwap_structure 208.54; vwap_5d slope RISING", "verdict": "pass", "fields": ["pvp_position", "vwap_14d", "avwap_structure", "elder_context.vwap_5d.slope_5d", "bar_close"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C15"], "observed": "entry 231.31: 15.65 over structure_shift_ref 215.66 (1.75 ATR), 8.3 over pvp_vah 223.01 (0.93 ATR); away from the Creek, so HOLD", "verdict": "partial", "fields": ["entry", "structure_shift_ref", "pvp_vah", "atr_14d"]},
+    {"step": 4, "canon_ref": ["C12"], "observed": "bar_close 231.31 > bar_open 227.49, range >= ATR, rvol_20d 1.62, CLV 0.5 misses the 0.67 stand-in; trigger would be a buy stop above bar_high 237.41", "verdict": "partial", "fields": ["bar_open", "bar_high", "bar_low", "bar_close", "atr_14d", "rvol_20d"]},
+    {"step": 5, "canon_ref": ["C13", "C14", "C17"], "observed": "bracket.stop 218.83 (engine); own danger point under structure_shift_ref 215.66 / vwap_5d zone; first target bracket.targets R 250.93", "verdict": "pass", "fields": ["bracket.stop", "structure_shift_ref", "bracket.targets", "bar_low"]}
+   ],
+   "falsifier": "A close back under structure_shift_ref 215.66 (into value, under pvp_vah 223.01) negates the trend read; no h1 close above bar_high 237.41 after a test means no entry."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "KEEP", "line": "RANGE but above value: pvp_position ABOVE_VALUE, bar_close 122.68 over pvp_vah 118.44 and vwap_14d 121.22; held_sl 119.49 sits under vwap_14d and above pvp_vah. hl_state TIGHTEN (hl_score 45) is a condition read, not a structural break; danger point base_low_20d 115.76 intact."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "Above value (pvp_position ABOVE_VALUE, bar_close 100.23 over pvp_vah 94.58), above vwap_14d 94.54; hl_state HOLD (hl_score 61), held_sl 97.45 behind value. Prior pivot R 101.32 is the first test; danger point base_low_20d 80.85 far below, structure intact."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Close 109.26 under vwap_14d 121.31, choch_state BEARISH, div_bear_count 4, hl_state EXIT (hl_score 4). base_low_20d 104.12 and held_sl 99.45 still intact, so per R12 the structure is not yet broken: state the exit case plainly and let the PM adjudicate."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short supported by structure: structure_shift BEARISH_CHOCH, pvp_position BELOW_VALUE, bar_close 139.75 only just over vwap_14d 139.34. The BUY stop 148.15 sits just under structure_shift_ref 149.34, which is the danger point; hl_state EXIT (hl_score 9) is a condition read, the structure has not been violated. Method is long-biased, so low confidence in this read."}
+ ],
+ "data_gaps": [
+  {"field": "high/low-volume nodes beyond the value area (NOT_SERVED, R11)", "impact": "Targets rest on prior swing highs and bracket.targets only; no HVN targets."},
+  {"field": "successive / last-week value areas (NOT_SERVED, R11)", "impact": "Value stepping up (C10) is read only through vwap_14d, vwap_5d slope and avwap_structure as a proxy."},
+  {"field": "hl_flow", "impact": "Held review cannot separate effort-versus-reward decay from risk decay inside hl_score (R12)."},
+  {"field": "structure_shift_ref (null for RANGE names)", "impact": "Range-labelled names such as CLX, HUM, HTFL, TEVA with pvp_position ABOVE_VALUE read as an ambiguous trend/range mix (R10) and were not nominated."}
+ ],
+ "declarations": [
+  "No ledger lesson block was injected into this packet; none applied.",
+  "Screening method: the 457-row packet was too large to read whole, so rows were filtered by structure_shift and day_vol and the candidate rows (BOS names, high-volume ABOVE_STRUCTURE and RANGE names, and the four held names) were read in full. Names outside those filters were not read in full.",
+  "Bracket fields were stated only as information (R1); no nomination, conviction or shortfall rests on a bracket.",
+  "ERAS day_vol 2.96 may be news-driven; ma_status NONE on the packet, event filter belongs after the tally.",
+  "MCD, MWH, QNT, Q, LUNR, MKSI BOS rows failed the break grade: bar range under atr_14d or close in the lower third (R3), so potential upthrust, not nominated.",
+  "OPCH ma_status PENDING_TARGET: event-driven, not nominated."
+ ],
+ "shortfall_reason": "Only three names pass the method's break/structure checks; fresh BULLISH_BOS rows mostly closed in the lower third or on narrow bars (potential upthrusts) and the extended trend names have no test yet. Not padded."
+}

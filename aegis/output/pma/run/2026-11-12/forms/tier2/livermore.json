@@ -1,0 +1,261 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-12",
+ "declarations": [
+  "trend_confirmation: PASS/PARTIAL/FAIL per name from the packet MTF grid and structure reads (C5); sma_dist read as extension only.",
+  "danger_signal_threshold: TRANSLATED. A 1 atr_14d fade from the day's high (fade_atr_ge:1) is my own translation, not Livermore's 6 points (C7, C18-C20).",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only). inside_information: NEVER (C11).",
+  "state_analogue: mp_state is the modern analogue of my six-column key, not identical (C18)."
+ ],
+ "answers": [
+  {
+   "pair_id": "AJG-livermore-for~oneil",
+   "ticker": "AJG",
+   "to": "oneil",
+   "text": "\"no tight base; day_vol 0.67 under 1.40\": a coil is not my test; day_vol 0.67 is the quiet spot I already filed. My test is trend then new high: W 9>21, D HH/HL, D 4.2% under 20-day high, so the new high is still to take. I wait for it; I hold my claim.",
+   "concede": false
+  },
+  {
+   "pair_id": "AXGN-livermore-for~raschke",
+   "ticker": "AXGN",
+   "to": "raschke",
+   "text": "\"range-expansion bar: an exit-side signal, not an entry\": a new high on day_vol 2.42 is the market paying up (C2, C5), my entry, not my exit. W 9>21, D HH/HL 1.8% under 20-day high. The extension (sma_dist 36.51) I manage with the 1 atr_14d fade, my translation. Claim stands.",
+   "concede": false
+  },
+  {
+   "pair_id": "ICE-livermore-for~oneil",
+   "ticker": "ICE",
+   "to": "oneil",
+   "text": "\"day_vol 1.17 at the high is under 1.40\": 1.40 is O'Neil's bar. day_vol 1.17 is above the name's own normal, and fill difficulty is not served anyway (R5). Grid: W 0.1% under 20-wk high, D 0.1% under 20-day high, H1 99% of range. A leader at the high is C5. Stands.",
+   "concede": false
+  },
+  {
+   "pair_id": "PRCH-livermore-for~oneil",
+   "ticker": "PRCH",
+   "to": "oneil",
+   "text": "\"well past 70% above the 200-day, climax\": the 200-day percentage is not my test; my danger signal is a 1 atr_14d fade from the high (C7), not yet printed. I grant day_vol 0.51 is thin and W is 20.5% above its last swing high: so WAIT for volume on the higher high.",
+   "concede": false
+  },
+  {
+   "pair_id": "TGTX-livermore-for~oneil",
+   "ticker": "TGTX",
+   "to": "oneil",
+   "text": "\"no tight base and middling structure\": base tightness is not my test. W HH/HL, D HH/HL 3.3% under 20-day high, H1 90% of range: the trend is established, the new high is not yet taken. structure 66.3 I already filed as modest at conviction 3. Stands.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high: the new high that ends the pullback."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 21.25, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D swing HH/HL, D 1.4% under 20-day high; H1 below EMA9 at 11% of range, so no dip buying; I wait for the high."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "I am wrong to stand aside if D swing turns HH/HL with a close above the last swing high on normal volume.",
+   "market_void": null,
+   "reason": "D swing HH but LL and H1 HH but LL: the last reaction is deeper than a normal one (C8), D 3.8% under 20-day high. Trend not clean enough to buy."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high: the new high on the day."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 5.2, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: D HH/HL, H1 HH/HL 95% of range, 0.1% under 20-hr high. W swing LH/LL is a stale read; W still 9>21 above EMA9. Quiet volume is the thin spot."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high on better volume."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 0.83, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W HH/HL 9>21, H1 HH/HL, D 1.4% under 20-day high. D swing LH but HL is mixed and day_vol is thin, so the high must print first."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high: the new high."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 7.17, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D above EMA9 with 9>21, H1 0.2% under 20-hr high. D swing HH but LL and W LH but HL: D 2.6% under 20-day high, so I wait for the break."
+  },
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high with volume joining."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 1.37, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W HH/HL, H1 HH/HL, D 1.6% under 20-day high. Group confirmation is thin (C14) and day_vol 0.91 is below normal, so wait for volume on the high; no add before."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high: the next higher high."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 17.67, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W HH/HL 2.2% under 20-wk high, H1 HH/HL 0.9% under 20-hr high, day_vol 1.72 above normal. D swing LH/LL and structure_shift RANGE temper it."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high: the new high is taken."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 9.19, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D HH/HL, H1 96% of range; D 3.9% under 20-day high, so the new high is not yet taken. Weakest structure in the group: low conviction."
+  },
+  {
+   "ticker": "KVYO",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "I am wrong to stand aside if W swing turns HH/HL and price closes above the 20-wk high.",
+   "market_void": null,
+   "reason": "W swing HH but LL, D 4.4% under 20-day high: a recovery rally, not an established uptrend making a new high (C5, C18). The tallies are split."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high: the new high is taken."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 8.13, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: D HH/HL, W 9>21 though HH but LL, H1 96% of range. D 4.2% under 20-day high: trend yes, new high not yet. Quiet volume."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high while volume stays heavy."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 2.86, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5, C2: D HH/HL 1.8% under 20-day high on day_vol 2.42. H1 swing LH but HL and 15.1% above its swing high: extended, so only the fresh high counts, no add into a stall (C6)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high: the new high on the day."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 4.19, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W 0.1% under 20-wk high, D 0.1% under 20-day high, H1 99% of range, all HH/HL with 9>21. A leader pressing the high on above-normal day_vol 1.17."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last confirmed pivot high: the new high."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 7.39, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D HH/HL 1.5% under both highs, H1 94% of range. structure_shift RANGE is no break yet and day_vol is quiet, so I want the close above the high."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high with volume at or above normal."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 1.18, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D HH/HL, D 1.0% under 20-day high. W 20.5% above last swing high is extended and day_vol is thin (C7, C15): only a higher high on volume, no add into a stall."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high: the new high."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 1.72, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W HH/HL 0.6% above last swing high, D HH/HL 2.2% under 20-day high, structure the cleanest in the part. H1 swing HH but LL: the high is still to be taken."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high: the new high."
+   },
+   "wrong_if": "Fade of 1 atr_14d (atr 3.26, my translation) from the day's high, or a daily close under ma_20.",
+   "market_void": null,
+   "reason": "C5: W and D HH/HL 9>21, group at highs (C12, C14). D 3.3% under 20-day high and day_vol 0.98 is normal, not expanding: wait for the break."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 6288,
+   "sha256": "e84291b048f6"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 4365,
+   "sha256": "3314f4196adb"
+  }
+ ]
+}

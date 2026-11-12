@@ -1,0 +1,110 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-12",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "ROIV",
+   "reason": "Established leader: structure 82.1, structure_shift 1 (broke above prior structure), mp_state 3 / mp_accel_state 1 (strong, accelerating). Healthcare peers BTSG and EW show the same break, so the group confirms (C14). My own danger level: entry 41.85 less 1x atr_14d 1.57 = 40.28.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "atr_14d", "entry", "gics_sector", "rank"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 82.1; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 12.84 (extended from 50d but a leader at its highs reads far from it)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.57; entry 41.85; own level entry minus 1x atr_14d = 40.28 (my translation, not Livermore's 6 points); bracket.valid False, named own level instead", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 52; gics_sector XLV; sector_trend_state 2 (fading, context only); BTSG structure_shift 1 and EW structure_shift 1 in same sector", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position, so no add-to-loser risk; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 1.57 declared; fill_difficulty NOT_SERVED (day_vol 0.98 proxy only); no inside information used", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 40.28 (entry less 1x atr_14d) or structure_shift turning to 2 (BEARISH_CHOCH) ends the idea."
+  },
+  {
+   "ticker": "BTSG",
+   "reason": "structure 84.2 with structure_shift 1 and mp_state 3 / mp_accel_state 1: a trend-confirmed name pressing out of its prior structure, same group break as ROIV and EW. Own danger level: entry 72.62 less 1x atr_14d 2.87 = 69.75. Not chasing: day_vol 0.77 is quiet.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "atr_14d", "entry", "day_vol", "rank"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 84.2; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 18.06 (far from 50d, a leader's normal reading)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.87; entry 72.62; own level entry minus 1x atr_14d = 69.75 (my translation); bracket.valid False, own level named", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 77; gics_sector XLV; sector_trend_state 2 (fading, context); ROIV and EW confirm in the same sector", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 2.87 declared; day_vol 0.77 is a proxy only, fill_difficulty NOT_SERVED; no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 69.75 (entry less 1x atr_14d) or structure_shift 2 (BEARISH_CHOCH) ends the idea."
+  },
+  {
+   "ticker": "EW",
+   "reason": "structure 89.5, structure_shift 1, mp_state 3 / mp_accel_state 1 in a group (XLV) where ROIV and BTSG also break out. Extended (sma_distance_pct 17.86) so entry discipline matters; my danger level: entry 105.81 less 1x atr_14d 3.02 = 102.79.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "entry", "rank"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 89.5; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 17.86 (extended, watch for chasing)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 3.02; entry 105.81; own level entry minus 1x atr_14d = 102.79 (my translation); bracket.valid False, own level named", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 19; gics_sector XLV; sector_trend_state 2 (fading, context); ROIV and BTSG confirm", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 3.02 declared; day_vol 0.87 proxy only, fill_difficulty NOT_SERVED; no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 102.79 (entry less 1x atr_14d) or structure_shift 2 (BEARISH_CHOCH) ends the idea."
+  },
+  {
+   "ticker": "MGNI",
+   "reason": "rank 11, structure 78.9, structure_shift 1, mp_state 3 / mp_accel_state 1, in the one sector reading Momentum Building (sector_trend_state 1). Very extended (sma_distance_pct 19.75): enter only on strength, not a dip. Danger level: entry 29.21 less 1x atr_14d 1.37 = 27.84.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "sector_trend_state", "atr_14d", "entry", "rank"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 78.9; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 19.75 (far above 50d, chase risk)", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.37; entry 29.21; own level entry minus 1x atr_14d = 27.84 (my translation); bracket.valid False, own level named", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C13"], "observed": "rank 11; gics_sector XLC; sector_trend_state 1 (Momentum Building); no second XLC name read in my packet as confirming", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 1.37 declared; day_vol 0.91 proxy only, fill_difficulty NOT_SERVED; no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 27.84 (entry less 1x atr_14d) or structure_shift 2 (BEARISH_CHOCH) ends the idea."
+  },
+  {
+   "ticker": "FLYW",
+   "reason": "rank 15, structure 75.8, structure_shift 1, mp_state 3 / mp_accel_state 1 with day_vol 1.3 (above-normal participation) on the break. Extended (sma_distance_pct 19.2). Danger level: entry 22.25 less 1x atr_14d 0.85 = 21.40. Group confirmation in XLI not yet read.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "day_vol", "sma_distance_pct", "atr_14d", "entry", "rank"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 75.8; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 19.2 (extended)", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.85; entry 22.25; own level entry minus 1x atr_14d = 21.40 (my translation); bracket.valid False, own level named", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 15; gics_sector XLI; sector_trend_state 2 (fading, context); no related XLI name confirmed in my read", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 0.85 declared; day_vol 1.3 proxy only, fill_difficulty NOT_SERVED; no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 21.40 (entry less 1x atr_14d) or structure_shift 2 (BEARISH_CHOCH) ends the idea."
+  },
+  {
+   "ticker": "ELF",
+   "reason": "structure_shift 3 (BULLISH_BOS: just broke a confirmed pivot high) with mp_state 1 / mp_accel_state 1 (building, accelerating) and sma_distance_pct 10.73, the least extended of my names. Structure 66.3 is modest. Danger level: entry 118.46 less 1x atr_14d 5.39 = 113.07.",
+   "fields_cited": ["structure", "structure_shift", "mp_state", "mp_accel_state", "sma_distance_pct", "atr_14d", "entry", "rank"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 66.3; structure_shift 3 (BULLISH_BOS); sma_distance_pct 10.73 (moderate extension)", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 5.39; entry 118.46; own level entry minus 1x atr_14d = 113.07 (my translation); bracket.valid False, own level named", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 290 (low overall rank); gics_sector XLP; sector_trend_state 2 (fading, context); no second XLP name confirms in my read", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "held False; no position; any add only above entry", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C7", "C11"], "observed": "translation via atr_14d 5.39 declared; day_vol 0.85 proxy only, fill_difficulty NOT_SERVED; no inside information", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A close below 113.07 (entry less 1x atr_14d) or structure_shift turning to 2 (BEARISH_CHOCH) ends the idea."
+  }
+ ],
+ "held_review": [
+  {"ticker": "EBAY", "verdict": "KEEP", "line": "structure_shift 4 (RANGE), structure 74.0, mp_state 2 / mp_accel_state 2 (fading): a normal reaction inside the trend (C8), no danger signal seen; working stop stays, no adds."},
+  {"ticker": "GPN", "verdict": "KEEP", "line": "structure 87.2, structure_shift 4 (RANGE), mp_state 3 / mp_accel_state 2 (strong, decelerating), sma_distance_pct 14.94: trend intact, no danger signal; hold with stop in place, no adds until a new high."},
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "structure 25.0, structure_shift 4 (RANGE), sma_distance_pct -3.25: the established uptrend my method requires is gone (C5); take the loss rather than wait (C3), never average down (C4)."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short fits the picture: structure 14.0, structure_shift 2 (BEARISH_CHOCH), sma_distance_pct -6.29; the BUY stop at 148.15 is the defined loss; add only at lower prices (C6), never into a rally."}
+ ],
+ "data_gaps": [
+  {"field": "pct_from_52w_high", "impact": "Not on my menu and pending from AQE; I could not measure proximity to the recent high directly, so step 1 leans on structure_shift and sma_distance_pct only."},
+  {"field": "bracket.stop", "impact": "Null with bracket.valid False for every nominee; I named my own danger level (entry less 1x atr_14d) instead. Not a reason against any name (R1)."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS/PARTIAL per name (structure/structure_shift + sma_distance_pct, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x atr_14d is my own translation, not literal 6pts) (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger_lesson: none injected for this run, so none applies"
+ ],
+ "shortfall_reason": null
+}

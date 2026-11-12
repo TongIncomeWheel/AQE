@@ -1,0 +1,84 @@
+{
+ "voice": "seow",
+ "date": "2026-11-12",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "KVYO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high shows the break is being bought."},
+   "wrong_if": "Daily close back under pivot_high, or close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system, small: D swing_class HH/HL, D dist_to_20bar_high_pct 4.37, W swing_class HH but LL, TIF proxy partial (support_confirm 2, support_refute 2). A recovery leg, not a leader; wait for the hourly."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last swing high clears the resistance line."},
+   "wrong_if": "Daily close below ma_40 or base_low_20d.",
+   "market_void": null,
+   "reason": "Position system, small: D swing_class HH/HL, D dist_to_20bar_high_pct 4.25, W swing_class HH but LL with a red weekly bar, H1 ema_order 9<21. Under its swing high, TIF flat; wait for the close through it."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a high-volume red bar with elder_pattern falling back.",
+   "market_void": null,
+   "reason": "Position system: new high, D swing_class HH/HL, D dist_to_20bar_high_pct 1.83, H1 pos_in_day_range_pct 88.5, W swing_class HH but LL. Strength is the signal (C26). Extended, so first 50% tranche only (support_refute 2 noted)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a high-volume red bar with elder_pattern falling back.",
+   "market_void": null,
+   "reason": "Position system: momentum flag true, W D H1 swing_class all HH/HL, W dist_to_20bar_high_pct 0.07, H1 pos_in_day_range_pct 98.8. All three frames press highs. support_confirm 1, support_refute 1; fund flow unread (declared)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "An hourly close above the last swing high is the resistance break I buy."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system, pre-break: momentum flag true, W and D swing_class HH/HL, D dist_to_20bar_high_pct 1.49, H1 close_vs_swing_high_pct 0.13. Coiled under the break with no buy signal yet; wait. support_confirm 3, support_refute 0."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red bar with elder_pattern falling back.",
+   "market_void": null,
+   "reason": "Position system: momentum flag true, W swing_class HH/HL, D swing_class HH/HL, W dist_to_20bar_high_pct 0.98, D close_vs_swing_high_pct 0.82. New high with strength; thin volume and unread fund flow cap it at a small first tranche (support_refute 1)."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last swing high clears the resistance line."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "Position system, small: momentum flag true, W D swing_class HH/HL, D close_vs_swing_high_pct -2.24, H1 swing_class HH but LL. TIF flat, fund flow unread; the break through the swing high comes first. support_confirm 2, support_refute 0."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a high-volume red bar with elder_pattern falling back.",
+   "market_void": null,
+   "reason": "Position system: momentum flag true, W swing_class HH/HL, W close_vs_swing_high_pct 11.61, D close_vs_swing_high_pct 3.4 (above last swing high), H1 pos_in_day_range_pct 89.9. Strength continuing. support_confirm 1, support_refute 1."
+  }
+ ],
+ "declarations": [
+  "Position system picked from each name's own picture (R10); swing set-up needs cci_20, bar_low, ma_20_slope_5d_pct, not served.",
+  "Declared proxies: structure_shift for resistance, elder_pattern for TIF, support = max(fib_swing_low, base_low_20d). cmf not served, fund flow unread.",
+  "Healthcare names (TGTX) are one sector bet; concentration is the PM's call. No bracket field used as a reason (R1)."
+ ]
+}

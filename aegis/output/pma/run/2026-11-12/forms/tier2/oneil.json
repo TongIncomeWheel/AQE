@@ -1,0 +1,264 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-12",
+ "declarations": [
+  "fundamentals NOT_AVAILABLE (C, A, S, I); base_stage NOT_AVAILABLE; market_gate DELEGATED; pivot_high distance unserved, MTF lines used as nearest read.",
+  "fundamentals NOT_AVAILABLE (C, A, S, I); base_stage NOT_AVAILABLE; market_gate DELEGATED; pivot_high distance unserved."
+ ],
+ "answers": [
+  {
+   "pair_id": "AJG-oneil-against~livermore",
+   "ticker": "AJG",
+   "to": "livermore",
+   "concede": false,
+   "text": "\"H1 9<21 is the lower frame\". The weekly is my base frame: W swing HH but LL, 4.2% under 20-wk high, lens coil warn, no completed base. day_vol 0.67 fails the 1.40 test. D/W above EMA9 is trend, not a base. Stand."
+  },
+  {
+   "pair_id": "AJG-oneil-against~seow",
+   "ticker": "AJG",
+   "to": "seow",
+   "concede": false,
+   "text": "\"A completed tight base is O'Neil's test\". Agreed, and it fails: lens coil warn, W swing HH but LL, D 4.2% under 20-day high, day_vol 0.67 under 1.40. Position tide above EMA9 is not a base. Stand."
+  },
+  {
+   "pair_id": "ICE-oneil-against~livermore",
+   "ticker": "ICE",
+   "to": "livermore",
+   "concede": false,
+   "text": "\"day_vol 1.17 is above normal\". Above normal is not my test: C16 needs day_vol 1.40, under it is a rejection. W 9.7% above last swing high with lens coil warn: no base behind the pivot. Stand."
+  },
+  {
+   "pair_id": "ICE-oneil-against~seow",
+   "ticker": "ICE",
+   "to": "seow",
+   "concede": false,
+   "text": "\"HH/HL within 0.1 of their highs\". That is trend at the high, not a base. W 9.7% above last swing high, lens coil warn, day_vol 1.17 under 1.40: unconfirmed. A 1.40 break would move me. Stand."
+  },
+  {
+   "pair_id": "PRCH-oneil-against~livermore",
+   "ticker": "PRCH",
+   "to": "livermore",
+   "concede": false,
+   "text": "\"Extension is not a veto\". Agreed, extension is a weight (R27). My case is entry 22.14 vs ma_200 12.54, past the 70% climax line (R7, C24), plus lens coil warn, day_vol 0.51, W 20.5% above last swing high. Stand."
+  },
+  {
+   "pair_id": "PRCH-oneil-against~seow",
+   "ticker": "PRCH",
+   "to": "seow",
+   "concede": false,
+   "text": "\"extension over ma_200 is no fault here\". The 200-day climax is my test (R7, C24), not yours. W 20.5% above last swing high: base far behind. day_vol 0.51 shows no sponsorship (C25); group Recovering From Weakness fails R9. Stand."
+  },
+  {
+   "pair_id": "TGTX-oneil-against~livermore",
+   "ticker": "TGTX",
+   "to": "livermore",
+   "concede": false,
+   "text": "\"structure 66.3 is modest, not failing\". Agreed, modest. Modest structure with lens coil warn is no completed base (R3). day_vol 0.98 under 1.40, D 3.3% under 20-day high: a break without volume is unconfirmed. Stand."
+  },
+  {
+   "pair_id": "TGTX-oneil-against~wyckoff",
+   "ticker": "TGTX",
+   "to": "wyckoff",
+   "concede": false,
+   "text": "\"day_vol 0.98 is ordinary\". Ordinary is my failure: C16 needs day_vol 1.40 on the break. W/D/H1 HH/HL is trend intact, but lens coil warn means no base to break from. Stand."
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "TMO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 667.17, or a break on day_vol under 1.40 that closes back under the high.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "Lens coil strong, structure 71.6; W/D swing HH/HL, D 1.4% under 20-day high; day_vol 0.75 dry, not distribution (C15). H1 below EMA9 at 11% of range, so the break waits on volume. rs IN-LINE is a weight. Market gate delegated."
+  },
+  {
+   "ticker": "ELF",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 106.98, or a thin-volume break that closes back under pivot_high.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "Coil strong, structure_shift BULLISH_BOS, structure 66.3; W swing HH/HL 0.1% above last swing high. D swing HH but LL, D 3.8% under 20-day high, day_vol 0.85, H1 below EMA9: pivot and volume still ahead."
+  },
+  {
+   "ticker": "CTAS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 207.85 on heavy day_vol, or a thin break that falls back under pivot_high.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "rs LEADER, coil strong, structure 74.7 BULLISH_BOS; D swing HH/HL 2.7% under 20-day high; H1 95% of range above EMA9; day_vol 0.64 dry. W swing LH/LL is the weak frame, so wait for the volume break."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 19.57, or a thin-volume push that fails back under the high.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "rs LEADER, coil strong, structure 77.9 BULLISH_BOS; W swing HH/HL, D 1.4% under 20-day high; day_vol 0.57 dry. D swing LH but HL and sector_trend_state Momentum Fading are cautions. Volume must arrive."
+  },
+  {
+   "ticker": "ABBV",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 274.15 on heavy day_vol, or the group turns while ABBV breaks alone.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "elder_pattern ACCUMULATION_BASE, coil strong, structure 71.6 BULLISH_BOS, rs LEADER; D 2.6% under 20-day high on day_vol 0.57 dry. W swing LH but HL and D HH but LL are weaker frames; H1 above EMA9 at 91% of range."
+  },
+  {
+   "ticker": "MGNI",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if coil turns strong and it breaks on vol_x_ge 1.4 with the group still Momentum Building.",
+   "market_void": null,
+   "reason": "Lens coil warn: no completed base (R3). D swing LH/LL, 12.9% above last swing high; day_vol 0.91 under 1.40. rs LEADER and sector_trend_state Momentum Building are real, but no base means no pivot. Moved from blind SUPPORT on R3."
+  },
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high with volume holding at vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 406.95 on heavy day_vol, or the group turns while HUM breaks alone.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "rs LEADER, coil strong, structure 82.1; day_vol 1.72 already clears 1.40. W swing HH/HL 2.2% under 20-wk high, H1 above EMA9 0.9% under 20-hr high. D swing LH/LL, RANGE and Momentum Fading group are cautions (R9)."
+  },
+  {
+   "ticker": "COR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 326.47 on heavy day_vol, or a break on volume under 1.40.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "Coil strong, BULLISH_BOS, rs LEADER; W/D swing HH/HL, D 3.9% under 20-day high; H1 96% of range. lens leadership warn, structure 63.2 and day_vol 0.57 keep it low. Break needs volume."
+  },
+  {
+   "ticker": "KVYO",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4 with the group following; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 18.12, or it breaks alone on day_vol under 1.40 while the group does not confirm.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "structure 87.4 BULLISH_BOS, coil strong, rs LEADER; D swing HH/HL 4.4% under 20-day high; day_vol 0.62 dry. W swing HH but LL, lens leadership warn, group Recovering From Weakness: a solo break is a Lone Ranger (R9)."
+  },
+  {
+   "ticker": "AJG",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if coil turns strong, or it breaks on vol_x_ge 1.4 and holds ma_50 251.06.",
+   "market_void": null,
+   "reason": "Lens coil warn, no completed tight base; W swing HH but LL; D 4.2% under 20-day high; day_vol 0.67 under 1.40. rs LEADER and structure 78.9 are real, but there is no pivot to buy."
+  },
+  {
+   "ticker": "AXGN",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it builds a tight base and breaks on vol_x_ge 1.4, with W swing turning HH/HL.",
+   "market_void": null,
+   "reason": "day_vol 2.42 clears 1.40, rs LEADER, structure 89.5, but lens coil warn means no base (R3). W swing HH but LL; D 11.2% above last swing high, H1 15.1% above: late buy (C17). Moved from blind SUPPORT on W LL and no base."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it breaks on vol_x_ge 1.4 and holds ma_50 159.64.",
+   "market_void": null,
+   "reason": "Lens coil warn; day_vol 1.17 under 1.40; mp_accel_state DECELERATING. At the highs (D 0.1% under 20-day high) but W 9.7% above last swing high: no base behind the pivot. rs LEADER and structure 83.2 are real."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 280.31 on heavy day_vol, or div_bear_count rising above 1.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "rs LEADER, coil strong, resistance strong, structure 74.7 RANGE; W/D swing HH/HL, D 1.5% under 20-day high; H1 94% of range; day_vol 0.65 dry. div_state BEARISH count 1 and no BOS are cautions. Break needs volume."
+  },
+  {
+   "ticker": "PRCH",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it builds a tight base above ma_50 17.83 and breaks on vol_x_ge 1.4 with the group confirming.",
+   "market_void": null,
+   "reason": "entry 22.14 vs ma_200 12.54 is past the 70% climax line (R7, C24); lens coil warn; day_vol 0.51; W 20.5% above last swing high; group Recovering From Weakness (R9). rs LEADER and structure 81.1 are real; sold into, not bought."
+  },
+  {
+   "ticker": "LTH",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above pivot_high on vol_x_ge 1.4; no add past 5% over it."
+   },
+   "wrong_if": "Close below ma_50 42.09, or a thin-volume break that fails back under pivot_high.",
+   "market_void": "SPY 4-5 distribution days inside 5 weeks (C2): gate void",
+   "reason": "rs LEADER, structure 94.7; W swing HH/HL 0.6% above last swing high, D 2.2% under 20-day high on day_vol 0.84 dry. lens coil warn: base looser than ideal, so conviction low. H1 swing HH but LL. Break needs volume."
+  },
+  {
+   "ticker": "TGTX",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it breaks on vol_x_ge 1.4 and holds ma_50 56.39.",
+   "market_void": null,
+   "reason": "Lens coil warn, structure 66.3 middling, insti_money warn (advisory); day_vol 0.98 under 1.40; D 3.3% under 20-day high. W/D swing HH/HL is trend, not a base. rs LEADER is real."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of2.json",
+   "bytes": 7590,
+   "sha256": "623ff4b7da84"
+  },
+  {
+   "file": "oneil.part2of2.json",
+   "bytes": 4184,
+   "sha256": "a07403ec3686"
+  }
+ ]
+}
