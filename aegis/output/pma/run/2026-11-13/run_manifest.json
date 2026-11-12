@@ -1,9 +1,65 @@
 {
  "created": "2026-11-12T23:37:50Z",
  "date": "2026-11-13",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-12T23:39:00Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  },
+  {
+   "at": "2026-11-12T23:39:10Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  }
+ ],
  "flags": [],
  "run_id": "pma-2026-11-13",
  "seats": {},
- "steps": {}
+ "steps": {
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T23:39:00Z",
+   "notes": [],
+   "started": "2026-11-12T23:39:00Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T23:39:00Z",
+   "notes": [
+    "not run (declared)"
+   ],
+   "started": "2026-11-12T23:39:00Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-12T23:39:10Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "packets consumed as published by the nightly AQE run (7/7, check.py data proved); packets_manifest.json not produced; voice_menus.json copied"
+   ],
+   "started": "2026-11-12T23:39:10Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
 }
