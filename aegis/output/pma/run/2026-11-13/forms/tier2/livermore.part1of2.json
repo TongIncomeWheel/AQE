@@ -1,0 +1,89 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-13",
+ "answers": [
+  {
+   "pair_id": "VNT-livermore-for~minervini",
+   "ticker": "VNT",
+   "to": "minervini",
+   "text": "\"W 18.0% above weekly swing high; template c2 fails.\" Distance from an old weekly swing high and the c2 stack test are not my tests. C5 asks for an uptrend, a normal pullback, then a new high: W HH/HL, D HH/HL 2.4% under its swing high, a pause. I never regret missing the lower entry (C5). I buy only the next closing high, not this bar.",
+   "concede": false
+  },
+  {
+   "pair_id": "ICE-livermore-for~minervini",
+   "ticker": "ICE",
+   "to": "minervini",
+   "text": "\"H1 below EMA9 at 3% of range: test rejected.\" My test is the size of the reaction, not the hourly average. H1 swing high 181.3 to close 177.88 is under one atr_14d (4.15, my translation of the danger signal, C7): a normal reaction (C8). D HH/HL at its swing high. No closing new high yet, so my trigger has not fired; it is not refuted.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high holds the fresh break."},
+   "wrong_if": "A one-day fade of 1 atr from the day's high (my translated danger signal) or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "C5 met: D HH/HL 0.5% above the last swing high, H1 above EMA9, 0.9% under the 20-day high. W swing LH/LL keeps conviction modest."
+  },
+  {
+   "ticker": "AAPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the last confirmed pivot high is the new high."},
+   "wrong_if": "A close back under pivot_high after the break, or a one-day fade of 1 atr from the high.",
+   "market_void": null,
+   "reason": "W HH/HL 2.8% above its swing high; D 0.1% under the last swing high: one close from the C5 new high. H1 at 7% of range is a normal reaction."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high continues the daily new high."},
+   "wrong_if": "A one-day fade of 1 atr from the day's high, or a close below ma_20.",
+   "market_void": null,
+   "reason": "D 6.3% above the last swing high and 0.9% under the 20-day high, H1 HH/HL above EMA9. W still 7.1% under its swing high; sub-$30 so my thresholds are scaled."
+  },
+  {
+   "ticker": "G",
+   "stance": "ABSTAIN",
+   "wrong_if": "A daily close at a new 52-week closing high that I sat out.",
+   "market_void": null,
+   "reason": "W and D HH/HL, but mp FADING/DECELERATING and H1 below EMA9 at 13% of range: a strong rally, not yet the confirmed trend at a new high my columns need."
+  },
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "Only a daily close at a new 52-week closing high ends the reaction."},
+   "wrong_if": "A close below ma_20 before the new high prints.",
+   "market_void": null,
+   "reason": "Uptrend, but D 7.5% under its swing high (HH but LL) and W LH/LL: inside a reaction. C5 forbids buying the pullback; I wait for the new high."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high carries the new high on."},
+   "wrong_if": "A one-day fade of 1 atr from the day's high, or a close below prior_bar_low.",
+   "market_void": null,
+   "reason": "W and D HH/HL, 0.5% under the 20-day high, H1 above EMA9 at 72% of range; JNJ beside it in Healthcare (C14). mp FADING/DECELERATING is the weight."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high after this reaction."},
+   "wrong_if": "A close below ma_20 or a one-day fade of 1 atr.",
+   "market_void": null,
+   "reason": "D HH/HL but 4.8% under its 20-day high, H1 below EMA9 at 7% of range, W LH but HL: a reaction, not the new high. I wait for it (C5)."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (1 atr is my translation, not Livermore's literal 6 points) (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column analogue, not identical (C18)",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11)",
+  "R1: no decision rests on a bracket field"
+ ]
+}

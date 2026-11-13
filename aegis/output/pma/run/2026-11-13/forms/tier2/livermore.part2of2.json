@@ -1,0 +1,73 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-13",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FROG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high resumes the new-high run."},
+   "wrong_if": "A one-day fade of 1 atr from the day's high, or a close below prior_bar_low.",
+   "market_void": null,
+   "reason": "W HH/HL 4.6% above its swing high, D 7.0% above the last swing high and 2.3% under the 20-day high, H1 above EMA9 at 74% of range. Extended; modest conviction."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "An hourly close above yesterday's high takes it to the new high."},
+   "wrong_if": "A one-day fade of 1 atr from the day's high, or a close below ma_20.",
+   "market_void": null,
+   "reason": "D HH/HL 2.3% above the last swing high and 0.5% under the 20-day high, H1 above EMA9 at 79% of range. mp FADING/DECELERATING and thin day_vol keep it small."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "ABSTAIN",
+   "wrong_if": "A fresh daily closing high that I sat out.",
+   "market_void": null,
+   "reason": "D swing LH/LL, H1 below EMA9 at 18% of range, mp FADING/DECELERATING: the trend is not confirmed in my columns and it is not at a new high."
+  },
+  {
+   "ticker": "VNT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high ends the pause."},
+   "wrong_if": "A close below ma_20, or a 1 atr fade after triggering.",
+   "market_void": null,
+   "reason": "W and D HH/HL, D 2.4% under its swing high, H1 at 1% of range: a normal pause in a leader (C8). I buy only the next closing high (C5)."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high."},
+   "wrong_if": "A close below ma_20 or a daily lower low.",
+   "market_void": null,
+   "reason": "W and D HH/HL, D 3.2% under the last swing high, H1 below EMA9 at 31% of range: a pause, not the new high. mp FADING/FLAT, thin volume."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high confirms the break."},
+   "wrong_if": "A close below ma_20 or a one-day fade of 1 atr from the high.",
+   "market_void": null,
+   "reason": "W HH/HL 8.0% above its swing high, D HH/HL at the swing high (0.0% under). The hourly fade was under 1 atr: normal (C8). Financials pair with CHYM (C14)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:high_52w_close", "tf": "D", "plain": "A daily close at a new 52-week closing high."},
+   "wrong_if": "A close below ma_20 or a daily lower low.",
+   "market_void": null,
+   "reason": "W HH/HL 6.9% above its swing high, D HH/HL 1.0% under the last swing high, H1 above EMA9: at the edge of the C5 new high. mp FADING/DECELERATING."
+  }
+ ],
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (1 atr is my translation, not the literal 6 points) (C7, C18-C20)",
+  "fill_difficulty: NOT_SERVED; inside_information: NEVER (C11)",
+  "R1: no decision rests on a bracket field"
+ ]
+}

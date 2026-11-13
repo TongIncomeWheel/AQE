@@ -1,0 +1,75 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-13",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FROG",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "FROG keeps making new highs on 1.4x volume with rs turning LEADER.",
+   "market_void": null,
+   "reason": "Fails the L test (R2): rs LAGGARD downday -3.16, lens leadership warn. div BEARISH/4 is a distribution read (C25), D 7.0% above the last swing high is the late zone (C17), day_vol 0.88 fails C16."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "CNK runs through the high on 1.4x volume.",
+   "market_void": null,
+   "reason": "A new high on light volume is my distribution test (C25): D 0.5% under the 20-day high on day_vol 0.46, div BEARISH/2. Leader, but the high is not being bought (C16)."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "VRDN runs on 1.4x volume without a pause.",
+   "market_void": null,
+   "reason": "Leader, but D 32.7% above the last swing high is far past any pivot (C17), D swing LH/LL, three lens warnings, day_vol 0.66. No buy point."
+  },
+  {
+   "ticker": "VNT",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a failed breakout back under the pivot.",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader just under its pivot: rs LEADER downday 2.18, structure 72.6, D 2.4% under the last swing high, W/D HH/HL. day_vol 0.91 fails C16 today; sma_dist 26.63% and Technology Recovering are cautions."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "After volume returns, an hourly close over the pivot high on 1.4x time-of-day volume."},
+   "wrong_if": "A close 8% under entry (C20), or a new high on falling volume (C25).",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader, structure 92.6, D 3.2% under the last swing high, W/D HH/HL. day_vol 0.45 is very light and div BEARISH/2 warns (C25), so volume must return before the breakout counts."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a failed breakout back under the pivot.",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader exactly at its pivot: rs LEADER downday 2.8, structure 77.9, D 0.0% under the last swing high, W/D HH/HL. day_vol 0.82 fails C16 today; Financials Fading is an R9 caution."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a failed breakout back under the pivot.",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader at its high in a confirming group (Industrials Momentum Building): rs LEADER downday 2.5, D 1.0% under the last swing high, W/D HH/HL, lens coil strong. day_vol 0.76 fails C16 today."
+  }
+ ],
+ "declarations": [
+  "market_gate DELEGATED: valid only into a confirmed uptrend; I write no market read.",
+  "fundamentals NOT_AVAILABLE (C, A, S, I untested); base_stage NOT_AVAILABLE (C19); rs_measure rs_leadership substitute; volume_measure day_vol vs 20-day substitute.",
+  "R1: no stop or target field is the basis of any decision."
+ ]
+}

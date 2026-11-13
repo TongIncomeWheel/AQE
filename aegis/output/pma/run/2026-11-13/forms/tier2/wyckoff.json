@@ -1,0 +1,213 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-13",
+ "declarations": [
+  "Bracket fields are never a basis here (R1). pvp levels, vwap_14d values and bar OHLC are not in this packet; levels are named by field. Judged on my own method only.",
+  "Bracket fields are never a basis here (R1). pvp levels, vwap_14d values and bar OHLC are not in this packet; levels are named by field."
+ ],
+ "answers": [
+  {
+   "pair_id": "G-wyckoff-for~minervini",
+   "ticker": "G",
+   "to": "minervini",
+   "text": "Quote: 'W close_vs_swing_high_pct 11.02 is past the weekly pivot.' My test is location against the daily Creek and value, not the weekly pivot. D close_vs_swing_high_pct 2.91 with D swing HH/HL and W swing HH/HL: the trend holds and price sits in the test zone (C7). Weekly distance sets entry location, never a stance (R2, C3). H1 below EMA9 43.1506 is why I wait for an SOS bar (C12). Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume, near the broken Creek"
+   },
+   "wrong_if": "Daily close back under structure_shift_ref: the break failed and price is back in the range.",
+   "market_void": null,
+   "reason": "TREND (C2): D close_vs_swing_high_pct 0.53, D swing HH/HL = at the test of the broken level (C7). W swing LH/LL is the top-down caution (C16); the SOS trigger requires follow-through (C12)."
+  },
+  {
+   "ticker": "AAPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume, at the test of the Creek"
+   },
+   "wrong_if": "Daily close back under structure_shift_ref: upthrust confirmed.",
+   "market_void": null,
+   "reason": "TREND (C2): W swing HH/HL, D close_vs_swing_high_pct -0.14 = at the test (C7). Light-volume break is a potential upthrust until it holds (C5); the SOS bar proves it (C12)."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pullback into the broken Creek, an hourly close above the prior day's high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: W swing HH/HL, but D close_vs_swing_high_pct 6.31 = away from value (R2). Do not chase (C15); wait for the test of the Creek, then the SOS trigger (C3, C12)."
+  },
+  {
+   "ticker": "G",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume, buy stop style"
+   },
+   "wrong_if": "Daily close under vwap_14d, back under the Creek and inside value.",
+   "market_void": null,
+   "reason": "TREND (C2): W and D swing HH/HL, D close_vs_swing_high_pct 2.91 = test zone above the Creek (C7). H1 below EMA9 43.1506, so act only on the SOS bar (C12)."
+  },
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: D close_vs_swing_high_pct -7.54 = pullback into the zone above the Creek (C7). W swing LH/LL and H1 9<21 are cautions (C16); the trigger demands follow-through (C12)."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pullback into the broken Creek, an hourly close above the prior day's high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: W and D swing HH/HL, but D close_vs_swing_high_pct 7.6 = away from value (R2). Hold for the test, then SOS (C3, C15). Bearish divergence is a caution."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume, at the test of the Creek"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: D swing HH/HL, D close_vs_swing_high_pct 1.08 = at the test on light selling (C7). W swing LH but HL and H1 below EMA9 80.3366: act only on the SOS bar (C12)."
+  },
+  {
+   "ticker": "FROG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref; a heavy-volume drop into value confirms supply.",
+   "market_void": null,
+   "reason": "TREND: W swing HH/HL, D close_vs_swing_high_pct 6.96 is within the test zone on its own ATR (C7). div_bear_count 4 means effort must confirm: SOS bar only (C5, C12)."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close above yesterday's high on rising volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: D swing HH/HL, D close_vs_swing_high_pct 2.29 = test zone (C7). W swing LH but HL and very light volume are cautions; the SOS trigger needs effort (C12)."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pullback into the broken Creek, an hourly close above the prior day's high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: W swing HH/HL, but D close_vs_swing_high_pct 32.69 = far from value (R2). The move left without me (C15); wait for the next trading zone, then SOS."
+  },
+  {
+   "ticker": "VNT",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After the pullback pauses, an hourly close above the prior day's high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: W and D swing HH/HL, D close_vs_swing_high_pct -2.4 = first pullback after the impulse (C7). H1 below EMA9 43.4341 at 0.7% of the day's range: let it pause, then SOS (C12)."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the range top on volume, a breakout that holds outside"
+   },
+   "wrong_if": "A poke over pivot_high that closes back under it (upthrust).",
+   "market_void": null,
+   "reason": "RANGE at the upper edge (C2): D close_vs_swing_high_pct -3.22, W swing HH/HL. The breakout is judged by C5; volume has shown no effort yet, so wait for it."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After the hourly dip pauses, an hourly close above the prior day's high on volume"
+   },
+   "wrong_if": "Daily close under structure_shift_ref.",
+   "market_void": null,
+   "reason": "TREND: W and D swing HH/HL, D close_vs_swing_high_pct -0.04. H1 below EMA9 178.3307 at 3.4% of the day's range: wait for the pause, then SOS (C12)."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close above the range top on volume, a breakout that holds outside"
+   },
+   "wrong_if": "A poke over pivot_high that closes back under it (upthrust).",
+   "market_void": null,
+   "reason": "RANGE at the upper edge (C2): D close_vs_swing_high_pct -0.98, W and D swing HH/HL. Breakout judged by C5 (wide bar, volume, hold outside)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of2.json",
+   "bytes": 3994,
+   "sha256": "5f030239d734"
+  },
+  {
+   "file": "wyckoff.part2of2.json",
+   "bytes": 3349,
+   "sha256": "dd72e244cb6d"
+  }
+ ]
+}

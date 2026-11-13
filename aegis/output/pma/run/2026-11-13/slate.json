@@ -1,0 +1,362 @@
+{
+ "date": "2026-11-13",
+ "chair": "chair",
+ "board_sha256": "d78c74340bc8733ef858ac4c3cf83a58624a837c1031e9992a10600eb5ff2764",
+ "decision_sha256": "3cce307db86f9a10f14214704f2f934e824e5332dd9013bdda3843d337eedc1f",
+ "tickets": [
+  {
+   "ticker": "JNJ",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 7,
+    "wait": 0,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a new high on falling volume (C25).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at the pivot: rs LEADER, structure 84.2 BULLISH_BOS, D 0.5% above the last swing high, D\" | minervini: \"Template passes: entry 283.52 > ma50 266.72 > ma100 263.57 > ma200 249.49, rs_rank_pct 77.86. D\" | livermore: \"C5 met: D HH/HL 0.5% above the last swing high, H1 above EMA9, 0.9% under the 20-day high. W sw\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "AAPL",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 6,
+    "wait": 0,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a breakout that fails back under the pivot on heavy volume.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at the pivot: five lenses strong, structure 71.6 BULLISH_BOS, D 0.1% under the last swin\" | minervini: \"Template passes: entry 354.88 > ma20 345.51 > ma50 338.48 > ma100 326.01 > ma200 300.76, rs_ran\" | livermore: \"W HH/HL 2.8% above its swing high; D 0.1% under the last swing high: one close from the C5 new \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "CHYM",
+   "verdict": "WATCH",
+   "entry_trigger": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 2,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "minervini: \"close_below:ma_20\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template passes, rs_rank_pct 96.84. D 6.3% above its last swing high is past the pivot (C5); W \" | livermore: \"D 6.3% above the last swing high and 0.9% under the 20-day high, H1 HH/HL above EMA9. W still 7\" | seow: \"POSITION system: ABOVE_STRUCTURE, elder_pattern SUSTAINED, rs_rank_pct 96.84, rs_spy_20d 12.15;\"",
+   "dissent": [],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "U",
+   "verdict": "WATCH",
+   "entry_trigger": "After the pause under the high tightens, buy an hourly close above the 52-week closing high on 1.4x volume",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After the pause under the high tightens, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 2,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "minervini: \"close_below:ma_20\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template passes, rs_rank_pct 96.67. D 7.5% under its swing high and W LH/LL: a base still formi\" | livermore: \"Uptrend, but D 7.5% under its swing high (HH but LL) and W LH/LL: inside a reaction. C5 forbids\" | seow: \"POSITION system: ABOVE_STRUCTURE, rs_rank_pct 96.67, rs_spy_20d 17.68, ret_63d 8.5. D 7.5% unde\"",
+   "dissent": [],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "BDX",
+   "verdict": "WATCH",
+   "entry_trigger": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 2,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "minervini: \"close_below:ma_20\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template passes: entry 215.71 > ma20 202.11 > ma50 190.32 > ma100 179.43 > ma200 168.19, rs_ran\" | livermore: \"W and D HH/HL, 0.5% under the 20-day high, H1 above EMA9 at 72% of range; JNJ beside it in Heal\" | seow: \"POSITION system: new high, ABOVE_STRUCTURE, W and D HH/HL, rs_rank_pct 90.77, ret_63d 17.62, rs\"",
+   "dissent": [],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "EMBJ",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a breakout that fails back under the pivot.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader in a confirming group (Industrials Momentum Building, no Lone Ranger), structure 74.7, D\" | minervini: \"Template passes, rs_rank_pct 84.87, rs LEADER. D HH/HL 1.1% above swing high, W LH but HL tight\" | livermore: \"D HH/HL but 4.8% under its 20-day high, H1 below EMA9 at 7% of range, W LH but HL: a reaction, \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "FROG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high resumes the new-high run.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high resumes the new-high run."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 3,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"A one-day fade of 1 atr from the day's high, or a close below prior_bar_low.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template passes: entry 110.6 > ma20 95.98 > ma50 94.41 > ma100 91.55 > ma200 73.51, rs_rank_pct\" | livermore: \"W HH/HL 4.6% above its swing high, D 7.0% above the last swing high and 2.3% under the 20-day h\" | seow: \"POSITION system: new high, ABOVE_STRUCTURE, elder_pattern ACCELERATION, rs_rank_pct 94.87, rs_s\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails the L test (R2): rs LAGGARD downday -3.16, lens leadership warn. div BEARISH/4 is a distribution read (C25), D 7.0% above the last swing high is the late zone (C17), day_vol 0.88 fails C16."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "CNK",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high takes it to the new high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high takes it to the new high."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"A one-day fade of 1 atr from the day's high, or a close below ma_20.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template passes, rs_rank_pct 93.16, rs LEADER. D HH/HL 2.3% over the swing high, W LH but HL co\" | livermore: \"D HH/HL 2.3% above the last swing high and 0.5% under the 20-day high, H1 above EMA9 at 79% of \" | seow: \"POSITION system: ABOVE_STRUCTURE at the high, elder_pattern ACCELERATION, rs_rank_pct 93.16, re\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "A new high on light volume is my distribution test (C25): D 0.5% under the 20-day high on day_vol 0.46, div BEARISH/2. Leader, but the high is not being bought (C16)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "VNT",
+   "verdict": "WATCH",
+   "entry_trigger": "A daily close at a new 52-week closing high ends the pause.",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a new 52-week closing high ends the pause."
+   },
+   "timing_count": {
+    "support": 4,
+    "act_now": 2,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 2
+   },
+   "wrong_if": "livermore: \"A close below ma_20, or a 1 atr fade after triggering.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader just under its pivot: rs LEADER downday 2.18, structure 72.6, D 2.4% under the last swin\" | livermore: \"W and D HH/HL, D 2.4% under its swing high, H1 at 1% of range: a normal pause in a leader (C8).\" | seow: \"POSITION system: ABOVE_STRUCTURE, W and D HH/HL, rs_rank_pct 91.03, rs_spy_20d 31.57, ret_63d 3\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Template fails c2 on my proxy: ma100 32.8 < ma200 33.9 (C3, all eight or none). rs_rank_pct 91.03 and W/D HH/HL are strong but the long stack is not complete."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "PCOR",
+   "verdict": "WATCH",
+   "entry_trigger": "After volume returns, an hourly close over the pivot high on 1.4x time-of-day volume.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "After volume returns, an hourly close over the pivot high on 1.4x time-of-day volume."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 0,
+    "wait": 5,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a new high on falling volume (C25).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader, structure 92.6, D 3.2% under the last swing high, W/D HH/HL. day_vol 0.45 is very light\" | minervini: \"Template passes: entry 77.23 > ma20 66.54 > ma50 58.74 > ma100 55.14 > ma200 53.71, rs_rank_pct\" | livermore: \"W and D HH/HL, D 3.2% under the last swing high, H1 below EMA9 at 31% of range: a pause, not th\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "ICE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a failed breakout back under the pivot.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader exactly at its pivot: rs LEADER downday 2.8, structure 77.9, D 0.0% under the last swing\" | livermore: \"W HH/HL 8.0% above its swing high, D HH/HL at the swing high (0.0% under). The hourly fade was \" | seow: \"POSITION system: ABOVE_STRUCTURE, W and D HH/HL at the swing high, rs_spy_20d 14.18, ret_63d 14\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Template fails c2 and c8: ma100 153.28 < ma200 154.56 and rs_rank_pct 69.02 under 70 (C3, C11). Near its high, but not a qualified stage 2 leader."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "ADP",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 5,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"A close 8% under entry (C20), or a failed breakout back under the pivot.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at its high in a confirming group (Industrials Momentum Building): rs LEADER downday 2.5\" | minervini: \"Template passes: entry 307.92 > ma20 298.27 > ma50 280.85 > ma100 270.17 > ma200 242.46, rs_ran\" | livermore: \"W HH/HL 6.9% above its swing high, D HH/HL 1.0% under the last swing high, H1 above EMA9: at th\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 7
+ }
+}

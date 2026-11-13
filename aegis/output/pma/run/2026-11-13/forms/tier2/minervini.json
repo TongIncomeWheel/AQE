@@ -1,0 +1,258 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-13",
+ "declarations": [
+  "Trend Template read with ma100 standing in for ma_150; c3 and c6 not served; c8 via rs_rank_pct, a proxy, not IBD RS. vcp_detail and earnings_growth NOT_SERVED (SEPA element 2 not run). R1: no bracket field is a reason. Every trigger needs vol_x_ge:1.4 as confirmation (C6).",
+  "Trend Template read with ma100 standing in for ma_150; c3 and c6 not served; c8 via rs_rank_pct, a proxy. vcp_detail and earnings_growth NOT_SERVED. R1: no bracket field is a reason. Every trigger needs vol_x_ge:1.4 as confirmation (C6)."
+ ],
+ "answers": [
+  {
+   "pair_id": "G-minervini-against~seow",
+   "ticker": "G",
+   "to": "seow",
+   "text": "'I read no 100/200 average (C1).' My gate is exactly that average stack (C3, all eight or none). ma100 34.97 < ma200 35.36 still fails c2 on my proxy; W/D HH/HL and rs_rank_pct 90.43 are strength, not a template pass. H1 was never my reason.",
+   "concede": false
+  },
+  {
+   "pair_id": "G-minervini-against~raschke",
+   "ticker": "G",
+   "to": "raschke",
+   "text": "'H1 below EMA9 is the first pullback after fresh highs.' Agreed on the H1 read, and I drop H1 as a reason. The claim rests on ma100 34.97 < ma200 35.36 (c2, C3), which a pullback setup does not test. Stance stays OPPOSE until the long stack turns.",
+   "concede": false
+  },
+  {
+   "pair_id": "U-minervini-for~elder-lens",
+   "ticker": "U",
+   "to": "elder-lens",
+   "text": "'W swing LH/LL, D HH but LL, 7.5% under.' The stack passes: entry 50.18 > ma20 43.2 > ma50 43.18 > ma100 39.57 > ma200 31.88, rs_rank_pct 96.67. D 7.5% under the swing high is a pause where a pivot forms (C4); W LH/LL means no pivot yet, so I time it WAIT, not ACT_NOW.",
+   "concede": false
+  },
+  {
+   "pair_id": "EMBJ-minervini-for~elder-lens",
+   "ticker": "EMBJ",
+   "to": "elder-lens",
+   "text": "'elder_5d green going away on the last bar.' elder is advisory on my card, never a vote. My test: full stack entry 79.48 > ma20 74.76 > ma50 74.56 > ma100 71.9 > ma200 67.7, rs_rank_pct 84.87, D HH/HL 1.1% above swing high; W LH but HL is a tightening base, not a break.",
+   "concede": false
+  },
+  {
+   "pair_id": "FROG-minervini-for~elder-lens",
+   "ticker": "FROG",
+   "to": "elder-lens",
+   "text": "'D 7.0% above the last swing high is in front.' That is my C5 chase test and it stands; the elder ACCELERATION tag was stale too. The template still passes (rs_rank_pct 94.87, from_52w_hi 0.0%), so I keep SUPPORT but move timing to WAIT for a tighter pivot.",
+   "concede": true
+  },
+  {
+   "pair_id": "CNK-minervini-for~elder-lens",
+   "ticker": "CNK",
+   "to": "elder-lens",
+   "text": "'Not clean on my grid: W swing LH but HL.' On my weekly base read, LH but HL is a contraction, the VCP shape I want (C4). Stack passes: entry 41.46 > ma20 39.75 > ma50 37.61 > ma100 35.92 > ma200 32.04, D HH/HL 2.3% over the swing high: near the pivot (C5).",
+   "concede": false
+  },
+  {
+   "pair_id": "VNT-minervini-against~livermore",
+   "ticker": "VNT",
+   "to": "livermore",
+   "text": "'Extension is a weight, not a trend failure.' Agreed on extension, and I drop it. The claim rests on ma100 32.8 < ma200 33.9, a failed c2 on my proxy (C3, all eight or none); W/D HH/HL does not test the long stack.",
+   "concede": false
+  },
+  {
+   "pair_id": "VNT-minervini-against~wyckoff",
+   "ticker": "VNT",
+   "to": "wyckoff",
+   "text": "'MA order is not my test.' It is mine (C3). ma100 32.8 < ma200 33.9 fails c2 on my ma_150 stand-in; ABOVE_STRUCTURE and W/D HH/HL are strength I note, not a template pass.",
+   "concede": false
+  },
+  {
+   "pair_id": "ICE-minervini-against~livermore",
+   "ticker": "ICE",
+   "to": "livermore",
+   "text": "'mp DECELERATING is a weight.' I drop mp. Two criteria still fail: ma100 153.28 < ma200 154.56 (c2) and rs_rank_pct 69.02 under 70 (c8). D at the swing high is not a qualified leader without both (C3, C11).",
+   "concede": false
+  },
+  {
+   "pair_id": "ICE-minervini-against~wyckoff",
+   "ticker": "ICE",
+   "to": "wyckoff",
+   "text": "'Not structure tests.' Correct, they are Trend Template tests (C3), which run before any structure read on my card. ma100 153.28 < ma200 154.56 and rs_rank_pct 69.02 both fail; W/D HH/HL does not change that.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the 52-week closing high, on volume at least 1.4x normal"
+   },
+   "wrong_if": "close_below:pivot_high: the breakout fails back into the base",
+   "market_void": null,
+   "reason": "Template passes: entry 283.52 > ma50 266.72 > ma100 263.57 > ma200 249.49, rs_rank_pct 77.86. D HH/HL 0.5% above swing high: at the pivot (C5). day_vol 1.02 not yet expansion (C6)."
+  },
+  {
+   "ticker": "AAPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the 52-week closing high, on volume at least 1.4x normal"
+   },
+   "wrong_if": "close_below:ma_20 after the breakout, or structure turns BEARISH_CHOCH",
+   "market_void": null,
+   "reason": "Template passes: entry 354.88 > ma20 345.51 > ma50 338.48 > ma100 326.01 > ma200 300.76, rs_rank_pct 74.62. W HH/HL, D 0.1% under swing high: at the pivot (C5). day_vol 0.63."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 96.84. D 6.3% above its last swing high is past the pivot (C5); W 7.1% under swing high is the base top. Wait for the pause to tighten."
+  },
+  {
+   "ticker": "G",
+   "stance": "OPPOSE",
+   "wrong_if": "ma_above:ma_100:ma_200 prints and price makes a new high: my c2 fail was a proxy artefact",
+   "market_void": null,
+   "reason": "Template fails c2 on my proxy: ma100 34.97 < ma200 35.36 (C3, all eight or none). rs_rank_pct 90.43 and W/D HH/HL are strong, but the stack is not complete."
+  },
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After the pause under the high tightens, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 96.67. D 7.5% under its swing high and W LH/LL: a base still forming, no pivot yet (C4, C5)."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes: entry 215.71 > ma20 202.11 > ma50 190.32 > ma100 179.43 > ma200 168.19, rs_rank_pct 90.77. D 7.6% past its swing high: past the pivot (C5); div BEARISH/1."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the 52-week closing high, on volume at least 1.4x normal"
+   },
+   "wrong_if": "close_below:ma_50",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 84.87, rs LEADER. D HH/HL 1.1% above swing high, W LH but HL tightening: close to the base (C4, C5). day_vol 0.58 needs expansion (C6)."
+  },
+  {
+   "ticker": "FROG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes: entry 110.6 > ma20 95.98 > ma50 94.41 > ma100 91.55 > ma200 73.51, rs_rank_pct 94.87. D 7.0% past its swing high (C5) and downday -3.16 fails the down-day leader test (C11)."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the 52-week closing high, on volume at least 1.4x normal"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes, rs_rank_pct 93.16, rs LEADER. D HH/HL 2.3% over the swing high, W LH but HL contracting: near the pivot (C4, C5). day_vol 0.46 needs expansion (C6)."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After a tight low-volume pause, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes: entry 30.48 > ma20 25.55 > ma50 22.59 > ma100 21.72 > ma200 21.57, rs_rank_pct 95.3. D 32.7% past its swing high: far past any pivot (C5)."
+  },
+  {
+   "ticker": "VNT",
+   "stance": "OPPOSE",
+   "wrong_if": "ma_above:ma_100:ma_200 prints and price makes a new high on volume",
+   "market_void": null,
+   "reason": "Template fails c2 on my proxy: ma100 32.8 < ma200 33.9 (C3, all eight or none). rs_rank_pct 91.03 and W/D HH/HL are strong but the long stack is not complete."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "After the pause under the high dries up, buy an hourly close above the 52-week closing high on 1.4x volume"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes: entry 77.23 > ma20 66.54 > ma50 58.74 > ma100 55.14 > ma200 53.71, rs_rank_pct 94.36. D 3.2% under its swing high, sma_dist 31.48%, day_vol 0.45: the pause must tighten (C4, C6)."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "OPPOSE",
+   "wrong_if": "rs_rank_pct rises above 70 and ma_above:ma_100:ma_200 prints with a new high on volume",
+   "market_void": null,
+   "reason": "Template fails c2 and c8: ma100 153.28 < ma200 154.56 and rs_rank_pct 69.02 under 70 (C3, C11). Near its high, but not a qualified stage 2 leader."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:high_52w_close",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the 52-week closing high, on volume at least 1.4x normal"
+   },
+   "wrong_if": "close_below:ma_20",
+   "market_void": null,
+   "reason": "Template passes: entry 307.92 > ma20 298.27 > ma50 280.85 > ma100 270.17 > ma200 242.46, rs_rank_pct 89.83. W/D HH/HL, D 1.0% under swing high: at the pivot (C5). day_vol 0.76."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 6766,
+   "sha256": "8aa328047d4c"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 3223,
+   "sha256": "ba755c44c745"
+  }
+ ]
+}

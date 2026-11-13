@@ -1,0 +1,74 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-13",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "a completed hourly candle closes above yesterday's high"},
+   "wrong_if": "daily close below yesterday's low: the break fails back into the range",
+   "market_void": null,
+   "reason": "BREAKOUT family (C2): D swing HH/HL, close_vs_swing_high_pct 0.53, dist_to_20bar_high_pct 0.89; H1 above EMA9 9>21. Fresh break close to its extreme; I time it on the hour (C22). W LH/LL noted."
+  },
+  {
+   "ticker": "AAPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "a completed hourly candle closes above the last confirmed pivot high"},
+   "wrong_if": "daily close below yesterday's low",
+   "market_void": null,
+   "reason": "BREAKOUT/test family (C2/C20): W HH/HL, D close_vs_swing_high_pct -0.14 sitting at the pivot; trigger and invalidation close together. H1 pos_in_day_range_pct 6.6 is weak, so the pivot close is the proof."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "daily close below ma_20 after the reclaim",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2, Holy-Grail shape, adx NOT_SERVED): W HH/HL but D close_vs_swing_high_pct 6.31 is extended; I buy the first pullback to the 20-day (C7), not here."
+  },
+  {
+   "ticker": "G",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "daily close below ma_20 after the reclaim",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2): W and D HH/HL, H1 below EMA9 with pos_in_day_range_pct 13.4: a first pullback is starting. W close_vs_swing_high_pct 11.02 is stretched; wait for the 20-day (C7)."
+  },
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "daily close below ma_20 after the reclaim",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2): D close_vs_swing_high_pct -7.54, pullback after fresh highs; H1 9<21 LH/LL so the pullback is not done. W LH/LL keeps conviction low; I wait for the 20-day."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "after a pullback under the 20-day average, an hourly close back above it"},
+   "wrong_if": "daily close below ma_20 after the reclaim",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2): W and D HH/HL at highs, D close_vs_swing_high_pct 7.6; H1 LH/LL hints the pause. The first pullback to the 20-day is the low-risk entry (C7)."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:structure_shift_ref", "tf": "H1", "plain": "after a dip into the broken pivot, an hourly close back above it"},
+   "wrong_if": "daily close below structure_shift_ref",
+   "market_void": null,
+   "reason": "TEST family (C2/C20): D HH/HL, close_vs_swing_high_pct 1.08, H1 below EMA9 at pos_in_day_range_pct 6.9: the retest of the broken level is under way, my double stop point."
+  }
+ ],
+ "declarations": [
+  "setup_type per C2 named in each reason; adx NOT_SERVED (C7/C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via grid swing distances (C3/C4 substitute); bar_range_history NOT_SERVED (C12/C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "No refutation of my claims was routed to me (answer_pairs empty). R1: no decision rests on a stop-and-target set. R41: no Valen flag used."
+ ]
+}

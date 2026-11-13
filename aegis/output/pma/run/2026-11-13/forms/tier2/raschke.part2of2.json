@@ -1,0 +1,74 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-13",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "FROG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:structure_shift_ref", "tf": "H1", "plain": "after a dip into the broken pivot, an hourly close back above it"},
+   "wrong_if": "daily close below structure_shift_ref",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2): W HH/HL, D close_vs_swing_high_pct 6.96 extended and D HH but LL; I buy only the pullback to the broken level, not the extension."
+  },
+  {
+   "ticker": "CNK",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:structure_shift_ref", "tf": "H1", "plain": "after a dip into the broken pivot, an hourly close back above it"},
+   "wrong_if": "daily close below structure_shift_ref",
+   "market_void": null,
+   "reason": "TEST family (C2/C20): D HH/HL, close_vs_swing_high_pct 2.29 above the broken high; a retest of it puts trigger and invalidation together. W LH but HL keeps it modest."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "an orderly first pullback holding fib_382 with D swing back to HH/HL would make me wrong to stand aside",
+   "market_void": null,
+   "reason": "D swing LH/LL with close_vs_swing_high_pct 32.69: climax-zone extension (C19), not a retracement in trend. None of my four setups is formed here."
+  },
+  {
+   "ticker": "VNT",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "an orderly first pullback holding fib_382 then an hourly reclaim would make me wrong to stand aside",
+   "market_void": null,
+   "reason": "W and D HH/HL but W close_vs_swing_high_pct 18.04 and H1 pos_in_day_range_pct 0.7: a pullback may be starting, not yet at a level I can stop under (C17)."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "an orderly first pullback holding fib_382 then an hourly reclaim would make me wrong to stand aside",
+   "market_void": null,
+   "reason": "W close_vs_swing_high_pct 19.2: extended pause high above its average, not a contraction I can stop under; bar_range_history NOT_SERVED so I cannot call an NR4/NR7."
+  },
+  {
+   "ticker": "ICE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "a completed hourly candle closes above the last confirmed pivot high"},
+   "wrong_if": "daily close below yesterday's low",
+   "market_void": null,
+   "reason": "BREAKOUT/test family (C2/C20): W, D and H1 HH/HL, D close_vs_swing_high_pct -0.04 right at the pivot. H1 pos_in_day_range_pct 3.4 is weak, so the pivot close is the proof."
+  },
+  {
+   "ticker": "ADP",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "a completed hourly candle closes above the last confirmed pivot high"},
+   "wrong_if": "daily close below ma_20",
+   "market_void": null,
+   "reason": "BREAKOUT family (C2): range at highs, HH/HL on W, D and H1; D close_vs_swing_high_pct -0.98. A close over the pivot is the break I take."
+  }
+ ],
+ "declarations": [
+  "setup_type per C2 named in each reason; adx NOT_SERVED (C7/C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via grid swing distances (C3/C4 substitute); bar_range_history NOT_SERVED (C12/C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "R1: no decision rests on a stop-and-target set. R41: no Valen flag used."
+ ]
+}

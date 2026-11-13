@@ -1,0 +1,97 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-13",
+ "answers": [
+  {
+   "pair_id": "FROG-oneil-against~seow",
+   "ticker": "FROG",
+   "to": "seow",
+   "text": "\"Not a laggard: rs_rank_pct 94.87, rs_spy_20d 18.89.\" Those are 20-day reads, the wrong horizon for my L test (C10); my gate is rs_leadership and it reads LAGGARD (downday -3.16). D 7.0% above swing high is the late zone (C17); day_vol 0.88 is under 1.40 (C16). W HH/HL is noted, not enough.",
+   "concede": false
+  },
+  {
+   "pair_id": "CNK-oneil-against~seow",
+   "ticker": "CNK",
+   "to": "seow",
+   "text": "\"day_vol 0.46 is a C25 caution, never a reject.\" In my canon a new high on lower volume means institutional buying has stopped (C25), and under 1.40 is a hard rejection of the breakout (C16). D 2.3% above swing high is inside 5%, but nobody bought it. Divergence is secondary.",
+   "concede": false
+  },
+  {
+   "pair_id": "CNK-oneil-against~wyckoff",
+   "ticker": "CNK",
+   "to": "wyckoff",
+   "text": "\"Light selling at the test, not a failed break.\" My test is the buy side: D HH/HL and 0.5% under the 20-day high on day_vol 0.46 is a new high nobody paid up for (C25, C16). W LH but HL. I need 1.4x volume through the high before it is a breakout.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "JNJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a new high on falling volume (C25).",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader at the pivot: rs LEADER, structure 84.2 BULLISH_BOS, D 0.5% above the last swing high, D HH/HL. day_vol 1.02 is under 1.40, so only a volume-confirmed move counts. W LH/LL and Healthcare Fading are R9 cautions."
+  },
+  {
+   "ticker": "AAPL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Hourly close over the pivot high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a breakout that fails back under the pivot on heavy volume.",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader at the pivot: five lenses strong, structure 71.6 BULLISH_BOS, D 0.1% under the last swing high, W HH/HL. day_vol 0.63 fails C16 today; Technology only Recovering (R9 caution)."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "CHYM runs on without a pause on rising volume.",
+   "market_void": null,
+   "reason": "Leader, but D 6.3% above the last swing high is the 5.1-10% late zone (C17), day_vol 0.67 is no breakout volume (C16), Financials Fading. I wait for the next base."
+  },
+  {
+   "ticker": "G",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "G makes a new 52-week high on 1.4x volume while I wait.",
+   "market_void": null,
+   "reason": "Leader with structure 85.3 and W/D HH/HL, but not a new high (from_52w_hi -11.07%), day_vol 0.7 fails C16, H1 at 13% of the day's range. No pivot to buy today (C7)."
+  },
+  {
+   "ticker": "U",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "U clears its last swing high on 1.4x volume.",
+   "market_void": null,
+   "reason": "Leader on down days, but lens leadership, coil and resistance warn (R3), D 7.5% under the last swing high with HH but LL, W LH/LL, day_vol 0.71. No sound base, no pivot."
+  },
+  {
+   "ticker": "BDX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "BDX runs on 1.4x volume without a pause.",
+   "market_void": null,
+   "reason": "Leader at its high with W/D HH/HL, but D 7.6% above the last swing high is the late zone (C17), lens coil warns, day_vol 0.91 fails C16, Healthcare Fading. I wait for a new base."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Hourly close over yesterday's high on 1.4x time-of-day volume; no buy past pivot +5%."},
+   "wrong_if": "A close 8% under entry (C20), or a breakout that fails back under the pivot.",
+   "market_void": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+   "reason": "Leader in a confirming group (Industrials Momentum Building, no Lone Ranger), structure 74.7, D 1.1% above the last swing high, D HH/HL. day_vol 0.58 fails C16 today; H1 below EMA9 and coil warn are cautions."
+  }
+ ],
+ "declarations": [
+  "market_gate DELEGATED: valid only into a confirmed uptrend; I write no market read.",
+  "fundamentals NOT_AVAILABLE (C, A, S, I untested); base_stage NOT_AVAILABLE (C19); rs_measure rs_leadership substitute; volume_measure day_vol vs 20-day substitute; base_measure structure composite substitute.",
+  "R1: no stop or target field is the basis of any decision."
+ ]
+}
