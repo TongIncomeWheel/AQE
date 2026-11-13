@@ -1,0 +1,83 @@
+{
+ "date": "2026-11-13",
+ "chair": "chair",
+ "board_sha256": "d78c74340bc8733ef858ac4c3cf83a58624a837c1031e9992a10600eb5ff2764",
+ "decision_sha256": "3cce307db86f9a10f14214704f2f934e824e5332dd9013bdda3843d337eedc1f",
+ "tickets": [
+  {
+   "ticker": "FROG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high resumes the new-high run.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high resumes the new-high run."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 3,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"A one-day fade of 1 atr from the day's high, or a close below prior_bar_low.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template passes: entry 110.6 > ma20 95.98 > ma50 94.41 > ma100 91.55 > ma200 73.51, rs_rank_pct\" | livermore: \"W HH/HL 4.6% above its swing high, D 7.0% above the last swing high and 2.3% under the 20-day h\" | seow: \"POSITION system: new high, ABOVE_STRUCTURE, elder_pattern ACCELERATION, rs_rank_pct 94.87, rs_s\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Fails the L test (R2): rs LAGGARD downday -3.16, lens leadership warn. div BEARISH/4 is a distribution read (C25), D 7.0% above the last swing high is the late zone (C17), day_vol 0.88 fails C16."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "CNK",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high takes it to the new high.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high takes it to the new high."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "livermore: \"A one-day fade of 1 atr from the day's high, or a close below ma_20.\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Template passes, rs_rank_pct 93.16, rs LEADER. D HH/HL 2.3% over the swing high, W LH but HL co\" | livermore: \"D HH/HL 2.3% above the last swing high and 0.5% under the 20-day high, H1 above EMA9 at 79% of \" | seow: \"POSITION system: ABOVE_STRUCTURE at the high, elder_pattern ACCELERATION, rs_rank_pct 93.16, re\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "A new high on light volume is my distribution test (C25): D 0.5% under the 20-day high on day_vol 0.46, div BEARISH/2. Leader, but the high is not being bought (C16)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Major index logs 4-5 distribution days inside 4-5 weeks (C2)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 7
+ },
+ "hold_round": true
+}
