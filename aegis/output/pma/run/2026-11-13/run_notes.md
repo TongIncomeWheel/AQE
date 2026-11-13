@@ -11,3 +11,4 @@
 - minervini: packet too large; read first 48 columns of all 307 rows plus every column of 6 nominated and 2 held rows. Declared.
 - VOTE_PACKET 97,667 bytes, over the 70,000 guide even at the last trim rung (per-name data lines alone are over): declared, same as 12 Nov.
 - SLATE: built by code (slate_gen.py from decision.json + the seats' own tier-2 words; no Chair model spawn, as 12 Nov), validated OK. 12 slated: 7 ADVANCE (JNJ AAPL EMBJ FROG CNK ICE ADP), 5 WATCH (CHYM U BDX VNT PCOR); NOT_SLATED G VRDN. Market kill: major index 4-5 distribution days (C2).
+- LEDGERS: first seeded from the stale aegis/data/pma copy (ends 28 Oct) by mistake; caught before any publish, re-seeded from the 12 Nov run's verdict_ledger.json and phase4_ledger.json (the carried-forward record) and DECIDE record-verdicts, ledger, repeat-watch and repeatmarks re-run. Stale copies kept in stale_ledgers/.
