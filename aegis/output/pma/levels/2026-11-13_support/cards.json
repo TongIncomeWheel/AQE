@@ -1,0 +1,229 @@
+{
+ "advance": {
+  "JNJ": {
+   "triggers": [
+    {
+     "id": "JNJ-buy0",
+     "kind": "close_above",
+     "level": 286.08,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "JNJ: an hourly candle closes above 286.08 (6 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "JNJ-touch",
+     "kind": "trade_above",
+     "level": 286.08,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "JNJ traded through yesterday's intraday high 286.08: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "JNJ-wait",
+     "kind": "trade_below",
+     "level": 282.02,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "JNJ is back in the wait area 270.04-282.02."
+    },
+    {
+     "id": "JNJ-dead",
+     "kind": "close_below",
+     "level": 282.02,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "JNJ closed under 282.02, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 286.08",
+   "kills": "A daily close under 282.02 (3 analysts' exit line)."
+  },
+  "AAPL": {
+   "triggers": [
+    {
+     "id": "AAPL-buy0",
+     "kind": "close_above",
+     "level": 355.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "AAPL: an hourly candle closes above 355.63 (4 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "AAPL-touch",
+     "kind": "trade_above",
+     "level": 359.37,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "AAPL traded through yesterday's intraday high 359.37: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "AAPL-wait",
+     "kind": "trade_below",
+     "level": 351.73,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "AAPL is back in the wait area 350.64-351.73."
+    },
+    {
+     "id": "AAPL-dead",
+     "kind": "close_below",
+     "level": 345.51,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "AAPL closed under 345.51, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above high_52w_close 355.63; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 345.51 (2 analysts' exit line)."
+  },
+  "ADP": {
+   "triggers": [
+    {
+     "id": "ADP-buy0",
+     "kind": "close_above",
+     "level": 307.94,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "ADP: an hourly candle closes above 307.94 (4 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "ADP-touch",
+     "kind": "trade_above",
+     "level": 311.89,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "ADP traded through yesterday's intraday high 311.89: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "ADP-dead",
+     "kind": "close_below",
+     "level": 298.27,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "ADP closed under 298.27, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above high_52w_close 307.94; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 298.27 (3 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "CHYM": {
+   "triggers": [
+    {
+     "id": "CHYM-buy0",
+     "kind": "close_above",
+     "level": 33.34,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CHYM: an hourly candle closes above 33.34 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CHYM-touch",
+     "kind": "trade_above",
+     "level": 33.34,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHYM traded through yesterday's intraday high 33.34: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CHYM-dead",
+     "kind": "close_below",
+     "level": 30.09,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CHYM closed under 30.09, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 33.34; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 30.09 (3 analysts' exit line)."
+  },
+  "BDX": {
+   "triggers": [
+    {
+     "id": "BDX-buy0",
+     "kind": "close_above",
+     "level": 216.85,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "BDX: an hourly candle closes above 216.85 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "BDX-touch",
+     "kind": "trade_above",
+     "level": 216.85,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "BDX traded through yesterday's intraday high 216.85: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "BDX-wait",
+     "kind": "trade_below",
+     "level": 205.26,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "BDX is back in the wait area 200.47-205.26."
+    },
+    {
+     "id": "BDX-dead",
+     "kind": "close_below",
+     "level": 202.11,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "BDX closed under 202.11, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 216.85; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 202.11 (2 analysts' exit line)."
+  },
+  "PCOR": {
+   "triggers": [
+    {
+     "id": "PCOR-buy0",
+     "kind": "close_above",
+     "level": 79.8,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PCOR: an hourly candle closes above 79.8 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PCOR-touch",
+     "kind": "trade_above",
+     "level": 78.62,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PCOR traded through yesterday's intraday high 78.62: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "PCOR-dead",
+     "kind": "close_below",
+     "level": 66.54,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PCOR closed under 66.54, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above pivot_high 79.8; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 66.54 (2 analysts' exit line)."
+  }
+ },
+ "held": {
+  "SPCX": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 145.05 (STP 68, GTC).",
+   "against": ""
+  },
+  "RBRK": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 99.45 (STP 80, GTC).",
+   "against": ""
+  }
+ }
+}
