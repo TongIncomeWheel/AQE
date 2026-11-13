@@ -1,0 +1,63 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DV",
+   "reason": "Leader sitting on its pivot (pct_from_pivot -0.07) with volume confirming at day_vol 1.47, above the 1.40 line; structure 69.5 in a range not yet broken. Buy only on a close through pivot_high 13.58 into a confirmed uptrend (market gate DELEGATED). Base unmeasured: lens null.",
+   "fields_cited": ["rs_leadership", "rank", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "ma_200", "bracket.stop", "bracket.risk_pct", "sector_trend_state", "div_state", "atr_14d"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER); rank 162, second of six XLK names in this packet; no IBD RS Rating served", "verdict": "partial", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "structure 69.5; structure_shift 4 (RANGE); lens null so no coil read; base stage not served. base_measure: structure composite (substitute)", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C15", "C16"], "observed": "day_vol 1.47 vs the 1.40 line. volume_measure: day_vol vs 20d (substitute)", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot_high 13.58, pct_from_pivot -0.07 (at the pivot, not past it); sma_distance_pct 0.61; entry 13.57 vs ma_200 11.45, well under 70%", "verdict": "pass", "fields": ["pivot_high", "pct_from_pivot", "sma_distance_pct", "entry", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.stop 13.53, bracket.risk_pct 0.29, bracket.valid True, inside 7-8%; atr_14d 0.04 is very small for this price", "verdict": "pass", "fields": ["bracket.stop", "bracket.risk_pct", "bracket.valid", "atr_14d"]},
+    {"step": 6, "canon_ref": ["C25"], "observed": "sector_trend_state 3 (Recovering From Weakness), group not confirming; div_state NONE, div_bear_count 0; lens.sector not served", "verdict": "partial", "fields": ["sector_trend_state", "div_state", "div_bear_count", "lens"]},
+    {"step": 7, "canon_ref": ["C23", "C1"], "observed": "fundamentals C,A,S,I NOT_AVAILABLE; base_stage NOT_AVAILABLE; market_gate DELEGATED; ranked first of two volume survivors on step-1 rank", "verdict": "partial", "fields": ["sc_momentum"]}
+   ],
+   "falsifier": "A close below bracket.stop 13.53, or a push through pivot_high 13.58 on day_vol under 1.40, voids it. So does an index under distribution."
+  },
+  {
+   "ticker": "PAYO",
+   "reason": "Leader with the heaviest volume in the set, day_vol 2.91, just under its pivot (pct_from_pivot -0.55). Buy only on a close through pivot_high 7.22, market gate DELEGATED. Caution: div_state BEARISH, div_bear_count 3; rank 257 is low in its group; base unmeasured.",
+   "fields_cited": ["rs_leadership", "rank", "structure", "structure_shift", "day_vol", "pivot_high", "pct_from_pivot", "ma_200", "div_state", "div_bear_count", "sector_trend_state", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER); rank 257, fifth of six XLK names in this packet; no IBD RS Rating served", "verdict": "partial", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "structure 66.3; structure_shift 4 (RANGE); lens null so no coil read; base stage not served. base_measure: structure composite (substitute)", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C15", "C16"], "observed": "day_vol 2.91 vs the 1.40 line. volume_measure: day_vol vs 20d (substitute)", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot_high 7.22, pct_from_pivot -0.55 (not yet through); sma_distance_pct 0.52; entry 7.18 vs ma_200 6.19, well under 70%", "verdict": "pass", "fields": ["pivot_high", "pct_from_pivot", "sma_distance_pct", "entry", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 7.15. My own level: back under ma_50 7.14", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "bracket.atr_fallback_stop", "ma_50"]},
+    {"step": 6, "canon_ref": ["C25"], "observed": "div_state BEARISH, div_bear_count 3; sector_trend_state 3 (Recovering From Weakness), group not confirming; lens.sector not served", "verdict": "fail", "fields": ["div_state", "div_bear_count", "sector_trend_state", "lens"]},
+    {"step": 7, "canon_ref": ["C23", "C1"], "observed": "fundamentals C,A,S,I NOT_AVAILABLE; base_stage NOT_AVAILABLE; market_gate DELEGATED; ranked second of two volume survivors", "verdict": "partial", "fields": ["sc_momentum"]}
+   ],
+   "falsifier": "A close back under ma_50 7.14, or failure to close through pivot_high 7.22 while the bearish divergence holds, voids it. So does an index under distribution."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "rs_leadership 2 (LAGGARD), structure 29.0, under its 10-week line (sma_distance_pct -2.65 vs ma_50 113.39), div_bear_count 4: relative strength has decayed on a holding, a C10 sell. day_vol 0.54 is not a heavy-volume break; working stop 99.45 stands meanwhile."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short 68 with NO working broker stop breaks C20 (every position carries an automatic stop). Weakness is intact (structure 17.0, structure_shift 2 BEARISH_CHOCH, rs_leadership 2), but place a stop now; the thesis is wrong on a reclaim of ma_50 149.12. CAN SLIM is a long method, so this is a risk line only."}
+ ],
+ "data_gaps": [
+  {"field": "lens", "impact": "lens null on every row: no lens.coil, lens.structure, lens.resistance or lens.sector, so base tightness, overhead supply and group confirmation (R3, R9) could not be read directly"},
+  {"field": "bq.bq_base_dur", "impact": "not in packet: base length (7-8 week test, C12) cannot be measured"},
+  {"field": "bq.bq_range_tight", "impact": "not in packet: base tightness cannot be measured"},
+  {"field": "rvol", "impact": "not in packet; day_vol used as the only volume read"},
+  {"field": "ma_200", "impact": "null for SPCX: climax/200-day read unavailable on the held short"},
+  {"field": "fundamentals (EPS, sales, ROE, sponsor count, absolute volume)", "impact": "C, A, S, I letters untestable (C4-C6, C8, C11)"}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I untested)",
+  "base_stage: NOT_AVAILABLE (C19 cannot be enforced)",
+  "market_gate: DELEGATED (valid only into a confirmed uptrend; void if the index is under distribution)",
+  "rs_measure: rs_leadership (substitute, no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute, canon says 50-day)",
+  "base_measure: structure composite (substitute)",
+  "ledger memory: none injected this run; no standing lesson applies"
+ ],
+ "shortfall_reason": "Only two names clear the C16 volume line (day_vol 1.40): CCC, VRNS, FIGS, CHYM, MGNI, DXC, BBY and PRCH all print day_vol below 1.40, a hard rejection under C16. MGNI is also near the C24 climax zone above its 200-day. No padding."
+}

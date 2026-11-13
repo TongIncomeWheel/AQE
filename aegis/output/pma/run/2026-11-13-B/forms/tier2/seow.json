@@ -1,0 +1,35 @@
+{
+ "voice": "seow",
+ "date": "2026-11-13",
+ "declarations": [
+  "No pairs: none of my claims was refuted. System picked from the name's own picture (R10). Bracket fields not used (R1). Declared proxies per R13-R15."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high until one breaks (C27)."
+   },
+   "wrong_if": "A daily close below the support line max(fib_swing_low, base_low_20d), or a red candle sold next session below its low (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (R13, C26): weekly and daily HH/HL, W above EMA9 with 9>21, D close 120.99 above EMA9 119.2168, 3.2% under the last swing high 124.94. Strength top-decile (C23). H1 below EMA9 is a ripple, managed by the trailing buy stop (C7). First 50% tranche only (C30)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 898,
+   "sha256": "efee6e26896a"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 83,
+   "sha256": "7b26575468f5"
+  }
+ ]
+}

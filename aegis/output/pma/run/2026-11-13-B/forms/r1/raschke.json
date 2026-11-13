@@ -1,0 +1,52 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DV",
+   "reason": "Range-contraction / double-stop-point test (C2, C12, C20): structure_shift 4 (RANGE) sitting on its average, sma_distance_pct 0.61, tiny atr_14d 0.04 with day_vol 1.47 participation; structural stop bracket.stop 13.53 (bracket.stop_type 5, swing_low_2) right under the base.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 69.5, structure_shift 4 (RANGE), sma_distance_pct 0.61 -> BREAKOUT family (range contraction at the average), secondary TEST of the base", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13", "C20"], "observed": "atr_14d 0.04, atr_caution True, day_vol 1.47, elder_pattern 2 (ACCUMULATION_BASE), mp_state 2 (FADING), mp_accel_state 3 (FLAT); ID/NR4 count not computable", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "elder_pattern", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C7", "C6", "C3", "C12", "C16"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid True, bracket.stop 13.53, bracket.stop_type 5 (swing_low_2), bracket.risk_pct 0.29 vs entry 13.57", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct", "entry"]}
+   ],
+   "falsifier": "A close below bracket.stop 13.53 (the swing_low_2 base) breaks the range to the downside and voids the contraction-breakout read; a long breakout that fails back inside the range on entry day is also wrong (C23)."
+  },
+  {
+   "ticker": "TECH",
+   "reason": "Breakout out of contraction (C2, C12): structure_shift 3 (BULLISH_BOS) while price sits on its average, sma_distance_pct 0.43, atr_14d 0.12, mp_state 3 (STRONG) and mp_accel_state 1 (ACCELERATING). Caution: div_state BEARISH with div_bear_count 4 and elder_pattern 4 (INTERRUPTED).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "div_bear_count", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 77.9, structure_shift 3 (BULLISH_BOS), sma_distance_pct 0.43 -> BREAKOUT family off a tight base", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C7"], "observed": "atr_14d 0.12, atr_caution False, day_vol 0.74; trend proxy mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); div_bear_count 4, elder_pattern 4 advisory caution", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "div_state", "div_bear_count", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C7", "C6", "C3", "C12", "C16"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, n_day_extreme via sma_distance_pct+structure_shift, bar_range_history NOT_SERVED, market_breadth OUT_OF_SERVED_SCOPE", "verdict": "pass", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; my level = bracket.atr_fallback_stop 72.72 under entry 72.84 (swing extreme of the broken pivot not on my menu)", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "bracket.atr_fallback_stop", "entry", "atr_14d"]}
+   ],
+   "falsifier": "A close back below bracket.atr_fallback_stop 72.72 (back under the broken base, structure_shift leaving BULLISH_BOS) means the breakout failed; with div_bear_count 4 that would read as a false breakout to reverse, not hold (C23)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "TIGHTEN", "line": "No named set-up fits: structure 29.0, structure_shift 4 (RANGE) below its average sma_distance_pct -2.65, div_bear_count 4; C18 minimise time in market - tighten the 99.45 broker stop toward bracket.atr_fallback_stop 102.75 and exit on a close below it."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short is with structure (structure 17.0, structure_shift 2 BEARISH_CHOCH, sma_distance_pct -6.15, selling a lower high) but it is UNPROTECTED - C17 demands a buy-stop beyond the swing high now; absent that level on my menu, entry 139.94 plus atr_14d 8.27 is the outer bound."}
+ ],
+ "data_gaps": [
+  {"field": "lens", "impact": "null on every row; cannot use lens.coil as the declared substitute for the Anti pullback read (R4), so no retracement/Anti case could be graded."},
+  {"field": "energy.squeeze_score", "impact": "column absent from the packet; no squeeze-strength read to corroborate the range-contraction proxy for DV and TECH (C12/C13)."},
+  {"field": "bracket.stop_type", "impact": "null for TECH and SPCX (bracket.valid False); I named my own level from bracket.atr_fallback_stop / entry+atr_14d instead of a structural swing extreme."},
+  {"field": "structure_shift_ref", "impact": "not served in the packet; R6 swing-extreme stop for an invalid bracket (TECH, SPCX short buy-stop) could not be named from structure directly."},
+  {"field": "elder_pattern", "impact": "null for PTC and CPB; advisory only, did not change the classification."}
+ ],
+ "declarations": [
+  {"setup_type": "DV: breakout (range contraction) / test; TECH: breakout", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ledger_memory": "no voice_memory block injected this run; no standing lesson applies"},
+  {"declined": "MRNA and CDNA read as possible climax/extension (sma_distance_pct 15.57 / 21.33, atr_14d 20.62 / 5.33) - visual climax patterns are not called from composite fields (R9, C10)"}
+ ],
+ "shortfall_reason": "Only two names fit one of the four set-up families cleanly. PTC, OPCH, ACN, AVPT, CCC sit extended off their average (sma_distance_pct 7-16) in RANGE or a BOS without contraction - not a test, first pullback or contraction breakout; CPB is BEARISH_CHOCH; MRNA/CDNA would be climax calls I decline (R9). Not padded."
+}

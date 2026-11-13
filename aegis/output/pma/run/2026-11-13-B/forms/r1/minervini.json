@@ -1,0 +1,79 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "MGNI",
+   "reason": "Stage 2 leader with the full MA stack (entry 29.34 > ma_50 24.48 > ma_100 22.91 > ma_200 18.12), rs_leadership 3 (LEADER), rs_spy_20d 21.75, held above structure, least extended of the leaders (sma_distance_pct 19.84) in a sector at sector_trend_state 1 (Momentum Building).",
+   "fields_cited": ["entry", "ma_20", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership", "rs_spy_20d", "structure", "structure_shift", "day_vol", "sector_trend_state", "bracket.valid"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "entry 29.34 vs ma_200 18.12; sma_distance_pct 19.84; structure_shift 1 (ABOVE_STRUCTURE)", "verdict": "pass", "fields": ["entry", "ma_200", "sma_distance_pct", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "c1 PASS (ma_100 22.91 as 150 proxy, ma_200 18.12); c2 PASS; c3 no slope served; c4 PASS ma_50 24.48; c5 PASS; c6/c7 approximated only; c8 proxy rs_leadership 3", "verdict": "partial", "fields": ["entry", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership 3 (LEADER), rs_spy_20d 21.75, rs_down_day_20d 2.43", "verdict": "pass", "fields": ["rs_leadership", "rs_spy_20d", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "structure 71.6, structure_shift 1 (ABOVE_STRUCTURE), ma_20 24.36 ~ ma_50 24.48 (flattened base); day_vol 0.8, flow 84.2; contraction count not served", "verdict": "partial", "fields": ["structure", "structure_shift", "ma_20", "ma_50", "day_vol", "flow"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "bracket.valid False, bracket.stop null; no served pivot; own invalidation = close below ma_50 24.48", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "entry", "ma_50"]},
+    {"step": 6, "canon_ref": ["C1", "C12", "C13"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; SEPA element 2 not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "A close below ma_50 24.48 (the base floor; engine bracket.valid False so this is my own structural level) or rs_leadership dropping off LEADER."
+  },
+  {
+   "ticker": "BRZE",
+   "reason": "Highest structure in the packet (structure 88.4) and a fresh structure_shift 3 (BULLISH_BOS) on a full stage 2 stack, rs_leadership 3 (LEADER), rs_spy_20d 55.32. Caution: sma_distance_pct 38.52 extended and day_vol 0.4 is light for a breakout (C6) - entry must stay near the break, no chase.",
+   "fields_cited": ["entry", "ma_20", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership", "rs_spy_20d", "structure", "structure_shift", "day_vol", "sector_trend_state", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "entry 46.61 vs ma_200 25.57; sma_distance_pct 38.52; structure_shift 3 (BULLISH_BOS)", "verdict": "pass", "fields": ["entry", "ma_200", "sma_distance_pct", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "c1 PASS (ma_100 30.12, ma_200 25.57); c2 PASS; c3 no slope served; c4 PASS ma_50 33.65; c5 PASS; c6/c7 approximated only; c8 proxy rs_leadership 3", "verdict": "partial", "fields": ["entry", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership 3 (LEADER), rs_spy_20d 55.32, rs_down_day_20d 0.82", "verdict": "pass", "fields": ["rs_leadership", "rs_spy_20d", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "structure 88.4, structure_shift 3 (BULLISH_BOS); day_vol 0.4 - breakout not on expanding volume; flow 34.2", "verdict": "partial", "fields": ["structure", "structure_shift", "day_vol", "flow"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "entry 46.61, sma_distance_pct 38.52 extended; bracket.valid False, bracket.stop null; own invalidation = close below ma_20 44.29", "verdict": "partial", "fields": ["entry", "sma_distance_pct", "bracket.valid", "bracket.stop", "ma_20"]},
+    {"step": 6, "canon_ref": ["C1", "C12", "C13"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; SEPA element 2 not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "The BOS fails: a close back below ma_20 44.29 (my own structural level; engine bracket.valid False), or structure_shift reverting to 2 (BEARISH_CHOCH)."
+  },
+  {
+   "ticker": "HNGE",
+   "reason": "Clean stage 2 stack (entry 120.99 > ma_20 114.46 > ma_50 103.36 > ma_100 94.0 > ma_200 70.55), above structure, quiet day_vol 0.34 near the 20-day = tightening in trend; stop defined at bracket.stop 114.46. RS only rs_leadership 1 (IN-LINE), rs_spy_20d 17.17 - follower risk (C11).",
+   "fields_cited": ["entry", "ma_20", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership", "rs_spy_20d", "structure", "structure_shift", "day_vol", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "sector_trend_state"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "entry 120.99 vs ma_200 70.55; sma_distance_pct 17.06; structure_shift 1 (ABOVE_STRUCTURE)", "verdict": "pass", "fields": ["entry", "ma_200", "sma_distance_pct", "structure_shift"]},
+    {"step": 2, "canon_ref": ["C3"], "observed": "c1 PASS (ma_100 94.0, ma_200 70.55); c2 PASS; c3 no slope served; c4 PASS ma_50 103.36; c5 PASS; c6/c7 approximated; c8 proxy rs_leadership 1 (IN-LINE) weak", "verdict": "partial", "fields": ["entry", "ma_50", "ma_100", "ma_200", "sma_distance_pct", "rs_leadership"]},
+    {"step": 3, "canon_ref": ["C11"], "observed": "rs_leadership 1 (IN-LINE), rs_spy_20d 17.17, rs_down_day_20d 0.12", "verdict": "partial", "fields": ["rs_leadership", "rs_spy_20d", "rs_down_day_20d"]},
+    {"step": 4, "canon_ref": ["C4", "C6"], "observed": "structure 76.8, structure_shift 1 (ABOVE_STRUCTURE); day_vol 0.34 dry-up; contraction count not served", "verdict": "partial", "fields": ["structure", "structure_shift", "day_vol"]},
+    {"step": 5, "canon_ref": ["C5", "C7"], "observed": "bracket.valid True, bracket.stop 114.46, bracket.stop_type 3 (ma20), bracket.risk_pct 5.4", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct"]},
+    {"step": 6, "canon_ref": ["C1", "C12", "C13"], "observed": "earnings_growth NOT_SERVED; company_category NOT_SERVED; SEPA element 2 not run", "verdict": "no_data", "fields": ["ticker"]}
+   ],
+   "falsifier": "A close below bracket.stop 114.46 (the 20-day) ends the tightening read; rs_leadership slipping to 2 (LAGGARD) ends the leadership case."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Trend Template broken: entry 110.38 below ma_20 118.75 and ma_50 113.39, rs_leadership 2 (LAGGARD), structure 29.0, div_bear_count 4 - not a stage 2 leader now (C3, C7, C10); at minimum the working broker stop 99.45 stays, never lowered."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short 68 is UNPROTECTED - C7 says the stop is fixed before entry and executed instantly; trend agrees with the short (entry 139.94 < ma_20 142.45 < ma_50 149.12, structure_shift 2 BEARISH_CHOCH, rs_leadership 2) but a buy-stop must be placed now, above ma_50 149.12."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "absent from packet; cannot read the squeeze/VCP-coil quality flag for any name (C4)"},
+  {"field": "bq.bq_base_dur", "impact": "absent from packet; base duration (C4 5-26 week range) unreadable, base read rests on structure/structure_shift alone"},
+  {"field": "bq.bq_range_tight", "impact": "absent from packet; base tightness unreadable (C4/C5 final-contraction test)"},
+  {"field": "ma_200", "impact": "null for SPCX; long-term stage cannot be confirmed on the held short"},
+  {"field": "rank", "impact": "null for held RBRK and SPCX; no relative placement for the held book"},
+  {"field": "elder_pattern", "impact": "null for MGNI, HNGE, REPL, AMLX, ADPT; impulse quality flag unreadable (advisory only)"},
+  {"field": "bracket.stop", "impact": "null for MGNI and BRZE (bracket.valid False); own structural invalidation levels named instead - never a reason to not nominate (R1)"}
+ ],
+ "declarations": [
+  "trend_template: PARTIAL for all three nominees - criteria 1,2,4,5 PASS from the served MA stack (ma_100 as the 150-day proxy); criterion 3 (200-day rising a month) not served; criteria 6/7 approximated only; criterion 8 via rs proxy (C3)",
+  "vcp_detail: NOT_SERVED (structure/structure_shift are a composite proxy only, C4)",
+  "earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20)",
+  "rs_proxy: rs_leadership + rs_spy_20d (substitute for IBD RS rank, C3/C11)",
+  "volume_signature: day_vol at breakout only (C6, partial)",
+  "memory: no ledger memory block was injected; no standing lesson applies",
+  "passed on XERS (sma_distance_pct 62.54) and REPL (sma_distance_pct 50.23) on the C5/R5 chase rule despite LEADER RS; MRNA, AMLX, ADPT fail RS (rs_leadership 2 LAGGARD); CDNA and GMAB structure_shift 4 (RANGE) with weaker structure",
+  "R9 advisory: 8 of the 10 non-held packet candidates are XLV at sector_trend_state 2 (Momentum Fading) - market-timing context, not a stock verdict"
+ ],
+ "shortfall_reason": null
+}

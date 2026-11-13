@@ -1,0 +1,121 @@
+{
+ "_schema": {
+  "shape": "decision",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-13T05:26:02Z"
+ },
+ "schema": "decision.v1",
+ "date": "2026-11-13",
+ "rules": {
+  "min_support": 4,
+  "tie": "WATCH",
+  "advance": "ACT_NOW > WAIT among SUPPORT",
+  "trigger": "modal (word, tf) of the winning timing camp",
+  "trigger_tie_rule": "the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)"
+ },
+ "survivors": [
+  "HNGE"
+ ],
+ "names": {
+  "HNGE": {
+   "ticker": "HNGE",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 3,
+    "wait": 3
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "seow"
+    ],
+    "wait": [
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Let price pull back to the 20-day average, then buy a 1-hour close back above it",
+    "seats": [
+     "raschke"
+    ],
+    "of_camp": 3,
+    "plain_from": "raschke",
+    "tie_broken": true,
+    "tied": [
+     {
+      "word": "in_zone:ma_20",
+      "tf": "D",
+      "seats": [
+       "elder-lens"
+      ]
+     },
+     {
+      "word": "reclaim:ma_20",
+      "tf": "H1",
+      "seats": [
+       "raschke"
+      ]
+     },
+     {
+      "word": "h1_close_above:bar_high",
+      "tf": "H1",
+      "seats": [
+       "wyckoff"
+      ]
+     }
+    ],
+    "tie_rule": "the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 3 vs WAIT 3 (tie -> WATCH)",
+   "horizon_sessions": 20
+  }
+ },
+ "market_kill": null,
+ "market_kill_note": "no SUPPORT decision named a market condition -- declared, never invented",
+ "ignored_forms": [],
+ "measurement": {
+  "act_now_vs_wait": {
+   "HNGE": {
+    "act_now": 3,
+    "wait": 3
+   }
+  },
+  "deciders_present": [
+   "oneil",
+   "minervini",
+   "livermore",
+   "elder-lens",
+   "seow",
+   "raschke",
+   "wyckoff"
+  ],
+  "deciders_absent": [],
+  "advance": 0,
+  "watch": 1,
+  "not_slated": 0
+ }
+}

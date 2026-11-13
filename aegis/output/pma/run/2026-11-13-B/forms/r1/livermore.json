@@ -1,0 +1,70 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "BTSG",
+   "reason": "Established uptrend, normal pullback, then a fresh break above the confirmed pivot high (structure_shift BULLISH_BOS, structure 82.1); my state analogue reads STRONG and ACCELERATING. Healthcare confirmed by TEVA also breaking out (two-stock Key Price, C14). Price, not news, is the reason.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop", "entry"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 82.1, structure_shift BULLISH_BOS, sma_distance_pct 15.74", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.8 (danger = reaction >= 1x atr_14d off day's high, my translation); entry 71.45; bracket.valid False; bracket.atr_fallback_stop 68.65; mp_state STRONG, mp_accel_state ACCELERATING", "verdict": "pass", "fields": ["atr_14d", "entry", "bracket.valid", "bracket", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 30; gics_sector XLV; TEVA (XLV) also BULLISH_BOS = second related name; sector_trend_state Momentum Fading — Hold, Don't Add", "verdict": "partial", "fields": ["rank", "gics_sector", "gics_sector_name", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; any add only above entry 71.45, never below", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "danger threshold translated via atr_14d 2.8, not literal 6 pts; day_vol 0.6 is a proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong on a single-day reaction of atr_14d 2.8 or more from the day's high (danger signal, my ATR translation), or a close back below the broken pivot; my own max-loss level is bracket.atr_fallback_stop 68.65 since bracket.valid False."
+  },
+  {
+   "ticker": "TEVA",
+   "reason": "Fresh break above the confirmed pivot high (structure_shift BULLISH_BOS) on above-normal participation (day_vol 1.32), not far extended (sma_distance_pct 9.06). Confirms BTSG as the second Healthcare name. State analogue BUILDING but DECELERATING, so a lower conviction.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "day_vol", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "bracket.valid", "bracket.atr_fallback_stop", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 71.6, structure_shift BULLISH_BOS, sma_distance_pct 9.06", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.22 (danger = reaction >= 1x atr_14d off day's high, my translation); entry 43.65; bracket.valid False; bracket.atr_fallback_stop 42.43; mp_state BUILDING, mp_accel_state DECELERATING", "verdict": "partial", "fields": ["atr_14d", "entry", "bracket.valid", "bracket", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 261; gics_sector XLV with BTSG also BULLISH_BOS; sector_trend_state Momentum Fading — Hold, Don't Add", "verdict": "partial", "fields": ["rank", "gics_sector", "gics_sector_name", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 43.65", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "threshold translated via atr_14d 1.22, not literal points; day_vol 1.32 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong on a single-day reaction of atr_14d 1.22 or more from the day's high, or a close below bracket.atr_fallback_stop 42.43 (my own max-loss level; bracket.valid False)."
+  },
+  {
+   "ticker": "ELAN",
+   "reason": "Uptrend holding above structure (structure 81.1) with the state analogue STRONG and ACCELERATING, only moderately extended (sma_distance_pct 13.59). Third Healthcare leader, keeping the book concentrated in one group (C12). Not yet a fresh confirmed pivot break, so conviction 3.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "bracket.stop", "bracket.stop_type", "bracket.valid", "entry"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 81.1, structure_shift ABOVE_STRUCTURE (not BULLISH_BOS), sma_distance_pct 13.59", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 0.94 (danger = reaction >= 1x atr_14d off day's high, my translation); entry 26.5; bracket.stop 25.32 (fib_786), bracket.valid True; mp_state STRONG, ACCELERATING", "verdict": "pass", "fields": ["atr_14d", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 113; gics_sector XLV alongside BTSG and TEVA; sector_trend_state Momentum Fading — Hold, Don't Add", "verdict": "partial", "fields": ["rank", "gics_sector", "gics_sector_name", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; adds only above entry 26.5", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C18", "C11"], "observed": "threshold translated via atr_14d 0.94, not literal points; day_vol 0.76 proxy only, fill difficulty NOT_SERVED", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Wrong on a single-day reaction of atr_14d 0.94 or more from the day's high, or a close below bracket.stop 25.32."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Long 80 is a losing trade in no uptrend: structure 29.0, structure_shift RANGE, sma_distance_pct -2.65, mp_state FADING. C3/C22 say take the first small loss, never average down (C4); working broker stop 99.45 is the backstop, not the reason to wait."},
+  {"ticker": "SPCX", "verdict": "TIGHTEN", "line": "Short 68 is on the right side of the trend (structure 17.0, BEARISH_CHOCH, sma_distance_pct -6.15, mp_state FADING) but is UNPROTECTED: C9 demands a predetermined max loss now; danger signal = a single-day rally of atr_14d 8.27 off the day's low (my translation)."}
+ ],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null on BTSG, TEVA (bracket.valid False); I named my own max-loss level from bracket.atr_fallback_stop instead. Information only, never a reason against the name (R1)."},
+  {"field": "rank", "impact": "null for held RBRK and SPCX; leadership step could not rank the held names against the field."},
+  {"field": "pct_from_52w_high (proximity to recent high)", "impact": "not on my menu; sma_distance_pct measures extension from the 50-day, not distance from the high, so C5's 'fresh new high' rests on structure_shift alone."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS for BTSG and TEVA (structure_shift BULLISH_BOS + sma_distance_pct, C5); PARTIAL for ELAN (ABOVE_STRUCTURE, no fresh pivot break)",
+  "danger_signal_threshold: TRANSLATED via atr_14d at 1x from the day's high, my own translation, not Livermore's literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger_memory: no memory block injected this run; no standing lesson applies"
+ ],
+ "shortfall_reason": null
+}

@@ -1,0 +1,134 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-13",
+ "seat_kind": "challenge",
+ "names_read": 9,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-13\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"DV\", \"nomination_count\": 2, \"seats\": [\"oneil\", \"raschke\"]"},
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C15", "C17", "C12"],
+   "claim": "Six of nine room names sit in one GICS sector. The room's breadth is one sector bet repeated, not six independent reads; any shared sector shock hits most of the slate at once. Deciders should say what each Healthcare name adds that the others do not.",
+   "evidence": "gics_sector_name Healthcare: TEVA, BTSG, ELAN, HNGE, TECH, HTFL (6 of 9); gics_sector_name Technology: DV, BRZE, PAYO (3 of 9)",
+   "addressed_to": "livermore, wyckoff, minervini, raschke"
+  },
+  {
+   "scope": "TEVA",
+   "kind": "EXTENSION",
+   "ticker": "TEVA",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Breakout read and a broad bearish oscillator divergence point opposite ways; four of five oscillators disagree with the price break. Nominated in the PULLBACK lane while the shift reads a fresh break up. The seats should state which read governs and the observable that proves it wrong, or stand aside (R8).",
+   "evidence": "structure_shift BULLISH_BOS; div_state BEARISH; div_bear_count 4; day_vol 1.32; ma_50 40.03, ma_100 37.27, ma_200 35.05",
+   "addressed_to": "livermore, wyckoff"
+  },
+  {
+   "scope": "TECH",
+   "kind": "EXTENSION",
+   "ticker": "TECH",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Break of structure on below-average participation with four of five oscillators diverging bearish: an exhaustion-risk shape, not a confirmed thrust. Seat owes the disconfirming observable for the momentum case.",
+   "evidence": "structure_shift BULLISH_BOS; div_state BEARISH; div_bear_count 4; day_vol 0.74",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "PAYO",
+   "kind": "EXTENSION",
+   "ticker": "PAYO",
+   "canon_ref": ["C5", "C7"],
+   "claim": "Heavy-volume day inside a range with a three-oscillator bearish divergence; heavy volume without a structure break plus divergence reads as distribution risk as easily as accumulation. Seat owes which it is and what would disprove it.",
+   "evidence": "structure_shift RANGE; day_vol 2.91; div_state BEARISH; div_bear_count 3; ma_50 7.14, ma_100 7.13",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": "BRZE",
+   "canon_ref": ["C6", "C12"],
+   "claim": "Break of structure printed on well under half normal volume; participation does not confirm the break. Ask the seat what participation it needs to see for the break to count.",
+   "evidence": "structure_shift BULLISH_BOS; day_vol 0.4; structure 88.4",
+   "addressed_to": "minervini"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": "BTSG",
+   "canon_ref": ["C6", "C16"],
+   "claim": "Highest conviction in the room (solo, 4) rests on a break of structure on low participation with a bearish divergence present, and a short-term MA below the 100-day. Conviction 4 should be traced to the few fields that carry it (R12), and the invalidation observable stated.",
+   "evidence": "convictions 4 (single seat livermore); structure_shift BULLISH_BOS; day_vol 0.6; div_state BEARISH; div_bear_count 1; ma_50 61.73, ma_100 63.57, ma_200 56.03",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "ELAN",
+   "kind": "PROCESS",
+   "ticker": "ELAN",
+   "canon_ref": ["C5"],
+   "claim": "MOMENTUM-lane nomination whose moving-average stack is flat to inverted; the higher-timeframe trend the momentum case is meant to ride is not visible in the MAs (R4). Seat should name the higher-timeframe context it is entering with.",
+   "evidence": "ma_50 23.33, ma_100 23.98, ma_200 23.84; structure_shift ABOVE_STRUCTURE; day_vol 0.76",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "HTFL",
+   "kind": "EXTENSION",
+   "ticker": "HTFL",
+   "canon_ref": ["C5", "C7"],
+   "claim": "Short-term average far above the long-term average with the weakest structure score in the room, a range read and a heavy-volume day: the trend is extended, and a heavy day inside a range in a stretched name needs a stated reading. Seat owes the disconfirming observable.",
+   "evidence": "ma_50 51.94, ma_100 42.64, ma_200 35.12; structure 57.9; structure_shift RANGE; day_vol 2.61",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "DV",
+   "kind": "PROCESS",
+   "ticker": "DV",
+   "canon_ref": ["C16", "C1"],
+   "claim": "The room's convergence pick carries a volatility unit that looks implausibly small for its price level; if atr_14d is wrong, every ATR-based read of this name is wrong. Two seats agreeing is not convergence of independent evidence until the input is confirmed (C15).",
+   "evidence": "atr_14d 0.04 against ma_50 13.49; nomination_count 2 (oneil, raschke); structure_shift RANGE; day_vol 1.47",
+   "addressed_to": "oneil, raschke"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C2"],
+   "claim": "Room cases lean on structure_shift and div_state reads; no forward-return separation versus baseline has been measured for either field. They may be described, never leaned on as edge (R1).",
+   "evidence": "structure_shift BULLISH_BOS on TEVA, BTSG, BRZE, TECH; div_state BEARISH on TEVA, BTSG, TECH, PAYO; no edge statistic served in the packet",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C3", "C4"],
+   "claim": "No regime or SRM label is served in the room packet, so no case can justify size on environment match (R3). Each decider should name the regime its case is valid inside.",
+   "evidence": "regime absent from packet; srm absent from packet",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "livermore", "ticker": "TEVA", "class": "AMBIGUITY", "what_is_owed": "Which read governs, the break of structure or the 4-oscillator bearish divergence, and the observable that disproves it."},
+  {"seat": "wyckoff", "ticker": "TEVA", "class": "AMBIGUITY", "what_is_owed": "Why a PULLBACK lane read on a name printing a break of structure; the disconfirming observable."},
+  {"seat": "raschke", "ticker": "TECH", "class": "INVALIDATION", "what_is_owed": "The observable that would prove the momentum case wrong given div_bear_count 4 and day_vol 0.74."},
+  {"seat": "oneil", "ticker": "PAYO", "class": "INVALIDATION", "what_is_owed": "Accumulation or distribution on the day_vol 2.91 range day, and what would disprove it."},
+  {"seat": "minervini", "ticker": "BRZE", "class": "PARTICIPATION", "what_is_owed": "What participation confirms a break printed on day_vol 0.4."},
+  {"seat": "livermore", "ticker": "BTSG", "class": "DEPTH", "what_is_owed": "The few fields carrying conviction 4, and the invalidation observable."},
+  {"seat": "livermore", "ticker": "ELAN", "class": "CONTEXT", "what_is_owed": "The higher-timeframe context given ma_50 23.33 below ma_100 23.98."},
+  {"seat": "wyckoff", "ticker": "HTFL", "class": "INVALIDATION", "what_is_owed": "The reading of the day_vol 2.61 range day in an extended MA stack, and the disconfirming observable."},
+  {"seat": "oneil", "ticker": "DV", "class": "DATA", "what_is_owed": "Confirmation that atr_14d 0.04 is a correct input before ATR-based reads are used."},
+  {"seat": "raschke", "ticker": "DV", "class": "DATA", "what_is_owed": "Confirmation that atr_14d 0.04 is a correct input before ATR-based reads are used."}
+ ],
+ "declarations": [
+  "psychology_claims: NONE -- I have no emotional state; C18-C21 are PM-facing (R9)",
+  "I never nominate and never vote; findings are crowding, extension and overlap reads only",
+  "House rule R1: no finding uses a bracket field as a reason; bracket fields are not cited as evidence",
+  "Fields read outside my menu and not used: rs_rank_pct, pct_from_52w_high present in packet rows, not cited"
+ ],
+ "data_gaps": [
+  {"field": "lens_warnings", "impact": "null on all 9 room names; the lens-warning crowding read could not be made"},
+  {"field": "regime", "impact": "not in the packet; environment named for no case (R3)"},
+  {"field": "srm", "impact": "not in the packet; sector-environment context for the Healthcare cluster could not be read"},
+  {"field": "atr_14d", "impact": "values on DV 0.04, PAYO 0.03, TECH 0.12 look implausibly small for price level; ATR-relative reads on those names held back"},
+  {"field": "price", "impact": "no close price served; extension from the MAs could only be read from the MA stack, not price-to-MA"}
+ ]
+}

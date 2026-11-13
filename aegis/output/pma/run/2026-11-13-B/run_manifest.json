@@ -1,0 +1,851 @@
+{
+ "created": "2026-11-13T05:16:25Z",
+ "date": "2026-11-13",
+ "degradations": [
+  {
+   "at": "2026-11-13T05:27:21Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-13T05:27:21Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['forms/qa/steenbarger.json']",
+   "step": "QA"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['rationale_draft.json']",
+   "step": "RATIONALE"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['forms/adopt/*.json (glob matched nothing)']",
+   "step": "ADOPT"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['rationale_final.json']",
+   "step": "RATIONALE-FINAL"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['committee_position.json']",
+   "step": "POSITION"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['conditions.json', 'conditions.md', 'conditions.html', 'cards.json']",
+   "step": "CONDITIONS"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['repeat_watch.json', 'purity_check.json']",
+   "step": "REPEAT-WATCH"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['brackets.json', 'repeat_marks.json', 'unr_table.md']",
+   "step": "BRACKET"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['scorecard.json', 'scorecard.md', 'scorecard.html', 'scorecard_log.jsonl']",
+   "step": "SCORECARD"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['cards_text.json', 'cards_lines.json']",
+   "step": "WRITE"
+  },
+  {
+   "at": "2026-11-13T05:27:22Z",
+   "note": "declared produces absent: ['pma_levels.json']",
+   "step": "LEVELS"
+  },
+  {
+   "at": "2026-11-13T05:27:23Z",
+   "note": "declared produces absent: ['publish_receipt.json']",
+   "step": "PUBLISH"
+  }
+ ],
+ "flags": [],
+ "report": "B",
+ "rerun": {
+  "of": "pma-2026-11-13",
+  "publishes_live": false,
+  "run_dir": "aegis/output/pma/run/2026-11-13-B",
+  "suffix": "B"
+ },
+ "reuse_from_report_a": {
+  "does_not_rerun": [
+   "weather",
+   "macro",
+   "sector",
+   "held-book sections"
+  ],
+  "reuses": [
+   "data pull",
+   "packets base",
+   "market kill",
+   "macro context",
+   "held review"
+  ],
+  "run_dir": "aegis/output/pma/run/2026-11-13"
+ },
+ "run_id": "pma-2026-11-13-B",
+ "seats": {
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "b8644bf668025b239bf0600fbf1f9887e8b5b08acf0d24e226430012dbd62235",
+   "status": "committed"
+  },
+  "CROSS/elder-lens": {
+   "file": "forms/cross/elder-lens.json",
+   "flags": [],
+   "sha256": "cf0f0c6e46cab5d223a5ec12e0ebeb7982c8ab18fb20d722a31667f38c20b3a2",
+   "status": "committed"
+  },
+  "CROSS/livermore": {
+   "file": "forms/cross/livermore.json",
+   "flags": [],
+   "sha256": "dd35c7b73337261af012bb65b52c1f0f5279de09170c41dcb5539f5218d42057",
+   "status": "committed"
+  },
+  "CROSS/minervini": {
+   "file": "forms/cross/minervini.json",
+   "flags": [],
+   "sha256": "70c379751266d9e836b301322e72bcd79bbbddcdd0bd2f85d36e7c22dbe0bb3e",
+   "status": "committed"
+  },
+  "CROSS/oneil": {
+   "file": "forms/cross/oneil.json",
+   "flags": [],
+   "sha256": "45ae0c4512ed8a6535f0b8cef80e3b1500bf25bed8002e035d42d5d25c44e726",
+   "status": "committed"
+  },
+  "CROSS/raschke": {
+   "file": "forms/cross/raschke.json",
+   "flags": [],
+   "sha256": "06b4f3b4e43a0ebce00adc66495ceec77ac1a7775ec6bf83b248ae1a15e5245b",
+   "status": "committed"
+  },
+  "CROSS/seow": {
+   "file": "forms/cross/seow.json",
+   "flags": [],
+   "sha256": "5cc128ef3e17a0a641bdd417d51b3d8951639a7f9cecea9dd040f637bc04c7a8",
+   "status": "committed"
+  },
+  "CROSS/wyckoff": {
+   "file": "forms/cross/wyckoff.json",
+   "flags": [],
+   "sha256": "c628ae5ae0089538d0883c3ad70056e3b37b0e1402f9a88b172479c0dada74bf",
+   "status": "committed"
+  },
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "3410e0437e1c2f56fa0a7cee1535d51012e50d5d6b5e22545d741461397d627f",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "5e8a235a0f0ed33745875a2a461cb22248f6a3707ae8b908390adee6c4e4525d",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "4a6b0bca60614813e727272368b68f721ef65603ad832d476d4db2c45943f13b",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "a31cbdfde5f5bc5282fe568f7b079a5b62cdb2f2c7089384ee2c44e6cf0a3fb3",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "cdf91d1c79cfd955456cc50c9c881589c238bd0c57c3724c5ec727b91b1bb21a",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "20ff024b2cdfc6a4ff96acac707a623191208bef5dd4b1f04ec227b60fbaf73c",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "583ef0ced40bd916be803b50baa7bfbb104f4b25e23ba05cf493f0657f0c6e7f",
+   "status": "committed"
+  },
+  "RATIFY/elder-lens": {
+   "file": "forms/ratify/elder-lens.json",
+   "flags": [],
+   "sha256": "ff583e77afbd22deef888ec2121cd0758778a1d3bbcf978d4504f6fb0a2a122e",
+   "status": "committed"
+  },
+  "RATIFY/livermore": {
+   "file": "forms/ratify/livermore.json",
+   "flags": [],
+   "sha256": "a47665a5d7dcc0f6f4084ca7fa4a5ca6fd1b6fd94fe6014d9c495a7e2c719670",
+   "status": "committed"
+  },
+  "RATIFY/minervini": {
+   "file": "forms/ratify/minervini.json",
+   "flags": [],
+   "sha256": "1f379b48c866802f8e385a6962ee59ea9e57af76d3440b40deb66f2a821c6fc9",
+   "status": "committed"
+  },
+  "RATIFY/oneil": {
+   "file": "forms/ratify/oneil.json",
+   "flags": [],
+   "sha256": "7553c148b166eaf0f1227e38ff2f55628d0f687497f8a5a1a220f0f09cba2551",
+   "status": "committed"
+  },
+  "RATIFY/raschke": {
+   "file": "forms/ratify/raschke.json",
+   "flags": [],
+   "sha256": "65b46143b164a8914320616be77ae1cac911eaf3ca1653d1a48427f43fe5a938",
+   "status": "committed"
+  },
+  "RATIFY/seow": {
+   "file": "forms/ratify/seow.json",
+   "flags": [],
+   "sha256": "ae4b42816bf5cd3252f717bf4523d78e0d45b997c1b09026f3f1b84e0d38aa1f",
+   "status": "committed"
+  },
+  "RATIFY/wyckoff": {
+   "file": "forms/ratify/wyckoff.json",
+   "flags": [],
+   "sha256": "238e62ac705a1077bb4f7f0081836bc9fd30970ffd1888bd354470f77156377a",
+   "status": "committed"
+  },
+  "TIER2/elder-lens": {
+   "file": "forms/tier2/elder-lens.json",
+   "flags": [],
+   "sha256": "269246abaee0336ae784bfbb9ed825598cb38f107fc754ad616ee5857d6d2b58",
+   "status": "committed"
+  },
+  "TIER2/livermore": {
+   "file": "forms/tier2/livermore.json",
+   "flags": [],
+   "sha256": "02390d12d8f3526bb9f074b6db448771a33d58940bc3f00c8a598af517475e60",
+   "status": "committed"
+  },
+  "TIER2/minervini": {
+   "file": "forms/tier2/minervini.json",
+   "flags": [],
+   "sha256": "c5902afe87bcd92a3771c64de7f5321d4aa8bcb5052b43fa697d1128428fc9ab",
+   "status": "committed"
+  },
+  "TIER2/oneil": {
+   "file": "forms/tier2/oneil.json",
+   "flags": [],
+   "sha256": "eb7d949565e36efd309add43e97041afc817d40690c6e804c370fde411785048",
+   "status": "committed"
+  },
+  "TIER2/raschke": {
+   "file": "forms/tier2/raschke.json",
+   "flags": [],
+   "sha256": "30f803495e784dc413fdd179ee31cb8f5490f4bfd637dbab8bfbc11158a9be52",
+   "status": "committed"
+  },
+  "TIER2/seow": {
+   "file": "forms/tier2/seow.json",
+   "flags": [],
+   "sha256": "3974852c14677272d012974d10f4e6838c2c51e940daadf0de95e24c73c7cc26",
+   "status": "committed"
+  },
+  "TIER2/wyckoff": {
+   "file": "forms/tier2/wyckoff.json",
+   "flags": [],
+   "sha256": "7067a182417c08e4ce2cc54c3a465ba4d2455ae2b2a6732225402b5909cf5cce",
+   "status": "committed"
+  },
+  "VOTE/elder-lens": {
+   "file": "forms/r2/elder-lens.json",
+   "flags": [],
+   "sha256": "f8b7e1d7574b24fb21bb664ccbf98a2929348add719086a5f46d768e4e714b75",
+   "status": "committed"
+  },
+  "VOTE/livermore": {
+   "file": "forms/r2/livermore.json",
+   "flags": [],
+   "sha256": "792947559a408ef04b085db62f305b7a57bc4f351fe744c8ad778d5274641c15",
+   "status": "committed"
+  },
+  "VOTE/minervini": {
+   "file": "forms/r2/minervini.json",
+   "flags": [],
+   "sha256": "1d8f6bd58f6fe067a6f221d34e000c21e6758f28aefd6baa47fb625559fd967d",
+   "status": "committed"
+  },
+  "VOTE/oneil": {
+   "file": "forms/r2/oneil.json",
+   "flags": [],
+   "sha256": "89dcbae68f0898df62a7838903091e6f12a0b17b80b18d2c169fcaf956e24517",
+   "status": "committed"
+  },
+  "VOTE/raschke": {
+   "file": "forms/r2/raschke.json",
+   "flags": [],
+   "sha256": "1c8588e77d8a1a4110983d7c2adc88bc117b914a859081ab5740e00d1f1f733b",
+   "status": "committed"
+  },
+  "VOTE/seow": {
+   "file": "forms/r2/seow.json",
+   "flags": [],
+   "sha256": "a51e7feb316505961c17d850898b34bc888f6f32664368984951ab54242f6e4e",
+   "status": "committed"
+  },
+  "VOTE/wyckoff": {
+   "file": "forms/r2/wyckoff.json",
+   "flags": [],
+   "sha256": "580a6b4e97bc3bbcc0ea29ec9ad9efd0b964129b26414c98731eec5a84ba98bd",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "ADOPT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "BRACKET": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 8782,
+    "spawns": 0
+   },
+   "files": {
+    "forms/challenge/steenbarger.json": "b8644bf668025b239bf0600fbf1f9887e8b5b08acf0d24e226430012dbd62235"
+   },
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:20:27Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHECK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "CLAIMS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CONDITIONS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "CROSS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 43505,
+    "spawns": 0
+   },
+   "files": {
+    "forms/cross/elder-lens.json": "cf0f0c6e46cab5d223a5ec12e0ebeb7982c8ab18fb20d722a31667f38c20b3a2",
+    "forms/cross/livermore.json": "dd35c7b73337261af012bb65b52c1f0f5279de09170c41dcb5539f5218d42057",
+    "forms/cross/minervini.json": "70c379751266d9e836b301322e72bcd79bbbddcdd0bd2f85d36e7c22dbe0bb3e",
+    "forms/cross/oneil.json": "45ae0c4512ed8a6535f0b8cef80e3b1500bf25bed8002e035d42d5d25c44e726",
+    "forms/cross/raschke.json": "06b4f3b4e43a0ebce00adc66495ceec77ac1a7775ec6bf83b248ae1a15e5245b",
+    "forms/cross/seow.json": "5cc128ef3e17a0a641bdd417d51b3d8951639a7f9cecea9dd040f637bc04c7a8",
+    "forms/cross/wyckoff.json": "c628ae5ae0089538d0883c3ad70056e3b37b0e1402f9a88b172479c0dada74bf"
+   },
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:24:49Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "FUNNEL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "FORCED done with missing produces: ['data_health.json']",
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "LEVELS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 44893,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "3410e0437e1c2f56fa0a7cee1535d51012e50d5d6b5e22545d741461397d627f",
+    "forms/r1/livermore.json": "5e8a235a0f0ed33745875a2a461cb22248f6a3707ae8b908390adee6c4e4525d",
+    "forms/r1/minervini.json": "4a6b0bca60614813e727272368b68f721ef65603ad832d476d4db2c45943f13b",
+    "forms/r1/oneil.json": "a31cbdfde5f5bc5282fe568f7b079a5b62cdb2f2c7089384ee2c44e6cf0a3fb3",
+    "forms/r1/raschke.json": "cdf91d1c79cfd955456cc50c9c881589c238bd0c57c3724c5ec727b91b1bb21a",
+    "forms/r1/seow.json": "20ff024b2cdfc6a4ff96acac707a623191208bef5dd4b1f04ec227b60fbaf73c",
+    "forms/r1/wyckoff.json": "583ef0ced40bd916be803b50baa7bfbb104f4b25e23ba05cf493f0657f0c6e7f"
+   },
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:18:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PAIR": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "POSITION": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PUBLISH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:23Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:23Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "QA": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "FORCED done with missing produces: ['forms/qa/steenbarger.json']",
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIFY": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 3731,
+    "spawns": 0
+   },
+   "files": {
+    "forms/ratify/elder-lens.json": "ff583e77afbd22deef888ec2121cd0758778a1d3bbcf978d4504f6fb0a2a122e",
+    "forms/ratify/livermore.json": "a47665a5d7dcc0f6f4084ca7fa4a5ca6fd1b6fd94fe6014d9c495a7e2c719670",
+    "forms/ratify/minervini.json": "1f379b48c866802f8e385a6962ee59ea9e57af76d3440b40deb66f2a821c6fc9",
+    "forms/ratify/oneil.json": "7553c148b166eaf0f1227e38ff2f55628d0f687497f8a5a1a220f0f09cba2551",
+    "forms/ratify/raschke.json": "65b46143b164a8914320616be77ae1cac911eaf3ca1653d1a48427f43fe5a938",
+    "forms/ratify/seow.json": "ae4b42816bf5cd3252f717bf4523d78e0d45b997c1b09026f3f1b84e0d38aa1f",
+    "forms/ratify/wyckoff.json": "238e62ac705a1077bb4f7f0081836bc9fd30970ffd1888bd354470f77156377a"
+   },
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:02Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIONALE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "RATIONALE-FINAL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "REPEAT-WATCH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "REPORT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:23Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:23Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "SCORECARD": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "SLATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIER2": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 9987,
+    "spawns": 0
+   },
+   "files": {
+    "forms/tier2/elder-lens.json": "269246abaee0336ae784bfbb9ed825598cb38f107fc754ad616ee5857d6d2b58",
+    "forms/tier2/livermore.json": "02390d12d8f3526bb9f074b6db448771a33d58940bc3f00c8a598af517475e60",
+    "forms/tier2/minervini.json": "c5902afe87bcd92a3771c64de7f5321d4aa8bcb5052b43fa697d1128428fc9ab",
+    "forms/tier2/oneil.json": "eb7d949565e36efd309add43e97041afc817d40690c6e804c370fde411785048",
+    "forms/tier2/raschke.json": "30f803495e784dc413fdd179ee31cb8f5490f4bfd637dbab8bfbc11158a9be52",
+    "forms/tier2/seow.json": "3974852c14677272d012974d10f4e6838c2c51e940daadf0de95e24c73c7cc26",
+    "forms/tier2/wyckoff.json": "7067a182417c08e4ce2cc54c3a465ba4d2455ae2b2a6732225402b5909cf5cce"
+   },
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:26:01Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIMING": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "VOTE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 111035,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r2/elder-lens.json": "f8b7e1d7574b24fb21bb664ccbf98a2929348add719086a5f46d768e4e714b75",
+    "forms/r2/livermore.json": "792947559a408ef04b085db62f305b7a57bc4f351fe744c8ad778d5274641c15",
+    "forms/r2/minervini.json": "1d8f6bd58f6fe067a6f221d34e000c21e6758f28aefd6baa47fb625559fd967d",
+    "forms/r2/oneil.json": "89dcbae68f0898df62a7838903091e6f12a0b17b80b18d2c169fcaf956e24517",
+    "forms/r2/raschke.json": "1c8588e77d8a1a4110983d7c2adc88bc117b914a859081ab5740e00d1f1f733b",
+    "forms/r2/seow.json": "a51e7feb316505961c17d850898b34bc888f6f32664368984951ab54242f6e4e",
+    "forms/r2/wyckoff.json": "580a6b4e97bc3bbcc0ea29ec9ad9efd0b964129b26414c98731eec5a84ba98bd"
+   },
+   "finished": "2026-11-13T05:27:21Z",
+   "notes": [
+    "Report B (non-live): see run_notes; produces not all present as declared"
+   ],
+   "started": "2026-11-13T05:23:19Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "WRITE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-13T05:27:22Z",
+   "notes": [
+    "Report B is scored only and non-live: reuses A's weather, book, levels and brief; module built by code"
+   ],
+   "started": "2026-11-13T05:27:22Z",
+   "status": "degraded",
+   "tokens": 0
+  }
+ }
+}

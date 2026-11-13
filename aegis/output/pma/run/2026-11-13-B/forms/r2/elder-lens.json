@@ -1,0 +1,360 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-13",
+ "round": 2,
+ "declarations": [
+  "Steenbarger committee UNPROVEN: I lean on no structure_shift or div_state read; my basis is elder, elder_5d, elder_pattern, mp only.",
+  "Steenbarger committee PROCESS: my cases are valid only in a tape where the weekly screen reads up (C21); VALEN reads RISK OFF / CHOP, so every SUPPORT is a pullback-at-the-average entry, never a chase (C22).",
+  "R1: no bracket field is the basis of any vote here.",
+  "Impulse colour, force-index and weekly_trend_direction fields are not in the vote packet; colour is inferred from the elder score decode only (C2 limit).",
+  "No ledger memory block injected; no standing lesson applies. Censor duty: no packet row shows elder <= 1."
+ ],
+ "votes": [
+  {
+   "ticker": "DV",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Every field on my menu is None for DV: elder None, elder_5d None, mp None. Permission (C3) and the transition (C4) cannot be read; I do not proxy them. Standing aside is a decision (C22).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "Two seats nominated it; MTF shows weekly HH/HL and daily above EMA9 with 9>21, so the higher timeframe screen reads up (C21).",
+    "against": "No elder, elder_5d or mp served: I cannot say whether buying is forbidden (C1, C3).",
+    "entry_trigger": "A served elder_5d whose last bar is >= 7 after a bar <= 6 (permission event, C4).",
+    "wrong_if": "A served elder at or below 1 (red, buying forbidden).",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "The row re-served with elder, elder_5d, elder_pattern and mp populated.",
+    "cannot_see": [
+     "elder",
+     "elder_5d",
+     "elder_pattern",
+     "mp",
+     "mp_state",
+     "impulse_colour_last_bar"
+    ]
+   }
+  },
+  {
+   "ticker": "TEVA",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder 10.0 so not red, buying permitted (C3). elder_5d [10, 10, 7, 10, 10] is a high plateau, summer not spring (C20): no permission event today. elder_pattern CORRECTION_REENTRY but mp_state BUILDING, so R8 is not met. Idea is the seats' (C1); I support only a pullback entry into the rising average (C10).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder prints at or below 1, or price closes under the 50-day while elder fades.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Not red on any of five bars; dip-and-reclaim pattern CORRECTION_REENTRY; weekly HH/HL first screen up (C21).",
+    "against": "Plateau reading is summer (C20); the dip to 7 was not a transition (not <= 6); mp_state BUILDING, R8 unmet; colour and force fields not served.",
+    "entry_trigger": "Pullback into ma_20 with elder holding >= 7 (buy under the average, C10).",
+    "wrong_if": "elder at or below 1, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp_state STRONG with CORRECTION_REENTRY (R8), or elder dropping to <= 6.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "weekly_trend_direction",
+     "channel_upper"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BTSG",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder 7.0, not red, permitted (C3). elder_5d [7, 10, 10, 10, 7]: the last bar dropped, green going away during a powerful upswing (C4), which marks the swing tiring, not a buy now. mp 93.0 mp_state STRONG. I support only the pullback into the rising average, never the chase (C10).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder falls to 1 or below, or the daily close loses the 50-day.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Strong momentum mp 93.0 STRONG; not red on any bar; weekly above EMA9 with 9>21 (C21).",
+    "against": "Last-bar drop 10 to 7 is Elder's profit-taking signal (C4); elder_pattern None; weekly swing reads HH but LL, not clean.",
+    "entry_trigger": "Pullback into ma_20 with elder holding >= 7, or elder dips <= 6 then prints >= 7 (C4).",
+    "wrong_if": "elder at or below 1, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A dip to <= 6 then a >= 7 bar inside the rising trend: that would raise conviction.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "impulse_colour_prior_bar",
+     "force_index_ema_2",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "ELAN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "elder 7.0 not red, but elder_5d [10, 10, 10, 7, 7] shows green faded two bars ago with no fresh transition (C4), elder_pattern None. The first screen is not clean: weekly swing LH but HL (C21). Transitional ground: stand aside, not trade smaller (C22).",
+   "conviction_change": null,
+   "opposing_case": "mp 80.0 mp_state STRONG; not red on any bar; weekly above EMA9 with 9>21 and daily HH/HL, so the tide may still be rising and the 7s may be the pullback Elder buys.",
+   "self_counter": null,
+   "falsifier": "Weekly swing turns HH/HL and elder dips <= 6 then prints >= 7.",
+   "challenge_reply": null,
+   "case": {
+    "for": "mp 80.0 STRONG; never red in five bars; daily HH/HL.",
+    "against": "Green has gone away (C4) with no reclaim; weekly LH (C21 censor); no pattern; transitional tape (C22).",
+    "entry_trigger": "Weekly HH/HL restored plus a permission event: elder <= 6 then >= 7.",
+    "wrong_if": "elder returns to 10 and holds while the weekly prints a higher high.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "weekly_trend_direction UP served, or a <= 6 then >= 7 transition.",
+    "cannot_see": [
+     "weekly_trend_direction",
+     "impulse_colour_last_bar",
+     "force_index_ema_13",
+     "price_ema_slope"
+    ]
+   }
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder 7.0 not red, permitted (C3). elder_5d [7, 10, 10, 7, 7]: force has eased off the top while the weekly reads HH/HL, the pullback-in-uptrend shape Elder buys (C9, C10), but no <= 6 bar yet, so no permission event. mp 83.0; mp_state FADING is not decay (R13).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder at or below 1, or close below the 50-day.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Weekly HH/HL tide up (C21); never red in five bars; force easing into a pullback (C6 analogue).",
+    "against": "No transition bar; elder_pattern None; force and slope fields unserved so the C9 pair is unverified.",
+    "entry_trigger": "Pullback into ma_20 with elder holding >= 7.",
+    "wrong_if": "elder at or below 1, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "elder dipping <= 6 and reclaiming >= 7 (raise), or elder <= 1 (veto).",
+    "cannot_see": [
+     "force_index_ema_2",
+     "price_ema_slope",
+     "impulse_colour_last_bar",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BRZE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Every field on my menu is None for BRZE: elder None, elder_5d None, mp None. I cannot read permission (C3) or a transition (C4) and will not proxy them. Standing aside is a decision (C22).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "MTF daily HH/HL above EMA9 with 9>21; weekly above EMA9.",
+    "against": "No Elder read served; weekly swing HH but LL; cannot rule red in or out.",
+    "entry_trigger": "A served elder_5d with last >= 7 after a bar <= 6.",
+    "wrong_if": "A served elder at or below 1.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "The row re-served with elder, elder_5d, elder_pattern and mp.",
+    "cannot_see": [
+     "elder",
+     "elder_5d",
+     "elder_pattern",
+     "mp",
+     "mp_state",
+     "impulse_colour_last_bar"
+    ]
+   }
+  },
+  {
+   "ticker": "TECH",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "elder_5d [6, 8, 8, 5, 8]: last bar elder 8.0 after a 5, the permission event (C3, C4), my primary trigger. mp 80.0 mp_state STRONG; weekly HH/HL first screen up (C21). elder_pattern INTERRUPTED fails my trend leg, a weight on a MOMENTUM-lane name (R27), so conviction 3, not higher.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder drops back to 6 or below next bar (whipsaw, C1), or 1 or below.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Fresh <= 6 to >= 7 transition on the last bar; mp STRONG; price on its average, the value-zone buy (C10).",
+    "against": "INTERRUPTED pattern and a 6/8/8/5/8 flip-flop risk a whipsaw (C1); colour fields unserved so the decode is inferred.",
+    "entry_trigger": "in_zone ma_20 with elder holding >= 7.",
+    "wrong_if": "elder at or below 6 on the next bar, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A second bar >= 7 (confirm) or a reversion to <= 6 (withdraw).",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "impulse_colour_prior_bar",
+     "force_index_ema_2",
+     "channel_upper"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:6",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "HTFL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "elder_5d [0, 5, 5, 8, 10]: red-certain first bar, then red gave way (5 to 8) and force built to elder 10.0, Elder's best long signal (C4), completed a bar ago. Weekly HH/HL (C21). mp 67.0 BUILDING. elder_pattern INTERRUPTED fails my trend leg (step 3), so 3 and an entry at the average, not here.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder falls back to 1 or below (red again).",
+   "challenge_reply": null,
+   "case": {
+    "for": "Red giving way is the textbook buy-permission event (C3, C4); weekly tide up.",
+    "against": "Transition was the prior bar, now at 10 = summer (C20); INTERRUPTED; mp_state BUILDING not STRONG.",
+    "entry_trigger": "Pullback into ma_20 with elder holding >= 7 (C10).",
+    "wrong_if": "elder at or below 1, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "mp_state STRONG (raise) or elder <= 1 (veto).",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:ma_50",
+     "elder_le:1"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PAYO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d [5, 5, 8, 5, 8]: last bar elder 8.0 after a 5 is a permission event (C4), but the 5/8/5/8 alternation is the whipsaw Elder warns of (C1). elder_pattern INTERRUPTED fails my trend leg; mp 55.0 BUILDING. Weekly HH/HL (C21). Price sits on its average, the value zone (C10).",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "elder reverts to 6 or below on the next bar.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Permission event on the last bar; weekly HH/HL; price at the average where Elder buys.",
+    "against": "Third flip in five bars (C1 whipsaw); INTERRUPTED; mp only BUILDING; colour fields unserved.",
+    "entry_trigger": "in_zone ma_20 with elder holding >= 7 for a second bar.",
+    "wrong_if": "elder at or below 6 next bar, or daily close below ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Two consecutive bars >= 7 (raise) or a reversion to 5 (withdraw).",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "impulse_colour_prior_bar",
+     "force_index_ema_2",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:6",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:ma_20+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of1.json",
+   "bytes": 11659,
+   "votes": 9,
+   "sha256": "5f0e3c18116a"
+  }
+ ]
+}

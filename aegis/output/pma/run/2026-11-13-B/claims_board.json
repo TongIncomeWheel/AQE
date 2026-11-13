@@ -1,0 +1,2202 @@
+{
+ "_schema": {
+  "shape": "claims_board",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-13T05:23:20Z"
+ },
+ "schema": "claims_board.v1",
+ "date": "2026-11-13",
+ "deliberation_set": [
+  "DV",
+  "TEVA",
+  "BTSG",
+  "ELAN",
+  "HNGE",
+  "BRZE",
+  "TECH",
+  "HTFL",
+  "PAYO"
+ ],
+ "deciders_present": [
+  "oneil",
+  "minervini",
+  "livermore",
+  "elder-lens",
+  "seow",
+  "raschke",
+  "wyckoff"
+ ],
+ "deciders_absent": [],
+ "ignored_ballots": [],
+ "ballots_off_room": [],
+ "params": {
+  "claims_per_camp": 2,
+  "claim_reviewers": 2,
+  "method_family": {
+   "oneil": "breakout",
+   "minervini": "breakout",
+   "livermore": "pivotal",
+   "elder-lens": "impulse",
+   "seow": "position",
+   "raschke": "swing",
+   "wyckoff": "structure",
+   "aqe-quant": "quant"
+  }
+ },
+ "out": [],
+ "names": {
+  "DV": {
+   "support": [
+    "oneil"
+   ],
+   "oppose": [],
+   "abstain": [
+    "minervini",
+    "livermore",
+    "elder-lens",
+    "seow",
+    "raschke",
+    "wyckoff"
+   ],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 2,
+    "minervini": null,
+    "livermore": null,
+    "elder-lens": null,
+    "seow": null,
+    "raschke": null,
+    "wyckoff": null
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "DV-oneil-for",
+     "author": "oneil",
+     "kind": "for",
+     "text": "Leader at its pivot, pct_from_pivot -0.07, with day_vol 1.47 clearing the C16 line; not extended, so a buy at the pivot is inside the 5% window (C17).",
+     "conviction": 2,
+     "reviewers": [
+      "livermore",
+      "elder-lens"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "The room's convergence pick carries a volatility unit that looks implausibly small for its price level; if atr_14d is wrong, every ATR-based read of this name is wrong. Two seats agreeing is not conve"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 13.57,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.07,
+     "ema21": 13.54,
+     "ema9": 13.5603,
+     "ema_order": "9>21",
+     "export_close": 13.57,
+     "high_20bar": 13.58,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "flat",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing LH but HL, 0.1% above the last swing high, 0.1% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 0.07,
+      "cls": "LH but HL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-10-13",
+       "price": 13.56
+      },
+      "last_swing_low": {
+       "date": "2026-10-05",
+       "price": 13.44
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-09-14",
+       "price": 13.65
+      },
+      "prev_swing_low": {
+       "date": "2026-09-09",
+       "price": 13.32
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH but HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 13.57,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.07,
+     "ema21": 13.5662,
+     "ema9": 13.5664,
+     "ema_order": "9>21",
+     "high_20bar": 13.58,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "flat",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 100.0,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing LH/LL, at the last swing high, 0.1% under 20-hr high, 100% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": 0.0,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-10",
+       "price": 13.57
+      },
+      "last_swing_low": {
+       "date": "2026-11-09",
+       "price": 13.54
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-02",
+       "price": 13.58
+      },
+      "prev_swing_low": {
+       "date": "2026-11-06",
+       "price": 13.55
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 13.57,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.59,
+     "ema21": 12.8121,
+     "ema9": 13.4233,
+     "ema_order": "9>21",
+     "high_20bar": 13.65,
+     "high_20bar_date": "2026-09-18",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.6% under the last swing high, 0.6% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": -0.59,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-18",
+       "price": 13.65
+      },
+      "last_swing_low": {
+       "date": "2026-07-24",
+       "price": 10.35
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-08-07",
+       "price": 13.36
+      },
+      "prev_swing_low": {
+       "date": "2026-06-26",
+       "price": 9.9
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "beecdad8c759685b8d7716fbf6d20f13a9f41163f18460bfaa2ded93ed792b45",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "daily swing is LH but HL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 0.6% under the last swing high, 0.6% under 20-wk high, this week still open | D: above EMA9, 9>21, swing LH but HL, 0.1% above the last swing high, 0.1% under 20-day high | H1: above EMA9, 9>21, swing LH/LL, at the last swing high, 0.1% under 20-hr high, 100% of the day's range"
+   }
+  },
+  "TEVA": {
+   "support": [
+    "minervini",
+    "livermore",
+    "elder-lens",
+    "seow",
+    "wyckoff"
+   ],
+   "oppose": [
+    "oneil",
+    "raschke"
+   ],
+   "abstain": [],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 3,
+    "minervini": 4,
+    "livermore": 3,
+    "elder-lens": 2,
+    "seow": 3,
+    "raschke": 2,
+    "wyckoff": 2
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "TEVA-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "text": "Full MA stack, LEADER RS, BULLISH_BOS on day_vol 1.32 expansion, entry within 1% of structure_shift_ref 43.34: a textbook breakout close to the pivot (C3, C5, C6).",
+     "conviction": 4,
+     "reviewers": [
+      "raschke",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "TEVA-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "text": "New high after a normal pullback: BULLISH_BOS, from_52w_hi 0.0%, W and D swing HH/HL, day_vol 1.32 above normal; second Healthcare name breaking with BTSG (C14).",
+     "conviction": 3,
+     "reviewers": [
+      "oneil",
+      "raschke"
+     ]
+    },
+    {
+     "claim_id": "TEVA-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "day_vol 1.32 fails the C16 volume test; div BEARISH/4 on a new high reads as distribution (C25); sector state Momentum Fading.",
+     "conviction": 3,
+     "reviewers": [
+      "seow",
+      "livermore"
+     ]
+    },
+    {
+     "claim_id": "TEVA-raschke-against",
+     "author": "raschke",
+     "kind": "against",
+     "text": "A breakout without prior range contraction is outside C12/C13. H1 HH but LL: the hourly is already slipping. div BEARISH/4 is a caution flag.",
+     "conviction": 2,
+     "reviewers": [
+      "minervini",
+      "elder-lens"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Breakout read and a broad bearish oscillator divergence point opposite ways; four of five oscillators disagree with the price break. Nominated in the PULLBACK lane while the shift reads a fresh break "
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 43.65,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.49,
+     "ema21": 41.6187,
+     "ema9": 42.5009,
+     "ema_order": "9>21",
+     "export_close": 43.65,
+     "high_20bar": 44.31,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.7% above the last swing high, 1.5% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 0.72,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-03",
+       "price": 43.34
+      },
+      "last_swing_low": {
+       "date": "2026-10-23",
+       "price": 39.1
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-19",
+       "price": 41.88
+      },
+      "prev_swing_low": {
+       "date": "2026-10-08",
+       "price": 38.25
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 43.64,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.51,
+     "ema21": 43.1989,
+     "ema9": 43.5843,
+     "ema_order": "9>21",
+     "high_20bar": 44.31,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 40.7,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing HH but LL, 1.5% under the last swing high, 1.5% under 20-hr high, 41% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -1.51,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-12",
+       "price": 44.31
+      },
+      "last_swing_low": {
+       "date": "2026-11-10",
+       "price": 41.64
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 43.11
+      },
+      "prev_swing_low": {
+       "date": "2026-11-06",
+       "price": 42.21
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 43.65,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.49,
+     "ema21": 38.2771,
+     "ema9": 40.8863,
+     "ema_order": "9>21",
+     "high_20bar": 44.31,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 3.9% above the last swing high, 1.5% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 3.88,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-09",
+       "price": 42.02
+      },
+      "last_swing_low": {
+       "date": "2026-10-09",
+       "price": 38.25
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-08-28",
+       "price": 38.37
+      },
+      "prev_swing_low": {
+       "date": "2026-09-11",
+       "price": 35.42
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "ca8932d1944be11f50a81bb5d97494d1145c42720223c92ba844500da544f324",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": true,
+     "reasons": [
+      "weekly and daily HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 3.9% above the last swing high, 1.5% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 0.7% above the last swing high, 1.5% under 20-day high | H1: above EMA9, 9>21, swing HH but LL, 1.5% under the last swing high, 1.5% under 20-hr high, 41% of the day's range"
+   }
+  },
+  "BTSG": {
+   "support": [
+    "livermore",
+    "elder-lens",
+    "seow",
+    "raschke",
+    "wyckoff"
+   ],
+   "oppose": [
+    "oneil",
+    "minervini"
+   ],
+   "abstain": [],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 3,
+    "minervini": 3,
+    "livermore": 4,
+    "elder-lens": 2,
+    "seow": 3,
+    "raschke": 2,
+    "wyckoff": 2
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "BTSG-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "text": "Strongest trend state in the room on my reading: mp STRONG/ACCELERATING, structure 82.1 BULLISH_BOS, daily swing HH/HL 0.5% above the last swing high, group confirmed by TEVA.",
+     "conviction": 4,
+     "reviewers": [
+      "oneil",
+      "minervini"
+     ]
+    },
+    {
+     "claim_id": "BTSG-seow-for",
+     "author": "seow",
+     "kind": "for",
+     "text": "Fresh BOS on a STRONG/ACCELERATING name with rs_spy_20d 16.48: buy strength, pyramid if it proves right (C30).",
+     "conviction": 3,
+     "reviewers": [
+      "oneil",
+      "minervini"
+     ]
+    },
+    {
+     "claim_id": "BTSG-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "day_vol 0.6 fails C16; lens coil warn so no tight base to buy from; sma_dist 15.74% stretched from the pivot (C17 weight).",
+     "conviction": 3,
+     "reviewers": [
+      "seow",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "BTSG-minervini-against",
+     "author": "minervini",
+     "kind": "against",
+     "text": "ma_50 61.73 below ma_100 63.57 fails criterion 4 (C3); breakout on day_vol 0.6 fails C6 expansion; sma_distance_pct 15.74 is a stretch from the 20-day.",
+     "conviction": 3,
+     "reviewers": [
+      "livermore",
+      "elder-lens"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Highest conviction in the room (solo, 4) rests on a break of structure on low participation with a bearish divergence present, and a short-term MA below the 100-day. Conviction 4 should be traced to t"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 71.45,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 2.83,
+     "ema21": 66.1152,
+     "ema9": 69.1615,
+     "ema_order": "9>21",
+     "export_close": 71.45,
+     "high_20bar": 73.53,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.5% above the last swing high, 2.8% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 0.46,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-30",
+       "price": 71.12
+      },
+      "last_swing_low": {
+       "date": "2026-11-06",
+       "price": 64.52
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-21",
+       "price": 63.44
+      },
+      "prev_swing_low": {
+       "date": "2026-10-26",
+       "price": 58.03
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 71.47,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 2.79,
+     "ema21": 71.6107,
+     "ema9": 72.1991,
+     "ema_order": "9>21",
+     "high_20bar": 73.52,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 2.2,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "below EMA9, 9>21, swing HH/HL, 2.8% under the last swing high, 2.8% under 20-hr high, 2% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -2.79,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-11",
+       "price": 73.52
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 72.15
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 68.93
+      },
+      "prev_swing_low": {
+       "date": "2026-11-10",
+       "price": 68.31
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 71.45,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 3.12,
+     "ema21": 61.7852,
+     "ema9": 64.5857,
+     "ema_order": "9>21",
+     "high_20bar": 73.75,
+     "high_20bar_date": "2026-07-31",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 8.8% above the last swing high, 3.1% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 8.85,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-09",
+       "price": 65.64
+      },
+      "last_swing_low": {
+       "date": "2026-09-25",
+       "price": 54.87
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-08-28",
+       "price": 63.14
+      },
+      "prev_swing_low": {
+       "date": "2026-08-28",
+       "price": 56.43
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH but LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "6ab385e83c8c55b2c7e0ea0c01fe9afaef86a3c50e74a1d6f11f3968716d7505",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH but LL, 8.8% above the last swing high, 3.1% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 0.5% above the last swing high, 2.8% under 20-day high | H1: below EMA9, 9>21, swing HH/HL, 2.8% under the last swing high, 2.8% under 20-hr high, 2% of the day's range"
+   }
+  },
+  "ELAN": {
+   "support": [
+    "livermore",
+    "seow",
+    "wyckoff"
+   ],
+   "oppose": [
+    "oneil",
+    "minervini",
+    "elder-lens",
+    "raschke"
+   ],
+   "abstain": [],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 3,
+    "minervini": 3,
+    "livermore": 2,
+    "elder-lens": 2,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": 2
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "ELAN-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "text": "mp STRONG/ACCELERATING, structure 81.1, rs LEADER spy20 14.48, run_10d 14.03%: a strong state analogue in the leading group.",
+     "conviction": 2,
+     "reviewers": [
+      "raschke",
+      "oneil"
+     ]
+    },
+    {
+     "claim_id": "ELAN-seow-for",
+     "author": "seow",
+     "kind": "for",
+     "text": "Above structure with rs_spy_20d 14.48 and STRONG/ACCELERATING mp: a position-system name on strength.",
+     "conviction": 2,
+     "reviewers": [
+      "minervini",
+      "elder-lens"
+     ]
+    },
+    {
+     "claim_id": "ELAN-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "No base or pivot (R3), MAs flat to inverted, day_vol 0.76 under 1.40 (C16), lens leadership warn; house episodic-pivot setup FAILED.",
+     "conviction": 3,
+     "reviewers": [
+      "seow",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "ELAN-minervini-against",
+     "author": "minervini",
+     "kind": "against",
+     "text": "ma_50 23.33 under ma_100 23.98 and ma_200 23.84 fails criteria 4 and the stage 2 confirmation (C2, C3); day_vol 0.76 shows no accumulation push; the episodic pivot FAILED.",
+     "conviction": 3,
+     "reviewers": [
+      "livermore",
+      "seow"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "MOMENTUM-lane nomination whose moving-average stack is flat to inverted; the higher-timeframe trend the momentum case is meant to ride is not visible in the MAs (R4). Seat should name the higher-timef"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 26.5,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 2.89,
+     "ema21": 24.5317,
+     "ema9": 25.6095,
+     "ema_order": "9>21",
+     "export_close": 26.5,
+     "high_20bar": 27.29,
+     "high_20bar_date": "2026-11-09",
+     "last_bar": "flat",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 2.9% under the last swing high, 2.9% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -2.89,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-09",
+       "price": 27.29
+      },
+      "last_swing_low": {
+       "date": "2026-10-26",
+       "price": 22.18
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-16",
+       "price": 24.11
+      },
+      "prev_swing_low": {
+       "date": "2026-10-20",
+       "price": 22.03
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 26.505,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 2.45,
+     "ema21": 26.5544,
+     "ema9": 26.6405,
+     "ema_order": "9>21",
+     "high_20bar": 27.17,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 27.7,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "below EMA9, 9>21, swing HH/HL, 2.5% under the last swing high, 2.5% under 20-hr high, 28% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -2.45,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-12",
+       "price": 27.17
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 26.25
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-10",
+       "price": 27.15
+      },
+      "prev_swing_low": {
+       "date": "2026-11-11",
+       "price": 26.14
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 26.5,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 5.29,
+     "ema21": 23.8228,
+     "ema9": 24.1787,
+     "ema_order": "9>21",
+     "high_20bar": 27.98,
+     "high_20bar_date": "2026-08-07",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing LH but HL, 9.9% above the last swing high, 5.3% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 9.91,
+      "cls": "LH but HL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-10-16",
+       "price": 24.11
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 21.62
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-08-28",
+       "price": 25.41
+      },
+      "prev_swing_low": {
+       "date": "2026-08-14",
+       "price": 21.32
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "LH but HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "2db25951616fe93378693c67980e549f0e26b7d5746e5aa9756abab6172c4969",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is LH but HL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing LH but HL, 9.9% above the last swing high, 5.3% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 2.9% under the last swing high, 2.9% under 20-day high | H1: below EMA9, 9>21, swing HH/HL, 2.5% under the last swing high, 2.5% under 20-hr high, 28% of the day's range"
+   }
+  },
+  "HNGE": {
+   "support": [
+    "minervini",
+    "livermore",
+    "elder-lens",
+    "seow",
+    "raschke",
+    "wyckoff"
+   ],
+   "oppose": [
+    "oneil"
+   ],
+   "abstain": [],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 4,
+    "minervini": 3,
+    "livermore": 3,
+    "elder-lens": 2,
+    "seow": 3,
+    "raschke": 3,
+    "wyckoff": 2
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 25
+   },
+   "claims": [
+    {
+     "claim_id": "HNGE-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "text": "Cleanest stack in the set, structure 76.8 ABOVE_STRUCTURE, dry-up on day_vol 0.34 just under the swing high: a tightening base inside stage 2 (C3, C4, C6).",
+     "conviction": 3,
+     "reviewers": [
+      "wyckoff",
+      "raschke"
+     ]
+    },
+    {
+     "claim_id": "HNGE-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "text": "Textbook C5 sequence half done: an established trend, a lower-volume normal reaction (day_vol 0.34), weekly 26.6% above its swing high, rs_rank_pct 98.63.",
+     "conviction": 3,
+     "reviewers": [
+      "oneil",
+      "elder-lens"
+     ]
+    },
+    {
+     "claim_id": "HNGE-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "More than 70% above ma200 70.55 is a C24 climax; rs IN-LINE fails R2; day_vol 0.34 is no breakout; lens coil warn.",
+     "conviction": 4,
+     "reviewers": [
+      "livermore",
+      "seow"
+     ]
+    }
+   ],
+   "challenge_claims": [],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 120.99,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.28,
+     "ema21": 114.4235,
+     "ema9": 119.2168,
+     "ema_order": "9>21",
+     "export_close": 120.99,
+     "high_20bar": 126.4,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 3.2% under the last swing high, 4.3% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -3.16,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-04",
+       "price": 124.94
+      },
+      "last_swing_low": {
+       "date": "2026-11-06",
+       "price": 111.0
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-13",
+       "price": 107.0
+      },
+      "prev_swing_low": {
+       "date": "2026-10-16",
+       "price": 97.44
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 121.04,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 4.24,
+     "ema21": 121.0849,
+     "ema9": 121.2737,
+     "ema_order": "9>21",
+     "high_20bar": 126.4,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 63.5,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "below EMA9, 9>21, swing HH but LL, 4.2% under the last swing high, 4.2% under 20-hr high, 64% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -4.24,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-11",
+       "price": 126.4
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 119.18
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 122.18
+      },
+      "prev_swing_low": {
+       "date": "2026-11-11",
+       "price": 121.65
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 120.99,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.28,
+     "ema21": 94.1363,
+     "ema9": 107.4054,
+     "ema_order": "9>21",
+     "high_20bar": 126.4,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 26.6% above the last swing high, 4.3% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 26.6,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-08-28",
+       "price": 95.57
+      },
+      "last_swing_low": {
+       "date": "2026-07-31",
+       "price": 71.4
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-07-17",
+       "price": 91.5
+      },
+      "prev_swing_low": {
+       "date": "2026-04-10",
+       "price": 34.64
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "8a6b56da8553d8e076bca1fd5d8ff152fc5749200916dcdb41be31c86ff10906",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": true,
+     "reasons": [
+      "weekly and daily HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 26.6% above the last swing high, 4.3% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 3.2% under the last swing high, 4.3% under 20-day high | H1: below EMA9, 9>21, swing HH but LL, 4.2% under the last swing high, 4.2% under 20-hr high, 64% of the day's range"
+   }
+  },
+  "BRZE": {
+   "support": [
+    "minervini",
+    "livermore"
+   ],
+   "oppose": [
+    "oneil"
+   ],
+   "abstain": [
+    "elder-lens",
+    "seow",
+    "raschke",
+    "wyckoff"
+   ],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 3,
+    "minervini": 2,
+    "livermore": 2,
+    "elder-lens": null,
+    "seow": null,
+    "raschke": null,
+    "wyckoff": null
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "BRZE-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "text": "Highest structure in R1 (structure 88.4), BULLISH_BOS, LEADER RS with rs_spy_20d 55.32; MTF weekly and daily above EMA9, 0.4% under the 20-day high.",
+     "conviction": 2,
+     "reviewers": [
+      "raschke",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "BRZE-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "text": "W, D and H1 all above EMA9 with 9>21; daily HH/HL just through its swing high; hourly at 60% of the day's range: a new high in an established trend (C5).",
+     "conviction": 2,
+     "reviewers": [
+      "oneil",
+      "elder-lens"
+     ]
+    },
+    {
+     "claim_id": "BRZE-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "day_vol 0.4 fails C16; sma_distance_pct 38.52 extended; packet row null, so no base or group read.",
+     "conviction": 3,
+     "reviewers": [
+      "livermore",
+      "seow"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Break of structure printed on well under half normal volume; participation does not confirm the break. Ask the seat what participation it needs to see for the break to count."
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 46.61,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.43,
+     "ema21": 42.7565,
+     "ema9": 45.8592,
+     "ema_order": "9>21",
+     "export_close": 46.61,
+     "high_20bar": 46.81,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 1.4% above the last swing high, 0.4% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 1.44,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-22",
+       "price": 45.95
+      },
+      "last_swing_low": {
+       "date": "2026-11-02",
+       "price": 45.61
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-09-24",
+       "price": 26.3
+      },
+      "prev_swing_low": {
+       "date": "2026-10-15",
+       "price": 27.87
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 46.64,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.37,
+     "ema21": 46.4374,
+     "ema9": 46.5913,
+     "ema_order": "9>21",
+     "high_20bar": 46.815,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 59.8,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.4% under the last swing high, 0.4% under 20-hr high, 60% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -0.37,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-12",
+       "price": 46.815
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 46.38
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 46.32
+      },
+      "prev_swing_low": {
+       "date": "2026-11-10",
+       "price": 45.98
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 46.61,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.43,
+     "ema21": 32.5539,
+     "ema9": 38.415,
+     "ema_order": "9>21",
+     "high_20bar": 46.81,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 33.1% above the last swing high, 0.4% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 33.1,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-08-28",
+       "price": 35.02
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 22.27
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-07-17",
+       "price": 27.04
+      },
+      "prev_swing_low": {
+       "date": "2026-09-11",
+       "price": 23.38
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH but LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "ea9ba112d23575413ffbebb5c074bbae0db022e45e71e4403c1c9a124556941c",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH but LL, 33.1% above the last swing high, 0.4% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 1.4% above the last swing high, 0.4% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 0.4% under the last swing high, 0.4% under 20-hr high, 60% of the day's range"
+   }
+  },
+  "TECH": {
+   "support": [
+    "elder-lens"
+   ],
+   "oppose": [
+    "oneil",
+    "minervini",
+    "livermore",
+    "seow",
+    "raschke"
+   ],
+   "abstain": [
+    "wyckoff"
+   ],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 3,
+    "minervini": 2,
+    "livermore": 3,
+    "elder-lens": 3,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": null
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 3,
+    "wyckoff": 20
+   },
+   "claims": [
+    {
+     "claim_id": "TECH-elder-lens-for",
+     "author": "elder-lens",
+     "kind": "for",
+     "text": "Fresh <= 6 to >= 7 transition on the last bar; mp STRONG; price on its average, the value-zone buy (C10).",
+     "conviction": 3,
+     "reviewers": [
+      "minervini",
+      "raschke"
+     ]
+    },
+    {
+     "claim_id": "TECH-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "day_vol 0.74 fails C16; div BEARISH/4 and flow 26.3 point at distribution (C25); lens leadership only ok.",
+     "conviction": 3,
+     "reviewers": [
+      "elder-lens",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "TECH-livermore-against",
+     "author": "livermore",
+     "kind": "against",
+     "text": "Price is static: ret_63d 0.61, atr 0.12, sma_dist 0.43%, flat averages; flow 26.3. No activity, no leadership by my definition (C12).",
+     "conviction": 3,
+     "reviewers": [
+      "elder-lens",
+      "wyckoff"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Break of structure on below-average participation with four of five oscillators diverging bearish: an exhaustion-risk shape, not a confirmed thrust. Seat owes the disconfirming observable for the mome"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 72.84,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.05,
+     "ema21": 72.6839,
+     "ema9": 72.7667,
+     "ema_order": "9>21",
+     "export_close": 72.84,
+     "high_20bar": 72.88,
+     "high_20bar_date": "2026-11-09",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.1% under the last swing high, 0.1% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -0.05,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-09",
+       "price": 72.88
+      },
+      "last_swing_low": {
+       "date": "2026-10-16",
+       "price": 72.45
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-27",
+       "price": 72.75
+      },
+      "prev_swing_low": {
+       "date": "2026-09-30",
+       "price": 72.33
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 72.84,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.03,
+     "ema21": 72.8127,
+     "ema9": 72.8281,
+     "ema_order": "9>21",
+     "high_20bar": 72.86,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 66.7,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing LH/LL, 0.0% under the last swing high, 0.0% under 20-hr high, 67% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -0.03,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-11",
+       "price": 72.86
+      },
+      "last_swing_low": {
+       "date": "2026-11-11",
+       "price": 72.77
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 72.88
+      },
+      "prev_swing_low": {
+       "date": "2026-11-10",
+       "price": 72.78
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 72.84,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.05,
+     "ema21": 69.9706,
+     "ema9": 72.416,
+     "ema_order": "9>21",
+     "high_20bar": 72.88,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.2% above the last swing high, 0.1% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 0.21,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-25",
+       "price": 72.69
+      },
+      "last_swing_low": {
+       "date": "2026-09-11",
+       "price": 72.08
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-08-21",
+       "price": 72.62
+      },
+      "prev_swing_low": {
+       "date": "2026-03-20",
+       "price": 48.25
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "2f425265ede9843dfb6e561ced50bfc92511ff8dab5a17da1e6edbe0425354ca",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": true,
+     "reasons": [
+      "weekly and daily HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 0.2% above the last swing high, 0.1% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 0.1% under the last swing high, 0.1% under 20-day high | H1: above EMA9, 9>21, swing LH/LL, 0.0% under the last swing high, 0.0% under 20-hr high, 67% of the day's range"
+   }
+  },
+  "HTFL": {
+   "support": [
+    "minervini",
+    "livermore",
+    "elder-lens",
+    "wyckoff"
+   ],
+   "oppose": [
+    "oneil",
+    "seow",
+    "raschke"
+   ],
+   "abstain": [],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 4,
+    "minervini": 2,
+    "livermore": 2,
+    "elder-lens": 3,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": 2
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 5,
+    "wyckoff": 15
+   },
+   "claims": [
+    {
+     "claim_id": "HTFL-elder-lens-for",
+     "author": "elder-lens",
+     "kind": "for",
+     "text": "Red giving way is the textbook buy-permission event (C3, C4); weekly tide up.",
+     "conviction": 3,
+     "reviewers": [
+      "oneil",
+      "seow"
+     ]
+    },
+    {
+     "claim_id": "HTFL-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "text": "Clean ascending stack, rs_spy_20d 19.6, range top with day_vol 2.61 and flow 72.4: buyers pressing the pivot (C3, C6).",
+     "conviction": 2,
+     "reviewers": [
+      "raschke",
+      "seow"
+     ]
+    },
+    {
+     "claim_id": "HTFL-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "text": "rs LAGGARD fails R2; more than 70% above ma200 35.12 is a C24 climax; structure 57.9 RANGE weakest base in the room.",
+     "conviction": 4,
+     "reviewers": [
+      "livermore",
+      "wyckoff"
+     ]
+    },
+    {
+     "claim_id": "HTFL-seow-against",
+     "author": "seow",
+     "kind": "against",
+     "text": "structure_shift RANGE: no resistance break; elder pattern INTERRUPTED; weakest structure 57.9 in the room.",
+     "conviction": 2,
+     "reviewers": [
+      "minervini",
+      "livermore"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Short-term average far above the long-term average with the weakest structure score in the room, a range read and a heavy-volume day: the trend is extended, and a heavy day inside a range in a stretch"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 59.92,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.22,
+     "ema21": 55.3438,
+     "ema9": 56.8323,
+     "ema_order": "9>21",
+     "export_close": 59.92,
+     "high_20bar": 60.66,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 1.1% under the last swing high, 1.2% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -1.06,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-29",
+       "price": 60.56
+      },
+      "last_swing_low": {
+       "date": "2026-11-06",
+       "price": 51.06
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-06",
+       "price": 54.32
+      },
+      "prev_swing_low": {
+       "date": "2026-10-15",
+       "price": 47.39
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 59.88,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.19,
+     "ema21": 58.1695,
+     "ema9": 59.1478,
+     "ema_order": "9>21",
+     "high_20bar": 60.6,
+     "high_20bar_date": "2026-11-11",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 86.7,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing HH/HL, 1.2% under the last swing high, 1.2% under 20-hr high, 87% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -1.19,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-11",
+       "price": 60.6
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 57.51
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-10",
+       "price": 57.16
+      },
+      "prev_swing_low": {
+       "date": "2026-11-10",
+       "price": 54.5
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 59.92,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.22,
+     "ema21": 46.0477,
+     "ema9": 52.8754,
+     "ema_order": "9>21",
+     "high_20bar": 60.66,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 14.8% above the last swing high, 1.2% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 14.75,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-18",
+       "price": 52.22
+      },
+      "last_swing_low": {
+       "date": "2026-10-09",
+       "price": 46.5
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-06-26",
+       "price": 36.46
+      },
+      "prev_swing_low": {
+       "date": "2026-09-11",
+       "price": 45.41
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "88a5f4848168b711569c9a26019466715db14317cc6bfc898fe959ccc2cd1e0f",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": true,
+     "reasons": [
+      "weekly and daily HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 14.8% above the last swing high, 1.2% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 1.1% under the last swing high, 1.2% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 1.2% under the last swing high, 1.2% under 20-hr high, 87% of the day's range"
+   }
+  },
+  "PAYO": {
+   "support": [
+    "oneil",
+    "minervini",
+    "elder-lens"
+   ],
+   "oppose": [
+    "livermore",
+    "seow",
+    "raschke"
+   ],
+   "abstain": [
+    "wyckoff"
+   ],
+   "no_vote": [],
+   "convictions": {
+    "oneil": 2,
+    "minervini": 2,
+    "livermore": 2,
+    "elder-lens": 2,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": null
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 25,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 20,
+    "raschke": 3,
+    "wyckoff": 15
+   },
+   "claims": [
+    {
+     "claim_id": "PAYO-oneil-for",
+     "author": "oneil",
+     "kind": "for",
+     "text": "LEADER, day_vol 2.91 well over 1.40, coil strong, at its pivot and its averages, not extended (C17).",
+     "conviction": 2,
+     "reviewers": [
+      "raschke",
+      "livermore"
+     ]
+    },
+    {
+     "claim_id": "PAYO-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "text": "Full stack in order, LEADER RS, flat base above ma_200 6.19, heavy day_vol 2.91 right under the pivot (C3, C4, C11).",
+     "conviction": 2,
+     "reviewers": [
+      "seow",
+      "raschke"
+     ]
+    },
+    {
+     "claim_id": "PAYO-livermore-against",
+     "author": "livermore",
+     "kind": "against",
+     "text": "Static price: atr 0.03, ret_63d 0.7, flat averages, RANGE; inside the range, not at a new pivot high (C5). Technology, outside the room's leading group.",
+     "conviction": 2,
+     "reviewers": [
+      "minervini",
+      "oneil"
+     ]
+    },
+    {
+     "claim_id": "PAYO-seow-against",
+     "author": "seow",
+     "kind": "against",
+     "text": "structure_shift RANGE, ret_63d 0.7, flat averages, div BEARISH/3, elder_pattern INTERRUPTED.",
+     "conviction": 2,
+     "reviewers": [
+      "minervini",
+      "oneil"
+     ]
+    }
+   ],
+   "challenge_claims": [
+    "Heavy-volume day inside a range with a three-oscillator bearish divergence; heavy volume without a structure break plus divergence reads as distribution risk as easily as accumulation. Seat owes which"
+   ],
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 7.18,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.55,
+     "ema21": 7.1521,
+     "ema9": 7.1599,
+     "ema_order": "9>21",
+     "export_close": 7.18,
+     "high_20bar": 7.22,
+     "high_20bar_date": "2026-11-04",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.6% under the last swing high, 0.6% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -0.55,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-04",
+       "price": 7.22
+      },
+      "last_swing_low": {
+       "date": "2026-10-12",
+       "price": 7.12
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-09-25",
+       "price": 7.19
+      },
+      "prev_swing_low": {
+       "date": "2026-09-18",
+       "price": 7.1
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 231,
+     "close": 7.175,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.07,
+     "ema21": 7.1568,
+     "ema9": 7.1579,
+     "ema_order": "9>21",
+     "high_20bar": 7.18,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12 15:30:00",
+     "pos_in_day_range_pct": 87.5,
+     "served": true,
+     "session": "2026-11-12",
+     "summary": "above EMA9, 9>21, swing LH/LL, 0.1% above the last swing high, 0.1% under 20-hr high, 88% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": 0.07,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-09",
+       "price": 7.17
+      },
+      "last_swing_low": {
+       "date": "2026-10-28",
+       "price": 7.11
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-05",
+       "price": 7.18
+      },
+      "prev_swing_low": {
+       "date": "2026-10-22",
+       "price": 7.15
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 7.18,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.55,
+     "ema21": 6.9132,
+     "ema9": 7.1367,
+     "ema_order": "9>21",
+     "high_20bar": 7.22,
+     "high_20bar_date": "2026-11-06",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-12",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.1% under the last swing high, 0.6% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": -0.14,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-25",
+       "price": 7.19
+      },
+      "last_swing_low": {
+       "date": "2026-09-04",
+       "price": 7.08
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-09-04",
+       "price": 7.18
+      },
+      "prev_swing_low": {
+       "date": "2026-08-14",
+       "price": 7.02
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-12",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-12 15:30:00",
+      "rows": 231,
+      "sha256": "357f458b77f73c034922bbd886c3b5de2b0364b567691140f6ecb54cc22e6bf7",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": true,
+     "reasons": [
+      "weekly and daily HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 0.1% under the last swing high, 0.6% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 0.6% under the last swing high, 0.6% under 20-day high | H1: above EMA9, 9>21, swing LH/LL, 0.1% above the last swing high, 0.1% under 20-hr high, 88% of the day's range"
+   }
+  }
+ },
+ "routing": {
+  "oneil": [
+   "TEVA-livermore-for",
+   "BTSG-livermore-for",
+   "BTSG-seow-for",
+   "ELAN-livermore-for",
+   "HNGE-livermore-for",
+   "BRZE-livermore-for",
+   "HTFL-elder-lens-for",
+   "PAYO-livermore-against",
+   "PAYO-seow-against"
+  ],
+  "minervini": [
+   "TEVA-raschke-against",
+   "BTSG-livermore-for",
+   "BTSG-seow-for",
+   "ELAN-seow-for",
+   "TECH-elder-lens-for",
+   "HTFL-seow-against",
+   "PAYO-livermore-against",
+   "PAYO-seow-against"
+  ],
+  "livermore": [
+   "DV-oneil-for",
+   "TEVA-oneil-against",
+   "BTSG-minervini-against",
+   "ELAN-minervini-against",
+   "HNGE-oneil-against",
+   "BRZE-oneil-against",
+   "HTFL-oneil-against",
+   "HTFL-seow-against",
+   "PAYO-oneil-for"
+  ],
+  "elder-lens": [
+   "DV-oneil-for",
+   "TEVA-raschke-against",
+   "BTSG-minervini-against",
+   "ELAN-seow-for",
+   "HNGE-livermore-for",
+   "BRZE-livermore-for",
+   "TECH-oneil-against",
+   "TECH-livermore-against"
+  ],
+  "seow": [
+   "TEVA-oneil-against",
+   "BTSG-oneil-against",
+   "ELAN-oneil-against",
+   "ELAN-minervini-against",
+   "HNGE-oneil-against",
+   "BRZE-oneil-against",
+   "HTFL-elder-lens-for",
+   "HTFL-minervini-for",
+   "PAYO-minervini-for"
+  ],
+  "raschke": [
+   "TEVA-minervini-for",
+   "TEVA-livermore-for",
+   "ELAN-livermore-for",
+   "HNGE-minervini-for",
+   "BRZE-minervini-for",
+   "TECH-elder-lens-for",
+   "HTFL-minervini-for",
+   "PAYO-oneil-for",
+   "PAYO-minervini-for"
+  ],
+  "wyckoff": [
+   "TEVA-minervini-for",
+   "BTSG-oneil-against",
+   "ELAN-oneil-against",
+   "HNGE-minervini-for",
+   "BRZE-minervini-for",
+   "TECH-oneil-against",
+   "TECH-livermore-against",
+   "HTFL-oneil-against"
+  ]
+ },
+ "under_routed": [],
+ "reviewers_absent": [],
+ "rerouted": [],
+ "measurement": {
+  "claims_issued": 30,
+  "names_with_claims": 9,
+  "names_out": 0,
+  "load": {
+   "oneil": 9,
+   "minervini": 8,
+   "livermore": 9,
+   "elder-lens": 8,
+   "seow": 9,
+   "raschke": 9,
+   "wyckoff": 8
+  }
+ }
+}

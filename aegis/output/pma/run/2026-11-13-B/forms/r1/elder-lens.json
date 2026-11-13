@@ -1,0 +1,30 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-13",
+ "round": 1,
+ "nominations": [],
+ "held_review": [
+  {
+   "ticker": "RBRK",
+   "verdict": "TIGHTEN",
+   "line": "elder 3.0, elder_5d [0, 3, 3, 3, 3]: no single-bar drop (R7 not fired), but permission unresolved (2-6), mp 0.0, mp_state FADING, force_index_ema_13 -4032565.84 bearish zone, price_ema_slope -0.6687 falling; working stop 99.45 may be raised, never lowered (C18)."
+  },
+  {
+   "ticker": "SPCX",
+   "verdict": "TIGHTEN",
+   "line": "Short 68 with NO working broker stop: C18 says the stop goes on at the instant of entry; place one now. elder_5d [3, 5, 5, 5, 6] rising against the short; weekly_trend_direction DOWN and price_ema_slope -0.0779 still back it; impulse BLUE does not forbid it."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "elder_context",
+   "impact": "Only elder_context.volume.up_bar_vol_ratio is served and it is null on every row, so the volume half of the dip-and-reclaim test (R8, C23) cannot be read for any name."
+  }
+ ],
+ "declarations": [
+  "No ledger memory block was injected for this run; no standing lesson applies.",
+  "Censor duty: no packet row shows elder <= 1; no red-certain bar to report.",
+  "Step 1 gate: no candidate row has elder >= 7 on the last bar (highest is elder 6.0 on VRNS and MET), so permission is unresolved on every name and no step-2 permission event exists (no elder_5d last >= 7 after a <= 6 bar)."
+ ],
+ "shortfall_reason": "Zero nominations. Step 1: no candidate has elder >= 7 on the last bar (all 2-6, permission unresolved). Step 2: no elder_5d permission event (last >= 7 after <= 6) and no CORRECTION_REENTRY with mp_state STRONG; mp_state is FADING/BUILDING throughout. Elder: stand aside in a murky tape (C22); not padding."
+}
