@@ -1,0 +1,191 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-16T04:29:26Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-16",
+ "survivors": [
+  "CHYM",
+  "EXLS",
+  "BTSG",
+  "COLD",
+  "PCOR",
+  "CDW",
+  "EMBJ",
+  "SN",
+  "BBY",
+  "SPCX"
+ ],
+ "pairs": [
+  {
+   "pair_id": "EXLS-minervini-for~elder-lens",
+   "ticker": "EXLS",
+   "claim_id": "EXLS-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "elder-lens",
+   "claim_text": "All MA criteria pass, strong down-day resilience (downday 2.14), price at the pivot not extended (ext_atr20 0.85).",
+   "refute_evidence": "elder 4.0, elder_5d [7, 10, 7, 5, 4] INTERRUPTED: falling into the ambiguous band, permission unproven (C3) and trend leg failed. W swing HH but LL; H1 9<21 LH/LL. MA pass is not permission.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21 but swing HH but LL",
+    "D": "above EMA9, 9>21, HH/HL; force falling through ambiguous band",
+    "H1": "below EMA9, 9<21, LH/LL, 16% of day's range"
+   }
+  },
+  {
+   "pair_id": "EXLS-livermore-for~elder-lens",
+   "ticker": "EXLS",
+   "claim_id": "EXLS-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "elder-lens",
+   "claim_text": "Fresh break of structure (BULLISH_BOS, structure 71.6), ma20 42.26 over ma50 38.45 over ma200 32.77, daily HH/HL: an established trend resuming through its pivot.",
+   "refute_evidence": "An established trend resuming needs force with it (C9); elder_5d [7, 10, 7, 5, 4] INTERRUPTED says force is fading, not resuming. H1 below EMA9, 9<21, LH/LL. Stand aside until a not-red bar (C22).",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, swing HH but LL: tide not clean",
+    "D": "9>21, HH/HL, but elder 4.0 unresolved",
+    "H1": "below EMA9, 9<21, LH/LL"
+   }
+  },
+  {
+   "pair_id": "EXLS-elder-lens-against~minervini",
+   "ticker": "EXLS",
+   "claim_id": "EXLS-elder-lens-against",
+   "kind": "against",
+   "author": "elder-lens",
+   "refuter": "minervini",
+   "claim_text": "elder 4.0 cannot prove not-red; the series is still falling; INTERRUPTED pattern breaks the trend leg.",
+   "refute_evidence": "Elder colour is advisory to me. My test is stage 2 + pivot: D swing HH/HL, close 43.25 above ema9 43.1236, close_vs_swing_high_pct 0.68 at the pivot; W 9>21. The trend leg is intact; only H1 LH/LL cautions.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH but LL, 2.5% under 20-wk high: stage 2 tide intact",
+    "D": "HH/HL, 0.7% above swing high 42.96: at the pivot, trend leg unbroken",
+    "H1": "below EMA9, 9<21, LH/LL, 16% of day range: short-term softness only"
+   }
+  },
+  {
+   "pair_id": "COLD-livermore-for~raschke",
+   "ticker": "COLD",
+   "claim_id": "COLD-livermore-for",
+   "kind": "for",
+   "author": "livermore",
+   "refuter": "raschke",
+   "claim_text": "Fresh 52-week closing high, structure 89.5, mp STRONG, day_vol 1.29, daily HH/HL, ma20 14.99 over ma50 14.53: the market's own action says strength (C2).",
+   "refute_evidence": "A fresh high on day_vol 1.29 after a run is a range-expansion bar C19 reads as likely climax. H1 at 85% of range, W swing LH/LL. No test, retracement or contraction to classify (C2).",
+   "refute_tf": {
+    "W": "LH/LL, 10.4% above last swing high",
+    "D": "HH/HL, 2.2% above last swing high: at the high, not a pullback",
+    "H1": "LH but EL, 85% of range: expansion close"
+   }
+  },
+  {
+   "pair_id": "PCOR-minervini-for~seow",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "Near-vertical thrust into new highs, now pausing on light volume just under the pivot: the C18 power-play shape.",
+   "refute_evidence": "'Just under the pivot' is no signal in my method: structure RANGE, daily 2.7% under the swing high; ext_atr20 3.63 rules out a swing dip. Mechanical: no signal, no trade (C19/C31) until a close above pivot_high.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL, 19.8% above swing high: strong",
+    "D": "HH/HL, 2.7% under swing high, red bar: not broken",
+    "H1": "below EMA9, 9>21, LH but HL, 32% of day range: no trigger"
+   }
+  },
+  {
+   "pair_id": "PCOR-oneil-for~seow",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "seow",
+   "claim_text": "rank 10, rs LEADER, structure 97.9; D 2.7% under the last swing high on dry volume day_vol 0.56; entry 77.62 vs ma200 53.82 not a climax.",
+   "refute_evidence": "Strength passes C6 (ret_63d 32.96, rs_rank_pct 94.91) but structure RANGE and D 2.7% under the last swing high: no resistance break, so no position buy signal; extended for a swing set-up.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL: leader on the weekly",
+    "D": "2.7% under swing high, red bar: no signal on the bar",
+    "H1": "below EMA9, LH but HL, 32% of day range"
+   }
+  },
+  {
+   "pair_id": "PCOR-livermore-against~minervini",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-livermore-against",
+   "kind": "against",
+   "author": "livermore",
+   "refuter": "minervini",
+   "claim_text": "structure_shift RANGE and mp DECELERATING: the reaction column (C18); sma_dist 31.38% far off the 50-day; hourly below EMA9 with LH. No new high, so no entry (C5).",
+   "refute_evidence": "sma_dist 31.38% is a weight after a thrust, but a pause under the pivot is the C18 flag shape: D HH/HL, 2.73% under 20-day high 79.8; W HH/HL, 9>21. No new high means wait for the break, not drop the name.",
+   "refute_tf": {
+    "W": "HH/HL, 9>21, 2.7% under 20-wk high: powerful stage 2",
+    "D": "HH/HL, above EMA9, 2.7% under swing high: flag under the pivot",
+    "H1": "below EMA9, LH but HL, 32% of range: quiet pause"
+   }
+  },
+  {
+   "pair_id": "PCOR-livermore-against~elder-lens",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-livermore-against",
+   "kind": "against",
+   "author": "livermore",
+   "refuter": "elder-lens",
+   "claim_text": "structure_shift RANGE and mp DECELERATING: the reaction column (C18); sma_dist 31.38% far off the 50-day; hourly below EMA9 with LH. No new high, so no entry (C5).",
+   "refute_evidence": "No new high is not a reason against in Elder; he buys the reaction (C10). W above EMA9, 9>21, HH/HL; D 9>21 HH/HL; elder 7.0 not red. The distance off the 50-day means wait for value, not no entry.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, HH/HL: tide up",
+    "D": "above EMA9, 9>21, HH/HL, 2.7% under 20-day high",
+    "H1": "below EMA9, 9>21, LH but HL: short-term dip"
+   }
+  },
+  {
+   "pair_id": "PCOR-seow-against~oneil",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-seow-against",
+   "kind": "against",
+   "author": "seow",
+   "refuter": "oneil",
+   "claim_text": "No buy signal on the bar; extended from the 20-day so no swing set-up; bearish divergence.",
+   "refute_evidence": "Not extended by my test: D close_vs_swing_high_pct -2.7 puts price under its pivot, D swing HH/HL, the pre-breakout spot C17 wants. No buy on the bar is agreed: my buy is only a pivot close on 1.4x volume.",
+   "refute_tf": {
+    "W": "HH/HL, 19.8% over weekly swing high: prior uptrend",
+    "D": "HH/HL, 2.7% under swing high: pre-pivot, not extended",
+    "H1": "below EMA9, 9>21, LH but HL, 32% of day's range"
+   }
+  },
+  {
+   "pair_id": "PCOR-seow-against~minervini",
+   "ticker": "PCOR",
+   "claim_id": "PCOR-seow-against",
+   "kind": "against",
+   "author": "seow",
+   "refuter": "minervini",
+   "claim_text": "No buy signal on the bar; extended from the 20-day so no swing set-up; bearish divergence.",
+   "refute_evidence": "No buy bar yet is true and my entry waits for the pivot break; divergence is advisory to me. Structure holds: D HH/HL, 2.7% under 20-day high; W HH/HL. Extension is a weight on a thrust-and-flag, not a fail.",
+   "refute_tf": {
+    "W": "HH/HL, 19.8% above last swing high: strong thrust",
+    "D": "HH/HL, 2.7% under 20-day high: flag holding under pivot",
+    "H1": "below EMA9, LH but HL: no breakdown"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 10,
+  "by_author": {
+   "minervini": 2,
+   "livermore": 4,
+   "elder-lens": 1,
+   "oneil": 1,
+   "seow": 2
+  },
+  "by_refuter": {
+   "elder-lens": 3,
+   "minervini": 3,
+   "raschke": 1,
+   "seow": 2,
+   "oneil": 1
+  }
+ }
+}
