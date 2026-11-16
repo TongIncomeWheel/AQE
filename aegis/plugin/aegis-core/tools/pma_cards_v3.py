@@ -942,11 +942,11 @@ void = (f'<p class="flag watch"><b>Void every new trigger if</b> the index is un
 holds = sorted(BYV["HOLD-FOR-CONDITIONS"], key=lambda c: c["ticker"])
 def hold_row(t):
     cd = CD["hold"][t]; tr = cd["triggers"]
-    buy = next(x for x in tr if x["kind"] == "close_above")
+    buy = next((x for x in tr if x["kind"] == "close_above"), None)          # conductor 2026-11-16 (PCOR): a HOLD name can have NO shared buy line; degrade, never crash
     wa = next((x for x in tr if x["kind"] == "trade_below" and "wait area" in x["action"]), None)
     zone = re.search(r"wait area ([\d.]+-[\d.]+)", wa["action"]).group(1).rstrip(".").replace("-", " to ") if wa else ("held: add question only" if t in HELD else "&mdash;")
     dead = next((f"daily close under {x['level']}" for x in tr if x["kind"] == "close_below"), cd.get("kills", "&mdash;"))
-    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead), extras(t), E(AL.listing(t, _AQE_BY)["plain_line"])]
+    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, (f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else "") if buy else "no shared buy line yet"), E(dead), extras(t), E(AL.listing(t, _AQE_BY)["plain_line"])]
 hold_tmpl = (f'<details class="big"><summary>The {len(holds)} hold cards, same template</summary><div class="stack">' + "".join(tmpl_card(c["ticker"]) for c in holds) + "</div></details>") if holds else ""
 hold_card = card(f"{len(holds)} names wait for a condition first; nothing to do until it prints.",
     table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R", "AQE-listed and AQE scores"], [hold_row(c["ticker"]) for c in holds]),

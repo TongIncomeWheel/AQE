@@ -1,0 +1,212 @@
+{
+ "advance": {
+  "CDW": {
+   "triggers": [
+    {
+     "id": "CDW-buy0",
+     "kind": "close_above",
+     "level": 166.15,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CDW: an hourly candle closes above 166.15 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CDW-touch",
+     "kind": "trade_above",
+     "level": 173.82,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CDW traded through yesterday's intraday high 173.82: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CDW-dead",
+     "kind": "close_below",
+     "level": 144.34,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CDW closed under 144.34, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above pivot_high 166.15; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 144.34 (3 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "EXLS": {
+   "triggers": [
+    {
+     "id": "EXLS-buy0",
+     "kind": "close_above",
+     "level": 43.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "EXLS: an hourly candle closes above 43.63 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "EXLS-touch",
+     "kind": "trade_above",
+     "level": 43.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "EXLS traded through yesterday's intraday high 43.63: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "EXLS-wait",
+     "kind": "trade_below",
+     "level": 42.96,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "EXLS is back in the wait area 42.96-42.96."
+    },
+    {
+     "id": "EXLS-dead",
+     "kind": "close_below",
+     "level": 42.96,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "EXLS closed under 42.96, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 43.63; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 42.96 (3 analysts' exit line)."
+  },
+  "PCOR": {
+   "triggers": [
+    {
+     "id": "PCOR-buy0",
+     "kind": "close_above",
+     "level": 79.8,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "PCOR: an hourly candle closes above 79.8 (1 analyst's not shared (no majority) buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "PCOR-touch",
+     "kind": "trade_above",
+     "level": 78.5,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "PCOR traded through yesterday's intraday high 78.5: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "PCOR-dead",
+     "kind": "close_below",
+     "level": 77.03,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "PCOR closed under 77.03, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 77.03 (1 analyst's exit line)."
+  },
+  "EMBJ": {
+   "triggers": [
+    {
+     "id": "EMBJ-buy0",
+     "kind": "close_above",
+     "level": 79.08,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "EMBJ: an hourly candle closes above 79.08 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "EMBJ-touch",
+     "kind": "trade_above",
+     "level": 79.08,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "EMBJ traded through yesterday's intraday high 79.08: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "EMBJ-wait",
+     "kind": "trade_below",
+     "level": 75.08,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "EMBJ is back in the wait area 75.08-75.08."
+    },
+    {
+     "id": "EMBJ-dead",
+     "kind": "close_below",
+     "level": 66.26,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "EMBJ closed under 66.26, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 79.08",
+   "kills": "A daily close under 66.26 (4 analysts' exit line)."
+  },
+  "SN": {
+   "triggers": [
+    {
+     "id": "SN-dead",
+     "kind": "close_below",
+     "level": 187.1,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "SN closed under 187.1, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "no shared buy: ",
+   "kills": "A daily close under 187.1 (2 analysts' exit line).",
+   "not_structured_yet": "no analyst buy level resolved"
+  },
+  "BBY": {
+   "triggers": [
+    {
+     "id": "BBY-buy0",
+     "kind": "close_above",
+     "level": 100.58,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "BBY: an hourly candle closes above 100.58 (2 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "BBY-touch",
+     "kind": "trade_above",
+     "level": 104.42,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "BBY traded through yesterday's intraday high 104.42: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "BBY-wait",
+     "kind": "trade_below",
+     "level": 99.09,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "BBY is back in the wait area 99.09-99.09."
+    },
+    {
+     "id": "BBY-dead",
+     "kind": "close_below",
+     "level": 93.64,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "BBY closed under 93.64, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above pivot_high 100.58",
+   "kills": "A daily close under 93.64 (2 analysts' exit line)."
+  }
+ },
+ "held": {
+  "RBRK": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 99.45 (STP 80, GTC).",
+   "against": ""
+  },
+  "SPCX": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 145.05 (STP 68, GTC).",
+   "against": ""
+  }
+ }
+}
