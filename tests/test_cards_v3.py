@@ -521,3 +521,41 @@ def test_the_real_11_nov_failures_none_numbers_empty_scorecard_and_a_raw_crown_t
 def test_the_default_refresh_dir_resolves_from_the_plugin_tree_not_one_level_too_high():
     src = TOOL.read_text()
     assert "def _find_repo" in src and "parents[5]\n" not in src.replace("return here.parents[5]", "")
+
+
+def test_a_hold_name_with_no_shared_buy_line_renders_and_says_so(run):
+    """Conductor 2026-11-16 (PCOR): a HOLD-FOR-CONDITIONS name can have NO shared buy line ("no shared buy"), so its triggers carry no close_above. The hold table, the hold card
+    and the template card must say "no shared buy line yet" instead of crashing (a crash falls the whole page back to v2 and the funnel never prints)."""
+    holds = []
+    def strip_buy(o):
+        holds.extend(o["hold"])
+        t = next(iter(o["hold"]))
+        o["hold"][t]["triggers"] = [x for x in o["hold"][t]["triggers"] if x["kind"] != "close_above"]
+        strip_buy.t = t
+    edit(run, "cards.json", strip_buy)
+    t = strip_buy.t
+    def strip_lv(o):
+        for r in o["rows"]:
+            if r["ticker"] == t:
+                r["triggers"] = [x for x in r["triggers"] if x["kind"] != "close_above"]
+    edit(run, "pma_levels.json", strip_lv)
+    h = render(run)
+    s = text(h)
+    assert t in s and "no shared buy line yet" in s.lower()
+    assert 'id="tickers"' in h
+
+
+def test_v3_prints_the_funnel_and_the_aqe_listing_for_report_a(run):
+    """Conductor 2026-11-16: with scan_funnel.json in the run dir the Cards print the funnel (stage strip + one line per name with its AQE tag), and every hold row carries
+    its AQE-listed status and scores; the wu export, when present, serves names outside the daily list."""
+    f = {"report": "A", "method": "whole_universe", "disclosure": None, "notes": [],
+         "stages": [{"stage": "Universe rows scored (market cap $2B+, 10-day volume 1.5M+, NYSE or NASDAQ)", "n_in": 1102, "n_out": 1102, "rule": "r", "dropped": []},
+                    {"stage": "Seat screens, union", "n_in": 1102, "n_out": 118, "rule": "each seat's own code screen", "dropped": [], "dropped_count": 984},
+                    {"stage": "Cross-examination (survivors move on)", "n_in": 3, "n_out": 1, "rule": "x", "dropped": [{"ticker": "ZZZ", "reason": "oneil: no base (C16)"}]}],
+         "names": [{"ticker": "ZZZ", "outcome": "fell out", "stage": "cross-examination", "reason": "oneil: no base (C16)", "aqe_listed": False, "aqe_lists": "none",
+                    "aqe_line": "AQE-listed: none", "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 61"}]}
+    (run / "scan_funnel.json").write_text(json.dumps(f))
+    h = render(run)
+    s = text(h)
+    assert "Committee Standard Scan funnel" in s and "984 names" in s and "ZZZ" in s and "oneil: no base" in s and "no base (C16)" not in s
+    assert "AQE-listed and AQE scores" in s                                                       # the hold table's AQE column
