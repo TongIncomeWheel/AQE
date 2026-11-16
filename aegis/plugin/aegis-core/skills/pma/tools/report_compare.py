@@ -37,7 +37,28 @@ def _list_return(closes, tickers, base, end):
     return (statistics.mean(rs), len(rs)) if rs else (None, 0)
 
 
+METHOD_CHANGE_DATE = "2026-11-16"     # PM 2026-11-16: the first Standard Scan (whole_universe) run; earlier A rows are the AQE-door method
+
+
+def split_series(reports):
+    """PM 2026-11-16: once the Standard Scan has locked a row (method whole_universe), report A is graded as separate series, never pooled:
+    A1 = the old AQE-door method (rows with no method, aqe_doors or fallback_aqe_doors), A2 = the Standard Scan, A2L = its AQE-listed picks,
+    A2N = its picks that are not AQE-listed. Before any such row exists A stays one series, exactly as before."""
+    out = dict(reports)
+    led = reports.get("A")
+    rows = (led["rows"] if isinstance(led, dict) else led) if led is not None else []
+    if any(r.get("method") == "whole_universe" for r in rows):
+        out.pop("A")
+        v2 = [r for r in rows if r.get("method") == "whole_universe"]
+        out["A1"] = [r for r in rows if r.get("method") != "whole_universe"]
+        out["A2"] = v2
+        out["A2L"] = [r for r in v2 if r.get("aqe_listed") is True]
+        out["A2N"] = [r for r in v2 if r.get("aqe_listed") is False]
+    return out
+
+
 def grade(reports, closes, exports, asof, horizons, bench="SPY"):
+    reports = split_series(reports)
     days = sc.calendar(closes, bench)
     asof = asof or days[-1]
     result = {"asof": asof, "bench": bench, "horizons": horizons, "reports": {}, "overlap": {}, "notes": []}
@@ -88,10 +109,17 @@ def _f(x):
     return "n/a" if x is None else f"{x:+.2f}"
 
 
+# PM 2026-11-16: display names only. The ids A / B / C stay the identifiers (AEGIS_REPORT, run dir suffixes, ledger `report` column, manifests).
+DISPLAY = {"A": "Committee Standard Scan", "B": "Report B", "C": "Committee AQE Quant Scan",
+           "A1": "Committee Standard Scan, before 16 Nov (AQE doors)", "A2": "Committee Standard Scan, from 16 Nov (whole market)",
+           "A2L": "Committee Standard Scan, from 16 Nov, picks AQE also lists", "A2N": "Committee Standard Scan, from 16 Nov, picks AQE does not list"}
+ORDER = ("A", "A1", "A2", "A2L", "A2N", "B", "C")
+
+
 def lines(res):
     """One plain line per report for A's Cards (PM 2026-11-05)."""
     out = {}
-    for rep, o in res["reports"].items():
+    for rep, o in sorted(res["reports"].items(), key=lambda kv: ORDER.index(kv[0]) if kv[0] in ORDER else 99):
         bits = []
         for h in res["horizons"]:
             b = o["by_horizon"][str(h)]
@@ -99,7 +127,7 @@ def lines(res):
                 bits.append(f"{h} sessions: {b['n']} picks, {_f(b['mean'])}% average, {_f(b['vs_spy_mean'])} vs SPY, {_f(b['vs_list_mean'])} vs the full list")
             else:
                 bits.append(f"{h} sessions: not yet graded ({b.get('pending', 0)} picks waiting)")
-        out[rep] = f"Report {rep}: " + "; ".join(bits)
+        out[rep] = f"{DISPLAY.get(rep, 'Report ' + rep)}: " + "; ".join(bits)
     return out
 
 

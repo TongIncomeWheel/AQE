@@ -202,3 +202,7 @@ reconstructed. Footer, always: **"DRAFT — PM approval required. Nothing is sta
 ---
 
 *The v5.3 prose card is kept as `SKILL_v53_prose.md.bak` for reference only. It is not authoritative.*
+
+**Report display names (PM 2026-11-16):** Report A is shown to the PM as the *Committee Standard Scan*, Report C as the *Committee AQE Quant Scan* (Report B keeps its name). Display names only: `AEGIS_REPORT=A/B/C`, run dir suffixes `-B` / `-C`, the ledger `report` column and manifest ids are unchanged. The one list is `RUN.yaml parameters.report_display_names`.
+
+**Standard Scan (PM 2026-11-16).** Report A runs `method whole_universe`: candidates from the whole screened universe (code screens, 25 per seat), no AQE gate or door, packets built with `--clean`, every name shown with its AQE-listed status and scores. Report C is the Committee AQE Quant Scan, independent of A (`quant-screen`). Report B is frozen. See `RUN.yaml report.rules` (5)-(5f) and `docs/AQE_STANDARD_SCAN.md`.

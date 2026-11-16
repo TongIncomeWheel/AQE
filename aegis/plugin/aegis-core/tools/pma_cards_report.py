@@ -6,7 +6,7 @@ sections (those are Report A's, and B/C reuse A's), and NO levels: B and C are s
 Reads consensus.json (+ report_lines.json when present). Writes one phone-safe HTML page and nothing else."""
 import argparse, datetime, html, json, os, sys
 
-NAME = {"B": "Report B -- the whole screened market", "C": "Report C -- the committee plus the AQE-quant voice"}
+NAME = {"B": "Report B -- the whole screened market", "C": "Committee AQE Quant Scan -- the committee plus the AQE-quant voice"}
 WHAT = {"B": "The same seven voices, each reading the whole daily screened universe with its own method, before any AQE score gate.",
         "C": "The seven voices plus one that argues only from AQE's own scores and the parts behind them."}
 

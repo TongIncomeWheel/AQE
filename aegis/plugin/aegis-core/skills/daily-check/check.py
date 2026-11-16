@@ -156,7 +156,7 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
         if rep_ in ("B", "C"):
             if not M.get("rerun") or (M.get("rerun") or {}).get("publishes_live") is not False:
                 fails.append(f"report {rep_} must be a non-live run (rerun block with publishes_live false): it publishes no levels and is not watched by alerts")
-            notes.append(f"REPORT {rep_}: scored only; no levels published; reuses report A's weather, macro, market kill and held review")
+            notes.append(f"REPORT {rep_}: scored only; no levels published; reuses Committee Standard Scan's weather, macro, market kill and held review")
         rr = M.get("rerun")
         if rr:
             # RERUN (PM 2026-11-03): not live. The run dir must be the r<N> dir, and its publish receipt may list only
@@ -551,6 +551,15 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
         menu = set(menus.get(v) or [])
         if not menu:
             fails.append(f"voice coverage: {v} has no menu in voice_menus.json"); continue
+        # STANDARD SCAN clean test (PM 2026-11-16): the columns `packets --clean` withholds (packets/clean_test.json) are off the menu BY DESIGN, declared in the packet and the
+        # receipt; a charter that reads one is reported as served-off-menu, never as a blind spot. Every other column is checked exactly as before.
+        _ctp = os.path.join(packets_dir, "clean_test.json")
+        if os.path.exists(_ctp):
+            try:
+                _strip_cols = set((json.load(open(_ctp, encoding="utf-8")) or {}).get("stripped_fields") or [])
+            except ValueError:
+                _strip_cols = set()
+            menu = {f for f in menu if f.split(".", 1)[0] not in _strip_cols}
         pk = os.path.join(packets_dir, f"{v}.tsv")
         if not os.path.exists(pk):
             fails.append(f"voice coverage: packet MISSING for {v} ({pk})"); continue
@@ -880,6 +889,13 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
             fails.append(f"candidate_set run_date {CS.get('run_date')} != run date {run_date}")
         if EX is not None and daily:
             exp_t = {r.get("ticker") for r in daily} | {h.get("ticker") for h in (EX.get("held_positions") or [])}
+            # STANDARD SCAN / AQE QUANT SCAN (PM 2026-11-16): the screened names the AQE daily list lacks are served from `augment-export`'s copy (universe_only rows)
+            _wup = os.path.join(od, "aqe_daily_export_wu.json")
+            if os.path.exists(_wup):
+                try:
+                    exp_t |= {r.get("ticker") for r in (json.load(open(_wup, encoding="utf-8")).get("daily_list") or [])}
+                except ValueError:
+                    fails.append("aqe_daily_export_wu.json is not valid JSON")
             stray = sorted(t for t in uni if t not in exp_t)
             if stray:
                 fails.append(f"candidate_set carries {len(stray)} ticker(s) not in the export: {stray[:6]}")
@@ -896,7 +912,44 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
         if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C":
             for _need in ("aqe_indicators.tsv", "aqe_glossary.md", "c_required_reading.json"):
                 if not os.path.exists(os.path.join(pk, _need)):
-                    fails.append(f"report C packet file MISSING: {_need} (every C seat must read the AQE indicators and the glossary)")
+                    fails.append(f"Committee AQE Quant Scan packet file MISSING: {_need} (every C seat must read the AQE indicators and the glossary)")
+        # --- the run's candidate method (PM 2026-11-16, Standard Scan) ---
+        _mp = os.path.join(od, "run_manifest.json")
+        _meth = None
+        if os.path.exists(_mp):
+            try:
+                _meth = (json.load(open(_mp, encoding="utf-8")) or {}).get("method")
+            except ValueError:
+                fails.append("run_manifest.json is not valid JSON")
+        if _meth == "whole_universe":
+            for _need in ("seat_sets.json", "aqe_daily_export_wu.json"):
+                if not os.path.exists(os.path.join(od, _need)):
+                    fails.append(f"Standard Scan (whole_universe) run is missing {_need}: the screens and the augmented export are the candidate step")
+            _ct = os.path.join(pk, "clean_test.json")
+            if not os.path.exists(_ct):
+                fails.append("Standard Scan packets were not built with --clean: packets/clean_test.json is MISSING, so AQE membership and scores may have reached the seats")
+            else:
+                try:
+                    _strip = set((json.load(open(_ct, encoding="utf-8")) or {}).get("stripped_fields") or [])
+                except ValueError:
+                    _strip = set()
+                    fails.append("packets/clean_test.json is not valid JSON")
+                for v in deciders:
+                    _f = os.path.join(pk, f"{v}.tsv")
+                    if not os.path.exists(_f):
+                        continue
+                    _hd = [l for l in open(_f, encoding="utf-8", errors="replace").read().split("\n") if l and not l.startswith("#")][:1]
+                    _cols = {c.split(".", 1)[0] for c in (_hd[0].split("\t") if _hd else [])}
+                    _leak = sorted(_cols & _strip)
+                    if _leak:
+                        fails.append(f"packet {v}.tsv carries AQE column(s) the clean test withholds: {_leak}")
+            notes.append("candidate method: whole_universe (Standard Scan, no AQE gate); packets are the clean test")
+        elif _meth == "fallback_aqe_doors":
+            notes.append("WARN candidate method: FALLBACK to the old AQE-door chain (the universe rows were missing or refused); the brief and Cards must say so")
+        elif _meth == "quant_scan":
+            if not os.path.exists(os.path.join(od, "quant_screen.json")):
+                fails.append("AQE Quant Scan run is missing quant_screen.json (the whole-universe quant screen is its candidate step)")
+            notes.append("candidate method: quant_scan (whole-universe AQE quant screen; nothing taken from the Standard Scan)")
         present = sorted(f for f in os.listdir(pk) if f.endswith(".tsv"))
         _trim_receipt = None
         _trp = os.path.join(pk, "packet_trim.json")
@@ -944,7 +997,7 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
         extra = [f for f in present if f[:-4] not in deciders]
         if extra:
             fails.append(f"packets for NON-decider seats present (R31 -- a stray file serves a seat the universe it must not see): {extra}")
-        stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f not in ("no_technical_coverage.json", "packet_trim.json")]
+        stray_json = [f for f in os.listdir(pk) if f.endswith(".json") and f not in ("no_technical_coverage.json", "packet_trim.json", "clean_test.json")]
         if stray_json:
             fails.append(f"stray packet files (retired macro seats or unknown): {stray_json} (R31)")
     # --- per-voice data coverage (PM 2026-11-03): each charter's required fields against its packet ---

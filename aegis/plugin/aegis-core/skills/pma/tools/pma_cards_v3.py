@@ -45,7 +45,9 @@ T = J("cards_text.json"); CONS = J("consensus.json"); POS = J("committee_positio
 LV = {r["ticker"]: r for r in J("pma_levels.json")["rows"]}
 CD = J("cards.json"); V = J("aqe_valen_dashboard.json"); CR = J("aqe_crown_macro.json"); MARK = J("aqe_last_run.json")
 RUN_META = json.load(open(RUN / "run_manifest.json")) if (RUN / "run_manifest.json").exists() else {}
-DEC = J("decision.json"); D = J("aqe_daily_export.json"); P4 = J("phase4.json")
+DEC = J("decision.json"); D = J("aqe_daily_export_wu.json" if (RUN / "aqe_daily_export_wu.json").exists() else "aqe_daily_export.json"); P4 = J("phase4.json")      # Standard Scan: the augmented export carries the screened names the AQE daily list lacks (universe_only rows)
+DL_AQE = [r for r in D["daily_list"] if not r.get("universe_only")]      # the AQE lists and tables are built from AQE's own daily list only
+METHOD = RUN_META.get("method")
 SCMD = (RUN / "scorecard.md").read_text()
 RV = json.load(open(REF / "valen_dashboard.json")); RC = json.load(open(REF / "crown_macro.json"))
 ROWS = {r["ticker"]: r for r in D["daily_list"]}
@@ -64,7 +66,7 @@ _CL = _opt("cards_lines.json", None)           # WRITER-authored lines 2 and 3 (
 CL = ((_CL or {}).get("cards") if isinstance(_CL, dict) and isinstance((_CL or {}).get("cards"), dict) else _CL) or {}
 CARD_FIELDS = {}                                # ticker -> the ten fields as printed; written to card_fields.json for the alert side
 LINE_FALLBACK = []                              # (ticker, field, problems): a writer line that broke the gate; the extraction line was printed instead
-ON_LISTS = CT.brief_lists(D["daily_list"], (D.get("lens_ranking") or {}).get("ranked"))
+ON_LISTS = CT.brief_lists(DL_AQE, (D.get("lens_ranking") or {}).get("ranked"))
 SLATE_T = {x["ticker"]: x for x in (_opt("slate.json", {}) or {}).get("tickets") or []}
 SRM = {s["sector"]: s for s in D["srm"]}
 CONS_BY = {c["ticker"]: c for c in CONS}
@@ -286,10 +288,14 @@ ma_banner = ('<p class="flag"><b>M&amp;A flags are not in this export.</b> The e
              f'{(": " + E(str(_ms.get("reason")))) if _ms.get("reason") else ""}. Names marked &ldquo;M&amp;A not checked&rdquo; are unchecked, not clean.</p>' if _ms.get("scan_status") != "ok" else "")
 _msum = CX.momentum_summary(MTF, [c["ticker"] for c in CONS if c.get("status") not in ("DEAL_PINNED", "NOT_SLATED")], ROWS)
 mom_banner = f'<p class="flag"><b>Uptrend structure.</b> {E(_msum["text"])}</p>' if _msum else ""
+import aqe_listing as AL
+_AQE_BY = {r["ticker"]: r for r in D["daily_list"]}
+method_banner = (f'<p class="flag"><b>Standard Scan, no AQE gate.</b> The committee picked from the whole screened market. {E(AL.DISCLOSURE)}</p>' if METHOD == "whole_universe" else
+                 '<p class="flag"><b>FALLBACK: AQE doors.</b> The universe rows were missing or refused, so this run used the old AQE-door chain (method fallback_aqe_doors).</p>' if METHOD == "fallback_aqe_doors" else "")
 top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DATE.day} {RUN_DATE:%b %Y} &middot; to the PM{(' &middot; rerun ' + RERUN + ', not live') if RERUN else ''} &middot; {n_adv} triggers</div>
 <h1>{h1}</h1>
 <p class="ask">{ask}</p>
-<p class="fresh"><b>Data:</b> {d(close_d)} close &middot; run {MARK["exported_at"][11:16]} SGT{run_note} &middot; refreshed {ref_at[11:16]} SGT, {off_note} &middot; now {now_sgt:%H:%M} SGT</p>
+{method_banner}<p class="fresh"><b>Data:</b> {d(close_d)} close &middot; run {MARK["exported_at"][11:16]} SGT{run_note} &middot; refreshed {ref_at[11:16]} SGT, {off_note} &middot; now {now_sgt:%H:%M} SGT</p>
 <div class="tiles">
 {tile(n_adv, "ready on a trigger", f"{n_agreed} agreed, {n_adv-n_agreed} contested")}
 {tile(mins(f"{D['spy_roc_20d']:.2f}%"), "SPY, 20 days", f"closed {spy['last_price']}")}
@@ -567,7 +573,7 @@ def gword(g, q):
         return {"IMPROVING": "Turning up, now gaining on the market", "WEAKENING": "Turning back up after a pullback", "LAGGING": "Turning up from the bottom, still lagging"}.get(q, "Turning up")
     return {"IMPROVING": "Improving: starting to beat the market", "LEADING": "Leading the market"}.get(q)
 grp = collections.defaultdict(dict); meta = {}
-for r in D["daily_list"]:
+for r in DL_AQE:
     rs, e_, m_ = r.get("rs_spy_20d"), r.get("entry"), r.get("ma_50")
     if not ((r.get("on_longlist") or r.get("on_elder")) and isinstance(rs, (int, float)) and rs > 0 and isinstance(e_, (int, float)) and isinstance(m_, (int, float)) and e_ > m_):
         continue
@@ -883,7 +889,7 @@ def tcard(r):
     """Template card first; the writer's numbers (buy line, 1R shares, targets) stay folded beneath it."""
     h = tmpl_card(r["t"])
     assert h.endswith("</div>")
-    return h[:-6] + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
+    return h[:-6] + f'<p class="aqe">{E(AL.listing(r["t"], _AQE_BY)["plain_line"])}</p>' + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
 
 def supp_ctx(t):
     """A supplemental-pass name (PM 2026-11-05): the room did not vote it in THIS run, so everything comes from its live levels row
@@ -940,10 +946,10 @@ def hold_row(t):
     wa = next((x for x in tr if x["kind"] == "trade_below" and "wait area" in x["action"]), None)
     zone = re.search(r"wait area ([\d.]+-[\d.]+)", wa["action"]).group(1).rstrip(".").replace("-", " to ") if wa else ("held: add question only" if t in HELD else "&mdash;")
     dead = next((f"daily close under {x['level']}" for x in tr if x["kind"] == "close_below"), cd.get("kills", "&mdash;"))
-    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead), extras(t)]
+    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else ""), E(dead), extras(t), E(AL.listing(t, _AQE_BY)["plain_line"])]
 hold_tmpl = (f'<details class="big"><summary>The {len(holds)} hold cards, same template</summary><div class="stack">' + "".join(tmpl_card(c["ticker"]) for c in holds) + "</div></details>") if holds else ""
 hold_card = card(f"{len(holds)} names wait for a condition first; nothing to do until it prints.",
-    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R"], [hold_row(c["ticker"]) for c in holds]),
+    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R", "AQE-listed and AQE scores"], [hold_row(c["ticker"]) for c in holds]),
     "For a held name the line is an add question only.",
     ("Why each one waits", "<ul class='plainlist'>" + "".join(f"<li><b>{c['ticker']}</b>: {E(plain(T['holds'][c['ticker']]))}</li>" for c in holds) + "</ul>"))
 
@@ -965,7 +971,7 @@ lr = D["lens_ranking"]["ranked"][:10]
 def room(t):
     c = CONS_BY.get(t)
     return "not voted" if not c else {"ADVANCE": "advance", "HOLD-FOR-CONDITIONS": "hold", "PASS": "pass"}[c["verdict"]] + {"AGREED": ", agreed", "CONTESTED": ", contested", "DROPPED": ", dropped", "NOT_SLATED": ", not slated", "DEAL_PINNED": ", deal-pinned"}.get(c.get("status"), "")
-top20 = sorted([r for r in D["daily_list"] if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])[:20]
+top20 = sorted([r for r in DL_AQE if isinstance(r.get("rank"), int)], key=lambda r: r["rank"])[:20]
 def sstate(r):
     x = SRM.get(r.get("gics_sector_name")) or {}
     return {"lead": "leading", "turn": "turning"}.get(gkind(x.get("grade"), x.get("rrg_quadrant")), f"{x.get('grade','')} {str(x.get('rrg_quadrant','')).lower()}")
@@ -1192,7 +1198,7 @@ s8 = section("9 &middot; Read with care", ("This is a rerun on frozen votes" if 
     f'<details class="big"><summary>{len(cav)} caveats on the run, the data, the book and the sizing</summary><ul class="plainlist">{"".join(f"<li>{E(x)}</li>" for x in cav)}</ul>'
     f'<p>{E(MARK["committee_data_status"])}. {E(MARK["ma_panel_refresh"])}.</p></details>'
     f'<details class="big"><summary>{refresh_more[0]}</summary>{refresh_more[1]}</details>'
-    + (f'<details class="big"><summary>Which of the three reports is beating the market</summary><ul class="plainlist">{"".join(f"<li>{E(plain(_RL[k]))}</li>" for k in ("A", "B", "C") if _RL.get(k))}</ul></details>' if any(_RL.get(k) for k in ("A", "B", "C")) else ""), "care")
+    + (f'<details class="big"><summary>Which of the three reports is beating the market</summary><ul class="plainlist">{"".join(f"<li>{E(plain(_RL[k]))}</li>" for k in ("A", "A1", "A2", "A2L", "A2N", "B", "C") if _RL.get(k))}</ul></details>' if any(_RL.get(k) for k in ("A", "A1", "A2", "A2L", "A2N", "B", "C")) else ""), "care")
 
 # ------------------------------------------------------------------ page
 CSS = """

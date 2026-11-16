@@ -275,7 +275,7 @@ def _quant_citation_errors(v, where):
     case = v.get("case") if isinstance(v.get("case"), dict) else {}
     found = _quant_fields_in(" ".join(str(x) for x in (v.get("reason"), case.get("for"), case.get("against")) if x))
     if len(found) < QUANT_MIN_FIELDS:
-        return [f"{where}: {v.get('vote')} cites {len(found)} AQE field(s) ({', '.join(sorted(found)) or 'none'}) -- a Report C decider must name "
+        return [f"{where}: {v.get('vote')} cites {len(found)} AQE field(s) ({', '.join(sorted(found)) or 'none'}) -- a Committee AQE Quant Scan decider must name "
                 f"at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in backticks as its reasons "
                 f"(for example `structure` and `subcomponents.energy.exhaustion_score`). Re-file with the fields named."]
     return []
@@ -305,7 +305,7 @@ def validate_round1(form, universe):
             errs.append(f"voice {form.get('voice')!r} is not a decider seat (R31: {', '.join(DECIDERS)}); "
                         f"the QA seat and benched or stood-down voices do not nominate")
         if REPORT == "C" and form.get("voice") != QUANT_SEAT and noms:
-            errs.append(f"nominations: under Report C only {QUANT_SEAT} nominates (PM 2026-11-10); {form.get('voice')!r} votes on Report A's deliberation "
+            errs.append(f"nominations: under Committee AQE Quant Scan only {QUANT_SEAT} nominates (PM 2026-11-10); {form.get('voice')!r} votes on Committee Standard Scan's deliberation "
                         f"set plus {QUANT_SEAT}'s names and files no nominations")
         if len(noms) > SHORTLIST_CAP:
             errs.append(f"nominations: {len(noms)} > {SHORTLIST_CAP} -- R33 (PM 2026-10-30): a decider shortlists at "
@@ -326,7 +326,7 @@ def validate_round1(form, universe):
         if _cites_aqe(form.get("voice")):
             cited = {f for f in (n.get("fields_cited") or []) if f in AQE_QUANT_FIELDS}
             if len(cited) < QUANT_MIN_FIELDS:
-                errs.append(f"{w}: a Report C decider must cite at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in "
+                errs.append(f"{w}: a Committee AQE Quant Scan decider must cite at least {QUANT_MIN_FIELDS} AQE composite or sub-component fields in "
                             f"fields_cited ({len(cited)} found: {', '.join(sorted(cited)) or 'none'})")
         for step in (n.get("checklist_trace") or []):
             if isinstance(step, dict):
@@ -1616,6 +1616,19 @@ def cmd_init(a):
             return 2
         m["rerun"] = {"suffix": suffix, "of": f"pma-{a.date}", "run_dir": f"aegis/output/pma/run/{a.date}-{suffix}",
                       "publishes_live": False}
+    # PM 2026-11-16 (Standard Scan): the run's candidate method rides in the manifest so the brief, Cards, ledger and check.py all read the same word.
+    # A: whole_universe (the Standard Scan, no AQE gate) | aqe_doors (the old chain) | fallback_aqe_doors (the old chain because the universe rows were
+    # missing or refused). B is frozen ("report_b"); C is the AQE Quant Scan ("quant_scan"). No flag on an A run = the old chain.
+    _meth = (getattr(a, "method", None) or "").strip()
+    if report == "C":
+        _meth = "quant_scan"
+    elif report == "B":
+        _meth = "report_b"
+    elif _meth and _meth not in ("whole_universe", "aqe_doors", "fallback_aqe_doors"):
+        print(f"init: --method must be whole_universe, aqe_doors or fallback_aqe_doors, not {_meth!r}", file=sys.stderr)
+        return 2
+    if _meth:
+        m["method"] = _meth
     if report != "A":
         m["report"] = report
         m["reuse_from_report_a"] = {"run_dir": f"aegis/output/pma/run/{a.date}",
@@ -1790,7 +1803,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--manifest", default="run_manifest.json")
     sub = p.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live"); s.add_argument("--report", default=None, help="A (default) | B | C: Report B/C run as pma-<date>-B/-C in run/<date>-B/-C, never live; AEGIS_REPORT must match")
+    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live"); s.add_argument("--report", default=None, help="A (default) | B | C: Report B/C run as pma-<date>-B/-C in run/<date>-B/-C, never live; AEGIS_REPORT must match"); s.add_argument("--method", default=None, help="Standard Scan (PM 2026-11-16), report A only: whole_universe | aqe_doors | fallback_aqe_doors; C and B are set by --report")
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")

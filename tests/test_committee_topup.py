@@ -72,7 +72,7 @@ def test_the_nightly_scope_carries_the_screened_names_outside_the_export():
 def test_screen_picks_and_seat_sets_agree_on_what_a_b_run_needs(tmp_path):
     rows = json.loads((ct.PROJECT_ROOT / "aegis/output/aqe_universe_rows.json").read_text())["rows"]
     picks = ct.screen_picks(rows)
-    assert 0 < len(picks) <= 70 and set(picks) <= {r["ticker"] for r in rows}
+    assert 0 < len(picks) <= 150 and set(picks) <= {r["ticker"] for r in rows}
     ss = tmp_path / "seat_sets.json"
     ss.write_text(json.dumps({"seats": {"oneil": [{"ticker": picks[0]}], "seow": [{"ticker": picks[-1]}]}}))
     assert ct.names_from_seat_sets(ss) == sorted({picks[0], picks[-1]})

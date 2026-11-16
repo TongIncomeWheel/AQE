@@ -23,7 +23,7 @@ from src.pipeline import committee_data as cd
 
 DEFAULT_DIR = PROJECT_ROOT / "aegis" / "output" / "committee_data"
 UNIVERSE_ROWS_REPO = PROJECT_ROOT / "aegis" / "output" / "aqe_universe_rows.json"
-SCREEN_TOP = 10          # Report B reads the top 10 per seat (PM 2026-11-10)
+SCREEN_TOP = 25          # the Standard Scan (report A, PM 2026-11-16) reads the top 25 per seat; the old Report B read 10
 FUND_OK = ("served", "carried", "partial")
 
 
@@ -50,6 +50,18 @@ def screen_picks(rows: list[dict], top: int = SCREEN_TOP) -> list[str]:
         return []
     res = _screens_mod().all_screens(rows, top)
     return sorted({x["ticker"] for v in res.values() for x in v})
+
+
+def quant_picks(rows: list[dict]) -> list[str]:
+    """The names the AQE Quant Scan's whole-universe quant screen seats (same code as `pma_pipeline.py quant-screen`, defaults top 30 + top 6 on five sub-scores)."""
+    if not rows:
+        return []
+    return sorted(_screens_mod().quant_screen(rows))
+
+
+def scope_picks(rows: list[dict]) -> list[str]:
+    """Everything the two live-chain reports can seat from outside the export: the seven Standard Scan screens plus the AQE Quant Scan screen (PM 2026-11-16)."""
+    return sorted(set(screen_picks(rows)) | set(quant_picks(rows)))
 
 
 def names_from_seat_sets(path: Path) -> list[str]:
@@ -159,7 +171,7 @@ def main(argv=None) -> int:
         if not rows:
             print("[topup] FAILED: --screens needs the universe rows file and it is missing or empty")
             return 2
-        names |= set(screen_picks(rows))
+        names |= set(scope_picks(rows))
     if not names:
         print("[topup] FAILED: no names given (--names / --seat-sets / --screens)")
         return 2

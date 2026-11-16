@@ -129,6 +129,23 @@ SCREENS = {
 SEATS = list(SCREENS)
 
 
+def quant_screen(rows, top=30, per_sub=6):
+    """The AQE Quant Scan's candidate screen over the whole universe (PM 2026-11-16): the top `top` by AQE rank (the pipeline composite over SC_MOMENTUM, SC_POSITION and the
+    engines) UNION the top `per_sub` on each engine sub-score a name can lead on (Flow, Energy, Structure, MP, Elder), so a name that leads one engine but ranks lower overall
+    is not lost. Pure code, no model, no AQE list membership, nothing from the Standard Scan. -> {ticker: [why, ...]} in a stable order."""
+    def num(v):
+        return v if isinstance(v, (int, float)) and v == v else None
+    out = {}
+    ranked = sorted([r for r in rows if num(r.get("rank")) is not None], key=lambda r: (r["rank"], r["ticker"]))
+    for r in ranked[:top]:
+        out.setdefault(r["ticker"], []).append(f"AQE rank {int(r['rank'])}")
+    for key, word in (("flow", "Flow"), ("energy", "Energy"), ("structure", "Structure"), ("mp", "MP"), ("elder", "Elder")):
+        lead = sorted([r for r in rows if num(r.get(key)) is not None], key=lambda r: (-r[key], num(r.get("rank")) if num(r.get("rank")) is not None else 1e9, r["ticker"]))
+        for r in lead[:per_sub]:
+            out.setdefault(r["ticker"], []).append(f"{word} {r[key]:g}")
+    return out
+
+
 def score(seat, row):
     hits = []
     for name, test in SCREENS[seat]:
