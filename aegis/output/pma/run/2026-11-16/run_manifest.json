@@ -6,12 +6,60 @@
    "at": "2026-11-16T04:16:38Z",
    "note": "declared produces absent: ['packets/']",
    "step": "GATHER"
+  },
+  {
+   "at": "2026-11-16T04:16:51Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
   }
  ],
  "flags": [],
  "method": "whole_universe",
  "run_id": "pma-2026-11-16",
- "seats": {},
+ "seats": {
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "250a46459d193df84a0c601859df7f33f7c0a777b1550e4c5d93f7697872e76d",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "933b1f87621e6383c6fd796f0808e998e5dd36f9db1a7f0273de43d23b10bc90",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "4b444308859c8bade385781aa6c9efbb8ca71d008c7c0d40166b1c3063245728",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "8fb891e26033d145614016b6806cf4ad16afc4ba3b441acb6cd20ef322b5004d",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "dc842244f2de88377dba354c7986b41d6416a63df1bca38a61b7d63e9c9bb353",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "d977c64d812aff75b15a614775172c9f41f5a696c77cef813299d6b895b170d3",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "a19fa9d62cfccf359aff53680078883287f248cc810c59bf2372f811dfdc5cc2",
+   "status": "committed"
+  }
+ },
  "steps": {
   "GATHER": {
    "cost": {
@@ -26,6 +74,82 @@
     "run dir assembled by the conductor from main; packets built by the screens step"
    ],
    "started": "2026-11-16T04:16:38Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T04:19:57Z",
+   "notes": [],
+   "started": "2026-11-16T04:19:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 83923,
+    "spawns": 7
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "250a46459d193df84a0c601859df7f33f7c0a777b1550e4c5d93f7697872e76d",
+    "forms/r1/livermore.json": "933b1f87621e6383c6fd796f0808e998e5dd36f9db1a7f0273de43d23b10bc90",
+    "forms/r1/minervini.json": "4b444308859c8bade385781aa6c9efbb8ca71d008c7c0d40166b1c3063245728",
+    "forms/r1/oneil.json": "8fb891e26033d145614016b6806cf4ad16afc4ba3b441acb6cd20ef322b5004d",
+    "forms/r1/raschke.json": "dc842244f2de88377dba354c7986b41d6416a63df1bca38a61b7d63e9c9bb353",
+    "forms/r1/seow.json": "d977c64d812aff75b15a614775172c9f41f5a696c77cef813299d6b895b170d3",
+    "forms/r1/wyckoff.json": "a19fa9d62cfccf359aff53680078883287f248cc810c59bf2372f811dfdc5cc2"
+   },
+   "finished": "2026-11-16T04:19:57Z",
+   "notes": [],
+   "started": "2026-11-16T04:19:49Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T04:19:57Z",
+   "notes": [],
+   "started": "2026-11-16T04:19:57Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T04:16:51Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "packets built by screens + packets --seat-sets; voice_menus copied"
+   ],
+   "started": "2026-11-16T04:16:51Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T04:19:57Z",
+   "notes": [],
+   "started": "2026-11-16T04:19:57Z",
    "status": "done",
    "tokens": 0
   }

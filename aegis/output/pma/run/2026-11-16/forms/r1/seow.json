@@ -1,0 +1,84 @@
+{
+ "voice": "seow",
+ "date": "2026-11-16",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "AMLX",
+   "reason": "POSITION system fired: fresh break above resistance (structure_shift 3 = BULLISH_BOS, pct_from_pivot 0.97) in a LEADING sector, ret_63d 41.34 vs index -2.37, rs_rank_pct 99.22, COM proxy cmf 0.2 > 0. Buy stop 1 tick over bar_high 30.72; support line base_low_20d 26.23.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "structure_shift_ref", "sector_rrg_quadrant", "ret_63d", "rs_rank_pct", "subcomponents.flow.cmf", "elder_5d", "bar_high", "base_low_20d", "fib_swing_low", "elder_context.volume.avg_vol_20d"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 1418963, entry 30.29", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C6", "C24"], "observed": "ret_63d 41.34 vs index_pct_change_63d -2.37; rs_rank_pct 99.22; sector_rrg_quadrant 3 (LEADING)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift 3 (BULLISH_BOS), structure_shift_ref 30.0, pct_from_pivot 0.97", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.2 (>0); elder_pattern null; elder_5d [10, 10, 10, 7, 7]", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "trade_above:bar_high 30.72; support line max(fib_swing_low 21.28, base_low_20d 26.23) = 26.23", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d"]}
+   ],
+   "falsifier": "A close below the support line base_low_20d 26.23 (sell that session or the next), or the trend-colour flip proxy (bar_close < bar_open after the up-run) with the sell placed next session below that bar's low. A close back under structure_shift_ref 30.0 says the break failed."
+  },
+  {
+   "ticker": "TMO",
+   "reason": "POSITION system fired: fresh break above resistance (structure_shift 3 = BULLISH_BOS, pct_from_pivot 0.85) in a LEADING sector, ret_63d 19.59 vs index -2.37, rs_rank_pct 93.96, cmf 0.09 > 0. Caution: TIF proxy elder_pattern 4 (INTERRUPTED), elder_5d fell to 2. Buy stop over bar_high 702.03.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "structure_shift_ref", "sector_rrg_quadrant", "ret_63d", "rs_rank_pct", "subcomponents.flow.cmf", "elder_pattern", "elder_5d", "bar_high", "fib_swing_low", "base_low_20d"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2245941, entry 700.22", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C6", "C24"], "observed": "ret_63d 19.59 vs index_pct_change_63d -2.37; rs_rank_pct 93.96; sector_rrg_quadrant 3 (LEADING)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift 3 (BULLISH_BOS), structure_shift_ref 694.33, pct_from_pivot 0.85", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.09 (>0); elder_pattern 4 (INTERRUPTED); elder_5d [9, 10, 10, 2, 2]", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "trade_above:bar_high 702.03; support line max(fib_swing_low 661.6, base_low_20d 661.3) = 661.6", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d"]}
+   ],
+   "falsifier": "A close below the support line fib_swing_low 661.6; a close back under structure_shift_ref 694.33 says the break failed. Buy stop over bar_high 702.03 not taken = no entry, re-place against the next prior-day high."
+  },
+  {
+   "ticker": "KDP",
+   "reason": "POSITION system fired: above resistance (structure_shift 1 = ABOVE_STRUCTURE, pct_from_pivot 2.66) on heavy volume (rvol_20d 2.75) in a LEADING sector, ret_63d 20.01 vs index -2.37, cmf 0.1 > 0. Caution: elder_pattern 4 (INTERRUPTED). Buy stop over bar_high 36.87; support 34.14.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "structure_shift_ref", "rvol_20d", "sector_rrg_quadrant", "ret_63d", "rs_rank_pct", "subcomponents.flow.cmf", "elder_pattern", "elder_5d", "bar_high", "base_low_20d", "fib_swing_low"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 21907394, entry 36.34", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C6", "C24"], "observed": "ret_63d 20.01 vs index_pct_change_63d -2.37; rs_rank_pct 79.32; sector_rrg_quadrant 3 (LEADING)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift 1 (ABOVE_STRUCTURE), structure_shift_ref 35.4, pct_from_pivot 2.66", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.1 (>0); subcomponents.flow.mfi 69.23; elder_pattern 4 (INTERRUPTED); elder_5d [7, 10, 10, 3, 4]", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "subcomponents.flow.mfi", "elder_pattern", "elder_5d"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "trade_above:bar_high 36.87; support line max(fib_swing_low 30.06, base_low_20d 34.14) = 34.14", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d"]}
+   ],
+   "falsifier": "A close below the support line base_low_20d 34.14; a close back under structure_shift_ref 35.4 puts it back below resistance and the signal is gone."
+  },
+  {
+   "ticker": "HNGE",
+   "reason": "POSITION system: broke out earlier, kept running (structure_shift 1 = ABOVE_STRUCTURE, pct_from_pivot 19.38), LEADING sector, ret_63d 31.32, rs_rank_pct 98.36, cmf 0.09 > 0. Caution: last bar red (bar_close 115.39 < bar_open 121.34) and elder_pattern 4 (INTERRUPTED). Buy stop over bar_high 121.45.",
+   "fields_cited": ["structure_shift", "pct_from_pivot", "sector_rrg_quadrant", "ret_63d", "rs_rank_pct", "subcomponents.flow.cmf", "elder_pattern", "elder_5d", "bar_open", "bar_close", "bar_high", "fib_swing_low", "base_low_20d"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C25"], "observed": "elder_context.volume.avg_vol_20d 2034879, entry 115.39", "verdict": "pass", "fields": ["elder_context.volume.avg_vol_20d", "entry"]},
+    {"step": 2, "canon_ref": ["C23", "C6", "C24"], "observed": "ret_63d 31.32 vs index_pct_change_63d -2.37; rs_rank_pct 98.36; sector_rrg_quadrant 3 (LEADING)", "verdict": "pass", "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]},
+    {"step": 3, "canon_ref": ["C26"], "observed": "structure_shift 1 (ABOVE_STRUCTURE), structure_shift_ref 96.66, pct_from_pivot 19.38", "verdict": "pass", "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot"]},
+    {"step": 4, "canon_ref": ["C28"], "observed": "subcomponents.flow.cmf 0.09 (>0); elder_pattern 4 (INTERRUPTED); elder_5d [10, 10, 7, 7, 2]; bar_close 115.39 < bar_open 121.34", "verdict": "partial", "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d", "bar_close", "bar_open"]},
+    {"step": 5, "canon_ref": ["C27", "C14", "C29", "C30"], "observed": "trade_above:bar_high 121.45; support line max(fib_swing_low 111.0, base_low_20d 99.99) = 111.0", "verdict": "pass", "fields": ["bar_high", "fib_swing_low", "base_low_20d"]}
+   ],
+   "falsifier": "A close below the support line fib_swing_low 111.0. If the buy stop over bar_high 121.45 is never taken, there is no entry (C27)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "TIGHTEN", "line": "Red candle (bar_close 109.88 < bar_open 112.69), elder_pattern 2 left SUSTAINED/ACCELERATION, cmf -0.24, structure_shift 4 (RANGE): C14 arms the sell next session 1 tick under bar_low 105.59, above the working 99.45; a close below support fib_swing_low 106.92 is the hard exit."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short is out of scope for my long-only method (C32) - declared, not applied. Read only as the mirror: structure_shift 2 (BEARISH_CHOCH), ma_20 142.1 < ma_40 148.67, ma_20_slope_5d_pct -2.16, cmf -0.08, last bar down; nothing in the mirror argues covering ahead of the working 145.05 stop."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null for AMLX: the TIF trend-impulse proxy could not be read, step 4 recorded partial on cmf alone (elder_5d read instead)."},
+  {"field": "atr_14d", "impact": "absent from the packet: the swing pullback grade (R7, bar_range_5d vs atr_14d) could not test 'measured bars'; swing names were judged on the bar-count, 40MA and five-condition tests only."},
+  {"field": "rs_rank_pct", "impact": "null for held SPCX (with ret_6m, ret_12m, pct_from_52w_high, ma_200): strength read on the held short incomplete; held review rests on structure and MAs."}
+ ],
+ "declarations": [
+  "Ledger memory: no voice_memory block was injected this run; no standing lesson applies.",
+  "Declared proxies used: structure_shift / pct_from_pivot for the resistance line and light-green arrow; sector_rrg_quadrant for the market-cycle arrow; subcomponents.flow.cmf for COM; elder_pattern / elder_5d for TIF; bar_close < bar_open for the red candle; max(fib_swing_low, base_low_20d) for the support line.",
+  "Both systems were run on every packet name (R10/R32). Swing system: no name passed all five set-up conditions and the pullback grade - W met the five (cci_20 -110.03, bar_low 108.25 <= ma_20 114.06, bar_close 111.92 > ma_40 108.99, ma_20_slope_5d_pct 1.29) but days_since_swing_high 8 fails C4/R7; PFE bar_close 28.89 < ma_40 29.07; BSP ma_20_slope_5d_pct -2.86.",
+  "C32: shorts out of scope; SPCX reviewed as a held name only. C21 (house rule) not used.",
+  "R1: engine bracket fields were not used to include, exclude or grade any name; each falsifier names my own support line from structure."
+ ],
+ "shortfall_reason": "Only four packet names show a position-system buy signal (structure_shift BULLISH_BOS/ABOVE_STRUCTURE or pct_from_pivot > 0) with strength and positive fund flow, and no name passes the full five-condition swing set-up plus pullback grade. Fewer is valid; padding would breach C19/C31."
+}

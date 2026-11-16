@@ -1,0 +1,117 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-16",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "MGNI",
+   "reason": "Leader in the one Building group on my sheet: above structure, structure 72.6, mp_state STRONG and ACCELERATING - an upward-trend column still extending. Entry only on a fresh high; danger signal is a one-day reaction from the high of 2x atr_14d 1.27 (my translation, not 6 points).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "sector_trend_state", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 72.6, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 19.18", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.27; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 28.02", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "sector_trend_state 1 (Momentum Building), gics_sector XLC, rank 16; no second XLC name in packet to confirm", "verdict": "partial", "fields": ["sector_trend_state", "gics_sector", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False - initial line only, any addition only at higher prices", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 0.85 read as proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A single-day reaction from the day's high of 2x atr_14d 1.27 or more, or a close under bracket.atr_fallback_stop 28.02, or structure_shift turning BEARISH_CHOCH."
+  },
+  {
+   "ticker": "U",
+   "reason": "Highest structure on my sheet, structure 92.6, above structure, mp_state STRONG and ACCELERATING in a Recovering tech group - trend column intact. Buy only the next new high; danger signal = one-day reaction of 2x atr_14d 2.75 from the high (my translation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "sector_trend_state", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 92.6, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 21.7", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.75; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 50.06", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "sector_trend_state 3 (Recovering), gics_sector XLK, rank 12; the other XLK name (RBRK) structure 25.0 does not confirm", "verdict": "partial", "fields": ["sector_trend_state", "gics_sector", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False - initial line only, add only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 0.94 read as proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A one-day reaction from the high of 2x atr_14d 2.75 or more, or a close under bracket.atr_fallback_stop 50.06, or structure_shift BEARISH_CHOCH."
+  },
+  {
+   "ticker": "BTSG",
+   "reason": "Fresh break of structure (BULLISH_BOS) out of the pullback with structure 80.0 and mp_state STRONG, ACCELERATING - the pullback-then-new-high my C5 entry asks for. Healthcare peers EW and ELAN read STRONG too. Danger signal 2x atr_14d 2.81 from the day's high (my translation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C17"], "observed": "structure 80.0, structure_shift 3 (BULLISH_BOS), sma_distance_pct 14.98", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.81; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 68.4", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state 2 (Fading); second XLV names EW and ELAN mp_state 3 confirm; rank 75", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False - initial line only, add only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 0.51 read as proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Break back into the range (structure_shift RANGE/BEARISH_CHOCH) or a one-day reaction of 2x atr_14d 2.81 from the high, or a close under bracket.atr_fallback_stop 68.4."
+  },
+  {
+   "ticker": "EW",
+   "reason": "Established uptrend above structure, structure 86.3, mp_state STRONG; a second healthcare name (BTSG) confirms. Acceleration has cooled (DECELERATING) so I want the next new high before acting, not the pullback. Danger signal 2x atr_14d 2.86 from the high (my translation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "gics_sector", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 86.3, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 18.5", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C8", "C18"], "observed": "atr_14d 2.86; mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 104.29", "verdict": "partial", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLV, sector_trend_state 2 (Fading); BTSG confirms; rank 14", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "held False - initial line only, add only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 0.79 read as proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "mp_state turning FADING with no new high, a one-day reaction of 2x atr_14d 2.86 from the high, or a close under bracket.atr_fallback_stop 104.29."
+  },
+  {
+   "ticker": "CHYM",
+   "reason": "Above structure, structure 81.1, mp_state BUILDING and ACCELERATING with day_vol 1.61 - a trend resuming with participation; BEN in the same group reads STRONG, ACCELERATING as the second name. Danger signal 2x atr_14d 1.35 from the high (my translation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "day_vol", "gics_sector", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C19"], "observed": "structure 81.1, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 12.09", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.35; mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 32.2", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLF, sector_trend_state 2 (Fading); BEN mp_state 3 mp_accel_state 1 confirms; rank 9", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "held False - initial line only, add only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 1.61 read as proxy only, fill difficulty not served", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "Failure to make a new high and a reaction of 2x atr_14d 1.35 from a rally high (C20), or a close under bracket.atr_fallback_stop 32.2."
+  },
+  {
+   "ticker": "EMBJ",
+   "reason": "Leading Building industrials group, above structure, mp_state STRONG and ACCELERATING, and only sma_distance_pct 5.44 off its 50-day - not a chase. ADP's BULLISH_BOS in the same group is the second name. Danger signal 2x atr_14d 2.91 from the high (my translation).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "sector_trend_state", "atr_14d", "bracket.atr_fallback_stop", "rank"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 74.7, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 5.44", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.91; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, own wrong-level = bracket.atr_fallback_stop 75.82", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "sector_trend_state 1 (Momentum Building), gics_sector XLI, ADP structure_shift 3 confirms; rank 189", "verdict": "pass", "fields": ["sector_trend_state", "gics_sector", "rank"]},
+    {"step": 4, "canon_ref": ["C6"], "observed": "held False - initial line only, add only higher", "verdict": "pass", "fields": ["held"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; day_vol 0.95 read as proxy only", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ],
+   "falsifier": "A one-day reaction of 2x atr_14d 2.91 from the high, a close under bracket.atr_fallback_stop 75.82, or structure_shift BEARISH_CHOCH."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Long 80 with no trend under it: structure 25.0, structure_shift 4 (RANGE), sma_distance_pct -3.4 below the 50-day; mp_state BUILDING is not a new high. C3 - take the first small loss rather than hope; the working broker stop 99.45 stays as the hard floor, never averaged down (C4)."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68 is on the trend's side: structure 21.0, structure_shift 2 (BEARISH_CHOCH), sma_distance_pct -6.58, mp_state FADING. Keep the working BUY stop 145.05; add only at successively lower prices (C6); a one-day rally of 2x atr_14d 8.08 off the low is my danger signal (translation)."}
+ ],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null on all six nominees (bracket.valid False); I named my own wrong-level from bracket.atr_fallback_stop and structure instead - information only, never a reason against a name (R1)."},
+  {"field": "bracket.risk_pct", "impact": "null on all six nominees; max loss stated as a level, not a percent."},
+  {"field": "pct_from_52w_high", "impact": "not on my menu (pending from AQE); C5 new-high proximity is read only through structure_shift/sma_distance_pct, which measure extension from the 50-day, not distance to the high."},
+  {"field": "mp_state transition parameter", "impact": "not emitted; my C18-C20 thresholds remain translated via atr_14d (2x multiplier is my own, not Livermore's 6/3/12 points)."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS/FAIL per name from structure/structure_shift + sma_distance_pct (C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (2x, my multiplier), not literal 6pts (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger memory: no memory block injected this round; no standing lesson applies",
+  "concentration in healthcare/financials among nominees is consistent with C12 (R7)"
+ ],
+ "shortfall_reason": null
+}

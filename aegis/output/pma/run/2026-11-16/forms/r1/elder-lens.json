@@ -1,0 +1,86 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-16",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DOCU",
+   "reason": "Red giving way: elder_5d [0, 0, 5, 5, 7] prints the permission event on the last bar (C4), impulse GREEN, weekly UP read first, price_ema_slope 0.1766 rising, force_index_ema_13 269242.53 bullish zone, entry 80.76 under channel_upper 90.09. Spring, not summer.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar GREEN; weekly_trend_direction UP", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "weekly_trend_direction"]},
+    {"step": 2, "canon_ref": ["C4", "C20"], "observed": "elder_5d [0, 0, 5, 5, 7]: last 7 after 5 = permission event on last bar; elder_pattern 2 (ACCUMULATION_BASE); colour GREEN/GREEN", "verdict": "pass", "fields": ["elder_5d", "elder_pattern", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C7"], "observed": "price_ema_slope 0.1766 > 0; force_index_ema_13 269242.53 > 0; pattern not INTERRUPTED; force_index_ema_2 1052668.25 > 0 so no pullback dip yet (R3 not fired)", "verdict": "pass", "fields": ["price_ema_slope", "force_index_ema_13", "force_index_ema_2", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 80.76 inside channel_upper 90.09 / channel_lower 67.42 (R5 pass); no swing-low or value-MA field on my menu to place my own stop", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition quality: 0,0,5,5,7 — red certain two bars back, permission on the last bar; mp_state 1 (BUILDING), mp 61.0", "verdict": "pass", "fields": ["elder_5d", "mp_state", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-trigger step not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "Impulse prints RED again (elder at or under 1) or force_index_ema_13 crosses below zero; price thesis wrong on a close back under the value zone, which my menu cannot place — the PM's bracket step names the price."
+  },
+  {
+   "ticker": "KSS",
+   "reason": "Elder's best long signal on the colour itself: impulse_colour_prior_bar RED gave way to impulse_colour_last_bar BLUE (C3/C4), and force_index_ema_2 -10512.09 dipped under zero while price_ema_slope 0.0126 rises (C6 pullback timer), weekly UP, entry 24.0 under channel_upper 26.98.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3", "C21"], "observed": "elder 3.0 (ambiguous band) but impulse_colour_last_bar BLUE = not red, ban lifted; weekly_trend_direction UP", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "weekly_trend_direction"]},
+    {"step": 2, "canon_ref": ["C4", "C3"], "observed": "impulse_colour_prior_bar RED -> impulse_colour_last_bar BLUE (R2 red vanishing); elder_5d [7, 8, 5, 2, 3] has no >=7 last-bar event", "verdict": "partial", "fields": ["impulse_colour_last_bar", "impulse_colour_prior_bar", "elder_5d"]},
+    {"step": 3, "canon_ref": ["C6", "C9", "C10", "C7"], "observed": "force_index_ema_2 -10512.09 < 0 with price_ema_slope 0.0126 > 0 (R3 fires); force_index_ema_13 329367.56 > 0; but elder_pattern 4 (INTERRUPTED)", "verdict": "partial", "fields": ["force_index_ema_2", "price_ema_slope", "force_index_ema_13", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 24.0 inside channel_upper 26.98 / channel_lower 19.67 (R5 pass); no swing-low field on menu for my own stop", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition is the colour (RED->BLUE) on the last bar, not the score; mp_state 2 (FADING), mp 72.0", "verdict": "partial", "fields": ["elder_5d", "mp_state", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-trigger step not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "impulse_colour_last_bar returns to RED, or price_ema_slope turns negative / force_index_ema_13 crosses below zero; price stop at the last daily swing low, which my menu cannot see."
+  },
+  {
+   "ticker": "DOCS",
+   "reason": "Permission event on the last bar: elder_5d [2, 0, 6, 6, 7] lifts from red (0) to 7 (C4), impulse GREEN, weekly UP, price_ema_slope 0.0624 rising, force_index_ema_13 161035.33 bullish, entry 33.34 under channel_upper 37.41. Pattern INTERRUPTED tempers the trend leg.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3", "C21"], "observed": "elder 7.0; impulse_colour_last_bar GREEN; weekly_trend_direction UP", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "weekly_trend_direction"]},
+    {"step": 2, "canon_ref": ["C4"], "observed": "elder_5d [2, 0, 6, 6, 7]: last 7 after 6 = permission event on last bar; colour GREEN/GREEN", "verdict": "pass", "fields": ["elder_5d", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C7"], "observed": "elder_pattern 4 (INTERRUPTED) = card says trend leg failed; yet price_ema_slope 0.0624 > 0 and force_index_ema_13 161035.33 > 0; force_index_ema_2 232288.65 > 0 (no dip)", "verdict": "partial", "fields": ["elder_pattern", "price_ema_slope", "force_index_ema_13", "force_index_ema_2"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 33.34 inside channel_upper 37.41 / channel_lower 27.41 (R5 pass); no swing-low field on menu for my own stop", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C22"], "observed": "transition 2,0,6,6,7 on the last bar; mp_state 1 (BUILDING), mp 65.0", "verdict": "partial", "fields": ["elder_5d", "mp_state", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-trigger step not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "elder drops back to 6 or under with colour RED, or force_index_ema_13 crosses below zero; price stop at the last daily swing low, not on my menu."
+  },
+  {
+   "ticker": "WDAY",
+   "reason": "Spring season (C20): elder_5d [0, 0, 3, 3, 5] rising from certain red, impulse_colour_prior_bar BLUE -> impulse_colour_last_bar GREEN, force_index_ema_2 6740094.81 and force_index_ema_13 377914.61 both positive, price_ema_slope 0.2239 rising, weekly UP, entry 196.45 under channel_upper 227.49.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3", "C21"], "observed": "elder 5.0 (ambiguous band); impulse_colour_last_bar GREEN resolves not-red; weekly_trend_direction UP", "verdict": "partial", "fields": ["elder", "impulse_colour_last_bar", "weekly_trend_direction"]},
+    {"step": 2, "canon_ref": ["C4", "C20"], "observed": "elder_5d [0, 0, 3, 3, 5]: red certain two bars back, no >=7 last bar; colour BLUE->GREEN (not red vanishing); elder_pattern 2 (ACCUMULATION_BASE)", "verdict": "partial", "fields": ["elder_5d", "impulse_colour_last_bar", "impulse_colour_prior_bar", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C7"], "observed": "price_ema_slope 0.2239 > 0; force_index_ema_13 377914.61 > 0; pattern not INTERRUPTED", "verdict": "pass", "fields": ["price_ema_slope", "force_index_ema_13", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19", "C11"], "observed": "entry 196.45 inside channel_upper 227.49 / channel_lower 163.53 (R5 pass); no swing-low field on menu for my own stop", "verdict": "partial", "fields": ["entry", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C20", "C22"], "observed": "rising below centre, permission not yet a >=7 bar; mp_state 1 (BUILDING), mp 31.0", "verdict": "partial", "fields": ["elder_5d", "mp_state", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "not a held name; held-trigger step not applicable", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "elder_5d fails to print a bar of 7 or more and the colour falls back to RED, or price_ema_slope turns negative; price stop at the last daily swing low, not on my menu."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Long 80: price_ema_slope -0.6446 falling and force_index_ema_13 -3570988.4 in the bearish zone — with the average falling only shorts are permitted (C10); elder_5d [3, 3, 3, 3, 3] has no new drop but no permission either; working stop 99.45 is never lowered (C18)."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68: weekly_trend_direction DOWN, price_ema_slope -0.1854 falling, force_index_ema_13 -79397955.48 bearish zone, colour BLUE (forbids nothing); elder_5d [5, 5, 5, 6, 5] single-bar drop runs with the short; BUY stop 145.05 held or lowered, never raised (C18)."}
+ ],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on EPAM, AMC, CDW, PRCH, BOBS, REPL, AMRX, LFST, COTY, ADPT, CNK, PTC — R8 (CORRECTION_REENTRY with STRONG) and the INTERRUPTED trend-leg test could not be read on those rows; none showed a last-bar permission event, so no nomination was lost to it."},
+  {"field": "swing_low (last daily swing low / value-zone EMA)", "impact": "not on my menu, so step 4 cannot name my own price invalidation level; falsifiers are stated on impulse colour / force regime and defer the price to the PM's bracket step."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected for this run; no standing lesson applies.",
+  "Censor duty: no row in my packet prints elder at or under 1; KSS printed impulse_colour_prior_bar RED and has now lifted to BLUE.",
+  "Fields outside my menu present in the packet (ma_20, ma_50, structure_shift, choch_state, pin_bar_state, ma_status, extension_bracket, held_book.*) were not read for judgment.",
+  "Green going away (impulse GREEN -> BLUE) on CDW, TECH, VRNS, AMRX, FIGS, CNK is Elder's profit-taking signal, not an entry, so none was nominated."
+ ],
+ "shortfall_reason": "Four nominations, not six: only DOCU and DOCS print the last-bar permission event (elder_5d at 7 or more after 6 or under), KSS shows red vanishing in the colour itself, and WDAY is a spring read; every other row is a plateau (summer, C20/C24 unsourced) or green going away, and padding is the breach."
+}
