@@ -15,7 +15,7 @@ def E(x):
     return html.escape(str(x), quote=True)
 
 
-def render(report, date, consensus, lines=None):
+def render(report, date, consensus, lines=None, funnel=None):
     rows = [r for r in consensus if r.get("verdict") in ("ADVANCE", "HOLD-FOR-CONDITIONS")]
     rows.sort(key=lambda r: (r["verdict"] != "ADVANCE", -(r.get("conviction") or 0), r["ticker"]))
     n_all = len(consensus)
@@ -30,6 +30,10 @@ def render(report, date, consensus, lines=None):
     ln = (lines or {}).get(report)
     score = (f'<p>{E(ln)}</p>' if ln else '<p>No graded result yet: the first five-session result arrives a week after the first run.</p>')
     d = datetime.date.fromisoformat(date)
+    funnel_html = ""
+    if funnel:
+        import scan_funnel as SF
+        funnel_html = "<h2>2 &middot; The funnel</h2>" + SF.html_tables(funnel)
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aegis Daily Cards {E(report)}</title><style>
 body{{font:16px/1.5 system-ui,sans-serif;margin:0;padding:16px;background:#fff;color:#111}}
@@ -42,7 +46,7 @@ body{{font:16px/1.5 system-ui,sans-serif;margin:0;padding:16px;background:#fff;c
 <h2>1 &middot; The tickers</h2>
 <p>{len(rows)} of {n_all} names advance or hold for conditions. No price levels are published for this report; it is graded on what the names do next.</p>
 <table>{"".join(body) or '<tr><td>No name reached an advance or hold verdict.</td></tr>'}</table>
-<h2>2 &middot; Scorecard</h2>{score}
+{funnel_html}<h2>{"3" if funnel else "2"} &middot; Scorecard</h2>{score}
 <p class="meta">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div></body></html>"""
 
@@ -61,7 +65,9 @@ def main(argv=None):
     lpath = os.path.join(a.run_dir, "report_lines.json")
     lines = json.load(open(lpath)) if os.path.exists(lpath) else None
     out = a.out or os.path.join(a.run_dir, f"pma_cards_{a.date}-{a.report}.html")
-    open(out, "w").write(render(a.report, a.date, json.load(open(cpath)), lines))
+    fpath = os.path.join(a.run_dir, "scan_funnel.json")
+    funnel = json.load(open(fpath)) if os.path.exists(fpath) else None          # PM 2026-11-16: the funnel strip, built by scan_funnel.py
+    open(out, "w").write(render(a.report, a.date, json.load(open(cpath)), lines, funnel))
     print(f"wrote {out}")
     return 0
 

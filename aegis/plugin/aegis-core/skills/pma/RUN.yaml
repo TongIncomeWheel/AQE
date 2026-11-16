@@ -127,6 +127,12 @@ report:
     --universe-rows aqe_universe_rows.json --consensus consensus.json --out aqe_listing.md`, pasted verbatim like held_table.md (header | Ticker | AQE-listed | AQE scores |, then the disclosure line); the gate (Q-SS) fails a
     whole_universe brief without the table, a row for every ADVANCE or HOLD name, and the disclosure line. `pma_levels.py emit ... --export aqe_daily_export_wu.json --universe-rows aqe_universe_rows.json` adds each
     row's `aqe` block. Cards v3 prints the same facts in plain words on every ticker card and a banner naming the method.
+    (5b2) THE FUNNEL STRIP (PM 2026-11-16), for BOTH scans: after the slate, the vote and QA (before WRITE and REPORT) run `python3 tools/scan_funnel.py --run-dir . --report A` in the A run dir and
+    `--report C` in the C run dir. It writes scan_funnel.json and scan_funnel.md by code from seat_sets.json / quant_screen.json, tally.json, phase4.json, funnel.json, slate.json, consensus.json and
+    committee_record.json: the count at every stage (universe, screens, nominated, in the room, cross-examination survivors, slated, ratified AGREED / CONTESTED / DROPPED, QA hold; for C: universe, quant screen,
+    aqe-quant nominations, in the room, cross-examination, vote) and, for every name that fell out from the room on, one line with the tool file's own reason and its AQE tag (AQE-listed or not, plus AQE scores).
+    The early stages print counts only (listing 984 names would hide the story). The Cards page (v3 for A, pma_cards_report.py for C) prints the same tables; the brief pastes scan_funnel.md VERBATIM after the
+    AQE-listed table; the gate (Q-SS) fails a whole_universe brief without the "| Stage | In | Out | What fell out |" table. Nothing in the funnel is hand-written.
     (5c) THE LOUD FALLBACK (PM 2026-11-16): if aqe_universe_rows.json is missing, empty or refused (export.universe_rows_status), `screens` stops with a reason. Do NOT go on silently and do NOT stop the live committee:
     re-run `registrar.py init --method fallback_aqe_doors` and use the old chain (the AQE-published candidate_set.json, `trim`, the doors on, no --clean, no augment-export). The brief says FALLBACK in its heading line
     (the gate checks it), the Cards banner says FALLBACK: AQE doors, the ledger rows carry method fallback_aqe_doors, and the DONE post names it. A coverage FAIL is NOT a fallback reason: top it up.

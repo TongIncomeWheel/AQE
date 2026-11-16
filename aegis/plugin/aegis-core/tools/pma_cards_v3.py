@@ -986,9 +986,32 @@ strong_det = ('<details class="big"><summary>Strong names no reviewer picked, th
     + table(["AQE #", "Name", "Sector", "Sector state", "Committee"], [[r["rank"], f"<b>{r['ticker']}</b>", E(r.get("gics_sector_name") or ""), sstate(r), room(r["ticker"])] for r in top20])
     + "<p>The lens list and the AQE rank are AQE&rsquo;s own orderings; neither overrides the committee, and the committee does not override them.</p></details>")
 
+def _funnel_card():
+    """PM 2026-11-16: the funnel strip, count at every narrowing stage, each name that fell out with the tool file's own reason and its AQE tag (scan_funnel.py, code only)."""
+    f = _opt("scan_funnel.json", None)
+    if not f:
+        return ""
+    import scan_funnel as SF
+    fx = lambda v: SF.plain_reason(plain(str(v)))
+    cell = lambda v: "n/a" if v is None else f"{v:,}"
+    strip = []
+    for st in f["stages"]:
+        fell = (f"{st['dropped_count']:,} names (count only; the rule is {fx(st['rule'])})" if st.get("dropped_count") is not None
+                else (", ".join(f"<b>{E(d['ticker'])}</b>" for d in st["dropped"]) or "none"))
+        strip.append([E(fx(st["stage"])), cell(st["n_in"]), cell(st["n_out"]), fell])
+    rows = []
+    for n in f["names"]:
+        where = (f"{n['stage']}: {n['reason']}" if n["outcome"] == "fell out" else f"{n['outcome']} ({n['reason']})")
+        rows.append([f"<b>{E(n['ticker'])}</b>", E(fx(n["outcome"]).lower().replace("-", " ")), E(fx(where)), E(fx(n["aqe_plain"]))])
+    title = "Committee Standard Scan funnel" if f["report"] == "A" else "Committee AQE Quant Scan funnel"
+    notes = "".join(f"<p class='fresh'>{E(fx(x))}</p>" for x in f.get("notes") or [])
+    return (f'<div class="card"><h3>{title}: {cell(f["stages"][0]["n_in"]) if f["stages"] else "n/a"} names narrow to {len(f["names"])} in the room.</h3>'
+            + table(["Stage", "In", "Out", "What fell out"], strip) + table(["Name", "Result", "Where it fell out and why, from the tool files", "AQE-listed and AQE scores"], rows, "sortable") + notes + "</div>")
+funnel_html = _funnel_card()
+
 s5 = section("2 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
                                            f"All {n_adv} ADVANCE names pay 1R or more at two targets." if n_adv else "No name is ADVANCE today."),
-    chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
+    funnel_html + chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
     + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>'
        + "".join(tmpl_card(r["t"]) for r in thin) if thin else "")
     + f'<div class="grid">{c_hs}</div>' + common + hold_card + hold_tmpl + deal_pinned_html + pass_det + supp_section + strong_det, "tickers")

@@ -3825,6 +3825,7 @@ def cmd_gate(a):
     if _meth_g == "whole_universe":
         import aqe_listing
         chk(aqe_listing.DISCLOSURE in brief_full, "Q-SS", "the brief carries the Standard Scan disclosure line (seat screens use AQE structure and momentum-phase fields, not AQE list membership or scores)")
+        chk("| Stage | In | Out | What fell out |" in brief_full, "Q-SS", "the brief carries the funnel strip (| Stage | In | Out | What fell out |, pasted from scan_funnel.md)")
         _hdr = "| Ticker | AQE-listed | AQE scores |"
         _at = brief_full.find(_hdr)
         chk(_at >= 0, "Q-SS", "the brief carries the AQE-listed table (| Ticker | AQE-listed | AQE scores |)")
