@@ -117,6 +117,10 @@ def summarise(rows, beta_cap=None):
     return out
 
 
+METHOD_CHANGE_DATE = "2026-11-16"     # PM 2026-11-16: the first Standard Scan (whole_universe) run; earlier rows are the AQE-door method; never pooled silently
+METHOD_WORD = {"whole_universe": "Standard Scan, whole market", "aqe_doors": "AQE doors (before the change)", "fallback_aqe_doors": "AQE doors (fallback day)"}
+
+
 def cmd_grade(a):
     ledger = json.load(open(a.ledger))
     rows_in = ledger["rows"] if isinstance(ledger, dict) else ledger
@@ -171,6 +175,7 @@ def cmd_grade(a):
             "ret": round(x, 2), "vs_spy": round(x - spy, 2),
             "vs_universe": round(x - R["universe_mean"], 2) if R["universe_mean"] is not None else None,
             "beta": beta, "beta_adj": round(x - beta * spy, 2) if beta is not None else None,
+            "method": r.get("method") or "aqe_doors", "aqe_listed": r.get("aqe_listed"),          # PM 2026-11-16: a row with no method is the old AQE-door chain
         })
 
     for R in runs.values():
@@ -186,6 +191,10 @@ def cmd_grade(a):
         "pooled_all": summarise(graded, a.beta_cap),
         "pooled_full_horizon": summarise(full_rows, a.beta_cap),
         "by_run": {d: summarise([g for g in graded if g["run"] == d]) for d in sorted(runs)},
+        "method_change_date": METHOD_CHANGE_DATE,
+        "by_method": {m: summarise([g for g in graded if g["method"] == m]) for m in sorted({g["method"] for g in graded})},
+        "by_aqe_listing_standard_scan": {k: summarise([g for g in graded if g["method"] == "whole_universe" and g["aqe_listed"] is v])
+                                         for k, v in (("AQE-listed", True), ("not AQE-listed", False), ("listing unknown", None))},
         "rows": graded,
         "refused_ref_mismatch": refused,
         "ungraded": ungraded,
@@ -316,6 +325,24 @@ def render_md(o):
             if s.get("n"):
                 L.append(f"| {lab} | {s['n']} | {_f(s['mean'])}% | {_f(s['vs_spy_mean'])} | {s['beat_spy']}/{s['n']} | {_f(s['vs_universe_mean'])} |")
         L += ["", "Worst advances: " + ", ".join(f"{w['ticker']} ({w['run'][5:]}) {_f(w['vs_spy'])} β{w['beta']}" for w in adv["worst"])]
+    # PM 2026-11-16: the Standard Scan (whole market, no AQE gate) started on the change date. The two methods are shown apart, never pooled, and the Standard Scan's
+    # picks are split into those AQE also lists and those it does not, each against SPY and the AQE equal-weight list.
+    bm = o.get("by_method") or {}
+    if "whole_universe" in bm and (bm["whole_universe"].get("ADVANCE", {}).get("n") or bm["whole_universe"].get("HOLD-FOR-CONDITIONS", {}).get("n")):
+        L += ["", f"## 5 · By method (the Standard Scan started {o.get('method_change_date')})", "",
+              "| Method | Verdict | n | Mean | vs SPY | Beat SPY | vs AQE list |", "|---|---|---|---|---|---|---|"]
+        for m in sorted(bm):
+            for b in BUCKETS:
+                st = bm[m].get(b) or {}
+                if st.get("n"):
+                    L.append(f"| {METHOD_WORD.get(m, m)} | {SHORT[b]} | {st['n']} | {_f(st['mean'])}% | {_f(st['vs_spy_mean'])} | {st['beat_spy']}/{st['n']} | {_f(st['vs_universe_mean'])} |")
+        L += ["", "## 6 · Standard Scan picks: AQE-listed or not", "",
+              "| Group | Verdict | n | Mean | vs SPY | Beat SPY | vs AQE list |", "|---|---|---|---|---|---|---|"]
+        for lab, blk in (o.get("by_aqe_listing_standard_scan") or {}).items():
+            for b in BUCKETS:
+                st = blk.get(b) or {}
+                if st.get("n"):
+                    L.append(f"| {lab} | {SHORT[b]} | {st['n']} | {_f(st['mean'])}% | {_f(st['vs_spy_mean'])} | {st['beat_spy']}/{st['n']} | {_f(st['vs_universe_mean'])} |")
     if o["refused_ref_mismatch"]:
         L += ["", f"**Refused (ledger price does not match the close):** {len(o['refused_ref_mismatch'])} rows."]
     if o["ungraded"]:

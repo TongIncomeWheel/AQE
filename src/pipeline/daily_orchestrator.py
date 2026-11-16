@@ -684,7 +684,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             _urows = _ct.load_universe_rows(OUTPUT_DIR / "aqe_universe_rows.json")
             _picks = set(_ct.screen_picks(_urows))
             _extra = [r for r in _urows if r["ticker"] in _picks]
-            print(f"  committee data scope: + {len(_extra)} Report B screened names from {len(_urows)} universe rows (the rest are export names)")
+            print(f"  committee data scope: + {len(_extra)} Standard Scan screened names from {len(_urows)} universe rows (the rest are export names)")
         except Exception as _e:  # noqa: BLE001 - loud, never silent: the PMA's B run tops up from CI instead (committee_topup)
             print(f"  [WARN] committee data: Report B screened names NOT added to scope ({_e}); run committee_topup before a B run")
         _res = _cd.run(_export, str(run_date), previous_pack=_prev, extra_rows=_extra)

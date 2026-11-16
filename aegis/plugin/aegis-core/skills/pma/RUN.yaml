@@ -55,6 +55,10 @@ parameters:
   tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
   mtf_frames: [W, D, H1]        # R39
   committee_position: on        # R42 SWITCH: `off` = the conductor skips RATIONALE, ADOPT, RATIONALE-FINAL and POSITION for this run, ticks each `degraded` with the note 'R42 switched off', and writes that line at the top of run_notes.md. The Cards then print no committee block (no committee_position.json); verdicts and the conviction-free count are unaffected. No code change needed.
+  report_display_names:         # PM 2026-11-16: DISPLAY names only (Cards headings and report lines, brief section headings, desk/DONE messages, run_notes). The ids A / B / C stay the identifiers: AEGIS_REPORT, run dir suffixes -B/-C, the ledger `report` column, manifest ids.
+    A: "Committee Standard Scan"
+    B: "Report B"
+    C: "Committee AQE Quant Scan"
   cards_renderer: v3            # PM 2026-11-04 (choice B): v3 = pma_cards_v3.py is the daily Cards. SAFETY NET in pma_cards_publish.py: if v3 errors, or the plain-words gate fails on its page / the words file, v2 (pma_cards.py render) publishes instead and the run says CARDS FALLBACK in run_notes.md, cards_renderer.json and the DONE push. Never silent, never a blank page. Set v2 to switch back.
   ma_not_deal_pinned: [APO, RY, F, COMP]   # R44 MANUAL OVERRIDE (5 Nov): the scan read these as pending TAKEOVER TARGETS and was wrong (APO: a rumour about Universal Music; RY: RBC is the seller of Moneris; F: 'Eagle Ford' name collision; COMP: a class-action notice). Names listed here are NOT deal-pinned; ratify-count prints and records each. Clear the list once the matcher fix has run in a nightly.
   lanes_v1_threshold: proportional   # R43 (PM-approved 2026-11-04): DROP at ceil(leads/2) lead objections; `absolute` = the room's own 4, among leads only (measured in docs/LANES_V1_SPEC.md)
@@ -92,37 +96,58 @@ rerun:
     (5) The desk message starts 'PMA RERUN <date>-r2 DONE' and says it is not live.
 
 report:
-  how: "export AEGIS_REPORT=<A|B|C>; registrar.py --manifest run_manifest.json init --date <date> --report <B|C>   # run_id pma-<date>-<B|C>, run dir aegis/output/pma/run/<date>-<B|C>"
+  how: "export AEGIS_REPORT=<A|C>; registrar.py --manifest run_manifest.json init --date <date> [--method whole_universe|aqe_doors|fallback_aqe_doors]   # report A, the live committee (PM 2026-11-16: whole_universe, the Standard Scan); registrar.py ... init --date <date> --report C   # run_id pma-<date>-C, run dir aegis/output/pma/run/<date>-C, method quant_scan; report B is frozen"
   rules: >
-    THREE DAILY REPORTS (PM 2026-11-05), to measure which method beats the market. A = the committee as it runs today (the default; with
-    AEGIS_REPORT unset a run is A, byte for byte as before). B = the same seven seats, each with its own method, on the whole daily screened
-    AQE universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) BEFORE any AQE score gate. C = the same seven seats plus an
-    eighth decider, aqe-quant, who must argue from AQE's composites and sub-components (every SUPPORT / OPPOSE names at least two, the
-    registrar rejects otherwise -- and the same rule binds EVERY Report C decider, because C is the whole committee reading the AQE indicators; every seat's packet set carries packets/aqe_indicators.tsv (composites, gates, every sub-component for every candidate), packets/aqe_glossary.md and packets/c_required_reading.json, and check.py FAILs a C run missing any of them). (1) B and C are NOT LIVE: they run as the non-live
-    rerun kind (publishes_live false), write no levels, are not read by the alerts, and are scored only. (2) They do NOT rerun weather,
-    macro, sector or the held-book sections: they reuse A's outputs for the same date (data pull, packets base, market kill, macro
-    context, held review) and carry only their ticker section and a scorecard line on their page (tools/pma_cards_report.py). (3) The AEGIS_REPORT
-    setting must match the manifest or every registrar command and check.py chain refuses to run. (4) The drop rule is ceil(n/2) of the
-    deciders present: 4 of 7 in A and B, 4 of 8 in C. (5) REPORT B's candidate step: instead of `trim`, run `pma_pipeline.py screens --universe-rows aqe_universe_rows.json --export aqe_daily_export.json --date <date>` (seven deterministic per-seat code screens from tools/seat_screens.py, top 25 each, written to seat_sets.json and candidate_set.json; held names always carried), then `packets ... --seat-sets seat_sets.json` so each seat reads only its own 25 plus the book. B has no AQE door: run `rank` with --strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0 so no AQE list or flag seats a name; everything from NOMINATE on is the same chain as A. aqe_universe_rows.json is written by the nightly export (status in export.universe_rows_status; an empty or refused file stops the B run loudly). (5b) REPORT B's chain, PM decision 2026-11-10 (cap option 1): `screens --top 10` (the default under B), each seat nominates at most THREE (registrar and
-    pma_pipeline read the cap from the report), `rank` with every AQE door off as above, then `pma_pipeline.py reuse-a --phase4 phase4.json --a-consensus <report A run dir>/consensus.json
-    --date <date>`: a B name Report A has ALREADY deliberated today reuses A's verdict (written to reused_from_a.json, tagged on the brief section) and leaves B's deliberation set, so
-    only NEW names run the vote chain. The brief's Sweep B section (contracts/brief_sections.json) is built from B's consensus.json plus reused_from_a.json. B stays non-live.
-    (5d) REPORT B DATA COVERAGE (conductor defect 2026-11-10): the screens read the whole universe but the committee data (aegis/output/committee_data) was built for the export names only, so a screened name could
-    arrive with NO MTF and NO fundamentals and be dropped on a data gap. The nightly now adds the names the seven screens would seat (src/pipeline/committee_topup.py via committee_data extra_rows). After `screens`, run
-    `pma_pipeline.py coverage --seat-sets seat_sets.json`: it FAILS (exit 1, names listed) if any screened name lacks fundamentals, a served MTF row or closes. The fix is the "Committee data top-up" workflow
-    (workflow_dispatch committee-topup.yml, inputs names + screens=true), which pulls the gap with the same fetchers, merges it into the three files and publishes to main; then `git pull` and re-run `coverage`. Never proceed past a FAIL.
-    (5e) SLATE for B and C (conductor 2026-11-11): after DECIDE-TIMING and the tier-2 forms, `pma_pipeline.py slate-from-forms --dir <run dir>` writes slate.json by code from decision.json + forms/tier2 + slate_plan.json (only the names in `keep`);
-    why_agreed, dissent and wrong_if are quotes of the seats' own tier-2 text, nothing the seats did not say. Then `registrar.py validate --file slate.json --kind slate --decision decision.json`. No hand script.
-    (5c) REPORT C's chain, PM decision 2026-11-10: ONLY aqe-quant NOMINATES (at most six; the registrar rejects round-1 nominations from any other C seat). `rank` runs with every AQE door off (as in 5), then
-    `pma_pipeline.py cset --phase4 phase4.json --a-phase4 <report A run dir>/phase4.json`: C's deliberation set is A's deliberation set (re-voted by all EIGHT seats reading the AQE indicators)
-    plus aqe-quant's new names; phase4 records from_a / quant_new. Everything from VOTE on is the same chain, with the drop rule 4 of 8. The brief's Indicators C section shows the deliberated names that passed. C stays non-live.
-    (5f) DAILY ORDER FOR THE THREE REPORTS (conductor 2026-11-11; the pma-auto routine reads this block, RUN.yaml wins over the routine prompt). A runs first and finishes through PUBLISH exactly as above. THEN, in the same session and
-    only if A published (a stuck A runs no B or C): REPORT B = `export AEGIS_REPORT=B` -> `registrar.py --manifest run_manifest.json init --date <date> --report B` (run dir <date>-B) -> `screens` -> `coverage --seat-sets seat_sets.json`
-    (on FAIL dispatch the committee-topup workflow, git pull, re-run; never proceed past a FAIL) -> `packets --seat-sets seat_sets.json` -> NOMINATE (cap 3) -> `rank` doors off -> `reuse-a` -> the chain from VOTE with only the new names ->
-    `slate-from-forms` -> RATIFY ... CHECK, writing NO levels and nothing live. REPORT C = `export AEGIS_REPORT=C` -> `init --report C` (<date>-C) -> packets with the AQE indicator files -> NOMINATE (aqe-quant only, cap 6) -> `rank` doors off -> `cset` ->
-    the chain from VOTE with 8 seats -> `slate-from-forms` -> ... CHECK. Both are non-live rerun-kind runs (publishes_live false). Then unset AEGIS_REPORT and WRITE the brief: the core verdict table is A's; Sweep B (§0C) and Indicators C (§0D) are
-    code-built modules from the B and C consensus.json (module-registry; a module that fails is a one-line degraded note, never a blocker). The brief gate is `pma_pipeline.py gate ... --export aqe_daily_export.json`: with the export it checks that §9A has
-    ONE ROW PER HELD NAME carrying exactly one action word (HOLD, ADD, TRIM, EXIT, STOP-TIGHTEN), or states the book is FLAT. A stuck B or C is reported in the DONE post and never delays A's PUBLISH or the Cards.
+    TWO LIVE-CHAIN REPORTS AND A FROZEN ONE (PM 2026-11-05, re-ruled 2026-11-16), to measure whether the committee WITHOUT the AQE gate has more edge than AQE. The Committee Standard Scan
+    (report A, the default; with AEGIS_REPORT unset a run is A) now seats names from the WHOLE screened universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) with NO AQE gate and NO
+    AQE door. The Committee AQE Quant Scan (report C) is independent of A: a scan FROM the whole AQE universe on the AQE composites and sub-components. Report B is FROZEN (retired 2026-11-16; its
+    ledger rows stay as their own series, nothing is graded into A or C). Display names only: ids A, B, C, AEGIS_REPORT, run dir suffixes -B/-C, the ledger report column and manifest ids never change.
+    (1) C (and the frozen B) are NOT LIVE: non-live rerun kind (publishes_live false), no levels, not read by the alerts, scored only. A is the live committee. (2) C does NOT rerun weather, macro,
+    sector or the held-book sections: it reuses A's market outputs for the same date (data pull, market kill, macro context, held review) and takes NOTHING from A's candidate set, nominations or verdicts.
+    (3) The AEGIS_REPORT setting must match the manifest or every registrar command and check.py chain refuses to run. (4) The drop rule is ceil(n/2) of the deciders present: 4 of 7 in A, 4 of 8 in C.
+    (5) THE MANIFEST CARRIES THE METHOD (PM 2026-11-16). `registrar.py init --date <d> --method whole_universe` for a Standard Scan A run (the default for every A run from 2026-11-16); `--method aqe_doors` is
+    the old chain; `--method fallback_aqe_doors` is the LOUD fallback below. C is stamped `quant_scan` by `init --report C`. The brief, the Cards, the ledger (`method`, `aqe_listed`, `aqe_lists`, `aqe_scores`
+    on every row) and check.py all read that one word. method_change_date = 2026-11-16; the scorecard grades the old method and the Standard Scan as separate series (A1 / A2, and A2 split into AQE-listed
+    A2L and not-AQE-listed A2N), never pooled.
+    (5a) STANDARD SCAN CANDIDATE STEP (report A, method whole_universe), instead of the AQE-published candidate_set: after `init --method whole_universe`, run `pma_pipeline.py screens --universe-rows aqe_universe_rows.json
+    --export aqe_daily_export.json --date <d>` (seven deterministic per-seat code screens from tools/seat_screens.py, top 25 per seat, written to seat_sets.json and candidate_set.json; the held book is always
+    carried; a screened name that AQE's daily list carries keeps its real export row, so the seats see AQE's fields exactly as today), then `pma_pipeline.py coverage --seat-sets seat_sets.json` (FAILS, names listed,
+    if a screened name lacks fundamentals, a served MTF row or closes: dispatch the committee-topup workflow, git pull, re-run; never proceed past a FAIL), then `pma_pipeline.py augment-export --export
+    aqe_daily_export.json --universe-rows aqe_universe_rows.json --seat-sets seat_sets.json --out aqe_daily_export_wu.json`, which adds the screened names the AQE daily list lacks as universe_only rows (a COPY; the
+    original export is never edited). From here to the end of the run EVERY command that takes --export takes aqe_daily_export_wu.json (packets, rank, brackets, conditions, r2digest, emit, record-verdicts, repeat
+    marks, the cards) and the Cards page reads it from the run dir. Then `packets --seat-sets seat_sets.json --max-bytes 100000`: each seat reads its own 25 plus the book. THE SEATS KEEP EVERY AQE FIELD (PM 2026-11-16:
+    "the committee is free to use AQE filters, scores and data in the deliberation rounds"); the only change to the committee is the candidate POOL. (`packets --clean` exists but is NOT used.) `rank` runs with
+    every AQE door off: --strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0 (nominations of any seat at any conviction, plus the held book; no AQE list, flag or score seats a name).
+    Nominations are at most SIX per seat. Everything from NOMINATE on is the chain it always was, including levels, brackets, conditions, the slate, the brief and the alerts' pma_levels.json: names outside daily_list
+    get their bracket and levels from the universe record.
+    (5b) THE WRITE-UP (PM 2026-11-16): AQE is tested, not hidden. Every name the brief, the Cards and pma_levels.json show carries "AQE-listed: Longlist, Elder, QS or none" and its AQE scores (SC_MOMENTUM, Flow, Energy,
+    Structure, MP, Elder, pipeline rank, QS odds; PTRS is not an export field and is never claimed) or "AQE score not available", never blank. The brief's table is code-built: `python3 tools/aqe_listing.py --export
+    aqe_daily_export_wu.json --universe-rows aqe_universe_rows.json --consensus consensus.json --out aqe_listing.md`, pasted verbatim like held_table.md (header | Ticker | AQE-listed | AQE scores |); the gate (Q-SS)
+    fails a whole_universe brief without that table (a row for every ADVANCE or HOLD name) and without the funnel strip. `pma_levels.py emit ... --export aqe_daily_export_wu.json --universe-rows
+    aqe_universe_rows.json` adds each row's `aqe` block. Cards v3 prints the same facts in plain words on every ticker card and a banner naming the method.
+    (5b2) THE FUNNEL STRIP (PM 2026-11-16), for BOTH scans: after the slate, the vote and QA (before WRITE and REPORT) run `python3 tools/scan_funnel.py --run-dir . --report A` in the A run dir and
+    `--report C` in the C run dir. It writes scan_funnel.json and scan_funnel.md by code from seat_sets.json (A), candidate_set.json (C), tally.json, phase4.json, funnel.json, slate.json, consensus.json and
+    committee_record.json: the count at every stage (A: universe, screens, nominated, in the room, cross-examination survivors, slated, ratified AGREED / CONTESTED / DROPPED, QA hold; C: AQE's own scored list,
+    aqe-quant nominations, in the room, cross-examination, vote) and, for every name that fell out from the room on, one line with the tool file's own reason and its AQE tag (AQE-listed or not, plus AQE scores).
+    The early stages print counts only (listing 984 names would hide the story). The Cards page (v3 for A, pma_cards_report.py for C) prints the same tables; the brief pastes scan_funnel.md VERBATIM after the
+    AQE-listed table. Nothing in the funnel is hand-written.
+    (5c) THE LOUD FALLBACK (PM 2026-11-16): if aqe_universe_rows.json is missing, empty or refused (export.universe_rows_status), `screens` stops with a reason. Do NOT go on silently and do NOT stop the live committee:
+    re-run `registrar.py init --method fallback_aqe_doors` and use the old chain (the AQE-published candidate_set.json, `trim`, the doors on, no augment-export). The brief says FALLBACK in its heading line
+    (the gate checks it), the Cards banner says FALLBACK: AQE doors, the ledger rows carry method fallback_aqe_doors, and the DONE post names it. A coverage FAIL is NOT a fallback reason: top it up.
+    (5d) COMMITTEE AQE QUANT SCAN (report C, PM 2026-11-16: independent of A; its universe is AQE's OWN scored list, daily_list). `export AEGIS_REPORT=C` -> `registrar.py init --date <d> --report C` (<d>-C, method
+    quant_scan) -> the AQE-published candidate_set.json for the same date (`trim`: AQE's daily list plus the held book) -> `packets` with the AQE indicator files for all EIGHT seats (aqe_indicators.tsv,
+    aqe_glossary.md, c_required_reading.json) -> NOMINATE: ONLY aqe-quant nominates (at most SIX; the registrar rejects round-1 nominations from any other C seat), scanning AQE's list on the AQE quant numbers ->
+    `rank` with every AQE door off (--strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0): the deliberation set is aqe-quant's nominations plus the held book, about 9 names -> all EIGHT
+    seats vote with the AQE indicators in front of them, drop rule 4 of 8 -> `slate-from-forms` -> RATIFY ... CHECK, writing NO levels and nothing live. There is no cset and no A input: no A set, no A nominations,
+    no A verdicts. Every SUPPORT / OPPOSE and nomination of a C decider names at least two AQE composite or sub-component fields (the registrar rejects otherwise); every seat's packet set carries
+    packets/aqe_indicators.tsv, packets/aqe_glossary.md and packets/c_required_reading.json, and check.py FAILs a C run missing any of them. C stays non-live.
+    (5e) SLATE for C (conductor 2026-11-11): after DECIDE-TIMING and the tier-2 forms, `pma_pipeline.py slate-from-forms --dir <run dir>` writes slate.json by code from decision.json + forms/tier2 + slate_plan.json (only the
+    names in `keep`); why_agreed, dissent and wrong_if are quotes of the seats' own tier-2 text, nothing the seats did not say. Then `registrar.py validate --file slate.json --kind slate --decision decision.json`. No hand script.
+    (5f) DAILY ORDER (conductor 2026-11-16; the pma-auto routine reads this block, RUN.yaml wins over the routine prompt). A runs first and finishes through PUBLISH exactly as above (method whole_universe, or the loud
+    fallback). THEN, in the same session and only if A published (a stuck A runs no C): the COMMITTEE AQE QUANT SCAN as in (5d). Report B is not run. Then unset AEGIS_REPORT and WRITE the brief: the core verdict table
+    is A's; the AQE-listed table (5b) follows it; the Indicators C section (§0D) is a code-built module from C's consensus.json (module-registry; a module that fails is a one-line degraded note, never a blocker).
+    The brief gate is `pma_pipeline.py gate ... --export aqe_daily_export_wu.json`: with the export it checks that §9A has ONE ROW PER HELD NAME carrying exactly one action word (HOLD, ADD, TRIM, EXIT,
+    STOP-TIGHTEN, SET-STOP), or states the book is FLAT. A stuck C is reported in the DONE post and never delays A's PUBLISH or the Cards.
     (5h) THE BOOK AS ONE TABLE (PM 2026-11-11). WRITE builds `held_table.md` by code (`held_view.py table --export aqe_daily_export.json --broker-stops broker_stops.json --out held_table.md`) and the brief pastes it verbatim as the single
     `## §3 / §9A` table (no second 9A table): Name | Qty | Entry | Mark | P&L $ | P&L in R | Broker stop status | Worked-out stop (basis) | Entry-to-stop dollars | Action. The worked-out stop is AQE's REFERENCE (structural bracket, else extension bracket, else 1 ATR fallback, labelled) and is
     replaced by a real broker stop when one exists; no stop order = NO STOP AT BROKER and action SET-STOP (an allowed 9A action word with HOLD, ADD, TRIM, EXIT, STOP-TIGHTEN). Reference only: never an order, never a size. The same facts ride on pma_levels.json held rows
@@ -217,7 +242,7 @@ steps:
     on_fail: "FATAL - halt and page the PM. No export, no run."
     rulings: [R7, R12]
     checkpoint_after: true        # the run lock -- run_manifest.json on main before any seat is spawned
-    first: "registrar.py init --date <date>   # writes run_manifest.json (the scoreboard); every later tick needs it. RERUN: add --rerun r2 (see `rerun:` above)"
+    first: "registrar.py init --date <date> --method whole_universe   # writes run_manifest.json (the scoreboard); every later tick needs it. PM 2026-11-16: every A run is the Standard Scan (--method whole_universe) unless the loud fallback applies (report.rules 5c: --method fallback_aqe_doors); the candidate step (screens, coverage, augment-export, packets --clean) is report.rules 5a. RERUN: add --rerun r2 (see `rerun:` above)"
     must_also: >
       THE BOOK AND ITS STOPS (R20, PM 2026-11-02: "Stop from Tiger is correct. That's the dependency").
       The book of record is the close's journal on main, aegis/data/journal/aegis_journal_<last close>.json
@@ -255,7 +280,9 @@ steps:
     must_also: >
       Copy the skill's contracts/voice_menus.json to the run root as voice_menus.json (CHALLENGE and the
       packet verify read it there). VERIFY ONLY otherwise. AQE publishes candidate_set.json; consume it as
-      published. No local filter, no screen, no column stripping (R5). One grep for qs_market
+      published. No local filter, no screen, no column stripping (R5). EXCEPTION (PM 2026-11-16, Standard Scan): on a `method whole_universe` run the candidate step is
+      report.rules (5a) instead: `screens` writes candidate_set.json and seat_sets.json from the whole universe, `augment-export` writes aqe_daily_export_wu.json (use it as --export from
+      there on); the seats keep every AQE field (PM 2026-11-16; `packets --clean` is cancelled). The AQE-published candidate_set.json is then used ONLY by the loud fallback (report.rules 5c). One grep for qs_market
       across seat packets; a hit is FATAL.
       THE HELD FLOOR (R12): every seat packet carries held, the cost basis, the size, the
       unrealised, AQE's hl_state/hl_score, the written stop and target, the kNN path and the

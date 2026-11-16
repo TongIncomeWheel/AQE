@@ -23,7 +23,7 @@ from src.pipeline import committee_data as cd
 
 DEFAULT_DIR = PROJECT_ROOT / "aegis" / "output" / "committee_data"
 UNIVERSE_ROWS_REPO = PROJECT_ROOT / "aegis" / "output" / "aqe_universe_rows.json"
-SCREEN_TOP = 10          # Report B reads the top 10 per seat (PM 2026-11-10)
+SCREEN_TOP = 25          # the Standard Scan (report A, PM 2026-11-16) reads the top 25 per seat; the old Report B read 10
 FUND_OK = ("served", "carried", "partial")
 
 

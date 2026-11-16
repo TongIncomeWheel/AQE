@@ -158,7 +158,7 @@ list, Valen undercut-and-rally reclaim day, no seat picked it. Say that in its c
 
 ## THE BRIEF — fixed order
 
-**Heading, verbatim: `## §0 VERDICT TABLE — REPORT A: the main committee, picking from AQE's own lists (the only report with trade rows)`** (keep the `§0 VERDICT TABLE` prefix: the gate matches on it; the B and C sections below it carry their own REPORT B / REPORT C headings, built by code). **§0 VERDICT TABLE — first thing on the page.**
+**Heading, verbatim: `## §0 VERDICT TABLE — COMMITTEE STANDARD SCAN: the main committee, picking from AQE's own lists (the only scan with trade rows)`** (keep the `§0 VERDICT TABLE` prefix: the gate matches on it; the B and C sections below it carry their own REPORT B / COMMITTEE AQE QUANT SCAN headings, built by code). **§0 VERDICT TABLE — first thing on the page.**
 | Ticker | AQE rank | Door | Lane | Verdict | Consensus case (one line) | Condition / invalidation |
 One row per deliberated name, ADVANCE first, then HOLD, then PASS. Door = how it reached the vote (Seats / Solo / Elder+Lens / Lens / Strength / PM lens / AQE leader). Lane (R14, PM ruling 2026-09-22) = MOMENTUM or PULLBACK, read from consensus.json — a MOMENTUM verdict was decided by the strength seats, a PULLBACK verdict by the whole room; say so in §0B in one line and never name a seat. Condition = the single observable that makes a HOLD tradeable, or that kills an ADVANCE.
 
@@ -226,3 +226,5 @@ This is the section the PM reads last and acts on first.
 - **Verbatim paste** for §4 and §6, byte-for-byte.
 - **Degraded mode:** a missing input renders as a one-line declared gap. The brief ALWAYS lands. Header carries every degradation from `run_manifest.json`, as a table.
 - **Voice:** CIO to CIO. Short. Decisive. Numbers in tables. Written for a PM at 6am with one coffee. If a sentence explains process instead of the market, delete it.
+
+**AQE-listed table and funnel (PM 2026-11-16, Standard Scan).** On a whole_universe run the brief carries, right after the §0 verdict table, the code-built file `aqe_listing.md` pasted VERBATIM (header `| Ticker | AQE-listed | AQE scores |`), then `scan_funnel.md` pasted VERBATIM (the stage strip `| Stage | In | Out | What fell out |` and one line per name with its AQE tag). Never retype or edit a number or a reason from either; a name with no AQE record reads "AQE score not available" and stays so. On a fallback_aqe_doors run the heading line of the brief says FALLBACK. The gate (Q-SS) fails a whole_universe brief without the AQE-listed table (a row for every ADVANCE or HOLD name) and the funnel strip.

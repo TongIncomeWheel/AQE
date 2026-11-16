@@ -554,6 +554,15 @@ def cmd_emit(a):
     uni = {r["ticker"]: r for r in (_load(a.candidates, {}).get("universe") or [])}
     closes = _load(a.closes) if getattr(a, "closes", None) else {}
     doc = apply_window(doc, history, a.window, uni, {c["ticker"]: c["verdict"] for c in cons}, closes)
+    if getattr(a, "export", None):
+        # STANDARD SCAN write-up (PM 2026-11-16): every row says whether the name is AQE-listed and carries its AQE scores (or "AQE score not available", loudly).
+        # Additive: no existing key is touched; the alerts and the Cards read the new `aqe` block only when they want it.
+        import aqe_listing
+        _eb, _ub = aqe_listing.load_rows(a.export, getattr(a, "universe_rows", None))
+        for r in doc["rows"]:
+            x = aqe_listing.listing(r["ticker"], _eb, _ub)
+            r["aqe"] = {"listed": x["aqe_listed"], "lists": x["aqe_lists"], "in_daily_list": x["in_daily_list"], "scores": x["scores"], "qs_odds": x["qs_odds"],
+                        "source": x["source"], "line": x["line"]}
     if getattr(a, "slate", None):
         # R40: TODAY's market kill always wins -- set after the history merge, never carried from an older file.
         mk, note = market_kill_from_slate(a.slate, a.date)
@@ -766,6 +775,8 @@ def main(argv=None):
     e.add_argument("--slate", default=None,
                    help="slate.json (R40): its market_kill line is published as top-level market_kill "
                         "{symbol, word, level, plain, seats, origin_run}; null is declared with market_kill_note")
+    e.add_argument("--export", default=None, help="STANDARD SCAN: the export (aqe_daily_export_wu.json on a whole-universe run) each row's `aqe` block (AQE-listed + scores) is read from")
+    e.add_argument("--universe-rows", default=None, help="aqe_universe_rows.json, the fallback record for a name outside the export")
     e.add_argument("--out", default="pma_levels.json")
     e.set_defaults(fn=cmd_emit)
     m = sub.add_parser("merge-supplement", help="add a SAME-DATE supplemental committee pass to the published file, additively (refuses on a broken contract)")
