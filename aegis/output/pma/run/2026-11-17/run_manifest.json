@@ -1,10 +1,185 @@
 {
  "created": "2026-11-16T23:37:30Z",
  "date": "2026-11-17",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-16T23:41:13Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-16T23:41:13Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  },
+  {
+   "at": "2026-11-16T23:41:14Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  }
+ ],
  "flags": [],
  "method": "whole_universe",
  "run_id": "pma-2026-11-17",
- "seats": {},
- "steps": {}
+ "seats": {
+  "NOMINATE/elder-lens": {
+   "file": "forms/r1/elder-lens.json",
+   "flags": [],
+   "sha256": "3a0326af5d40c3ceb3e618ed5f5b30c820462a82281af99ce412d9fe18764e42",
+   "status": "committed"
+  },
+  "NOMINATE/livermore": {
+   "file": "forms/r1/livermore.json",
+   "flags": [],
+   "sha256": "9f113f9645bf781b9ffc3800add585ca07f8212ffad0b284cfcd44343133d987",
+   "status": "committed"
+  },
+  "NOMINATE/minervini": {
+   "file": "forms/r1/minervini.json",
+   "flags": [],
+   "sha256": "4144eb1154b0f740d4b4ffe143c1969837d05ee6b74acd17b6693072b161ba2d",
+   "status": "committed"
+  },
+  "NOMINATE/oneil": {
+   "file": "forms/r1/oneil.json",
+   "flags": [],
+   "sha256": "28e80da00428faeb30b8df792ca96154dfd3398feb1818e8f1b6e4f612922690",
+   "status": "committed"
+  },
+  "NOMINATE/raschke": {
+   "file": "forms/r1/raschke.json",
+   "flags": [],
+   "sha256": "0a0dae7d8674398bfb70dfad4a831869970327307897850d455dd63264c19b3a",
+   "status": "committed"
+  },
+  "NOMINATE/seow": {
+   "file": "forms/r1/seow.json",
+   "flags": [],
+   "sha256": "63181ddf8939ffc3e1545a6c5a34e3ff2b2edee2caf7d3da848a7d0d644a5817",
+   "status": "committed"
+  },
+  "NOMINATE/wyckoff": {
+   "file": "forms/r1/wyckoff.json",
+   "flags": [],
+   "sha256": "d7c610d067df8eb015b026f6d8b0e022b38f27b83b089be4df8dfce0643babad",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:13Z",
+   "notes": [
+    "FORCED done with missing produces: ['data_health.json']",
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:13Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:14Z",
+   "notes": [
+    "not run: alerts paused by PM order"
+   ],
+   "started": "2026-11-16T23:41:14Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:13Z",
+   "notes": [
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:13Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 77536,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r1/elder-lens.json": "3a0326af5d40c3ceb3e618ed5f5b30c820462a82281af99ce412d9fe18764e42",
+    "forms/r1/livermore.json": "9f113f9645bf781b9ffc3800add585ca07f8212ffad0b284cfcd44343133d987",
+    "forms/r1/minervini.json": "4144eb1154b0f740d4b4ffe143c1969837d05ee6b74acd17b6693072b161ba2d",
+    "forms/r1/oneil.json": "28e80da00428faeb30b8df792ca96154dfd3398feb1818e8f1b6e4f612922690",
+    "forms/r1/raschke.json": "0a0dae7d8674398bfb70dfad4a831869970327307897850d455dd63264c19b3a",
+    "forms/r1/seow.json": "63181ddf8939ffc3e1545a6c5a34e3ff2b2edee2caf7d3da848a7d0d644a5817",
+    "forms/r1/wyckoff.json": "d7c610d067df8eb015b026f6d8b0e022b38f27b83b089be4df8dfce0643babad"
+   },
+   "finished": "2026-11-16T23:41:14Z",
+   "notes": [
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:07Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:13Z",
+   "notes": [
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:13Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:13Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:13Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-16T23:41:13Z",
+   "notes": [
+    "17 Nov harness"
+   ],
+   "started": "2026-11-16T23:41:13Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
 }

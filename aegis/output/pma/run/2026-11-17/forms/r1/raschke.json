@@ -1,0 +1,77 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-17",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "G",
+   "reason": "RETRACEMENT (C2): first pullback inside an established up-structure, Holy-Grail shape with ADX not served. structure 90.5, structure_shift 1 (ABOVE_STRUCTURE), elder_pattern 3 (CORRECTION_REENTRY), mp_accel_state 2 pullback. Stop is mine: under bracket.atr_fallback_stop 42.92.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "elder_pattern", "atr_14d", "bracket", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 90.5, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 19.03", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 2 (FADING), mp_accel_state 2 (DECELERATING), elder_pattern 3 (CORRECTION_REENTRY); ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C7", "C12"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; breadth out of scope", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "mp_accel_state"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; own level under bracket.atr_fallback_stop 42.92 (atr_14d 1.36), entry 44.28", "verdict": "partial", "fields": ["bracket", "bracket.valid", "atr_14d", "entry"]}
+   ],
+   "falsifier": "A daily close under 42.92 (bracket.atr_fallback_stop) or structure_shift turning 2 (BEARISH_CHOCH) means the pullback is a reversal, not a retracement."
+  },
+  {
+   "ticker": "TTEK",
+   "reason": "RETRACEMENT (C2): pullback closest to support among the strong names. structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 8.17, mp_state 3 (STRONG) with mp_accel_state 2 easing, atr_caution False, div_state NONE. Stop is mine: under bracket.atr_fallback_stop 37.67.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_caution", "div_state", "bracket", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 72.6, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 8.17", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING), elder_pattern 4 (INTERRUPTED); ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "elder_pattern"]},
+    {"step": 3, "canon_ref": ["C7", "C12"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; lens null", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; own level under bracket.atr_fallback_stop 37.67 (atr_14d 1.4), entry 39.07", "verdict": "partial", "fields": ["bracket", "bracket.valid", "atr_14d", "entry"]}
+   ],
+   "falsifier": "A close under 37.67 (bracket.atr_fallback_stop) or structure_shift turning 2 (BEARISH_CHOCH) voids the higher-low read."
+  },
+  {
+   "ticker": "HAS",
+   "reason": "RETRACEMENT (C2): pullback in an up-structure, structure 82.1, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 18.45, mp_accel_state 2 easing, day_vol 0.51 quiet pullback, div_state NONE. elder_pattern 4 (INTERRUPTED) is a caution. Stop is mine: under bracket.atr_fallback_stop 117.87.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "mp_accel_state", "day_vol", "elder_pattern", "div_state", "bracket", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 82.1, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 18.45", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "mp_state 2 (FADING), mp_accel_state 2 (DECELERATING), elder_pattern 4 (INTERRUPTED), day_vol 0.51; ADX gate not served", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "elder_pattern", "day_vol"]},
+    {"step": 3, "canon_ref": ["C7", "C12"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct+structure_shift; bar_range_history NOT_SERVED; lens null", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; own level under bracket.atr_fallback_stop 117.87 (atr_14d 3.15), entry 121.02", "verdict": "partial", "fields": ["bracket", "bracket.valid", "atr_14d", "entry"]}
+   ],
+   "falsifier": "A close under 117.87 (bracket.atr_fallback_stop) or structure_shift turning 2 (BEARISH_CHOCH)."
+  },
+  {
+   "ticker": "BRZE",
+   "reason": "BREAKOUT (C2, C12): structure_shift 3 (BULLISH_BOS) with structure 100.0 out of a contracted range, atr_14d 0.82, elder_pattern 2 (ACCUMULATION_BASE). Against: day_vol 0.22 no participation, sma_distance_pct 36.13 extended. Stop is mine: under bracket.atr_fallback_stop 45.75.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "elder_pattern", "bracket", "bracket.valid"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 100.0, structure_shift 3 (BULLISH_BOS), sma_distance_pct 36.13", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "Crabel breakout proxy: atr_14d 0.82, atr_caution True, day_vol 0.22; mp_state 2 (FADING)", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "mp_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13"], "observed": "bar_range_history NOT_SERVED (no NR4/NR7 or HV ratio); adx NOT_SERVED; stochastic_kd NOT_SERVED; lens null", "verdict": "partial", "fields": ["atr_14d", "day_vol", "lens"]},
+    {"step": 4, "canon_ref": ["C17", "C23"], "observed": "bracket.valid False, bracket.stop null; own level under bracket.atr_fallback_stop 45.75 (atr_14d 0.82), entry 46.57", "verdict": "partial", "fields": ["bracket", "bracket.valid", "atr_14d", "entry"]}
+   ],
+   "falsifier": "A close back under 45.75 (bracket.atr_fallback_stop) is a failed breakout (C23 says the failure itself is information)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Long retracement failed: structure_shift 2 (BEARISH_CHOCH), structure 25.0, sma_distance_pct -6.98, div_state MIXED div_bear_count 4. None of my four setups is live. C18/C21 say keep the loss small rather than wait; broker stop 99.45 is the hard floor."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short agrees with structure_shift 2 (BEARISH_CHOCH), structure 23.0, sma_distance_pct -7.62. Structural BUY stop 145.05 sits above the swing (C17). No parabolic or range-expansion bar to trigger a C19 windfall exit yet."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Absent from the packet, so the squeeze/contraction read for the BREAKOUT family (BRZE) uses only atr_14d/day_vol."},
+  {"field": "lens", "impact": "Null for TTEK, HAS and BRZE, so no lens.coil substitute for the Anti/stochastic pullback read on those names (R4)."}
+ ],
+ "declarations": [
+  {"applies_to": ["G", "TTEK", "HAS"], "setup_type": "retracement (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"applies_to": ["BRZE"], "setup_type": "breakout (C2)", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"note": "Ledger memory was not injected for this round, so no standing lesson applies. The packet carries off-menu columns (e.g. adx_14); I did not read or cite them. Climax-shaped names (XERS sma_distance_pct 58.02, REPL sma_distance_pct 43.78) are declined under R9/C10, not called. Names with atr_14d tiny relative to entry (DV, CCC, TECH, OPCH) look pinned rather than Crabel-contracted, so I did not nominate them as breakouts. PTC is excluded as event-driven."}
+ ],
+ "shortfall_reason": "Four nominations, not six. Only these four fit one of my four setup families cleanly. The rest are climax shapes I decline to call (R9), pinned ranges, or BEARISH_CHOCH/RANGE names with no test trigger I can read. I am not padding."
+}

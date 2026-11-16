@@ -1,0 +1,128 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HUM",
+   "reason": "Established uptrend broke above its confirmed pivot high (structure_shift 3, BULLISH_BOS) with structure 84.2 and mp_state 3 (STRONG) accelerating: a new high after a normal reaction, C5. BTSG gives the second XLV name confirming (C14). Wrong below bracket.atr_fallback_stop 444.1.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "bracket", "bracket.valid"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "declared": {
+    "trend_confirmation": "PASS (structure 84.2, structure_shift 3 BULLISH_BOS, sma_distance_pct 12.54; C5)",
+    "danger_signal_threshold": "TRANSLATED via atr_14d 17.15, not literal 6pts (C7, C18-C20)",
+    "state_analogue": "mp_state 3 / mp_accel_state 1 read as my six-column classifier's modern equivalent, not identical (C18)",
+    "fill_difficulty": "NOT_SERVED (day_vol 0.83 is a proxy only)",
+    "inside_information": "NEVER (C11)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 84.2; structure_shift 3 (BULLISH_BOS); sma_distance_pct 12.54", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18", "C20"], "observed": "atr_14d 17.15 = my translated danger-signal unit (1x ATR reaction off day high); mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 444.1", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLV; second XLV name BTSG also structure_shift 3; sector_trend_state 3 (Momentum Fading); rank 35", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; first unit at entry 461.25, adds only at higher prices", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; ATR multiplier is my translation; day_vol 0.83 not a fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "BTSG",
+   "reason": "Close broke above the confirmed pivot (structure_shift 3, BULLISH_BOS), structure 80.0, mp_state 3 (STRONG) accelerating, day_vol 1.13 above normal on the break: C5 new-high entry. Pairs with HUM as the two-stock XLV confirmation (C14). Wrong below bracket.atr_fallback_stop 68.66.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "gics_sector", "bracket", "bracket.valid"],
+   "conviction": 4,
+   "price_at_nomination": null,
+   "declared": {
+    "trend_confirmation": "PASS (structure 80.0, structure_shift 3 BULLISH_BOS, sma_distance_pct 14.85; C5)",
+    "danger_signal_threshold": "TRANSLATED via atr_14d 2.71, not literal 6pts (C7, C18-C20)",
+    "state_analogue": "mp_state 3 / mp_accel_state 1 read as my six-column classifier's modern equivalent, not identical (C18)",
+    "fill_difficulty": "NOT_SERVED (day_vol 1.13 is a proxy only)",
+    "inside_information": "NEVER (C11)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 80.0; structure_shift 3 (BULLISH_BOS); sma_distance_pct 14.85", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18", "C20"], "observed": "atr_14d 2.71 = translated danger-signal unit; mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 68.66", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "gics_sector XLV; HUM confirms (structure_shift 3); sector_trend_state 3 (Momentum Fading); rank 38", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; first unit at entry 71.37, adds only at higher prices", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; ATR multiplier is my translation; day_vol 1.13 not a fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "COLD",
+   "reason": "Trending above structure (structure_shift 1, ABOVE_STRUCTURE), structure 87.4, mp_state 3 (STRONG), day_vol 1.85, rank 11; GEO and AHR in XLRE read the same, the group Key Price confirms (C14). Decelerating, so not yet a fresh-pivot break. Wrong below bracket.atr_fallback_stop 16.15.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "gics_sector", "rank", "bracket", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "declared": {
+    "trend_confirmation": "PASS (structure 87.4, structure_shift 1 ABOVE_STRUCTURE, sma_distance_pct 14.21; C5)",
+    "danger_signal_threshold": "TRANSLATED via atr_14d 0.5, not literal 6pts (C7, C18-C20)",
+    "state_analogue": "mp_state 3 / mp_accel_state 2 read as my six-column classifier's modern equivalent, not identical (C18)",
+    "fill_difficulty": "NOT_SERVED (day_vol 1.85 is a proxy only)",
+    "inside_information": "NEVER (C11)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 87.4; structure_shift 1 (ABOVE_STRUCTURE), not a fresh BOS; sma_distance_pct 14.21", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18", "C20"], "observed": "atr_14d 0.5 = translated danger-signal unit; mp_state 3, mp_accel_state 2; bracket.valid False, bracket.atr_fallback_stop 16.15", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLRE; GEO and AHR also structure_shift 1, mp_state 3; sector_trend_state 3; rank 11", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; first unit at entry 16.65, adds only at higher prices", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; ATR multiplier is my translation; day_vol 1.85 not a fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "GEO",
+   "reason": "Above structure (structure_shift 1), structure 76.8, mp_state 3 (STRONG) and accelerating, not stretched (sma_distance_pct 8.43): the trend column is intact and COLD/AHR confirm the XLRE group (C14). Wrong below bracket.atr_fallback_stop 31.21.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "mp_state", "mp_accel_state", "gics_sector", "bracket", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "declared": {
+    "trend_confirmation": "PASS (structure 76.8, structure_shift 1 ABOVE_STRUCTURE, sma_distance_pct 8.43; C5)",
+    "danger_signal_threshold": "TRANSLATED via atr_14d 1.45, not literal 6pts (C7, C18-C20)",
+    "state_analogue": "mp_state 3 / mp_accel_state 1 read as my six-column classifier's modern equivalent, not identical (C18)",
+    "fill_difficulty": "NOT_SERVED (day_vol 0.59 is a proxy only)",
+    "inside_information": "NEVER (C11)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 76.8; structure_shift 1 (ABOVE_STRUCTURE), not a fresh BOS; sma_distance_pct 8.43", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18", "C20"], "observed": "atr_14d 1.45 = translated danger-signal unit; mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 31.21", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLRE; COLD and AHR also structure_shift 1, mp_state 3; sector_trend_state 3; rank 98", "verdict": "pass", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; first unit at entry 32.66, adds only at higher prices", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; ATR multiplier is my translation; day_vol 0.59 not a fill-difficulty read", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  },
+  {
+   "ticker": "CHYM",
+   "reason": "Above structure (structure_shift 1), structure 84.2, mp_state 3 (STRONG) accelerating, day_vol 4.05 heavy participation, rank 6: a leading, active name. Single-name in XLF (AFL is RANGE), so no two-stock group confirmation (C14). Wrong below bracket.atr_fallback_stop 32.96.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "rank", "gics_sector", "bracket", "bracket.valid"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "declared": {
+    "trend_confirmation": "PASS (structure 84.2, structure_shift 1 ABOVE_STRUCTURE, sma_distance_pct 14.52; C5)",
+    "danger_signal_threshold": "TRANSLATED via atr_14d 1.33, not literal 6pts (C7, C18-C20)",
+    "state_analogue": "mp_state 3 / mp_accel_state 1 read as my six-column classifier's modern equivalent, not identical (C18)",
+    "fill_difficulty": "NOT_SERVED (day_vol 4.05 is a proxy only)",
+    "inside_information": "NEVER (C11)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 84.2; structure_shift 1 (ABOVE_STRUCTURE); sma_distance_pct 14.52", "verdict": "partial", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18", "C20"], "observed": "atr_14d 1.33 = translated danger-signal unit; mp_state 3, mp_accel_state 1; bracket.valid False, bracket.atr_fallback_stop 32.96", "verdict": "pass", "fields": ["atr_14d", "mp_state", "mp_accel_state", "bracket", "bracket.valid"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "gics_sector XLF; rank 6; AFL structure_shift 4 (RANGE) does not confirm; sector_trend_state 3", "verdict": "partial", "fields": ["gics_sector", "sector_trend_state", "rank"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; first unit at entry 34.29, adds only at higher prices", "verdict": "pass", "fields": ["held", "entry"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; ATR multiplier is my translation; day_vol 4.05 not a fill-difficulty read; no reason for the volume is relied on", "verdict": "pass", "fields": ["atr_14d", "day_vol"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "Long 80: structure_shift 2 (BEARISH_CHOCH), structure 25.0, sma_distance_pct -6.98, mp_state 2 (FADING) - the up-trend has ended (C20); take the first loss (C3), do not wait for the broker stop 99.45."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68: structure_shift 2 (BEARISH_CHOCH), structure 23.0, sma_distance_pct -7.62, sector_trend_state 1 (Declining) - the down-trend column is intact; hold with the BUY stop 145.05, add only at lower prices (C6)."}
+ ],
+ "data_gaps": [
+  {"field": "rank", "impact": "rank is null for both held names (RBRK, SPCX), so I cannot place them against current leaders for C12/C13; held review rests on structure and mp_state."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected; no standing lesson applies.",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x ATR reaction from the day's high), my own translation, never Livermore's literal 6/3/12 points (C7, C18-C20).",
+  "state_analogue: mp_state/mp_accel_state read as the modern analogue of my six-column Market Key, not identical (C18).",
+  "fill_difficulty: NOT_SERVED (day_vol is a relative-volume proxy only).",
+  "inside_information: NEVER (C11).",
+  "Concentration in XLV and XLRE is deliberate (C12, R7). Bracket fields are read as information only; none shaped any nomination or conviction (R1)."
+ ],
+ "shortfall_reason": "Five names, not six: the rest of the packet fails C5 on my own trend reading - inside a range (structure_shift 4), stretched far beyond a normal entry (XERS sma_distance_pct 58.02), or mp_state 2 (FADING) - or lacks a second confirming name in its group (C14). Padding is the breach."
+}

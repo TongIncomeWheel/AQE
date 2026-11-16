@@ -1,0 +1,49 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-17",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "ASO",
+   "reason": "LEADER at rank 9, top of the XLY names I see; structure 84.2 with lens coil warn; day_vol 1.65 clears the 1.40 test; pct_from_pivot -1.12 under pivot_high 71.29, a buy only at the pivot. Market gate DELEGATED; fundamentals NOT_AVAILABLE (C,A,S,I); div_bear_count 3 is the caution.",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "structure", "structure_shift", "lens", "day_vol", "pct_from_pivot", "pivot_high", "ma_50", "ma_200", "entry", "sma_distance_pct", "sector_trend_state", "div_state", "div_bear_count", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership LEADER; rank 9 vs XLY peers SN rank 110, BBY rank 100, ABNB rank 172; rs_spy_20d 24.49 reported only (20d is not a 12-month RS rating)", "verdict": "pass", "fields": ["rs_leadership", "rank", "gics_sector", "rs_spy_20d"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18", "C19"], "observed": "base_measure: structure composite (substitute): structure 84.2, structure_shift RANGE, lens coil warn, lens structure ok, lens resistance ok; base stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "volume_measure: day_vol vs 20d (substitute): day_vol 1.65 >= 1.40; handle dry-up (C15) not served", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot -1.12, pivot_high 71.29, entry 70.49; ma_200 53.38 (well under the 70% climax line); sma_distance_pct 24.7 context only", "verdict": "pass", "fields": ["pct_from_pivot", "pivot_high", "entry", "ma_200", "sma_distance_pct"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False (information only, R1); bracket.atr_fallback_stop 67.94; my own line is 7-8% under a pivot buy at 71.29; 8-week rule applies if +20% in 3 weeks; no add past +5%", "verdict": "pass", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "bracket.price"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "lens sector strong but sector_trend_state Momentum Fading - Hold, Don't Add; div_state BEARISH, div_bear_count 3", "verdict": "partial", "fields": ["lens", "sector_trend_state", "div_state", "div_bear_count"]},
+    {"step": 7, "canon_ref": ["C23", "C1"], "observed": "declared block filed: fundamentals NOT_AVAILABLE (C,A,S,I), base_stage NOT_AVAILABLE, market_gate DELEGATED; sole survivor of steps 1-4", "verdict": "partial", "fields": ["sc_momentum"]}
+   ],
+   "falsifier": "Wrong if it clears pivot_high 71.29 on day_vol under 1.40, or closes 7-8% under a pivot buy (about 65.6-66.3), or loses ma_50 56.53 on heavy volume; void outright if the index is under distribution (market gate DELEGATED)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "EXIT-CASE", "line": "rs_leadership LAGGARD, structure 25, structure_shift BEARISH_CHOCH, entry 106.03 under ma_50 113.99 (sma_distance_pct -6.98), held_book.hl_state EXIT; RS decay is a C10 sell and the 10-week line has failed (R8). Working broker stop 99.45 stands meanwhile."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68: every CAN SLIM read is weak (rs_leadership LAGGARD, structure 23, BEARISH_CHOCH, entry 137.36 under ma_50 148.69, sector Declining - Avoid), which supports the short side; working BUY stop 145.05 sits under ma_50 148.69. hl_state EXIT noted, sign convention for a short not served."}
+ ],
+ "data_gaps": [
+  {"field": "bq.bq_base_dur", "impact": "absent from packet: cannot test the C12 7-8 week base duration; base integrity read on the structure substitute only"},
+  {"field": "bq.bq_range_tight", "impact": "absent from packet: cannot test base tightness/handle depth (C12, C14) directly; leaned on lens coil"},
+  {"field": "lens", "impact": "positional string with no per-slot labels in the packet header; I read it as leadership,coil,insti_money,structure,resistance,extension,sector (extension always null) - if the order differs my coil/sector reads change"},
+  {"field": "ma_200", "impact": "null for SPCX: the C24 climax test cannot be run on that held name"},
+  {"field": "high_52w", "impact": "served but off my menu; new-high confirmation (C7) not used"}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE - letters C, A, S, I untested; never inferred from price/volume (R10)",
+  "base_stage: NOT_AVAILABLE - C19 not enforced",
+  "market_gate: DELEGATED - every nomination valid only into a confirmed uptrend; void if the index is under distribution",
+  "rs_measure: rs_leadership (substitute - no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure: structure composite (substitute)",
+  "ledger memory: no voice_memory block was injected this run; no standing lesson applies",
+  "pivot: pivot_high / pct_from_pivot are served in this packet and used for the C17 test (R5 field note); sma_distance_pct used as context only",
+  "screen: CHYM (pct_from_pivot 10.36) and BILL (pct_from_pivot 13.53) rejected as more than 10% past pivot (C17); names with lens null rejected at step 2 (R3, no coil read); remaining lensed names except ABNB rejected on day_vol under 1.40 (C16); ABNB (day_vol 1.4) failed step 1 at rank 172, last of the XLY names shown, and sits pct_from_pivot -5.9 with no breakout",
+  "PAYO excluded as EVENT-DRIVEN (pending acquisition target per the packet's ma_status/ma_note, read only to obey the FORBIDDEN rule, not as a signal)",
+  "advisory only, not voted: flow, lens insti_money, rs_spy_20d"
+ ],
+ "shortfall_reason": "Only ASO survives leadership, base, breakout volume and extension in order: CHYM and BILL are more than 10% past pivot (C17 hard rejection), most LEADER names printed day_vol under 1.40 (C16 hard rejection), lens-null names give no coil read (R3), ABNB is not top of its group (C9), PAYO is event-driven. No padding."
+}
