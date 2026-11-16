@@ -1,0 +1,147 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-16",
+ "seat_kind": "challenge",
+ "names_read": 8,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"ticker\": \"SARO\", \"nomination_count\": 1, \"seats\": [\"aqe-quant\"], \"convictions\": [4], \"lane\": \"MOMENTUM\""},
+ "findings": [
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "The whole nominated room traces to ONE seat. Every one of the six names has a single nominator and no decider seat nominated anything, so there is no independent convergence on any name. Agreement in the vote would be agreement with one anchor, not independent confirmation.",
+   "evidence": "SARO, U, MGNI, VRDN, FISV, PCOR: nomination_count 1, seats [aqe-quant] on every row; doors SOLO (SARO, U, MGNI, VRDN) or NOMINATED (FISV, PCOR); RBRK, SPCX nomination_count 0 (held only).",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C17"],
+   "claim": "Technology clustering: three of the six nominated names are Technology, and the held book already carries a Technology name. Approving all three stacks one sector exposure, so the read is less diversified than six tickers suggest.",
+   "evidence": "gics_sector_name Technology: U, FISV, PCOR (nominated) and RBRK (held). Others: SARO Industrials, MGNI Communication Services, VRDN Healthcare; SPCX Industrials (held).",
+   "addressed_to": "oneil, minervini"
+  },
+  {
+   "scope": "SARO",
+   "kind": "CONTEXT",
+   "ticker": "SARO",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Higher-timeframe context conflicts with the composite. The moving averages are stacked downward (50 under 100 under 200) and the name sits well off its 52-week high, so the strong composite reads as a rally inside a longer down-trend. The case must name which trend it is exploiting, or stand aside.",
+   "evidence": "ma_50 23.08, ma_100 25.37, ma_200 26.36; pct_from_52w_high -16.27; rs_rank_pct 62.35 (lowest in room); lens_warnings 4 (highest in room); mp_state 2 (FADING), mp_accel_state 2 (DECELERATING); sc_momentum 83.4, structure 86.3.",
+   "addressed_to": "minervini, wyckoff, livermore"
+  },
+  {
+   "scope": "FISV",
+   "kind": "CONTEXT",
+   "ticker": "FISV",
+   "canon_ref": ["C5", "C1"],
+   "claim": "Same conflict as SARO: a sharp one-month burst sits under a downward moving-average stack and below the 52-week high, with momentum slowing and the pipeline tier at watch. The higher-timeframe trend this setup exploits is not evident in the fields.",
+   "evidence": "ma_50 50.4, ma_100 51.23, ma_200 54.48; pct_from_52w_high -8.69; subcomponents.mp.excess_return 35.3; mp_state 2 (FADING), mp_accel_state 2 (DECELERATING); subcomponents.pipe.pipe_tier 3 (C-WATCH); lens_warnings 3; structure 96.8.",
+   "addressed_to": "minervini, wyckoff"
+  },
+  {
+   "scope": "VRDN",
+   "kind": "EXTENSION",
+   "ticker": "VRDN",
+   "canon_ref": ["C5", "C6"],
+   "claim": "Extension on thin participation. A very large one-month excess return and sharply accelerating relative strength sit on top of a nearly flat moving-average stack, on the lowest day volume in the room. The move outran its base; the case must say what makes entry here not a chase.",
+   "evidence": "subcomponents.mp.excess_return 63.38; subcomponents.structure.rs_accel 36.3; subcomponents.energy.en_trend_bars 20.0; day_vol 0.41 (lowest in room); ma_50 22.75, ma_100 21.86, ma_200 21.56; lens_warnings 2.",
+   "addressed_to": "raschke, elder-lens, seow"
+  },
+  {
+   "scope": "U",
+   "kind": "EXTENSION",
+   "ticker": "U",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Context is clean (rising stack, at the high) but the last month is exceptional in the name's own terms and money flow is near saturation. Not a reason to drop it; the seat owes the observable that would show the thrust has failed before entry.",
+   "evidence": "subcomponents.mp.roc_zscore 3.5; pct_from_52w_high 0.0; subcomponents.flow.mfi 87.6; ma_50 43.39 vs ma_200 31.95; elder 10.0; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); day_vol 0.94.",
+   "addressed_to": "minervini, oneil, raschke"
+  },
+  {
+   "scope": "MGNI",
+   "kind": "EXTENSION",
+   "ticker": "MGNI",
+   "canon_ref": ["C5", "C7"],
+   "claim": "At the high with no base under it. Money flow is near saturation, the base engine scores zero and the base count is one day, so this is a thrust, not a breakout from a defined base. The base-reading seats owe whether a pattern exists here at all.",
+   "evidence": "subcomponents.flow.mfi 91.23; subcomponents.structure.base_score 0.0; subcomponents.structure.base_days 1.0; subcomponents.structure.rs_accel -0.02; pct_from_52w_high -0.17; rs_rank_pct 99.31; day_vol 0.85.",
+   "addressed_to": "oneil, minervini"
+  },
+  {
+   "scope": "PCOR",
+   "kind": "EXTENSION",
+   "ticker": "PCOR",
+   "canon_ref": ["C6", "C16"],
+   "claim": "The bearish_divergence quality flag fires at the 52-week high while the structure read is inside the range, not breaking out. Fields conflict (composite strong, oscillators diverging); the case must address the divergence or abstain.",
+   "evidence": "div_state BEARISH, div_bear_count 2; structure_shift RANGE; pct_from_52w_high 0.0; lens_warnings 3; day_vol 0.56; structure 97.9.",
+   "addressed_to": "elder-lens, raschke"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1", "C17"],
+   "claim": "The room is selected on one composite band. The six names span under five points of sc_momentum, and no forward-return separation of that composite against baseline has been served. It can be described, not leaned on as edge; a decider's reason must trace to its own method's fields.",
+   "evidence": "sc_momentum: SARO 83.4, FISV 82.3, PCOR 81.3, U 80.7, MGNI 80.0, VRDN 78.9. No edge statistic for sc_momentum in the packet.",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C3"],
+   "claim": "No nominated name traded on above-normal participation on the data day. The room's strength is carried by trend and composite readings, not by a volume event, so participation confirmation is absent across the board.",
+   "evidence": "day_vol: U 0.94, FISV 0.87, MGNI 0.85, SARO 0.62, PCOR 0.56, VRDN 0.41 (all below 1).",
+   "addressed_to": "wyckoff, livermore"
+  },
+  {
+   "scope": "RBRK",
+   "kind": "PROCESS",
+   "ticker": "RBRK",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Held name with a rising moving-average stack but collapsed structure and persistence, and four of five oscillators confirming a bearish divergence. The holders owe the observable that keeps the thesis alive.",
+   "evidence": "ma_50 113.74, ma_100 99.92, ma_200 78.95; structure 25.0; sc_momentum 31.3; mp 3.0; div_state MIXED, div_bear_count 4; structure_shift RANGE; lens_warnings null.",
+   "addressed_to": "livermore, wyckoff"
+  },
+  {
+   "scope": "SPCX",
+   "kind": "PROCESS",
+   "ticker": "SPCX",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Held name whose up-structure has failed: a character change below the swing anchor, with structure and persistence at the floor. Loss of alignment is an exit condition per canon; the holders owe a written reason it is not.",
+   "evidence": "structure_shift BEARISH_CHOCH; structure 21.0; mp 0.0; sc_momentum 29.1; ma_50 148.9, ma_100 142.49, ma_200 null.",
+   "addressed_to": "livermore, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "minervini", "ticker": "SARO", "class": "CONTEXT", "what_is_owed": "Name the higher-timeframe trend given ma_50 23.08 < ma_100 25.37 < ma_200 26.36, or abstain."},
+  {"seat": "wyckoff", "ticker": "FISV", "class": "CONTEXT", "what_is_owed": "Locate the burst (excess_return 35.3) in a phase given the downward stack ma_50 50.4 < ma_200 54.48."},
+  {"seat": "raschke", "ticker": "VRDN", "class": "EXTENSION", "what_is_owed": "State why entry after excess_return 63.38 on day_vol 0.41 is not a chase, and the observable that proves it wrong."},
+  {"seat": "oneil", "ticker": "MGNI", "class": "EXTENSION", "what_is_owed": "Say whether a base exists (base_score 0.0, base_days 1.0) and what the pattern is."},
+  {"seat": "elder-lens", "ticker": "PCOR", "class": "EXTENSION", "what_is_owed": "Address div_state BEARISH, div_bear_count 2 at the high, or abstain."},
+  {"seat": "minervini", "ticker": "U", "class": "EXTENSION", "what_is_owed": "Pre-state the observable that shows the roc_zscore 3.5 thrust has failed."},
+  {"seat": "livermore", "ticker": "RBRK", "class": "PROCESS", "what_is_owed": "Written observable keeping the held thesis alive given div_bear_count 4 and structure 25.0."},
+  {"seat": "livermore", "ticker": "SPCX", "class": "PROCESS", "what_is_owed": "Written reason the BEARISH_CHOCH is not an exit condition."}
+ ],
+ "declarations": [
+  "I never nominate and never vote; these are QA challenges only.",
+  "psychology_claims: NONE - no emotional state is read or claimed (R9); C22 not used as a gate (R10).",
+  "R1 house rule observed: no finding uses an engine level as a disqualifier.",
+  "Report C fields (subcomponents.*, mp_state, mp_accel_state, pipe_tier) were read from aqe_indicators.tsv per the round instruction, beyond my card menu.",
+  "R3 (regime named) could not be evaluated: no regime/srm context in the packet."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Regime/srm not in packet; R3 environment check and C4 environment match cannot be evaluated for any name."},
+  {"field": "nomination reasons / fields_cited", "impact": "Packet carries the anonymised tally only; R5 (pre-stated invalidation) and R12 (field-count conviction) cannot be tested per seat."},
+  {"field": "price", "impact": "No close price in packet; extension measured only through indirect fields (excess_return, roc_zscore, mfi, pct_from_52w_high)."},
+  {"field": "sc_m_gates", "impact": "null on every row of aqe_indicators.tsv; gate pass/fail read only from sc_m_gate_detail."},
+  {"field": "sc_p_gates", "impact": "null on every row; position gate read only from sc_p_gate_detail."},
+  {"field": "pipe_rank", "impact": "null on every row; pipeline read only from subcomponents.pipe.*."},
+  {"field": "lens_warnings", "impact": "null for held RBRK and SPCX; held crowding read incomplete."},
+  {"field": "ma_200", "impact": "null for SPCX; long-trend context for that held name incomplete."},
+  {"field": "rs_rank_pct", "impact": "null for SPCX (also pct_from_52w_high null)."},
+  {"field": "ledger memory", "impact": "No voice_memory block injected; sector clustering vs my recent record not checkable."}
+ ]
+}

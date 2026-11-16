@@ -1,0 +1,291 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-16",
+ "round": 2,
+ "declarations": [
+  "trend_template read off ma_20/ma_50/ma_100/ma_200 and sma_distance_pct; ma_150 not served (ma_100 used as the nearest stand-in) and the 200-day slope is inferred from the stack, never shown (C3).",
+  "rs_proxy: rs_rank_pct, rs_leadership and rs_spy_20d stand in for the IBD RS rank; not the same statistic (C3, C11).",
+  "vcp_detail NOT_SERVED: base_score/base_days/bq_* are composite proxies, no contraction count (C4). volume_signature: day_vol and bq_vol_dry only (C6, partial). earnings_growth NOT_SERVED (C12, R4).",
+  "Round-1 ballot forms/r1/minervini.json was not found, so conviction_change is null on every name.",
+  "Steenbarger ANCHOR/UNPROVEN: my votes rest on the Trend Template and base reading, not on sc_momentum; I support only the three names that pass the stack (U, MGNI, PCOR)."
+ ],
+ "data_gaps": [
+  {
+   "field": "ma_150",
+   "impact": "Template criteria 1, 2 and 4 read against ma_100 instead"
+  },
+  {
+   "field": "ma_200 slope",
+   "impact": "Criterion 3 inferred, not tested"
+  },
+  {
+   "field": "forms/r1/minervini.json",
+   "impact": "No round-1 position to compare for conviction_change"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template FAILS criterion 4 (50-day above 150/200): ma50 23.08 < ma100 25.37 < ma200 26.36, so this is not a confirmed stage 2 (C2, C3). AQE agrees no prior advance: `subcomponents.pipe.pr_ret_12m` 4.0 (weak 12-month return), `subcomponents.structure.resist_score` 5.0 (far under the high, from_52w_hi -16.27%). `sc_momentum` 83.4 is a rally, not a stage 2 leader. Template is all-or-nothing.",
+   "conviction_change": null,
+   "opposing_case": "Strongest composite in the room: `sc_momentum` 83.4, `flow` 84.2, `structure` 86.3, `mp` 96.0, `subcomponents.structure.rs_accel` 20.3 (lead widening fast), LEADER tag, price back above ma200 26.36. If the 50 crosses the 200 and a base forms, this becomes a stage 2 name.",
+   "self_counter": null,
+   "falsifier": "ma50 crossing above ma100 and ma200 with price holding above them; then the template passes and I reconsider.",
+   "challenge_reply": "Steenbarger SARO CONTEXT: the higher-timeframe trend is DOWN (ma_50 23.08 < ma_100 25.37 < ma_200 26.36; weekly swing LH/LL). The 1-month burst is a rally inside a stage 1/4 structure, not stage 2. My method does not exploit it: I oppose rather than abstain because the template failure is decisive (C2, C3).",
+   "case": {
+    "for": "`flow` 84.2 and `mp` 96.0 show real buying and persistence; `subcomponents.structure.rs_accel` 20.3 and `subcomponents.structure.rs_vs_spy` 10.99 show improving relative strength, which C14 says can mark the next leader before the trend confirms.",
+    "against": "Trend Template fails: 50-day below the 100 and 200 (C3 criteria 2 and 4). `subcomponents.pipe.pr_ret_12m` 4.0 shows no prior advance; rs_rank_pct 62.35 is under a 70 floor (C11 proxy). Buying before stage 2 confirms is prediction (C2).",
+    "entry_trigger": "None now. Need ma_50 above ma_100 and ma_200, then a base and a breakout over its pivot on volume.",
+    "wrong_if": "The 50-day crosses above the 200-day and price holds above both while a tight base forms; then the template passes.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A golden-cross stack (ma_50 > ma_100 > ma_200) with a fresh base and a volume-expansion breakout.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "52-week low price",
+     "earnings growth (C12)",
+     "VCP contraction count"
+    ]
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Trend Template PASSES on the served stack: price above ma20 43.82, ma50 43.39 > ma100 39.83 > ma200 31.95, from_52w_hi 0.0%, rs_rank_pct 97.84 (C3, C11). AQE confirms stage 2 leadership: `structure` 92.6 and `subcomponents.structure.rs_accel` 17.33 (lead widening), `mp` 93.0 with `subcomponents.mp.trend_score` 20.0 (full alignment). Weight: `subcomponents.bq.bq_base_dur` 0.0, no tight base yet; sma_dist 21.7%. Buy the breakout over pivot_high only.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": "No defined base: `subcomponents.bq.bq_base_dur` 0.0 and `subcomponents.energy.squeeze_score` 0.0, so there is no tight final contraction to buy (C4, C5); `subcomponents.mp.roc_zscore` 3.5 thrust on day_vol 0.94.",
+   "falsifier": "A breakout over pivot_high that reverses on light volume, or a daily close back under ma_20.",
+   "challenge_reply": "Steenbarger U EXTENSION: pre-stated failure observable for the `subcomponents.mp.roc_zscore` 3.5 thrust: a push over pivot_high on volume below normal that closes back under it, or a daily close below ma_20, or a BEARISH_CHOCH. Any one ends the idea (C6, C7).",
+   "case": {
+    "for": "All served Trend Template criteria pass; price at the 52-week high; LEADER with rs_down_day 2.94 (C11). `structure` 92.6, `mp` 93.0, `elder` 10.0, `mp_accel_state` ACCELERATING: a stage 2 leader, not a bargain.",
+    "against": "No base under the thrust: `subcomponents.bq.bq_base_dur` 0.0, `subcomponents.structure.base_days` 7.0, `subcomponents.energy.squeeze_score` 0.0; sma_dist 21.7% extended; volume not expanding (day_vol 0.94). Chasing breaks C5.",
+    "entry_trigger": "Hourly close above pivot_high with volume at least 1.4x normal; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below ma_20, or a bearish change of character.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "A failed breakout on light volume (C6), or the stack losing order (ma_50 under ma_100).",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "earnings growth (C12)",
+     "VCP contraction count",
+     "institutional sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings growth and EPS acceleration (SEPA element 2) not served; fundamentals leg not run."
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Trend Template PASSES on the stack: ma50 24.58 > ma100 23.02 > ma200 18.19, price above all, from_52w_hi -0.17%, rs_rank_pct 99.31 (C3, C11). AQE: `mp` 97.0 with `subcomponents.mp.trend_score` 20.0, `subcomponents.pipe.pipe_tier` A-TIER. But no base: `subcomponents.structure.base_score` 0.0, `subcomponents.structure.base_days` 1.0. A thrust, not a pivot (R5): low conviction, buy only a fresh breakout on volume.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": "Daily close below ma_20 or a bearish change of character before any base forms.",
+   "challenge_reply": "Steenbarger MGNI EXTENSION (owed oneil, minervini): no base exists by my read. `subcomponents.structure.base_score` 0.0 and `subcomponents.structure.base_days` 1.0; not a VCP, not a power play (no near-vertical thrust, ret_63d 21.08). It is a stage 2 thrust off the last swing high; I wait for a contraction before a true pivot (C4, C5, C18).",
+   "case": {
+    "for": "Best leadership in the room: rs_rank_pct 99.31, ret_12m 106.12, `mp` 97.0, `subcomponents.mp.roc_zscore` 2.67, `subcomponents.structure.wk_score` 15.0 (weekly trend up). Every template criterion I can read passes.",
+    "against": "No base or pivot: `subcomponents.structure.base_score` 0.0, `subcomponents.bq.bq_range_tight` 0.0; `subcomponents.structure.rs_accel` -0.02 (lead not widening); daily 13.3% above the last swing high and sma_dist 19.18%: a chase by C5.",
+    "entry_trigger": "Hourly close above bar_high with volume at least 1.4x normal; no buy past bar_high+5pct.",
+    "wrong_if": "Daily close below ma_20 or a bearish change of character.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "A tight 2-4 week contraction with volume drying up would raise conviction; a close under ma_20 ends it.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "earnings growth (C12)",
+     "VCP contraction count",
+     "institutional sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings growth not served; fundamentals leg of SEPA not run."
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Stage 2 is only starting: ma200 21.56 sits flat under ma100 21.86, so criterion 3 (200-day rising a month) is not shown, and ret_12m 6.67 shows no prior advance (C2, C3). No base to buy: `subcomponents.structure.base_score` 2.4, `subcomponents.structure.base_days` 4.0, `subcomponents.energy.squeeze_score` 0.0. Extension (sma_dist 35.71%) is a weight, not the basis. Low conviction.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 84.6, `mp` 96.0, `subcomponents.structure.rs_accel` 36.3 and rs_rank_pct 96.63: the fastest-improving leader in the room, stack ordered 50 > 100 > 200, from_52w_hi -8.61%. Early stage 2 is where the biggest moves start (C2).",
+   "self_counter": null,
+   "falsifier": "A tight base forms above ma_20 with volume drying up and the 200-day turns up; then I support the breakout.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`subcomponents.structure.rs_accel` 36.3 and `subcomponents.mp.excess_return` 63.38: genuine relative strength (C11); `flow` 73.7 with `subcomponents.flow.cmf` 0.29 shows buying.",
+    "against": "No base or pivot (`subcomponents.structure.base_days` 4.0); 200-day flat; day_vol 0.41 (no volume expansion, C6); sector Momentum Fading. Buying here is a chase (C5).",
+    "entry_trigger": "Need a new base of several weeks above ma_20, then an hourly close above its pivot_high on volume at least 1.4x normal.",
+    "wrong_if": "A fresh base forms and breaks out on volume while the 200-day rises: my opposition is wrong.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "A contracting base with volume dry-up and a rising 200-day.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "earnings growth (C12)",
+     "VCP contraction count"
+    ]
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Trend Template FAILS criteria 2 and 4: ma50 50.4 < ma100 51.23 < ma200 54.48 (C3). Same pattern as a broken leader bouncing (C13, R6). AQE agrees: `subcomponents.pipe.pr_ret_12m` 4.0 (weak 12-month return), `subcomponents.pipe.pipe_tier` C-WATCH, `mp_accel_state` DECELERATING. `structure` 96.8 reflects the burst, not a stage 2 trend.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 96.8, `subcomponents.structure.rs_vs_spy` 25.21 and `subcomponents.structure.rs_accel` 10.08 (lead improving), price back above ma200 54.48 and 0.7% under the 20-week high. A burst like this can be the first leg of a new stage 2.",
+   "self_counter": null,
+   "falsifier": "ma50 crossing above ma200 with price holding above them and a base forming.",
+   "challenge_reply": "Steenbarger sector CROWDING (owed minervini): agreed. Of the Technology names I oppose FISV, support PCOR at 3 and U at 3; C11 says capital goes to the top-RS name of a group, not across it.",
+   "case": {
+    "for": "`flow` 78.9 with `subcomponents.flow.cmf` 0.39 shows buying; `subcomponents.structure.base_score` 12.0 and RS improving (C11, C14).",
+    "against": "50 and 100 under the 200 (C3 fail); ret_12m -0.93; `subcomponents.pipe.pr_ret_12m` 4.0; a former leader bouncing on price alone is the broken-leader trap (C13).",
+    "entry_trigger": "None now. Need ma_50 above ma_200 and a base, then a breakout over its pivot on volume.",
+    "wrong_if": "The stack turns up (ma_50 over ma_100 and ma_200) and price holds above it.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A golden-cross stack plus a fresh base with volume dry-up.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "earnings growth (C12)",
+     "company category (C20)"
+    ]
+   }
+  },
+  {
+   "ticker": "PCOR",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Trend Template PASSES on the stack: ma50 59.08 > ma100 55.52 > ma200 53.82, price above all, from_52w_hi 0.0%, rs_rank_pct 94.91 (C3, C11). The only real base in the room: `subcomponents.structure.base_score` 15.0, `subcomponents.structure.base_days` 16.0, `subcomponents.bq.bq_vol_dry` 15.0 (volume drying up, C6), `structure` 97.9. Structure RANGE under pivot_high: buy the breakout, not now.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": "`subcomponents.pipe.pr_ret_12m` 8.0 (ret_12m -0.58): the 200-day only recently turned, so criterion 3 is inferred not shown; div BEARISH/2 at the high is advisory but real; `subcomponents.energy.squeeze_score` 0.0.",
+   "falsifier": "A breakout over pivot_high on volume that fails back into the range, or a daily close below ma_20.",
+   "challenge_reply": "Steenbarger PCOR divergence: div_state BEARISH, div_bear_count 2 is advisory in my method; the breakout must come on volume at least 1.4x normal or I do not buy (C6). Sector crowding: noted; PCOR is my preferred Technology name for its base.",
+   "case": {
+    "for": "Stage 2 stack ordered, at the 52-week high, LEADER; a 16-day base with volume dry-up (`subcomponents.bq.bq_vol_dry` 15.0, day_vol 0.56) is the C4/C6 footprint; `mp` 96.0.",
+    "against": "ret_12m -0.58 means stage 2 is young; sma_dist 31.38% from its average; bearish divergence 2 of 5; `subcomponents.bq.bq_range_tight` 4.0 (range not tight).",
+    "entry_trigger": "Hourly close above pivot_high with volume at least 1.4x normal; no buy past pivot_high+5pct.",
+    "wrong_if": "Daily close below ma_20 or a bearish change of character.",
+    "horizon_sessions": 30,
+    "would_change_my_mind": "A breakout on light volume or a close back into the base below ma_20.",
+    "cannot_see": [
+     "ma_150",
+     "ma_200 slope",
+     "earnings growth (C12)",
+     "VCP contraction count",
+     "institutional sponsorship"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:pivot_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:ma_20",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Earnings growth not served; fundamentals leg of SEPA not run."
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Held: leadership has broken. Price under ma20 118.63 and near ma50 113.74 (sma_dist -3.4%), RS LAGGARD (C11). AQE: `structure` 25.0, `mp` 3.0, `sc_momentum` 31.3, `elder` 3.0; AQE HEALTH EXIT. C7: the stop fixed before entry is executed when it trades, no renegotiation; C9: never add to a loser.",
+   "conviction_change": null,
+   "opposing_case": "Long-term stack still ordered (ma50 113.74 > ma100 99.92 > ma200 78.95), rs_rank_pct 95.77, ret_6m 72.31: a stage 2 name in a pullback that could rebuild a base.",
+   "self_counter": null,
+   "falsifier": "A reclaim of ma_20 with `structure` back above 60 and RS back to LEADER.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Longer stack ordered; ret_12m 48.59; `subcomponents.structure.rs_spy_score` 15.0 shows the 3-month lead is still there.",
+    "against": "`subcomponents.structure.rs_accel` -14.84 (lead eroding), `subcomponents.mp.trend_score` 0.0, div MIXED/4, LAGGARD: a leader buckling (C14). Holding for vindication is C10's error.",
+    "entry_trigger": "No add. Would only add after a new base and a breakout over its pivot on volume (C9).",
+    "wrong_if": "Price reclaims ma_20 and holds, with RS back to LEADER.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A tight base above ma_50 with volume drying up and RS turning positive.",
+    "cannot_see": [
+     "hl_trend component (R11)",
+     "ma_150",
+     "earnings growth (C12)"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT; my method is a long stage-2 method and the canon I am pinned to carries no short rule, so I do not vote the short. On the long side it fails the template: no ma200, price under ma50 148.9, structure BEARISH_CHOCH, `structure` 21.0, `mp` 0.0: not a buy.",
+   "conviction_change": null,
+   "opposing_case": null,
+   "self_counter": null,
+   "falsifier": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "For the held short: `structure` 21.0, `mp` 0.0, BEARISH_CHOCH and RS LAGGARD all show the up-structure failed.",
+    "against": "`subcomponents.energy.exhaustion_score` 10.0 and price above vwap14; `mp_accel_state` ACCELERATING; no 200-day history, so stage cannot be read.",
+    "entry_trigger": "None in my method; I would need a full Trend Template pass to consider the long side.",
+    "wrong_if": "For the short: price closes back above ma_50 with structure turning BULLISH_BOS.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A canon rule on shorting, which I do not have.",
+    "cannot_see": [
+     "ma_200",
+     "52-week high and low",
+     "short-side rules in my canon",
+     "earnings growth (C12)"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of1.json",
+   "bytes": 16176,
+   "votes": 8,
+   "sha256": "85ffc319dd60"
+  }
+ ]
+}

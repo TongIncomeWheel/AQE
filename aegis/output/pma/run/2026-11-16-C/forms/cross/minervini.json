@@ -1,0 +1,105 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-16",
+ "declarations": [
+  "Method: Trend Template first (C3), then base and pivot (C4, C5), RS as C11 proxy. earnings_growth NOT_SERVED (C12, R4); vcp_detail NOT_SERVED, composite proxies only (C4). No bracket field used (R1); no Valen flag used (R41)."
+ ],
+ "rulings": [
+  {
+   "claim_id": "SARO-aqe-quant-for",
+   "ticker": "SARO",
+   "ruling": "REFUTE",
+   "evidence": "Flow is real (`subcomponents.flow.flow_score` 17.0) but it is not stage 2: `subcomponents.pipe.pr_ret_12m` 4.0 shows no prior advance, `subcomponents.structure.resist_score` 5.0 far under the high; weekly LH/LL with 9<21 (C2, C3).",
+   "tf": {
+    "W": "LH/LL, EMA9<EMA21, 12.4% under 20-wk high: no stage 2 uptrend (C2, C3)",
+    "D": "9>21, HH but LL, 5.5% under 20-day high: a rally, not a base on top of a trend",
+    "H1": "9<21, LH/LL, 71% of range: no pivot breakout to buy (C5)"
+   },
+   "stance_after": "OPPOSE",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "U-raschke-against",
+   "ticker": "U",
+   "ruling": "CONFIRM",
+   "evidence": "No base to buy, which my method needs (C4, C5): `subcomponents.energy.squeeze_score` 0.0, `subcomponents.bq.bq_base_dur` 0.0, `subcomponents.structure.base_days` 7.0. The ADX 30 gate is not my test; `subcomponents.mp.adx_val` 27.38 is a real trend.",
+   "tf": {
+    "W": "9>21, 2.7% under 20-wk high: stage 2 trend intact, no weekly base",
+    "D": "9>21, HH but LL, 2.7% under 20-day high: a thrust off the low, no contraction",
+    "H1": "97% of the day's range, 0.2% under 20-hr high: buying here anticipates, no pivot"
+   },
+   "stance_after": "SUPPORT",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "MGNI-elder-lens-against",
+   "ticker": "MGNI",
+   "ruling": "CONFIRM",
+   "evidence": "Chase by my test (C5), not by Elder's: `subcomponents.structure.base_score` 0.0, `subcomponents.structure.base_days` 1.0, `subcomponents.structure.rs_accel` -0.02; daily 13.3% above last swing high. elder_5d is advisory only for me.",
+   "tf": {
+    "W": "9>21, HH but LL, 1.6% under 20-wk high: trend up, no weekly base",
+    "D": "13.3% above the last swing high, 1.6% under 20-day high: no pivot, extended (C5)",
+    "H1": "below EMA9, 37% of range: no tight final contraction on the hour"
+   },
+   "stance_after": "SUPPORT",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "VRDN-seow-for",
+   "ticker": "VRDN",
+   "ruling": "REFUTE",
+   "evidence": "RS is real (C11): `subcomponents.structure.rs_accel` 36.3, `subcomponents.structure.rs_vs_spy` 27.08. No base: `subcomponents.structure.base_score` 2.4, `subcomponents.energy.squeeze_score` 0.0; `subcomponents.pipe.pr_ret_12m` 4.0: no prior advance.",
+   "tf": {
+    "W": "HH/HL, 9>21, 24.2% above last swing high: early stage 2, extended off the base",
+    "D": "34.4% above the last swing high: the breakout is already spent, a chase (C5)",
+    "H1": "92% of range, 2.4% under 20-hr high: no tight contraction to buy"
+   },
+   "stance_after": "OPPOSE",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "FISV-aqe-quant-for",
+   "ticker": "FISV",
+   "ruling": "REFUTE",
+   "evidence": "Structure points read the burst, not a stage 2 trend: `subcomponents.pipe.pr_ret_12m` 4.0 (no prior advance), `subcomponents.pipe.pr_ma_score` 17.0 (stack not complete), `mp_accel_state` DECELERATING; weekly HH but LL (C2, C3, C13).",
+   "tf": {
+    "W": "HH but LL, 0.7% under 20-wk high: a bounce, not a confirmed stage 2 (C2)",
+    "D": "LH but HL, 25.5% above the last swing high: extended, no base pivot (C5)",
+    "H1": "LH/LL, 90% of range: no tight final contraction"
+   },
+   "stance_after": "OPPOSE",
+   "changed_mind": false,
+   "what_moved_me": null
+  },
+  {
+   "claim_id": "SPCX-wyckoff-against",
+   "ticker": "SPCX",
+   "ruling": "CONFIRM",
+   "evidence": "Fails the long-side template (C3): `structure` 21.0, `mp` 0.0, `subcomponents.mp.trend_score` 0.0, `subcomponents.structure.wk_score` 0.0. Only 23 weekly bars, so stage cannot be read; no short rule in my canon.",
+   "tf": {
+    "W": "below EMA9, 9<21, 21.1% under 20-wk high; 23 bars only, no 200-day read",
+    "D": "below EMA9, 9<21, LH/LL, 16.3% under 20-day high: failed up-structure",
+    "H1": "below EMA9, 9<21, 43% of range: no long pivot"
+   },
+   "stance_after": "ABSTAIN",
+   "changed_mind": false,
+   "what_moved_me": null
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 2402,
+   "sha256": "c655bc2f9f1d"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 2338,
+   "sha256": "7f1b17b8302e"
+  }
+ ]
+}

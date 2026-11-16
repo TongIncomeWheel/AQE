@@ -1,0 +1,341 @@
+[
+ {
+  "ticker": "U",
+  "verdict": "PASS",
+  "status": "DROPPED",
+  "slate_verdict": "ADVANCE",
+  "ordering_score": 2,
+  "conviction": 2,
+  "conviction_basis": "ORDERING figure only (R34): AGREED 5 / with reservations 4 / CONTESTED 3 / DROPPED 2 -- never a gate. `conviction` is a DEPRECATED alias of `ordering_score` kept for one release; it is NOT the committee's conviction (R42: committee_position.json committee_conviction)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "livermore",
+    "minervini",
+    "oneil"
+   ],
+   "oppose": [
+    "aqe-quant",
+    "elder-lens",
+    "raschke",
+    "seow",
+    "wyckoff"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [
+   {
+    "voice": "aqe-quant",
+    "objection": "Trigger close_above:pivot_high buys at the range top (`subcomponents.energy.en_pos50` 91.5) while `subcomponents.energy.en_trend_bars` 8.0 leaves wear unjudged; on the floor I ratified in_zone:ma_20 (D), so per R40 I OBJECT. Breadth holds: `flow` 78.9, `energy` 66.4, `structure` 92.6, `mp` 93.0.",
+    "would_clear": "Trigger in_zone:ma_20 (D) with wrong_if a daily close below ma_20, valid while `mp_accel_state` stays ACCELERATING."
+   },
+   {
+    "voice": "elder-lens",
+    "objection": "Trigger unchanged: close_above:pivot_high buys strength in front of price at `subcomponents.energy.en_pos50` 91.5 with `elder` 10.0 in summer (C20). Elder buys the pullback under a rising average (C6, C10). The floor offered no evidence my method weighs; livermore's C5 is his canon.",
+    "would_clear": "Trigger in_zone:ma_20 on D: buy the pullback into the 20-day average while `elder` stays 7 or more and `subcomponents.structure.wk_score` holds 15.0 (C21)."
+   },
+   {
+    "voice": "raschke",
+    "objection": "Trigger still buys a close above the pivot high, a thrust in none of my four set-ups (C2): `subcomponents.energy.en_pos50` 91.5, top of range, no pullback; `subcomponents.energy.squeeze_score` 0.0, no coil (C12); `subcomponents.mp.adx_val` 27.38, under the Holy Grail 30 gate (C7).",
+    "would_clear": "A retracement trigger: first pullback holding in_zone:ma_20 (D), then an hourly close above the prior day's high, with `subcomponents.mp.adx_val` above 30; wrong_if a daily close below ma_20."
+   },
+   {
+    "voice": "seow",
+    "objection": "Floor changed no evidence my method reads: U still passes my position system (`structure` 92.6, `subcomponents.flow.cmf` 0.34 COM above zero), but close_above:pivot_high waits for a daily close; my entry is a buy stop 1 tick over the prior-day high (C27, R15).",
+    "would_clear": "Trigger trade_above:bar_high on D: buy stop one tick over Friday's high, re-placed over each new prior-day high until taken; wrong_if a close below max(fib_swing_low, base_low_20d) (C14, C29)."
+   },
+   {
+    "voice": "wyckoff",
+    "objection": "Ticket unchanged: close_above:pivot_high on D still buys the run, not the test. `subcomponents.energy.en_pos50` 91.5 puts price at the top, away from value (R2, C3, C15). The floor brought no evidence of a back-up into value.",
+    "would_clear": "Trigger reads: back-up into in_zone:structure_shift_ref (or pvp_vah; in_zone:ma_20 only where it meets that level), then h1_close_above:bar_high, buy stop (C7, C12)."
+   }
+  ],
+  "reservations": [
+   {
+    "voice": "minervini",
+    "reservation": "Trigger stands: the buy is the breakout (C5); stage 2 leader, `structure` 92.6, `subcomponents.structure.rs_accel` 17.33 (C3, C11). Reservation on wrong_if words: mine is a daily close back below ma_20 (C7), not the 1-ATR fade. Missing: `subcomponents.bq.bq_base_dur` 0.0, no tight base."
+   },
+   {
+    "voice": "oneil",
+    "reservation": "close_above:pivot_high (D) is the CAN SLIM buy point and I hold it; in_zone:ma_20 is not (C7, C17). The words must carry C16: the pivot close on volume at least 1.4x normal (`subcomponents.flow.volume_score` 2.0 shows none yet), no buy past +5% (C17). Gate DELEGATED (C1)."
+   }
+  ],
+  "held": true,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "entry_trigger": "A daily close above the last confirmed pivot high: the fresh new high that ends the minor reaction (C5, C19).",
+  "wrong_if": "livermore: \"A one-day fade of 1 ATR or more from the day's high after entry, or a daily close back under the pivot after clearing it (C7, C20).\"",
+  "trigger": {
+   "word": "close_above:pivot_high",
+   "tf": "D",
+   "plain": "A daily close above the last confirmed pivot high: the fresh new high that ends the minor reaction (C5, C19)."
+  },
+  "horizon_sessions": 20,
+  "why_agreed": "oneil: \"Leader (C9): `structure` 92.6, `subcomponents.structure.rs_accel` 17.33, `mp` 93.0. Base thin: \" | minervini: \"Stage 2 leader on the stack (C3, C11). `structure` 92.6 and `subcomponents.structure.rs_accel` \" | livermore: \"C5 walk: `structure` 92.6 (leads the market, weekly up), `mp` 93.0 with `mp_state` 3 (STRONG) =\"",
+  "dissent": [
+   {
+    "voice": "raschke",
+    "why": "None of my four set-ups (C2). `subcomponents.mp.adx_val` 27.38 is under the Holy Grail gate of 30 (C7); `subcomponents.energy.squeeze_score` 0.0, no coil (C12). `structure` 92.6 and `mp` 93.0 are strong trend, but D is 2.7% under the 20-day high, no pullback: a thrust I cannot name."
+   }
+  ],
+  "gaps": []
+ },
+ {
+  "ticker": "SARO",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "aqe-quant",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "oneil",
+    "raschke",
+    "seow"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "MGNI",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "aqe-quant",
+    "livermore",
+    "minervini",
+    "raschke",
+    "seow",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens",
+    "oneil"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "VRDN",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "aqe-quant",
+    "raschke",
+    "seow",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "oneil"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "FISV",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "aqe-quant",
+    "seow",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "oneil",
+    "raschke"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "PCOR",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "MOMENTUM",
+  "split": {
+   "support": [
+    "aqe-quant",
+    "livermore",
+    "minervini",
+    "oneil",
+    "raschke",
+    "wyckoff"
+   ],
+   "oppose": [
+    "elder-lens"
+   ],
+   "abstain": [
+    "seow"
+   ]
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "RBRK",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "PULLBACK",
+  "split": {
+   "support": [],
+   "oppose": [
+    "aqe-quant",
+    "elder-lens",
+    "livermore",
+    "minervini",
+    "oneil",
+    "raschke",
+    "seow",
+    "wyckoff"
+   ],
+   "abstain": []
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ },
+ {
+  "ticker": "SPCX",
+  "verdict": "PASS",
+  "status": "NOT_SLATED",
+  "slate_verdict": null,
+  "ordering_score": 1,
+  "conviction": 1,
+  "conviction_basis": "ORDERING figure only (R34); `conviction` is a deprecated alias of `ordering_score`, not the committee's conviction (R42)",
+  "lane": "PULLBACK",
+  "split": {
+   "support": [
+    "livermore"
+   ],
+   "oppose": [
+    "seow",
+    "wyckoff"
+   ],
+   "abstain": [
+    "aqe-quant",
+    "elder-lens",
+    "minervini",
+    "oneil",
+    "raschke"
+   ]
+  },
+  "advisory": {
+   "support": [],
+   "oppose": [],
+   "abstain": []
+  },
+  "objections": [],
+  "reservations": [],
+  "held": false,
+  "n_deciders": 8,
+  "drop_threshold": 4,
+  "gaps": []
+ }
+]

@@ -1,0 +1,46 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-16",
+ "declarations": [
+  "No refutation pairs were routed to me (answer_pairs empty).",
+  "vcp_detail NOT_SERVED; earnings_growth NOT_SERVED (C4, C12, R4). ma_150 not served; rs_leadership/rs_spy_20d are a proxy for IBD RS rank, not the same statistic.",
+  "Stance unchanged from my blind ABSTAIN; abstaining because the trade is a short outside my method, not on any bracket."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the last confirmed pivot high on expanding volume; do not chase far past it."
+   },
+   "wrong_if": "A daily close back below ma_20, or a bearish change of character after the breakout attempt.",
+   "market_void": null,
+   "reason": "Stage 2 leader on the stack (C3, C11). `structure` 92.6 and `subcomponents.structure.rs_accel` 17.33: lead widening; `mp` 93.0 with `subcomponents.mp.trend_score` 20.0: full alignment. Weight: `subcomponents.bq.bq_base_dur` 0.0, no tight base; D 2.69% under the 54.27 high, buy the breakout (C5)."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "For the long side I would be wrong only if price rebuilt a full Trend Template pass: daily close above ma_50 with structure turning BULLISH_BOS.",
+   "market_void": null,
+   "reason": "Held SHORT; my canon is a long stage-2 method with no short rule, so I do not vote it. Long side fails: `structure` 21.0 and `mp` 0.0 (no persistence), `subcomponents.mp.trend_score` 0.0; W and D below EMA9 with 9<21, D swing LH/LL: stage cannot be stage 2 (C2, C3)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 968,
+   "sha256": "3dfab3ca84a6"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 728,
+   "sha256": "1c101a7d2129"
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "voice": "seow",
+ "date": "2026-11-16",
+ "declarations": [
+  "Declared proxies (R13, R14): structure / structure_shift for the resistance line, subcomponents.flow.cmf for COM, elder and mp_accel_state for TIF. TradersGPS lines are proprietary.",
+  "Not served on this sheet: fib_swing_low, base_low_20d, bar_high values; levels are named by field, never typed.",
+  "Judged long only (C32); declared proxies: subcomponents.flow.cmf for COM, elder for TIF."
+ ],
+ "answers": [
+  {
+   "pair_id": "U-seow-for~raschke",
+   "ticker": "U",
+   "to": "raschke",
+   "text": "\"Needs range contraction first; no new high printed.\" My position system needs no coil: the buy signal is the resistance break (C26), and W close 52.81 sits 10.6% above the last weekly swing high 47.77 with `structure` 92.6 and `subcomponents.structure.wk_score` 15.0. `subcomponents.energy.squeeze_score` 0.0 is not my test. The D close 2.7% under 54.27 is why I never buy at market: the buy stop over bar_high must be taken first (C27). Fund flow holds: `subcomponents.flow.cmf` 0.34.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "U",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop one tick over Friday's high; if not taken, re-place it over each new prior-day high."
+   },
+   "wrong_if": "A daily close below the support line max(fib_swing_low, base_low_20d), or `subcomponents.flow.cmf` 0.34 turning below 0.",
+   "market_void": null,
+   "reason": "Position system: weekly break above resistance (`structure` 92.6, `subcomponents.structure.rs_vs_spy` 14.55 beats SPY, C6) with fund flow confirming (`subcomponents.flow.cmf` 0.34, `flow` 78.9, C28) and impulse up (`elder` 10.0, `mp_accel_state` 1 ACCELERATING). `sc_momentum` 80.7. Declared proxies."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close back above ma_20 with `subcomponents.flow.cmf` above 0 and `elder` rising to 7 or more.",
+   "market_void": null,
+   "reason": "Neither system fires. Position: support line broke (C26 mirror, C29); `structure` 21.0, `subcomponents.structure.wk_score` 0.0, `mp` 0.0. Flow against: `subcomponents.flow.cmf` -0.08 (COM below zero), `elder` 5.0. Swing: D and W 9<21, no up-trend to buy a dip in (C2). `sc_momentum` 29.1."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 1748,
+   "sha256": "d7a364693fa7"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 735,
+   "sha256": "0d8757b3972c"
+  }
+ ]
+}

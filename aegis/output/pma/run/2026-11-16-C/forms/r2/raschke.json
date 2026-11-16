@@ -1,0 +1,256 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-16",
+ "round": 2,
+ "declarations": [
+  "Round-1 ballot forms/r1/raschke.json does not exist: raschke filed no R1 nomination, so conviction_change is null on all eight.",
+  "Report C serves `subcomponents.mp.adx_val`, so the Holy Grail adx>30 level is read directly; adx SLOPE (rising) is still not served. ma_20 stands in for the 20-period EMA.",
+  "Declared: stochastic_kd NOT_SERVED (C6); bar_range_history NOT_SERVED (C12/C13), `subcomponents.energy.squeeze_score` used as proxy; n_day_extreme via sma_dist + structure_shift; market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "Steenbarger ANCHOR/UNPROVEN: I weigh no seat count and no sc_momentum band; every vote above rests on adx_val, structure, energy subcomponents and the swing shape.",
+  "R1: no OPPOSE here rests on a bracket. Brackets read as information only."
+ ],
+ "votes": [
+  {
+   "ticker": "SARO",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No named set-up (C2). `subcomponents.mp.adx_val` 46.04 is a strong trend reading, but the weekly is swing LH/LL with 9<21, so the Anti premise (C6: short trend resolves toward the longer one) points against a long here. `energy` 72.3 with `subcomponents.energy.squeeze_score` 0.0: no contraction, so no breakout-mode set-up. A rally inside a longer down-leg, not a retracement in an uptrend.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 86.3 and `subcomponents.structure.rs_accel` 20.3 show a widening lead; `subcomponents.structure.wk_score` 15.0 says the weekly close is above a rising 10-week line; `subcomponents.mp.adx_val` 46.04 clears the Holy Grail gate, so a first pullback could qualify.",
+   "falsifier": "Weekly swing turns HH/HL while adx stays above 30: the longer trend is then up and a Holy Grail pullback becomes valid.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 46.04 above the Holy Grail gate; `structure` 86.3; `subcomponents.energy.exhaustion_score` 10.0 shows no climax wear.",
+    "against": "Weekly swing LH/LL, 9<21 and ma50 23.08 < ma100 25.37 < ma200 26.36: longer trend down (C6). `subcomponents.energy.squeeze_score` 0.0, no contraction. sma_dist 20.17% is not a pullback.",
+    "entry_trigger": "Only after the weekly turns up: first pullback to ma_20, then an hourly close above bar_high.",
+    "wrong_if": "My OPPOSE is wrong if it closes above the 20-week high with the weekly swing turning HH.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Weekly 9>21 with a HH/HL swing, then an orderly pullback to the 20-day line with adx still above 30.",
+    "cannot_see": [
+     "stochastic %K/%D",
+     "per-bar range history",
+     "exact 20-day high/low count"
+    ]
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fits none of the four set-ups (C2, R1). `subcomponents.mp.adx_val` 27.38 is under the Holy Grail gate of 30 (C7), so this is not a qualified retracement; `subcomponents.energy.squeeze_score` 0.0 means no range contraction for a breakout-mode entry (C12); at the high (from_52w_hi 0.0%) it is not a test of a prior extreme. A thrust (`subcomponents.mp.roc_zscore` 3.5) I have no named way to buy.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 92.6, `mp` 93.0 STRONG/ACCELERATING, `elder` 10.0 and a rising MA stack: the cleanest trend context in the room; `subcomponents.energy.exhaustion_score` 10.0 shows no climax yet.",
+   "falsifier": "adx rises above 30 and the first pullback holds the 20-day line, making a Holy Grail long valid.",
+   "challenge_reply": "Steenbarger: the observable that shows the roc_zscore 3.5 thrust failed is a daily close below bar_low on a range-expansion red bar, or an hourly close back under the 20-day line; either is the C19 climax-exit read.",
+   "case": {
+    "for": "`structure` 92.6 and `mp` 93.0 with `mp_accel_state` ACCELERATING; `subcomponents.structure.rs_accel` 17.33, lead widening; MA stack rising.",
+    "against": "`subcomponents.mp.adx_val` 27.38 under the 30 gate; `subcomponents.energy.squeeze_score` 0.0; H1 at 97% of the day's range after run_10d 40.08%: a thrust, no set-up.",
+    "entry_trigger": "A first pullback to ma_20 with adx above 30, then an hourly close above bar_high.",
+    "wrong_if": "Wrong if it keeps trending with adx crossing 30 and a pullback holds the 20-day line.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx above 30 and rising plus an orderly pullback to the 20-day average.",
+    "cannot_see": [
+     "stochastic %K/%D",
+     "per-bar range history"
+    ]
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate, conditional (C7). `subcomponents.mp.adx_val` 34.8 clears the 30 gate and the MA stack rises (ma20 24.66 > ma50 24.58 > ma100 23.02 > ma200 18.19). But `subcomponents.structure.base_score` 0.0 and daily 13.3% above the last swing high: no pullback yet. I buy only the first pullback to the 20-day line, never here.",
+   "conviction_change": null,
+   "falsifier": "The pullback breaks the 20-day line by more than 1 ATR: the trend, not the pullback, is ending.",
+   "challenge_reply": null,
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "age_ge:10"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+2pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 34.8 over the gate; `mp` 97.0 STRONG; `subcomponents.energy.price_action_score` 12.5, orderly higher lows.",
+    "against": "`subcomponents.structure.base_score` 0.0, `subcomponents.structure.base_days` 1.0; `subcomponents.structure.rs_accel` -0.02, lead not widening; sma_dist 19.18%.",
+    "entry_trigger": "Pullback in_zone of ma_20, then an hourly close above bar_high.",
+    "wrong_if": "A close more than 1 ATR under the 20-day line, or 10 sessions with no buy.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "adx falling below 30 during the pullback, or a bearish CHoCH.",
+    "cannot_see": [
+     "adx slope (rising?)",
+     "20-period EMA, ma_20 used",
+     "stochastic %K/%D"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "The strongest Holy Grail gate in the room (C7): `subcomponents.mp.adx_val` 50.93 and `structure` 84.6, weekly HH/HL. I do not buy here: sma_dist 35.71% is no pullback. The trade is the first pullback to the 20-day line, then a buy above the prior bar's high; stop beyond that pullback's low (C17).",
+   "conviction_change": null,
+   "falsifier": "The pullback closes more than 1 ATR under the 20-day line, or adx drops below 30.",
+   "challenge_reply": "Steenbarger: buying after excess_return 63.38 on day_vol 0.41 would be a chase, so I do not. Entry waits for a pullback to ma_20 (26.14 today) and an hourly close above bar_high. Wrong if `mp_accel_state` stays DECELERATING while price closes 1 ATR under the 20-day line.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "age_ge:10"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+2pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 50.93, `subcomponents.structure.rs_accel` 36.3, weekly swing HH/HL; `subcomponents.energy.exhaustion_score` 10.0.",
+    "against": "sma_dist 35.71% with day_vol 0.41; `subcomponents.structure.base_score` 2.4; `mp_accel_state` DECELERATING.",
+    "entry_trigger": "Pullback in_zone of ma_20, then an hourly close above bar_high.",
+    "wrong_if": "A close more than 1 ATR under the 20-day line, or 10 sessions with no buy.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A range-expansion red bar from here (climax, C19) or adx falling under 30.",
+    "cannot_see": [
+     "adx slope (rising?)",
+     "20-period EMA, ma_20 used",
+     "stochastic %K/%D"
+    ]
+   }
+  },
+  {
+   "ticker": "FISV",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No qualified set-up (C2). `subcomponents.mp.adx_val` 39.37 clears the gate, but the daily swing is LH and ma50 50.4 < ma100 51.23 < ma200 54.48: the Holy Grail needs fresh highs in an established uptrend, not a burst under a falling stack. `subcomponents.energy.en_pos50` 97.74 at the top of the range with `subcomponents.energy.squeeze_score` 0.0: no pullback and no coil.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 96.8, `subcomponents.structure.base_score` 12.0 on `subcomponents.structure.base_days` 26.0, weekly 9>21; adx 39.37 is a real trend and a first pullback could still qualify.",
+   "falsifier": "Price holds above ma_200 while the 50-day turns up through the 100-day, then a first pullback holds the 20-day line.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 39.37; `structure` 96.8; `subcomponents.structure.base_score` 12.0 on a 26-day base.",
+    "against": "Daily swing LH, falling MA stack; `subcomponents.pipe.pipe_tier` C-WATCH; `mp_accel_state` DECELERATING; sma_dist 26.54%.",
+    "entry_trigger": "Would need the MA stack to turn up, then a pullback to ma_20 and an hourly close above bar_high.",
+    "wrong_if": "Wrong if it makes a daily HH and keeps trending with adx above 30.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "ma_50 crossing above ma_100 and a daily HH/HL swing.",
+    "cannot_see": [
+     "stochastic %K/%D",
+     "per-bar range history"
+    ]
+   }
+  },
+  {
+   "ticker": "PCOR",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Holy Grail candidate on the cleanest swing in the room: daily HH/HL, weekly HH/HL, `subcomponents.mp.adx_val` 43.88 over the gate, `subcomponents.structure.base_score` 15.0. Not a buy at the high: sma_dist 31.38% and div BEARISH/2 warn the pullback is near, and that pullback is my entry (C7).",
+   "conviction_change": null,
+   "falsifier": "The pullback breaks the 20-day line by more than 1 ATR, or structure turns BEARISH_CHOCH.",
+   "challenge_reply": "Steenbarger: div_state BEARISH, div_bear_count 2 at the high is advisory on my card, never a vote alone. I read it as the pullback warning; I do not buy the high, I wait for the 20-day line and an hourly close above bar_high.",
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "above_vwap_s"
+    ],
+    "wrong": [
+     "close_below:ma_20-1atr",
+     "choch_bearish",
+     "age_ge:10"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:pivot_high+2pct",
+    "tf": "1H",
+    "non_price": null
+   },
+   "case": {
+    "for": "`subcomponents.mp.adx_val` 43.88; `structure` 97.9; `subcomponents.structure.base_score` 15.0 on 16.0 days; daily and weekly HH/HL.",
+    "against": "div BEARISH/2 at the high; `mp_accel_state` DECELERATING; day_vol 0.56; sma_dist 31.38%.",
+    "entry_trigger": "Pullback in_zone of ma_20, then an hourly close above bar_high.",
+    "wrong_if": "A close more than 1 ATR under the 20-day line, a bearish CHoCH, or 10 sessions with no buy.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "div_bear_count rising to 4+ with a range-expansion red bar: a climax, not a pullback.",
+    "cannot_see": [
+     "adx slope (rising?)",
+     "20-period EMA, ma_20 used",
+     "stochastic %K/%D"
+    ]
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Held long that fits no set-up (C2). `subcomponents.mp.adx_val` 17.14 is drifting with `subcomponents.mp.di_bullish` False, so there is no trend to buy a retracement in; `subcomponents.energy.en_pos50` 44.51 is mid-range, not a test of an extreme. `structure` 25.0 and `mp` 3.0. Held-book line: EXIT-CASE advisory, the written stop is the structural line (C17).",
+   "conviction_change": null,
+   "opposing_case": "MA stack still rises (ma50 113.74 > ma100 99.92 > ma200 78.95) and weekly swing is HH/HL; `mp_accel_state` ACCELERATING from a low base; the pullback may be a deep weekly retracement.",
+   "falsifier": "A close back above ma_20 with adx turning up and buyers on top.",
+   "challenge_reply": null,
+   "case": {
+    "for": "Weekly HH/HL with a rising long MA stack; `mp_accel_state` ACCELERATING.",
+    "against": "`subcomponents.mp.adx_val` 17.14, `subcomponents.mp.di_bullish` False; `structure` 25.0; `mp` 3.0; daily below EMA9, 9<21; div MIXED/4.",
+    "entry_trigger": "No add. Only a test of a prior low that fails (Turtle Soup) would be a new set-up.",
+    "wrong_if": "Wrong if it closes back above ma_20 and holds with di_bullish True.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A new 20-day low that reverses above the prior low (C3), or a close above the 20-day line.",
+    "cannot_see": [
+     "exact 20-day low and its date",
+     "stochastic %K/%D"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT (qty -68). A long-side vote means nothing here. On my method the down-structure is real (BEARISH_CHOCH, daily LH/LL, `structure` 21.0, `mp` 0.0) but `subcomponents.mp.adx_val` 18.04 is under the gate for a sell-the-pullback Holy Grail (C7). Advisory: the short shows an open gain; protect it, do not let it erode (C19).",
+   "conviction_change": null,
+   "falsifier": "A close back above ma_20 on the short.",
+   "challenge_reply": null,
+   "case": {
+    "for": "For the short: BEARISH_CHOCH, `structure` 21.0, `mp` 0.0, weekly and daily 9<21.",
+    "against": "For the short: `subcomponents.mp.adx_val` 18.04 under 30, no strong trend; price above vwap14; `subcomponents.energy.en_pos50` 33.41 not at an extreme low.",
+    "entry_trigger": "No action on my method; a short add would need adx above 30 and a rally to the 20-day line that fails.",
+    "wrong_if": "The short read is wrong on a close above ma_20.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "adx above 30 with a failed rally to the 20-day line.",
+    "cannot_see": [
+     "exact 20-day high/low",
+     "stochastic %K/%D"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of1.json",
+   "bytes": 12993,
+   "votes": 8,
+   "sha256": "db77746b1671"
+  }
+ ]
+}
