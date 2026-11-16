@@ -1,0 +1,160 @@
+{
+ "voice": "seow",
+ "date": "2026-11-16",
+ "declarations": [
+  "Both systems run on every name (R10/R32); system named in each reason. Declared proxies as in my blind vote. R1: no bracket field used. C21 house rule not used as a reason.",
+  "Both systems run on every name (R10/R32). R1: no bracket field used. C32: SPCX short abstained."
+ ],
+ "answers": [
+  {
+   "pair_id": "PCOR-seow-against~oneil",
+   "ticker": "PCOR",
+   "to": "oneil",
+   "text": "'Not extended by my test; price under its pivot.' My swing test is the 20-day, not the pivot: D ema21 68.6874 vs close 77.62 is no dip to a rising 20MA, so no swing set-up. On the position system the refuter agrees: D close_vs_swing_high_pct -2.73, no break above resistance yet. No signal on either system; mechanical, no trade (C19/C31).",
+   "concede": false
+  },
+  {
+   "pair_id": "PCOR-seow-against~minervini",
+   "ticker": "PCOR",
+   "to": "minervini",
+   "text": "'No buy bar yet is true; structure holds.' Agreed the structure holds (W HH/HL, D HH/HL) and that divergence is advisory, but my claim is about the signal: D close_vs_swing_high_pct -2.73 means no resistance break (C26), and close 77.62 far over D ema21 68.6874 means no swing dip (C3). No signal, no trade.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed to each new prior-day high (C27)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or elder leaves SUSTAINED and the next session trades under that bar's low.",
+   "market_void": null,
+   "reason": "POSITION system: above resistance, D close_vs_swing_high_pct 7.98, W HH/HL, H1 HH/HL at pos_in_day_range_pct 77.9. Caution: D swing HH but LL."
+  },
+  {
+   "ticker": "EXLS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high; not taken = re-place next session."
+   },
+   "wrong_if": "Daily close back below pivot_high or below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: fresh break, D close_vs_swing_high_pct 0.68, D HH/HL. Cautions: H1 LH/LL at pos_in_day_range_pct 16.3, W HH but LL; the buy stop is the re-confirmation."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed daily (C27)."
+   },
+   "wrong_if": "Daily close back below pivot_high or below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: just-happened break, D close_vs_swing_high_pct 0.13, W and D HH/HL, H1 pos_in_day_range_pct 90.1."
+  },
+  {
+   "ticker": "COLD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed daily (C27)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: break to highs, D close_vs_swing_high_pct 2.2, D HH/HL, H1 pos_in_day_range_pct 85.0. Caution: W LH/LL though W close_vs_swing_high_pct 10.38."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close above pivot_high with elder >= 7 is my position buy signal and proves this OPPOSE wrong.",
+   "market_void": null,
+   "reason": "Neither system fires: D close_vs_swing_high_pct -2.73 (no resistance break), close 77.62 far over D ema21 68.6874 (no swing dip). Mechanical: no signal, no trade."
+  },
+  {
+   "ticker": "CDW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed daily (C27)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: holding at resistance, D close_vs_swing_high_pct -0.48, D HH/HL, W close_vs_swing_high_pct 8.61. Caution: H1 LH but EL at pos_in_day_range_pct 33.2."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close back above the pivot high - the resistance-line buy signal (C26) - then act."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system, signal not live: D close_vs_swing_high_pct -5.67, W LH/LL, H1 LH/LL below EMA9. D HH/HL keeps it a candidate; the break must print first."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed daily (C27)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: W HH/HL with W close_vs_swing_high_pct 16.37, D HH/HL at -2.74, H1 pos_in_day_range_pct 94.8 - strength closing near the day high."
+  },
+  {
+   "ticker": "BBY",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "trade_above:bar_high",
+    "tf": "D",
+    "plain": "Buy stop 1 tick over yesterday's high, trailed daily (C27)."
+   },
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d).",
+   "market_void": null,
+   "reason": "POSITION system: W HH/HL with W close_vs_swing_high_pct 7.81, D HH/HL at -2.58, H1 pos_in_day_range_pct 85.2."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Out of scope: held short (C32). Mirror read only: a daily close back above ma_20 would undercut the short.",
+   "market_void": null,
+   "reason": "Shorts are out of scope for my long-only method (C32); declared, not applied. D LH/LL, 9<21 on all frames."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 3315,
+   "sha256": "dd71cde7ccff"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 2210,
+   "sha256": "bfe0197a0835"
+  }
+ ]
+}

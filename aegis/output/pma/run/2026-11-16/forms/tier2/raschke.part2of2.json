@@ -1,0 +1,55 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-16",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CDW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "Buy an hourly close above the daily swing high being tested."},
+   "wrong_if": "Daily close under ma_20: the test of the high has failed.",
+   "market_void": null,
+   "reason": "Test at the prior high, a double stop point (C2/C20): D close_vs_swing_high_pct -0.48, D swing_class HH/HL, W ema_order 9>21. Entry and invalidation sit close together by construction."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After the pullback turns, an hourly close above Friday's high."},
+   "wrong_if": "Daily close under ma_20, turning the higher low into a lower low.",
+   "market_void": null,
+   "reason": "RETRACEMENT family (C2/C7 approximated, ADX not served): D swing_class HH/HL, D close_vs_swing_high_pct -5.67. H1 swing_class LH/LL and W swing_class LH/LL: the higher low is not yet confirmed, so I wait for the turn."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Let the pullback reach the 20-day, then buy the hourly close back above it."},
+   "wrong_if": "Daily close more than 1 ATR under ma_20: the pullback has become a reversal.",
+   "market_void": null,
+   "reason": "First pullback after fresh highs, the Holy Grail shape (C7, ADX not served): W and D swing_class HH/HL, D close_vs_swing_high_pct -2.74. Price is not yet at the average; I act only when it gets there and turns."
+  },
+  {
+   "ticker": "BBY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "reclaim:ma_20", "tf": "H1", "plain": "Let the pullback reach the 20-day, then buy the hourly close back above it."},
+   "wrong_if": "Daily close more than 1 ATR under ma_20.",
+   "market_void": null,
+   "reason": "First pullback after fresh highs (C7 approximated): W and D swing_class HH/HL, D close_vs_swing_high_pct -2.58, H1 swing_class LH/LL. The pullback has not reached the average; the reclaim there is the entry."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close above ma_20 would end the lower-high read; no long setup exists now.",
+   "market_void": null,
+   "reason": "No long setup in C2: D swing_class LH/LL, D close_vs_ema9 below, W swing_class null. On my method this is a sell-the-lower-high shape, not a long to support."
+  }
+ ],
+ "declarations": [
+  "Part 2 carries no answers (all answers in part 1; none routed). adx NOT_SERVED (C7,C8); stochastic_kd NOT_SERVED (C6); bar_range_history NOT_SERVED (C12,C13); market_breadth OUT_OF_SERVED_SCOPE (C16). Bracket information only (R1); no Valen flags (R41)."
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-16",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CDW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Buy the pullback into the 20-day value zone while elder holds not-red."},
+   "wrong_if": "elder prints red, or a daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "W 9>21, HH but LL; D HH/HL. elder 7.0, [7,10,10,10,7]: green going away on the last bar is profit-taking (C4), not entry; still not red. Buy only the pullback to value (C10)."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Buy the pullback into the 20-day value zone while elder holds not-red."},
+   "wrong_if": "elder prints red, or a daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "W 9>21 but swing LH/LL; D HH/HL, close 78.73 near ema9 78.1891. elder 7.0, [9,10,10,7,7]: not red, no transition; mp STRONG. Permitted, not proposed (C1); buy at value."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Buy the pullback into the 20-day value zone while elder holds not-red."},
+   "wrong_if": "elder prints red, or a daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "W 9>21, HH/HL and D HH/HL: tides up (C21). elder 7.0, [10,7,7,7,7]: not red at the edge, no transition. Permitted, not proposed (C1); buy at value (C10)."
+  },
+  {
+   "ticker": "BBY",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Buy the pullback into the 20-day value zone while elder holds not-red."},
+   "wrong_if": "elder prints red, or a daily close below base_low_20d.",
+   "market_void": null,
+   "reason": "W 9>21, HH/HL and D HH/HL: tides up (C21). elder 7.0, [10,10,10,7,7]: green fading, no permission event, not red. Buy only the pullback to value (C10)."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_below:bar_low", "tf": "D", "plain": "Held SHORT: add to the short only on a daily close below yesterday's low with elder not green."},
+   "wrong_if": "elder prints green-side (elder at or above 7), or a daily close above ma_50.",
+   "market_void": null,
+   "reason": "Held short, KEEP. W 9<21 and D 9<21, LH/LL: falling tides permit only shorts (C10, C21). elder 5.0 not green, so shorting is not forbidden (C3). Buy stop never raised (C18). No long case."
+  }
+ ],
+ "declarations": [
+  "SPCX SUPPORT is for the held SHORT (keep / add), never a long: both tides down permit only shorts.",
+  "elder and elder_5d figures are from my own blind vote; grid figures from the tier-2 packet."
+ ]
+}

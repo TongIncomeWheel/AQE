@@ -1,0 +1,279 @@
+{
+ "date": "2026-11-16",
+ "chair": "chair",
+ "board_sha256": "5005393fad6904c5ce6da041255b0f72ebca2a90285204fcf691f5ccefb8a720",
+ "decision_sha256": "8adee4c4f8f6d796e911dab385c02e46855c89e3c41259508c13cc980d4aa847",
+ "tickets": [
+  {
+   "ticker": "CHYM",
+   "verdict": "WATCH",
+   "entry_trigger": "after a tight pause forms, an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "after a tight pause forms, an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"daily close below ma_20 (ma20 30.29): the stage 2 leg has failed\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, day_vol 1.61 passed my volume test, lens sector strong (not a Lone Ranger). Caution:\" | minervini: \"Trend Template passes (entry 33.55 > ma50 29.93 > ma100 28.05 > ma200 24.03, rs LEADER). But D \" | livermore: \"W HH/HL 9>21, D 0.8% under the 20-day high, H1 HH/HL above EMA9: trend column extending toward \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "EXLS",
+   "verdict": "WATCH",
+   "entry_trigger": "A 1-hour close above Friday's high on rising volume: the sign-of-strength follow-through",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A 1-hour close above Friday's high on rising volume: the sign-of-strength follow-through"
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 2,
+    "abstain": 0
+   },
+   "wrong_if": "raschke: \"Daily close back under structure_shift_ref (the broken pivot): the break becomes a failed test.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Trend Template passes, D HH/HL at the pivot (close_vs_swing_high_pct 0.68). The break printed o\" | livermore: \"D HH/HL and 0.7% above the last swing high is the C5 new high after a pullback, but day_vol 0.3\" | seow: \"POSITION system: fresh break, D close_vs_swing_high_pct 0.68, D HH/HL. Cautions: H1 LH/LL at po\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "The break printed on day_vol 0.39: under +40% volume is a hard rejection (C16). H1 LH/LL, 9<21, pos_in_day_range_pct 16.3 - closes near the low (C25). lens None: no coil read for R3. Leadership (rs LEADER) keeps it on watch only."
+    },
+    {
+     "voice": "elder-lens",
+     "why": "elder 4.0, elder_5d [7,10,7,5,4] INTERRUPTED: permission unresolved and trend leg failed (steps 1, 3). H1 9<21, LH/LL. Weekly tide up is not enough on its own (C9); stand aside (C22)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "BTSG",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy an hourly close above Friday's high, the buy stop over the test bar.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above Friday's high, the buy stop over the test bar."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "raschke: \"Daily close under structure_shift_ref (the broken pivot), turning the break into a failed test.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, BULLISH_BOS, lens sector strong; W and D HH/HL; D close_vs_swing_high_pct 0.13 is at\" | minervini: \"W and D HH/HL, D close_vs_swing_high_pct 0.13: at the pivot, not chased. ma100 63.61 above ma50\" | livermore: \"W and D HH/HL, D 0.1% above the last swing high: the pullback-then-new-high C5 asks for, with E\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "COLD",
+   "verdict": "WATCH",
+   "entry_trigger": "Buy the pullback into the 20-day value zone while elder holds not-red.",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy the pullback into the 20-day value zone while elder holds not-red."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "elder-lens: \"elder prints red, or a daily close below base_low_20d.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, structure 89.5, D close_vs_swing_high_pct 2.2 inside 5% of the pivot, lens sector st\" | minervini: \"Breakout to new highs on day_vol 1.29 (C6 expansion), D HH/HL, close_vs_swing_high_pct 2.2: wit\" | livermore: \"D HH/HL, 2.2% above the last swing high and 0.7% under the 20-day high: a brand-new high is the\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "PCOR",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it."
+   },
+   "timing_count": {
+    "support": 4,
+    "act_now": 1,
+    "wait": 3,
+    "oppose": 2,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Daily close under pivot_high-8pct after entry, or structure turning bearish (CHoCH).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rank 10, rs LEADER, structure 97.9; W and D HH/HL; D close_vs_swing_high_pct -2.73 under the pi\" | minervini: \"Trend Template passes, rs LEADER rs_spy_20d 37.39. Thrust then a flag on day_vol 0.56, D close_\" | livermore: \"W HH/HL 9>21 and D HH/HL, 2.73% under the 79.8 swing high: an established trend in a normal rea\"",
+   "dissent": [
+    {
+     "voice": "seow",
+     "why": "Neither system fires: D close_vs_swing_high_pct -2.73 (no resistance break), close 77.62 far over D ema21 68.6874 (no swing dip). Mechanical: no signal, no trade."
+    },
+    {
+     "voice": "raschke",
+     "why": "After a range-expansion run (W close_vs_swing_high_pct 19.8) the shape is a climax (C19); C11 takes one only once a reversal is visible. H1 swing_class LH but HL, H1 close_vs_ema9 below: no test or contraction bar to buy."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "CDW",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy an hourly close above the daily swing high being tested.",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above the daily swing high being tested."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 4,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"daily close below ma_20 (ma20 161.9), or a pivot break that closes back under pivot_high-1atr\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Tight base under the high: lens coil and resistance strong, rs LEADER, D close_vs_swing_high_pc\" | minervini: \"Trend Template passes (entry 171.65 > ma50 150.71 > ma100 145.09 > ma200 134.95, rs LEADER). D \" | livermore: \"D HH/HL, 0.5% under the last swing high (172.47), W above EMA9 9>21: an established trend one c\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "EMBJ",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 0,
+    "wait": 7,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Daily close under pivot_high-8pct after entry, or a heavy-volume close under ma_50.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER in a Momentum Building group (lens sector strong, not a Lone Ranger), near its 10-wee\" | minervini: \"Trend Template passes, rs LEADER rs_rank_pct 87.65; a flat base on top of the advance. But D cl\" | livermore: \"D HH/HL but 5.7% under the last swing high (83.46), H1 LH/LL, W LH/LL: a reaction under way. C5\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "SN",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 3,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Daily close under pivot_high-8pct after entry, or a heavy-volume close under ma_50.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Group leader: rs LEADER, lens leadership/resistance/sector strong; W and D HH/HL; D close_vs_sw\" | minervini: \"Trend Template passes, rs LEADER rs_rank_pct 98.62. W and D HH/HL, D close_vs_swing_high_pct -2\" | livermore: \"W and D HH/HL, D 2.7% under the 232.76 swing high, H1 at 95% of the day's range: a leader resti\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "BBY",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 3,
+    "wait": 4,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Daily close under pivot_high-8pct after entry, or a heavy-volume close under ma_50.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER, lens sector strong; W and D HH/HL; D close_vs_swing_high_pct -2.58 under the pivot. \" | minervini: \"Trend Template passes, rs LEADER rs_rank_pct 96.89. W and D HH/HL, D close_vs_swing_high_pct -2\" | livermore: \"W and D HH/HL, D 2.6% under the 106.83 swing high: established trend in a normal reaction (C5, \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "SPY index logs 4-5 distribution days inside 5 weeks (C2); market gate DELEGATED",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 8
+ }
+}

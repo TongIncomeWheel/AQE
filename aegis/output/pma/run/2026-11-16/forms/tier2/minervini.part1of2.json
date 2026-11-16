@@ -1,0 +1,73 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-16",
+ "answers": [
+  {
+   "pair_id": "EXLS-minervini-for~elder-lens",
+   "ticker": "EXLS",
+   "to": "elder-lens",
+   "text": "\"elder 4.0 INTERRUPTED: permission unproven; MA pass is not permission.\" Elder is advisory on my card, never my gate; the Trend Template is, and it passes. D is HH/HL with close_vs_swing_high_pct 0.68: at the pivot, not extended. The H1 LH/LL and day_vol 0.39 I already named: the pivot is unconfirmed by C5/C6, so I wait for volume, I do not drop the name.",
+   "concede": false
+  },
+  {
+   "pair_id": "PCOR-minervini-for~seow",
+   "ticker": "PCOR",
+   "to": "seow",
+   "text": "\"'Just under the pivot' is no signal: no trade until close above.\" Agreed on timing, and it is my rule too (C5: the buy is the breakout, not the anticipation). My claim was the shape: W HH/HL, D HH/HL, close_vs_swing_high_pct -2.73 on day_vol 0.56 after the thrust, a C18 flag. The shape stands; the entry is the pivot break, which is my trigger.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "after a tight pause forms, an hourly close above the prior day's high"},
+   "wrong_if": "daily close below ma_20 (ma20 30.29): the stage 2 leg has failed",
+   "market_void": null,
+   "reason": "Trend Template passes (entry 33.55 > ma50 29.93 > ma100 28.05 > ma200 24.03, rs LEADER). But D close_vs_swing_high_pct 7.98: past the pivot, a chase by C5. Wait for a fresh tight pivot. Fundamentals not checked."
+  },
+  {
+   "ticker": "EXLS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "a daily close above the prior day's high on expanding volume"},
+   "wrong_if": "daily close back below pivot_high-0.5atr: a failed breakout",
+   "market_void": null,
+   "reason": "Trend Template passes, D HH/HL at the pivot (close_vs_swing_high_pct 0.68). The break printed on day_vol 0.39 and H1 is LH/LL: unconfirmed by C6, so volume must print first. Fundamentals not checked."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "a daily close above the prior day's high on expanding volume, holding the pivot"},
+   "wrong_if": "daily close back below pivot_high-0.5atr",
+   "market_void": null,
+   "reason": "W and D HH/HL, D close_vs_swing_high_pct 0.13: at the pivot, not chased. ma100 63.61 above ma50 61.93 leaves criterion 4 approximated, and the break came on day_vol 0.51 (C6). Needs volume. Fundamentals not checked."
+  },
+  {
+   "ticker": "COLD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above the prior day's high"},
+   "wrong_if": "daily close back below pivot_high-0.5atr: the breakout failed",
+   "market_void": null,
+   "reason": "Breakout to new highs on day_vol 1.29 (C6 expansion), D HH/HL, close_vs_swing_high_pct 2.2: within a few percent of the pivot. Weights: W LH/LL, flat stack (ma50 14.53 under ma100 14.81), rs_rank_pct 70.98 at the floor. Fundamentals not checked."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "an hourly close above the last confirmed pivot high"},
+   "wrong_if": "daily close below ma_20 (ma20 67.57), or a pivot break that closes back inside the flag",
+   "market_void": null,
+   "reason": "Trend Template passes, rs LEADER rs_spy_20d 37.39. Thrust then a flag on day_vol 0.56, D close_vs_swing_high_pct -2.73 under the pivot: the C18 power-play shape. sma_dist 31.38% is a weight. Fundamentals not checked."
+  }
+ ],
+ "declarations": [
+  "trend_template read from ma50/ma100/ma200 (ma100 stands in for the 150-day); 200-day slope approximated; criterion 8 via rs_leadership + rs_spy_20d proxy (C3)",
+  "vcp_detail: NOT_SERVED (C4); earnings_growth: NOT_SERVED, SEPA fundamentals leg not run (C1, C12)",
+  "volume_signature: day_vol at the current bar only (C6, partial)",
+  "R1: no decision rests on a bracket; levels named are structural lines"
+ ]
+}

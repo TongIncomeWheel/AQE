@@ -1,0 +1,57 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-16",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CDW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "an hourly close above the last confirmed pivot high"},
+   "wrong_if": "daily close below ma_20 (ma20 161.9), or a pivot break that closes back under pivot_high-1atr",
+   "market_void": null,
+   "reason": "Trend Template passes (entry 171.65 > ma50 150.71 > ma100 145.09 > ma200 134.95, rs LEADER). D HH/HL, close_vs_swing_high_pct -0.48: at the pivot, inside the buy zone. Weights: W HH but LL, day_vol 0.89 neutral. Fundamentals not checked."
+  },
+  {
+   "ticker": "EMBJ",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "a daily close above the last confirmed pivot high once the base tightens"},
+   "wrong_if": "daily close below ma_50 (ma50 74.67): the base has broken",
+   "market_void": null,
+   "reason": "Trend Template passes, rs LEADER rs_rank_pct 87.65; a flat base on top of the advance. But D close_vs_swing_high_pct -5.67 and W LH/LL: the pivot is not yet within buying range. Fundamentals not checked."
+  },
+  {
+   "ticker": "SN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "an hourly close above the last confirmed pivot high"},
+   "wrong_if": "daily close below ma_20 (ma20 210.24)",
+   "market_void": null,
+   "reason": "Trend Template passes, rs LEADER rs_rank_pct 98.62. W and D HH/HL, D close_vs_swing_high_pct -2.74 on day_vol 0.78: pivot within reach. sma_dist 18.91% is a weight. Fundamentals not checked."
+  },
+  {
+   "ticker": "BBY",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:pivot_high", "tf": "H1", "plain": "an hourly close above the last confirmed pivot high"},
+   "wrong_if": "daily close below ma_50 (ma50 93.64), or a failed pivot break",
+   "market_void": null,
+   "reason": "Trend Template passes, rs LEADER rs_rank_pct 96.89. W and D HH/HL, D close_vs_swing_high_pct -2.58 on dry volume (day_vol 0.56): the C5/C6 pivot setup. Fundamentals not checked."
+  },
+  {
+   "ticker": "SPCX",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "for the held short: a daily close back above ma_50 (ma50 148.9)",
+   "market_void": null,
+   "reason": "Held short; my canon is long-only stage 2 and has no short rule. On the long side it fails the Trend Template: D below EMA9, 9<21, LH/LL, close_vs_swing_high_pct -16.29, rs LAGGARD. No view on the short."
+  }
+ ],
+ "declarations": [
+  "trend_template read from ma50/ma100/ma200 (ma100 stands in for the 150-day); criterion 8 via rs proxy (C3)",
+  "vcp_detail and earnings_growth NOT_SERVED; SEPA fundamentals leg not run (C1, C4, C12)",
+  "R1: no decision rests on a bracket"
+ ]
+}

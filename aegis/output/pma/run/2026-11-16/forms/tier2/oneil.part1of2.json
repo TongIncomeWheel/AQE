@@ -1,0 +1,66 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-16",
+ "answers": [
+  {
+   "pair_id": "PCOR-oneil-for~seow",
+   "ticker": "PCOR",
+   "to": "seow",
+   "text": "\"No resistance break, so no position buy signal\" - agreed there is no buy today, and my claim never said there was. My test (C17) measures extension from the pivot: D close_vs_swing_high_pct -2.73 means price sits under the pivot, not past it, so it cannot be extended in my terms. W HH/HL, 9>21 is the leader's frame. The buy is the pivot break on day_vol at least 1.4x (C16); until then a watch name. Claim stands.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "A new-high daily close over Friday's high on volume at least 1.4x normal; no add-ons (late band)."},
+   "wrong_if": "Daily close back under pivot_high (failed breakout), or a heavy-volume close under ma_50.",
+   "market_void": "SPY index logs 4-5 distribution days inside 5 weeks (C2); market gate DELEGATED",
+   "reason": "rs LEADER, day_vol 1.61 passed my volume test, lens sector strong (not a Lone Ranger). Caution: D close_vs_swing_high_pct 7.98 is the 5-10% late-buy band (C17). W HH/HL, 9>21. C, A, S, I untested."
+  },
+  {
+   "ticker": "EXLS",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if it runs on from the D swing high without a day_vol 1.4x day, or re-breaks on heavy volume.",
+   "market_void": null,
+   "reason": "The break printed on day_vol 0.39: under +40% volume is a hard rejection (C16). H1 LH/LL, 9<21, pos_in_day_range_pct 16.3 - closes near the low (C25). lens None: no coil read for R3. Leadership (rs LEADER) keeps it on watch only."
+  },
+  {
+   "ticker": "BTSG",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Wait for volume: a daily close over Friday's high on volume at least 1.4x normal, within 5% of the pivot."},
+   "wrong_if": "Daily close back under pivot_high, or a heavy-volume close under ma_50.",
+   "market_void": "SPY index logs 4-5 distribution days inside 5 weeks (C2); market gate DELEGATED",
+   "reason": "rs LEADER, BULLISH_BOS, lens sector strong; W and D HH/HL; D close_vs_swing_high_pct 0.13 is at the buy point. But the break came on day_vol 0.51 (C16), so only a volume-confirmed new high is a buy."
+  },
+  {
+   "ticker": "COLD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Wait for volume: a daily close over Friday's high on volume at least 1.4x normal, within 5% of the pivot."},
+   "wrong_if": "Daily close back under pivot_high, or a heavy-volume close under ma_50.",
+   "market_void": "SPY index logs 4-5 distribution days inside 5 weeks (C2); market gate DELEGATED",
+   "reason": "rs LEADER, structure 89.5, D close_vs_swing_high_pct 2.2 inside 5% of the pivot, lens sector strong. day_vol 1.29 under my 1.4x test, and W swing LH/LL means the base is unproven: low conviction, volume-conditional."
+  },
+  {
+   "ticker": "PCOR",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Wait for a daily close over the last pivot high on volume at least 1.4x normal; no buy more than 5% past it."},
+   "wrong_if": "Daily close under pivot_high-8pct after entry, or structure turning bearish (CHoCH).",
+   "market_void": "SPY index logs 4-5 distribution days inside 5 weeks (C2); market gate DELEGATED",
+   "reason": "rank 10, rs LEADER, structure 97.9; W and D HH/HL; D close_vs_swing_high_pct -2.73 under the pivot on dry volume day_vol 0.56 (C15). Caution: div BEARISH/2 and three lens warns (C25)."
+  }
+ ],
+ "declarations": [
+  "fundamentals NOT_AVAILABLE: C, A, S, I untested. base_stage NOT_AVAILABLE (C19).",
+  "market_gate DELEGATED: every SUPPORT is valid only into a confirmed index uptrend; market_void names C2 distribution in words.",
+  "substitutes: rs_leadership for RS Rating; day_vol vs 20d for the 50d volume test; MTF D swing-high distance for the pivot (pct_from_pivot unserved).",
+  "R1: no stance rests on a bracket. R41: no Valen flag cited."
+ ]
+}
