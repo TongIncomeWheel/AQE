@@ -52,18 +52,6 @@ def screen_picks(rows: list[dict], top: int = SCREEN_TOP) -> list[str]:
     return sorted({x["ticker"] for v in res.values() for x in v})
 
 
-def quant_picks(rows: list[dict]) -> list[str]:
-    """The names the AQE Quant Scan's whole-universe quant screen seats (same code as `pma_pipeline.py quant-screen`, defaults top 30 + top 6 on five sub-scores)."""
-    if not rows:
-        return []
-    return sorted(_screens_mod().quant_screen(rows))
-
-
-def scope_picks(rows: list[dict]) -> list[str]:
-    """Everything the two live-chain reports can seat from outside the export: the seven Standard Scan screens plus the AQE Quant Scan screen (PM 2026-11-16)."""
-    return sorted(set(screen_picks(rows)) | set(quant_picks(rows)))
-
-
 def names_from_seat_sets(path: Path) -> list[str]:
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     return sorted({x["ticker"] for v in (d.get("seats") or {}).values() for x in v})
@@ -171,7 +159,7 @@ def main(argv=None) -> int:
         if not rows:
             print("[topup] FAILED: --screens needs the universe rows file and it is missing or empty")
             return 2
-        names |= set(scope_picks(rows))
+        names |= set(screen_picks(rows))
     if not names:
         print("[topup] FAILED: no names given (--names / --seat-sets / --screens)")
         return 2

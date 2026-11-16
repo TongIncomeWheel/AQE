@@ -290,7 +290,7 @@ _msum = CX.momentum_summary(MTF, [c["ticker"] for c in CONS if c.get("status") n
 mom_banner = f'<p class="flag"><b>Uptrend structure.</b> {E(_msum["text"])}</p>' if _msum else ""
 import aqe_listing as AL
 _AQE_BY = {r["ticker"]: r for r in D["daily_list"]}
-method_banner = (f'<p class="flag"><b>Standard Scan, no AQE gate.</b> The committee picked from the whole screened market. {E(AL.DISCLOSURE)}</p>' if METHOD == "whole_universe" else
+method_banner = ('<p class="flag"><b>Standard Scan, no AQE gate.</b> The committee picked from the whole screened market. Each name below says whether AQE also lists it, with its AQE scores.</p>' if METHOD == "whole_universe" else
                  '<p class="flag"><b>FALLBACK: AQE doors.</b> The universe rows were missing or refused, so this run used the old AQE-door chain (method fallback_aqe_doors).</p>' if METHOD == "fallback_aqe_doors" else "")
 top = f'''<div class="meta">Aegis committee cards &middot; {RUN_DATE:%a} {RUN_DATE.day} {RUN_DATE:%b %Y} &middot; to the PM{(' &middot; rerun ' + RERUN + ', not live') if RERUN else ''} &middot; {n_adv} triggers</div>
 <h1>{h1}</h1>

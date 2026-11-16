@@ -343,8 +343,6 @@ def render_md(o):
                 st = blk.get(b) or {}
                 if st.get("n"):
                     L.append(f"| {lab} | {SHORT[b]} | {st['n']} | {_f(st['mean'])}% | {_f(st['vs_spy_mean'])} | {st['beat_spy']}/{st['n']} | {_f(st['vs_universe_mean'])} |")
-        import aqe_listing
-        L += ["", aqe_listing.DISCLOSURE]
     if o["refused_ref_mismatch"]:
         L += ["", f"**Refused (ledger price does not match the close):** {len(o['refused_ref_mismatch'])} rows."]
     if o["ungraded"]:

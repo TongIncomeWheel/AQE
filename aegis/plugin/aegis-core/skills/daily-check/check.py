@@ -926,9 +926,7 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
                 if not os.path.exists(os.path.join(od, _need)):
                     fails.append(f"Standard Scan (whole_universe) run is missing {_need}: the screens and the augmented export are the candidate step")
             _ct = os.path.join(pk, "clean_test.json")
-            if not os.path.exists(_ct):
-                fails.append("Standard Scan packets were not built with --clean: packets/clean_test.json is MISSING, so AQE membership and scores may have reached the seats")
-            else:
+            if os.path.exists(_ct):          # the clean-test strip was cancelled 2026-11-16; if a run builds it anyway, its own receipt is still verified
                 try:
                     _strip = set((json.load(open(_ct, encoding="utf-8")) or {}).get("stripped_fields") or [])
                 except ValueError:
@@ -943,13 +941,11 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
                     _leak = sorted(_cols & _strip)
                     if _leak:
                         fails.append(f"packet {v}.tsv carries AQE column(s) the clean test withholds: {_leak}")
-            notes.append("candidate method: whole_universe (Standard Scan, no AQE gate); packets are the clean test")
+            notes.append("candidate method: whole_universe (Standard Scan, candidates from the whole screened universe, no AQE gate or door)")
         elif _meth == "fallback_aqe_doors":
             notes.append("WARN candidate method: FALLBACK to the old AQE-door chain (the universe rows were missing or refused); the brief and Cards must say so")
         elif _meth == "quant_scan":
-            if not os.path.exists(os.path.join(od, "quant_screen.json")):
-                fails.append("AQE Quant Scan run is missing quant_screen.json (the whole-universe quant screen is its candidate step)")
-            notes.append("candidate method: quant_scan (whole-universe AQE quant screen; nothing taken from the Standard Scan)")
+            notes.append("candidate method: quant_scan (AQE's own scored list, aqe-quant nominates; nothing taken from the Standard Scan)")
         present = sorted(f for f in os.listdir(pk) if f.endswith(".tsv"))
         _trim_receipt = None
         _trp = os.path.join(pk, "packet_trim.json")

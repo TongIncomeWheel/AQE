@@ -54,20 +54,23 @@ def test_standard_scan_funnel_counts_every_stage_and_tags_every_name_with_its_aq
     by = {n["ticker"]: n for n in f["names"]}
     assert by["A"]["aqe_listed"] is True and "AQE-listed: Longlist" in by["A"]["aqe_line"]
     assert "AQE score not available" in by["B"]["aqe_line"] and "AQE score not available" in by["H"]["aqe_plain"]       # a name in neither file: loud, never blank
-    assert f["disclosure"]                                                                                          # the Standard Scan disclosure line rides on the funnel
+    assert f["disclosure"] is None                                                                                  # PM 2026-11-16: no disclosure line (the seats keep every AQE field)
     md = SF.render_md(f)
     assert "| Stage | In | Out | What fell out |" in md and "**B**" in md and "997 names (count only" in md
 
 
-def test_quant_scan_funnel_has_the_quant_stages_and_no_disclosure(tmp_path):
+def test_quant_scan_funnel_starts_from_aqes_own_list_and_takes_nothing_from_a(tmp_path):
     eb = _synthetic(tmp_path)
-    (tmp_path / "quant_screen.json").write_text(json.dumps({"universe_rows": 1000, "rule": "top 30 by AQE rank plus the top 6 on five sub-scores", "names": 3, "why": {"A": ["AQE rank 1"], "B": ["Flow 99"], "C": ["Energy 98"]}}))
+    (tmp_path / "seat_sets.json").unlink()                                              # C has no seat sets: its universe is AQE's own scored list
+    (tmp_path / "candidate_set.json").write_text(json.dumps({"universe": [{"ticker": t, "source": "longlist"} for t in "ABCDEFGH"] + [{"ticker": "H1", "source": "held_book"}]}))
     (tmp_path / "run_manifest.json").write_text(json.dumps({"method": "quant_scan", "report": "C"}))
     (tmp_path / "consensus.json").write_text(json.dumps([{"ticker": "A", "verdict": "ADVANCE"}, {"ticker": "B", "verdict": "PASS", "objections": [{"voice": "oneil", "objection": "no base"}]}]))
     f = SF.build(str(tmp_path), "C", eb, {})
     names = [s["stage"] for s in f["stages"]]
-    assert names[1] == "AQE quant screen" and "Nominated by aqe-quant" in names and names[-1].startswith("Vote by all eight seats")
-    assert f["stages"][1]["n_out"] == 3 and f["disclosure"] is None
+    assert names[0].startswith("AQE's own scored list") and f["stages"][0]["n_out"] == 8                  # the held book is not part of AQE's list
+    assert "Nominated by aqe-quant" in names and names[-1].startswith("Vote by all eight seats")
+    nom = next(s for s in f["stages"] if s["stage"] == "Nominated by aqe-quant")
+    assert nom["n_in"] == 8 and nom["n_out"] == 2 and nom["dropped_count"] == 6 and f["disclosure"] is None
 
 
 def test_plain_reason_removes_charter_codes_and_raw_tokens_for_the_cards_gate():
@@ -93,12 +96,12 @@ def test_every_real_run_funnel_passes_the_cards_plain_words_gate(tmp_path):
 def test_the_quant_scan_page_carries_the_funnel_tables_and_passes_the_html_gate(tmp_path):
     import pma_cards_report as CR
     eb = _synthetic(tmp_path)
-    (tmp_path / "quant_screen.json").write_text(json.dumps({"universe_rows": 1000, "rule": "top 30 by AQE rank", "names": 2, "why": {"A": ["AQE rank 1"], "B": ["Flow 99"]}}))
+    (tmp_path / "candidate_set.json").write_text(json.dumps({"universe": [{"ticker": t, "source": "longlist"} for t in "ABC"]}))
     (tmp_path / "run_manifest.json").write_text(json.dumps({"method": "quant_scan", "report": "C"}))
     f = SF.build(str(tmp_path), "C", eb, {})
     cons = [{"ticker": "A", "verdict": "ADVANCE", "conviction": 4, "split": {"support": ["a"], "oppose": [], "abstain": []}}]
     page = CR.render("C", "2026-11-16", cons, None, f)
-    assert "The funnel" in page and "AQE quant screen" in page and "AQE-listed" in page and 'Scorecard' in page
+    assert "The funnel" in page and "AQE&#x27;s own scored list" in page.replace("'", "&#x27;") and "AQE-listed" in page and 'Scorecard' in page
     out = tmp_path / "c.html"; out.write_text(page)
     fails, _ = _gate().check_cards_html(str(out))
     assert not fails, fails

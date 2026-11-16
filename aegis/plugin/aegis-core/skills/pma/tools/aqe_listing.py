@@ -16,7 +16,7 @@ import json
 import os
 import sys
 
-DISCLOSURE = ("Seat screens use AQE structure and momentum-phase fields, not AQE list membership or scores.")
+DISCLOSURE = None     # PM 2026-11-16 (correction): the seats keep every AQE field; no disclosure line is printed (the clean-test strip was cancelled)
 LISTS = (("on_longlist", "Longlist"), ("on_elder", "Elder"), ("on_qs", "QS"))
 SCORES = (("sc_momentum", "SC_MOMENTUM"), ("flow", "Flow"), ("energy", "Energy"), ("structure", "Structure"), ("mp", "MP"),
           ("elder", "Elder score"), ("pipe_rank", "Pipeline rank"))
@@ -107,7 +107,7 @@ def main(argv=None):
         tk = [c["ticker"] for c in json.load(open(a.consensus, encoding="utf-8"))]
     else:
         tk = [t for t in (a.tickers or "").split(",") if t]
-    md = table_md(tk, by, ub) + "\n\n" + DISCLOSURE + "\n"
+    md = table_md(tk, by, ub) + "\n"
     if a.out:
         open(a.out, "w", encoding="utf-8").write(md)
     print(md)

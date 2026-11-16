@@ -68,7 +68,7 @@ def build(run, report="A", export_by=None, universe_by=None):
     man = _j(run, "run_manifest.json", {}) or {}
     method = man.get("method") or ("quant_scan" if report == "C" else "aqe_doors")
     notes, stages = [], []
-    sets = _j(run, "seat_sets.json") if report == "A" else _j(run, "quant_screen.json")
+    sets = _j(run, "seat_sets.json") if report == "A" else None
     tally = _j(run, "tally.json", []) or []
     p4 = _j(run, "phase4.json", {}) or {}
     fun = _j(run, "funnel.json", {}) or {}
@@ -80,18 +80,21 @@ def build(run, report="A", export_by=None, universe_by=None):
     nominated = _names([t["ticker"] for t in tally])
     held = _names(p4.get("held_seated"))
     screened = None
-    if isinstance(sets, dict):
-        if report == "A":
-            screened = _names([x for v in (sets.get("seats") or {}).values() for x in v])
-        else:
-            screened = _names(sets.get("names") and list((sets.get("why") or {}).keys()) or [])
+    if report == "A" and isinstance(sets, dict):
+        screened = _names([x for v in (sets.get("seats") or {}).values() for x in v])
         n_univ = sets.get("universe_rows")
         stages.append({"stage": "Universe rows scored (market cap $2B+, 10-day volume 1.5M+, NYSE or NASDAQ)", "n_in": n_univ, "n_out": n_univ, "rule": "the whole screened universe, before any AQE gate", "dropped": []})
-        rule = (sets.get("rule") or "") if report == "C" else "each seat's own code screen, top 25 names per seat, union of the seven"
-        stages.append({"stage": "Seat screens, union" if report == "A" else "AQE quant screen", "n_in": n_univ, "n_out": len(screened), "rule": _cut(rule, 200),
+        stages.append({"stage": "Seat screens, union", "n_in": n_univ, "n_out": len(screened), "rule": "each seat's own code screen, top 25 names per seat, union of the seven",
                        "dropped": [], "dropped_count": (n_univ - len(screened)) if isinstance(n_univ, int) else None})
+    elif report == "C":
+        # PM 2026-11-16: the AQE Quant Scan's universe is AQE's OWN scored list (daily_list), nothing from the Standard Scan
+        cs = _j(run, "candidate_set.json", {}) or {}
+        aqe_list = _names([r.get("ticker") for r in (cs.get("universe") or []) if r.get("source") != "held_book"])
+        screened = aqe_list
+        if aqe_list:
+            stages.append({"stage": "AQE's own scored list (the AQE universe for this scan)", "n_in": len(aqe_list), "n_out": len(aqe_list), "rule": "every name on AQE's daily list, read by aqe-quant with the AQE indicator files", "dropped": []})
     else:
-        notes.append("no seat_sets.json / quant_screen.json in the run dir: the early stages (universe, screens) are not shown for this run")
+        notes.append("no seat_sets.json in the run dir: the early stages (universe, screens) are not shown for this run")
     if tally or nominated:
         base = screened if screened is not None else None
         stages.append({"stage": "Nominated (any seat, any conviction)" if report == "A" else "Nominated by aqe-quant", "n_in": len(base) if base is not None else None,
@@ -167,7 +170,7 @@ def build(run, report="A", export_by=None, universe_by=None):
         x = AL.listing(t, export_by, universe_by)
         names.append({"ticker": t, "outcome": outcome, "stage": stage, "reason": reason, "aqe_listed": x["aqe_listed"], "aqe_lists": x["aqe_lists"],
                       "aqe_line": x["line"], "aqe_plain": x["plain_line"]})
-    return {"report": report, "method": method, "stages": stages, "names": names, "notes": notes, "disclosure": AL.DISCLOSURE if method == "whole_universe" else None}
+    return {"report": report, "method": method, "stages": stages, "names": names, "notes": notes, "disclosure": None}
 
 
 def render_md(f):

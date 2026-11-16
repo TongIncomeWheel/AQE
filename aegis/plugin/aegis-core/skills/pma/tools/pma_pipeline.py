@@ -101,7 +101,7 @@ if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C":
 # The Standard Scan (Report A, method whole_universe) seats names from the whole screened universe with NO AQE gate and NO AQE door. To make the test of
 # "does the committee without AQE have edge" clean, the seat packets carry no AQE list membership and no AQE composite or engine score (staged strip;
 # stage 2, re-expressing the four screen fields on raw price, is a later PM call). The screens themselves still read AQE structure / momentum-phase
-# fields, and every brief, Cards page and scorecard says so (aqe_listing.DISCLOSURE).
+# fields. CANCELLED 2026-11-16 (PM: the seats keep every AQE field): `packets --clean` still exists but is NOT used by any run; no disclosure line is printed.
 CLEAN_STRIP = ("source", "in_ledger", "on_longlist", "on_elder", "on_qs", "qs", "rank", "pipe_rank", "sc_momentum", "flow", "energy", "structure",
                "mp", "mp_state", "mp_state_plain", "mp_accel_state", "elder", "elder_5d", "elder_pattern", "elder_hi7_streak", "lens", "lens_positive",
                "lens_warnings", "thematic_basket", "thematic_grade", "thematic_rrg_quadrant", "runner_setup", "runner_conviction",
@@ -350,7 +350,9 @@ def cmd_screens(a):
     keep = sorted({x["ticker"] for v in res.values() for x in v})
     save(a.out_sets, {"rule": f"per-seat code screens, top {a.top} of {len(rows)} universe rows (date {U.get('date')})",
                       "universe_rows": len(rows), "universe_date": U.get("date"), "seats": res})
-    ns = argparse.Namespace(export=a.export, date=a.date, out=a.out, universe_rows=a.universe_rows, keep=keep)
+    # PM 2026-11-16: a screened name the AQE daily list carries keeps its REAL export row (true list flags, lens), so the seats see AQE data exactly as today;
+    # only the names outside daily_list are plain universe records. The doors stay off by the rank arguments, not by hiding the flags.
+    ns = argparse.Namespace(export=a.export, date=a.date, out=a.out, universe_rows=a.universe_rows, keep=keep, prefer_export=True)
     cmd_trim(ns)
     print("receipt: screens " + ", ".join(f"{s}={len(v)}" for s, v in res.items()) + f"; {len(keep)} distinct names; universe {len(rows)} rows")
 
@@ -387,22 +389,6 @@ def cmd_augment_export(a):
           f"{len(missing)} in neither file ({', '.join(missing) or 'none'})")
     if missing:
         raise SystemExit(f"augment-export: REFUSING -- {missing} are in neither the export nor the universe rows, so no row can be served for them")
-
-
-def cmd_quant_screen(a):
-    """COMMITTEE AQE QUANT SCAN candidate step: a code screen of the whole AQE universe on the AQE quant numbers (PM 2026-11-16; C takes nothing from the Standard Scan).
-    Writes quant_screen.json (who and why) and candidate_set.json via trim (held names carried whole). Every seat's packet then reads this set with the AQE indicator files."""
-    import seat_screens
-    U = load(a.universe_rows, needs=["rows"])
-    if not U["rows"]:
-        raise SystemExit("quant-screen: the universe rows file is empty -- REFUSING (a Quant Scan on no universe would be a silent empty report)")
-    why = seat_screens.quant_screen(U["rows"], a.top, a.per_sub)
-    keep = sorted(why)
-    save(a.out_sets, {"rule": f"top {a.top} by AQE rank over {len(U['rows'])} universe rows (date {U.get('date')}) plus the top {a.per_sub} on each of Flow, Energy, Structure, MP, Elder",
-                      "universe_rows": len(U["rows"]), "universe_date": U.get("date"), "names": len(keep), "why": why,
-                      "seats": {"aqe-quant": keep}})      # same shape as seat_sets.json, so `augment-export --seat-sets quant_screen.json` serves these names
-    cmd_trim(argparse.Namespace(export=a.export, date=a.date, out=a.out, universe_rows=a.universe_rows, keep=keep, prefer_export=True))
-    print(f"receipt: quant-screen: {len(keep)} distinct names from {len(U['rows'])} universe rows (top {a.top} by AQE rank + top {a.per_sub} on five sub-scores)")
 
 
 def cmd_reuse_a(a):
@@ -3816,7 +3802,7 @@ def cmd_gate(a):
                           ("DRAFT", "draft footer")]:
         chk(token.lower() in brief.lower(), "Q4", f"brief carries {label}")
     chk("persuad" not in brief.lower(), "Q4n", "zero persuasion narration")
-    # Q-SS: STANDARD SCAN write-up (PM 2026-11-16). On a whole_universe run the brief carries (1) the disclosure line and (2) the code-built AQE-listed table with a row for every
+    # Q-SS: STANDARD SCAN write-up (PM 2026-11-16). On a whole_universe run the brief carries the code-built funnel strip and the AQE-listed table with a row for every
     # ADVANCE / HOLD name ("AQE-listed: Longlist / Elder / QS / none" plus the AQE scores, or "AQE score not available", never blank). The method comes from the run manifest.
     _man = os.path.join(os.path.dirname(os.path.abspath(a.brief)), "run_manifest.json")
     _meth_g = run_method(_man if os.path.exists(_man) else "run_manifest.json")
@@ -3824,7 +3810,6 @@ def cmd_gate(a):
         chk("FALLBACK" in brief_full, "Q-SS", "a fallback run says so in the brief: the universe rows were missing or refused, so this is the old AQE-door chain (method fallback_aqe_doors)")
     if _meth_g == "whole_universe":
         import aqe_listing
-        chk(aqe_listing.DISCLOSURE in brief_full, "Q-SS", "the brief carries the Standard Scan disclosure line (seat screens use AQE structure and momentum-phase fields, not AQE list membership or scores)")
         chk("| Stage | In | Out | What fell out |" in brief_full, "Q-SS", "the brief carries the funnel strip (| Stage | In | Out | What fell out |, pasted from scan_funnel.md)")
         _hdr = "| Ticker | AQE-listed | AQE scores |"
         _at = brief_full.find(_hdr)
@@ -4041,10 +4026,6 @@ if __name__ == "__main__":
     s = sub.add_parser("augment-export", help="STANDARD SCAN (PM 2026-11-16): add the screened names that are not in daily_list to a copy of the export (universe_only rows from aqe_universe_rows.json) so every later command finds a row")
     s.add_argument("--export", required=True); s.add_argument("--universe-rows", required=True); s.add_argument("--seat-sets", default=None, help="seat_sets.json from `screens`")
     s.add_argument("--tickers", default=None, help="comma list of extra tickers"); s.add_argument("--out", default="aqe_daily_export_wu.json")
-    s = sub.add_parser("quant-screen", help="COMMITTEE AQE QUANT SCAN (PM 2026-11-16): code screen of the WHOLE universe on AQE composites and sub-components -> quant_screen.json + candidate_set.json; nothing from the Standard Scan")
-    s.add_argument("--universe-rows", required=True); s.add_argument("--export", required=True); s.add_argument("--date", required=True)
-    s.add_argument("--top", type=int, default=30, help="top N by AQE rank (the pipeline composite)"); s.add_argument("--per-sub", type=int, default=6, help="top N on each of Flow, Energy, Structure, MP, Elder")
-    s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="quant_screen.json")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--max-bytes", type=int, default=None, help="trim each seat's packet to about this many bytes (rows ranked by that seat's own screen, held book always kept; declared in the packet and packet_trim.json)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book"); s.add_argument("--clean", action="store_true", help="STANDARD SCAN clean test (PM 2026-11-16): strip AQE list membership and AQE composite / engine scores from every seat packet; declared in a # CLEAN TEST line and packets/clean_test.json")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
@@ -4138,7 +4119,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "augment-export": cmd_augment_export, "quant-screen": cmd_quant_screen, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "augment-export": cmd_augment_export, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,

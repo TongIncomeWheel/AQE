@@ -148,15 +148,3 @@ def test_report_compare_splits_a_into_the_old_method_and_the_standard_scan_with_
     assert [r["ticker"] for r in out["A1"]] == ["AAA"] and [r["ticker"] for r in out["A2L"]] == ["BBB"] and [r["ticker"] for r in out["A2N"]] == ["CCC", "DDD"]
     assert set(RC.split_series({"A": led[:1]})) == {"A"}                                                                    # before any Standard Scan row, A is one series
     assert RC.DISPLAY["A2L"].startswith("Committee Standard Scan") and RC.DISPLAY["C"] == "Committee AQE Quant Scan"
-
-
-# ------------------------------------------------------------------ the AQE Quant Scan (report C), independent of A
-def test_quant_screen_takes_the_top_by_aqe_rank_and_each_sub_score_leader_and_nothing_from_a():
-    sys.path.insert(0, str(TOOLS))
-    import seat_screens as PP
-    rows = [{"ticker": f"T{i:02d}", "rank": i + 1, "flow": 10, "energy": 10, "structure": 10, "mp": 10, "elder": 5} for i in range(40)]
-    rows[39].update({"flow": 99})
-    rows[38].update({"energy": 98})
-    why = PP.quant_screen(rows, top=5, per_sub=1)
-    assert {"T00", "T01", "T02", "T03", "T04"} <= set(why) and "T39" in why and "Flow 99" in why["T39"] and "T38" in why and "T20" not in why
-    assert PP.quant_screen([], 30, 6) == {}

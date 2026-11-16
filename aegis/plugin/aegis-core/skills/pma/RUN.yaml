@@ -111,40 +111,36 @@ report:
     A2L and not-AQE-listed A2N), never pooled.
     (5a) STANDARD SCAN CANDIDATE STEP (report A, method whole_universe), instead of the AQE-published candidate_set: after `init --method whole_universe`, run `pma_pipeline.py screens --universe-rows aqe_universe_rows.json
     --export aqe_daily_export.json --date <d>` (seven deterministic per-seat code screens from tools/seat_screens.py, top 25 per seat, written to seat_sets.json and candidate_set.json; the held book is always
-    carried), then `pma_pipeline.py coverage --seat-sets seat_sets.json` (FAILS, names listed, if a screened name lacks fundamentals, a served MTF row or closes: dispatch the committee-topup workflow, git pull, re-run;
-    never proceed past a FAIL), then `pma_pipeline.py augment-export --export aqe_daily_export.json --universe-rows aqe_universe_rows.json --seat-sets seat_sets.json --out aqe_daily_export_wu.json`, which adds the
-    screened names the AQE daily list lacks as universe_only rows (a COPY; the original export is never edited). From here to the end of the run EVERY command that takes --export takes aqe_daily_export_wu.json
-    (packets, rank, brackets, conditions, r2digest, emit, record-verdicts, repeat marks, the cards) and the Cards page reads it from the run dir. Then `packets --seat-sets seat_sets.json --max-bytes 100000 --clean`:
-    each seat reads its own 25 plus the book, and the CLEAN TEST strips AQE list membership and AQE composite or engine scores from every packet (source, in_ledger, on_longlist, on_elder, on_qs, qs, rank, pipe_rank,
-    sc_momentum, flow, energy, structure, mp, mp_state, mp_accel_state, elder, elder_5d, elder_pattern, elder_hi7_streak, lens fields, thematic fields, runner/premove/mover_subtype, the AQE gates and sub-components)
-    and adds raw price, volume and relative-strength columns instead; every packet carries a `# CLEAN TEST` line and packets/clean_test.json, and check.py FAILs a packet that carries a stripped column. `rank` runs
-    with every AQE door off: --strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0 (nominations of any seat at any conviction, plus the held book). Nominations are at most SIX per seat (the
-    registrar default for A). Everything from NOMINATE on is the chain it always was, including levels, brackets, conditions, the slate, the brief and the alerts' pma_levels.json: names outside daily_list get their
-    bracket and levels from the universe record. STAGE 2 (re-expressing the four screen fields structure_shift, structure score, mp_state, rs_leadership on raw price) is a later PM call; until then every brief, Cards
-    page and scorecard carries the disclosure line: Seat screens use AQE structure and momentum-phase fields, not AQE list membership or scores.
-    (5b) THE WRITE-UP (PM 2026-11-16): every name the brief, the Cards and pma_levels.json show carries "AQE-listed: Longlist, Elder, QS or none" and its AQE scores (SC_MOMENTUM, Flow, Energy, Structure, MP, Elder, pipeline
-    rank, QS odds; PTRS is not an export field and is never claimed) or "AQE score not available", never blank. The brief's table is code-built: `python3 tools/aqe_listing.py --export aqe_daily_export_wu.json
-    --universe-rows aqe_universe_rows.json --consensus consensus.json --out aqe_listing.md`, pasted verbatim like held_table.md (header | Ticker | AQE-listed | AQE scores |, then the disclosure line); the gate (Q-SS) fails a
-    whole_universe brief without the table, a row for every ADVANCE or HOLD name, and the disclosure line. `pma_levels.py emit ... --export aqe_daily_export_wu.json --universe-rows aqe_universe_rows.json` adds each
-    row's `aqe` block. Cards v3 prints the same facts in plain words on every ticker card and a banner naming the method.
+    carried; a screened name that AQE's daily list carries keeps its real export row, so the seats see AQE's fields exactly as today), then `pma_pipeline.py coverage --seat-sets seat_sets.json` (FAILS, names listed,
+    if a screened name lacks fundamentals, a served MTF row or closes: dispatch the committee-topup workflow, git pull, re-run; never proceed past a FAIL), then `pma_pipeline.py augment-export --export
+    aqe_daily_export.json --universe-rows aqe_universe_rows.json --seat-sets seat_sets.json --out aqe_daily_export_wu.json`, which adds the screened names the AQE daily list lacks as universe_only rows (a COPY; the
+    original export is never edited). From here to the end of the run EVERY command that takes --export takes aqe_daily_export_wu.json (packets, rank, brackets, conditions, r2digest, emit, record-verdicts, repeat
+    marks, the cards) and the Cards page reads it from the run dir. Then `packets --seat-sets seat_sets.json --max-bytes 100000`: each seat reads its own 25 plus the book. THE SEATS KEEP EVERY AQE FIELD (PM 2026-11-16:
+    "the committee is free to use AQE filters, scores and data in the deliberation rounds"); the only change to the committee is the candidate POOL. (`packets --clean` exists but is NOT used.) `rank` runs with
+    every AQE door off: --strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0 (nominations of any seat at any conviction, plus the held book; no AQE list, flag or score seats a name).
+    Nominations are at most SIX per seat. Everything from NOMINATE on is the chain it always was, including levels, brackets, conditions, the slate, the brief and the alerts' pma_levels.json: names outside daily_list
+    get their bracket and levels from the universe record.
+    (5b) THE WRITE-UP (PM 2026-11-16): AQE is tested, not hidden. Every name the brief, the Cards and pma_levels.json show carries "AQE-listed: Longlist, Elder, QS or none" and its AQE scores (SC_MOMENTUM, Flow, Energy,
+    Structure, MP, Elder, pipeline rank, QS odds; PTRS is not an export field and is never claimed) or "AQE score not available", never blank. The brief's table is code-built: `python3 tools/aqe_listing.py --export
+    aqe_daily_export_wu.json --universe-rows aqe_universe_rows.json --consensus consensus.json --out aqe_listing.md`, pasted verbatim like held_table.md (header | Ticker | AQE-listed | AQE scores |); the gate (Q-SS)
+    fails a whole_universe brief without that table (a row for every ADVANCE or HOLD name) and without the funnel strip. `pma_levels.py emit ... --export aqe_daily_export_wu.json --universe-rows
+    aqe_universe_rows.json` adds each row's `aqe` block. Cards v3 prints the same facts in plain words on every ticker card and a banner naming the method.
     (5b2) THE FUNNEL STRIP (PM 2026-11-16), for BOTH scans: after the slate, the vote and QA (before WRITE and REPORT) run `python3 tools/scan_funnel.py --run-dir . --report A` in the A run dir and
-    `--report C` in the C run dir. It writes scan_funnel.json and scan_funnel.md by code from seat_sets.json / quant_screen.json, tally.json, phase4.json, funnel.json, slate.json, consensus.json and
-    committee_record.json: the count at every stage (universe, screens, nominated, in the room, cross-examination survivors, slated, ratified AGREED / CONTESTED / DROPPED, QA hold; for C: universe, quant screen,
+    `--report C` in the C run dir. It writes scan_funnel.json and scan_funnel.md by code from seat_sets.json (A), candidate_set.json (C), tally.json, phase4.json, funnel.json, slate.json, consensus.json and
+    committee_record.json: the count at every stage (A: universe, screens, nominated, in the room, cross-examination survivors, slated, ratified AGREED / CONTESTED / DROPPED, QA hold; C: AQE's own scored list,
     aqe-quant nominations, in the room, cross-examination, vote) and, for every name that fell out from the room on, one line with the tool file's own reason and its AQE tag (AQE-listed or not, plus AQE scores).
     The early stages print counts only (listing 984 names would hide the story). The Cards page (v3 for A, pma_cards_report.py for C) prints the same tables; the brief pastes scan_funnel.md VERBATIM after the
-    AQE-listed table; the gate (Q-SS) fails a whole_universe brief without the "| Stage | In | Out | What fell out |" table. Nothing in the funnel is hand-written.
+    AQE-listed table. Nothing in the funnel is hand-written.
     (5c) THE LOUD FALLBACK (PM 2026-11-16): if aqe_universe_rows.json is missing, empty or refused (export.universe_rows_status), `screens` stops with a reason. Do NOT go on silently and do NOT stop the live committee:
-    re-run `registrar.py init --method fallback_aqe_doors` and use the old chain (the AQE-published candidate_set.json, `trim`, the doors on, no --clean, no augment-export). The brief says FALLBACK in its heading line
+    re-run `registrar.py init --method fallback_aqe_doors` and use the old chain (the AQE-published candidate_set.json, `trim`, the doors on, no augment-export). The brief says FALLBACK in its heading line
     (the gate checks it), the Cards banner says FALLBACK: AQE doors, the ledger rows carry method fallback_aqe_doors, and the DONE post names it. A coverage FAIL is NOT a fallback reason: top it up.
-    (5d) COMMITTEE AQE QUANT SCAN (report C, PM 2026-11-16: independent of A). `export AEGIS_REPORT=C` -> `registrar.py init --date <d> --report C` (<d>-C, method quant_scan) ->
-    `pma_pipeline.py quant-screen --universe-rows aqe_universe_rows.json --export aqe_daily_export.json --date <d>` (code only: the top 30 of the WHOLE universe by AQE rank, plus the top 6 on each of Flow, Energy,
-    Structure, MP and Elder, de-duplicated, about 45 to 55 names, written to quant_screen.json and candidate_set.json; the held book carried) -> `coverage --seat-sets quant_screen.json` -> `augment-export --export
-    aqe_daily_export.json --universe-rows aqe_universe_rows.json --seat-sets quant_screen.json --out aqe_daily_export_wu.json` -> `packets` WITHOUT --clean, with the AQE indicator files for all EIGHT seats
-    (aqe_indicators.tsv, aqe_glossary.md, c_required_reading.json) -> NOMINATE: ONLY aqe-quant nominates (at most SIX; the registrar rejects round-1 nominations from any other C seat) -> `rank` with every AQE door
-    off (--strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0): the deliberation set is aqe-quant's nominations plus the held book, about 9 names -> all EIGHT seats vote with the AQE
-    indicators in front of them, drop rule 4 of 8 -> `slate-from-forms` -> RATIFY ... CHECK, writing NO levels and nothing live. There is no cset and no A input: no A set, no A nominations, no A verdicts.
-    Every SUPPORT / OPPOSE and nomination of a C decider names at least two AQE composite or sub-component fields (the registrar rejects otherwise); every seat's packet set carries packets/aqe_indicators.tsv,
-    packets/aqe_glossary.md and packets/c_required_reading.json, and check.py FAILs a C run missing any of them. C stays non-live.
+    (5d) COMMITTEE AQE QUANT SCAN (report C, PM 2026-11-16: independent of A; its universe is AQE's OWN scored list, daily_list). `export AEGIS_REPORT=C` -> `registrar.py init --date <d> --report C` (<d>-C, method
+    quant_scan) -> the AQE-published candidate_set.json for the same date (`trim`: AQE's daily list plus the held book) -> `packets` with the AQE indicator files for all EIGHT seats (aqe_indicators.tsv,
+    aqe_glossary.md, c_required_reading.json) -> NOMINATE: ONLY aqe-quant nominates (at most SIX; the registrar rejects round-1 nominations from any other C seat), scanning AQE's list on the AQE quant numbers ->
+    `rank` with every AQE door off (--strong-seats 0 --swing-seats 0 --unr-seats 0 --door-budget 0 --machine-add 0): the deliberation set is aqe-quant's nominations plus the held book, about 9 names -> all EIGHT
+    seats vote with the AQE indicators in front of them, drop rule 4 of 8 -> `slate-from-forms` -> RATIFY ... CHECK, writing NO levels and nothing live. There is no cset and no A input: no A set, no A nominations,
+    no A verdicts. Every SUPPORT / OPPOSE and nomination of a C decider names at least two AQE composite or sub-component fields (the registrar rejects otherwise); every seat's packet set carries
+    packets/aqe_indicators.tsv, packets/aqe_glossary.md and packets/c_required_reading.json, and check.py FAILs a C run missing any of them. C stays non-live.
     (5e) SLATE for C (conductor 2026-11-11): after DECIDE-TIMING and the tier-2 forms, `pma_pipeline.py slate-from-forms --dir <run dir>` writes slate.json by code from decision.json + forms/tier2 + slate_plan.json (only the
     names in `keep`); why_agreed, dissent and wrong_if are quotes of the seats' own tier-2 text, nothing the seats did not say. Then `registrar.py validate --file slate.json --kind slate --decision decision.json`. No hand script.
     (5f) DAILY ORDER (conductor 2026-11-16; the pma-auto routine reads this block, RUN.yaml wins over the routine prompt). A runs first and finishes through PUBLISH exactly as above (method whole_universe, or the loud
@@ -286,7 +282,7 @@ steps:
       packet verify read it there). VERIFY ONLY otherwise. AQE publishes candidate_set.json; consume it as
       published. No local filter, no screen, no column stripping (R5). EXCEPTION (PM 2026-11-16, Standard Scan): on a `method whole_universe` run the candidate step is
       report.rules (5a) instead: `screens` writes candidate_set.json and seat_sets.json from the whole universe, `augment-export` writes aqe_daily_export_wu.json (use it as --export from
-      there on), and `packets ... --clean` strips AQE membership and scores (declared, checked). The AQE-published candidate_set.json is then used ONLY by the loud fallback (report.rules 5c). One grep for qs_market
+      there on); the seats keep every AQE field (PM 2026-11-16; `packets --clean` is cancelled). The AQE-published candidate_set.json is then used ONLY by the loud fallback (report.rules 5c). One grep for qs_market
       across seat packets; a hit is FATAL.
       THE HELD FLOOR (R12): every seat packet carries held, the cost basis, the size, the
       unrealised, AQE's hl_state/hl_score, the written stop and target, the kNN path and the

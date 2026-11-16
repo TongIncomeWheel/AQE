@@ -2103,9 +2103,10 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
     check("seven seats, 25 names each", sorted(ss) == sorted(["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"])
           and all(len(v) == 25 for v in ss.values()), str({k: len(v) for k, v in ss.items()}))
     cand = json.load(open(cs))["universe"]
-    check("the candidate set is the union of the screens plus the held book, all plain universe rows",
+    exp_by = {r["ticker"]: r for r in D["daily_list"]}
+    check("the candidate set is the union of the screens plus the held book; a name AQE lists keeps its REAL row and flags (the seats keep every AQE field, PM 2026-11-16), no list seats a name",
           {r["ticker"] for r in cand} >= {x["ticker"] for v in ss.values() for x in v}
-          and all(r.get("source") in ("universe", "held_book") and not r.get("on_longlist") and not r.get("on_elder") for r in cand),
+          and all(bool(r.get("on_longlist")) == bool((exp_by.get(r["ticker"]) or {}).get("on_longlist")) and bool(r.get("on_elder")) == bool((exp_by.get(r["ticker"]) or {}).get("on_elder")) for r in cand),
           str({r.get("source") for r in cand}))
     b = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04",
                         "--outdir", out, "--seat-sets", sets], capture_output=True, text=True, env=env)
@@ -2233,28 +2234,11 @@ def test_report_c_only_the_quant_nominates_and_the_candidate_set_is_its_own_whol
     check("report C: a non-quant seat filing nominations is REJECTED", r.returncode != 0 and "only aqe-quant nominates" in r.stdout + r.stderr, (r.stdout + r.stderr)[-300:])
     r = reg(["validate", "--file", f, "--round", "1", "--candidates", cs], None)
     check("report A is unchanged: the same ballot is accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
-    # PM 2026-11-16: C is independent of A. `cset` and its A-phase4 dependence are gone; the candidate step is a code quant screen of the whole universe.
-    d = os.path.join(td, "qscreen"); os.makedirs(d, exist_ok=True)
-    rows = []
-    for i in range(60):
-        rows.append({"ticker": f"U{i:02d}", "rank": i + 1, "flow": 50 + (i % 7), "energy": 40 + (i % 5), "structure": 30 + (i % 9), "mp": 20 + (i % 11), "elder": 5 + (i % 6), "entry": 10.0,
-                     "sc_momentum": 70 - i * 0.5})
-    rows[59].update({"flow": 99})      # last by AQE rank but the top Flow name: the sub-score door keeps it
-    ur = os.path.join(d, "u.json"); json.dump({"date": "2026-11-16", "rows": rows}, open(ur, "w"))
-    ex = os.path.join(d, "ex.json"); json.dump({"daily_list": rows[:3], "held_positions": [dict(rows[0], ticker="HLD")], "srm": []}, open(ex, "w"))
+    # PM 2026-11-16: C is independent of A and its universe is AQE's own scored list: `cset` and every A input are gone; there is no whole-universe quant screen either.
     env = dict(os.environ); env["AEGIS_REPORT"] = "C"
-    r = subprocess.run([sys.executable, PIPE, "quant-screen", "--universe-rows", ur, "--export", ex, "--date", "2026-11-16", "--top", "5", "--per-sub", "2",
-                        "--out", os.path.join(d, "candidate_set.json"), "--out-sets", os.path.join(d, "quant_screen.json")], capture_output=True, text=True, env=env, cwd=d)
-    q = json.load(open(os.path.join(d, "quant_screen.json"))) if os.path.exists(os.path.join(d, "quant_screen.json")) else {}
-    check("quant-screen runs", r.returncode == 0, (r.stdout + r.stderr)[-300:])
-    check("quant-screen: the top five by AQE rank are in", all(f"U0{i}" in q.get("why", {}) for i in range(5)), str(sorted(q.get("why", {}))))
-    check("quant-screen: the top Flow name outside the top five is kept, with its reason", "Flow 99" in (q.get("why", {}).get("U59") or []), str(q.get("why", {}).get("U59")))
-    check("quant-screen: a mid-table name that leads nothing is not seated", "U30" not in q.get("why", {}))
-    cs = json.load(open(os.path.join(d, "candidate_set.json")))
-    check("quant-screen: the candidate set is those names plus the held book, taken from the universe rows", {x["ticker"] for x in cs["universe"]} == set(q["why"]) | {"HLD"}, str(sorted(x["ticker"] for x in cs["universe"])))
-    check("quant-screen names the seat set shape so augment-export can serve them", q.get("seats", {}).get("aqe-quant") == sorted(q["why"]))
-    r = subprocess.run([sys.executable, PIPE, "cset", "--phase4", "x", "--a-phase4", "y"], capture_output=True, text=True, env=env)
-    check("cset is gone: C takes nothing from A", r.returncode != 0 and "cset" in (r.stdout + r.stderr))
+    for gone in ("cset", "quant-screen"):
+        r = subprocess.run([sys.executable, PIPE, gone, "--phase4", "x"], capture_output=True, text=True, env=env)
+        check(f"{gone} is gone: C takes nothing from A and screens nothing", r.returncode != 0 and gone in (r.stdout + r.stderr))
 
 
 def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data(td):
