@@ -84,6 +84,6 @@ _The archive ledger books P&L off the journal's average cost (buy commission inc
 - GLD 2026-09-28: sell of 108 with no entry on record
 - WEAT 2026-10-16: sell of 545 with no entry on record
 - SPCX: 0 open per fills vs -68 per aegis_journal_2026-11-13.json
-- HNGE 2026-08-31: archive -406.37 vs fills net +0.00 (diff +0.00)
+- HNGE 2026-08-31: archive -406.37 vs fills net -627.91 (diff -221.54)
 - WEAT 2026-10-16: archive -1347.89 vs fills net +0.00 (diff +1347.89)
 - cross-check: trade journal Aegis net -12717.68 vs archive -13568.23 (diff +850.55)
