@@ -1,0 +1,103 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-17",
+ "declarations": [
+  "No refutation of my claims was paired to me (answer_pairs empty), so answers is [].",
+  "Declared: adx NOT_SERVED (C7, C8); stochastic_kd NOT_SERVED (C6); n_day_extreme via MTF swing + 20-bar high (substitute, C3/C4); bar_range_history NOT_SERVED (C12, C13); market_breadth OUT_OF_SERVED_SCOPE (C16).",
+  "R1: no stance rests on a bracket. R41: no Valen flag used as a reason."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:ma_20",
+    "tf": "H1",
+    "plain": "Wait for the first pullback to the 20-day, then buy an hourly close back above it (Holy Grail shape)."
+   },
+   "wrong_if": "close_below:ma_20-0.5atr, or structure_shift turns BEARISH_CHOCH: the pullback became a reversal.",
+   "market_void": null,
+   "reason": "Fresh highs, first leg of a Holy Grail (C7): W swing HH/HL, D close_vs_swing_high_pct 6.25, H1 pos_in_day_range_pct 89.3, dist_to_20bar_high_pct 0.35. No pullback yet, so today is a chase; I buy the first retracement. ADX NOT_SERVED."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above yesterday's high: the shallow dip has been reclaimed."
+   },
+   "wrong_if": "close_below:bar_low, the reclaim-day low (C17 swing extreme), or BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2): W and D swing HH/HL, D close_vs_swing_high_pct -4.04, D close_vs_ema9 above, H1 pos_in_day_range_pct 89.9. Higher low at 111.0 held. Caution: H1 swing HH but LL. ADX, %K/%D NOT_SERVED."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstaining: a tight pause that holds above the last swing high would make it a first-pullback setup I could read.",
+   "market_void": null,
+   "reason": "Range-expansion leg I decline to call (R9, C19): D close_vs_swing_high_pct 10.36, D swing HH but LL, D last_bar red. Strong, but a climax-likely bar is where my canon exits, not enters. Not an argument against the name."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above yesterday's high while price holds the broken pivot."
+   },
+   "wrong_if": "close_below:structure_shift_ref-0.5atr: the test of the broken pivot failed.",
+   "market_void": null,
+   "reason": "TEST of a fresh break, a double stop point (C20): W/D/H1 swing HH/HL, D close_vs_swing_high_pct 0.09 sits on the broken pivot 114.64, dist_to_20bar_high_pct 0.62. Trigger and invalidation adjacent. Exact 20-day extreme NOT_SERVED."
+  },
+  {
+   "ticker": "LFST",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy an hourly close above yesterday's high: the quiet pullback has turned."
+   },
+   "wrong_if": "close_below:ma_20, or structure_shift turns BEARISH_CHOCH.",
+   "market_void": null,
+   "reason": "RETRACEMENT (C2, Holy Grail shape C7): W and D swing HH/HL, D close_vs_swing_high_pct -7.54, D close_vs_ema9 above, H1 pos_in_day_range_pct 81.5. Caution: H1 swing LH/LL, higher low on H1 not set. ADX NOT_SERVED."
+  },
+  {
+   "ticker": "GKOS",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstaining: a tight higher low that holds would make it a retracement I could read.",
+   "market_void": null,
+   "reason": "Retracement vs climax top after a wide run is a visual call I decline (R9): W close_vs_swing_high_pct 27.79, D close_vs_swing_high_pct -4.04, D last_bar red, H1 swing HH but LL, pos_in_day_range_pct 36.5. Not an argument against the name."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Abstaining: a quiet higher low above the 20-day would give me a retracement with a swing low to stop under.",
+   "market_void": null,
+   "reason": "Pullback still falling: D close_vs_swing_high_pct -6.93, D last_bar red, H1 close_vs_ema9 below, H1 swing HH but LL, pos_in_day_range_pct 20.0. No established higher low and no contraction proxy; I stand aside (C22)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "raschke.part1of2.json",
+   "bytes": 2769,
+   "sha256": "8991ca927610"
+  },
+  {
+   "file": "raschke.part2of2.json",
+   "bytes": 1902,
+   "sha256": "f8380b7f5b89"
+  }
+ ]
+}

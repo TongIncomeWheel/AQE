@@ -1,0 +1,63 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-17",
+ "answers": [
+  {
+   "pair_id": "LFST-minervini-for~wyckoff",
+   "ticker": "LFST",
+   "to": "wyckoff",
+   "text": "\"Not near the high: 7.5% under the 20-day high.\" My test is Trend Template criterion 7, within 25% of the high (C3): W dist_to_20bar_high_pct 7.54 passes it, and W swing HH/HL with close_vs_swing_high_pct 6.78 is a stage 2 weekly. The 7.5% is the base's depth under its pivot, not a failed trend; it is why I buy only the clear of pivot_high (C5), not now. H1 LH/LL is a frame my base read does not use. Not conceded.",
+   "concede": false
+  },
+  {
+   "pair_id": "STGW-minervini-for~livermore",
+   "ticker": "STGW",
+   "to": "livermore",
+   "text": "\"A pullback, not a new high; one name is no group.\" My claim was stack, RS and sector, and W swing HH/HL with close_vs_swing_high_pct 19.48 still says stage 2 (C3). I agree D close_vs_swing_high_pct -6.93 is a reaction inside the base, so no buy until pivot_high clears on volume (C5) - that is already my trigger. Sector state is context for C15, not a group count. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy when an hourly candle closes above yesterday's high, the next leg of the new-high break."},
+   "wrong_if": "A daily close under ma_20: the break off the 52-week high failed.",
+   "market_void": null,
+   "reason": "Stage 2 at the high: W HH/HL, D dist_to_20bar_high_pct 0.35, D close_vs_swing_high_pct 6.25 (a break of the last swing high), H1 pos_in_day_range_pct 89.3. Chase risk off the swing high is a weight (C5); volume must confirm (C6)."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Buy on a daily close above the last pivot high, the base breakout."},
+   "wrong_if": "A daily close under ma_50, or a breakout that closes back under pivot_high.",
+   "market_void": null,
+   "reason": "Group RS leader in stage 2 (C11): W HH/HL close_vs_swing_high_pct 26.91, D HH/HL close_vs_swing_high_pct -4.04 basing under 126.4. Entry is the pivot clear, not the anticipation (C5); mature move is a C17 caution."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy a small continuation when an hourly candle closes above yesterday's high."},
+   "wrong_if": "A daily close under ma_20, or a pullback on rising volume after the spike (C6).",
+   "market_void": null,
+   "reason": "W HH/HL with dist_to_20bar_high_pct 3.54 under the weekly high; D close_vs_swing_high_pct 10.36 is extended past the pivot (C5), a weight on a heavy-volume continuation, so low conviction. D last_bar red."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "Buy when an hourly candle closes above yesterday's high, follow-through on the pivot break."},
+   "wrong_if": "A daily close back under pivot_high: the breakout failed.",
+   "market_void": null,
+   "reason": "At the pivot, not above it: D HH/HL close_vs_swing_high_pct 0.09, W HH/HL dist_to_20bar_high_pct 0.62. Entry close to the pivot is the method (C5). Defensive-rotation note (C15, C17) is advisory, not a block."
+  }
+ ],
+ "declarations": [
+  "trend_template: read on the W/D/H1 grid plus my blind-vote stack; ma_150 not served (ma_100 stands in); criterion 8 via rs_leadership/rs_spy_20d, not IBD-equivalent (C3).",
+  "vcp_detail: NOT_SERVED (C4). earnings_growth: NOT_SERVED (C1 element 2, C12, C13, C20). volume_signature: day_vol at the current bar only (C6, partial).",
+  "market_void null on every name: my market timing reads leadership behaviour (C14), not an index level."
+ ]
+}

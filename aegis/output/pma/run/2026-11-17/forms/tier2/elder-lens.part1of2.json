@@ -1,0 +1,48 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "HUM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Wait for price to pull back into the 20-day average, then buy there while the elder reading stays 7 or higher."},
+   "wrong_if": "The elder reading closes at 6 or lower (green going away), or a daily close below ma_50.",
+   "market_void": null,
+   "reason": "Not red: elder_5d [10, 10, 10, 10, 10], permission certain (C3). Weekly tide up: W 9>21, HH/HL. But a plateau is summer, not spring (C20); no transition (C4). D close 461.25 sits 0.3% under the 20-day high with D swing LH/LL, so Elder buys the pullback to value (C10). C24 unsourced."
+  },
+  {
+   "ticker": "HNGE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "in_zone:entry", "tf": "D", "plain": "Buy near yesterday's close from today's session; do not chase above it."},
+   "wrong_if": "The next close prints an elder reading of 6 or lower (permission lost), or a daily close below ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [10, 7, 7, 2, 7]: bar 4 at 2 then 7 on the last bar is red giving way, the permission event on the last bar, Elder's best long (C3, C4). Weekly tide first: W 9>21, HH/HL (C21). D HH/HL, close 4.0% under the 20-day high, not stretched. INTERRUPTED pattern is the weak leg."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Wait for a pullback into the 20-day average, then buy while the elder reading stays 7 or higher."},
+   "wrong_if": "The elder reading closes at 6 or lower, or a daily close below ma_50.",
+   "market_void": null,
+   "reason": "Not red: elder_5d [10, 10, 10, 10, 10] with mp_state STRONG (C3). Weekly W 9>21 HH/HL permits a long (C21). A plateau is summer, no transition (C4, C20); D close 10.4% above the last swing high and D last bar red, so the buy rests at value under the average (C10). C24 unsourced."
+  },
+  {
+   "ticker": "CHD",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:ma_20", "tf": "D", "plain": "Wait for a pullback into the 20-day average, then buy while the elder reading stays 7 or higher."},
+   "wrong_if": "The elder reading closes at 6 or lower, or a daily close below ma_50.",
+   "market_void": null,
+   "reason": "elder_5d [7, 7, 7, 7, 10]: not red, strength rising on the last bar but from 7, not a red-giving-way event (C3, C4). Weekly W 9>21 HH/HL, D HH/HL: tide and wave agree (C21). D close 0.6% under the 20-day high; Elder bids under the average, not at the high (C10)."
+  }
+ ],
+ "declarations": [
+  "No refutation pairs were routed to me (answer_pairs empty), so answers is [].",
+  "elder_5d and mp_state figures are from my own blind vote; colour, force and channel fields are not in this packet for these names and are unread, not assumed.",
+  "No market_void: my method carries no market-wide kill line (C7: the force regime is per name)."
+ ]
+}

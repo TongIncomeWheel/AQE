@@ -1,0 +1,120 @@
+{
+ "advance": {
+  "CHD": {
+   "triggers": [
+    {
+     "id": "CHD-buy0",
+     "kind": "close_above",
+     "level": 115.46,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CHD: an hourly candle closes above 115.46 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "CHD-touch",
+     "kind": "trade_above",
+     "level": 115.46,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHD traded through yesterday's intraday high 115.46: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CHD-wait",
+     "kind": "trade_below",
+     "level": 114.64,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHD is back in the wait area 114.64-114.64."
+    },
+    {
+     "id": "CHD-dead",
+     "kind": "close_below",
+     "level": 114.64,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CHD closed under 114.64, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 115.46",
+   "kills": "A daily close under 114.64 (4 analysts' exit line)."
+  }
+ },
+ "hold": {
+  "CHYM": {
+   "triggers": [
+    {
+     "id": "CHYM-buy0",
+     "kind": "close_above",
+     "level": 34.63,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CHYM: an hourly candle closes above 34.63 (2 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "CHYM-touch",
+     "kind": "trade_above",
+     "level": 34.63,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CHYM traded through yesterday's intraday high 34.63: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CHYM-dead",
+     "kind": "close_below",
+     "level": 30.52,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CHYM closed under 30.52, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 34.63; outperforms SPY today; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 30.52 (2 analysts' exit line)."
+  },
+  "LFST": {
+   "triggers": [
+    {
+     "id": "LFST-buy0",
+     "kind": "close_above",
+     "level": 15.66,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "LFST: an hourly candle closes above 15.66 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.4
+    },
+    {
+     "id": "LFST-touch",
+     "kind": "trade_above",
+     "level": 14.56,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "LFST traded through yesterday's intraday high 14.56: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "LFST-dead",
+     "kind": "close_below",
+     "level": 13.55,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "LFST closed under 13.55, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "closes above pivot_high 15.66; volume at least 1.4x normal for the time of day",
+   "kills": "A daily close under 13.55 (2 analysts' exit line)."
+  }
+ },
+ "held": {
+  "RBRK": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 99.45 (STP 80, GTC).",
+   "against": ""
+  },
+  "SPCX": {
+   "committee_exit": null,
+   "committee_exit_range": null,
+   "for": "Keep under the broker stop 145.05 (STP 68, GTC).",
+   "against": ""
+  }
+ }
+}

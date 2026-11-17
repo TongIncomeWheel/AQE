@@ -1,0 +1,468 @@
+{
+ "_schema": {
+  "shape": "decision",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-16T23:53:15Z"
+ },
+ "schema": "decision.v1",
+ "date": "2026-11-17",
+ "rules": {
+  "min_support": 4,
+  "tie": "WATCH",
+  "advance": "ACT_NOW > WAIT among SUPPORT",
+  "trigger": "modal (word, tf) of the winning timing camp",
+  "trigger_tie_rule": "the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)"
+ },
+ "survivors": [
+  "HUM",
+  "HNGE",
+  "CHYM",
+  "CHD",
+  "LFST",
+  "GKOS",
+  "STGW"
+ ],
+ "names": {
+  "HUM": {
+   "ticker": "HUM",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 3,
+    "wait": 3
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "livermore",
+     "seow"
+    ],
+    "wait": [
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Wait for price to pull back into the 20-day average, then buy there while the elder reading stays 7 or higher.",
+    "seats": [
+     "elder-lens"
+    ],
+    "of_camp": 3,
+    "plain_from": "elder-lens",
+    "tie_broken": true,
+    "tied": [
+     {
+      "word": "in_zone:ma_20",
+      "tf": "D",
+      "seats": [
+       "elder-lens"
+      ]
+     },
+     {
+      "word": "reclaim:ma_20",
+      "tf": "H1",
+      "seats": [
+       "raschke"
+      ]
+     },
+     {
+      "word": "reclaim:vwap_14d",
+      "tf": "H1",
+      "seats": [
+       "wyckoff"
+      ]
+     }
+    ],
+    "tie_rule": "the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 3 vs WAIT 3 (tie -> WATCH)",
+   "horizon_sessions": 10
+  },
+  "HNGE": {
+   "ticker": "HNGE",
+   "counts": {
+    "support": 6,
+    "oppose": 1,
+    "abstain": 0,
+    "act_now": 5,
+    "wait": 1
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [
+     "oneil"
+    ],
+    "abstain": [],
+    "act_now": [
+     "minervini",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": [
+     "livermore"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when an hourly candle closes above yesterday's high, the sign-of-strength follow-through",
+    "seats": [
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 5,
+    "plain_from": "wyckoff",
+    "tie_broken": false
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 5 vs WAIT 1",
+   "horizon_sessions": 10
+  },
+  "CHYM": {
+   "ticker": "CHYM",
+   "counts": {
+    "support": 6,
+    "oppose": 0,
+    "abstain": 1,
+    "act_now": 3,
+    "wait": 3
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [
+     "raschke"
+    ],
+    "act_now": [
+     "oneil",
+     "minervini",
+     "livermore"
+    ],
+    "wait": [
+     "elder-lens",
+     "seow",
+     "wyckoff"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "close_above:bar_high",
+    "tf": "D",
+    "plain": "Wait for a daily close above yesterday's high, which undoes the red candle, then the buy stop follows.",
+    "seats": [
+     "seow"
+    ],
+    "of_camp": 3,
+    "plain_from": "seow",
+    "tie_broken": true,
+    "tied": [
+     {
+      "word": "in_zone:ma_20",
+      "tf": "D",
+      "seats": [
+       "elder-lens"
+      ]
+     },
+     {
+      "word": "close_above:bar_high",
+      "tf": "D",
+      "seats": [
+       "seow"
+      ]
+     },
+     {
+      "word": "reclaim:vwap_14d",
+      "tf": "H1",
+      "seats": [
+       "wyckoff"
+      ]
+     }
+    ],
+    "tie_rule": "the modal (word, timeframe) wins; a tie in the number of seats is broken by the seat with the higher BLIND conviction in that group, then by decider order (oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff)"
+   },
+   "why": "6 SUPPORT of 7; ACT_NOW 3 vs WAIT 3 (tie -> WATCH)",
+   "horizon_sessions": 15
+  },
+  "CHD": {
+   "ticker": "CHD",
+   "counts": {
+    "support": 7,
+    "oppose": 0,
+    "abstain": 0,
+    "act_now": 6,
+    "wait": 1
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": [],
+    "act_now": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ],
+    "wait": [
+     "elder-lens"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "ADVANCE",
+   "timing_camp": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when an hourly candle closes above yesterday's high, follow-through off the broken level",
+    "seats": [
+     "minervini",
+     "livermore",
+     "raschke",
+     "wyckoff"
+    ],
+    "of_camp": 6,
+    "plain_from": "wyckoff",
+    "tie_broken": false
+   },
+   "why": "7 SUPPORT of 7; ACT_NOW 6 vs WAIT 1",
+   "horizon_sessions": 20
+  },
+  "LFST": {
+   "ticker": "LFST",
+   "counts": {
+    "support": 4,
+    "oppose": 1,
+    "abstain": 2,
+    "act_now": 1,
+    "wait": 3
+   },
+   "seats": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "raschke"
+    ],
+    "oppose": [
+     "seow"
+    ],
+    "abstain": [
+     "elder-lens",
+     "wyckoff"
+    ],
+    "act_now": [
+     "raschke"
+    ],
+    "wait": [
+     "oneil",
+     "minervini",
+     "livermore"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "WATCH",
+   "timing_camp": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "after a handle forms on drying volume, a daily close above the pivot high on volume at least 1.4x normal",
+    "seats": [
+     "oneil",
+     "minervini",
+     "livermore"
+    ],
+    "of_camp": 3,
+    "plain_from": "oneil",
+    "tie_broken": false
+   },
+   "why": "4 SUPPORT of 7; ACT_NOW 1 vs WAIT 3",
+   "horizon_sessions": 20
+  },
+  "GKOS": {
+   "ticker": "GKOS",
+   "counts": {
+    "support": 3,
+    "oppose": 2,
+    "abstain": 2,
+    "act_now": 1,
+    "wait": 2
+   },
+   "seats": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens"
+    ],
+    "oppose": [
+     "oneil",
+     "seow"
+    ],
+    "abstain": [
+     "raschke",
+     "wyckoff"
+    ],
+    "act_now": [
+     "elder-lens"
+    ],
+    "wait": [
+     "minervini",
+     "livermore"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "NOT_SLATED",
+   "timing_camp": null,
+   "trigger": null,
+   "why": "3 SUPPORT < 4 of 7",
+   "horizon_sessions": 20
+  },
+  "STGW": {
+   "ticker": "STGW",
+   "counts": {
+    "support": 1,
+    "oppose": 3,
+    "abstain": 3,
+    "act_now": 0,
+    "wait": 1
+   },
+   "seats": {
+    "support": [
+     "minervini"
+    ],
+    "oppose": [
+     "oneil",
+     "livermore",
+     "seow"
+    ],
+    "abstain": [
+     "elder-lens",
+     "raschke",
+     "wyckoff"
+    ],
+    "act_now": [],
+    "wait": [
+     "minervini"
+    ]
+   },
+   "held": false,
+   "question": "BUY",
+   "proposal": "NOT_SLATED",
+   "timing_camp": null,
+   "trigger": null,
+   "why": "1 SUPPORT < 4 of 7",
+   "horizon_sessions": 20
+  }
+ },
+ "market_kill": {
+  "plain": "index under distribution: 4-5 distribution days inside 4-5 weeks (C1, C2)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 3
+ },
+ "market_kill_note": null,
+ "ignored_forms": [],
+ "measurement": {
+  "act_now_vs_wait": {
+   "HUM": {
+    "act_now": 3,
+    "wait": 3
+   },
+   "HNGE": {
+    "act_now": 5,
+    "wait": 1
+   },
+   "CHYM": {
+    "act_now": 3,
+    "wait": 3
+   },
+   "CHD": {
+    "act_now": 6,
+    "wait": 1
+   },
+   "LFST": {
+    "act_now": 1,
+    "wait": 3
+   },
+   "GKOS": {
+    "act_now": 1,
+    "wait": 2
+   },
+   "STGW": {
+    "act_now": 0,
+    "wait": 1
+   }
+  },
+  "deciders_present": [
+   "oneil",
+   "minervini",
+   "livermore",
+   "elder-lens",
+   "seow",
+   "raschke",
+   "wyckoff"
+  ],
+  "deciders_absent": [],
+  "advance": 2,
+  "watch": 3,
+  "not_slated": 2
+ }
+}

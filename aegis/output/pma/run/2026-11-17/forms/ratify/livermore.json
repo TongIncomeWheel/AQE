@@ -1,0 +1,47 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "HUM",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "The trigger in_zone:ma_20 buys the pullback itself, which C5 forbids: enter only on the new high after the reaction. The name is at its high (D dist_to_20bar_high_pct 0.35, W close_vs_swing_high_pct 1.04), so waiting for ma_20 waits for a reaction, not a confirmation.",
+   "would_clear": "Replace the trigger with a new-high trigger: h1_close_above:bar_high (a completed 1-hour close above yesterday's high)."
+  },
+  {
+   "ticker": "HNGE",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "h1_close_above:bar_high clears yesterday's high, not the pivot: D close_vs_swing_high_pct -4.04 says the stock is still inside a normal reaction under its high, so this ACT_NOW buy is a pullback buy, not the C5 new high that ends the reaction.",
+   "would_clear": "Trigger close_above:pivot_high on D (a daily close above the last confirmed pivot high), timing WAIT."
+  },
+  {
+   "ticker": "CHYM",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "CHD",
+   "answer": "AGREE",
+   "conviction": 4,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "LFST",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 3,
+   "reservation": "The trigger close_above:pivot_high is mine; the words add a handle and a 1.4x volume test my method does not require, and the wrong-if omits my C20 danger signal: a rally stalling short of pivot_high then reacting 1x ATR (my translation).",
+   "objection": null,
+   "would_clear": null
+  }
+ ]
+}

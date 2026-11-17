@@ -1,0 +1,37 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "LFST",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "After the right side tightens, buy a daily close above the last pivot high."},
+   "wrong_if": "A daily close under ma_50.",
+   "market_void": null,
+   "reason": "Stage 2 weekly: W HH/HL close_vs_swing_high_pct 6.78. D close_vs_swing_high_pct -7.54 is a loose base under 15.66; wait for it to tighten, then the pivot clear (C4, C5)."
+  },
+  {
+   "ticker": "GKOS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Once volume returns on up days, buy a daily close above the last pivot high."},
+   "wrong_if": "A daily close under ma_20, or a pullback on rising volume (C6).",
+   "market_void": null,
+   "reason": "Strong RS stage 2: W HH/HL close_vs_swing_high_pct 27.79, D close_vs_swing_high_pct -4.04 under 255.19. Volume signature not confirming yet (C6), so wait for demand then the pivot clear (C5)."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "After the reaction tightens, buy a daily close above the last pivot high."},
+   "wrong_if": "A daily close under ma_20.",
+   "market_void": null,
+   "reason": "W HH/HL close_vs_swing_high_pct 19.48 is stage 2; D close_vs_swing_high_pct -6.93 and H1 pos_in_day_range_pct 20.0 are a reaction inside a loose base, so wait, then the pivot clear (C5)."
+  }
+ ],
+ "declarations": [
+  "vcp_detail: NOT_SERVED (C4). earnings_growth: NOT_SERVED (C12). rs_proxy: rs_leadership + rs_spy_20d, not IBD-equivalent (C3/C11)."
+ ]
+}

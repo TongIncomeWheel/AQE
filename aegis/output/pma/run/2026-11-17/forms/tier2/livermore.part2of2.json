@@ -1,0 +1,37 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d; 1x ATR is my own translation of C7, never the literal 6/3/12 points (C18-C20). fill_difficulty NOT_SERVED. inside_information NEVER (C11)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "LFST",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the last confirmed pivot high, the new high that ends the reaction."},
+   "wrong_if": "A daily close below ma_20, or a rally that stalls short of the pivot high and reacts 1x ATR (C20).",
+   "market_void": null,
+   "reason": "W HH/HL close_vs_swing_high_pct 6.78 is the trend; D close_vs_swing_high_pct -7.54 and H1 LH/LL is a reaction. C5: never buy the pullback; wait for the new high."
+  },
+  {
+   "ticker": "GKOS",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "A daily close above the last confirmed pivot high, the new high that ends the reaction."},
+   "wrong_if": "A daily close below ma_20, or a one-day fade of 1x ATR off a high (my C7 translation).",
+   "market_void": null,
+   "reason": "W HH/HL close_vs_swing_high_pct 27.79 is an established Upward Trend; D close_vs_swing_high_pct -4.04, H1 HH but LL: a reaction under the high. Entry only on the new high (C5)."
+  },
+  {
+   "ticker": "STGW",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A daily close above pivot_high that extends fast, with a second Communication Services name confirming (C14).",
+   "market_void": null,
+   "reason": "Inside a reaction: D close_vs_swing_high_pct -6.93, H1 below EMA9, pos_in_day_range_pct 20.0. rank 286 fails my C12 leadership test; a single name with no group confirmation (C14)."
+  }
+ ]
+}

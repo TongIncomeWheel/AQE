@@ -1,0 +1,83 @@
+{
+ "date": "2026-11-17",
+ "chair": "chair",
+ "board_sha256": "72ae6d72ffad32acf40f08b032a13d5471d365dfc9a97d7714688dce25f5036f",
+ "decision_sha256": "2fb7ebffded15a2f2520a0ab5279790526cd531897bfaa0164e73246171d94b5",
+ "tickets": [
+  {
+   "ticker": "HUM",
+   "verdict": "WATCH",
+   "entry_trigger": "Wait for price to pull back into the 20-day average, then buy there while the elder reading stays 7 or higher.",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Wait for price to pull back into the 20-day average, then buy there while the elder reading stays 7 or higher."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "elder-lens: \"The elder reading closes at 6 or lower (green going away), or a daily close below ma_50.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Stage 2 at the high: W HH/HL, D dist_to_20bar_high_pct 0.35, D close_vs_swing_high_pct 6.25 (a \" | livermore: \"C5 met: W HH/HL close_vs_swing_high_pct 1.04, D dist_to_20bar_high_pct 0.35, H1 pos_in_day_rang\" | elder-lens: \"Not red: elder_5d [10, 10, 10, 10, 10], permission certain (C3). Weekly tide up: W 9>21, HH/HL.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leadership real (W HH/HL, close_vs_swing_high_pct 1.04 inside 5% of the weekly pivot) but the break printed on day_vol 0.83, under 1.40 (C16, R4): I withdraw until volume confirms. sector_trend_state Momentum Fading is the R9 caution."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "HNGE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy when an hourly candle closes above yesterday's high, the sign-of-strength follow-through",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when an hourly candle closes above yesterday's high, the sign-of-strength follow-through"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 5,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "raschke: \"close_below:bar_low, the reclaim-day low (C17 swing extreme), or BEARISH_CHOCH.\"",
+   "horizon_sessions": 10,
+   "why_agreed": "minervini: \"Group RS leader in stage 2 (C11): W HH/HL close_vs_swing_high_pct 26.91, D HH/HL close_vs_swing\" | livermore: \"Established trend: W HH/HL, close_vs_swing_high_pct 26.91. D close_vs_swing_high_pct -4.04 is a\" | elder-lens: \"elder_5d [10, 7, 7, 2, 7]: bar 4 at 2 then 7 on the last bar is red giving way, the permission \"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Hold firm (R7, C24): close 121.29 vs ma200 71.38 is 69.9% over the 200-day, so any pivot break is bought inside the climax zone. D HH/HL and W HH/HL say leader; the rule says sell into it, never buy."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "index under distribution: 4-5 distribution days inside 4-5 weeks (C1, C2)",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 3
+ },
+ "hold_round": true
+}
