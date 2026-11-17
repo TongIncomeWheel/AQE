@@ -658,7 +658,29 @@ def basket_card():
                 "Baskets are a hand-picked proxy for themes, not the whole market. A name in no basket is simply not here.",
                 ("All baskets: grade, week, month, rotation, strongest members",
                  table(["Basket", "Grade", "1 week", "1 month", "Rotation", "Strongest members (20-day strength vs SPY)"], rows_)))
-c_basket = basket_card()
+def valen_basket_card():
+    """PM 2026-11-17 (follow Valen's baskets): the ACTIVE basket set from the refreshed Valen artifact's theme block (Valen's 96 once data/valen_baskets.json is loaded). Returns None
+    when the block is missing or still on AQE's own 35, so the older card above stands in and says which set it is."""
+    tb = ((RV.get("groups") or {}).get("themes")) or {}
+    bs = tb.get("basket_set") or {}
+    if tb.get("status") != "OK" or bs.get("status") != "valen":
+        return None
+    byt = {r.get("ticker"): r for r in D["daily_list"]}
+    rows_ = []
+    for b in tb["baskets"]:
+        mem = sorted([byt[t] for t in (b.get("members") or []) if t in byt and isinstance(byt[t].get("rs_spy_20d"), (int, float))], key=lambda r: -r["rs_spy_20d"])[:3]
+        r1 = b.get("ret_pct") or {}
+        state = f"bullish {b['sessions_on']} sessions" if b.get("bullish") else (f"off {abs(b['sessions_on'])} sessions" if b.get("bullish") is not None else "not read")
+        rows_.append([E(b["display_name"]), E(str(b.get("sector") or "")), pill(E(state), "good" if b.get("bullish") else ""), pill("leading", "good") if b.get("leading") else "&mdash;",
+                      str(b.get("rs_1m")) if b.get("rs_1m") is not None else "&mdash;", str(b.get("thrust")) if b.get("thrust") is not None else "&mdash;",
+                      mins(f"{r1['1w']:+.1f}%") if isinstance(r1.get("1w"), (int, float)) else "&mdash;", mins(f"{r1['1m']:+.1f}%") if isinstance(r1.get("1m"), (int, float)) else "&mdash;",
+                      ", ".join(f"<b>{E(r['ticker'])}</b> {r['rs_spy_20d']:+.0f}%" for r in mem) or "&mdash;"])
+    sm = tb["summary"]
+    return card(f"{sm['bullish']} of Valen&rsquo;s {sm['baskets']} theme baskets are bullish and {sm['leading']} are leading.", "",
+                f"Data to the close of {E(tb['as_of'])}. Bullish means the basket closes above its 9-day, 21-day and 50-day averages; leading means bullish with 1-month strength of 80 or more (a 0 to 100 rank across the baskets).",
+                ("All baskets: bullish or not, since when, strength, week, month, strongest members",
+                 table(["Basket", "Sector", "Trend", "Leading", "1-month strength", "Thrust", "1 week", "1 month", "Strongest members (20-day strength vs SPY)"], rows_)))
+c_basket = valen_basket_card() or basket_card()
 
 import stage_brief as SB
 def stage_line(t):
@@ -691,7 +713,7 @@ def _stage_card():
                 ("The Stage 1 to 4 cycle", "<p>Weinstein's four stages on weekly bars against the 30-week average: 1 basing, 2 advancing, 3 topping, 4 declining. A reading, never a gate or a size. "
                  "The distribution-day line is the committee canon's own number (O'Neil), four in 25 sessions.</p>"))
 c_stage = _stage_card()
-s2 = section("5 &middot; Sector and theme strength", (f"Money sits in {_jn2([SHORT.get(x, x) for x in lead_secs])}" if lead_secs else "No sector passes the entry gate")
+s2 = section("2 &middot; Sector and theme strength", (f"Money sits in {_jn2([SHORT.get(x, x) for x in lead_secs])}" if lead_secs else "No sector passes the entry gate")
              + (f"; {_jn2(blocked_lag)} lag." if blocked_lag else "."),
              f'<div class="grid">{c_stage}{c_sec}{c_th}{c_basket}{c_grp}</div>', "sectors")
 
@@ -725,7 +747,7 @@ c_vv = card(f"Near-term fear {'rose' if hv['now'] > hv['1mo_ago'] else 'eased' i
                        (0.82, "0.82 calm", "var(--good)", 1), (1.00, "1.00 stress", "var(--bad)", 1)],
           bands=[(0.82, 1.00, "var(--soft)")], label="VIX against 3-month VIX"),
     "Under 0.82 is calm; over 1.00 means near-term fear has overtaken the 3-month view.")
-s3 = section("6 &middot; What happened", f"SPY {'fell' if D['spy_roc_20d'] < 0 else 'rose'} {abs(D['spy_roc_20d'])}% in 20 days, and on {CLOSE_WD} the list {'lagged' if yv(y_list) < yv(y_spy) else 'led' if yv(y_list) > yv(y_spy) else 'matched'} a {'rising' if yv(y_spy) > 0 else 'falling'} SPY.",
+s3 = section("7 &middot; What happened", f"SPY {'fell' if D['spy_roc_20d'] < 0 else 'rose'} {abs(D['spy_roc_20d'])}% in 20 days, and on {CLOSE_WD} the list {'lagged' if yv(y_list) < yv(y_spy) else 'led' if yv(y_list) > yv(y_spy) else 'matched'} a {'rising' if yv(y_spy) > 0 else 'falling'} SPY.",
              f'<div class="grid">{c_idx}{c_x}{c_vv}</div>', "happened")
 
 # ------------------------------------------------------------------ 4 YOUR BOOK
@@ -821,7 +843,7 @@ for t in HELD_ORDER:
         _clauses.append(f"{t} is an exit case, {'up' if h['unreal_usd'] >= 0 else 'down'} ${abs(h['unreal_usd']):,.0f}")
     else:
         _clauses.append(f"keep {t} with " + ("NO stop order (unprotected)" if h.get("held_sl") is None else f"its stop at {h['held_sl']}"))
-s4 = section("3 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
+s4 = section("5 &middot; Your book", (_cap1("; ".join(_clauses)) + ".") if _clauses else "No positions are held.",
              book_table() + f'<div class="grid">{held_cards}{c_conc}</div>' if HELD else '<div class="card"><p>No positions are held.</p></div>', "book")
 
 # ------------------------------------------------------------------ 5 THE TICKERS
@@ -1045,7 +1067,7 @@ def _funnel_card():
             + strip + counts + table(["Step", "Name", "Result", "Why, from the tool files", "AQE-listed and AQE scores"], rows, "sortable") + notes + "</div>")
 funnel_html = _funnel_card()
 
-s5 = section("2 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
+s5 = section("3 &middot; The funnel and the tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
                                            f"All {n_adv} ADVANCE names pay 1R or more at two targets." if n_adv else "No name is ADVANCE today."),
     funnel_html + chg_html + void + reward + '<div class="stack">' + "".join(tcard(r) for r in usable) + "</div>"
     + (f'<div class="card"><h3>Reward too thin at the buy line: {" and ".join(r["t"] for r in thin)}</h3><ul class="thin">{"".join(thin_li(r) for r in thin)}</ul></div>'
@@ -1221,13 +1243,13 @@ if "swing" in FL:      # PM 2026-11-05: the fourth brief list, shown beside the 
     _sw = FL["swing"]
     cardsB += (f'<div class="card"><h3>Swing pivot top {len(_sw["rows"])}</h3>{list_table("swing")}</div>')
 
-s5b = section("4 &middot; The AQE lists", "Elder, AQE, Detect lens and Swing pivot, one row per name.", cardsB, "lists")
+s5b = section("6 &middot; The AQE lists", "Elder, AQE, Detect lens and Swing pivot, one row per name.", cardsB, "lists")
 # ------------------------------------------------------------------ 6 THE PLAN
 steps = []
 for x in T.get("plan") or []:
     head, body = x.split(": ", 1) if ": " in x else ("", x)
     steps.append(f'<li><span class="when">{E(head)}</span><span>{E(body[0].upper() + body[1:])}</span></li>')
-s6 = section("7 &middot; The plan, Singapore time", f"Nothing can fire before the first hourly close at {FIRST_HOUR_SGT:%H:%M} SGT.",
+s6 = section("4 &middot; The plan, Singapore time", f"Nothing can fire before the first hourly close at {FIRST_HOUR_SGT:%H:%M} SGT.",
              f'<div class="card"><ul class="timeline">{"".join(steps)}</ul></div>', "plan")
 
 # ------------------------------------------------------------------ 7 SCORECARD
@@ -1356,7 +1378,7 @@ section#lists>.card{margin-top:14px}
 """
 page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aegis Daily Cards</title><style>{CSS}{CT.TEMPLATE_CSS}</style></head><body><div class="wrap">
-{top}{s1}{s5}{s4}{s5b}{s2}{s3}{s6}{s7}{s8}
+{top}{s1}{s2}{s5}{s6}{s4}{s5b}{s3}{s7}{s8}
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div><script>
 document.querySelectorAll("table.sortable").forEach(function(t){{var h=t.tHead.rows[0].cells;Array.prototype.forEach.call(h,function(th,i){{th.style.cursor="pointer";th.title="Click to sort";var asc=true;th.addEventListener("click",function(){{
