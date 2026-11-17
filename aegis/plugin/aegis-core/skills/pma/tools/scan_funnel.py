@@ -62,6 +62,46 @@ def _names(x):
     return list(dict.fromkeys(out))
 
 
+LABELS = (("universe", "Universe"), ("seat screens", "Screens"), ("aqe's own scored", "AQE list"), ("nominated", "Nominated"), ("in the room", "In the room"),
+          ("cross-exam", "Cross-examined"), ("slated", "Slated"), ("ratified", "Ratified"), ("qa hold", "After QA"), ("vote", "Voted"))
+
+
+def _label(stage, report):
+    """One short plain word per stage for the strip (PM 2026-11-17: the Valen funnel's shape: one clean chronological strip)."""
+    low = stage.lower()
+    return next((w for k, w in LABELS if low.startswith(k)), stage.split(" (")[0])
+
+
+def _ensure(f):
+    """Older scan_funnel.json files and hand-built dicts carry no step/label: fill them in place, in stage order."""
+    for i, st in enumerate(f["stages"]):
+        st.setdefault("step", i + 1)
+        st.setdefault("label", _label(st["stage"], f.get("report")))
+    for n in f["names"]:
+        if "step" not in n:
+            n["step"] = next((st["step"] for st in f["stages"] if (st.get("short") or st["stage"]) == n.get("stage")), None)
+            n["step_label"] = next((st["label"] for st in f["stages"] if st["step"] == n["step"]), None)
+    return f
+
+
+def strip_cells(f):
+    """-> [(step, label, count)] strictly in the order the stages happen; the count is what moved ON from that stage."""
+    _ensure(f)
+    return [(st["step"], st["label"], st["n_out"]) for st in f["stages"]]
+
+
+def strip_text(f):
+    """The strip as one line: 'Universe 1,066 > Screens 175 > Nominated 38 > ...' (plain, no codes)."""
+    return " > ".join(f"{lab} {'n/a' if c is None else format(c, ',')}" for _, lab, c in strip_cells(f))
+
+
+def fell_rows(f):
+    """Per-name table rows in the SAME order as the strip: names that fell out at step 1.., then the names that reached the end. -> list of names."""
+    _ensure(f)
+    end = len(f["stages"]) + 1
+    return sorted(f["names"], key=lambda n: ((n.get("step") or end) if n["outcome"] == "fell out" else end + 1, n["ticker"]))
+
+
 def build(run, report="A", export_by=None, universe_by=None):
     """-> {report, method, stages: [{stage, n_in, n_out, rule, dropped: [{ticker, reason}]}], names: [{ticker, outcome, stage, reason, aqe}], notes}."""
     export_by, universe_by = export_by or {}, universe_by or {}
@@ -170,22 +210,29 @@ def build(run, report="A", export_by=None, universe_by=None):
         x = AL.listing(t, export_by, universe_by)
         names.append({"ticker": t, "outcome": outcome, "stage": stage, "reason": reason, "aqe_listed": x["aqe_listed"], "aqe_lists": x["aqe_lists"],
                       "aqe_line": x["line"], "aqe_plain": x["plain_line"]})
+    for i, st in enumerate(stages):
+        st["step"] = i + 1
+        st["label"] = _label(st["stage"], report)
+    for n in names:
+        n["step"] = next((st["step"] for st in stages if (st.get("short") or st["stage"]) == n["stage"]), None)
+        n["step_label"] = next((st["label"] for st in stages if st["step"] == n["step"]), None)
     return {"report": report, "method": method, "stages": stages, "names": names, "notes": notes, "disclosure": None}
 
 
 def render_md(f):
-    def cell(v):
-        return "n/a" if v is None else f"{v:,}"
+    """PM 2026-11-17 (Valen funnel shape): ONE strip, strictly chronological left to right with a count on each stage, then the per-name table in the same stage order."""
+    cell = lambda v: "n/a" if v is None else f"{v:,}"
+    cs = strip_cells(f)
     L = [f"### Funnel: {'Committee Standard Scan' if f['report'] == 'A' else 'Committee AQE Quant Scan'}", "",
-         "| Stage | In | Out | What fell out |", "|---|---|---|---|"]
-    for s in f["stages"]:
-        fell = (f"{s['dropped_count']:,} names (count only: the rule is {s['rule']})" if s.get("dropped_count") is not None
-                else (", ".join(f"**{d['ticker']}**" for d in s["dropped"]) or "none") if s.get("dropped") is not None else "none")
-        L.append(f"| {s['stage']} | {cell(s['n_in'])} | {cell(s['n_out'])} | {fell} |")
-    L += ["", "| Ticker | Result | Where and why (from the tool files) | AQE-listed and AQE scores |", "|---|---|---|---|"]
-    for n in f["names"]:
-        where = f"{n['stage']}: {n['reason']}" if n["outcome"] == "fell out" else f"{n['outcome']} ({n['reason']})"
-        L.append(f"| **{n['ticker']}** | {n['outcome']} | {where.replace('|', '/')} | {n['aqe_line']} |")
+         "| " + " | ".join(f"{i}. {lab}" for i, lab, _ in cs) + " |", "|" + "---|" * len(cs), "| " + " | ".join(cell(c) for _, _, c in cs) + " |", "",
+         "What each step does: " + "; ".join(f"{i}. {s['label']}: {s['rule']}" for i, s in zip((c[0] for c in cs), f["stages"])), "",
+         "| Step | Ticker | Result | Why (from the tool files) | AQE-listed and AQE scores |", "|---|---|---|---|---|"]
+    for n in fell_rows(f):
+        fell = n["outcome"] == "fell out"
+        L.append(f"| {n.get('step_label') or 'end'} | **{n['ticker']}** | {'fell out' if fell else n['outcome']} | {(n['reason'] if fell else n['reason'] or 'reached the end').replace('|', '/')} | {n['aqe_line']} |")
+    for st in f["stages"]:
+        if st.get("dropped_count") is not None:
+            L.append(f"\n{st['label']}: {st['dropped_count']:,} names left out by the rule above (count only).")
     for note in f["notes"]:
         L += ["", f"> {note}"]
     if f.get("disclosure"):
@@ -194,20 +241,20 @@ def render_md(f):
 
 
 def html_tables(f):
-    """Two plain tables for a Cards-style page (the compact B/C page): the stage strip and one line per name. Every text is passed through plain_reason()."""
+    """Cards-style page: the one-row strip (steps in order, a count under each) and the per-name table in the same order. Every text passes through plain_reason()."""
     import html
     E = lambda x: html.escape(str(x), quote=True)
     cell = lambda v: "n/a" if v is None else f"{v:,}"
-    strip = "".join(
-        f"<tr><td>{E(plain_reason(st['stage']))}</td><td>{cell(st['n_in'])}</td><td>{cell(st['n_out'])}</td><td>"
-        + (f"{st['dropped_count']:,} names (count only)" if st.get("dropped_count") is not None else (", ".join(f"<b>{E(d['ticker'])}</b>" for d in st["dropped"]) or "none")) + "</td></tr>"
-        for st in f["stages"])
+    cs = strip_cells(f)
+    strip = ("<table><thead><tr>" + "".join(f"<th>{i}. {E(plain_reason(lab))}</th>" for i, lab, _ in cs) + "</tr></thead><tbody><tr>"
+             + "".join(f"<td><b>{cell(c)}</b></td>" for _, _, c in cs) + "</tr></tbody></table>")
+    counts = (f"<p>What each step does: {E(plain_reason('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
+              + "".join(f"<p>{E(plain_reason(st['label']))}: {st['dropped_count']:,} names left out (count only).</p>" for st in f["stages"] if st.get("dropped_count") is not None))
     rows = "".join(
-        f"<tr><td><b>{E(n['ticker'])}</b></td><td>{E(plain_reason(n['outcome']).lower())}</td><td>"
-        + E(plain_reason(f"{n['stage']}: {n['reason']}" if n["outcome"] == "fell out" else f"{n['outcome']} ({n['reason']})")) + f"</td><td>{E(plain_reason(n['aqe_plain']))}</td></tr>"
-        for n in f["names"])
-    return ('<table><thead><tr><th>Stage</th><th>In</th><th>Out</th><th>What fell out</th></tr></thead><tbody>' + strip + "</tbody></table>"
-            '<table><thead><tr><th>Name</th><th>Result</th><th>Where it fell out and why, from the tool files</th><th>AQE-listed and AQE scores</th></tr></thead><tbody>' + rows + "</tbody></table>")
+        f"<tr><td>{E(plain_reason(n.get('step_label') or 'end'))}</td><td><b>{E(n['ticker'])}</b></td><td>{E(plain_reason('fell out' if n['outcome'] == 'fell out' else n['outcome']).lower())}</td><td>"
+        + E(plain_reason(n["reason"] or "reached the end")) + f"</td><td>{E(plain_reason(n['aqe_plain']))}</td></tr>"
+        for n in fell_rows(f))
+    return (strip + counts + '<table><thead><tr><th>Step</th><th>Name</th><th>Result</th><th>Why, from the tool files</th><th>AQE-listed and AQE scores</th></tr></thead><tbody>' + rows + "</tbody></table>")
 
 
 def main(argv=None):
