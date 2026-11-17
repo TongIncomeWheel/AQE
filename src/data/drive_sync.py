@@ -732,6 +732,15 @@ _FIELD_GLOSSARY.update({
                 "(entry - low) / ATR14, within_cap = atr_multiple <= 1 (Valen: a stop more than one daily range "
                 "away means skip the trade), fit = GOOD (lod_dist_atr <= 0.70) / OK / TOO_FAR / NA. A reading "
                 "of the arithmetic, never a gate and never a size (src/valen/entry.py).",
+    "themes": "Valen theme layer (PM 2026-11-17): the AQE thematic baskets this name belongs to, each {name, bullish, sessions_on, "
+              "rs_1m, leading}. bullish = the equal-weight basket index closes above its EMA9, EMA21 and SMA50; sessions_on = consecutive "
+              "sessions the flag has held (negative = off); rs_1m = 0-100 percentile of the basket's 21-session return across baskets; "
+              "leading = bullish AND rs_1m >= 80. AQE's own formulas (src/valen/themes.py DEFINITIONS). null = the theme layer was not read "
+              "this run; [] = read, in no basket. A reading, never a gate.",
+    "in_leading_theme": "True when any basket containing this name is leading (bullish AND 1-month strength 80 or more); null = not read.",
+    "dryup_45": "Of the last 10 sessions, how many traded 45% or more under the 50-day average volume (Valen's volume-suite mark).",
+    "dryup_60": "Of the last 10 sessions, how many traded 60% or more under the 50-day average volume.",
+    "dryup_window": "The number of sessions dryup_45 / dryup_60 count over (10).",
     "unr_summary": "Longlist + Elder names by U&R status on the last completed trading day: "
                    "`met` and `setup` ticker lists, `as_of`, and how many were checked.",
     # Stage Weather at ticker level (docs/AQE_STAGE_WEATHER.md, 2026-11-10). Readings only, never a gate.

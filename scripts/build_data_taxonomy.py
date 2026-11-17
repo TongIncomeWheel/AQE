@@ -1456,6 +1456,17 @@ SCORE_TREE = [
     R("stop_fit", "", "leaf", "dict", "",
       "Valen's stop-fit test on the last completed bar: entry (close), stop (one tick under the low), atr_multiple, lod_dist_atr, within_cap, fit GOOD|OK|TOO_FAR|NA (a reading, never a gate)",
       "valen/entry.py:entry_last_day", ""),
+    R("themes", "", "leaf", "list", "",
+      "AQE thematic baskets this name belongs to, each with bullish flag, sessions_on, rs_1m, leading (Valen theme layer; null = not read)",
+      "valen/themes.py:theme_fields", ""),
+    R("in_leading_theme", "themes", "leaf", "boolean", "",
+      "Any basket containing the name is bullish AND 1-month strength >= 80 (null = theme layer not read)", "valen/themes.py:theme_fields", ""),
+    R("dryup_45", "", "leaf", "count", "",
+      "Of the last 10 sessions, how many traded 45%+ under the 50-day average volume", "valen/themes.py:dryup_counts", ""),
+    R("dryup_60", "dryup_45", "leaf", "count", "",
+      "Of the last 10 sessions, how many traded 60%+ under the 50-day average volume", "valen/themes.py:dryup_counts", ""),
+    R("dryup_window", "dryup_45", "leaf", "count", "",
+      "Sessions the dry-up counts cover (10)", "valen/themes.py:dryup_counts", ""),
     R("unr_summary", "", "leaf", "dict", "",
       "Longlist + Elder names by U&R status on the last completed trading day: "
       "`met` / `setup` ticker lists, as_of, how many were checked",
@@ -1926,6 +1937,8 @@ def classify_export_location(name: str) -> str:
         return "qs{} block"
     if name in ("unr_status", "unr_note", "unr_as_of", "unr_level"):
         return "daily_list[] + held_positions[] (U&R last-day column)"
+    if name in ("themes", "in_leading_theme", "dryup_45", "dryup_60", "dryup_window"):
+        return "daily_list[] + held_positions[] (Valen theme layer / dry-up counts)"
     if name == "stop_fit":
         return "daily_list[] + held_positions[] (Valen stop-fit, last completed bar)"
     if name == "unr_summary":
