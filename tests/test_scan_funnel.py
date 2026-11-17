@@ -56,7 +56,14 @@ def test_standard_scan_funnel_counts_every_stage_and_tags_every_name_with_its_aq
     assert "AQE score not available" in by["B"]["aqe_line"] and "AQE score not available" in by["H"]["aqe_plain"]       # a name in neither file: loud, never blank
     assert f["disclosure"] is None                                                                                  # PM 2026-11-16: no disclosure line (the seats keep every AQE field)
     md = SF.render_md(f)
-    assert "| Stage | In | Out | What fell out |" in md and "**B**" in md and "997 names (count only" in md
+    # PM 2026-11-17 (Valen funnel shape): one strip, chronological, a count per step, then the names in the same step order
+    cs = SF.strip_cells(f)
+    assert [lab for _, lab, _ in cs] == ["Universe", "Screens", "Nominated", "In the room", "Cross-examined", "Slated", "Ratified", "After QA"][:len(cs)] and [i for i, _, _ in cs] == list(range(1, len(cs) + 1))
+    assert cs[0][2] == 1000 and cs[1][2] == 3 and SF.strip_text(f).startswith("Universe 1,000 > Screens 3 > Nominated 2")
+    assert "| 1. Universe | 2. Screens |" in md and "**B**" in md and "997 names left out" in md
+    order = [n["ticker"] for n in SF.fell_rows(f)]
+    steps = [n["step"] for n in SF.fell_rows(f) if n["outcome"] == "fell out"]
+    assert steps == sorted(steps) and set(order) == {n["ticker"] for n in f["names"]}
 
 
 def test_quant_scan_funnel_starts_from_aqes_own_list_and_takes_nothing_from_a(tmp_path):
@@ -101,7 +108,7 @@ def test_the_quant_scan_page_carries_the_funnel_tables_and_passes_the_html_gate(
     f = SF.build(str(tmp_path), "C", eb, {})
     cons = [{"ticker": "A", "verdict": "ADVANCE", "conviction": 4, "split": {"support": ["a"], "oppose": [], "abstain": []}}]
     page = CR.render("C", "2026-11-16", cons, None, f)
-    assert "The funnel" in page and "AQE&#x27;s own scored list" in page.replace("'", "&#x27;") and "AQE-listed" in page and 'Scorecard' in page
+    assert "The funnel" in page and "1. AQE list" in page and "AQE-listed" in page and 'Scorecard' in page
     out = tmp_path / "c.html"; out.write_text(page)
     fails, _ = _gate().check_cards_html(str(out))
     assert not fails, fails
