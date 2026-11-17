@@ -5,3 +5,7 @@
 - Crown DEGRADED (declared by the nightly); positioning_cot as of 2026-11-10 (weekly cadence).
 - DECIDE: QA held HNGE and HUM; floor2 14 messages + ratify2 7 forms, all hashes verified. ratify-count: 0 AGREED; CONTESTED 3 (CHD ADVANCE; CHYM, LFST hold-for-conditions); DROPPED 2 (HUM, HNGE). Rationale/adopt/final/position: no gaps.
 - SCORECARD: graded 5 runs (10-16 Nov), asof 16 Nov close; 4 rows refused (ledger reference price vs close mismatch), 1 ungraded; declared.
+
+CARDS FALLBACK: the v3 page was NOT published (pma_cards_v3.py exited 1:                                                 ~~~~^^^^^^^^^^^^^^^^^^^^ KeyError: 'ma_panel_refresh'). The v2 page was published instead.
+- 17 Nov PM-ordered forced rerun #148 (new code): export good (stage_market live, themes, stop_fit, 1,658-name universe, 500K floor); tail steps killed at the 75-min subprocess cap (status partial, ENG fixing and a re-dispatch follows). Interim Cards rendered against this morning's healthy aqe_last_run marker because Cards v3 reads a key (ma_panel_refresh) the partial marker lacks; re-render on the full marker when the re-dispatch finishes.
+- FINAL 17 Nov (after forced rerun #149, status success, finished 18:43 SGT): brief, aqe_listing, scan_funnel and stage_weather regenerated from the final export; gate 0 FAIL; Cards v3 rendered clean on the FULL aqe_last_run marker (fallback false), supersedes the interim marker note above; levels rebuilt (37 rows) and republished. Scorecard still refuses 4 rows (declared).
