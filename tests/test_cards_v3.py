@@ -575,11 +575,11 @@ def test_v3_prints_the_funnel_and_the_aqe_listing_for_report_a(run):
 
 
 def test_the_sections_run_in_valens_top_down_order_and_none_is_missing(run):
-    """PM 2026-11-17 ('follow Valen's flow and structure'): market and weather, then where the money is (sector, theme, stage), then the funnel and the tickers, then the plan, the book, the AQE lists, what happened,
-    the scorecard, read with care. Numbered 1 to 9 in document order; restyle, never delete a section."""
+    """PM ruling 2026-11-17 (replaces the first Valen-flow order): 1 Macro and weather, 2 What happened, 3 Sector and theme strength, 4 Your book, 5 The plan, 6 The funnel and the tickers, 7 The AQE lists,
+    8 Scorecard, 9 Read with care. Numbered 1 to 9 in document order; ids unchanged; restyle, never delete a section."""
     h = render(run)
     order = [m.group(1) for m in re.finditer(r'<section id="([a-z]+)">', h)]
-    assert order == ["macro", "sectors", "tickers", "plan", "book", "lists", "happened", "scorecard", "care"], order
+    assert order == ["macro", "happened", "sectors", "book", "plan", "tickers", "lists", "scorecard", "care"], order
     kick = re.findall(r'<div class="kicker">(\d+) &middot; ', h)
     assert kick == [str(i) for i in range(1, 10)], kick
 
