@@ -562,7 +562,7 @@ def test_v3_prints_the_funnel_and_the_aqe_listing_for_report_a(run):
     """Conductor 2026-11-16: with scan_funnel.json in the run dir the Cards print the funnel (stage strip + one line per name with its AQE tag), and every hold row carries
     its AQE-listed status and scores; the wu export, when present, serves names outside the daily list."""
     f = {"report": "A", "method": "whole_universe", "disclosure": None, "notes": [],
-         "stages": [{"stage": "Universe rows scored (market cap $2B+, 10-day volume 1.5M+, NYSE or NASDAQ)", "n_in": 1102, "n_out": 1102, "rule": "r", "dropped": []},
+         "stages": [{"stage": "Universe rows scored (market cap $2B+, 10-day volume 500K+, NYSE or NASDAQ)", "n_in": 1102, "n_out": 1102, "rule": "r", "dropped": []},
                     {"stage": "Seat screens, union", "n_in": 1102, "n_out": 118, "rule": "each seat's own code screen", "dropped": [], "dropped_count": 984},
                     {"stage": "Cross-examination (survivors move on)", "n_in": 3, "n_out": 1, "rule": "x", "dropped": [{"ticker": "ZZZ", "reason": "oneil: no base (C16)"}]}],
          "names": [{"ticker": "ZZZ", "outcome": "fell out", "stage": "cross-examination", "reason": "oneil: no base (C16)", "aqe_listed": False, "aqe_lists": "none",

@@ -5,7 +5,7 @@ Purpose: prove whether the committee WITHOUT the AQE gate has more edge than AQE
 
 | Report | Display name | Candidate pool | Live |
 |---|---|---|---|
-| A | Committee Standard Scan | the whole screened universe (mcap >= $2B, 10-day vol >= 1.5M, NYSE/NASDAQ) via seven per-seat code screens, top 25 per seat; no AQE gate, no AQE door; nominations cap 6 | yes |
+| A | Committee Standard Scan | the whole screened universe (mcap >= $2B, 10-day vol >= 500K, NYSE/NASDAQ) via seven per-seat code screens, top 25 per seat; no AQE gate, no AQE door; nominations cap 6 | yes |
 | C | Committee AQE Quant Scan | AQE's OWN scored list (`daily_list`); only aqe-quant nominates (cap 6); all 8 seats vote with the AQE indicators; takes NOTHING from A | no |
 
 The seats KEEP every AQE field in both scans (the committee is free to use AQE filters, scores and data); the only change to the committee is the candidate pool.

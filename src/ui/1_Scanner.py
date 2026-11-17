@@ -564,7 +564,7 @@ with st.sidebar:
         st.divider()
         st.caption(
             "**Auto-refresh**: screens the full US equity market — mcap ≥ $2B, "
-            "10-day avg volume ≥ 1.5M, US primary listing (NASDAQ/NYSE). "
+            "10-day avg volume ≥ 500K, US primary listing (NASDAQ/NYSE). "
             "Size + liquidity + listing only — **no trend filter**, so a "
             "pulled-back name stays eligible and each list applies its own "
             "trend view. Runs automatically at 06:00 SGT (Tue–Sat). Use the "
