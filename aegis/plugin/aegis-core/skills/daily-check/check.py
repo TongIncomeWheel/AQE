@@ -870,6 +870,15 @@ def check_data(output_dir, run_yaml=DEFAULT_RUN_YAML, journal_dir=None, broker_s
             if r.get("on_longlist") is None or r.get("on_elder") is None:
                 fails.append(f"export row {r.get('ticker')} lacks on_longlist/on_elder flags"); break
         notes.append(f"export: {len(daily)} rows, {len(EX.get('held_positions') or [])} held ({hps}), data_quality flagged {dq.get('flagged_count')}")
+    # --- the Stage 1-4 weather layer (PM 2026-11-17): loud when the stamp did not run or failed; never a blocker (a stage is a reading) ---
+    if EX is not None:
+        _ss = EX.get("stage_status")
+        if _ss is None and "stage_market" not in EX:
+            notes.append("WARN stage weather: this export carries no stage_status / stage_market (the layer is not stamped); the brief must say so in one line")
+        elif isinstance(_ss, dict) and _ss.get("status") != "live":
+            notes.append(f"WARN stage weather: stage_status is {_ss.get('status')!r} ({_ss.get('reason')}); the brief must say so in one line")
+        else:
+            notes.append(f"stage weather: live, {(_ss or {}).get('read', '?')} names read, market {(EX.get('stage_market') or {}).get('status')}")
     # --- the book and its stops (PM 2026-11-02) ---
     jd = journal_dir or os.path.join(os.path.dirname(os.path.abspath(od)), "data", "journal")
     bf, bn = check_book(jd, run_date, EX, broker_stops)

@@ -90,7 +90,10 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     # in cmd_packets, fails loudly), (2) it isn't in any menu today, so it never round-trips through
     # _slice. "qs" is undocumented in aegis/contracts/*.schema.json despite being live in the daily
     # export -- schema drift, flagged separately, not blocking.
-    "qs", "on_qs"]
+    "qs", "on_qs",
+    # STAGE WEATHER (PM 2026-11-17, "Stage 1-4 builds"): the Weinstein stage of the ticker, its group (sector ETF) and the market, stamped on every export row by src/stages.
+    # Served to the seats whose canon is the four-stage cycle (menus: minervini C2/C3, oneil C2, wyckoff accumulation/distribution, livermore). A reading, never a gate.
+    "stage", "stage_name", "stage_candidate", "stage_weeks", "stage_transition", "stage2_confirmed", "trend_template", "trend_template_met", "stage_detail"]
 
 # Report C only (PM 2026-11-05): the AQE-quant seat reads the gate booleans and the pipeline rank, which the A trim has never carried.
 # Added under the C flag alone so a Report A candidate set stays byte-identical.
@@ -3827,6 +3830,25 @@ def cmd_gate(a):
                     _c = rw.get("counts") or {}
                     chk(all(f"{_c.get(k)} {w}" in brief for k, w in (("new", "NEW"), ("remain", "REMAIN"), ("left", "LEFT"))), "Q6r",
                         f"the brief section 4 carries the count line ({_c.get('new')} NEW, {_c.get('remain')} REMAIN, {_c.get('left')} LEFT)")
+    # Q-SW: STAGE WEATHER (PM 2026-11-17, "Stage 1-4 builds"). When the export carries the layer, the brief carries the code-built stage_weather.md (market, group and a row for every ADVANCE /
+    # HOLD name: stage, weeks, group stage, market stage, Trend Template); when the layer is missing or unreadable the brief says so in one loud line. An export from before the layer skips this.
+    if getattr(a, "export", None) and os.path.exists(a.export):
+        try:
+            _exg = json.load(open(a.export, encoding="utf-8"))
+        except ValueError:
+            _exg = {}
+        if "stage_market" in _exg or "stage_status" in _exg:
+            import stage_brief as _SB
+            _sok, _swhy = _SB.available(_exg)
+            if _sok:
+                chk(_SB.HEADING in brief_full, "Q-SW", "the brief carries the Stage weather section (### Stage weather, pasted from stage_weather.md)")
+                _sat = brief_full.find(_SB.HEADER)
+                chk(_sat >= 0, "Q-SW", f"the brief carries the stage table by name ({_SB.HEADER})")
+                if _sat >= 0:
+                    _miss = [c["ticker"] for c in cons if c["verdict"] in ("ADVANCE", "HOLD-FOR-CONDITIONS") and f"**{c['ticker']}**" not in brief_full[_sat:]]
+                    chk(not _miss, "Q-SW", f"the stage table has a row for every ADVANCE / HOLD name (missing: {_miss or 'none'})")
+            else:
+                chk("Stage weather unavailable" in brief_full, "Q-SW", f"the stage layer is unavailable ({_swhy}) and the brief says so in one line (Stage weather unavailable: ...)")
     # ---- Q-EXEC: EXECUTIVE FORM (PM ruling 2026-09-05 -- tables and one-liners, never prose;
     # consensus view, never who voted what). Mechanical presence/absence checks only.
     body, _, appendix = brief.partition("APPENDIX A")

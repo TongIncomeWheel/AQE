@@ -1,6 +1,6 @@
 # Stage Weather — the four-stage market cycle
 
-**Status:** built 2026-11-10 on branch `claude/intelligent-hopper-m78oal`, not yet on `main`.
+**Status:** built 2026-11-10; wired into the committee and merged to `main` 2026-11-17.
 Phase 1 = market / sector / breadth artifact. Phase 2 (same day, PM: "show market, sector and ticker level") =
 ticker-level columns on every export row + the committee canon's own tests. The `IMPL_*` thresholds need
 **PM sign-off** before merge (§6).
@@ -124,15 +124,19 @@ Page: **Stage Weather** (`src/ui/pages/9_Stage_Weather.py`), plain tables, one-c
 - **Not a `_REQUIRED_FIELDS` key.** If the stamp fails the export still ships; `stage_status: error` says nothing
   was read. Voice packets don't carry the columns yet (§6.3).
 
-## 6. Open decisions for the PM
+## 6. Decisions (PM 2026-11-17: "Stage 1-4 builds"; defaults chosen by the engineer, the PM may overrule)
 
-1. **Sign off the `IMPL_*` numbers** in `src/stages/spec.py`: flat band ±0.5% over 4 weeks, 2-week confirmation,
-   ±3-pt breadth band. They were chosen once and documented, not fitted.
-2. ~~Phase 2: ticker-level columns~~ — built (§2c).
-3. **Committee wiring:** the data-steward fetches `aqe_stage_weather.json` beside the other macro artifacts
-   (it is already published to `aegis/output`); whether a seat reads it is the committee's design call.
-4. **Whole-market breadth:** run the same classifier over `ma_panel.parquet` (~2000 names, VALEN breadth's source)
-   for a true market Stage 2 share. This needs weekly bars from that panel.
+1. **`IMPL_*` numbers** in `src/stages/spec.py` (flat band +-0.5% over 4 weeks, 2-week confirmation, +-3-pt breadth band): shipped as documented, chosen once, not fitted.
+2. ~~Phase 2: ticker-level columns~~ - built (section 2c).
+3. **Committee wiring - BUILT, three levels.** MARKET and GROUP: the export's `stage_market` block prints in the brief (`stage_brief.py` -> `stage_weather.md`, pasted verbatim after the funnel strip)
+   and as the first card of the Cards sector section (SPY and QQQ with distribution days, the 11 sector ETFs, breadth). TICKER: the stage columns reach the seats' packets and print as one
+   stage line on every ticker card and hold row. **Seats served the stage** (their canon IS the four-stage cycle): minervini (C2 stage, C3 Trend Template) and oneil (C2 market top) get every
+   stage column plus the group's and the market's stage; wyckoff (accumulation / distribution = stages 1 and 3) and livermore get stage, weeks in stage, transition and the group's and market's
+   stage. No other seat is served it, no seat is told to obey it. A stage is a reading, never a gate, a size or a disposition. The brief gate (Q-SW) fails a brief without the section (or
+   without its one-line "Stage weather unavailable" when the layer is missing); `check.py data` WARNs when the export's `stage_status` is not live.
+4. **Distribution-day line: FOUR in 25 sessions** - the committee canon's own number (O'Neil C2, `CANON_DD_COUNT`), not five. The count is always printed beside the line, so five or eight reads for
+   itself. Changing it is a one-number edit in `src/stages/spec.py`, but it would stop matching the locked canon.
+5. **Whole-market breadth** (run the classifier over `ma_panel.parquet`): not built; breadth stays labelled as AQE's own weekly panel.
 
 ## 7. First real read (SPY/QQQ from FMP, session 2026-11-09)
 
