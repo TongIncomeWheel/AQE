@@ -75,3 +75,27 @@ def test_panel_builder_adds_the_valen_names_and_etfs_as_context_only():
     from src.data import panel_builder as PB
     src = inspect.getsource(PB)
     assert "_vb.constituents(_act)" in src and "_vb.group_etfs(_act)" in src and 'status"] == "valen"' in src
+
+
+def test_theme_leaders_rotation_and_the_in_theme_tick_follow_the_active_set(tmp_path, monkeypatch):
+    """PM 2026-11-17: do not leave two basket sets on screen. groups.compute_groups and setups_daily.in_theme_tickers read the active set (Valen's, else AQE's 35)."""
+    from src.valen import groups as G
+    from src.valen import setups_daily as SD
+    d = doc(n=96, per=4, groups=0)
+    path = write(tmp_path, d)
+    monkeypatch.setattr(VB, "BASKETS_FILE", path)
+    panel = make_panel(d)
+    spy = panel[panel["ticker"] == "T0000"].copy()
+    spy["ticker"] = "SPY"
+    panel = pd.concat([panel, spy])
+    g = G.compute_groups(panel)
+    assert g["status"] == "OK" and len(g["groups"]) == 96 and {x["name"] for x in g["groups"]} == set(d["baskets"])
+    assert g["groups"][0]["sector"] in ("Growth", "Defensive", "Commodities") and g["themes"]["basket_set"]["status"] == "valen"
+    leaders = g["theme_leaders"]["one_month"][:5]
+    tickers = SD.in_theme_tickers({"groups": g})
+    assert tickers and all(t in {x for n in d["baskets"] for x in d["baskets"][n]["constituents"]} for t in tickers)       # Valen's tickers, not the old 35's
+    assert any(t in tickers for t in d["baskets"][leaders[0]]["constituents"])
+    monkeypatch.setattr(VB, "BASKETS_FILE", tmp_path / "gone.json")                                                 # no file: back to the 35, loudly
+    assert VB.load()["status"] == "fallback_aqe35" and len(VB.load()["baskets"]) == 35
+    g2 = G.compute_groups(panel)                                       # this panel holds none of the 35's names: the groups read says UNAVAILABLE, not Valen's rows
+    assert g2["status"] == "UNAVAILABLE" and not g2["groups"]

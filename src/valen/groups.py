@@ -98,8 +98,10 @@ def compute_groups(panel_daily: pd.DataFrame) -> dict:
     NO_DATA handling; `status` names how many of the 35 came back.
     """
     try:
+        from . import baskets as _vb
+        active = _vb.load()
         sector_grades = grade_all_sectors(panel_daily)
-        basket_grades = grade_thematic_baskets(panel_daily, sector_grades)
+        basket_grades = grade_thematic_baskets(panel_daily, sector_grades, baskets=active["baskets"])
     except Exception as exc:  # noqa: BLE001
         return {"status": "UNAVAILABLE", "reason": str(exc), "groups": [],
                 "theme_leaders": {}, "rotation": []}
@@ -108,7 +110,7 @@ def compute_groups(panel_daily: pd.DataFrame) -> dict:
     for name, g in basket_grades.items():
         if g.get("grade") == "NO_DATA" or g.get("roc5") is None:
             continue
-        info = THEMATIC_BASKETS.get(name) or {}
+        info = active["baskets"].get(name) or {}
         constituents = g.get("constituents_used") or []
         since_open = _since_open_pct(panel_daily, constituents)
         pct_off_high = _pct_off_52w_high(panel_daily, constituents)
@@ -116,6 +118,7 @@ def compute_groups(panel_daily: pd.DataFrame) -> dict:
             "name": name,
             "display_name": name.replace("_", " "),
             "parent_gics": info.get("parent_gics_etf"),
+            "sector": info.get("sector"),
             "since_open_pct": since_open,
             "ret_1w_pct": g.get("roc5"),
             "ret_1m_pct": g.get("roc20"),

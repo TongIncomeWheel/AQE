@@ -232,7 +232,7 @@ if gr.get("status") == "OK":
         rot_df = pd.DataFrame([
             {"Group": r["display_name"], "Thrust": r.get("thrust"),
              "1 Month %": r.get("ret_1m_pct"), "% off 52w high": r.get("pct_off_52w_high"),
-             "State": r.get("rotation_state"), "Parent sector": r.get("parent_gics")}
+             "State": r.get("rotation_state"), "Sector": r.get("sector") or r.get("parent_gics")}
             for r in rot_rows
         ])
         table_with_copy(rot_df, key="valen_rotation")

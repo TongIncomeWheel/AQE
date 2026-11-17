@@ -406,7 +406,7 @@ def _breadth(sub: pd.DataFrame) -> tuple[float | None, int, int]:
 
 
 def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
-                           min_constituents: int = 2) -> dict[str, dict]:
+                           min_constituents: int = 2, baskets: dict | None = None) -> dict[str, dict]:
     """Grade each thematic basket from its constituents' equal-weight price index.
 
     Reuses grade_sector_etf on a normalized equal-weight index of the
@@ -425,6 +425,9 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
     value survives as `parent_capped_grade`; nothing is hidden, it is just no
     longer the headline.
 
+    `baskets` (PM 2026-11-17): the basket set to grade, same shape as THEMATIC_BASKETS ({name: {"constituents": [...], "parent_gics_etf": optional}}); the
+    default is AQE's own 35. The Valen Theme Leaders / Rotation tables pass the ACTIVE set (src/valen/baskets.py); SRM's own export grading never does.
+
     Returns {basket: {grade, index_grade, parent_capped_grade, grade_path,
     breadth_pct, breadth_note, parent_gics, parent_grade, roc20, roc5,
     divergence, above_sma20, coverage, constituents_used, rrg_rs_ratio,
@@ -438,8 +441,8 @@ def grade_thematic_baskets(panel_daily: pd.DataFrame, sector_grades: dict,
     except Exception:  # noqa: BLE001
         piv = None
 
-    for name, info in THEMATIC_BASKETS.items():
-        parent = info["parent_gics_etf"]
+    for name, info in (baskets if baskets is not None else THEMATIC_BASKETS).items():
+        parent = info.get("parent_gics_etf")
         cons = info["constituents"]
         parent_grade = (sector_grades.get(parent) or {}).get("grade")
         present = [t for t in cons if piv is not None and t in piv.columns]
