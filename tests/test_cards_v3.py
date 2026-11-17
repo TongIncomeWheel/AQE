@@ -572,3 +572,33 @@ def test_v3_prints_the_funnel_and_the_aqe_listing_for_report_a(run):
     s = text(h)
     assert "Committee Standard Scan funnel" in s and "984 names" in s and "ZZZ" in s and "oneil: no base" in s and "no base (C16)" not in s
     assert "AQE-listed and AQE scores" in s                                                       # the hold table's AQE column
+
+
+def test_the_sections_run_in_valens_top_down_order_and_none_is_missing(run):
+    """PM 2026-11-17 ('follow Valen's flow and structure'): market and weather, then where the money is (sector, theme, stage), then the funnel and the tickers, then the plan, the book, the AQE lists, what happened,
+    the scorecard, read with care. Numbered 1 to 9 in document order; restyle, never delete a section."""
+    h = render(run)
+    order = [m.group(1) for m in re.finditer(r'<section id="([a-z]+)">', h)]
+    assert order == ["macro", "sectors", "tickers", "plan", "book", "lists", "happened", "scorecard", "care"], order
+    kick = re.findall(r'<div class="kicker">(\d+) &middot; ', h)
+    assert kick == [str(i) for i in range(1, 10)], kick
+
+
+def test_the_theme_card_reads_valens_baskets_when_the_artifact_has_them_and_the_35_otherwise(run):
+    """PM 2026-11-17: follow Valen's baskets. With a loaded Valen set the card says so; without it the older card stands in."""
+    assert "theme baskets grade Deploy" in text(render(run))                                  # fixture has no Valen block: the 35's card
+    def valen(o):
+        o.setdefault("groups", {})["themes"] = {"status": "OK", "as_of": "2026-11-04", "basket_set": {"status": "valen", "n": 2}, "summary": {"baskets": 2, "bullish": 1, "leading": 1},
+            "baskets": [{"name": "AI", "display_name": "AI", "sector": "Growth", "bullish": True, "sessions_on": 12, "leading": True, "rs_1m": 95, "thrust": 80, "ret_pct": {"1w": 3.2, "1m": 9.1},
+                         "members": ["NVDA"]},
+                        {"name": "Coal", "display_name": "Coal", "sector": "Commodities", "bullish": False, "sessions_on": -4, "leading": False, "rs_1m": 20, "thrust": 10, "ret_pct": {"1w": -1.0, "1m": -5.0}, "members": []}]}
+    edit(run, "ref/valen_dashboard.json", valen)
+    t = text(render(run))
+    assert "1 of Valen&rsquo;s 2 theme baskets are bullish and 1 are leading" in t and "bullish 12 sessions" in t and "off 4 sessions" in t and "1-month strength" in t
+    assert "theme baskets grade Deploy" not in t
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("chk_ord", ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "daily-check" / "check.py")
+    ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
+    out = run / "valen_cards.html"; out.write_text(render(run), encoding="utf-8")
+    fails, _ = ck.check_cards_html(str(out))
+    assert not fails, fails                                                                     # the plain-words gate passes with the Valen card on the page
