@@ -183,3 +183,13 @@ def test_the_actionable_block_has_no_near_miss_table_when_there_is_none_and_says
     eb = _synthetic(tmp_path)
     h = SF.html_actionable(SF.build(str(tmp_path), "A", eb, {}))
     assert "<b>Near misses:</b> none" in h and "Near misses a CIO can act on" not in h and "Audit: names that fell out (2)" in h
+
+
+def test_an_older_funnel_file_without_near_misses_says_not_computed_never_none(tmp_path):
+    eb = _synthetic(tmp_path)
+    f = SF.build(str(tmp_path), "A", eb, {})
+    del f["near_misses"]
+    for n in f["names"]:
+        n.pop("short", None)
+    h = SF.html_actionable(f)
+    assert "not computed in this scan_funnel.json" in h and "<b>Near misses:</b> none" not in h and "Audit: names that fell out" in h

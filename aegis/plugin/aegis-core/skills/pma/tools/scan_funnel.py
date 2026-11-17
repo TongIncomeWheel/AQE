@@ -299,8 +299,10 @@ def html_actionable(f, fx=None):
     does = f"<p>What each step does: {E(fx('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
     counted = "".join(f"<p>{E(fx(st['label']))}: {st['dropped_count']:,} names were not carried forward. They are counted here, not listed.</p>"
                       for st in f["stages"] if st.get("dropped_count") is not None)
-    near = f.get("near_misses") or []
-    if near:
+    near = f.get("near_misses")
+    if near is None:                                                  # an older scan_funnel.json: the near misses were never computed, which is NOT the same as none
+        nm = "<p><b>Near misses:</b> not computed in this scan_funnel.json. Rebuild it with scan_funnel.py.</p>"
+    elif near:
         nm = ("<p><b>Near misses a CIO can act on</b></p>"
               + _tbl(["Name", "Where it stopped", "What happened", "What would clear it", "AQE list"],
                      [[f"<b>{E(n['ticker'])}</b>", E(fx(n["where"])), E(fx(n["what"])), E(fx(n["clears"])), E(fx(_aqe_short(n.get("aqe_lists"))))] for n in near]))
