@@ -1,0 +1,23 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the September high, a fresh 52-week closing high"
+   },
+   "wrong_if": "A fresh high that fails and closes more than 1 ATR back under it (C20, my translation), or a one-day 2-ATR fade (C7, my translation).",
+   "market_void": null,
+   "reason": "Upward Trend analogue: `mp` 83.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING; `subcomponents.structure.base_score` 15.0 a proper base; `flow` 93.4. W HH/HL. Caution: `subcomponents.mp.adx_val` 23.19, D HH but LL; one name is no group call (C14)."
+  }
+ ],
+ "declarations": [
+  "Translation (C7, C18-C20): every ATR margin is my own translation via atr_14d, never Livermore's literal numbers. fill_difficulty NOT_SERVED; inside information NEVER (C11)."
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "a completed hourly candle closes above yesterday's high"},
+   "wrong_if": "`flow` falls under 80 with `subcomponents.flow.accum_score` dropping, or `mp_accel_state` turns DECELERATING",
+   "market_void": null,
+   "reason": "`flow` 93.4 from `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5; `mp_accel_state` 1 ACCELERATING on `subcomponents.pipe.pipe_tier` 2 B-STRONG (R8); `subcomponents.structure.rs_accel` 11.22 (R5). Caution: `subcomponents.mp.adx_val` 23.19 is a weak trend."
+  }
+ ],
+ "declarations": [
+  "R1 observed: no bracket field read or used."
+ ]
+}

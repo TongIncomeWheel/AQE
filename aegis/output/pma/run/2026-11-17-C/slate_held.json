@@ -1,0 +1,74 @@
+{
+ "date": "2026-11-17",
+ "chair": "chair",
+ "board_sha256": "c0b0d4c7c94f60831c318568f5789c716f5bf36a09e125bb56269344e5f6679b",
+ "decision_sha256": "977dff48a6c2c441b2b92643637fe976e5e1d3b0c592031a0e8a6797edb61b55",
+ "tickets": [
+  {
+   "ticker": "MBGL",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high, on volume, into a confirmed uptrend.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high, on volume, into a confirmed uptrend."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Daily close below ma50 19.14 on heavy volume (R8), or the next new high prints on day_vol under 1.0 (C25).\"",
+   "horizon_sessions": 10,
+   "why_agreed": "oneil: \"`structure` 89.5 with `subcomponents.structure.base_score` 12.0 over `subcomponents.structure.b\" | livermore: \"Upward Trend analogue: `mp` 97.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING; `flow` \" | elder-lens: \"Weekly tide first (C21): W close above EMA9, 9>21; `subcomponents.structure.wk_score` 15.0 = we\"",
+   "dissent": [
+    {
+     "voice": "minervini",
+     "why": "Trend Template fails (C3): ma200 None, ma50 below ma100. `structure` 89.5 and `flow` 93.4 are real strength, but `subcomponents.bq.bq_range_tight` 0.0 and `subcomponents.energy.squeeze_score` 0.0 show no contraction and D is 19.1% past the swing high: a chase (C5)."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "CHYM",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high, on volume, into a confirmed uptrend.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high, on volume, into a confirmed uptrend."
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 5,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Daily close below ma50 29.94 on heavy volume (R8), or follow-through to a new high on day_vol under 1.0 (C25).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"`subcomponents.structure.base_score` 15.0 over `subcomponents.structure.base_days` 17.0 is a fu\" | minervini: \"Template passes on proxies; `subcomponents.structure.base_score` 15.0 is a formed base and `flo\" | livermore: \"Upward Trend analogue: `mp` 83.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING; `subcom\"",
+   "dissent": [
+    {
+     "voice": "raschke",
+     "why": "No setup in my taxonomy (C2): `subcomponents.mp.adx_val` 23.19 and `subcomponents.mp.mp_adx_score` 12.0 fail the Holy Grail gate; `subcomponents.energy.squeeze_score` 0.0 means no contraction to break. D 10.4% over the swing high is the expansion bar (C19)."
+    }
+   ],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  }
+ ],
+ "market_kill": null,
+ "hold_round": true
+}

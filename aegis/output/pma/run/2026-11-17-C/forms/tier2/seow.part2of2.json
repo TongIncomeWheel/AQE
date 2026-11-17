@@ -1,0 +1,20 @@
+{
+ "voice": "seow",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high; if not taken, trail it to each new prior-day high (C27, R15)."},
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or price trading under the red bar's low before the buy stop fills (C14 colour-flip proxy).",
+   "market_void": null,
+   "reason": "POSITION system: D 10.4% over last swing high (C26), W HH/HL so C21 house rule passes. `flow` 93.4 and `elder` 10.0 with `mp_accel_state` 1 accelerating confirm; caution: `subcomponents.flow.cmf` 0.13 thin COM, `energy` 68.1, and D last bar red."
+  }
+ ],
+ "declarations": [
+  "Part 2 of 2: answers is [] by form; no refutation pairs name me as author.",
+  "R1 honoured: no bracket field is a reason. Red daily bar read via the C14/R15 colour-flip proxy, stated as a caution."
+ ]
+}

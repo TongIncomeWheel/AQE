@@ -1,0 +1,70 @@
+{
+ "voice": "aqe-quant",
+ "date": "2026-11-17",
+ "declarations": [
+  "R1 observed: no bracket field read or used.",
+  "pipe_rank, sc_m_gates and sc_p_gates are null on every row; MBGL pipeline parts null, declared unread."
+ ],
+ "answers": [
+  {
+   "pair_id": "MBGL-aqe-quant-for~minervini",
+   "ticker": "MBGL",
+   "to": "minervini",
+   "text": "\"No contraction; D close 19.13% over swing high is a chase.\" My test is engine breadth, not a base: `flow` 93.4, `energy` 64.7, `structure` 89.5, `mp` 97.0 all clear the gate floors (R2). Base step is n/a for a running name (A9); `subcomponents.flow.ext_score` 0.0 shows no climax penalty (R7 not met). `subcomponents.energy.squeeze_score` 0.0 was already in my case against. D/H1 HH/HL agree. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MBGL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high"
+   },
+   "wrong_if": "`flow` falls under 60, or `mp_accel_state` turns DECELERATING with `elder` at or below 3",
+   "market_void": null,
+   "reason": "Broad support (R2): `flow` 93.4, `mp` 97.0, `structure` 89.5; `mp_accel_state` 1 ACCELERATING; `subcomponents.mp.roc_zscore` 2.83 and `subcomponents.mp.rel_mom_score` 25.0 pass (R9); `subcomponents.structure.rs_accel` 9.43 (R5). Path unread: pipeline parts null."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "after one pause session, a completed hourly candle closes above the prior day's high"
+   },
+   "wrong_if": "`energy` slips under 60 or `subcomponents.energy.exhaustion_score` falls below 8.5 at a close",
+   "market_void": null,
+   "reason": "`structure` 96.8 and `flow` 94.7 with `subcomponents.flow.ext_score` 5.0 and `subcomponents.pipe.pipe_tier` 1 A-TIER; but `mp_accel_state` 2 DECELERATING with live wear `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 23.0 (R4): wait for a pause."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "a completed hourly candle closes above yesterday's high"
+   },
+   "wrong_if": "`flow` falls under 80 with `subcomponents.flow.accum_score` dropping, or `mp_accel_state` turns DECELERATING",
+   "market_void": null,
+   "reason": "`flow` 93.4 from `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5; `mp_accel_state` 1 ACCELERATING on `subcomponents.pipe.pipe_tier` 2 B-STRONG (R8); `subcomponents.structure.rs_accel` 11.22 (R5). Caution: `subcomponents.mp.adx_val` 23.19 is a weak trend."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "aqe-quant.part1of2.json",
+   "bytes": 2092,
+   "sha256": "df22f29048ea"
+  },
+  {
+   "file": "aqe-quant.part2of2.json",
+   "bytes": 816,
+   "sha256": "299f48d3c94a"
+  }
+ ]
+}

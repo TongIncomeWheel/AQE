@@ -1,0 +1,30 @@
+{
+ "voice": "seow",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MBGL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, re-placed to each new prior-day high until taken (C27, R15)."},
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or `subcomponents.flow.cmf` turning below zero (COM proxy flips).",
+   "market_void": null,
+   "reason": "POSITION system: D swing HH/HL, 19.1% over last swing high = resistance break (C26). COM proxy `subcomponents.flow.cmf` 0.36 > 0 and `flow` 93.4 buying; TIF proxy `elder` 10.0, `mp` 97.0 with `mp_accel_state` 1 accelerating. W swing unreadable: C21 house rule not testable."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy stop one tick over yesterday's high, trailed to each new prior-day high until it breaks (C27, R15)."},
+   "wrong_if": "A daily close below max(fib_swing_low, base_low_20d), or a red candle after the run sold next session below its low (C14, C29).",
+   "market_void": null,
+   "reason": "POSITION system: D HH/HL, 13.5% over last swing high, 1.4% under 20-day high = new-high picture (C26). COM proxy `subcomponents.flow.cmf` 0.34 > 0, `flow` 94.7; `structure` 96.8, `elder` 10.0. Caution: `mp_accel_state` 2 decelerating, `energy` 60.5 softest engine."
+  }
+ ],
+ "declarations": [
+  "No refutation pairs name me as author (answer_pairs empty), so answers is [].",
+  "Declared proxies: resistance line = MTF swing-high reads; COM = subcomponents.flow.cmf; TIF = elder / mp_accel_state. Support line max(fib_swing_low, base_low_20d) named by field only.",
+  "R1 honoured: no bracket field is a reason. C21 weekly read is a house rule, not the author's."
+ ]
+}

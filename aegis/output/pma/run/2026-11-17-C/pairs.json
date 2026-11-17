@@ -1,0 +1,137 @@
+{
+ "_schema": {
+  "shape": "pairs",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-17T01:50:22Z"
+ },
+ "schema": "pairs.v1",
+ "date": "2026-11-17",
+ "survivors": [
+  "MBGL",
+  "BILL",
+  "CHYM"
+ ],
+ "pairs": [
+  {
+   "pair_id": "MBGL-aqe-quant-for~minervini",
+   "ticker": "MBGL",
+   "claim_id": "MBGL-aqe-quant-for",
+   "kind": "for",
+   "author": "aqe-quant",
+   "refuter": "minervini",
+   "claim_text": "`flow` 93.4 built from `subcomponents.flow.flow_score` 17.0, `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5; `mp` 97.0 from `subcomponents.mp.abs_mom_score` 30.0; gate breakdown `sc_m_gate_detail` 17 = all five engines pass.",
+   "refute_evidence": "`flow` 93.4 and `mp` 97.0 are real strength (R3), but my test is base+pivot: `subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0 show no contraction; D close 19.13% over swing high is a chase (C5).",
+   "refute_tf": {
+    "W": "9>21 but no readable swing (22 bars): stage 2 unconfirmed, young issue (C2)",
+    "D": "HH/HL, 19.1% above swing high 20.18: extended past any pivot (C5, R5)",
+    "H1": "HH/HL, 47% of day's range: no fresh pivot to buy"
+   }
+  },
+  {
+   "pair_id": "MBGL-minervini-against~livermore",
+   "ticker": "MBGL",
+   "claim_id": "MBGL-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "livermore",
+   "claim_text": "Template uncomputable/failing (ma200 None, ma50 < ma100); no VCP evidence (`subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0); sma_dist 25.6% is extended past any pivot (C5).",
+   "refute_evidence": "C5: `mp` 97.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING = Upward Trend; `subcomponents.structure.resist_score` 5.0, `subcomponents.energy.en_pos50` 89.63 = small reaction under the high, no chase. A coil is not my test.",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 3.3% under 20-wk high; no readable swing: young trend, unproven",
+    "D": "HH/HL, 3.3% under 20-day high: a normal reaction off the high, not past it",
+    "H1": "HH/HL above EMA9, 47% of day's range: no fade off the high printed"
+   }
+  },
+  {
+   "pair_id": "MBGL-minervini-against~seow",
+   "ticker": "MBGL",
+   "claim_id": "MBGL-minervini-against",
+   "kind": "against",
+   "author": "minervini",
+   "refuter": "seow",
+   "claim_text": "Template uncomputable/failing (ma200 None, ma50 < ma100); no VCP evidence (`subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0); sma_dist 25.6% is extended past any pivot (C5).",
+   "refute_evidence": "Position system (C26): extension past the pivot is the buy, not a fault. COM proxy `subcomponents.flow.cmf` 0.36 above zero; `flow` 93.4; weekly up `subcomponents.structure.wk_score` 15.0. 50/100/200 stack and VCP are not my tests (C1).",
+   "refute_tf": {
+    "W": "above EMA9, 9>21, 9.3% over last weekly swing high; no swing class; C21 house not broken",
+    "D": "HH/HL, 19.1% above last swing high: resistance broken, position buy picture",
+    "H1": "above EMA9, 9>21, HH/HL, 47% of day range; not my trigger frame"
+   }
+  },
+  {
+   "pair_id": "CHYM-oneil-for~raschke",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-oneil-for",
+   "kind": "for",
+   "author": "oneil",
+   "refuter": "raschke",
+   "claim_text": "Volume breakout to new highs: day_vol 4.05, from_52w_hi -0.75%; `subcomponents.structure.base_score` 15.0 base; `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5; rs LEADER, lens sector strong; `subcomponents.energy.exhaustion_score` 10.0.",
+   "refute_evidence": "A 4x volume bar is range expansion, a climax risk (C19), not my setup: `subcomponents.energy.squeeze_score` 0.0 no prior coil, `subcomponents.mp.adx_val` 23.19 and `subcomponents.mp.mp_adx_score` 12.0 under the trend gate.",
+   "refute_tf": {
+    "W": "HH/HL, above EMA9, 3.5% under 20-wk high: trend up, not my trigger frame",
+    "D": "HH but LL, 10.4% over last swing high: expansion leg, not contraction",
+    "H1": "HH/HL, 48% of day's range: no inside/contraction bar after the spike yet"
+   }
+  },
+  {
+   "pair_id": "CHYM-minervini-for~raschke",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-minervini-for",
+   "kind": "for",
+   "author": "minervini",
+   "refuter": "raschke",
+   "claim_text": "All MA criteria pass, near the 52-week high, `subcomponents.structure.base_score` 15.0, `flow` 93.4 with `subcomponents.flow.accum_score` 7.5, breakout volume day_vol 4.05, elder SUSTAINED.",
+   "refute_evidence": "`flow` 93.4 and `subcomponents.flow.accum_score` 7.5 show buying, but my test needs an ADX trend or a coil: `subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.energy.squeeze_score` 0.0. Breakout volume is the expansion bar.",
+   "refute_tf": {
+    "W": "HH/HL, above EMA9, 3.5% under 20-wk high",
+    "D": "HH but LL, 1.0% under 20-day high after expansion: wait for contraction",
+    "H1": "HH/HL, above EMA9, 48% of range: no trigger formed"
+   }
+  },
+  {
+   "pair_id": "CHYM-raschke-against~minervini",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-raschke-against",
+   "kind": "against",
+   "author": "raschke",
+   "refuter": "minervini",
+   "claim_text": "`subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.mp.mp_adx_score` 12.0: weak trend; `subcomponents.energy.squeeze_score` 0.0; the 4x volume day is the expansion, not the setup.",
+   "refute_evidence": "ADX is not my test; my trend test passes: `subcomponents.pipe.pr_ma_score` 20.0, `subcomponents.mp.trend_score` 20.0, `subcomponents.structure.base_score` 15.0; the volume expansion out of a base is C6's breakout confirmation, not a flaw.",
+   "refute_tf": {
+    "W": "HH/HL, 3.5% under 20-wk high 35.55: confirmed stage 2 (C2, C3)",
+    "D": "HH but LL, 10.4% over swing high 31.07: past pivot, buy follow-through only (C5)",
+    "H1": "HH/HL, 0.8% under swing high, 48% of day's range"
+   }
+  },
+  {
+   "pair_id": "CHYM-raschke-against~livermore",
+   "ticker": "CHYM",
+   "claim_id": "CHYM-raschke-against",
+   "kind": "against",
+   "author": "raschke",
+   "refuter": "livermore",
+   "claim_text": "`subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.mp.mp_adx_score` 12.0: weak trend; `subcomponents.energy.squeeze_score` 0.0; the 4x volume day is the expansion, not the setup.",
+   "refute_evidence": "ADX is not my test; the new high is. `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING = Upward Trend; `subcomponents.structure.base_score` 15.0 says the volume day left a base (C16), with `subcomponents.flow.volume_score` 7.5.",
+   "refute_tf": {
+    "W": "HH/HL above EMA9, 3.5% under the 35.55 swing high: an established Upward Trend",
+    "D": "HH but LL, 1.0% under 20-day high: at the edge of a fresh high",
+    "H1": "HH/HL above EMA9, 0.8% under swing high 34.56, 48% of day's range: no fade"
+   }
+  }
+ ],
+ "measurement": {
+  "pairs": 7,
+  "by_author": {
+   "aqe-quant": 1,
+   "minervini": 3,
+   "oneil": 1,
+   "raschke": 2
+  },
+  "by_refuter": {
+   "minervini": 2,
+   "livermore": 2,
+   "seow": 1,
+   "raschke": 2
+  }
+ }
+}

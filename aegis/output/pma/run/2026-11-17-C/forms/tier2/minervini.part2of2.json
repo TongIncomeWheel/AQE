@@ -1,0 +1,24 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the 52-week closing high: the weekly base top breaks."
+   },
+   "wrong_if": "A daily close back below pivot_high: the breakout failed back into the base.",
+   "market_void": null,
+   "reason": "Template passes on proxies; `subcomponents.structure.base_score` 15.0 is a formed base and `flow` 93.4 with `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5 is accumulation volume. W is 3.5% under the weekly high: pivot near, not a chase (C5)."
+  }
+ ],
+ "declarations": [
+  "Trend Template on proxies: ma_150 not served (ma_100 used); rs_proxy = rs_leadership + rs_spy_20d, not IBD RS rank (C3, C11).",
+  "vcp_detail NOT_SERVED (C4, R2). earnings_growth NOT_SERVED: SEPA element 2 not run (R4, R10)."
+ ]
+}

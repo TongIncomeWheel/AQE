@@ -1,0 +1,1587 @@
+{
+ "schema": "board.v1",
+ "date": "2026-11-17",
+ "deliberation_set": [
+  "MBGL",
+  "BILL",
+  "KVYO",
+  "CLX",
+  "U",
+  "CHYM",
+  "RBRK",
+  "SPCX"
+ ],
+ "deciders_present": [
+  "aqe-quant",
+  "elder-lens",
+  "livermore",
+  "minervini",
+  "oneil",
+  "raschke",
+  "seow",
+  "wyckoff"
+ ],
+ "deciders_absent": [],
+ "ignored_ballots": [],
+ "ballots_off_room": [],
+ "contested": [
+  "MBGL",
+  "BILL",
+  "KVYO",
+  "CLX",
+  "U",
+  "CHYM",
+  "RBRK",
+  "SPCX"
+ ],
+ "uncontested_support": [],
+ "uncontested_oppose": [],
+ "challenged": [
+  "BILL",
+  "CHYM",
+  "CLX",
+  "KVYO",
+  "MBGL",
+  "RBRK",
+  "SPCX",
+  "U"
+ ],
+ "names": [
+  {
+   "ticker": "MBGL",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "oneil",
+     "raschke",
+     "seow"
+    ],
+    "oppose": [
+     "minervini"
+    ],
+    "abstain": [
+     "wyckoff"
+    ]
+   },
+   "convictions": {
+    "aqe-quant": 4,
+    "elder-lens": 2,
+    "livermore": 3,
+    "minervini": 3,
+    "oneil": 3,
+    "raschke": 2,
+    "seow": 3,
+    "wyckoff": null
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 6 support / 1 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Higher-timeframe context cannot be fully named: no 200-day average, no structure_shift read, and the 50-day sits below the 100-day. A strength/solo entry on a short history with a 2.5x volume day owes"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Broad four-engine agreement (R2): `flow` 93.4, `energy` 64.7, `structure` 89.5, `mp` 97.0. `mp_accel_state` 1 ACCELERATING; Precision Edge parts `subcomponents.mp.roc_zscore` 2.83 and `subcomponents.mp.rel_mom_score` 25.0 pass (R9). `subcomponents.structure.rs_accel` 9.43 positive (R5).",
+     "for": "`flow` 93.4 built from `subcomponents.flow.flow_score` 17.0, `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5; `mp` 97.0 from `subcomponents.mp.abs_mom_score` 30.0; gate breakdown `sc_m_gate_detail` 17 = all five engines pass.",
+     "against": "`energy` 64.7 is near its floor with `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.energy.atr_score` 1.0; path quality unread (pipeline parts null); exhaustion test not yet live (`subcomponents.energy.en_trend_bars` 13.0), so 10.0 is silence.",
+     "entry_trigger": "an hourly close above yesterday's high with session VWAP held, while `mp_accel_state` stays ACCELERATING",
+     "wrong_if": "`flow` falls under 60 or `mp_accel_state` turns DECELERATING with `elder` at or below 3",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "pipeline parts populated and weak (`subcomponents.pipe.pipe_tier` C-WATCH or lower), or `subcomponents.flow.ext_score` turning negative",
+     "cannot_see": [
+      "pipe_rank",
+      "subcomponents.pipe.*",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": "The path is unread: `pipe_rank` and every `subcomponents.pipe.*` part are null, and `subcomponents.energy.squeeze_score` 0.0 says there is no coil. Energy is the thinnest engine."
+    },
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "Not red: `elder` 10.0 (>=7, buying not forbidden, C3), elder_5d [7, 7, 10, 10, 10] is a high plateau with no <=6 bar, so no permission event (C4); this is summer (C20) and the read is C24 (unsourced). `mp` 97.0 STRONG and `subcomponents.structure.wk_score` 15.0 (weekly close above a rising 10-week average) keep the tide up (C21). I buy only the pullback into value (C10), not here.",
+     "for": "`elder` 10.0 not red, `mp` 97.0 STRONG ACCELERATING, `subcomponents.structure.wk_score` 15.0 weekly tide up: permission on, trend rising (C3, C9, C21).",
+     "against": "No transition in elder_5d [7, 7, 10, 10, 10] (C4); a plateau is summer, not Elder's buying season (C20); price sits far above ma20 19.82, so the C10 buy under the average is not on offer.",
+     "entry_trigger": "A pullback into ma20 19.82 with `elder` staying >=7 (not red), per C10.",
+     "wrong_if": "`elder` <=1 (red) or a bearish structure change; daily close under ma50 19.14.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A dip in elder_5d to <=6 then a bar >=7 near the 20-day average would be a C4 transition and lift conviction.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "force_index_ema_2",
+      "price_ema_slope",
+      "channel_upper",
+      "weekly_trend_direction"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Upward Trend under way but not yet at a fresh high. `mp` 97.0 with `mp_accel_state` 1 ACCELERATING is my six-column analogue reading Upward Trend; `subcomponents.energy.en_pos50` 89.63 and `subcomponents.structure.resist_score` 5.0 put price 3.3% under the 20-day high, a small reaction, not the new high. I act only when the new high prints (C5). Young history (ma200 None, ma50 19.14 under ma100 19.83) holds conviction at 3.",
+     "for": "`flow` 93.4 and `subcomponents.mp.roc_zscore` 2.83: an exceptional month carried by buying, the leader behaviour C12 says to watch. D swing HH/HL, W above EMA9.",
+     "against": "No established long trend to measure against: ma200 None, ma50 19.14 below ma100 19.83, structure_shift None. sma_dist 25.6% and ext_atr20 4.96 is a stretched run; `subcomponents.energy.squeeze_score` 0.0, no coil.",
+     "entry_trigger": "close_above:fib_swing_high, a fresh high after the current 3.3% reaction, on a day stronger than SPY.",
+     "wrong_if": "fade_atr_ge:2 in one session (my C7 translation, not 6 points), or a close back under pivot_high.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A close at a fresh high with follow-through next session raises me; failure to clear the high then a 1-ATR reaction (C20, my translation) ends the case.",
+     "cannot_see": [
+      "pct_from_52w_high (52-week history absent)",
+      "order-fill difficulty (day_vol 2.52 is a proxy only)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "Trend Template (C3) cannot pass: ma200 None and ma50 19.14 below ma100 19.83, so criteria 1-4 fail or are uncomputable. No contraction to buy: `subcomponents.bq.bq_range_tight` 0.0 and `subcomponents.energy.squeeze_score` 0.0, while sma_dist 25.6% is a chase (C5, R5). `flow` 93.4 and `structure` 89.5 are strong but strength without a confirmed stage 2 and a pivot is not my entry.",
+     "for": "rs LEADER spy20 33.9, day_vol 2.52 expansion, `flow` 93.4, `structure` 89.5, `subcomponents.structure.rs_spy_score` 15.0: genuine relative strength (C11).",
+     "against": "Template uncomputable/failing (ma200 None, ma50 < ma100); no VCP evidence (`subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0); sma_dist 25.6% is extended past any pivot (C5).",
+     "entry_trigger": "A new tight base above ma_50, then h1_close_above:pivot_high with vol_x_ge:1.4.",
+     "wrong_if": "Daily close below ma_20 (19.82) breaks the short uptrend.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A 4-7 week flat base correcting under 15% with range and volume contracting, ending in a volume breakout.",
+     "cannot_see": [
+      "ma_150",
+      "ma_200 (null)",
+      "52-week low/high",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": "Real leadership: rs LEADER spy20 33.9, `flow` 93.4, `structure` 89.5 with `subcomponents.structure.rs_accel_score` 15.0; a young issue can be a superperformer before a 200-day exists.",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Leader breaking out on volume: `structure` 89.5 with `subcomponents.structure.base_score` 12.0 over `subcomponents.structure.base_days` 27.0 reads a base (substitute measure, C12/C18); day_vol 2.52 clears the 1.40 test (C16); rs LEADER (C9); `flow` 93.4 advisory only. Weights: D 19.1% above the last swing high is past the C17 5% line, `subcomponents.structure.wk_score` 5.0 is a soft weekly read, ma200 None so C24 cannot run. Market gate DELEGATED.",
+     "for": "Volume confirms: day_vol 2.52 is +152% on the 20-day substitute (C16). `structure` 89.5 and `subcomponents.structure.base_score` 12.0 show a counted base; rs LEADER with downday 4.07 (C9). `subcomponents.energy.exhaustion_score` 10.0: no climax wear yet.",
+     "against": "Late: D 19.1% above the last swing high is beyond C17's 10% line on that measure; sma_dist 25.6%. `subcomponents.structure.wk_score` 5.0 and ma50 under ma100 leave the weekly trend unproven; short history, no ma200; lens leadership --, resistance warn.",
+     "entry_trigger": "Hourly close above bar_high on vol_x_ge:1.4 into a confirmed uptrend; no add-on past bar_high+5pct (C21).",
+     "wrong_if": "Daily close below ma50 19.14, or 8% below entry 24.04 (C20), or a new high on day_vol under 1.0 (C25).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A served pivot_high showing price within 5% of the pivot would lift me; a group turn in Technology (Lone Ranger, R9) or volume fading under 1.40 would withdraw me.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "S share supply",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count",
+      "ma200"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "RETRACEMENT pending (Holy Grail, C7): `subcomponents.mp.adx_val` 33.14 above 30 with `subcomponents.mp.di_bullish` True and `mp` 97.0 = a trend strong enough to buy its FIRST pullback. Not today: sma_dist 25.6%, `subcomponents.energy.squeeze_score` 0.0 (no contraction, so no breakout setup). I buy the pullback to the 20-day, not the extension.",
+     "for": "`subcomponents.mp.adx_val` 33.14 clears the Holy Grail gate; `flow` 93.4 and `structure` 89.5 say the trend has buyers; first pullback in such a trend is my lowest-risk retracement.",
+     "against": "Price is 19.1% above the last swing high with day_vol 2.52 and `subcomponents.energy.squeeze_score` 0.0: a range-expansion leg, the bar C19 says to exit, not enter. No ma200, short history.",
+     "entry_trigger": "after a pullback into ma20 19.82, an hourly close back above it (reclaim:ma_20); stop just under the pullback low",
+     "wrong_if": "a daily close more than half an ATR under the 20-day after the reclaim, or no pullback within 8 sessions",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "An ADX fall below 30 on the pullback (trend too weak for a Holy Grail), or a BEARISH_CHOCH before the 20-day is reached.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic",
+      "structure_shift (null)",
+      "ma200 (null)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "POSITION system fired (C26, R13 proxy): MTF daily 19.1% above the last swing high is a resistance break. Fund flow confirms: `flow` 93.4 and `subcomponents.flow.cmf` 0.36 above zero (COM proxy, C28/R14). Trend impulse: `elder` 10.0, elder_5d rising 7 to 10, `mp` 97.0 with `mp_accel_state` 1 ACCELERATING (TIF proxy). rs_spy_20d 33.9 > 0 (C23). Weights: structure_shift null, elder_pattern None, no index 63d figure served so R8 is unverified.",
+     "for": "Resistance break with fund flow behind it, the exact position-system buy picture: `flow` 93.4, `subcomponents.flow.cmf` 0.36, `structure` 89.5, `elder` 10.0; rs_spy_20d 33.9. Strength is the signal here (C26), extension is not a fault.",
+     "against": "No structure_shift read and elder_pattern None, so the vendor-line proxy and TIF proxy are only partly served; short history; run_10d 22.65% is a fast leg; `energy` 64.7 is the softest engine.",
+     "entry_trigger": "Buy stop one tick over bar_high, trailed to each new prior-day high until taken (C27, R15).",
+     "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the up-run: sell next session below its low (C14, C29).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "`subcomponents.flow.cmf` turning negative, or a bearish CHoCH on the daily.",
+     "cannot_see": [
+      "structure_shift",
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "R10/C16: structure_shift is None on MBGL, so my first question (C2, range or trend?) has no answer on the served fields, and ma200 is None (short history). `flow` 93.4 and `subcomponents.energy.en_pos50` 89.63 show demand high in the 50-day range and `mp` 97.0 is strong, but I do not force a structure I cannot label.",
+     "for": "`flow` 93.4 built on `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5: effort on the up side; `structure` 89.5; price high in its range at `subcomponents.energy.en_pos50` 89.63.",
+     "against": "No structure_shift read and no value-area fields; ext_atr20 4.96 and 19.1% above the last daily swing high: if this is a trend, price is far from value and I would not chase (C3, C15).",
+     "entry_trigger": "Needs a structure_shift read first; then in_zone:vwap_14d followed by h1_close_above:bar_high with vol_x_ge:1.2.",
+     "wrong_if": "A daily close back under ma20 19.82 on rising volume (a return into the old range).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "AQE serving structure_shift and pvp_position for MBGL, reading ABOVE_STRUCTURE and ABOVE_VALUE.",
+     "cannot_see": [
+      "structure_shift (None)",
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "vwap_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "BILL",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "minervini",
+     "oneil",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [],
+    "abstain": []
+   },
+   "convictions": {
+    "aqe-quant": 3,
+    "elder-lens": 3,
+    "livermore": 4,
+    "minervini": 3,
+    "oneil": 4,
+    "raschke": 3,
+    "seow": 4,
+    "wyckoff": 3
+   },
+   "contested": true,
+   "why_contested": [
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Lane label and fields disagree: BILL is filed in the PULLBACK lane but reads above structure on above-normal volume. The decider owes which setup it is judging; a pullback method applied to a breakout"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "`structure` 96.8 and `flow` 94.7 are the top pair on the sheet; `subcomponents.flow.ext_score` 5.0 is a breakout bonus; `subcomponents.pipe.pipe_tier` 1 A-TIER is a clean path (A8). `subcomponents.structure.rs_accel` 5.71 positive (R5). `energy` 60.5 sits at its floor.",
+     "for": "`structure` 96.8 decomposes cleanly: `subcomponents.structure.rs_spy_score` 15.0, `subcomponents.structure.rs_accel_score` 15.0, `subcomponents.structure.wk_score` 15.0; `subcomponents.pipe.pr_ma_score` 20.0 and `subcomponents.pipe.pr_adx_score` 20.0 show a steady path.",
+     "against": "`energy` 60.5 is carried by range position only (`subcomponents.energy.squeeze_score` 0.0, `subcomponents.energy.atr_score` 1.0); exhaustion test live and has found wear; `mp_accel_state` 2 DECELERATING.",
+     "entry_trigger": "an hourly close above yesterday's high with session VWAP held; the engines read it as continuation, not a pullback",
+     "wrong_if": "`energy` under 60 or `subcomponents.energy.exhaustion_score` lower than 8.5 at the next close",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`mp_accel_state` returning to ACCELERATING would lift me; `subcomponents.flow.ext_score` turning negative would drop me to ABSTAIN",
+     "cannot_see": [
+      "pipe_rank",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "elder_5d [10, 10, 7, 7, 10] with elder_pattern CORRECTION_REENTRY: force eased to 7 (never red) and reclaimed 10, the dip-and-reclaim shape (R8), but `mp_state` is FADING not STRONG so R8 is incomplete. `elder` 10.0 permits buying (C3); `mp` 93.0 and `subcomponents.structure.wk_score` 15.0 keep the trend above it rising (C9, C21). Judged as a pullback-reentry, which is my method's setup.",
+     "for": "CORRECTION_REENTRY reclaim to `elder` 10.0 after two 7 bars inside a rising trend: `mp` 93.0, `subcomponents.structure.wk_score` 15.0 (C6, C9, C21).",
+     "against": "The dip never went <=6, so no red-to-not-red permission event (C4); `mp_state` FADING fails R8's STRONG leg; price is above, not under, the average (C10).",
+     "entry_trigger": "A pullback toward ma20 51.32 holding `elder` >=7, or the next bar holding 10 after the reentry.",
+     "wrong_if": "`elder` <=1, or a daily close under ma50 47.91.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`mp_state` turning STRONG would complete R8; a red bar would end it.",
+     "cannot_see": [
+      "impulse_colour_prior_bar",
+      "force_index_ema_2",
+      "price_ema_slope",
+      "channel_upper",
+      "weekly_trend_direction",
+      "rvol for the pullback volume test (R8)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "The one name here at a fresh high in an established Upward Trend: from_52w_hi 0.0%, ma50 47.91 > ma100 46.65 > ma200 42.9, structure_shift ABOVE_STRUCTURE. `structure` 96.8 with `subcomponents.structure.resist_score` 10.0 and `subcomponents.structure.wk_score` 15.0 read just under the high with the weekly trend up; `flow` 94.7 says money is behind it. C5 and C16: buy strength at a new high. Lane says PULLBACK; I judge it as a new-high continuation.",
+     "for": "`sc_m_gate_detail` 17 (every engine clears its floor) and `subcomponents.pipe.pipe_tier` 1 A-TIER; D swing HH/HL, 13.5% above the last swing high, 1.4% under 20-day high.",
+     "against": "`energy` 60.5 sits near its floor; `mp_state` 2 FADING (not decay, R13) with deceleration; sma_dist 20.29% is stretched off the 50-day; W swing LH/LL.",
+     "entry_trigger": "close_above:high_52w_close, a fresh closing high, on a day stronger than SPY.",
+     "wrong_if": "fade_atr_ge:2 in one session (my C7 translation), or a close more than 1 ATR under high_52w_close after the break (C20 failure, my translation).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A fresh high that fails at once and reverses 1 ATR under it; or a second Technology name failing to make new highs alongside it (C14).",
+     "cannot_see": [
+      "order-fill difficulty",
+      "pivotal-point margin in modern units (atr_14d proxy)"
+     ],
+     "opposing_case": null,
+     "self_counter": "`mp_accel_state` 2 DECELERATING and `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 23.0: the push is slowing late in a long run, and the tape reads RISK OFF with SPY in a DOWNTREND. A leader in a falling market is the first to be tested."
+    },
+    "minervini": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Trend Template passes on proxies: price 57.63 > ma20 51.32 > ma50 47.91 > ma100 46.65 > ma200 42.9, from_52w_hi 0.0%, rs LEADER spy20 29.59 (C3, C11). `structure` 96.8 with `subcomponents.structure.wk_score` 15.0 and `flow` 94.7 confirm a stage 2 leader. Weight: sma_dist 20.29% and `subcomponents.energy.squeeze_score` 0.0 mean it is extended, so I buy only follow-through, not a chase (C5).",
+     "for": "Full MA stack in order, at the 52-week high, `structure` 96.8, `flow` 94.7, `subcomponents.flow.ext_score` 5.0 clean-breakout bonus, rs LEADER: the profile of a leader (C3, C11).",
+     "against": "Extended: sma_dist 20.29%, 13.5% above the last daily swing high, `subcomponents.energy.squeeze_score` 0.0 and `subcomponents.bq.bq_range_tight` 0.0: no contraction to pivot from; mp_accel_state DECELERATING.",
+     "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.4 and rs_today_gt_spy; better, a fresh tight flag above ma_20.",
+     "wrong_if": "Daily close below ma_20 (51.32).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A pullback on expanding volume, or a recovery on light volume (C6).",
+     "cannot_see": [
+      "ma_150",
+      "200-day slope",
+      "52-week low",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "The cleanest CAN SLIM read in the room: from_52w_hi 0.0% is a new high (C7); `structure` 96.8 with `subcomponents.structure.base_score` 12.0 over `subcomponents.structure.base_days` 29.0 and `subcomponents.structure.wk_score` 10.0 (weekly above a rising 10-week line); day_vol 1.81 clears 1.40 (C16); rs LEADER, lens leadership strong (C9); ma50 47.91 > ma100 46.65 > ma200 42.9, price well under 70% above ma200 (C24 clear). Market gate DELEGATED.",
+     "for": "New high out of a counted base: `structure` 96.8, `subcomponents.structure.wk_score` 10.0, `subcomponents.structure.rs_accel` 5.71 (lead widening). day_vol 1.81 is +81% on the 20-day substitute. Ordered MA stack; rs LEADER, downday 2.26.",
+     "against": "Extended: sma_dist 20.29%, D 13.5% above the last swing high (C17 late-buy warning). `energy` 60.5 and `subcomponents.energy.exhaustion_score` 8.5 at a long run. Sector reads Recovering From Weakness; four Tech names in the room.",
+     "entry_trigger": "Hourly close above bar_high on vol_x_ge:1.4 into a confirmed uptrend; no add-on past bar_high+5pct (C21).",
+     "wrong_if": "Daily close below ma50 47.91 on heavy volume (R8), or 8% below entry 57.63 (C20).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A new high on falling volume or closes at the day's low (C25); Technology turning while BILL runs alone (R9); a served pivot showing more than 10% extension.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "S share supply",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count"
+     ],
+     "opposing_case": null,
+     "self_counter": "Late on the pivot: D 13.5% above the last swing high is past C17's 10% line on that measure; `energy` 60.5 at its floor and `subcomponents.energy.exhaustion_score` 8.5 show some wear; sector Recovering, not leading."
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Judged as a RETRACEMENT (Holy Grail, C7), not a breakout: `subcomponents.mp.adx_val` 35.63 above 30, `subcomponents.mp.di_bullish` True, `structure` 96.8. `subcomponents.energy.squeeze_score` 0.0 rules out a Crabel range-contraction breakout. Elder CORRECTION_REENTRY and H1 'HH but LL' show the first pullback starting. Buy the pullback's reclaim, stop one tick under its low.",
+     "for": "Strongest trend on the sheet that clears the ADX gate: `subcomponents.mp.adx_val` 35.63, `flow` 94.7, `subcomponents.flow.ext_score` 5.0 (clean breakout already made). A first pullback in that trend is the Holy Grail.",
+     "against": "`mp_accel_state` DECELERATING and `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 23.0: the run is aging; sma_dist 20.29% means the 20-day is far below.",
+     "entry_trigger": "pullback into ma20 51.32 or fib_382, then an hourly close back above it (reclaim:ma_20)",
+     "wrong_if": "daily close more than half an ATR under the 20-day after entry, or a BEARISH_CHOCH",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "ADX reading slipping under 30 as it pulls back, or the pullback coming on expanding volume (distribution, not a retracement).",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "POSITION system fired, not swing (R10: lane is a label): from_52w_hi 0.0% and structure_shift ABOVE_STRUCTURE are a new-high picture (C26). Fund flow confirms: `flow` 94.7, `subcomponents.flow.cmf` 0.34 above zero (C28/R14). `structure` 96.8; rs_spy_20d 29.59, rs_rank_pct 91.84, ret_63d 17.21 (C23). `elder` 10.0 with elder_5d back to 10 after two 7s. Swing set-up fails (ext_atr20 3.08, no dip to ma_20).",
+     "for": "New 52-week high on fund flow: `flow` 94.7, `subcomponents.flow.cmf` 0.34, `structure` 96.8, `elder` 10.0; rs_rank_pct 91.84 and ret_63d 17.21 over the position horizon. The buy signal is the strength (C26).",
+     "against": "elder_pattern CORRECTION_REENTRY, not SUSTAINED; `energy` 60.5 near its floor; weekly swing LH/LL; run_10d 15.91% is a quick leg.",
+     "entry_trigger": "Buy stop one tick over bar_high, re-placed to each new prior-day high (C27, R15).",
+     "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) or a red candle after the run, sold next session below its low (C14, C29).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "`subcomponents.flow.cmf` below zero or structure_shift flipping to BEARISH_CHOCH.",
+     "cannot_see": [
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "cci_20",
+      "ma_40",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": "elder_pattern CORRECTION_REENTRY is not SUSTAINED/ACCELERATION, so my TIF proxy only half-confirms; `energy` 60.5 is the weakest engine; weekly swing LH/LL weighs on the C21 house rule."
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "TREND by structure_shift ABOVE_STRUCTURE (C2), but 13.5% above the last daily swing high with atr 2.05: away from value, so HOLD-FOR-CONDITIONS (R2, C3, C15). Demand is real: `flow` 94.7 with `subcomponents.flow.accum_score` 7.5; `structure` 96.8 with `subcomponents.structure.wk_score` 15.0 (weekly trend up). I judge it as a trend continuation joined at the test of the broken Creek, not as a pullback already in place.",
+     "for": "`structure` 96.8; `subcomponents.energy.en_pos50` 95.19 at the top of the 50-day range; `subcomponents.flow.ext_score` 5.0 (a breakout on volume) with day_vol 1.81: effort and result agree (C5).",
+     "against": "`subcomponents.energy.exhaustion_score` 8.5 after `subcomponents.energy.en_trend_bars` 23.0 is early wear; weekly swing LH/LL; pvp_position not served so R1 is half-read; ext_atr20 3.08 means no test yet.",
+     "entry_trigger": "in_zone:structure_shift_ref (the broken Creek), then h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 (C7, C12).",
+     "wrong_if": "Daily close below structure_shift_ref (re-entry into the old range = failed breakout, C5/C11), or choch_bearish.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A close back inside the old range on heavy selling, a BEARISH_CHOCH, or pvp_position served as INSIDE_VALUE.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref value",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "vwap_14d",
+      "elder_context.vwap_5d.slope_5d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "elder-lens",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [
+     "livermore",
+     "minervini",
+     "oneil"
+    ],
+    "abstain": []
+   },
+   "convictions": {
+    "aqe-quant": 4,
+    "elder-lens": 3,
+    "livermore": 2,
+    "minervini": 3,
+    "oneil": 3,
+    "raschke": 3,
+    "seow": 3,
+    "wyckoff": 2
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 5 support / 3 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Conflicting reads: the bearish_divergence caution fires with four of five oscillators confirming, on above-normal volume, while the momentum engines read accelerating. Where the fields conflict the de"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Broadest support on the sheet (R2): `flow` 86.8, `energy` 81.5, `structure` 76.8, `mp` 89.0. `mp_accel_state` 1 ACCELERATING on `subcomponents.pipe.pipe_tier` 2 B-STRONG (R8). `subcomponents.energy.squeeze_score` 12.5 is a full coil; `subcomponents.structure.rs_accel` 5.87 positive (R5).",
+     "for": "Every engine in its upper half; `subcomponents.flow.flow_score` 17.0 with `subcomponents.flow.accum_score` 7.5; `subcomponents.mp.rel_mom_score` 25.0; `subcomponents.energy.squeeze_score` 12.5 coil inside a running trend.",
+     "against": "Live wear (`subcomponents.energy.exhaustion_score` 8.5 at 31 bars); `structure` 76.8 is the lowest of the six nominees with `subcomponents.structure.base_score` 0.0; the bearish divergence the room names is outside my menu, so I cannot weigh it.",
+     "entry_trigger": "an hourly close above yesterday's high with session VWAP held, while `mp_accel_state` stays ACCELERATING",
+     "wrong_if": "`subcomponents.energy.exhaustion_score` lower than 8.5 or `flow` under 60",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "a further drop in `subcomponents.energy.exhaustion_score`, or `mp_accel_state` DECELERATING",
+     "cannot_see": [
+      "divergence readings",
+      "pipe_rank",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": "The exhaustion test is live and has found wear: `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0 (R4). `subcomponents.structure.base_score` 0.0 and `subcomponents.pipe.pr_ret_12m` 0.0 mean no base and no 12-month gain."
+    },
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "The only true permission event in the room: elder_5d [2, 7, 8, 8, 10], a bar <=6 then >=7 on bar 2, red giving way (C3, C4), then building to `elder` 10.0. `mp` 89.0 with `mp_state` FADING but ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep the tide up (C9, C21). Weight against: div BEARISH/4, Elder's warning that a reversal approaches (C8).",
+     "for": "Red-giving-way transition 2 to 7 in elder_5d, then 8, 8, 10 (C4); `mp` 89.0 ACCELERATING; `subcomponents.structure.wk_score` 15.0 (C21).",
+     "against": "The transition is four bars old, not on the last bar; div BEARISH/4 warns of reversal (C8); price above ma20 20.92, so not a buy under value (C10).",
+     "entry_trigger": "A pullback toward ma20 20.92 with `elder` >=7.",
+     "wrong_if": "`elder` <=1, or a daily close under ma50 18.3.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A fresh dip to <=6 and reclaim would be a second, stronger transition; force divergence data confirming the bearish read would move me to ABSTAIN.",
+     "cannot_see": [
+      "force_index_ema_2",
+      "force_index_ema_13",
+      "impulse_colour_last_bar",
+      "channel_upper",
+      "weekly_trend_direction"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Not an Upward Trend at new highs: from_52w_hi -31.18% and ret_12m -19.63 make this a strong rally inside a larger decline, a Natural Rally in my columns, not a leader at its high (C5). `structure` 76.8 is the lowest of the nominees and `subcomponents.structure.base_score` 0.0 shows no base behind the move. W and D both swing HH but LL. I wait for price to prove it; I do not buy the bounce.",
+     "for": "Coil plus money: `subcomponents.energy.squeeze_score` 12.5, `flow` 86.8, `mp_accel_state` 1 ACCELERATING; the average stack has turned up and D is 3.1% above the last swing high.",
+     "against": "`subcomponents.structure.base_score` 0.0 and `structure` 76.8; 31.18% under the 52-week high after a losing year. div BEARISH/4 (advisory for me) and `subcomponents.energy.exhaustion_score` 8.5 at 31 bars.",
+     "entry_trigger": "close_above:fib_swing_high after a normal reaction would put it back in my Upward Trend column; the real new high is a close above high_52w_close.",
+     "wrong_if": "A fresh high above fib_swing_high that holds for several sessions.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A fresh high on follow-through, with a second Technology name making new highs alongside it (C14).",
+     "cannot_see": [
+      "order-fill difficulty"
+     ],
+     "opposing_case": "`energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 is a real coil, `flow` 86.8 and `mp` 89.0 with `mp_accel_state` 1 ACCELERATING; ma50 18.3 > ma100 18.05 > ma200 17.84 has just turned up, so a new trend may be forming.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "Trend Template criterion 7 fails: from_52w_hi -31.18% is outside 25% of the 52-week high (C3); ret_12m -19.63 and `subcomponents.pipe.pr_ret_12m` 0.0 say this is a recovering former leader, the broken-leader caution (C13, R6). `subcomponents.structure.base_score` 0.0 shows no base, and div BEARISH/4 warns the rally is tiring. The MA stack and `flow` 86.8 are good, but the template is all eight or none.",
+     "for": "Ordered MA stack, rs LEADER spy20 34.11, `energy` 81.5, `subcomponents.energy.squeeze_score` 12.5 coil, `subcomponents.structure.wk_score` 15.0 weekly up.",
+     "against": "from_52w_hi -31.18% fails criterion 7; `subcomponents.structure.base_score` 0.0 no base; div BEARISH/4; ret_12m -19.63 a broken-leader recovery (C13).",
+     "entry_trigger": "Template pass (within 25% of the 52-week high), then h1_close_above:pivot_high with vol_x_ge:1.4.",
+     "wrong_if": "My opposition is wrong if it closes above high_52w_close range quickly with div cleared.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "Recovery to within 25% of the high plus a fresh tight base with volume drying up.",
+     "cannot_see": [
+      "ma_150",
+      "52-week high price",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": "MA stack is in order (ma20 20.92 > ma50 18.3 > ma100 18.05 > ma200 17.84), rs LEADER spy20 34.11, `energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 coiled, `flow` 86.8.",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "No sound base, so no pivot (R3): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0, and `structure` 76.8 is the lowest of the six nominees. It is not making new highs (C7): from_52w_hi -31.18%, ret_12m -19.63 is repair, not leadership. div BEARISH/4 adds distribution risk (C25). Volume (day_vol 1.84) and rs LEADER are real but nothing after step 2 rescues a name with no base.",
+     "for": "day_vol 1.84 passes C16; rs LEADER, downday 2.57; `energy` 81.5 and `subcomponents.energy.squeeze_score` 12.5 show compression; `subcomponents.structure.rs_accel_score` 15.0.",
+     "against": "`subcomponents.structure.base_score` 0.0: no base (R3, C12). from_52w_hi -31.18% is far from new highs (C7). div BEARISH/4 on above-normal volume is distribution showing before price (C25). lens leadership warn.",
+     "entry_trigger": "Would need a completed base and a close above its pivot to new highs on vol_x_ge:1.4.",
+     "wrong_if": "KVYO runs to new 52-week highs from here on day_vol above 1.40 with the bearish divergence cleared.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A peer showing a completed base I cannot count; `subcomponents.structure.base_score` rising with div_state back to NONE.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count"
+     ],
+     "opposing_case": "Volume and strength are present: day_vol 1.84 clears 1.40, rs LEADER, `energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 is a tight coil, `subcomponents.structure.rs_accel_score` 15.0 shows the lead widening.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "BREAKOUT setup (range contraction, C12/C13): `subcomponents.energy.squeeze_score` 12.5 is the maximum coil on the sheet and `subcomponents.mp.adx_val` 30.35 says the trend is real; `energy` 81.5. Only 3.1% above the last swing high, the least stretched name. Straddle logic: long above yesterday's high, out (and flipped, C23) below yesterday's low. Bearish divergence 4/5 is a caution I weigh, not a veto.",
+     "for": "Max coil `subcomponents.energy.squeeze_score` 12.5 with `energy` 81.5 and `subcomponents.mp.adx_val` 30.35: contraction inside a trend is what precedes a trend day (C12).",
+     "against": "div BEARISH/4 advisory caution; `structure` 76.8 lowest of the nominees with `subcomponents.structure.base_score` 0.0; Valen U&R FAILED; `subcomponents.energy.en_trend_bars` 31.0 is a long run.",
+     "entry_trigger": "an hourly close above yesterday's high (bar_high) on above-normal time-of-day volume",
+     "wrong_if": "a daily close under yesterday's low (bar_low): the failed breakout flips me out",
+     "horizon_sessions": 3,
+     "would_change_my_mind": "A breakout that does not move promptly (C11), or a divergence that completes into a BEARISH_CHOCH.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "POSITION system fired: structure_shift ABOVE_STRUCTURE, MTF daily 3.1% above the last swing high (C26, R13). Fund flow positive but thin: `subcomponents.flow.cmf` 0.11, `flow` 86.8 (C28). Trend impulse rising: `elder` 10.0, elder_5d 2 to 10; `energy` 81.5. rs_spy_20d 34.11, rs_rank_pct 93.95, ret_63d 28.52 (C23). Weights: div BEARISH/4, from_52w_hi -31.18% and ret_12m -19.63, so this is a medium-term not a long-term leader.",
+     "for": "Fresh strength over the position horizon with the break above resistance printed: `flow` 86.8, `energy` 81.5, `elder` 10.0, `subcomponents.flow.cmf` 0.11 above zero; ret_63d 28.52.",
+     "against": "`subcomponents.flow.cmf` 0.11 is the thinnest fund flow among the momentum names; div BEARISH/4; `structure` 76.8 is the lowest nominee structure; far below its 52-week high.",
+     "entry_trigger": "Buy stop one tick over bar_high, trailed to each new prior-day high (C27, R15).",
+     "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run, sold next session below its low.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "`subcomponents.flow.cmf` crossing below zero while price holds: COM diverging from price.",
+     "cannot_see": [
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "elder_pattern",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "TREND by structure_shift ABOVE_STRUCTURE, only 3.1% above the last daily swing high with atr 1.15: near the test of the Creek (C7). Coil is real: `subcomponents.energy.squeeze_score` 12.5, `energy` 81.5. But div BEARISH/4 on day_vol 1.84 is effort without matching result at the high, a possible upthrust (C5), and `subcomponents.structure.base_score` 0.0 shows no base under it. Low conviction; I need a sign-of-strength bar before acting.",
+     "for": "`energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 (coiled); `flow` 86.8; ABOVE_STRUCTURE and ext_atr20 1.71, so price is close to value, where my preferred entry lives (C7).",
+     "against": "div BEARISH/4 at the high on day_vol 1.84; `subcomponents.structure.base_score` 0.0; `structure` 76.8 is the lowest of the nominees; `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0.",
+     "entry_trigger": "in_zone:structure_shift_ref then h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 (C12, buy stop, never a resting limit).",
+     "wrong_if": "Daily close below structure_shift_ref, or choch_bearish.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "The divergence clearing with a new high on rising volume would lift me; a close back under the Creek ends it.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref value",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "vwap_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "CLX",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [
+     "elder-lens",
+     "livermore",
+     "minervini",
+     "oneil"
+    ],
+    "abstain": []
+   },
+   "convictions": {
+    "aqe-quant": 4,
+    "elder-lens": 2,
+    "livermore": 3,
+    "minervini": 4,
+    "oneil": 3,
+    "raschke": 2,
+    "seow": 2,
+    "wyckoff": 2
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 4 support / 4 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Higher-timeframe context is a downtrend: the average stack is fully inverted, so the BULLISH_BOS is a break inside a falling longer trend. The decider owes the trend or cycle context the setup exploit"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Four engines agree (R2): `flow` 77.6, `energy` 73.1, `structure` 89.5, `mp` 96.0. The live exhaustion test is clean: `subcomponents.energy.exhaustion_score` 10.0 at `subcomponents.energy.en_trend_bars` 18.0. `subcomponents.structure.rs_accel` 25.6 shows the lead widening (R5).",
+     "for": "`mp` 96.0 decomposes into `subcomponents.mp.abs_mom_score` 26.0, `subcomponents.mp.mp_adx_score` 25.0, `subcomponents.mp.rel_mom_score` 25.0; `subcomponents.pipe.pr_vol_score` 20.0; a run old enough to test (18 bars) that shows no wear.",
+     "against": "`mp_accel_state` 2 DECELERATING; `subcomponents.flow.ha_quality_count` 4.0 is choppy candles; `subcomponents.structure.rs_vs_spy` 6.63 is a small three-month lead; no coil.",
+     "entry_trigger": "an hourly close above yesterday's high with session VWAP held",
+     "wrong_if": "`subcomponents.energy.exhaustion_score` below 10 or `subcomponents.structure.rs_accel` negative at a close",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "wear appearing on the live exhaustion test, or `flow` under 60",
+     "cannot_see": [
+      "moving-average stack context",
+      "pipe_rank",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": "`mp_accel_state` 2 DECELERATING, `subcomponents.energy.squeeze_score` 0.0 (no coil) and `subcomponents.pipe.pr_rsi_score` 10.0 (a less healthy RSI read); the longer trend context the room raises is outside my menu."
+    },
+    "elder-lens": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "elder_5d [10, 7, 7, 7, 7]: force dropped from 10 and has sat at 7, the floor of not-red, for four bars, with `mp` 96.0 FADING and DECELERATING. That is green going away after an upswing, Elder's profit-taking signal (C4), not a buy; no <=6-to->=7 transition exists. ma50 89.11 under ma100 94.48 under ma200 99.29 leaves the trend over it unverified (C9, C10). Not red, so not forbidden.",
+     "for": "Not red at `elder` 7.0; `mp` 96.0; `subcomponents.structure.wk_score` 15.0 weekly tide up.",
+     "against": "Force cooled 10 to 7 and stalled (C4 green going away); `mp` DECELERATING; long average stack inverted, trend leg unverified (C9).",
+     "entry_trigger": "elder_5d dipping <=6 then printing >=7 near ma20 95.71 (a C4 transition).",
+     "wrong_if": "`elder` back to 10 with `mp_state` STRONG.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A permission event in elder_5d near the 20-day average.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "price_ema_slope",
+      "weekly_trend_direction",
+      "channel_upper"
+     ],
+     "opposing_case": "`elder` 7.0 is not red, `mp` 96.0 is high, `subcomponents.structure.wk_score` 15.0 says the weekly close is above a rising 10-week average, and BULLISH_BOS with sector strong could make this a fresh trend.",
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "A sharp rally inside a Downward Trend, not an established Upward Trend: ma50 89.11 < ma100 94.48 < ma200 99.29 and from_52w_hi -13.36%. `subcomponents.structure.rs_accel` 25.6 against `subcomponents.structure.rs_vs_spy` 6.63 says the lead is one month old; `mp_accel_state` 2 DECELERATING says the push is already slowing. Under C19 the rally must clear the old pivotal point by a margin; until then it is a Natural Rally, on day_vol 0.81.",
+     "for": "`structure` 89.5 BULLISH_BOS, `mp` 96.0 and `subcomponents.structure.wk_score` 15.0: the weekly close is above a rising 10-week average and the weekly is 0.7% under its 20-week high.",
+     "against": "Inverted stack ma50 89.11 < ma100 94.48 < ma200 99.29; 13.36% under the 52-week high; the lead is one month old (`subcomponents.structure.rs_accel` 25.6) and decelerating; day_vol 0.81.",
+     "entry_trigger": "A close above the 20-week high that holds, plus ma_above:ma_50:ma_100 turning.",
+     "wrong_if": "A close through the 20-week high that holds and extends: my Downward Trend read is wrong.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "Fresh weekly high with follow-through and the 50-day crossing the 100-day; a second Consumer Staples name confirming (C14).",
+     "cannot_see": [
+      "order-fill difficulty",
+      "20-week high as a condition level"
+     ],
+     "opposing_case": "`structure` 89.5 with BULLISH_BOS, `mp` 96.0, `subcomponents.energy.exhaustion_score` 10.0: four engines agree and the weekly sits 0.7% under its 20-week high, so a new weekly high is one push away.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Trend Template fails criteria 2-4: ma50 89.11 < ma100 94.48 < ma200 99.29, an inverted stack with the 200-day not rising (C3). This is a stage 1-to-2 attempt, not a confirmed stage 2 (C2). `subcomponents.structure.rs_vs_spy` 6.63 is a modest 3-month lead and `subcomponents.pipe.pr_ret_12m` 8.0 is no leader's year; day_vol 0.81 is a breakout without volume (C6). Consumer Staples leading is a rotation caution (C15, R9).",
+     "for": "BULLISH_BOS, `structure` 89.5, `subcomponents.structure.rs_accel` 25.6, rs LEADER spy20 32.22, within 13.36% of the 52-week high.",
+     "against": "Inverted 50/100/200 stack fails C3; low-volume break (day_vol 0.81); `subcomponents.structure.rs_vs_spy` 6.63 modest; defensive-sector leadership is a late-stage/rotation warning (C14, C15).",
+     "entry_trigger": "None until ma_above:ma_50:ma_200 and the 200-day rises a month; then a base and pivot breakout on vol_x_ge:1.4.",
+     "wrong_if": "My opposition is wrong if the stack repairs within the horizon and the advance continues.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "ma50 above ma200 with a rising 200-day plus a base on contracting volume.",
+     "cannot_see": [
+      "ma_150",
+      "200-day slope",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": "`structure` 89.5 with BULLISH_BOS, `subcomponents.structure.rs_accel` 25.6 lead widening, `subcomponents.structure.wk_score` 15.0, rs LEADER spy20 32.22, from_52w_hi -13.36%: a real turn may be starting.",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "Fails the breakout-volume test outright: day_vol 0.81 is under 1.40, a hard rejection, not a weaker buy (C16, R4). The BULLISH_BOS sits under an inverted stack, ma50 89.11 < ma100 94.48 < ma200 99.29, so this is a recovery inside a falling trend, not a new high out of a sound base (C7). `subcomponents.structure.rs_vs_spy` 6.63 is thin 3-month leadership and `subcomponents.pipe.pr_ret_12m` 8.0 is a modest year; sector Momentum Fading.",
+     "for": "`structure` 89.5 BULLISH_BOS and `subcomponents.structure.rs_accel` 25.6 show a sharp turn; rs LEADER, downday 2.19; W 0.7% under 20-wk high.",
+     "against": "day_vol 0.81 fails C16 (R4). Inverted ma50 < ma100 < ma200: no prior +30% uptrend into a base (C12). `subcomponents.structure.base_score` 8.0 is a partial base; lens leadership warn; Consumer Staples sector Momentum Fading (R9).",
+     "entry_trigger": "Would need a close above high_52w_close on vol_x_ge:1.4 with ma_50 turning up.",
+     "wrong_if": "A run of 20%+ from entry 110.17 inside 40 sessions without a volume breakout.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A breakout session on day_vol of 1.40 or more, and the sector state turning to Momentum Building.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count"
+     ],
+     "opposing_case": "`structure` 89.5 with BULLISH_BOS, `subcomponents.structure.rs_accel` 25.6 (lead widening fast), `subcomponents.energy.exhaustion_score` 10.0 (no wear), rs LEADER, lens sector strong.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "RETRACEMENT pending (Holy Grail, C7): `subcomponents.mp.adx_val` 40.35 is the strongest trend reading in the room, `subcomponents.mp.di_bullish` True, `mp` 96.0. But price is 24.2% above the last swing high with run_10d 22.55%: today is the climax-risk leg (C19), not an entry. I buy only the first pullback's reclaim of the 20-day.",
+     "for": "`subcomponents.mp.adx_val` 40.35 and `subcomponents.mp.mp_adx_score` 25.0: the cleanest ADX gate on the sheet; `subcomponents.energy.exhaustion_score` 10.0 shows no wear yet.",
+     "against": "`mp_accel_state` DECELERATING, day_vol 0.81 on the break, sma_dist 23.63%, and the 50/100/200-day stack is inverted: a strong short trend inside a falling long one, so time in the trade must be short (C18).",
+     "entry_trigger": "pullback into ma20 95.71 or fib_382, then an hourly close back above it (reclaim:ma_20)",
+     "wrong_if": "daily close more than half an ATR under the 20-day after entry, or no pullback within 8 sessions",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "ADX turning down through 30 on the pullback, or a range-expansion down bar off the high (a climax top, not a retracement).",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "POSITION system fired on a fresh resistance break: structure_shift BULLISH_BOS (C26, R13). Fund flow confirms: `subcomponents.flow.cmf` 0.29 above zero, `flow` 77.6 (C28/R14). rs_spy_20d 32.22 > 0, but ret_63d 4.38 and rs_rank_pct 75.0 are only modest over my position horizon (C23). Trend impulse is weak: `elder` 7.0, elder_5d down from 10 to 7. Sector reads Momentum Fading. Low conviction.",
+     "for": "A just-happened break above resistance with fund flow above zero: `subcomponents.flow.cmf` 0.29, `structure` 89.5, `mp` 96.0; rs_spy_20d 32.22.",
+     "against": "`elder` 7.0 falling from 10 is a fading trend impulse; ret_63d 4.38 is thin strength; sector Momentum Fading (top-down C24 weak); a low-participation break.",
+     "entry_trigger": "Buy stop one tick over bar_high, trailed to each new prior-day high (C27, R15).",
+     "wrong_if": "Daily close below structure_shift_ref, or below max(fib_swing_low, base_low_20d).",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "`elder` back to 10 with cmf rising would lift conviction; a close back under the broken pivot ends it.",
+     "cannot_see": [
+      "ma_40",
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "elder_pattern",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "structure_shift BULLISH_BOS: a break that just happened, so price sits at the Creek (C7 zone). Context: ma50 89.11 under ma100 94.48 under ma200 99.29 with price above all three is a Phase D break out of a longer range, not a trend. `structure` 89.5 and `subcomponents.structure.rs_accel` 25.6 back it, but day_vol 0.81 makes it a low-volume break: a potential upthrust until it holds outside the range (C5, R3). Low conviction.",
+     "for": "`structure` 89.5 with `subcomponents.structure.wk_score` 15.0 and `subcomponents.energy.en_pos50` 97.46; `subcomponents.structure.rs_accel` 25.6: the lead is widening; at the test, not extended from the Creek.",
+     "against": "day_vol 0.81 on the break: potential upthrust (C5); longer averages still inverted; `flow` 77.6 is the lowest flow of the trend names; `subcomponents.flow.ha_quality_count` 4.0 is choppy.",
+     "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 while holding above structure_shift_ref (C12).",
+     "wrong_if": "Daily close below structure_shift_ref: the break failed and price is back in the range.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A wide up bar on volume holding outside the range lifts me; a quick rejection back under the Creek is an upthrust and ends it.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref value",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "vwap_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "U",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "minervini",
+     "seow"
+    ],
+    "oppose": [
+     "oneil",
+     "raschke"
+    ],
+    "abstain": [
+     "wyckoff"
+    ]
+   },
+   "convictions": {
+    "aqe-quant": 4,
+    "elder-lens": 2,
+    "livermore": 3,
+    "minervini": 3,
+    "oneil": 3,
+    "raschke": 2,
+    "seow": 2,
+    "wyckoff": null
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 5 support / 2 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Higher-timeframe stretch with no fresh trigger: the 50-day sits about 36% above the 200-day while price reads RANGE on below-normal volume. The decider owes what event starts the trade now (C6: good e"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "`mp_accel_state` 1 ACCELERATING on `subcomponents.pipe.pipe_tier` 2 B-STRONG (R8); all three Precision Edge parts pass: `subcomponents.mp.roc_zscore` 2.84, `subcomponents.pipe.pr_rsi_score` 20.0, `subcomponents.mp.rel_mom_score` 25.0 (R9). Broad support: `flow` 73.7, `energy` 71.4, `structure` 87.4, `mp` 93.0.",
+     "for": "`subcomponents.structure.rs_vs_spy` 13.91 with `subcomponents.structure.rs_accel` 17.39 (R5); `subcomponents.mp.abs_mom_score` 30.0; exhaustion test not live (`subcomponents.energy.en_trend_bars` 9.0), a young run.",
+     "against": "Volume is drying, not building (`subcomponents.flow.volume_score` 0.0, `subcomponents.pipe.pr_vol_score` 5.0); `subcomponents.bq.bq_base_dur` 4.0 is a short base; `subcomponents.mp.adx_val` 28.31 is a modest trend.",
+     "entry_trigger": "an hourly close above yesterday's high on volume at least 1.2x the time-of-day norm with session VWAP held",
+     "wrong_if": "`mp_accel_state` DECELERATING with `subcomponents.mp.roc_zscore` under 1.94",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`subcomponents.flow.volume_score` rising would lift me; `subcomponents.structure.rs_accel` negative would drop me",
+     "cannot_see": [
+      "pipe_rank",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": "`subcomponents.pipe.pr_vol_score` 5.0 and `subcomponents.flow.volume_score` 0.0 say volume is not rising; `subcomponents.energy.squeeze_score` 0.0, no coil. The momentum is real but unconfirmed by volume."
+    },
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "elder_5d [10, 7, 7, 10, 7]: force dips to 7 and reclaims inside a rising trend, the pullback rhythm C6 buys, never red (`elder` 7.0, C3). `mp` 93.0 ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep the tide up (C9, C21). No <=6 bar, so no permission event (C4); the last bar is a drop, so I wait for value, not chase.",
+     "for": "Repeated shallow force dips (10 to 7) that reclaim, inside `mp` 93.0 ACCELERATING and weekly tide `subcomponents.structure.wk_score` 15.0 (C6, C21).",
+     "against": "No transition (C4); last bar dropped 10 to 7 with H1 below EMA9; pattern unlabelled, so R8 does not fire.",
+     "entry_trigger": "A pullback into ma20 44.39 with `elder` >=7.",
+     "wrong_if": "`elder` <=1, or a daily close under ma50 43.6.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A dip <=6 then >=7 would be the permission event; a red bar ends it.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "force_index_ema_2",
+      "price_ema_slope",
+      "channel_upper",
+      "weekly_trend_direction"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Established Upward Trend (ma50 43.6 > ma100 40.08 > ma200 32.07, from_52w_hi -1.76%) now in a normal reaction: structure_shift RANGE, D 4.4% under the last swing high, day_vol 0.78, a quiet lower-volume pullback (C8). `mp` 93.0 with `mp_accel_state` 1 ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep it in my Upward Trend column. I do not buy the reaction; I buy the new high (C5).",
+     "for": "`subcomponents.mp.roc_zscore` 2.84 and `subcomponents.mp.rel_mom_score` 25.0: an exceptional month well ahead of the market; ret_6m 93.58 is leader behaviour in an aligned stack.",
+     "against": "`subcomponents.structure.resist_score` 5.0 and `subcomponents.energy.en_trend_bars` 9.0: off its high on a young run; H1 below EMA9 at 8% of the day's range; run_10d 33.47% is a large thrust to digest.",
+     "entry_trigger": "close_above:high_52w_close, a fresh closing high after the reaction, on a day stronger than SPY.",
+     "wrong_if": "fade_atr_ge:2 (my C7 translation) or close_below:base_low_20d: the reaction is no longer normal.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "The new high printing on rising volume raises me; a deeper reaction on heavier volume (abnormal, C8) ends it.",
+     "cannot_see": [
+      "order-fill difficulty",
+      "pivotal-point margin in modern units (atr_14d proxy)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "Trend Template passes on proxies: 51.88 > ma20 44.39 > ma50 43.6 > ma100 40.08 > ma200 32.07, from_52w_hi -1.76%, ret_6m 93.58, rs LEADER spy20 31.31 (C3, C11). `structure` 87.4 with `subcomponents.structure.wk_score` 15.0 and `subcomponents.bq.bq_vol_dry` 10.0: a RANGE 4.4% under the daily swing high on day_vol 0.78 is the right side of a base with volume drying (C6). I buy only the pivot breakout (C5).",
+     "for": "Ordered stack, near the 52-week high, rs LEADER, `structure` 87.4, `subcomponents.structure.rs_accel` 17.39, quiet volume in a range just under the high.",
+     "against": "`subcomponents.bq.bq_range_tight` 0.0 and `subcomponents.energy.squeeze_score` 0.0: no measured tightening; sma_dist 19.0% still extended; ma50 far above ma200; H1 below EMA9.",
+     "entry_trigger": "h1_close_above:pivot_high with vol_x_ge:1.4 and above_vwap_s.",
+     "wrong_if": "Close back below pivot_high-1atr after a breakout, or a daily close below ma_20 (44.39).",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "The range breaking down on rising volume instead of breaking out.",
+     "cannot_see": [
+      "ma_150",
+      "52-week low",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "No breakout to buy: structure_shift RANGE with day_vol 0.78, under the 1.40 test (C16, R4), and `subcomponents.flow.volume_score` 0.0 says volume is drying, not arriving. `subcomponents.structure.base_days` 7.0 is far short of a 7-8 week base (C12). Price 51.88 vs ma200 32.07 is about 62% above the 200-day, close to the C24 climax boundary. Strong `structure` 87.4 and rs LEADER make it a watch, not a buy.",
+     "for": "Leader near its high: from_52w_hi -1.76%, rs LEADER, downday 2.66; `structure` 87.4 with `subcomponents.structure.base_score` 10.0; `subcomponents.mp.roc_zscore` 2.84.",
+     "against": "day_vol 0.78 fails C16; RANGE means no breakout happened; `subcomponents.flow.volume_score` 0.0; 7-day base is too short (C12); about 62% above ma200 nears the C24 70% line; H1 below EMA9.",
+     "entry_trigger": "Would need a close above pivot_high on vol_x_ge:1.4 after a base of 7+ weeks.",
+     "wrong_if": "U runs 20%+ from entry 51.88 within 40 sessions without a volume breakout.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A volume breakout of 1.40x or more from a measurable base, with price still under 70% above ma200.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count"
+     ],
+     "opposing_case": "`structure` 87.4, `subcomponents.mp.roc_zscore` 2.84 and `subcomponents.mp.rel_mom_score` 25.0 are an exceptional month; rs LEADER, from_52w_hi -1.76%, ret_6m 93.58.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "Fits none of my four setups today. Not a Holy Grail: `subcomponents.mp.adx_val` 28.31 is under the 30 gate. Not a breakout: `subcomponents.energy.squeeze_score` 0.0, no contraction. Not a test: no fresh extreme. structure_shift RANGE, H1 closed at 8% of the day's range below EMA9: no trigger, and C22 says stand aside when no setup is formed.",
+     "for": "`subcomponents.mp.roc_zscore` 2.84 and `subcomponents.mp.rel_mom_score` 25.0: an exceptional month; `structure` 87.4; a pullback 4.4% under the swing high could become a Holy Grail if ADX lifts.",
+     "against": "`subcomponents.mp.adx_val` 28.31 fails the Holy Grail gate; `subcomponents.flow.volume_score` 0.0 and day_vol 0.78: no participation; weak hourly close.",
+     "entry_trigger": "ADX reading back above 30, then a pullback into ma20 44.39 and an hourly reclaim of it",
+     "wrong_if": "if it rallies through the last swing high on volume without a pullback, my stand-aside missed it",
+     "horizon_sessions": 5,
+     "would_change_my_mind": "`subcomponents.mp.adx_val` above 30 with a completed first pullback, or a contraction reading (`subcomponents.energy.squeeze_score` rising) that makes it a breakout setup.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": "Exceptional month (`subcomponents.mp.roc_zscore` 2.84), Precision Edge parts pass, `mp` 93.0 with `mp_accel_state` ACCELERATING, 6-month return 93.58: the momentum is real and the dip off the high is shallow.",
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "Neither system has fired yet; judged on the POSITION system, closest to its picture. structure_shift RANGE and MTF daily 4.4% under the last swing high: no resistance break on the bar, so no buy signal (C26). Fund flow is there: `subcomponents.flow.cmf` 0.33, `flow` 73.7 (C28); `mp` 93.0, `structure` 87.4; rs_spy_20d 31.31, rs_rank_pct 97.81. Support only if the break prints. Swing fails: ext_atr20 2.77, no dip to ma_20.",
+     "for": "A strong name with fund flow in place: `subcomponents.flow.cmf` 0.33, `mp` 93.0, `structure` 87.4; rs_rank_pct 97.81, ret_6m 93.58. A break of the last swing high would be a textbook position buy (C26).",
+     "against": "No buy signal today: structure_shift RANGE, H1 below EMA9, `elder` 7.0 choppy at 10/7/7/10/7; ret_63d 11.0 is the weakest 63d among the momentum nominees.",
+     "entry_trigger": "Only after a daily close above pivot_high, then a buy stop one tick over bar_high (C26, C27).",
+     "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) before any break.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A close above pivot_high with cmf still positive turns this into a full position signal.",
+     "cannot_see": [
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "elder_pattern",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "structure_shift RANGE: range playbook (C1, C11). Price is in the upper part of the range (`subcomponents.energy.en_pos50` 86.08), 4.4% under the last daily swing high, on day_vol 0.78: neither an edge test nor a sign-of-strength break. `structure` 87.4 and `flow` 73.7 are strong, but C1 says the trade is at the edge, not in the middle.",
+     "for": "`structure` 87.4 with `subcomponents.structure.wk_score` 15.0; `flow` 73.7 with `subcomponents.flow.accum_score` 7.5; weekly 8.6% above its last swing high.",
+     "against": "RANGE, upper middle of the range on day_vol 0.78; H1 below EMA9 at 8% of the day's range; no shakeout or breakout bar to weigh (C6).",
+     "entry_trigger": "Either a range-high break: close_above:pivot_high with vol_x_ge:1.2 and clv_ge:0.67; or a spring: reclaim:base_low_20d.",
+     "wrong_if": "A daily close below base_low_20d without a reclaim.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A sign-of-strength break of the range high, or a spring at the range low.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "base_low_20d value",
+      "vwap_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "lane": "MOMENTUM",
+   "split": {
+    "support": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "minervini",
+     "oneil",
+     "seow",
+     "wyckoff"
+    ],
+    "oppose": [
+     "raschke"
+    ],
+    "abstain": []
+   },
+   "convictions": {
+    "aqe-quant": 3,
+    "elder-lens": 2,
+    "livermore": 4,
+    "minervini": 4,
+    "oneil": 4,
+    "raschke": 2,
+    "seow": 4,
+    "wyckoff": 3
+   },
+   "contested": true,
+   "why_contested": [
+    "blind split 7 support / 1 oppose",
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Participation spike: CHYM traded at four times its 20-day average, the highest day_vol in the room, and it is the only name entering through four doors. Is the case evidence or excitement: would it su"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "`flow` 93.4 is built from every flow part near ceiling (`subcomponents.flow.volume_score` 7.5, `subcomponents.flow.accum_score` 7.5, `subcomponents.flow.skew_score` 3.5); `mp_accel_state` 1 ACCELERATING on `subcomponents.pipe.pipe_tier` 2 B-STRONG (R8); `subcomponents.structure.base_score` 15.0 reads early.",
+     "for": "`subcomponents.pipe.momentum_composite` 81.0 with `subcomponents.pipe.pr_vol_score` 20.0 and `subcomponents.pipe.pr_ma_score` 20.0; `subcomponents.structure.rs_accel` 11.22 positive (R5); base of `subcomponents.structure.base_days` 17.0 in the sweet spot.",
+     "against": "`subcomponents.mp.adx_val` 23.19 is a weak trend (`subcomponents.mp.mp_adx_score` 12.0); `subcomponents.energy.squeeze_score` 0.0; the volume parts may lean on one heavy day, which my fields cannot separate.",
+     "entry_trigger": "an hourly close above yesterday's high with session VWAP held, while `mp_accel_state` stays ACCELERATING",
+     "wrong_if": "`flow` under 80 with `subcomponents.flow.accum_score` falling",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`subcomponents.mp.adx_val` above 25 would lift me; `subcomponents.flow.volume_score` collapsing after the heavy day would drop me",
+     "cannot_see": [
+      "single-day volume breakdown",
+      "pipe_rank",
+      "chart structure and levels"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "elder-lens": {
+     "vote": "SUPPORT",
+     "conviction": 2,
+     "reason": "`elder` 10.0, elder_5d [10, 10, 10, 10, 10] SUSTAINED: permission on (C3), but a pure plateau with no transition, so this is summer (C20) and the read is C24 (unsourced). `mp` 83.0 STRONG and ACCELERATING keeps the trend rising (C9); `subcomponents.structure.wk_score` 10.0 is a weaker weekly tide than the rest. I buy only the pullback into value (C10).",
+     "for": "Five bars of `elder` 10.0, `mp` 83.0 STRONG ACCELERATING: permission on and persistence high (C3, C9).",
+     "against": "Plateau is not a transition (C4, C20); `subcomponents.structure.wk_score` 10.0 is the softest weekly read among the supports; price above ma20 30.52, not under value (C10).",
+     "entry_trigger": "A pullback into ma20 30.52 holding `elder` >=7.",
+     "wrong_if": "`elder` <=1, or a daily close under ma50 29.94.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A dip <=6 and reclaim near the 20-day average would be a sourced C4 entry.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "force_index_ema_2",
+      "price_ema_slope",
+      "channel_upper",
+      "weekly_trend_direction"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Established Upward Trend near a fresh high: ma50 29.94 > ma100 28.21 > ma200 24.07, from_52w_hi -0.75%, W and H1 swing HH/HL, structure_shift ABOVE_STRUCTURE. `mp` 83.0 with `mp_state` 3 STRONG and `mp_accel_state` 1 ACCELERATING is my Upward Trend column in black ink; `subcomponents.structure.base_score` 15.0 says it came out of a proper base. Financials, outside the Technology cluster.",
+     "for": "`flow` 93.4 with `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5: buying on rising volume; `elder` 10.0 SUSTAINED.",
+     "against": "D swing HH but LL, 10.4% above the last swing high; `subcomponents.flow.ext_score` 0.0, no breakout bonus; adx 23.19; a 4x volume day can mark an end as easily as a start.",
+     "entry_trigger": "close_above:high_52w_close, a fresh closing high, on a day stronger than SPY.",
+     "wrong_if": "fade_atr_ge:2 in one session (my C7 translation), or a close more than 1 ATR under high_52w_close after the break.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "No follow-through after the new high (C17: a cleared level that does not run is itself a danger signal) lowers me.",
+     "cannot_see": [
+      "order-fill difficulty (day_vol 4.05 is a proxy only)",
+      "a second Financials name for Key Price confirmation"
+     ],
+     "opposing_case": null,
+     "self_counter": "`subcomponents.mp.adx_val` 23.19 is barely a trend and `subcomponents.structure.wk_score` 10.0 is not full marks; day_vol 4.05 could be a climax day rather than strength. One name is not a group (C14): no second Financials name confirms it here."
+    },
+    "minervini": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Cleanest stage 2 in the room: 34.29 > ma20 30.52 > ma50 29.94 > ma100 28.21 > ma200 24.07, from_52w_hi -0.75%, ret_6m 95.38, rs LEADER (C3). `subcomponents.structure.base_score` 15.0 on 17 base days is a well-formed base, and day_vol 4.05 with `flow` 93.4 is the expanding-volume breakout C6 requires. sma_dist 14.52% is the least extended of the leaders. Buy follow-through, never a chase.",
+     "for": "All MA criteria pass, near the 52-week high, `subcomponents.structure.base_score` 15.0, `flow` 93.4 with `subcomponents.flow.accum_score` 7.5, breakout volume day_vol 4.05, elder SUSTAINED.",
+     "against": "10.4% past the last daily swing high (chase risk, C5); `subcomponents.mp.adx_val` 23.19 a soft trend; sector state Momentum Fading.",
+     "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.2; or a tight pullback in_zone:ma_20 then a new high.",
+     "wrong_if": "Daily close below pivot_high: the breakout failed back into the base.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "Pullback on volume above the breakout day, or a light-volume recovery (C6).",
+     "cannot_see": [
+      "ma_150",
+      "52-week low",
+      "earnings growth",
+      "VCP contraction count"
+     ],
+     "opposing_case": null,
+     "self_counter": "Already 10.4% above the daily swing high, past a clean pivot entry (C5); `subcomponents.energy.squeeze_score` 0.0; spy20 19.19 is the weakest RS among the leaders; Financials reads Momentum Fading."
+    },
+    "oneil": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "Closest to the O'Neil picture: day_vol 4.05 is a decisive volume day (C16); from_52w_hi -0.75% is at new highs (C7); `subcomponents.structure.base_score` 15.0 over `subcomponents.structure.base_days` 17.0 is a full-credit base (substitute, C18); `subcomponents.flow.accum_score` 7.5; rs LEADER, lens leadership and sector strong (C9, R9). Price 34.29 vs ma200 24.07 is well under 70% above (C24 clear). Market gate DELEGATED.",
+     "for": "Volume breakout to new highs: day_vol 4.05, from_52w_hi -0.75%; `subcomponents.structure.base_score` 15.0 base; `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5; rs LEADER, lens sector strong; `subcomponents.energy.exhaustion_score` 10.0.",
+     "against": "Single-day volume carries the case; `subcomponents.mp.adx_val` 23.19 weak trend; `subcomponents.structure.wk_score` 5.0; D 10.4% above the last swing high (C17 late on that measure); sector Momentum Fading.",
+     "entry_trigger": "Hourly close above bar_high on vol_x_ge:1.4 into a confirmed uptrend; no add-on past bar_high+5pct (C21).",
+     "wrong_if": "Daily close below ma50 29.94 on heavy volume (R8), or 8% below entry 34.29 (C20), or a new high on day_vol under 1.0.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "Follow-through on falling volume or closes at the day's low (C25); Financials group failing to confirm (R9).",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "S share supply",
+      "I sponsor count",
+      "12-month RS rating",
+      "pivot_high",
+      "base-stage count"
+     ],
+     "opposing_case": null,
+     "self_counter": "The case leans on one volume session; `subcomponents.mp.adx_val` 23.19 is a weak trend, `subcomponents.structure.wk_score` 5.0 a soft weekly read, and Financials reads Momentum Fading. A one-day spike can be climax, not accumulation (C24)."
+    },
+    "raschke": {
+     "vote": "OPPOSE",
+     "conviction": 2,
+     "reason": "No setup in my taxonomy: `subcomponents.mp.adx_val` 23.19 fails the Holy Grail gate (no ADX-confirmed trend to buy a pullback in), `subcomponents.energy.squeeze_score` 0.0 means no range contraction, and day_vol 4.05 with price 10.4% above the last swing high is a range-expansion bar, which C19 treats as climax risk, not an entry.",
+     "for": "`flow` 93.4 with `subcomponents.flow.accum_score` 7.5, `elder` 10.0 SUSTAINED, `subcomponents.structure.base_score` 15.0: real buying out of a fresh base.",
+     "against": "`subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.mp.mp_adx_score` 12.0: weak trend; `subcomponents.energy.squeeze_score` 0.0; the 4x volume day is the expansion, not the setup.",
+     "entry_trigger": "a contraction day or two after the spike, then an hourly close above the spike day's high",
+     "wrong_if": "if it holds the spike day's range and keeps closing higher with ADX lifting over 30",
+     "horizon_sessions": 3,
+     "would_change_my_mind": "A quiet inside day after the spike (range contraction) or `subcomponents.mp.adx_val` above 30: either gives me a setup.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": "Four doors, `flow` 93.4 with every flow part near ceiling, `elder` 10.0 SUSTAINED, `subcomponents.structure.base_score` 15.0 and `mp_state` STRONG ACCELERATING: a fresh breakout from a base with heavy participation.",
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "SUPPORT",
+     "conviction": 4,
+     "reason": "POSITION system fired in full: structure_shift ABOVE_STRUCTURE, MTF daily 10.4% above the last swing high (C26, R13). TIF proxy confirms: elder_pattern SUSTAINED, `elder` 10.0 on all five bars (R14). COM proxy: `subcomponents.flow.cmf` 0.13 above zero, `flow` 93.4 (C28). rs_spy_20d 19.19, rs_rank_pct 97.89 (C23). Weekly swing HH/HL, so the C21 house rule passes. `mp` 83.0 with `mp_accel_state` 1 ACCELERATING.",
+     "for": "Every position-system proxy agrees: resistance broken, elder_pattern SUSTAINED with `elder` 10.0 x5, `subcomponents.flow.cmf` 0.13 above zero, `flow` 93.4; rs_rank_pct 97.89; weekly HH/HL.",
+     "against": "day_vol 4.05 is one heavy session that may inflate the flow read; ret_63d 7.46 modest; sector Momentum Fading; `energy` 68.1 is the softest engine.",
+     "entry_trigger": "Buy stop one tick over bar_high, trailed to each new prior-day high (C27, R15); add 50/30/20 on later signals (C30).",
+     "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or the trend colour flip (elder_pattern off SUSTAINED, red bar) sold next session below its low.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "cmf falling below zero after the volume day passes, or elder_pattern leaving SUSTAINED.",
+     "cannot_see": [
+      "pct_from_pivot",
+      "fib_swing_low",
+      "base_low_20d",
+      "bar_high",
+      "sector_rrg_quadrant",
+      "index 63d return"
+     ],
+     "opposing_case": null,
+     "self_counter": "`subcomponents.flow.cmf` 0.13 is modest next to `flow` 93.4, so the volume day may be carrying the flow read; ret_63d 7.46 is the thinnest 63d strength of the four momentum names; sector reads Momentum Fading."
+    },
+    "wyckoff": {
+     "vote": "SUPPORT",
+     "conviction": 3,
+     "reason": "TREND by structure_shift ABOVE_STRUCTURE, weekly HH/HL (C16 top-down passes). day_vol 4.05 is a high-volume impulse; C7 names the first pullback after it as an allowed entry. Demand: `flow` 93.4 with `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5. But 10.4% above the last daily swing high with atr 1.33 is away from value: HOLD-FOR-CONDITIONS (R2, C15).",
+     "for": "`flow` 93.4; `subcomponents.structure.base_score` 15.0 (a well-formed base under the break); elder 10.0 SUSTAINED; weekly HH/HL.",
+     "against": "Away from value (ext_atr20 2.83); `subcomponents.mp.adx_val` 23.19 is a weak trend reading; `subcomponents.energy.squeeze_score` 0.0, no coil; one 4.05x day can be climactic until a test on light volume holds.",
+     "entry_trigger": "in_zone:structure_shift_ref or in_zone:vwap_14d on lighter volume, then h1_close_above:bar_high with vol_x_ge:1.2 (C7, C12).",
+     "wrong_if": "Daily close below structure_shift_ref, or choch_bearish.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A pullback on heavy selling volume rather than light, or a close back inside the old range.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref value",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "vwap_14d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [],
+    "oppose": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "minervini",
+     "oneil",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ],
+    "abstain": []
+   },
+   "convictions": {
+    "aqe-quant": 4,
+    "elder-lens": 4,
+    "livermore": 4,
+    "minervini": 4,
+    "oneil": 4,
+    "raschke": 3,
+    "seow": 4,
+    "wyckoff": 4
+   },
+   "contested": true,
+   "why_contested": [
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Held name whose structure has changed character: a bearish CHoCH with mixed divergence, four oscillators bearish, and the weakest composite in the room. The held review owes whether the pre-stated dis"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held long, EXIT-CASE: every engine fails (`sc_m_gate_detail` 1); `mp` 0.0 with `subcomponents.mp.trend_score` 0.0 and `subcomponents.mp.mp_adx_score` 0.0; `structure` 25.0; `subcomponents.structure.rs_accel` -12.35, the lead is eroding; `elder` 3.0. The engines give no case to hold.",
+     "for": "`subcomponents.flow.accum_score` 7.5 (accumulation still rising); `subcomponents.pipe.pr_ret_12m` 16.0; `subcomponents.bq.bq_ema_conv` 20.0, averages bunching.",
+     "against": "`sc_momentum` 32.0; `mp` 0.0; `energy` 36.0; `structure` 25.0; `subcomponents.mp.di_bullish` False, sellers lead; `subcomponents.mp.roc_zscore` -1.02, weaker than usual.",
+     "entry_trigger": "none on these engines; I would need `mp` above 55 and `sc_m_gate_detail` showing all engines pass",
+     "wrong_if": "`mp` recovers above 55 with `subcomponents.mp.di_bullish` True",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`subcomponents.structure.rs_accel` turning positive with `flow` above 60",
+     "cannot_see": [
+      "chart structure and levels"
+     ],
+     "opposing_case": "`flow` 54.0 is not collapsed: `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.ext_score` 3.0 hint at buying under the surface, and `subcomponents.pipe.pr_ret_12m` 16.0 shows a strong 12-month record.",
+     "self_counter": null
+    },
+    "elder-lens": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held long, verdict EXIT-CASE. `elder` 3.0, elder_5d [3, 3, 3, 3, 3]: five bars in the 2-6 band, permission never resolved (C3); `mp` 0.0 with `subcomponents.structure.wk_score` 5.0 says no rising trend over it and no weekly tide (C9, C21). `structure` 25.0 BEARISH_CHOCH (R11) confirms the uptrend shape is gone. C18: the written stop 99.45 may be held or raised, never lowered.",
+     "for": "Not certainly red at `elder` 3.0; ACCUMULATION_BASE; long average stack still ordered.",
+     "against": "No permission for five bars, `mp` 0.0, `structure` 25.0 BEARISH_CHOCH, weekly tide `subcomponents.structure.wk_score` 5.0 (C3, C9, C21).",
+     "entry_trigger": "None to add; a re-entry would need a <=6 to >=7 transition in elder_5d.",
+     "wrong_if": "A bar >=7 in elder_5d with `mp` recovering above 75.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A C4 transition plus a rising trend leg.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "force_index_ema_13",
+      "weekly_trend_direction"
+     ],
+     "opposing_case": "ACCUMULATION_BASE with no single-bar drop (R7 not fired), `elder` 3.0 not certainly red, ma50 113.99 still over ma100 100.27 over ma200 79.2, so the longer trend may yet hold and the base resolve up.",
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held review: EXIT-CASE. The Upward Trend has ended in my columns: structure_shift BEARISH_CHOCH, D and H1 swing LH/LL, price under ma20 118.26 and ma50 113.99. `structure` 25.0 and `mp` 0.0 with `sc_m_gate_detail` 1 (no engine clears its floor) confirm it. The position is a loss (unrealised -512.03); C3 and C22 say the loss itself is the signal, take it small. C4: never add.",
+     "for": "Weekly swing HH/HL with an up-stacked ma50 113.99 > ma100 100.27 > ma200 79.2; `subcomponents.flow.accum_score` 7.5.",
+     "against": "`structure` 25.0, `mp` 0.0, `sc_m_gate_detail` 1; BEARISH_CHOCH; D and H1 LH/LL below EMA9; a losing position (C3).",
+     "entry_trigger": "None while it fails; to re-enter, a fresh close above pivot_high after a normal reaction.",
+     "wrong_if": "A close back above pivot_high within a few sessions.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A higher low then a close above the last daily swing high on rising volume.",
+     "cannot_see": [
+      "order-fill difficulty"
+     ],
+     "opposing_case": "The longer trend is intact: ma50 113.99 > ma100 100.27 > ma200 79.2, W swing HH/HL, ret_6m 63.17; `subcomponents.flow.accum_score` 7.5 says accumulation still runs, so this could be a normal reaction in a longer uptrend (C8).",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held, EXIT-CASE. Template criterion 5 fails: sma_dist -6.98% puts price under its average and below ma50 113.99; BEARISH_CHOCH, rs LAGGARD spy20 -3.05 (C3, C11). `structure` 25.0 and `subcomponents.mp.trend_score` 0.0 confirm the uptrend broke. C7: the stop is executed, not renegotiated; C10: holding for breakeven is ego.",
+     "for": "Long-term stack ma50 > ma100 > ma200 intact; `subcomponents.structure.rs_spy_score` 12.0; ret_6m 63.17.",
+     "against": "Price below ma20 and ma50, BEARISH_CHOCH, div MIXED/4, rs LAGGARD, `structure` 25.0, `subcomponents.mp.trend_score` 0.0, `flow` 54.0.",
+     "entry_trigger": "No add (never average down, C9); re-entry only after a fresh template pass and a new base.",
+     "wrong_if": "Daily close back above ma_50 with rising volume.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "Reclaim of the 50-day and a new contraction base.",
+     "cannot_see": [
+      "ma_150",
+      "hl_trend component",
+      "earnings growth"
+     ],
+     "opposing_case": "ma50 113.99 > ma100 100.27 > ma200 79.2 still stacked, ret_6m 63.17, `subcomponents.structure.rs_spy_score` 12.0: a shakeout in a longer stage 2 is possible (C16).",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held review EXIT-CASE. Leadership is gone: rs LAGGARD, downday -1.36 (C10 sell rule, substituted). `structure` 25.0 with BEARISH_CHOCH and `subcomponents.structure.wk_score` 0.0: the weekly trend has failed. `sc_momentum` 32.0 and `mp` 0.0. Price sits under ma50 113.99 (sma_dist -6.98%), the 10-week line, on day_vol 0.54; not yet the heavy-volume break of R8, but under it with a losing position, C20's 7-8% limit from cost 112.43 is the line.",
+     "for": "Long trend intact: ma50 > ma100 > ma200; ret_6m 63.17; selling volume light (day_vol 0.54); `subcomponents.pipe.pr_ret_12m` 16.0 shows a strong year.",
+     "against": "rs LAGGARD; `structure` 25.0 BEARISH_CHOCH; `subcomponents.structure.wk_score` 0.0; `mp` 0.0; below ma50 the 10-week line; div MIXED/4. Never average down (C20).",
+     "entry_trigger": "No new buy; held name. I would only keep it back above ma_50 with rs returning to LEADER.",
+     "wrong_if": "Close back above ma50 113.99 with rs LEADER inside 10 sessions.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A reclaim of the 10-week line on volume and `subcomponents.structure.wk_score` returning above 0.0.",
+     "cannot_see": [
+      "C/A EPS and sales",
+      "I sponsor count",
+      "12-month RS rating",
+      "hl_rs component"
+     ],
+     "opposing_case": "The longer trend still stands: ma50 113.99 > ma100 100.27 > ma200 79.2, ret_6m 63.17, rs_rank_pct 95.35; day_vol 0.54 shows no heavy-volume selling, so R8 has not strictly fired.",
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "HELD: EXIT-CASE. Long thesis has no setup left: structure_shift BEARISH_CHOCH, `structure` 25.0, `subcomponents.mp.adx_val` 17.11 drifting with `subcomponents.mp.di_bullish` False, `mp` 0.0, and every engine fails the momentum gate (`sc_m_gate_detail` all false). Not a Turtle Soup either: no fresh 20-day low against an older one is served. C18: minimise time in a trade that is not working.",
+     "for": "`subcomponents.bq.bq_ema_conv` 20.0 and `subcomponents.bq.bq_vol_dry` 15.0: averages bunching and volume drying, the start of a base; weekly still HH/HL; 6-month return 63.17.",
+     "against": "`structure` 25.0 BEARISH_CHOCH, `elder` 3.0, `subcomponents.mp.adx_val` 17.11, `subcomponents.structure.rs_accel` -12.35: the up-structure failed and the lead is eroding; price below vwap14.",
+     "entry_trigger": "none for the long; re-entry only on a Turtle Soup-style reclaim of a prior low or a new Holy Grail after ADX recovers over 30",
+     "wrong_if": "if price reclaims the 20-day (ma20 118.26) on a daily close, the CHoCH was a shakeout",
+     "horizon_sessions": 3,
+     "would_change_my_mind": "A daily close back above the 20-day with `subcomponents.mp.di_bullish` True again.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic",
+      "exact prior 20-day low and its date"
+     ],
+     "opposing_case": "Weekly swing still HH/HL, 6-month return 63.17, `subcomponents.bq.bq_ema_conv` 20.0 and `subcomponents.bq.bq_vol_dry` 15.0 read like a basing pullback inside a longer uptrend; held only since 2026-11-10.",
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held: EXIT-CASE. Position-system exit has printed: structure_shift BEARISH_CHOCH is a close below support (C14, C29). Fund flow negative: `subcomponents.flow.cmf` -0.16 below zero (C28); `elder` 3.0 for five bars, `mp` 0.0, `structure` 25.0. rs_spy_20d -3.05 fails the strength test (C6). Swing view also fails: price below ma_20 118.26, ext_atr20 -1.65.",
+     "for": "Long-term strength remains (rs_rank_pct 95.35, ret_6m 63.17); `subcomponents.flow.accum_score` 7.5 shows some accumulation under the surface.",
+     "against": "Both exits in my method are in: support broken (BEARISH_CHOCH) and the candle colour red (`elder` 3.0 x5). `subcomponents.flow.cmf` -0.16, `mp` 0.0, `structure` 25.0, rs_spy_20d -3.05.",
+     "entry_trigger": "None while held; re-entry only on a fresh resistance break with cmf above zero, buy stop over bar_high.",
+     "wrong_if": "A close back above ma_20 and a new break of pivot_high with positive cmf.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`subcomponents.flow.cmf` back above zero and `elder` back to 7 or more with a close above ma_20.",
+     "cannot_see": [
+      "fib_swing_low",
+      "base_low_20d",
+      "ma_40",
+      "bar_low",
+      "elder_context.volume.avg_vol_20d"
+     ],
+     "opposing_case": "rs_rank_pct 95.35, ret_6m 63.17 and ret_12m 50.38 say a longer-term leader; elder_pattern ACCUMULATION_BASE and `subcomponents.flow.accum_score` 7.5 could be a base forming after a shakeout.",
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "Held: EXIT-CASE. structure_shift BEARISH_CHOCH: the up-structure failed (R1), and price is below vwap14 116.98, so the danger point is violated (R12: the danger point wins). `structure` 25.0, `energy` 36.0 and `subcomponents.energy.en_pos50` 37.4 put price in the lower half of its range; `subcomponents.structure.rs_accel` -12.35: the lead is eroding. No long until a new range and shakeout form.",
+     "for": "Weekly HH/HL; longer averages stacked up; `flow` 54.0 is not distribution-grade; a range could form and offer a spring.",
+     "against": "BEARISH_CHOCH; `structure` 25.0; `sc_momentum` 32.0; div MIXED/4; daily and hourly LH/LL; below vwap14 116.98.",
+     "entry_trigger": "No long now; would need a new range, then reclaim:base_low_20d (spring) and h1_close_above:bar_high on vol_x_ge:1.2.",
+     "wrong_if": "A close back above ma20 118.26 on volume, re-entering the old up-structure.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A spring with follow-through, or a reclaim of the broken anchor low on heavy volume.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "structure_shift_ref value",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "hl_flow (NOT_SERVED)"
+     ],
+     "opposing_case": "Weekly swing still HH/HL and ma50 113.99 above ma100 100.27 above ma200 79.2: the longer uptrend is intact, and this could become a reaccumulation range with a spring near the written stop 99.45.",
+     "self_counter": null
+    }
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "lane": "PULLBACK",
+   "split": {
+    "support": [],
+    "oppose": [
+     "aqe-quant",
+     "elder-lens",
+     "livermore",
+     "minervini"
+    ],
+    "abstain": [
+     "oneil",
+     "raschke",
+     "seow",
+     "wyckoff"
+    ]
+   },
+   "convictions": {
+    "aqe-quant": 3,
+    "elder-lens": 4,
+    "livermore": 3,
+    "minervini": 4,
+    "oneil": null,
+    "raschke": null,
+    "seow": null,
+    "wyckoff": null
+   },
+   "contested": true,
+   "why_contested": [
+    "named in Steenbarger's challenge (1 finding(s))"
+   ],
+   "challenge_claims": [
+    "Held name with a bearish CHoCH and the lowest composite in the room; the higher-timeframe read is incomplete (no 200-day). The held review owes the observable that would end the hold and whether it ha"
+   ],
+   "cases": {
+    "aqe-quant": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "OPPOSE as a long idea; held SHORT, verdict KEEP: the engines stay weak, which is the short's case. `sc_momentum` 27.8, `mp` 0.0, `structure` 23.0, `sc_m_gate_detail` 1 (every engine fails), `subcomponents.structure.rs_accel` -7.35, `subcomponents.mp.di_bullish` False.",
+     "for": "`subcomponents.flow.accum_score` 7.5; `subcomponents.structure.rs_vs_spy` 3.65 positive; `subcomponents.bq.bq_ema_conv` 25.0, averages bunched.",
+     "against": "`flow` 42.0, `energy` 35.0, `structure` 23.0, `mp` 0.0; `subcomponents.mp.roc_zscore` -0.8; `subcomponents.structure.rs_accel` -7.35, the lead eroding (R6).",
+     "entry_trigger": "none as a long; for the held short, the engines staying under their floors keeps it",
+     "wrong_if": "`mp` above 55 with `subcomponents.mp.di_bullish` True",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "`flow` above 60 with `subcomponents.structure.rs_accel` positive",
+     "cannot_see": [
+      "pipe_rank",
+      "subcomponents.pipe.*",
+      "chart structure and levels"
+     ],
+     "opposing_case": "`subcomponents.flow.accum_score` 7.5 says accumulation is rising and `subcomponents.structure.rs_vs_spy` 3.65 is still a small three-month lead; a long could argue the selling is spent.",
+     "self_counter": null
+    },
+    "elder-lens": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "As a long: `elder` 2.0, elder_5d [5, 5, 6, 5, 2] INTERRUPTED, falling into the red region with `mp` 0.0 and `subcomponents.structure.wk_score` 2.0, so the trend leg has failed (C9, C21). Held SHORT (qty -68): verdict KEEP, since green forbids shorting and this is falling toward red, force aligned with the short (C3). C18: a short stop may be held or lowered, never raised; none is written, so I name ma20 141.57.",
+     "for": "(for the held short) Falling `elder` 2.0, `mp` 0.0, `structure` 23.0 BEARISH_CHOCH, weekly `subcomponents.structure.wk_score` 2.0.",
+     "against": "(against the short) `elder` 2.0 is not certainly red; a single-bar drop; no written stop.",
+     "entry_trigger": "No long. Short is held; no add without a red bar (`elder` <=1).",
+     "wrong_if": "Daily close above ma20 141.57, or `elder` >=7.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "elder_5d recovering >=7 with `mp` rising.",
+     "cannot_see": [
+      "impulse_colour_last_bar",
+      "force_index_ema_2",
+      "weekly_trend_direction",
+      "ma_200"
+     ],
+     "opposing_case": "`elder` 2.0 is not proven red (only <=1 is), the drop is one bar, and ma20 141.57 sits close to price, so a reclaim could squeeze the short.",
+     "self_counter": null
+    },
+    "livermore": {
+     "vote": "OPPOSE",
+     "conviction": 3,
+     "reason": "No long case: a Downward Trend in my red-ink column. structure_shift BEARISH_CHOCH, W, D and H1 below EMA9 with D swing LH/LL, sector Declining. `structure` 23.0 and `mp` 0.0 with `sc_m_gate_detail` 1 (no engine clears its floor). Held review on the SHORT (qty -68.0, unrealised 187.11): KEEP. C6 allows adding to a short only at lower prices, never into a rally.",
+     "for": "For the held short: `structure` 23.0, `mp` 0.0, BEARISH_CHOCH, sector Declining, D LH/LL. For a long: only `subcomponents.flow.accum_score` 7.5.",
+     "against": "As a long, nothing: `sc_m_gate_detail` 1. Against the short: `mp_accel_state` 1 ACCELERATING and a flat run_10d 0.73% say the decline may be pausing.",
+     "entry_trigger": "No long entry. For the short, add only on a fresh low (C6), never into a rally.",
+     "wrong_if": "A close above pivot_high that holds.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "A higher low and a close above the last daily swing high.",
+     "cannot_see": [
+      "order-fill difficulty",
+      "ma_200 (null)"
+     ],
+     "opposing_case": "`subcomponents.flow.accum_score` 7.5 and `mp_accel_state` 1 ACCELERATING hint the selling is slowing; run_10d 0.73% and price 2.1% under the H1 swing high say a rally against the short could be starting.",
+     "self_counter": null
+    },
+    "minervini": {
+     "vote": "OPPOSE",
+     "conviction": 4,
+     "reason": "As a long, the Trend Template fails: sma_dist -7.62%, price under ma20 141.57 and ma50 148.69, ma200 None, BEARISH_CHOCH, rs LAGGARD spy20 -3.7 (C2, C3). `structure` 23.0, `flow` 42.0 and `subcomponents.structure.wk_score` 2.0 read a stage 3-4 name. The book holds it short (qty -68); my long-only method cannot grade a short, but nothing here argues for buying it.",
+     "for": "Selling may be slowing (run_10d 0.73%); `subcomponents.energy.exhaustion_score` 10.0.",
+     "against": "Below ma20 and ma50, BEARISH_CHOCH, rs LAGGARD, `structure` 23.0, `flow` 42.0, `subcomponents.structure.wk_score` 2.0, sector Declining: not stage 2.",
+     "entry_trigger": "No long entry; needs a full template pass first.",
+     "wrong_if": "Daily close above ma_50 with volume expansion.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "A stage 2 transition: price over a rising 200-day and a base.",
+     "cannot_see": [
+      "ma_150",
+      "ma_200 (null)",
+      "short-side method (long-only canon)",
+      "earnings growth"
+     ],
+     "opposing_case": "run_10d 0.73% shows it holding, `subcomponents.energy.exhaustion_score` 10.0, and ma100 142.34 is near price: a base could form.",
+     "self_counter": null
+    },
+    "oneil": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Held SHORT (qty -68). CAN SLIM is a long-only method with no short-sale test on this card, so I cannot judge keeping it. As a long candidate it fails every step: `sc_momentum` 27.8, `structure` 23.0 BEARISH_CHOCH, rs LAGGARD, Industrials Declining. That supports the short's direction but is not a vote my method can cast.",
+     "for": "For the short: `structure` 23.0 BEARISH_CHOCH, `mp` 0.0, `subcomponents.structure.wk_score` 0.0, rs LAGGARD, below ma50 148.69.",
+     "against": "Against the short: `subcomponents.mp.adx_val` 17.62 is drift, not trend; day_vol 0.88 shows no heavy distribution; my method has no short-cover rule.",
+     "entry_trigger": "None; long-only method, no long entry while `structure` stays under 50 and rs is LAGGARD.",
+     "wrong_if": "Not applicable to a long-only read; a long case would need a new high out of a base on vol_x_ge:1.4.",
+     "horizon_sessions": 40,
+     "would_change_my_mind": "A card rule on short sales; none exists in my canon.",
+     "cannot_see": [
+      "short-sale rules in canon",
+      "C/A EPS and sales",
+      "I sponsor count",
+      "ma200"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "raschke": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "HELD SHORT (qty -68.0): my vote is on long ideas, so I abstain on the name and file a TIGHTEN line. The short is working: `structure` 23.0 BEARISH_CHOCH, `subcomponents.mp.di_bullish` False, `mp` 0.0, `elder` 2.0. But `subcomponents.mp.adx_val` 17.62 is no ADX-confirmed downtrend, so it is not a Holy Grail sell; C19: lock in the open gain, trail a tight stop rather than let it erode.",
+     "for": "For the short: `structure` 23.0 BEARISH_CHOCH, `flow` 42.0, `elder` 2.0 INTERRUPTED, D and W swings LH/LL below EMA9.",
+     "against": "`subcomponents.mp.adx_val` 17.62: the down-move is not a strong trend; `subcomponents.bq.bq_ema_conv` 25.0 shows averages bunching, the kind of compression that precedes a sharp move either way.",
+     "entry_trigger": "none for a long; for the held short, trail a stop just above the last lower high",
+     "wrong_if": "for the short: a daily close back above the 20-day (ma20 141.57)",
+     "horizon_sessions": 3,
+     "would_change_my_mind": "A contraction day resolving upward through the 20-day would end the short.",
+     "cannot_see": [
+      "adx slope (rising)",
+      "per-bar range history (NR4/NR7)",
+      "%K/%D stochastic"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "seow": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Held SHORT (qty -68). My method is long-only for this book; shorts are every criterion reversed and out of scope (C32): declared, never applied. As a long it fails every test: structure_shift BEARISH_CHOCH, `subcomponents.flow.cmf` -0.02, `elder` 2.0, `mp` 0.0, `structure` 23.0, rs_spy_20d -3.7. I do not vote a short position.",
+     "for": "For the held short, the long-side readings are all weak: `structure` 23.0, `elder` 2.0 INTERRUPTED, `mp` 0.0, cmf below zero.",
+     "against": "As a long, no resistance break, `subcomponents.flow.cmf` -0.02, sector Declining; nothing in my system to buy.",
+     "entry_trigger": "None: no long signal, and short rules are out of scope (C32).",
+     "wrong_if": "Not applicable to a short under my method; a long case would need a close above pivot_high with cmf above zero.",
+     "horizon_sessions": 10,
+     "would_change_my_mind": "Only a fresh long signal: resistance break with `subcomponents.flow.cmf` above zero.",
+     "cannot_see": [
+      "short-side rules (out of scope C32)",
+      "fib_swing_low",
+      "base_low_20d"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    },
+    "wyckoff": {
+     "vote": "ABSTAIN",
+     "conviction": null,
+     "reason": "Held SHORT (qty -68.0). structure_shift BEARISH_CHOCH with `structure` 23.0, `flow` 42.0 and `energy` 35.0: the up-structure failed and price is below vwap14 137.59, so the short sits with the structure (C9). Held review: KEEP. My card's vote is a long-entry read and I see no long here; I file ABSTAIN on the long idea rather than vote a playbook my card does not carry.",
+     "for": "For the held short: BEARISH_CHOCH, daily and hourly LH/LL, `structure` 23.0, `sc_momentum` 27.8, below every short average.",
+     "against": "`subcomponents.energy.exhaustion_score` 10.0 shows no selling climax yet; ma200 None so the long context is incomplete; weekly has no clear swing structure (C16).",
+     "entry_trigger": "No long; for a long it would need a new range and a spring: reclaim:base_low_20d then h1_close_above:bar_high with vol_x_ge:1.2.",
+     "wrong_if": "For the short: a daily close above vwap14 137.59 and ma20 141.57 on volume.",
+     "horizon_sessions": 20,
+     "would_change_my_mind": "Price re-entering value above vwap14 137.59 on volume, or a spring at the range low.",
+     "cannot_see": [
+      "pvp_position/pvp_vah/pvp_val/pvp_poc",
+      "bar_open/high/low/close",
+      "rvol_20d",
+      "ma200 (None)",
+      "hl_flow (NOT_SERVED)"
+     ],
+     "opposing_case": null,
+     "self_counter": null
+    }
+   }
+  }
+ ],
+ "floor_rule": "two messages per decider per contested name (floor-check counts); the Chair posts, never votes"
+}

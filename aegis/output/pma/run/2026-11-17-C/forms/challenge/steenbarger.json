@@ -1,0 +1,134 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-17",
+ "seat_kind": "challenge",
+ "names_read": 8,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-17\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"MBGL\", \"nomination_count\": 1, \"seats\": [\"aqe-quant\"]"},
+ "findings": [
+  {
+   "scope": "committee",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "Every nominated name in the room (6 of 6) comes from one seat with nomination_count 1; there is no independent convergence on any name. Agreement in the vote cannot be read as independent confirmation, because the room was built from a single input stream.",
+   "evidence": "tally: MBGL, BILL, KVYO, CLX, U, CHYM each nomination_count 1, seats [aqe-quant]; RBRK and SPCX nomination_count 0 (held only).",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "committee",
+   "kind": "ANCHOR",
+   "ticker": null,
+   "canon_ref": ["C1", "C17"],
+   "claim": "The six nominated names share one anchor band: sc_momentum 79.6 to 84.7, and five of six carry lens_warnings 2. A case leaning on the composite leans on a field whose forward-return separation has not been measured (UNPROVEN, R1). Each decider owes a reason in its own method that survives with sc_momentum hidden.",
+   "evidence": "sc_momentum MBGL 84.7, BILL 84.5, KVYO 83.7, CLX 82.3, CHYM 81.9, U 79.6; lens_warnings 2 on MBGL, KVYO, CLX, U, CHYM; lens_warnings 1 on BILL.",
+   "addressed_to": "oneil, minervini, elder-lens"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C3"],
+   "claim": "Sector clustering: four of six nominated names and five of eight room names sit in Technology. Approving several together is one sector bet, not several independent ideas; the deciders should rank within the cluster rather than pass it whole.",
+   "evidence": "gics_sector_name Technology: MBGL, BILL, KVYO, U, plus held RBRK. Other sectors: CLX Consumer Staples, CHYM Financials, SPCX Industrials.",
+   "addressed_to": "oneil, livermore"
+  },
+  {
+   "scope": "KVYO",
+   "kind": "EXTENSION",
+   "ticker": "KVYO",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Conflicting reads: the bearish_divergence caution fires with four of five oscillators confirming, on above-normal volume, while the momentum engines read accelerating. Where the fields conflict the decider owes an explicit answer to the divergence or an abstention, not a filled slot (R8).",
+   "evidence": "div_state BEARISH, div_bear_count 4, day_vol 1.84, structure_shift ABOVE_STRUCTURE, structure 76.8 (lowest of the six nominees); AQE sheet mp_accel_state 1 (ACCELERATING), subcomponents.energy.squeeze_score 12.5.",
+   "addressed_to": "minervini, elder-lens, wyckoff"
+  },
+  {
+   "scope": "CHYM",
+   "kind": "CROWDING",
+   "ticker": "CHYM",
+   "canon_ref": ["C17", "C6"],
+   "claim": "Participation spike: CHYM traded at four times its 20-day average, the highest day_vol in the room, and it is the only name entering through four doors. Is the case evidence or excitement: would it survive with the ticker hidden and the volume day removed?",
+   "evidence": "day_vol 4.05; doors STRENGTH, AQE_LEADER, PM_LENS, NOMINATED; structure_shift ABOVE_STRUCTURE; AQE sheet subcomponents.flow.ext_score 0.0, subcomponents.energy.exhaustion_score 10.0 (no exhaustion reading yet).",
+   "addressed_to": "oneil, minervini, raschke"
+  },
+  {
+   "scope": "CLX",
+   "kind": "PROCESS",
+   "ticker": "CLX",
+   "canon_ref": ["C5"],
+   "claim": "Higher-timeframe context is a downtrend: the average stack is fully inverted, so the BULLISH_BOS is a break inside a falling longer trend. The decider owes the trend or cycle context the setup exploits (R4), and a reason why a low-participation break counts.",
+   "evidence": "ma_50 89.11 < ma_100 94.48 < ma_200 99.29; structure_shift BULLISH_BOS; structure 89.5; day_vol 0.81; lane PULLBACK.",
+   "addressed_to": "wyckoff, livermore, seow"
+  },
+  {
+   "scope": "MBGL",
+   "kind": "PROCESS",
+   "ticker": "MBGL",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Higher-timeframe context cannot be fully named: no 200-day average, no structure_shift read, and the 50-day sits below the 100-day. A strength/solo entry on a short history with a 2.5x volume day owes a stated context and an invalidation observable from structure (R4, R5).",
+   "evidence": "ma_50 19.14, ma_100 19.83, ma_200 null; structure_shift null; structure 89.5; day_vol 2.52; doors STRENGTH, SOLO.",
+   "addressed_to": "oneil, minervini, livermore"
+  },
+  {
+   "scope": "BILL",
+   "kind": "OVERLAP",
+   "ticker": "BILL",
+   "canon_ref": ["C16", "C5"],
+   "claim": "Lane label and fields disagree: BILL is filed in the PULLBACK lane but reads above structure on above-normal volume. The decider owes which setup it is judging; a pullback method applied to a breakout reading is a mismatch, not a confirmation (R8).",
+   "evidence": "lane PULLBACK; structure_shift ABOVE_STRUCTURE; day_vol 1.81; structure 96.8; ma_50 47.91 > ma_100 46.65 > ma_200 42.9.",
+   "addressed_to": "raschke, seow"
+  },
+  {
+   "scope": "U",
+   "kind": "EXTENSION",
+   "ticker": "U",
+   "canon_ref": ["C5", "C6"],
+   "claim": "Higher-timeframe stretch with no fresh trigger: the 50-day sits about 36% above the 200-day while price reads RANGE on below-normal volume. The decider owes what event starts the trade now (C6: good entries work promptly).",
+   "evidence": "ma_50 43.6, ma_100 40.08, ma_200 32.07; structure_shift RANGE; day_vol 0.78; structure 87.4.",
+   "addressed_to": "livermore, minervini"
+  },
+  {
+   "scope": "RBRK",
+   "kind": "PROCESS",
+   "ticker": "RBRK",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Held name whose structure has changed character: a bearish CHoCH with mixed divergence, four oscillators bearish, and the weakest composite in the room. The held review owes whether the pre-stated disconfirming observable has now occurred (C7), stated as KEEP/TIGHTEN/EXIT-CASE.",
+   "evidence": "structure_shift BEARISH_CHOCH; div_state MIXED, div_bear_count 4; structure 25.0; sc_momentum 32.0; day_vol 0.54; ma_50 113.99 > ma_100 100.27 > ma_200 79.2.",
+   "addressed_to": "livermore, elder-lens, wyckoff"
+  },
+  {
+   "scope": "SPCX",
+   "kind": "PROCESS",
+   "ticker": "SPCX",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Held name with a bearish CHoCH and the lowest composite in the room; the higher-timeframe read is incomplete (no 200-day). The held review owes the observable that would end the hold and whether it has printed.",
+   "evidence": "structure_shift BEARISH_CHOCH; structure 23.0; sc_momentum 27.8; ma_50 148.69, ma_100 142.34, ma_200 null; day_vol 0.88.",
+   "addressed_to": "livermore, elder-lens, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "minervini", "ticker": "KVYO", "class": "AMBIGUITY", "what_is_owed": "An answer to div_state BEARISH, div_bear_count 4 in your own method, or an explicit abstention."},
+  {"seat": "wyckoff", "ticker": "CLX", "class": "CONTEXT", "what_is_owed": "The higher-timeframe context for a BULLISH_BOS under an inverted ma_50 < ma_100 < ma_200 stack."},
+  {"seat": "oneil", "ticker": "MBGL", "class": "CONTEXT", "what_is_owed": "A named higher-timeframe context with ma_200 null and structure_shift null, plus an invalidation observable from structure."},
+  {"seat": "raschke", "ticker": "BILL", "class": "AMBIGUITY", "what_is_owed": "Which setup is judged: PULLBACK lane vs structure_shift ABOVE_STRUCTURE."},
+  {"seat": "oneil", "ticker": "CHYM", "class": "CROWDING", "what_is_owed": "Whether the case survives with the day_vol 4.05 session removed."},
+  {"seat": "livermore", "ticker": "U", "class": "TRIGGER", "what_is_owed": "The event that starts the trade now while structure_shift reads RANGE on day_vol 0.78."},
+  {"seat": "elder-lens", "ticker": "RBRK", "class": "HELD_REVIEW", "what_is_owed": "KEEP / TIGHTEN / EXIT-CASE against structure_shift BEARISH_CHOCH and div_state MIXED."},
+  {"seat": "elder-lens", "ticker": "SPCX", "class": "HELD_REVIEW", "what_is_owed": "KEEP / TIGHTEN / EXIT-CASE against structure_shift BEARISH_CHOCH and structure 23.0."}
+ ],
+ "declarations": [
+  "I never nominate and never vote; these findings are QA questions for the deciders.",
+  "psychology_claims: NONE -- C18-C21 are PM-facing (R9); no emotional state is read or claimed.",
+  "environment_match: NOT_SERVED -- no regime or srm field is in my packet; no finding here justifies size (C3, C4).",
+  "edge_proven: NOT_MEASURED for every field cited (R1).",
+  "R1 house rule: entry-level fields were read as context only and are not a reason in any finding; each decider names its own invalidation level from structure."
+ ],
+ "data_gaps": [
+  {"field": "regime / srm", "impact": "Not served in the challenge packet; the regime each case is valid inside cannot be checked by this seat (R3)."},
+  {"field": "ma_200", "impact": "Null for MBGL and SPCX; higher-timeframe context incomplete for both (R4)."},
+  {"field": "structure_shift", "impact": "Null for MBGL; no BOS/CHoCH read to locate the setup."},
+  {"field": "lens_warnings", "impact": "Null for held RBRK and SPCX; crowding/behaviour context missing for the held book."},
+  {"field": "bracket.stop / bracket.risk_pct", "impact": "Null on all 8 room names; recorded as context only, never a reason (R1)."},
+  {"field": "ledger memory", "impact": "No voice_memory block injected; sector-clustering check against prior nominations could not be run."}
+ ]
+}

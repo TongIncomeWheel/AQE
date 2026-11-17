@@ -1,0 +1,3041 @@
+{
+ "_schema": {
+  "shape": "funnel",
+  "version": 1,
+  "written_by": "pma_pipeline.py",
+  "at": "2026-11-17T01:50:22Z"
+ },
+ "schema": "funnel.v1",
+ "date": "2026-11-17",
+ "claims_board_date": "2026-11-17",
+ "rule": {
+  "survives": "support CONFIRM >= 1 and support CONFIRM >= support REFUTE",
+  "out": "no SUPPORT vote at the blind vote (no claims)",
+  "dropped": "everything else, refuting evidence quoted"
+ },
+ "survivors": [
+  "MBGL",
+  "BILL",
+  "CHYM"
+ ],
+ "dropped": [
+  "KVYO",
+  "CLX",
+  "U"
+ ],
+ "out": [
+  "RBRK",
+  "SPCX"
+ ],
+ "names": {
+  "MBGL": {
+   "status": "SURVIVES",
+   "tallies": {
+    "support_confirm": 3,
+    "support_refute": 1,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 2,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "MBGL-aqe-quant-for",
+     "author": "aqe-quant",
+     "kind": "for",
+     "reviewers": [
+      "minervini",
+      "wyckoff"
+     ],
+     "rulings": [
+      {
+       "reviewer": "minervini",
+       "ruling": "REFUTE",
+       "evidence": "`flow` 93.4 and `mp` 97.0 are real strength (R3), but my test is base+pivot: `subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0 show no contraction; D close 19.13% over swing high is a chase (C5).",
+       "tf": {
+        "W": "9>21 but no readable swing (22 bars): stage 2 unconfirmed, young issue (C2)",
+        "D": "HH/HL, 19.1% above swing high 20.18: extended past any pivot (C5, R5)",
+        "H1": "HH/HL, 47% of day's range: no fresh pivot to buy"
+       }
+      },
+      {
+       "reviewer": "wyckoff",
+       "ruling": "CONFIRM",
+       "evidence": "Demand is real in my effort read: `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5 under `flow` 93.4, `mp` 97.0. structure_shift None, so range/trend stays unread (R10).",
+       "tf": {
+        "W": "no readable weekly swing; close 9.3% over Jul high 22.0, weekly Creek cleared",
+        "D": "HH/HL, 19.1% above swing high 20.18: away from value, no test yet (C3, C15)",
+        "H1": "HH/HL, 3.3% under 24.86, close at 47% of day range: no sign-of-strength close"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "MBGL-oneil-for",
+     "author": "oneil",
+     "kind": "for",
+     "reviewers": [
+      "wyckoff",
+      "elder-lens"
+     ],
+     "rulings": [
+      {
+       "reviewer": "elder-lens",
+       "ruling": "CONFIRM",
+       "evidence": "`elder` 10.0 not red, buying permitted (C3); `mp` 97.0 STRONG ACCELERATING with `subcomponents.structure.wk_score` 15.0 = rising tide (C9, C21); `subcomponents.flow.volume_score` 7.5 rising volume holds C23.",
+       "tf": {
+        "W": "above EMA9, 9>21, weekly tide up; swing not readable (open week)",
+        "D": "above EMA9, 9>21, HH/HL, green bar; not red, trend rising",
+        "H1": "above EMA9, 9>21, HH/HL, red last bar at 47% of range"
+       }
+      },
+      {
+       "reviewer": "wyckoff",
+       "ruling": "CONFIRM",
+       "evidence": "C5 met on two legs: day_vol 2.52 on the break and close 19.1% over swing high 20.18 (held outside); `structure` 89.5, `subcomponents.structure.base_score` 12.0. Close location not served.",
+       "tf": {
+        "W": "weekly Creek 22.0 cleared by 9.3%, swing structure not yet readable",
+        "D": "HH/HL, held 19.1% over 20.18: break held outside the old range",
+        "H1": "HH/HL, 3.3% under 24.86, mid-day close: bar geometry not served"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "MBGL-minervini-against",
+     "author": "minervini",
+     "kind": "against",
+     "reviewers": [
+      "livermore",
+      "seow"
+     ],
+     "rulings": [
+      {
+       "reviewer": "livermore",
+       "ruling": "REFUTE",
+       "evidence": "C5: `mp` 97.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING = Upward Trend; `subcomponents.structure.resist_score` 5.0, `subcomponents.energy.en_pos50` 89.63 = small reaction under the high, no chase. A coil is not my test.",
+       "tf": {
+        "W": "above EMA9, 9>21, 3.3% under 20-wk high; no readable swing: young trend, unproven",
+        "D": "HH/HL, 3.3% under 20-day high: a normal reaction off the high, not past it",
+        "H1": "HH/HL above EMA9, 47% of day's range: no fade off the high printed"
+       }
+      },
+      {
+       "reviewer": "seow",
+       "ruling": "REFUTE",
+       "evidence": "Position system (C26): extension past the pivot is the buy, not a fault. COM proxy `subcomponents.flow.cmf` 0.36 above zero; `flow` 93.4; weekly up `subcomponents.structure.wk_score` 15.0. 50/100/200 stack and VCP are not my tests (C1).",
+       "tf": {
+        "W": "above EMA9, 9>21, 9.3% over last weekly swing high; no swing class; C21 house not broken",
+        "D": "HH/HL, 19.1% above last swing high: resistance broken, position buy picture",
+        "H1": "above EMA9, 9>21, HH/HL, 47% of day range; not my trigger frame"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [],
+   "refutes_on_support": [
+    {
+     "claim_id": "MBGL-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "minervini",
+     "evidence": "`flow` 93.4 and `mp` 97.0 are real strength (R3), but my test is base+pivot: `subcomponents.bq.bq_range_tight` 0.0, `subcomponents.energy.squeeze_score` 0.0 show no contraction; D close 19.13% over swing high is a chase (C5).",
+     "tf": {
+      "W": "9>21 but no readable swing (22 bars): stage 2 unconfirmed, young issue (C2)",
+      "D": "HH/HL, 19.1% above swing high 20.18: extended past any pivot (C5, R5)",
+      "H1": "HH/HL, 47% of day's range: no fresh pivot to buy"
+     }
+    }
+   ],
+   "split": {
+    "support": [
+     "oneil",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "aqe-quant"
+    ],
+    "oppose": [
+     "minervini"
+    ],
+    "abstain": [
+     "wyckoff"
+    ]
+   },
+   "blind_conviction": {
+    "oneil": 3,
+    "minervini": 3,
+    "livermore": 3,
+    "elder-lens": 2,
+    "seow": 3,
+    "raschke": 2,
+    "wyckoff": null,
+    "aqe-quant": 4
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 5,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 100,
+     "close": 24.04,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 3.3,
+     "ema21": 20.2762,
+     "ema9": 21.5348,
+     "ema_order": "9>21",
+     "export_close": 24.04,
+     "high_20bar": 24.86,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 19.1% above the last swing high, 3.3% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 19.13,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-05",
+       "price": 20.18
+      },
+      "last_swing_low": {
+       "date": "2026-10-28",
+       "price": 18.01
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-22",
+       "price": 19.36
+      },
+      "prev_swing_low": {
+       "date": "2026-10-14",
+       "price": 17.65
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 24.045,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 3.28,
+     "ema21": 23.1911,
+     "ema9": 23.9917,
+     "ema_order": "9>21",
+     "high_20bar": 24.86,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 47.4,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "above EMA9, 9>21, swing HH/HL, 3.3% under the last swing high, 3.3% under 20-hr high, 47% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -3.28,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 24.86
+      },
+      "last_swing_low": {
+       "date": "2026-11-13",
+       "price": 22.66
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-10",
+       "price": 20.03
+      },
+      "prev_swing_low": {
+       "date": "2026-11-11",
+       "price": 19.41
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 22,
+     "close": 24.04,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 3.3,
+     "ema21": 20.1759,
+     "ema9": 20.7243,
+     "ema_order": "9>21",
+     "high_20bar": 24.86,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, no clear swing structure, 9.3% above the last swing high, 3.3% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 9.27,
+      "cls": null,
+      "last_swing_high": {
+       "date": "2026-07-31",
+       "price": 22.0
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 16.95
+      },
+      "prev_swing_high": null,
+      "prev_swing_low": {
+       "date": "2026-08-14",
+       "price": 18.68
+      },
+      "reason": "1 swing high(s) and 3 swing low(s) in 21 bars; two of each are needed",
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": null
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 100,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "071ab7ed4be3de015310e6cb95ca7ebeabc3488ba142ed0e9a809208ad308f75",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is not readable, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, no clear swing structure, 9.3% above the last swing high, 3.3% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 19.1% above the last swing high, 3.3% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 3.3% under the last swing high, 3.3% under 20-hr high, 47% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "BILL": {
+   "status": "SURVIVES",
+   "tallies": {
+    "support_confirm": 4,
+    "support_refute": 0,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 0,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "BILL-oneil-for",
+     "author": "oneil",
+     "kind": "for",
+     "reviewers": [
+      "raschke",
+      "aqe-quant"
+     ],
+     "rulings": [
+      {
+       "reviewer": "raschke",
+       "ruling": "CONFIRM",
+       "evidence": "Fresh highs in a strong uptrend, the Holy Grail precondition (C7): `subcomponents.mp.adx_val` 35.63 with `subcomponents.mp.di_bullish` True, `structure` 96.8. Sheet reads `subcomponents.structure.wk_score` 15.0, not 10.0.",
+       "tf": {
+        "W": "above EMA9, 9>21, 1.4% under 20-wk high; swing LH/LL, week still open",
+        "D": "HH/HL, 1.4% under 20-day high: fresh highs in trend, no pullback yet to buy",
+        "H1": "above EMA9, 79% of day's range, HH but LL: no retracement trigger printed yet"
+       }
+      },
+      {
+       "reviewer": "aqe-quant",
+       "ruling": "CONFIRM",
+       "evidence": "`structure` 96.8 with `subcomponents.structure.rs_accel` 5.71, lead widening (R5); `subcomponents.structure.rs_spy_score` 15.0. My sheet shows `subcomponents.structure.wk_score` 15.0, not 10.0: weekly trend up.",
+       "tf": {
+        "W": "`subcomponents.structure.wk_score` 15.0 weekly up; W bars above EMA9, swing LH/LL",
+        "D": "`structure` 96.8, `subcomponents.structure.resist_score` 10.0; D swing HH/HL",
+        "H1": "engines read no H1; bars above EMA9, 79% of the day's range"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "BILL-livermore-for",
+     "author": "livermore",
+     "kind": "for",
+     "reviewers": [
+      "oneil",
+      "minervini"
+     ],
+     "rulings": [
+      {
+       "reviewer": "oneil",
+       "ruling": "CONFIRM",
+       "evidence": "A counted base under a new high: `structure` 96.8, `subcomponents.structure.base_score` 12.0 over `subcomponents.structure.base_days` 29.0, `subcomponents.structure.wk_score` 15.0 (weekly above rising 10-wk line). Gate 17 agrees.",
+       "tf": {
+        "W": "above EMA9, 9>21, 1.4% under 20-wk high; swing LH/LL, base right side not yet clear",
+        "D": "HH/HL, 13.5% above swing high 50.76: past the C17 5% line on that measure",
+        "H1": "above EMA9, 9>21, 79% of day's range: closes near highs, no C25 distribution"
+       }
+      },
+      {
+       "reviewer": "minervini",
+       "ruling": "CONFIRM",
+       "evidence": "Stage 2 leader on my test: `subcomponents.pipe.pr_ma_score` 20.0 (above all averages, in order), `subcomponents.structure.wk_score` 15.0 weekly trend up, `structure` 96.8, gate 17; matches the claim (C3, C11).",
+       "tf": {
+        "W": "9>21, close 13.2% above weekly swing high 50.89: cleared the LH, near 20-wk high",
+        "D": "HH/HL, 1.4% under 20-day high: trend intact, extended (C5)",
+        "H1": "HH but LL, 79% of day's range: strong close, no tight pivot"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [],
+   "refutes_on_support": [],
+   "split": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff",
+     "aqe-quant"
+    ],
+    "oppose": [],
+    "abstain": []
+   },
+   "blind_conviction": {
+    "oneil": 4,
+    "minervini": 3,
+    "livermore": 4,
+    "elder-lens": 3,
+    "seow": 4,
+    "raschke": 3,
+    "wyckoff": 3,
+    "aqe-quant": 3
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 5,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 57.63,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.44,
+     "ema21": 51.4561,
+     "ema9": 53.8468,
+     "ema_order": "9>21",
+     "export_close": 57.63,
+     "high_20bar": 58.47,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 13.5% above the last swing high, 1.4% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 13.53,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-23",
+       "price": 50.76
+      },
+      "last_swing_low": {
+       "date": "2026-10-29",
+       "price": 46.96
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-09-15",
+       "price": 50.33
+      },
+      "prev_swing_low": {
+       "date": "2026-10-14",
+       "price": 43.43
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 57.68,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.32,
+     "ema21": 55.6885,
+     "ema9": 56.6743,
+     "ema_order": "9>21",
+     "high_20bar": 58.45,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 79.1,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "above EMA9, 9>21, swing HH but LL, 1.3% under the last swing high, 1.3% under 20-hr high, 79% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -1.32,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 58.45
+      },
+      "last_swing_low": {
+       "date": "2026-11-13",
+       "price": 53.46
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-12",
+       "price": 55.0
+      },
+      "prev_swing_low": {
+       "date": "2026-11-12",
+       "price": 53.77
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 57.63,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 1.44,
+     "ema21": 47.8097,
+     "ema9": 50.9905,
+     "ema_order": "9>21",
+     "high_20bar": 58.47,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing LH/LL, 13.2% above the last swing high, 1.4% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 13.24,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-09-04",
+       "price": 50.89
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 41.0
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-08-14",
+       "price": 52.6
+      },
+      "prev_swing_low": {
+       "date": "2026-08-28",
+       "price": 46.2
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "LH/LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "9b3a6e5b5051603b6c5d02476f77cc35b18cd86e667f57be8082a09405cc67ac",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is LH/LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing LH/LL, 13.2% above the last swing high, 1.4% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 13.5% above the last swing high, 1.4% under 20-day high | H1: above EMA9, 9>21, swing HH but LL, 1.3% under the last swing high, 1.3% under 20-hr high, 79% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "KVYO": {
+   "status": "DROPPED",
+   "tallies": {
+    "support_confirm": 0,
+    "support_refute": 3,
+    "support_cannot_see": 1,
+    "against_confirm": 0,
+    "against_refute": 4,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "KVYO-aqe-quant-for",
+     "author": "aqe-quant",
+     "kind": "for",
+     "reviewers": [
+      "oneil",
+      "livermore"
+     ],
+     "rulings": [
+      {
+       "reviewer": "oneil",
+       "ruling": "REFUTE",
+       "evidence": "No counted base, so no pivot (R3, C12): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0. A coil (`subcomponents.energy.squeeze_score` 12.5) is not a base; `structure` 76.8.",
+       "tf": {
+        "W": "HH but LL swing, 4.1% under 20-wk high: no orderly weekly base to count",
+        "D": "HH but LL: low 19.0 undercut 19.47, ragged, not a sound base (C12)",
+        "H1": "above EMA9, 9>21, HH/HL, 56% of day's range: timing only, no base read"
+       }
+      },
+      {
+       "reviewer": "livermore",
+       "ruling": "REFUTE",
+       "evidence": "C5 fails: `subcomponents.structure.base_score` 0.0 (no base) and `structure` 76.8; `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0. The flow is real; a running Upward Trend it is not.",
+       "tf": {
+        "W": "HH but LL: a lower low inside the swing, not my Upward Trend column",
+        "D": "HH but LL, 3.1% over swing high 22.2, 4.1% under 20-day high: a Natural Rally",
+        "H1": "HH/HL above EMA9, 56% of day's range: intraday strength only, no new high"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "KVYO-elder-lens-for",
+     "author": "elder-lens",
+     "kind": "for",
+     "reviewers": [
+      "oneil",
+      "minervini"
+     ],
+     "rulings": [
+      {
+       "reviewer": "oneil",
+       "ruling": "CANNOT_SEE",
+       "evidence": "elder_5d and the impulse are not CAN SLIM tests. `subcomponents.structure.wk_score` 15.0 reads weekly trend up, but `subcomponents.structure.base_score` 0.0 still leaves no base (R3); `mp` 89.0 is not mine.",
+       "tf": {
+        "W": "above EMA9, 9>21, HH but LL: trend up, no counted base",
+        "D": "HH but LL, 3.1% above swing high 22.2: no pivot to measure from",
+        "H1": "above EMA9, 9>21, HH/HL: impulse timing, no CAN SLIM test on this frame"
+       }
+      },
+      {
+       "reviewer": "minervini",
+       "ruling": "REFUTE",
+       "evidence": "`mp` 89.0 and `subcomponents.structure.wk_score` 15.0 are true, but my gate fails: `subcomponents.structure.base_score` 0.0 (no base), `subcomponents.pipe.pr_ret_12m` 0.0 (12m loss: broken-leader recovery, C13 R6).",
+       "tf": {
+        "W": "HH but LL, 9.4% over swing high 20.92: not a clean stage 2 sequence",
+        "D": "HH but LL, 3.1% over swing high: no base under it (C4)",
+        "H1": "HH/HL, 56% of day's range: timing only, not my gate"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "KVYO-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "reviewers": [
+      "elder-lens",
+      "seow"
+     ],
+     "rulings": [
+      {
+       "reviewer": "elder-lens",
+       "ruling": "REFUTE",
+       "evidence": "Base and 52w distance are not my tests. Impulse: `elder` 10.0 not red after a 2-to-7 permission event (C3, C4); `mp` 89.0 and `subcomponents.structure.wk_score` 15.0 keep the tide up (C21). The div is not force divergence (C8).",
+       "tf": {
+        "W": "above EMA9, 9>21, HH but LL; weekly tide up, long permitted",
+        "D": "above EMA9, 9>21, HH but LL, green bar; not red",
+        "H1": "above EMA9, 9>21, HH/HL, 56% of day's range"
+       }
+      },
+      {
+       "reviewer": "seow",
+       "ruling": "REFUTE",
+       "evidence": "No base is not my test; my buy is the resistance break (C26). Fund flow has not diverged (C28): `subcomponents.flow.cmf` 0.11 above zero, `subcomponents.flow.accum_score` 7.5 accumulation rising; `elder` 10.0. cmf thin is a caution.",
+       "tf": {
+        "W": "above EMA9, 9>21, 9.4% over last weekly swing high; HH but LL",
+        "D": "HH but LL, 3.1% above last swing high: resistance break printed",
+        "H1": "above EMA9, 9>21, HH/HL, 56% of day range; not my trigger frame"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "KVYO-minervini-against",
+     "author": "minervini",
+     "kind": "against",
+     "reviewers": [
+      "raschke",
+      "aqe-quant"
+     ],
+     "rulings": [
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "My breakout test is contraction, not base length: `subcomponents.energy.squeeze_score` 12.5 is a full coil and `subcomponents.mp.adx_val` 30.35 a real trend. `subcomponents.structure.base_score` 0.0 is not my test; divergence is advisory only.",
+       "tf": {
+        "W": "above EMA9, 9>21, 4.1% under 20-wk high; HH but LL",
+        "D": "HH but LL, 3.1% over last swing high: least stretched, coil intact (C12)",
+        "H1": "HH/HL, above EMA9, 56% of range: straddle setup, no break yet"
+       }
+      },
+      {
+       "reviewer": "aqe-quant",
+       "ruling": "REFUTE",
+       "evidence": "`subcomponents.structure.base_score` 0.0, `subcomponents.pipe.pr_ret_12m` 0.0 true, but base is n/a on a run of `subcomponents.energy.en_trend_bars` 31.0 (A9); `flow` 86.8, `energy` 81.5 broad (R2). 52w-high, divergence off menu.",
+       "tf": {
+        "W": "`subcomponents.pipe.pr_ret_12m` 0.0, no 12-month gain; W swing HH but LL",
+        "D": "`subcomponents.energy.squeeze_score` 12.5 coil on a 31-bar run; D HH but LL",
+        "H1": "engines read no H1; bars above EMA9, HH/HL, 56% of the day's range"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [
+    {
+     "claim_id": "KVYO-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "oneil",
+     "evidence": "No counted base, so no pivot (R3, C12): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0. A coil (`subcomponents.energy.squeeze_score` 12.5) is not a base; `structure` 76.8.",
+     "tf": {
+      "W": "HH but LL swing, 4.1% under 20-wk high: no orderly weekly base to count",
+      "D": "HH but LL: low 19.0 undercut 19.47, ragged, not a sound base (C12)",
+      "H1": "above EMA9, 9>21, HH/HL, 56% of day's range: timing only, no base read"
+     }
+    },
+    {
+     "claim_id": "KVYO-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "livermore",
+     "evidence": "C5 fails: `subcomponents.structure.base_score` 0.0 (no base) and `structure` 76.8; `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0. The flow is real; a running Upward Trend it is not.",
+     "tf": {
+      "W": "HH but LL: a lower low inside the swing, not my Upward Trend column",
+      "D": "HH but LL, 3.1% over swing high 22.2, 4.1% under 20-day high: a Natural Rally",
+      "H1": "HH/HL above EMA9, 56% of day's range: intraday strength only, no new high"
+     }
+    },
+    {
+     "claim_id": "KVYO-elder-lens-for",
+     "author": "elder-lens",
+     "refuter": "minervini",
+     "evidence": "`mp` 89.0 and `subcomponents.structure.wk_score` 15.0 are true, but my gate fails: `subcomponents.structure.base_score` 0.0 (no base), `subcomponents.pipe.pr_ret_12m` 0.0 (12m loss: broken-leader recovery, C13 R6).",
+     "tf": {
+      "W": "HH but LL, 9.4% over swing high 20.92: not a clean stage 2 sequence",
+      "D": "HH but LL, 3.1% over swing high: no base under it (C4)",
+      "H1": "HH/HL, 56% of day's range: timing only, not my gate"
+     }
+    }
+   ],
+   "refutes_on_support": [
+    {
+     "claim_id": "KVYO-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "oneil",
+     "evidence": "No counted base, so no pivot (R3, C12): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0. A coil (`subcomponents.energy.squeeze_score` 12.5) is not a base; `structure` 76.8.",
+     "tf": {
+      "W": "HH but LL swing, 4.1% under 20-wk high: no orderly weekly base to count",
+      "D": "HH but LL: low 19.0 undercut 19.47, ragged, not a sound base (C12)",
+      "H1": "above EMA9, 9>21, HH/HL, 56% of day's range: timing only, no base read"
+     }
+    },
+    {
+     "claim_id": "KVYO-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "livermore",
+     "evidence": "C5 fails: `subcomponents.structure.base_score` 0.0 (no base) and `structure` 76.8; `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0. The flow is real; a running Upward Trend it is not.",
+     "tf": {
+      "W": "HH but LL: a lower low inside the swing, not my Upward Trend column",
+      "D": "HH but LL, 3.1% over swing high 22.2, 4.1% under 20-day high: a Natural Rally",
+      "H1": "HH/HL above EMA9, 56% of day's range: intraday strength only, no new high"
+     }
+    },
+    {
+     "claim_id": "KVYO-elder-lens-for",
+     "author": "elder-lens",
+     "refuter": "minervini",
+     "evidence": "`mp` 89.0 and `subcomponents.structure.wk_score` 15.0 are true, but my gate fails: `subcomponents.structure.base_score` 0.0 (no base), `subcomponents.pipe.pr_ret_12m` 0.0 (12m loss: broken-leader recovery, C13 R6).",
+     "tf": {
+      "W": "HH but LL, 9.4% over swing high 20.92: not a clean stage 2 sequence",
+      "D": "HH but LL, 3.1% over swing high: no base under it (C4)",
+      "H1": "HH/HL, 56% of day's range: timing only, not my gate"
+     }
+    }
+   ],
+   "split": {
+    "support": [
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff",
+     "aqe-quant"
+    ],
+    "oppose": [
+     "oneil",
+     "minervini",
+     "livermore"
+    ],
+    "abstain": []
+   },
+   "blind_conviction": {
+    "oneil": 3,
+    "minervini": 3,
+    "livermore": 2,
+    "elder-lens": 3,
+    "seow": 3,
+    "raschke": 3,
+    "wyckoff": 2,
+    "aqe-quant": 4
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 3,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 22.89,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.11,
+     "ema21": 20.5745,
+     "ema9": 21.4936,
+     "ema_order": "9>21",
+     "export_close": 22.89,
+     "high_20bar": 23.87,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 3.1% above the last swing high, 4.1% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 3.11,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-05",
+       "price": 22.2
+      },
+      "last_swing_low": {
+       "date": "2026-11-10",
+       "price": 19.0
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-10-23",
+       "price": 21.17
+      },
+      "prev_swing_low": {
+       "date": "2026-10-29",
+       "price": 19.47
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 22.9,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.02,
+     "ema21": 22.3781,
+     "ema9": 22.8881,
+     "ema_order": "9>21",
+     "high_20bar": 23.86,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "flat",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 56.2,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "above EMA9, 9>21, swing HH/HL, 4.0% under the last swing high, 4.0% under 20-hr high, 56% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -4.02,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 23.86
+      },
+      "last_swing_low": {
+       "date": "2026-11-16",
+       "price": 21.67
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-09",
+       "price": 21.26
+      },
+      "prev_swing_low": {
+       "date": "2026-11-12",
+       "price": 20.78
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 22.89,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.11,
+     "ema21": 18.8872,
+     "ema9": 20.0895,
+     "ema_order": "9>21",
+     "high_20bar": 23.87,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "green",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 9.4% above the last swing high, 4.1% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 9.42,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-04",
+       "price": 20.92
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 14.77
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-07-31",
+       "price": 19.8
+      },
+      "prev_swing_low": {
+       "date": "2026-07-24",
+       "price": 15.47
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH but LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "ede1f5cf3c33b323f4def405fc0a8278b3d36fe19663171e454c2cfa9d8566dd",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is HH but LL, not HH/HL",
+      "daily swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH but LL, 9.4% above the last swing high, 4.1% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH but LL, 3.1% above the last swing high, 4.1% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 4.0% under the last swing high, 4.0% under 20-hr high, 56% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "CLX": {
+   "status": "DROPPED",
+   "tallies": {
+    "support_confirm": 0,
+    "support_refute": 4,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 4,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "CLX-aqe-quant-for",
+     "author": "aqe-quant",
+     "kind": "for",
+     "reviewers": [
+      "livermore",
+      "elder-lens"
+     ],
+     "rulings": [
+      {
+       "reviewer": "livermore",
+       "ruling": "REFUTE",
+       "evidence": "C19: W close 0.7% over pivotal point 109.42, no margin cleared; `mp_accel_state` 2 DECELERATING; `subcomponents.structure.rs_accel` 25.6 vs `subcomponents.structure.rs_vs_spy` 6.63: a one-month lead. `mp` 96.0 granted.",
+       "tf": {
+        "W": "HH but LL; 0.7% over the 2026-08-28 swing high 109.42: at the pivotal point, not past",
+        "D": "HH/HL, 24.2% above last swing high, red last bar 0.7% under 20-day high",
+        "H1": "HH/HL above EMA9, 60% of day's range: no fade yet, follow-through unproven"
+       }
+      },
+      {
+       "reviewer": "elder-lens",
+       "ruling": "REFUTE",
+       "evidence": "`elder` 7.0 after 10, stalled at the not-red floor: green going away, Elder's profit-taking signal, not a buy (C4); `mp_accel_state` DECELERATING and `mp_state` FADING despite `mp` 96.0 contradict 'no wear'.",
+       "tf": {
+        "W": "above EMA9, 9>21, HH but LL, red open week; tide up but uneven",
+        "D": "above EMA9, 9>21, HH/HL, red last bar, 24% over last swing high; no pullback",
+        "H1": "above EMA9, 9>21, HH/HL, red last bar, 60% of range"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "CLX-seow-for",
+     "author": "seow",
+     "kind": "for",
+     "reviewers": [
+      "oneil",
+      "minervini"
+     ],
+     "rulings": [
+      {
+       "reviewer": "oneil",
+       "ruling": "REFUTE",
+       "evidence": "Breakout unconfirmed: day_vol 0.81 under 1.40 (C16, R4). `subcomponents.structure.base_score` 8.0 is a partial base and `subcomponents.structure.rs_vs_spy` 6.63 a thin 3-month lead; `structure` 89.5 alone is not a buy.",
+       "tf": {
+        "W": "HH but LL, 0.7% above swing high 109.42: retest of the old top, base unproven",
+        "D": "HH/HL but 24.2% above swing high 88.7: extended past C17 on that measure",
+        "H1": "above EMA9, 9>21, red last bar, 60% of day's range: no volume thrust"
+       }
+      },
+      {
+       "reviewer": "minervini",
+       "ruling": "REFUTE",
+       "evidence": "The break is real (`structure` 89.5) but fails my template: `subcomponents.pipe.pr_ma_score` 17.0 (averages not fully stacked), `subcomponents.pipe.pr_ret_12m` 8.0 and `subcomponents.structure.rs_vs_spy` 6.63: no leader's year (C3, C11).",
+       "tf": {
+        "W": "HH but LL, only 0.7% over 109.42 swing high: stage 1-to-2 attempt (C2)",
+        "D": "HH/HL, 24.2% over swing high 88.7: extended, not a just-happened pivot (C5)",
+        "H1": "HH/HL, 60% of day's range: no tight pivot"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "CLX-minervini-against",
+     "author": "minervini",
+     "kind": "against",
+     "reviewers": [
+      "seow",
+      "raschke"
+     ],
+     "rulings": [
+      {
+       "reviewer": "seow",
+       "ruling": "REFUTE",
+       "evidence": "50/100/200 stack is not my instrument (C1). My confirm is fund flow: `subcomponents.flow.cmf` 0.29 above zero (C28). `subcomponents.structure.rs_vs_spy` 6.63 is positive, beating the index (C6); `subcomponents.structure.rs_accel` 25.6 lead widening.",
+       "tf": {
+        "W": "above EMA9, 9>21, 0.7% over last weekly swing high; HH but LL, not broken (C21 house)",
+        "D": "HH/HL, 24.2% over last swing high, 0.7% under 20-day high; red last bar is a caution",
+        "H1": "above EMA9, 9>21, HH/HL, 60% of day range; not my trigger frame"
+       }
+      },
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "My trend test is the ADX gate, and it passes cleanly: `subcomponents.mp.adx_val` 40.35, `subcomponents.mp.mp_adx_score` 25.0, `mp` 96.0. The long-MA stack and `subcomponents.structure.rs_vs_spy` 6.63 are not my test.",
+       "tf": {
+        "W": "above EMA9, 9>21, 0.7% under 20-wk high; HH but LL",
+        "D": "HH/HL, 24.2% over last swing high: strong trend, wait for first pullback",
+        "H1": "HH/HL, above EMA9, 60% of range: no pullback trigger yet"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "CLX-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "reviewers": [
+      "wyckoff",
+      "aqe-quant"
+     ],
+     "rulings": [
+      {
+       "reviewer": "wyckoff",
+       "ruling": "REFUTE",
+       "evidence": "Price over inverted long averages reads as a Phase D break out of accumulation (C4, C5): `subcomponents.flow.accum_score` 7.5, `subcomponents.structure.rs_accel` 25.6. day_vol 0.81 is an upthrust caution, not an oppose.",
+       "tf": {
+        "W": "HH but LL: shakeout 79.12, then close 0.7% over Aug high 109.42, Creek just broken",
+        "D": "HH/HL, 24.2% over swing high 88.7, 0.7% under 20-day high: holding outside range",
+        "H1": "HH/HL, close at 60% of day range, red last bar: no sign-of-strength bar yet"
+       }
+      },
+      {
+       "reviewer": "aqe-quant",
+       "ruling": "REFUTE",
+       "evidence": "`subcomponents.flow.volume_score` 5.5 and `subcomponents.pipe.pr_vol_score` 20.0 show volume rising; `subcomponents.structure.base_score` 8.0 is n/a on a running name (A9). MA stack, day_vol, sector off my menu.",
+       "tf": {
+        "W": "`subcomponents.structure.wk_score` 15.0 weekly up; W HH but LL, 0.7% under 20-wk high",
+        "D": "`subcomponents.energy.exhaustion_score` 10.0 at 18 bars, no wear; D HH/HL",
+        "H1": "engines read no H1; bars above EMA9, HH/HL, 60% of the day's range"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [
+    {
+     "claim_id": "CLX-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "livermore",
+     "evidence": "C19: W close 0.7% over pivotal point 109.42, no margin cleared; `mp_accel_state` 2 DECELERATING; `subcomponents.structure.rs_accel` 25.6 vs `subcomponents.structure.rs_vs_spy` 6.63: a one-month lead. `mp` 96.0 granted.",
+     "tf": {
+      "W": "HH but LL; 0.7% over the 2026-08-28 swing high 109.42: at the pivotal point, not past",
+      "D": "HH/HL, 24.2% above last swing high, red last bar 0.7% under 20-day high",
+      "H1": "HH/HL above EMA9, 60% of day's range: no fade yet, follow-through unproven"
+     }
+    },
+    {
+     "claim_id": "CLX-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "elder-lens",
+     "evidence": "`elder` 7.0 after 10, stalled at the not-red floor: green going away, Elder's profit-taking signal, not a buy (C4); `mp_accel_state` DECELERATING and `mp_state` FADING despite `mp` 96.0 contradict 'no wear'.",
+     "tf": {
+      "W": "above EMA9, 9>21, HH but LL, red open week; tide up but uneven",
+      "D": "above EMA9, 9>21, HH/HL, red last bar, 24% over last swing high; no pullback",
+      "H1": "above EMA9, 9>21, HH/HL, red last bar, 60% of range"
+     }
+    },
+    {
+     "claim_id": "CLX-seow-for",
+     "author": "seow",
+     "refuter": "oneil",
+     "evidence": "Breakout unconfirmed: day_vol 0.81 under 1.40 (C16, R4). `subcomponents.structure.base_score` 8.0 is a partial base and `subcomponents.structure.rs_vs_spy` 6.63 a thin 3-month lead; `structure` 89.5 alone is not a buy.",
+     "tf": {
+      "W": "HH but LL, 0.7% above swing high 109.42: retest of the old top, base unproven",
+      "D": "HH/HL but 24.2% above swing high 88.7: extended past C17 on that measure",
+      "H1": "above EMA9, 9>21, red last bar, 60% of day's range: no volume thrust"
+     }
+    },
+    {
+     "claim_id": "CLX-seow-for",
+     "author": "seow",
+     "refuter": "minervini",
+     "evidence": "The break is real (`structure` 89.5) but fails my template: `subcomponents.pipe.pr_ma_score` 17.0 (averages not fully stacked), `subcomponents.pipe.pr_ret_12m` 8.0 and `subcomponents.structure.rs_vs_spy` 6.63: no leader's year (C3, C11).",
+     "tf": {
+      "W": "HH but LL, only 0.7% over 109.42 swing high: stage 1-to-2 attempt (C2)",
+      "D": "HH/HL, 24.2% over swing high 88.7: extended, not a just-happened pivot (C5)",
+      "H1": "HH/HL, 60% of day's range: no tight pivot"
+     }
+    }
+   ],
+   "refutes_on_support": [
+    {
+     "claim_id": "CLX-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "livermore",
+     "evidence": "C19: W close 0.7% over pivotal point 109.42, no margin cleared; `mp_accel_state` 2 DECELERATING; `subcomponents.structure.rs_accel` 25.6 vs `subcomponents.structure.rs_vs_spy` 6.63: a one-month lead. `mp` 96.0 granted.",
+     "tf": {
+      "W": "HH but LL; 0.7% over the 2026-08-28 swing high 109.42: at the pivotal point, not past",
+      "D": "HH/HL, 24.2% above last swing high, red last bar 0.7% under 20-day high",
+      "H1": "HH/HL above EMA9, 60% of day's range: no fade yet, follow-through unproven"
+     }
+    },
+    {
+     "claim_id": "CLX-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "elder-lens",
+     "evidence": "`elder` 7.0 after 10, stalled at the not-red floor: green going away, Elder's profit-taking signal, not a buy (C4); `mp_accel_state` DECELERATING and `mp_state` FADING despite `mp` 96.0 contradict 'no wear'.",
+     "tf": {
+      "W": "above EMA9, 9>21, HH but LL, red open week; tide up but uneven",
+      "D": "above EMA9, 9>21, HH/HL, red last bar, 24% over last swing high; no pullback",
+      "H1": "above EMA9, 9>21, HH/HL, red last bar, 60% of range"
+     }
+    },
+    {
+     "claim_id": "CLX-seow-for",
+     "author": "seow",
+     "refuter": "oneil",
+     "evidence": "Breakout unconfirmed: day_vol 0.81 under 1.40 (C16, R4). `subcomponents.structure.base_score` 8.0 is a partial base and `subcomponents.structure.rs_vs_spy` 6.63 a thin 3-month lead; `structure` 89.5 alone is not a buy.",
+     "tf": {
+      "W": "HH but LL, 0.7% above swing high 109.42: retest of the old top, base unproven",
+      "D": "HH/HL but 24.2% above swing high 88.7: extended past C17 on that measure",
+      "H1": "above EMA9, 9>21, red last bar, 60% of day's range: no volume thrust"
+     }
+    },
+    {
+     "claim_id": "CLX-seow-for",
+     "author": "seow",
+     "refuter": "minervini",
+     "evidence": "The break is real (`structure` 89.5) but fails my template: `subcomponents.pipe.pr_ma_score` 17.0 (averages not fully stacked), `subcomponents.pipe.pr_ret_12m` 8.0 and `subcomponents.structure.rs_vs_spy` 6.63: no leader's year (C3, C11).",
+     "tf": {
+      "W": "HH but LL, only 0.7% over 109.42 swing high: stage 1-to-2 attempt (C2)",
+      "D": "HH/HL, 24.2% over swing high 88.7: extended, not a just-happened pivot (C5)",
+      "H1": "HH/HL, 60% of day's range: no tight pivot"
+     }
+    }
+   ],
+   "split": {
+    "support": [
+     "seow",
+     "raschke",
+     "wyckoff",
+     "aqe-quant"
+    ],
+    "oppose": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens"
+    ],
+    "abstain": []
+   },
+   "blind_conviction": {
+    "oneil": 3,
+    "minervini": 4,
+    "livermore": 3,
+    "elder-lens": 2,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": 2,
+    "aqe-quant": 4
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 5,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 110.17,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.73,
+     "ema21": 98.1197,
+     "ema9": 104.6735,
+     "ema_order": "9>21",
+     "export_close": 110.17,
+     "high_20bar": 110.98,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 24.2% above the last swing high, 0.7% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 24.21,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-22",
+       "price": 88.7
+      },
+      "last_swing_low": {
+       "date": "2026-10-28",
+       "price": 85.25
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-10-06",
+       "price": 84.73
+      },
+      "prev_swing_low": {
+       "date": "2026-10-21",
+       "price": 84.43
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 110.19,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.71,
+     "ema21": 108.8845,
+     "ema9": 109.9561,
+     "ema_order": "9>21",
+     "high_20bar": 110.98,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 59.9,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.7% under the last swing high, 0.7% under 20-hr high, 60% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -0.71,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 110.98
+      },
+      "last_swing_low": {
+       "date": "2026-11-16",
+       "price": 109.01
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-13",
+       "price": 110.31
+      },
+      "prev_swing_low": {
+       "date": "2026-11-12",
+       "price": 107.49
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 110.17,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.73,
+     "ema21": 95.8316,
+     "ema9": 97.3885,
+     "ema_order": "9>21",
+     "high_20bar": 110.98,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 0.7% above the last swing high, 0.7% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 0.69,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-08-28",
+       "price": 109.42
+      },
+      "last_swing_low": {
+       "date": "2026-10-02",
+       "price": 79.12
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-06-12",
+       "price": 100.73
+      },
+      "prev_swing_low": {
+       "date": "2026-06-26",
+       "price": 90.5
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH but LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "40ca11d4fac2048cf3b8a65673164e442ead824d896d6abe43b1eebd290152b4",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH but LL, 0.7% above the last swing high, 0.7% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH/HL, 24.2% above the last swing high, 0.7% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 0.7% under the last swing high, 0.7% under 20-hr high, 60% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "U": {
+   "status": "DROPPED",
+   "tallies": {
+    "support_confirm": 1,
+    "support_refute": 3,
+    "support_cannot_see": 0,
+    "against_confirm": 2,
+    "against_refute": 2,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "U-aqe-quant-for",
+     "author": "aqe-quant",
+     "kind": "for",
+     "reviewers": [
+      "raschke",
+      "oneil"
+     ],
+     "rulings": [
+      {
+       "reviewer": "oneil",
+       "ruling": "REFUTE",
+       "evidence": "Leadership real, but no base and no breakout: `subcomponents.structure.base_days` 7.0 is short of 7-8 weeks (C12); `subcomponents.flow.volume_score` 0.0 is volume drying; day_vol 0.78 under 1.40 (C16).",
+       "tf": {
+        "W": "LH/LL swing, 4.4% under 20-wk high: no completed weekly base",
+        "D": "HH but LL, 4.4% under swing high 54.27: pulling back, no pivot cleared",
+        "H1": "below EMA9, 8% of day's range: closing near the low (C25 caution)"
+       }
+      },
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "No setup in my taxonomy: `subcomponents.mp.adx_val` 28.31 is under the Holy Grail 30 gate, `subcomponents.energy.squeeze_score` 0.0 no coil. Young run (`subcomponents.energy.en_trend_bars` 9.0) is not a trigger; RS fields are not mine.",
+       "tf": {
+        "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+        "D": "HH but LL, 4.4% under last swing high: a pullback, but no ADX gate to buy it",
+        "H1": "below EMA9, closed 8% of day's range: weak close, no trigger (C22 stand aside)"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "U-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "reviewers": [
+      "raschke",
+      "wyckoff"
+     ],
+     "rulings": [
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "'Quiet range under the high' fails my contraction test: `subcomponents.energy.squeeze_score` 0.0, no coil; and `subcomponents.mp.adx_val` 28.31 is under the 30 gate, so no Holy Grail. `structure` 87.4 alone is not a setup.",
+       "tf": {
+        "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+        "D": "HH but LL, 4.4% under 20-day high: no range contraction read",
+        "H1": "below EMA9, closed 8% of day's range: no breakout or reclaim trigger"
+       }
+      },
+      {
+       "reviewer": "wyckoff",
+       "ruling": "CONFIRM",
+       "evidence": "Light-volume pullback under the high after a shakeout (daily LL 37.10, then HH 54.27): `subcomponents.flow.volume_score` 0.0, `subcomponents.structure.rs_accel` 17.39, `structure` 87.4. Mid-range, no SOS bar yet (C1).",
+       "tf": {
+        "W": "LH/LL: 47.77 under 48.46; close 8.6% over it, still inside the larger range",
+        "D": "HH but LL: spring-like low 37.10 under 38.44, rally to 54.27, now 4.4% under it",
+        "H1": "below EMA9, close at 8% of day range: weak close, no sign of strength"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "U-oneil-against",
+     "author": "oneil",
+     "kind": "against",
+     "reviewers": [
+      "livermore",
+      "elder-lens"
+     ],
+     "rulings": [
+      {
+       "reviewer": "livermore",
+       "ruling": "REFUTE",
+       "evidence": "C8 calls a quiet pullback normal: `subcomponents.flow.volume_score` 0.0 is volume drying in the reaction; `mp` 93.0, `mp_accel_state` 1 ACCELERATING, `subcomponents.structure.wk_score` 15.0 keep the Upward Trend. No new high yet: I wait for it.",
+       "tf": {
+        "W": "swing LH/LL is a caution; above EMA9, 9>21, 4.4% under 20-wk high",
+        "D": "HH but LL, 4.4% under swing high 54.27: a reaction; I buy only the new high (C5)",
+        "H1": "below EMA9, 8% of day's range: weak close; C7 fade untestable, atr_14d not served"
+       }
+      },
+      {
+       "reviewer": "elder-lens",
+       "ruling": "CONFIRM",
+       "evidence": "Volume shrinking at the swing is Elder's pause warning (C23): `subcomponents.flow.volume_score` 0.0. `elder` 7.0 after 10 is a one-bar drop, not red (C3); `mp` 93.0 keeps the trend leg, so I wait for value (C10).",
+       "tf": {
+        "W": "above EMA9, 9>21 but swing LH/LL, red open week; tide unclear",
+        "D": "above EMA9, 9>21, HH but LL, red bar 4.4% under 20-day high",
+        "H1": "below EMA9, 9>21, HH but LL, 8% of day's range; short-term weak"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "U-raschke-against",
+     "author": "raschke",
+     "kind": "against",
+     "reviewers": [
+      "seow",
+      "aqe-quant"
+     ],
+     "rulings": [
+      {
+       "reviewer": "seow",
+       "ruling": "REFUTE",
+       "evidence": "ADX gate is not my test. Participation by my COM proxy is present: `subcomponents.flow.cmf` 0.33 above zero, `subcomponents.flow.mfi` 87.69, `subcomponents.flow.accum_score` 7.5. Weak hourly is not my frame; my buy still awaits a daily break.",
+       "tf": {
+        "W": "above EMA9, 9>21, swing LH/LL: weekly structure soft (C21 house rule caution)",
+        "D": "HH but LL, 4.4% under last swing high: no resistance break yet, no buy signal",
+        "H1": "below EMA9, close at 8% of day range: weak, but not my trigger frame"
+       }
+      },
+      {
+       "reviewer": "aqe-quant",
+       "ruling": "CONFIRM",
+       "evidence": "Volume leg confirmed: `subcomponents.flow.volume_score` 0.0 and `subcomponents.pipe.pr_vol_score` 5.0, volume not rising. ADX leg not: `subcomponents.mp.adx_val` 28.31 is a real trend (above 25). Hourly close off my menu.",
+       "tf": {
+        "W": "`subcomponents.structure.wk_score` 15.0 weekly up; W swing LH/LL",
+        "D": "`subcomponents.mp.adx_val` 28.31 real trend; `subcomponents.flow.volume_score` 0.0",
+        "H1": "engines read no H1; bars below EMA9, 8% of the day's range"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [
+    {
+     "claim_id": "U-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "oneil",
+     "evidence": "Leadership real, but no base and no breakout: `subcomponents.structure.base_days` 7.0 is short of 7-8 weeks (C12); `subcomponents.flow.volume_score` 0.0 is volume drying; day_vol 0.78 under 1.40 (C16).",
+     "tf": {
+      "W": "LH/LL swing, 4.4% under 20-wk high: no completed weekly base",
+      "D": "HH but LL, 4.4% under swing high 54.27: pulling back, no pivot cleared",
+      "H1": "below EMA9, 8% of day's range: closing near the low (C25 caution)"
+     }
+    },
+    {
+     "claim_id": "U-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "raschke",
+     "evidence": "No setup in my taxonomy: `subcomponents.mp.adx_val` 28.31 is under the Holy Grail 30 gate, `subcomponents.energy.squeeze_score` 0.0 no coil. Young run (`subcomponents.energy.en_trend_bars` 9.0) is not a trigger; RS fields are not mine.",
+     "tf": {
+      "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+      "D": "HH but LL, 4.4% under last swing high: a pullback, but no ADX gate to buy it",
+      "H1": "below EMA9, closed 8% of day's range: weak close, no trigger (C22 stand aside)"
+     }
+    },
+    {
+     "claim_id": "U-minervini-for",
+     "author": "minervini",
+     "refuter": "raschke",
+     "evidence": "'Quiet range under the high' fails my contraction test: `subcomponents.energy.squeeze_score` 0.0, no coil; and `subcomponents.mp.adx_val` 28.31 is under the 30 gate, so no Holy Grail. `structure` 87.4 alone is not a setup.",
+     "tf": {
+      "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+      "D": "HH but LL, 4.4% under 20-day high: no range contraction read",
+      "H1": "below EMA9, closed 8% of day's range: no breakout or reclaim trigger"
+     }
+    }
+   ],
+   "refutes_on_support": [
+    {
+     "claim_id": "U-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "oneil",
+     "evidence": "Leadership real, but no base and no breakout: `subcomponents.structure.base_days` 7.0 is short of 7-8 weeks (C12); `subcomponents.flow.volume_score` 0.0 is volume drying; day_vol 0.78 under 1.40 (C16).",
+     "tf": {
+      "W": "LH/LL swing, 4.4% under 20-wk high: no completed weekly base",
+      "D": "HH but LL, 4.4% under swing high 54.27: pulling back, no pivot cleared",
+      "H1": "below EMA9, 8% of day's range: closing near the low (C25 caution)"
+     }
+    },
+    {
+     "claim_id": "U-aqe-quant-for",
+     "author": "aqe-quant",
+     "refuter": "raschke",
+     "evidence": "No setup in my taxonomy: `subcomponents.mp.adx_val` 28.31 is under the Holy Grail 30 gate, `subcomponents.energy.squeeze_score` 0.0 no coil. Young run (`subcomponents.energy.en_trend_bars` 9.0) is not a trigger; RS fields are not mine.",
+     "tf": {
+      "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+      "D": "HH but LL, 4.4% under last swing high: a pullback, but no ADX gate to buy it",
+      "H1": "below EMA9, closed 8% of day's range: weak close, no trigger (C22 stand aside)"
+     }
+    },
+    {
+     "claim_id": "U-minervini-for",
+     "author": "minervini",
+     "refuter": "raschke",
+     "evidence": "'Quiet range under the high' fails my contraction test: `subcomponents.energy.squeeze_score` 0.0, no coil; and `subcomponents.mp.adx_val` 28.31 is under the 30 gate, so no Holy Grail. `structure` 87.4 alone is not a setup.",
+     "tf": {
+      "W": "above EMA9, 9>21, swing LH/LL, 4.4% under 20-wk high",
+      "D": "HH but LL, 4.4% under 20-day high: no range contraction read",
+      "H1": "below EMA9, closed 8% of day's range: no breakout or reclaim trigger"
+     }
+    }
+   ],
+   "split": {
+    "support": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "aqe-quant"
+    ],
+    "oppose": [
+     "oneil",
+     "raschke"
+    ],
+    "abstain": [
+     "wyckoff"
+    ]
+   },
+   "blind_conviction": {
+    "oneil": 3,
+    "minervini": 3,
+    "livermore": 3,
+    "elder-lens": 2,
+    "seow": 2,
+    "raschke": 2,
+    "wyckoff": null,
+    "aqe-quant": 4
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 5,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 51.88,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.4,
+     "ema21": 46.357,
+     "ema9": 49.3484,
+     "ema_order": "9>21",
+     "export_close": 51.88,
+     "high_20bar": 54.27,
+     "high_20bar_date": "2026-11-09",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 4.4% under the last swing high, 4.4% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -4.4,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-09",
+       "price": 54.27
+      },
+      "last_swing_low": {
+       "date": "2026-10-30",
+       "price": 37.1
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-10-22",
+       "price": 41.79
+      },
+      "prev_swing_low": {
+       "date": "2026-09-29",
+       "price": 38.44
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 51.9,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 3.5,
+     "ema21": 51.6454,
+     "ema9": 52.2428,
+     "ema_order": "9>21",
+     "high_20bar": 53.78,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 8.3,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "below EMA9, 9>21, swing HH but LL, 3.5% under the last swing high, 3.5% under 20-hr high, 8% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -3.5,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 53.78
+      },
+      "last_swing_low": {
+       "date": "2026-11-12",
+       "price": 48.09
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-13",
+       "price": 51.57
+      },
+      "prev_swing_low": {
+       "date": "2026-11-10",
+       "price": 48.94
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 51.88,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 4.4,
+     "ema21": 41.7752,
+     "ema9": 46.3601,
+     "ema_order": "9>21",
+     "high_20bar": 54.27,
+     "high_20bar_date": "2026-11-13",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing LH/LL, 8.6% above the last swing high, 4.4% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": 8.6,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-10-16",
+       "price": 47.77
+      },
+      "last_swing_low": {
+       "date": "2026-10-30",
+       "price": 37.1
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-08-21",
+       "price": 48.46
+      },
+      "prev_swing_low": {
+       "date": "2026-10-02",
+       "price": 38.44
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "LH/LL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "d0eec7d175ae3b5f459a94edd4c4f84d79befaccffba0a86949844e3f4dcc249",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is LH/LL, not HH/HL",
+      "daily swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing LH/LL, 8.6% above the last swing high, 4.4% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH but LL, 4.4% under the last swing high, 4.4% under 20-day high | H1: below EMA9, 9>21, swing HH but LL, 3.5% under the last swing high, 3.5% under 20-hr high, 8% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "CHYM": {
+   "status": "SURVIVES",
+   "tallies": {
+    "support_confirm": 2,
+    "support_refute": 2,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 2,
+    "against_cannot_see": 0
+   },
+   "claims": [
+    {
+     "claim_id": "CHYM-oneil-for",
+     "author": "oneil",
+     "kind": "for",
+     "reviewers": [
+      "raschke",
+      "elder-lens"
+     ],
+     "rulings": [
+      {
+       "reviewer": "elder-lens",
+       "ruling": "CONFIRM",
+       "evidence": "`elder` 10.0 not red (C3); `mp` 83.0 STRONG ACCELERATING, trend rising (C9); `subcomponents.flow.volume_score` 7.5 orderly rising volume (C23); `subcomponents.structure.wk_score` 10.0 weekly tide softer but up.",
+       "tf": {
+        "W": "above EMA9, 9>21, HH/HL; weekly tide up, long permitted",
+        "D": "above EMA9, 9>21, HH but LL, red bar 1.0% under 20-day high",
+        "H1": "above EMA9, 9>21, HH/HL, 48% of day's range"
+       }
+      },
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "A 4x volume bar is range expansion, a climax risk (C19), not my setup: `subcomponents.energy.squeeze_score` 0.0 no prior coil, `subcomponents.mp.adx_val` 23.19 and `subcomponents.mp.mp_adx_score` 12.0 under the trend gate.",
+       "tf": {
+        "W": "HH/HL, above EMA9, 3.5% under 20-wk high: trend up, not my trigger frame",
+        "D": "HH but LL, 10.4% over last swing high: expansion leg, not contraction",
+        "H1": "HH/HL, 48% of day's range: no inside/contraction bar after the spike yet"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "CHYM-minervini-for",
+     "author": "minervini",
+     "kind": "for",
+     "reviewers": [
+      "raschke",
+      "wyckoff"
+     ],
+     "rulings": [
+      {
+       "reviewer": "raschke",
+       "ruling": "REFUTE",
+       "evidence": "`flow` 93.4 and `subcomponents.flow.accum_score` 7.5 show buying, but my test needs an ADX trend or a coil: `subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.energy.squeeze_score` 0.0. Breakout volume is the expansion bar.",
+       "tf": {
+        "W": "HH/HL, above EMA9, 3.5% under 20-wk high",
+        "D": "HH but LL, 1.0% under 20-day high after expansion: wait for contraction",
+        "H1": "HH/HL, above EMA9, 48% of range: no trigger formed"
+       }
+      },
+      {
+       "reviewer": "wyckoff",
+       "ruling": "CONFIRM",
+       "evidence": "Effort and result agree (C5): day_vol 4.05 on the break, `subcomponents.flow.volume_score` 7.5, `subcomponents.flow.accum_score` 7.5, over `subcomponents.structure.base_score` 15.0; close held 10.4% over swing high 31.07.",
+       "tf": {
+        "W": "HH/HL, 3.5% under Sep high 35.55: the weekly Creek still overhead",
+        "D": "HH but LL, 10.4% over swing high 31.07: break held, away from value (C3)",
+        "H1": "HH/HL, 0.8% under 34.56, close at 48% of day range: no SOS close yet"
+       }
+      }
+     ],
+     "missing": []
+    },
+    {
+     "claim_id": "CHYM-raschke-against",
+     "author": "raschke",
+     "kind": "against",
+     "reviewers": [
+      "minervini",
+      "livermore"
+     ],
+     "rulings": [
+      {
+       "reviewer": "minervini",
+       "ruling": "REFUTE",
+       "evidence": "ADX is not my test; my trend test passes: `subcomponents.pipe.pr_ma_score` 20.0, `subcomponents.mp.trend_score` 20.0, `subcomponents.structure.base_score` 15.0; the volume expansion out of a base is C6's breakout confirmation, not a flaw.",
+       "tf": {
+        "W": "HH/HL, 3.5% under 20-wk high 35.55: confirmed stage 2 (C2, C3)",
+        "D": "HH but LL, 10.4% over swing high 31.07: past pivot, buy follow-through only (C5)",
+        "H1": "HH/HL, 0.8% under swing high, 48% of day's range"
+       }
+      },
+      {
+       "reviewer": "livermore",
+       "ruling": "REFUTE",
+       "evidence": "ADX is not my test; the new high is. `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING = Upward Trend; `subcomponents.structure.base_score` 15.0 says the volume day left a base (C16), with `subcomponents.flow.volume_score` 7.5.",
+       "tf": {
+        "W": "HH/HL above EMA9, 3.5% under the 35.55 swing high: an established Upward Trend",
+        "D": "HH but LL, 1.0% under 20-day high: at the edge of a fresh high",
+        "H1": "HH/HL above EMA9, 0.8% under swing high 34.56, 48% of day's range: no fade"
+       }
+      }
+     ],
+     "missing": []
+    }
+   ],
+   "refuted_by": [],
+   "refutes_on_support": [
+    {
+     "claim_id": "CHYM-oneil-for",
+     "author": "oneil",
+     "refuter": "raschke",
+     "evidence": "A 4x volume bar is range expansion, a climax risk (C19), not my setup: `subcomponents.energy.squeeze_score` 0.0 no prior coil, `subcomponents.mp.adx_val` 23.19 and `subcomponents.mp.mp_adx_score` 12.0 under the trend gate.",
+     "tf": {
+      "W": "HH/HL, above EMA9, 3.5% under 20-wk high: trend up, not my trigger frame",
+      "D": "HH but LL, 10.4% over last swing high: expansion leg, not contraction",
+      "H1": "HH/HL, 48% of day's range: no inside/contraction bar after the spike yet"
+     }
+    },
+    {
+     "claim_id": "CHYM-minervini-for",
+     "author": "minervini",
+     "refuter": "raschke",
+     "evidence": "`flow` 93.4 and `subcomponents.flow.accum_score` 7.5 show buying, but my test needs an ADX trend or a coil: `subcomponents.mp.adx_val` 23.19 under 30, `subcomponents.energy.squeeze_score` 0.0. Breakout volume is the expansion bar.",
+     "tf": {
+      "W": "HH/HL, above EMA9, 3.5% under 20-wk high",
+      "D": "HH but LL, 1.0% under 20-day high after expansion: wait for contraction",
+      "H1": "HH/HL, above EMA9, 48% of range: no trigger formed"
+     }
+    }
+   ],
+   "split": {
+    "support": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "wyckoff",
+     "aqe-quant"
+    ],
+    "oppose": [
+     "raschke"
+    ],
+    "abstain": []
+   },
+   "blind_conviction": {
+    "oneil": 4,
+    "minervini": 4,
+    "livermore": 4,
+    "elder-lens": 2,
+    "seow": 4,
+    "raschke": 2,
+    "wyckoff": 3,
+    "aqe-quant": 3
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 20,
+    "elder-lens": 10,
+    "seow": 40,
+    "raschke": 3,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 34.29,
+     "close_matches_export": true,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.98,
+     "ema21": 31.0714,
+     "ema9": 32.4029,
+     "ema_order": "9>21",
+     "export_close": 34.29,
+     "high_20bar": 34.63,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH but LL, 10.4% above the last swing high, 1.0% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": 10.36,
+      "cls": "HH but LL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-20",
+       "price": 31.07
+      },
+      "last_swing_low": {
+       "date": "2026-10-30",
+       "price": 27.66
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-10-13",
+       "price": 31.0
+      },
+      "prev_swing_low": {
+       "date": "2026-10-15",
+       "price": 28.57
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH but LL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 34.27,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 0.95,
+     "ema21": 33.6452,
+     "ema9": 34.084,
+     "ema_order": "9>21",
+     "high_20bar": 34.6,
+     "high_20bar_date": "2026-11-16",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 47.6,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "above EMA9, 9>21, swing HH/HL, 0.8% under the last swing high, 0.9% under 20-hr high, 48% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -0.84,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-11-16",
+       "price": 34.56
+      },
+      "last_swing_low": {
+       "date": "2026-11-13",
+       "price": 32.61
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-11-13",
+       "price": 33.47
+      },
+      "prev_swing_low": {
+       "date": "2026-11-12",
+       "price": 32.55
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "HH/HL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 34.29,
+     "close_vs_ema9": "above",
+     "dist_to_20bar_high_pct": 3.54,
+     "ema21": 28.6878,
+     "ema9": 31.0747,
+     "ema_order": "9>21",
+     "high_20bar": 35.55,
+     "high_20bar_date": "2026-09-11",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "above EMA9, 9>21, swing HH/HL, 3.5% under the last swing high, 3.5% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": -3.54,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-09-11",
+       "price": 35.55
+      },
+      "last_swing_low": {
+       "date": "2026-10-30",
+       "price": 27.66
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-06-05",
+       "price": 19.77
+      },
+      "prev_swing_low": {
+       "date": "2026-10-02",
+       "price": 25.92
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "aeccb7a5201aa135d0882b11f52ceea8ed8802bd2d578b930115e2a5e40a69a7",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "daily swing is HH but LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: above EMA9, 9>21, swing HH/HL, 3.5% under the last swing high, 3.5% under 20-wk high, this week still open | D: above EMA9, 9>21, swing HH but LL, 10.4% above the last swing high, 1.0% under 20-day high | H1: above EMA9, 9>21, swing HH/HL, 0.8% under the last swing high, 0.9% under 20-hr high, 48% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": true,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "SUPPORT",
+     "after": "SUPPORT",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "RBRK": {
+   "status": "OUT",
+   "tallies": {
+    "support_confirm": 0,
+    "support_refute": 0,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 0,
+    "against_cannot_see": 0
+   },
+   "claims": [],
+   "refuted_by": [],
+   "refutes_on_support": [],
+   "split": {
+    "support": [],
+    "oppose": [
+     "oneil",
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "seow",
+     "raschke",
+     "wyckoff",
+     "aqe-quant"
+    ],
+    "abstain": []
+   },
+   "blind_conviction": {
+    "oneil": 4,
+    "minervini": 4,
+    "livermore": 4,
+    "elder-lens": 4,
+    "seow": 4,
+    "raschke": 3,
+    "wyckoff": 4,
+    "aqe-quant": 4
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 10,
+    "elder-lens": 10,
+    "seow": 10,
+    "raschke": 3,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 300,
+     "close": 106.03,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 24.22,
+     "ema21": 114.4418,
+     "ema9": 110.8864,
+     "ema_order": "9<21",
+     "high_20bar": 139.92,
+     "high_20bar_date": "2026-10-28",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "below EMA9, 9<21, swing LH/LL, 8.6% under the last swing high, 24.2% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -8.59,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-11",
+       "price": 116.0
+      },
+      "last_swing_low": {
+       "date": "2026-11-06",
+       "price": 104.12
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-10-28",
+       "price": 139.92
+      },
+      "prev_swing_low": {
+       "date": "2026-10-15",
+       "price": 106.92
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 106.04,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 5.93,
+     "ema21": 108.1571,
+     "ema9": 107.1537,
+     "ema_order": "9<21",
+     "high_20bar": 112.73,
+     "high_20bar_date": "2026-11-13",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 32.0,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "below EMA9, 9<21, swing LH/LL, 4.1% under the last swing high, 5.9% under 20-hr high, 32% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -4.06,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-13",
+       "price": 110.53
+      },
+      "last_swing_low": {
+       "date": "2026-11-16",
+       "price": 104.58
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-13",
+       "price": 112.73
+      },
+      "prev_swing_low": {
+       "date": "2026-11-13",
+       "price": 105.59
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "W": {
+     "bars": 63,
+     "close": 106.03,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 24.22,
+     "ema21": 101.0921,
+     "ema9": 110.4868,
+     "ema_order": "9>21",
+     "high_20bar": 139.92,
+     "high_20bar_date": "2026-10-30",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "below EMA9, 9>21, swing HH/HL, 24.2% under the last swing high, 24.2% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": -24.22,
+      "cls": "HH/HL",
+      "high_leg": "HH",
+      "last_swing_high": {
+       "date": "2026-10-30",
+       "price": 139.92
+      },
+      "last_swing_low": {
+       "date": "2026-09-11",
+       "price": 85.78
+      },
+      "low_leg": "HL",
+      "prev_swing_high": {
+       "date": "2026-08-28",
+       "price": 107.91
+      },
+      "prev_swing_low": {
+       "date": "2026-07-31",
+       "price": 67.31
+      },
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": "HH/HL"
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 300,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "b2a6083610a10627b5f3ed294922a677594388483c181add63036ebd15bb81c4",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "daily swing is LH/LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: below EMA9, 9>21, swing HH/HL, 24.2% under the last swing high, 24.2% under 20-wk high, this week still open | D: below EMA9, 9<21, swing LH/LL, 8.6% under the last swing high, 24.2% under 20-day high | H1: below EMA9, 9<21, swing LH/LL, 4.1% under the last swing high, 5.9% under 20-hr high, 32% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  },
+  "SPCX": {
+   "status": "OUT",
+   "tallies": {
+    "support_confirm": 0,
+    "support_refute": 0,
+    "support_cannot_see": 0,
+    "against_confirm": 0,
+    "against_refute": 0,
+    "against_cannot_see": 0
+   },
+   "claims": [],
+   "refuted_by": [],
+   "refutes_on_support": [],
+   "split": {
+    "support": [],
+    "oppose": [
+     "minervini",
+     "livermore",
+     "elder-lens",
+     "aqe-quant"
+    ],
+    "abstain": [
+     "oneil",
+     "seow",
+     "raschke",
+     "wyckoff"
+    ]
+   },
+   "blind_conviction": {
+    "oneil": null,
+    "minervini": 4,
+    "livermore": 3,
+    "elder-lens": 4,
+    "seow": null,
+    "raschke": null,
+    "wyckoff": null,
+    "aqe-quant": 3
+   },
+   "horizons": {
+    "oneil": 40,
+    "minervini": 20,
+    "livermore": 10,
+    "elder-lens": 10,
+    "seow": 10,
+    "raschke": 3,
+    "wyckoff": 20,
+    "aqe-quant": 10
+   },
+   "mtf": {
+    "D": {
+     "bars": 109,
+     "close": 137.36,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 17.34,
+     "ema21": 141.8097,
+     "ema9": 138.9705,
+     "ema_order": "9<21",
+     "high_20bar": 166.18,
+     "high_20bar_date": "2026-10-21",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "served": true,
+     "summary": "below EMA9, 9<21, swing LH/LL, 17.3% under the last swing high, 17.3% under 20-day high",
+     "swing": {
+      "close_vs_swing_high_pct": -17.34,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-10-21",
+       "price": 166.18
+      },
+      "last_swing_low": {
+       "date": "2026-11-05",
+       "price": 120.39
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-10-06",
+       "price": 176.42
+      },
+      "prev_swing_low": {
+       "date": "2026-10-22",
+       "price": 143.21
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "H1": {
+     "bars": 217,
+     "close": 137.45,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 4.78,
+     "ema21": 138.8794,
+     "ema9": 138.0983,
+     "ema_order": "9<21",
+     "high_20bar": 144.35,
+     "high_20bar_date": "2026-11-12",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16 15:30:00",
+     "pos_in_day_range_pct": 40.1,
+     "served": true,
+     "session": "2026-11-16",
+     "summary": "below EMA9, 9<21, swing LH/LL, 2.1% under the last swing high, 4.8% under 20-hr high, 40% of the day's range",
+     "swing": {
+      "close_vs_swing_high_pct": -2.12,
+      "cls": "LH/LL",
+      "high_leg": "LH",
+      "last_swing_high": {
+       "date": "2026-11-13",
+       "price": 140.43
+      },
+      "last_swing_low": {
+       "date": "2026-11-16",
+       "price": 135.85
+      },
+      "low_leg": "LL",
+      "prev_swing_high": {
+       "date": "2026-11-12",
+       "price": 147.6
+      },
+      "prev_swing_low": {
+       "date": "2026-11-13",
+       "price": 136.64
+      },
+      "rule": "strict fractal, 3 bars each side"
+     },
+     "swing_class": "LH/LL"
+    },
+    "W": {
+     "bars": 24,
+     "close": 137.36,
+     "close_vs_ema9": "below",
+     "dist_to_20bar_high_pct": 22.14,
+     "ema21": 143.3993,
+     "ema9": 142.1455,
+     "ema_order": "9<21",
+     "high_20bar": 176.42,
+     "high_20bar_date": "2026-10-09",
+     "last_bar": "red",
+     "last_bar_date": "2026-11-16",
+     "partial_last_bar": true,
+     "served": true,
+     "summary": "below EMA9, 9<21, no clear swing structure, 22.1% under the last swing high, 22.1% under 20-wk high, this week still open",
+     "swing": {
+      "close_vs_swing_high_pct": -22.14,
+      "cls": null,
+      "last_swing_high": {
+       "date": "2026-10-09",
+       "price": 176.42
+      },
+      "last_swing_low": {
+       "date": "2026-08-07",
+       "price": 104.83
+      },
+      "prev_swing_high": null,
+      "prev_swing_low": null,
+      "reason": "1 swing high(s) and 1 swing low(s) in 23 bars; two of each are needed",
+      "rule": "strict fractal, 2 bars each side, the open week left out"
+     },
+     "swing_class": null
+    },
+    "complete": true,
+    "fetch": {
+     "daily": {
+      "last_bar": "2026-11-16",
+      "rows": 109,
+      "source": "panel"
+     },
+     "hourly": {
+      "last_bar": "2026-11-16 15:30:00",
+      "rows": 217,
+      "sha256": "d47d9242f5b2136870a7026ff2c6823fda43f3948ba6a5a24f7181fede1c3fa2",
+      "source": "1hour"
+     }
+    },
+    "frames_served": [
+     "W",
+     "D",
+     "H1"
+    ],
+    "gaps": [],
+    "momentum": {
+     "flag": false,
+     "reasons": [
+      "weekly swing is not readable, not HH/HL",
+      "daily swing is LH/LL, not HH/HL"
+     ],
+     "rule": "weekly HH/HL and daily HH/HL"
+    },
+    "reason": null,
+    "served": true,
+    "summary": "W: below EMA9, 9<21, no clear swing structure, 22.1% under the last swing high, 22.1% under 20-wk high, this week still open | D: below EMA9, 9<21, swing LH/LL, 17.3% under the last swing high, 17.3% under 20-day high | H1: below EMA9, 9<21, swing LH/LL, 2.1% under the last swing high, 4.8% under 20-hr high, 40% of the day's range"
+   },
+   "stances": {
+    "oneil": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "minervini": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "livermore": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "elder-lens": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "seow": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "raschke": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "wyckoff": {
+     "blind": "ABSTAIN",
+     "after": "ABSTAIN",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    },
+    "aqe-quant": {
+     "blind": "OPPOSE",
+     "after": "OPPOSE",
+     "ruled": false,
+     "changed_mind": false,
+     "what_moved_me": []
+    }
+   }
+  }
+ },
+ "ignored_forms": [],
+ "measurement": {
+  "claims_issued": 20,
+  "rulings": {
+   "CONFIRM": 12,
+   "REFUTE": 27,
+   "CANNOT_SEE": 1
+  },
+  "rulings_total": 40,
+  "survivors": 3,
+  "dropped": 3,
+  "out": 2,
+  "stances_changed": [],
+  "stances_changed_n": 0,
+  "reviewers_present": [
+   "oneil",
+   "minervini",
+   "livermore",
+   "elder-lens",
+   "seow",
+   "raschke",
+   "wyckoff",
+   "aqe-quant"
+  ],
+  "reviewers_absent": []
+ }
+}

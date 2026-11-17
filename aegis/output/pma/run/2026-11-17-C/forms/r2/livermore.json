@@ -1,0 +1,259 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "round": 2,
+ "declarations": [
+  "Round-1: no livermore ballot exists at forms/r1/livermore.json (every name was nominated by aqe-quant or held), so conviction_change is null on every name.",
+  "Translation (C7, C18-C20): fade_atr_ge:2 and every 1-ATR margin are MY translation via atr_14d, never Livermore's literal 6/3-point numbers. mp_state/mp_accel_state read as my six-column analogue, not identical. fill_difficulty NOT_SERVED; inside information NEVER (C11).",
+  "Steenbarger PROCESS: agreed the room is one input stream, so each vote rests on my own new-high test, not on the nominator or sc_momentum: BILL and CHYM pass; MBGL and U wait for their high; KVYO and CLX fail it.",
+  "Steenbarger sector CROWDING: concentration is my discipline (R7), but I rank inside the Technology cluster: BILL first (at its high), U second (reaction in an uptrend), MBGL third (young trend), KVYO opposed. One tech name at a high is not a group call (C14).",
+  "Tape: VALEN reads RISK OFF with SPY/QQQ in DOWNTREND. Per C2 I act on each name's own price: every SUPPORT is conditional on its new high printing, never an order today."
+ ],
+ "votes": [
+  {
+   "ticker": "MBGL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Upward Trend under way but not yet at a fresh high. `mp` 97.0 with `mp_accel_state` 1 ACCELERATING is my six-column analogue reading Upward Trend; `subcomponents.energy.en_pos50` 89.63 and `subcomponents.structure.resist_score` 5.0 put price 3.3% under the 20-day high, a small reaction, not the new high. I act only when the new high prints (C5). Young history (ma200 None, ma50 19.14 under ma100 19.83) holds conviction at 3.",
+   "conviction_change": null,
+   "falsifier": "A fresh high that fails at once and reverses about 1 ATR below it (C20, my translation), or a one-day 2-ATR fade from the high (C7, my translation).",
+   "challenge_reply": "Context: a young Upward Trend with no 200-day to set it against, so I treat it as unproven and wait for the new high rather than buy the reaction. Invalidation from structure: a close back under pivot_high (the broken swing high, 19.1% below) or a one-day 2-ATR fade, my translation of C7.",
+   "case": {
+    "for": "`flow` 93.4 and `subcomponents.mp.roc_zscore` 2.83: an exceptional month carried by buying, the leader behaviour C12 says to watch. D swing HH/HL, W above EMA9.",
+    "against": "No established long trend to measure against: ma200 None, ma50 19.14 below ma100 19.83, structure_shift None. sma_dist 25.6% and ext_atr20 4.96 is a stretched run; `subcomponents.energy.squeeze_score` 0.0, no coil.",
+    "entry_trigger": "close_above:fib_swing_high, a fresh high after the current 3.3% reaction, on a day stronger than SPY.",
+    "wrong_if": "fade_atr_ge:2 in one session (my C7 translation, not 6 points), or a close back under pivot_high.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close at a fresh high with follow-through next session raises me; failure to clear the high then a 1-ATR reaction (C20, my translation) ends the case.",
+    "cannot_see": [
+     "pct_from_52w_high (52-week history absent)",
+     "order-fill difficulty (day_vol 2.52 is a proxy only)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:fib_swing_high"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:pivot_high"
+    ],
+    "wait": [],
+    "chase": "close_above:fib_swing_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "The one name here at a fresh high in an established Upward Trend: from_52w_hi 0.0%, ma50 47.91 > ma100 46.65 > ma200 42.9, structure_shift ABOVE_STRUCTURE. `structure` 96.8 with `subcomponents.structure.resist_score` 10.0 and `subcomponents.structure.wk_score` 15.0 read just under the high with the weekly trend up; `flow` 94.7 says money is behind it. C5 and C16: buy strength at a new high. Lane says PULLBACK; I judge it as a new-high continuation.",
+   "conviction_change": null,
+   "self_counter": "`mp_accel_state` 2 DECELERATING and `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 23.0: the push is slowing late in a long run, and the tape reads RISK OFF with SPY in a DOWNTREND. A leader in a falling market is the first to be tested.",
+   "falsifier": "A fresh closing high that fails and closes more than 1 ATR back under it (C20, my translation).",
+   "case": {
+    "for": "`sc_m_gate_detail` 17 (every engine clears its floor) and `subcomponents.pipe.pipe_tier` 1 A-TIER; D swing HH/HL, 13.5% above the last swing high, 1.4% under 20-day high.",
+    "against": "`energy` 60.5 sits near its floor; `mp_state` 2 FADING (not decay, R13) with deceleration; sma_dist 20.29% is stretched off the 50-day; W swing LH/LL.",
+    "entry_trigger": "close_above:high_52w_close, a fresh closing high, on a day stronger than SPY.",
+    "wrong_if": "fade_atr_ge:2 in one session (my C7 translation), or a close more than 1 ATR under high_52w_close after the break (C20 failure, my translation).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh high that fails at once and reverses 1 ATR under it; or a second Technology name failing to make new highs alongside it (C14).",
+    "cannot_see": [
+     "order-fill difficulty",
+     "pivotal-point margin in modern units (atr_14d proxy)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:high_52w_close-1atr"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Not an Upward Trend at new highs: from_52w_hi -31.18% and ret_12m -19.63 make this a strong rally inside a larger decline, a Natural Rally in my columns, not a leader at its high (C5). `structure` 76.8 is the lowest of the nominees and `subcomponents.structure.base_score` 0.0 shows no base behind the move. W and D both swing HH but LL. I wait for price to prove it; I do not buy the bounce.",
+   "conviction_change": null,
+   "opposing_case": "`energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 is a real coil, `flow` 86.8 and `mp` 89.0 with `mp_accel_state` 1 ACCELERATING; ma50 18.3 > ma100 18.05 > ma200 17.84 has just turned up, so a new trend may be forming.",
+   "falsifier": "KVYO clears fib_swing_high to a fresh high and holds it: then it is a new leader and my oppose was too slow.",
+   "case": {
+    "for": "Coil plus money: `subcomponents.energy.squeeze_score` 12.5, `flow` 86.8, `mp_accel_state` 1 ACCELERATING; the average stack has turned up and D is 3.1% above the last swing high.",
+    "against": "`subcomponents.structure.base_score` 0.0 and `structure` 76.8; 31.18% under the 52-week high after a losing year. div BEARISH/4 (advisory for me) and `subcomponents.energy.exhaustion_score` 8.5 at 31 bars.",
+    "entry_trigger": "close_above:fib_swing_high after a normal reaction would put it back in my Upward Trend column; the real new high is a close above high_52w_close.",
+    "wrong_if": "A fresh high above fib_swing_high that holds for several sessions.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A fresh high on follow-through, with a second Technology name making new highs alongside it (C14).",
+    "cannot_see": [
+     "order-fill difficulty"
+    ]
+   }
+  },
+  {
+   "ticker": "CLX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "A sharp rally inside a Downward Trend, not an established Upward Trend: ma50 89.11 < ma100 94.48 < ma200 99.29 and from_52w_hi -13.36%. `subcomponents.structure.rs_accel` 25.6 against `subcomponents.structure.rs_vs_spy` 6.63 says the lead is one month old; `mp_accel_state` 2 DECELERATING says the push is already slowing. Under C19 the rally must clear the old pivotal point by a margin; until then it is a Natural Rally, on day_vol 0.81.",
+   "conviction_change": null,
+   "opposing_case": "`structure` 89.5 with BULLISH_BOS, `mp` 96.0, `subcomponents.energy.exhaustion_score` 10.0: four engines agree and the weekly sits 0.7% under its 20-week high, so a new weekly high is one push away.",
+   "falsifier": "A close through the 20-week high that holds, with the 50-day turning up through the 100-day.",
+   "challenge_reply": "Context: an inverted average stack, so in my columns this is a Natural Rally in a Downward Trend. A low-participation break (day_vol 0.81) does not count for me; it counts only after a close clears the 20-week high (the weekly pivotal point) and holds, with the stack starting to turn.",
+   "case": {
+    "for": "`structure` 89.5 BULLISH_BOS, `mp` 96.0 and `subcomponents.structure.wk_score` 15.0: the weekly close is above a rising 10-week average and the weekly is 0.7% under its 20-week high.",
+    "against": "Inverted stack ma50 89.11 < ma100 94.48 < ma200 99.29; 13.36% under the 52-week high; the lead is one month old (`subcomponents.structure.rs_accel` 25.6) and decelerating; day_vol 0.81.",
+    "entry_trigger": "A close above the 20-week high that holds, plus ma_above:ma_50:ma_100 turning.",
+    "wrong_if": "A close through the 20-week high that holds and extends: my Downward Trend read is wrong.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Fresh weekly high with follow-through and the 50-day crossing the 100-day; a second Consumer Staples name confirming (C14).",
+    "cannot_see": [
+     "order-fill difficulty",
+     "20-week high as a condition level"
+    ]
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Established Upward Trend (ma50 43.6 > ma100 40.08 > ma200 32.07, from_52w_hi -1.76%) now in a normal reaction: structure_shift RANGE, D 4.4% under the last swing high, day_vol 0.78, a quiet lower-volume pullback (C8). `mp` 93.0 with `mp_accel_state` 1 ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep it in my Upward Trend column. I do not buy the reaction; I buy the new high (C5).",
+   "conviction_change": null,
+   "falsifier": "The reaction turns abnormal: a one-day 2-ATR fade (my C7 translation) or a close under base_low_20d.",
+   "challenge_reply": "Nothing starts the trade now, and I would not start it inside a RANGE on day_vol 0.78: that is a reaction, and C5 forbids buying it. The event is a daily close above the last swing high to a fresh closing high (high_52w_close), confirming the reaction is over. Until it prints this is a conditional support, not an order.",
+   "case": {
+    "for": "`subcomponents.mp.roc_zscore` 2.84 and `subcomponents.mp.rel_mom_score` 25.0: an exceptional month well ahead of the market; ret_6m 93.58 is leader behaviour in an aligned stack.",
+    "against": "`subcomponents.structure.resist_score` 5.0 and `subcomponents.energy.en_trend_bars` 9.0: off its high on a young run; H1 below EMA9 at 8% of the day's range; run_10d 33.47% is a large thrust to digest.",
+    "entry_trigger": "close_above:high_52w_close, a fresh closing high after the reaction, on a day stronger than SPY.",
+    "wrong_if": "fade_atr_ge:2 (my C7 translation) or close_below:base_low_20d: the reaction is no longer normal.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The new high printing on rising volume raises me; a deeper reaction on heavier volume (abnormal, C8) ends it.",
+    "cannot_see": [
+     "order-fill difficulty",
+     "pivotal-point margin in modern units (atr_14d proxy)"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:base_low_20d"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Established Upward Trend near a fresh high: ma50 29.94 > ma100 28.21 > ma200 24.07, from_52w_hi -0.75%, W and H1 swing HH/HL, structure_shift ABOVE_STRUCTURE. `mp` 83.0 with `mp_state` 3 STRONG and `mp_accel_state` 1 ACCELERATING is my Upward Trend column in black ink; `subcomponents.structure.base_score` 15.0 says it came out of a proper base. Financials, outside the Technology cluster.",
+   "conviction_change": null,
+   "self_counter": "`subcomponents.mp.adx_val` 23.19 is barely a trend and `subcomponents.structure.wk_score` 10.0 is not full marks; day_vol 4.05 could be a climax day rather than strength. One name is not a group (C14): no second Financials name confirms it here.",
+   "falsifier": "A fresh closing high that fails and closes more than 1 ATR back under it (C20, my translation).",
+   "case": {
+    "for": "`flow` 93.4 with `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5: buying on rising volume; `elder` 10.0 SUSTAINED.",
+    "against": "D swing HH but LL, 10.4% above the last swing high; `subcomponents.flow.ext_score` 0.0, no breakout bonus; adx 23.19; a 4x volume day can mark an end as easily as a start.",
+    "entry_trigger": "close_above:high_52w_close, a fresh closing high, on a day stronger than SPY.",
+    "wrong_if": "fade_atr_ge:2 in one session (my C7 translation), or a close more than 1 ATR under high_52w_close after the break.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "No follow-through after the new high (C17: a cleared level that does not run is itself a danger signal) lowers me.",
+    "cannot_see": [
+     "order-fill difficulty (day_vol 4.05 is a proxy only)",
+     "a second Financials name for Key Price confirmation"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:high_52w_close"
+    ],
+    "confirm": [
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "fade_atr_ge:2",
+     "close_below:high_52w_close-1atr"
+    ],
+    "wait": [],
+    "chase": "close_above:high_52w_close+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held review: EXIT-CASE. The Upward Trend has ended in my columns: structure_shift BEARISH_CHOCH, D and H1 swing LH/LL, price under ma20 118.26 and ma50 113.99. `structure` 25.0 and `mp` 0.0 with `sc_m_gate_detail` 1 (no engine clears its floor) confirm it. The position is a loss (unrealised -512.03); C3 and C22 say the loss itself is the signal, take it small. C4: never add.",
+   "conviction_change": null,
+   "opposing_case": "The longer trend is intact: ma50 113.99 > ma100 100.27 > ma200 79.2, W swing HH/HL, ret_6m 63.17; `subcomponents.flow.accum_score` 7.5 says accumulation still runs, so this could be a normal reaction in a longer uptrend (C8).",
+   "falsifier": "A close back above the last daily swing high within a few sessions would show the reaction was normal.",
+   "challenge_reply": "Disconfirming observable: the Upward Trend ending on a reaction below the pivotal point (C20). It has printed: BEARISH_CHOCH, D swing LH/LL, 24.2% under the 20-day high. Verdict EXIT-CASE.",
+   "case": {
+    "for": "Weekly swing HH/HL with an up-stacked ma50 113.99 > ma100 100.27 > ma200 79.2; `subcomponents.flow.accum_score` 7.5.",
+    "against": "`structure` 25.0, `mp` 0.0, `sc_m_gate_detail` 1; BEARISH_CHOCH; D and H1 LH/LL below EMA9; a losing position (C3).",
+    "entry_trigger": "None while it fails; to re-enter, a fresh close above pivot_high after a normal reaction.",
+    "wrong_if": "A close back above pivot_high within a few sessions.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A higher low then a close above the last daily swing high on rising volume.",
+    "cannot_see": [
+     "order-fill difficulty"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No long case: a Downward Trend in my red-ink column. structure_shift BEARISH_CHOCH, W, D and H1 below EMA9 with D swing LH/LL, sector Declining. `structure` 23.0 and `mp` 0.0 with `sc_m_gate_detail` 1 (no engine clears its floor). Held review on the SHORT (qty -68.0, unrealised 187.11): KEEP. C6 allows adding to a short only at lower prices, never into a rally.",
+   "conviction_change": null,
+   "opposing_case": "`subcomponents.flow.accum_score` 7.5 and `mp_accel_state` 1 ACCELERATING hint the selling is slowing; run_10d 0.73% and price 2.1% under the H1 swing high say a rally against the short could be starting.",
+   "falsifier": "A close above the last daily swing high (pivot_high) that holds: the Downward Trend is over.",
+   "challenge_reply": "Observable that ends the short hold: a rally that clears the last daily swing high (pivot_high) and holds a close above it (C19/C20 mirror). It has not printed: D swing LH/LL, 17.3% under the last swing high. Short: KEEP.",
+   "case": {
+    "for": "For the held short: `structure` 23.0, `mp` 0.0, BEARISH_CHOCH, sector Declining, D LH/LL. For a long: only `subcomponents.flow.accum_score` 7.5.",
+    "against": "As a long, nothing: `sc_m_gate_detail` 1. Against the short: `mp_accel_state` 1 ACCELERATING and a flat run_10d 0.73% say the decline may be pausing.",
+    "entry_trigger": "No long entry. For the short, add only on a fresh low (C6), never into a rally.",
+    "wrong_if": "A close above pivot_high that holds.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A higher low and a close above the last daily swing high.",
+    "cannot_see": [
+     "order-fill difficulty",
+     "ma_200 (null)"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of1.json",
+   "bytes": 16478,
+   "votes": 8,
+   "sha256": "bb961ff01078"
+  }
+ ]
+}

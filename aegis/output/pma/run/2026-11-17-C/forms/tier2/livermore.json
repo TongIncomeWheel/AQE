@@ -1,0 +1,62 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-17",
+ "declarations": [
+  "Translation (C7, C18-C20): every ATR margin is my own translation via atr_14d, never Livermore's literal 6/3-point numbers. mp_state/mp_accel_state read as my six-column analogue, not identical. fill_difficulty NOT_SERVED; inside information NEVER (C11). No pairs name me as author: answers empty.",
+  "Translation (C7, C18-C20): every ATR margin is my own translation via atr_14d, never Livermore's literal numbers. fill_difficulty NOT_SERVED; inside information NEVER (C11)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MBGL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:fib_swing_high",
+    "tf": "D",
+    "plain": "A daily close at a fresh high above the swing high, ending the small 3.3% reaction"
+   },
+   "wrong_if": "A one-day fade of 2 ATR from the high (my C7 translation via atr_14d, not 6 points), or a close back under pivot_high.",
+   "market_void": null,
+   "reason": "Upward Trend analogue: `mp` 97.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING; `flow` 93.4 buying; `subcomponents.structure.resist_score` 5.0 just under the high. D HH/HL, 3.3% under 20-day high. Young trend: only the new high buys it (C5)."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close at a fresh 52-week closing high"
+   },
+   "wrong_if": "A fresh high that fails and closes more than 1 ATR back under it (C20, my translation), or a one-day 2-ATR fade (C7, my translation).",
+   "market_void": null,
+   "reason": "Established Upward Trend, D HH/HL: `structure` 96.8, `subcomponents.structure.wk_score` 15.0 weekly up, `subcomponents.structure.resist_score` 10.0 just under the high; `flow` 94.7 buying. Caution `mp_accel_state` 2 DECELERATING; the new high decides (C5)."
+  },
+  {
+   "ticker": "CHYM",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "A daily close above the September high, a fresh 52-week closing high"
+   },
+   "wrong_if": "A fresh high that fails and closes more than 1 ATR back under it (C20, my translation), or a one-day 2-ATR fade (C7, my translation).",
+   "market_void": null,
+   "reason": "Upward Trend analogue: `mp` 83.0, `mp_state` 3 STRONG, `mp_accel_state` 1 ACCELERATING; `subcomponents.structure.base_score` 15.0 a proper base; `flow` 93.4. W HH/HL. Caution: `subcomponents.mp.adx_val` 23.19, D HH but LL; one name is no group call (C14)."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 1755,
+   "sha256": "125897dedf03"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 972,
+   "sha256": "ff5d693a59c2"
+  }
+ ]
+}

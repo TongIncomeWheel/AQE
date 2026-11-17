@@ -1,0 +1,34 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-17",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MBGL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A served structure_shift of ABOVE_STRUCTURE/BULLISH_BOS with price above value would make my abstain wrong: then it is a trend name to join on the test.",
+   "market_void": null,
+   "reason": "R10/C16: structure_shift not served, so range or trend (C2) has no answer. Demand is real (`flow` 93.4, `subcomponents.flow.accum_score` 7.5, `mp` 97.0) but weekly swing is unreadable and D is 19.1% above the last swing high; I do not label a structure I cannot see."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pullback tests the broken Creek, buy an hourly close above the prior day's high."
+   },
+   "wrong_if": "A daily close back below structure_shift_ref (re-entry into the old range: failed breakout, C5/C11), or choch_bearish.",
+   "market_void": null,
+   "reason": "TREND (ABOVE_STRUCTURE). `flow` 94.7 with `subcomponents.flow.accum_score` 7.5 and `structure` 96.8 with `subcomponents.structure.wk_score` 15.0: buyer control. D is 13.5% over the swing high: away from value, wait for the test (R2, C7); `subcomponents.energy.exhaustion_score` 8.5 = early wear."
+  }
+ ],
+ "declarations": [
+  "No refutation pairs name me as author; answers is empty.",
+  "pvp_*, structure_shift_ref values, bar_* and rvol_20d are not served in my packet; levels are named by field for AQE to stamp.",
+  "R1 honoured: no bracket field is a reason anywhere on this form."
+ ]
+}

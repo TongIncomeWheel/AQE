@@ -1,0 +1,326 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-17",
+ "round": 2,
+ "declarations": [
+  "Round-1 ballot forms/r1/elder-lens.json was not present on disk; I could not read it. All six nominated names were seated by aqe-quant only, so conviction_change is null throughout.",
+  "REPORT C: every vote cites `elder` and `mp` (both on my menu) plus `subcomponents.structure.wk_score` as the weekly-tide read for C21; that sub-component is outside my card menu and is used under the Report C directive only.",
+  "Steenbarger PROCESS/ANCHOR: I read no composite; my votes rest on the Impulse decode of elder_5d and persistence. Only KVYO carries a true <=6-to->=7 transition; MBGL and CHYM are C24 (unsourced) plateau reads.",
+  "Censor duty: no name in the set prints `elder` <=1 (red). SPCX `elder` 2.0 is the nearest.",
+  "R1: no bracket field is the basis of any vote; bracket INVALID on all eight is information only."
+ ],
+ "data_gaps": [
+  {
+   "field": "impulse_colour_last_bar / impulse_colour_prior_bar",
+   "impact": "R1/R2 colour tests unread; permission decoded from the elder score only."
+  },
+  {
+   "field": "force_index_ema_2 / price_ema_slope",
+   "impact": "R3 pullback timer unread."
+  },
+  {
+   "field": "force_index_ema_13",
+   "impact": "R4 per-name regime unread."
+  },
+  {
+   "field": "channel_upper / channel_lower",
+   "impact": "R5 upper-wall test unread."
+  },
+  {
+   "field": "weekly_trend_direction",
+   "impact": "R6 unread; wk_score used as the weekly proxy."
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "MBGL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Not red: `elder` 10.0 (>=7, buying not forbidden, C3), elder_5d [7, 7, 10, 10, 10] is a high plateau with no <=6 bar, so no permission event (C4); this is summer (C20) and the read is C24 (unsourced). `mp` 97.0 STRONG and `subcomponents.structure.wk_score` 15.0 (weekly close above a rising 10-week average) keep the tide up (C21). I buy only the pullback into value (C10), not here.",
+   "conviction_change": null,
+   "falsifier": "elder_5d prints a bar <=1 (red) or the daily structure turns bearish before price returns to value.",
+   "challenge_reply": "Survives with sc_momentum hidden: my case rests only on `elder` 10.0 and `mp` 97.0, read as Impulse permission and persistence; I never read the composite.",
+   "case": {
+    "for": "`elder` 10.0 not red, `mp` 97.0 STRONG ACCELERATING, `subcomponents.structure.wk_score` 15.0 weekly tide up: permission on, trend rising (C3, C9, C21).",
+    "against": "No transition in elder_5d [7, 7, 10, 10, 10] (C4); a plateau is summer, not Elder's buying season (C20); price sits far above ma20 19.82, so the C10 buy under the average is not on offer.",
+    "entry_trigger": "A pullback into ma20 19.82 with `elder` staying >=7 (not red), per C10.",
+    "wrong_if": "`elder` <=1 (red) or a bearish structure change; daily close under ma50 19.14.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A dip in elder_5d to <=6 then a bar >=7 near the 20-day average would be a C4 transition and lift conviction.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "elder_5d [10, 10, 7, 7, 10] with elder_pattern CORRECTION_REENTRY: force eased to 7 (never red) and reclaimed 10, the dip-and-reclaim shape (R8), but `mp_state` is FADING not STRONG so R8 is incomplete. `elder` 10.0 permits buying (C3); `mp` 93.0 and `subcomponents.structure.wk_score` 15.0 keep the trend above it rising (C9, C21). Judged as a pullback-reentry, which is my method's setup.",
+   "conviction_change": null,
+   "falsifier": "A bar <=1 in elder_5d, or the reclaim failing straight back under the 20-day average.",
+   "challenge_reply": "Survives with sc_momentum hidden: the case is `elder` 10.0 after the 7, 7 dip plus `mp` 93.0; the composite is not read.",
+   "case": {
+    "for": "CORRECTION_REENTRY reclaim to `elder` 10.0 after two 7 bars inside a rising trend: `mp` 93.0, `subcomponents.structure.wk_score` 15.0 (C6, C9, C21).",
+    "against": "The dip never went <=6, so no red-to-not-red permission event (C4); `mp_state` FADING fails R8's STRONG leg; price is above, not under, the average (C10).",
+    "entry_trigger": "A pullback toward ma20 51.32 holding `elder` >=7, or the next bar holding 10 after the reentry.",
+    "wrong_if": "`elder` <=1, or a daily close under ma50 47.91.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "`mp_state` turning STRONG would complete R8; a red bar would end it.",
+    "cannot_see": [
+     "impulse_colour_prior_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction",
+     "rvol for the pullback volume test (R8)"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "The only true permission event in the room: elder_5d [2, 7, 8, 8, 10], a bar <=6 then >=7 on bar 2, red giving way (C3, C4), then building to `elder` 10.0. `mp` 89.0 with `mp_state` FADING but ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep the tide up (C9, C21). Weight against: div BEARISH/4, Elder's warning that a reversal approaches (C8).",
+   "conviction_change": null,
+   "falsifier": "elder_5d dropping back <=6 within the next bars, confirming the divergence over the transition.",
+   "challenge_reply": "Steenbarger KVYO: the divergence is a weight, not ignored. It is oscillator divergence, not force divergence (C8 is measured on force, which I cannot see), so it caps me at 3 rather than vetoes; the transition 2->7 is what my card buys. sc_momentum hidden: case is `elder` and `mp` only.",
+   "case": {
+    "for": "Red-giving-way transition 2 to 7 in elder_5d, then 8, 8, 10 (C4); `mp` 89.0 ACCELERATING; `subcomponents.structure.wk_score` 15.0 (C21).",
+    "against": "The transition is four bars old, not on the last bar; div BEARISH/4 warns of reversal (C8); price above ma20 20.92, so not a buy under value (C10).",
+    "entry_trigger": "A pullback toward ma20 20.92 with `elder` >=7.",
+    "wrong_if": "`elder` <=1, or a daily close under ma50 18.3.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A fresh dip to <=6 and reclaim would be a second, stronger transition; force divergence data confirming the bearish read would move me to ABSTAIN.",
+    "cannot_see": [
+     "force_index_ema_2",
+     "force_index_ema_13",
+     "impulse_colour_last_bar",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "in_zone:ma_20"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CLX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "elder_5d [10, 7, 7, 7, 7]: force dropped from 10 and has sat at 7, the floor of not-red, for four bars, with `mp` 96.0 FADING and DECELERATING. That is green going away after an upswing, Elder's profit-taking signal (C4), not a buy; no <=6-to->=7 transition exists. ma50 89.11 under ma100 94.48 under ma200 99.29 leaves the trend over it unverified (C9, C10). Not red, so not forbidden.",
+   "conviction_change": null,
+   "opposing_case": "`elder` 7.0 is not red, `mp` 96.0 is high, `subcomponents.structure.wk_score` 15.0 says the weekly close is above a rising 10-week average, and BULLISH_BOS with sector strong could make this a fresh trend.",
+   "falsifier": "elder_5d lifting back to 10 with `mp_state` STRONG would prove the cooling was a pullback to buy.",
+   "challenge_reply": "sc_momentum hidden: the oppose rests on `elder` 7.0 holding flat after 10 and `mp` DECELERATING, not on the composite.",
+   "case": {
+    "for": "Not red at `elder` 7.0; `mp` 96.0; `subcomponents.structure.wk_score` 15.0 weekly tide up.",
+    "against": "Force cooled 10 to 7 and stalled (C4 green going away); `mp` DECELERATING; long average stack inverted, trend leg unverified (C9).",
+    "entry_trigger": "elder_5d dipping <=6 then printing >=7 near ma20 95.71 (a C4 transition).",
+    "wrong_if": "`elder` back to 10 with `mp_state` STRONG.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A permission event in elder_5d near the 20-day average.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "price_ema_slope",
+     "weekly_trend_direction",
+     "channel_upper"
+    ]
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "elder_5d [10, 7, 7, 10, 7]: force dips to 7 and reclaims inside a rising trend, the pullback rhythm C6 buys, never red (`elder` 7.0, C3). `mp` 93.0 ACCELERATING and `subcomponents.structure.wk_score` 15.0 keep the tide up (C9, C21). No <=6 bar, so no permission event (C4); the last bar is a drop, so I wait for value, not chase.",
+   "conviction_change": null,
+   "falsifier": "elder_5d printing <=1, or a daily close under ma50 43.6.",
+   "challenge_reply": "sc_momentum hidden: case is `elder` 7.0 inside a 10/7 rhythm and `mp` 93.0 only.",
+   "case": {
+    "for": "Repeated shallow force dips (10 to 7) that reclaim, inside `mp` 93.0 ACCELERATING and weekly tide `subcomponents.structure.wk_score` 15.0 (C6, C21).",
+    "against": "No transition (C4); last bar dropped 10 to 7 with H1 below EMA9; pattern unlabelled, so R8 does not fire.",
+    "entry_trigger": "A pullback into ma20 44.39 with `elder` >=7.",
+    "wrong_if": "`elder` <=1, or a daily close under ma50 43.6.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A dip <=6 then >=7 would be the permission event; a red bar ends it.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "`elder` 10.0, elder_5d [10, 10, 10, 10, 10] SUSTAINED: permission on (C3), but a pure plateau with no transition, so this is summer (C20) and the read is C24 (unsourced). `mp` 83.0 STRONG and ACCELERATING keeps the trend rising (C9); `subcomponents.structure.wk_score` 10.0 is a weaker weekly tide than the rest. I buy only the pullback into value (C10).",
+   "conviction_change": null,
+   "falsifier": "A single-bar drop then a bar <=1, or a bearish structure change.",
+   "challenge_reply": "sc_momentum hidden: case is `elder` 10.0 and `mp` 83.0 only; the day_vol 4.05 session is outside my menu and not part of my case.",
+   "case": {
+    "for": "Five bars of `elder` 10.0, `mp` 83.0 STRONG ACCELERATING: permission on and persistence high (C3, C9).",
+    "against": "Plateau is not a transition (C4, C20); `subcomponents.structure.wk_score` 10.0 is the softest weekly read among the supports; price above ma20 30.52, not under value (C10).",
+    "entry_trigger": "A pullback into ma20 30.52 holding `elder` >=7.",
+    "wrong_if": "`elder` <=1, or a daily close under ma50 29.94.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A dip <=6 and reclaim near the 20-day average would be a sourced C4 entry.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "price_ema_slope",
+     "channel_upper",
+     "weekly_trend_direction"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held long, verdict EXIT-CASE. `elder` 3.0, elder_5d [3, 3, 3, 3, 3]: five bars in the 2-6 band, permission never resolved (C3); `mp` 0.0 with `subcomponents.structure.wk_score` 5.0 says no rising trend over it and no weekly tide (C9, C21). `structure` 25.0 BEARISH_CHOCH (R11) confirms the uptrend shape is gone. C18: the written stop 99.45 may be held or raised, never lowered.",
+   "conviction_change": null,
+   "opposing_case": "ACCUMULATION_BASE with no single-bar drop (R7 not fired), `elder` 3.0 not certainly red, ma50 113.99 still over ma100 100.27 over ma200 79.2, so the longer trend may yet hold and the base resolve up.",
+   "falsifier": "elder_5d printing a bar >=7 after these <=6 bars (a C4 permission event) with `mp` recovering.",
+   "challenge_reply": "Steenbarger RBRK: EXIT-CASE. The disconfirming observable for a long, no trend over the force read, has printed: `mp` 0.0, BEARISH_CHOCH, and `elder` stuck at 3.0. Keep the 99.45 stop, never lower it (C18).",
+   "case": {
+    "for": "Not certainly red at `elder` 3.0; ACCUMULATION_BASE; long average stack still ordered.",
+    "against": "No permission for five bars, `mp` 0.0, `structure` 25.0 BEARISH_CHOCH, weekly tide `subcomponents.structure.wk_score` 5.0 (C3, C9, C21).",
+    "entry_trigger": "None to add; a re-entry would need a <=6 to >=7 transition in elder_5d.",
+    "wrong_if": "A bar >=7 in elder_5d with `mp` recovering above 75.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A C4 transition plus a rising trend leg.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_13",
+     "weekly_trend_direction"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "As a long: `elder` 2.0, elder_5d [5, 5, 6, 5, 2] INTERRUPTED, falling into the red region with `mp` 0.0 and `subcomponents.structure.wk_score` 2.0, so the trend leg has failed (C9, C21). Held SHORT (qty -68): verdict KEEP, since green forbids shorting and this is falling toward red, force aligned with the short (C3). C18: a short stop may be held or lowered, never raised; none is written, so I name ma20 141.57.",
+   "conviction_change": null,
+   "opposing_case": "`elder` 2.0 is not proven red (only <=1 is), the drop is one bar, and ma20 141.57 sits close to price, so a reclaim could squeeze the short.",
+   "falsifier": "elder_5d lifting back >=7 (not red, buying permitted) or a daily close over ma20 141.57.",
+   "challenge_reply": "Steenbarger SPCX: held short, KEEP. The observable that ends the hold is a daily close above ma20 141.57 or `elder` back >=7; neither has printed. `structure` 23.0 BEARISH_CHOCH supports the short.",
+   "case": {
+    "for": "(for the held short) Falling `elder` 2.0, `mp` 0.0, `structure` 23.0 BEARISH_CHOCH, weekly `subcomponents.structure.wk_score` 2.0.",
+    "against": "(against the short) `elder` 2.0 is not certainly red; a single-bar drop; no written stop.",
+    "entry_trigger": "No long. Short is held; no add without a red bar (`elder` <=1).",
+    "wrong_if": "Daily close above ma20 141.57, or `elder` >=7.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "elder_5d recovering >=7 with `mp` rising.",
+    "cannot_see": [
+     "impulse_colour_last_bar",
+     "force_index_ema_2",
+     "weekly_trend_direction",
+     "ma_200"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of1.json",
+   "bytes": 14327,
+   "votes": 8,
+   "sha256": "eb9f26e0d661"
+  }
+ ]
+}

@@ -1,0 +1,824 @@
+{
+ "created": "2026-11-17T00:02:45Z",
+ "date": "2026-11-17",
+ "degradations": [
+  {
+   "at": "2026-11-17T01:57:52Z",
+   "note": "declared produces absent: ['phase4_ledger.json', 'data_health.json', 'closes_scorecard.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-17T01:57:52Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['phase4_ledger.json']",
+   "step": "RANK"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['slate_plan.json', 'slate_excluded.json']",
+   "step": "SLATE"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['repeat_marks.json', 'unr_table.md']",
+   "step": "BRACKET"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['rationale_draft.json']",
+   "step": "RATIONALE"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['forms/adopt/*.json (glob matched nothing)']",
+   "step": "ADOPT"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['rationale_final.json']",
+   "step": "RATIONALE-FINAL"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['committee_position.json']",
+   "step": "POSITION"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['conditions.json', 'conditions.md', 'conditions.html', 'cards.json']",
+   "step": "CONDITIONS"
+  },
+  {
+   "at": "2026-11-17T01:57:53Z",
+   "note": "declared produces absent: ['repeat_watch.json', 'purity_check.json']",
+   "step": "REPEAT-WATCH"
+  },
+  {
+   "at": "2026-11-17T01:57:54Z",
+   "note": "declared produces absent: ['scorecard.json', 'scorecard.md', 'scorecard.html', 'scorecard_log.jsonl']",
+   "step": "SCORECARD"
+  },
+  {
+   "at": "2026-11-17T01:57:54Z",
+   "note": "declared produces absent: ['cards_text.json', 'cards_lines.json']",
+   "step": "WRITE"
+  },
+  {
+   "at": "2026-11-17T01:57:54Z",
+   "note": "declared produces absent: ['pma_levels.json']",
+   "step": "LEVELS"
+  },
+  {
+   "at": "2026-11-17T01:57:54Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  }
+ ],
+ "flags": [],
+ "method": "quant_scan",
+ "report": "C",
+ "rerun": {
+  "of": "pma-2026-11-17",
+  "publishes_live": false,
+  "run_dir": "aegis/output/pma/run/2026-11-17-C",
+  "suffix": "C"
+ },
+ "reuse_from_report_a": {
+  "does_not_rerun": [
+   "weather",
+   "macro",
+   "sector",
+   "held-book sections"
+  ],
+  "reuses": [
+   "data pull",
+   "packets base",
+   "market kill",
+   "macro context",
+   "held review"
+  ],
+  "run_dir": "aegis/output/pma/run/2026-11-17"
+ },
+ "run_id": "pma-2026-11-17-C",
+ "seats": {
+  "CHALLENGE/steenbarger": {
+   "file": "forms/challenge/steenbarger.json",
+   "flags": [],
+   "sha256": "bc26d8e70c2c06b7859fd3a4a9183db492a937cfb33b126968160ad98ccba45c",
+   "status": "committed"
+  },
+  "CROSS/aqe-quant": {
+   "file": "forms/cross/aqe-quant.json",
+   "flags": [],
+   "sha256": "35e147ef6739b9270c755c60198fb7995408310c827ae3218b42d24565345a81",
+   "status": "committed"
+  },
+  "CROSS/elder-lens": {
+   "file": "forms/cross/elder-lens.json",
+   "flags": [],
+   "sha256": "f34097b93ec0cb00e7a9613edb8edc2c7e939fe851f00c6858bcfd754e0af2b0",
+   "status": "committed"
+  },
+  "CROSS/livermore": {
+   "file": "forms/cross/livermore.json",
+   "flags": [],
+   "sha256": "6d27c6e37823502992126b567e976c7d754a2769fadc5be4a3b6e4fc705021f1",
+   "status": "committed"
+  },
+  "CROSS/minervini": {
+   "file": "forms/cross/minervini.json",
+   "flags": [],
+   "sha256": "81b3f65f4c1b8a1ee3c2b4f19c9e63f79af7f6cf3eb03ffd947768719a85c6ea",
+   "status": "committed"
+  },
+  "CROSS/oneil": {
+   "file": "forms/cross/oneil.json",
+   "flags": [],
+   "sha256": "d5c3aa61535f460faf333e430d96bf6b72d5df706e0ed313163fa2c1db761ff0",
+   "status": "committed"
+  },
+  "CROSS/raschke": {
+   "file": "forms/cross/raschke.json",
+   "flags": [],
+   "sha256": "05af975bb035d4cd01609df018669dd0665230a3d7880441653b344c7c8888b6",
+   "status": "committed"
+  },
+  "CROSS/seow": {
+   "file": "forms/cross/seow.json",
+   "flags": [],
+   "sha256": "e85761800e6b02d5e79e2ae496cdf5b38711e7232cb9c88ec79bcf47a6bf620e",
+   "status": "committed"
+  },
+  "CROSS/wyckoff": {
+   "file": "forms/cross/wyckoff.json",
+   "flags": [],
+   "sha256": "0656761ed37e389fa0b1a9b22df7cea2f01a024917edfe0ff63c84560ae253b3",
+   "status": "committed"
+  },
+  "NOMINATE/aqe-quant": {
+   "file": "forms/r1/aqe-quant.json",
+   "flags": [],
+   "sha256": "79237a26f0e37c03c64439acc5e934c0ee9c620c0663c88e0e7b9bf71ce52647",
+   "status": "committed"
+  },
+  "RATIFY/aqe-quant": {
+   "file": "forms/ratify/aqe-quant.json",
+   "flags": [],
+   "sha256": "4bf680cc31ccb1a50a48213379c8b9cb2294f118a4fd24c5da6588e81eb51ac7",
+   "status": "committed"
+  },
+  "RATIFY/elder-lens": {
+   "file": "forms/ratify/elder-lens.json",
+   "flags": [],
+   "sha256": "b56dd9a18c381784cf5fc2c733649bbf38dcf589a6c5d21c221d7f517cbea29c",
+   "status": "committed"
+  },
+  "RATIFY/livermore": {
+   "file": "forms/ratify/livermore.json",
+   "flags": [],
+   "sha256": "745814300ca6274deebea677064a8bd626ff1811bf645c7cfd20a6f62dff56e9",
+   "status": "committed"
+  },
+  "RATIFY/minervini": {
+   "file": "forms/ratify/minervini.json",
+   "flags": [],
+   "sha256": "8dee3409ffe6e3c812f5bd3d59b9fad86249be3629da98d5026b4416279693a2",
+   "status": "committed"
+  },
+  "RATIFY/oneil": {
+   "file": "forms/ratify/oneil.json",
+   "flags": [],
+   "sha256": "59352eedee715d28e74d8e0e0aa4ee9680075661c267616730e5e10d78419d51",
+   "status": "committed"
+  },
+  "RATIFY/raschke": {
+   "file": "forms/ratify/raschke.json",
+   "flags": [],
+   "sha256": "54d8dde048426efb0f3f88457995bf5e8a8e78c322222f7d1f530ceb7389f122",
+   "status": "committed"
+  },
+  "RATIFY/seow": {
+   "file": "forms/ratify/seow.json",
+   "flags": [],
+   "sha256": "678e2a11c2da3bf0c285be9cdc2239553218363b849843d5de6a4850d85954a0",
+   "status": "committed"
+  },
+  "RATIFY/wyckoff": {
+   "file": "forms/ratify/wyckoff.json",
+   "flags": [],
+   "sha256": "a01b7c3a1fdc3f2babb9deccefc343b3be41df79d00302eca509af58ddd658f7",
+   "status": "committed"
+  },
+  "TIER2/aqe-quant": {
+   "file": "forms/tier2/aqe-quant.json",
+   "flags": [],
+   "sha256": "08a6c26d8c5826fc6674bb9a7f3476b1eac293a37f001f20376497277919f7d4",
+   "status": "committed"
+  },
+  "TIER2/elder-lens": {
+   "file": "forms/tier2/elder-lens.json",
+   "flags": [],
+   "sha256": "3bccd45df861f6910e525be187ac233810aed7f309b268b5f2ef90b408eee103",
+   "status": "committed"
+  },
+  "TIER2/livermore": {
+   "file": "forms/tier2/livermore.json",
+   "flags": [],
+   "sha256": "efe5fb19a2a19842ef90f5856a2a7e58c2c22959d3d4fabe9055f66cc727c17f",
+   "status": "committed"
+  },
+  "TIER2/minervini": {
+   "file": "forms/tier2/minervini.json",
+   "flags": [],
+   "sha256": "06cbec134c53a7eb6014212b00692123911f723c09f0e9a3b6e84013bfbed32a",
+   "status": "committed"
+  },
+  "TIER2/oneil": {
+   "file": "forms/tier2/oneil.json",
+   "flags": [],
+   "sha256": "9487c9a27dd2699c27066836a07db77711330173ce1b1b4fabf7830c42f30fe9",
+   "status": "committed"
+  },
+  "TIER2/raschke": {
+   "file": "forms/tier2/raschke.json",
+   "flags": [],
+   "sha256": "138793b8754deaa5eac27ea5901720441b0c1f51ec8d0ccd17bed151a393595b",
+   "status": "committed"
+  },
+  "TIER2/seow": {
+   "file": "forms/tier2/seow.json",
+   "flags": [],
+   "sha256": "f6fbc5104d31c75ce85df8d93a176fcddabf39ffee02155099782c329db817f3",
+   "status": "committed"
+  },
+  "TIER2/wyckoff": {
+   "file": "forms/tier2/wyckoff.json",
+   "flags": [],
+   "sha256": "19804edb3d2efbd52bd5c88cc6c113651d57ceb915fb5bfd7b9fb9f372862b7c",
+   "status": "committed"
+  },
+  "VOTE/aqe-quant": {
+   "file": "forms/r2/aqe-quant.json",
+   "flags": [],
+   "sha256": "42c91fac2d92adf053f90a36b92333001fff24841a4c9827d09802d64104fe30",
+   "status": "committed"
+  },
+  "VOTE/elder-lens": {
+   "file": "forms/r2/elder-lens.json",
+   "flags": [],
+   "sha256": "94200b2d8077a01e71ba0eb5d0cdcc4cb8c8b56f8dfc6ed1932d83e9f94f6df4",
+   "status": "committed"
+  },
+  "VOTE/livermore": {
+   "file": "forms/r2/livermore.json",
+   "flags": [],
+   "sha256": "7b7179e4a222c0d64504f2b7e6dd1c9a7784b6a696200881cc5a314e0e28522d",
+   "status": "committed"
+  },
+  "VOTE/minervini": {
+   "file": "forms/r2/minervini.json",
+   "flags": [],
+   "sha256": "8387acbf3ba4ec1875d7f0374587a763fea0704cb51a1782de05bc3ada440ad4",
+   "status": "committed"
+  },
+  "VOTE/oneil": {
+   "file": "forms/r2/oneil.json",
+   "flags": [],
+   "sha256": "13e11186952288ab16d9992bc9cdcc28cbb9179e44dda5347e5149292515a9d3",
+   "status": "committed"
+  },
+  "VOTE/raschke": {
+   "file": "forms/r2/raschke.json",
+   "flags": [],
+   "sha256": "5541e82e8eebcfcf6d510bea2fd95f457a955f121e11c4303cdaa1e89858d48a",
+   "status": "committed"
+  },
+  "VOTE/seow": {
+   "file": "forms/r2/seow.json",
+   "flags": [],
+   "sha256": "01f98951a699f8953a7a01148326724949d3a20f154ed641dc0a70638604fa68",
+   "status": "committed"
+  },
+  "VOTE/wyckoff": {
+   "file": "forms/r2/wyckoff.json",
+   "flags": [],
+   "sha256": "69d7ad4fa69e2d517a123dc1161ebc42f5edb7082ca76f92d284b33f8e8ed4dc",
+   "status": "committed"
+  }
+ },
+ "steps": {
+  "ADOPT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "BRACKET": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "FORCED done with missing produces: ['repeat_marks.json', 'unr_table.md']",
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHALLENGE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 9485,
+    "spawns": 0
+   },
+   "files": {
+    "forms/challenge/steenbarger.json": "bc26d8e70c2c06b7859fd3a4a9183db492a937cfb33b126968160ad98ccba45c"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T00:07:06Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CHECK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:54Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:54Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "CLAIMS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "CONDITIONS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "CROSS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 31606,
+    "spawns": 0
+   },
+   "files": {
+    "forms/cross/aqe-quant.json": "35e147ef6739b9270c755c60198fb7995408310c827ae3218b42d24565345a81",
+    "forms/cross/elder-lens.json": "f34097b93ec0cb00e7a9613edb8edc2c7e939fe851f00c6858bcfd754e0af2b0",
+    "forms/cross/livermore.json": "6d27c6e37823502992126b567e976c7d754a2769fadc5be4a3b6e4fc705021f1",
+    "forms/cross/minervini.json": "81b3f65f4c1b8a1ee3c2b4f19c9e63f79af7f6cf3eb03ffd947768719a85c6ea",
+    "forms/cross/oneil.json": "d5c3aa61535f460faf333e430d96bf6b72d5df706e0ed313163fa2c1db761ff0",
+    "forms/cross/raschke.json": "05af975bb035d4cd01609df018669dd0665230a3d7880441653b344c7c8888b6",
+    "forms/cross/seow.json": "e85761800e6b02d5e79e2ae496cdf5b38711e7232cb9c88ec79bcf47a6bf620e",
+    "forms/cross/wyckoff.json": "0656761ed37e389fa0b1a9b22df7cea2f01a024917edfe0ff63c84560ae253b3"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:50:21Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "DECIDE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:57:52Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "FUNNEL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [
+    "FORCED done with missing produces: ['phase4_ledger.json', 'data_health.json', 'closes_scorecard.json']",
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:52Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:54Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:54Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "LEVELS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:54Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:54Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "MTF": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "NOMINATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 20987,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r1/aqe-quant.json": "79237a26f0e37c03c64439acc5e934c0ee9c620c0663c88e0e7b9bf71ce52647"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T00:05:35Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PAIR": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PM-LENS": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:52Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "POSITION": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:52Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "PUBLISH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:54Z",
+   "notes": [
+    "report C: run dir only"
+   ],
+   "started": "2026-11-17T01:57:54Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "QA": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:57:52Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RANK": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "FORCED done with missing produces: ['phase4_ledger.json']",
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIFY": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 11812,
+    "spawns": 0
+   },
+   "files": {
+    "forms/ratify/aqe-quant.json": "4bf680cc31ccb1a50a48213379c8b9cb2294f118a4fd24c5da6588e81eb51ac7",
+    "forms/ratify/elder-lens.json": "b56dd9a18c381784cf5fc2c733649bbf38dcf589a6c5d21c221d7f517cbea29c",
+    "forms/ratify/livermore.json": "745814300ca6274deebea677064a8bd626ff1811bf645c7cfd20a6f62dff56e9",
+    "forms/ratify/minervini.json": "8dee3409ffe6e3c812f5bd3d59b9fad86249be3629da98d5026b4416279693a2",
+    "forms/ratify/oneil.json": "59352eedee715d28e74d8e0e0aa4ee9680075661c267616730e5e10d78419d51",
+    "forms/ratify/raschke.json": "54d8dde048426efb0f3f88457995bf5e8a8e78c322222f7d1f530ceb7389f122",
+    "forms/ratify/seow.json": "678e2a11c2da3bf0c285be9cdc2239553218363b849843d5de6a4850d85954a0",
+    "forms/ratify/wyckoff.json": "a01b7c3a1fdc3f2babb9deccefc343b3be41df79d00302eca509af58ddd658f7"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:53:28Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "RATIONALE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "RATIONALE-FINAL": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "REPEAT-WATCH": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "REPORT": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "SCORECARD": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "SLATE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "FORCED done with missing produces: ['slate_plan.json', 'slate_excluded.json']",
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIER2": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 25731,
+    "spawns": 0
+   },
+   "files": {
+    "forms/tier2/aqe-quant.json": "08a6c26d8c5826fc6674bb9a7f3476b1eac293a37f001f20376497277919f7d4",
+    "forms/tier2/elder-lens.json": "3bccd45df861f6910e525be187ac233810aed7f309b268b5f2ef90b408eee103",
+    "forms/tier2/livermore.json": "efe5fb19a2a19842ef90f5856a2a7e58c2c22959d3d4fabe9055f66cc727c17f",
+    "forms/tier2/minervini.json": "06cbec134c53a7eb6014212b00692123911f723c09f0e9a3b6e84013bfbed32a",
+    "forms/tier2/oneil.json": "9487c9a27dd2699c27066836a07db77711330173ce1b1b4fabf7830c42f30fe9",
+    "forms/tier2/raschke.json": "138793b8754deaa5eac27ea5901720441b0c1f51ec8d0ccd17bed151a393595b",
+    "forms/tier2/seow.json": "f6fbc5104d31c75ce85df8d93a176fcddabf39ffee02155099782c329db817f3",
+    "forms/tier2/wyckoff.json": "19804edb3d2efbd52bd5c88cc6c113651d57ceb915fb5bfd7b9fb9f372862b7c"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:52:10Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "TIMING": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:53Z",
+   "notes": [
+    "report C: C harness"
+   ],
+   "started": "2026-11-17T01:57:53Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "VOTE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 137086,
+    "spawns": 0
+   },
+   "files": {
+    "forms/r2/aqe-quant.json": "42c91fac2d92adf053f90a36b92333001fff24841a4c9827d09802d64104fe30",
+    "forms/r2/elder-lens.json": "94200b2d8077a01e71ba0eb5d0cdcc4cb8c8b56f8dfc6ed1932d83e9f94f6df4",
+    "forms/r2/livermore.json": "7b7179e4a222c0d64504f2b7e6dd1c9a7784b6a696200881cc5a314e0e28522d",
+    "forms/r2/minervini.json": "8387acbf3ba4ec1875d7f0374587a763fea0704cb51a1782de05bc3ada440ad4",
+    "forms/r2/oneil.json": "13e11186952288ab16d9992bc9cdcc28cbb9179e44dda5347e5149292515a9d3",
+    "forms/r2/raschke.json": "5541e82e8eebcfcf6d510bea2fd95f457a955f121e11c4303cdaa1e89858d48a",
+    "forms/r2/seow.json": "01f98951a699f8953a7a01148326724949d3a20f154ed641dc0a70638604fa68",
+    "forms/r2/wyckoff.json": "69d7ad4fa69e2d517a123dc1161ebc42f5edb7082ca76f92d284b33f8e8ed4dc"
+   },
+   "finished": "2026-11-17T01:57:52Z",
+   "notes": [],
+   "started": "2026-11-17T01:48:20Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "WRITE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-17T01:57:54Z",
+   "notes": [
+    "report C: not live, scored only; no levels/conditions; its module is built into the A brief by code"
+   ],
+   "started": "2026-11-17T01:57:54Z",
+   "status": "degraded",
+   "tokens": 0
+  }
+ }
+}

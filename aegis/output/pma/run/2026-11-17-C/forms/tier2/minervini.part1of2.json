@@ -1,0 +1,55 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-17",
+ "answers": [
+  {
+   "pair_id": "MBGL-minervini-against~livermore",
+   "ticker": "MBGL",
+   "to": "livermore",
+   "text": "\"small reaction under the high, no chase\" - My gate is the Trend Template, not reaction size: ma200 None and ma50 below ma100 leave criteria 1-4 unpassed (C3). D closes 19.1% above the 20.18 swing high, so no base pivot sits near price (C5); W has no readable swing. `mp` 97.0 and `mp_accel_state` 1 ACCELERATING are strength I never doubted, but `subcomponents.bq.bq_range_tight` 0.0 shows no contraction.",
+   "concede": false
+  },
+  {
+   "pair_id": "MBGL-minervini-against~seow",
+   "ticker": "MBGL",
+   "to": "seow",
+   "text": "\"extension past the pivot is the buy, not a fault\" - In my method it is the fault: C5 bars buying more than a few percent past the pivot, and D is 19.1% above the swing high. `subcomponents.flow.cmf` 0.36 and `subcomponents.structure.wk_score` 15.0 confirm demand, but W has no readable swing and ma200 None leaves the Trend Template unpassed (C2, C3). A different method, not evidence against my test.",
+   "concede": false
+  },
+  {
+   "pair_id": "CHYM-minervini-for~raschke",
+   "ticker": "CHYM",
+   "to": "raschke",
+   "text": "\"my test needs an ADX trend or a coil\" - ADX is not in the Trend Template; the MA stack is, and it passes (C3). `subcomponents.energy.squeeze_score` 0.0 shows no measured coil, but `subcomponents.structure.base_score` 15.0 on `subcomponents.structure.base_days` 17.0 is the base, and the expansion bar is the C6 breakout. W sits 3.5% under the weekly high: the pivot is the weekly base top, so I time on it.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MBGL",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "Wrong if a tight base forms above ma_50 and breaks out on volume, or a 200-day forms with the full stack in order.",
+   "market_void": null,
+   "reason": "Trend Template fails (C3): ma200 None, ma50 below ma100. `structure` 89.5 and `flow` 93.4 are real strength, but `subcomponents.bq.bq_range_tight` 0.0 and `subcomponents.energy.squeeze_score` 0.0 show no contraction and D is 19.1% past the swing high: a chase (C5)."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a pause or tight flag, a completed hourly close above the prior day's high."
+   },
+   "wrong_if": "A daily close below ma_20 on rising volume (C6).",
+   "market_void": null,
+   "reason": "Template passes on proxies; `structure` 96.8 with `subcomponents.structure.wk_score` 15.0 and `subcomponents.structure.rs_spy_score` 15.0 is a stage 2 leader. WAIT: D is 13.5% past the swing high, `subcomponents.energy.squeeze_score` 0.0, `mp_accel_state` 2 DECELERATING: no chase (C5)."
+  }
+ ],
+ "declarations": [
+  "Trend Template on proxies: ma_150 not served (ma_100 used); rs_proxy = rs_leadership + rs_spy_20d, not IBD RS rank (C3, C11).",
+  "vcp_detail NOT_SERVED: structure/bq/squeeze are proxies, no contraction count (C4, R2). earnings_growth NOT_SERVED: SEPA element 2 not run (R4, R10)."
+ ]
+}

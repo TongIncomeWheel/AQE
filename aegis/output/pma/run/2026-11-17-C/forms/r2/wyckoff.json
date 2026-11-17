@@ -1,0 +1,329 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-17",
+ "round": 2,
+ "declarations": [
+  "No round-1 ballot exists at forms/r1/wyckoff.json, so conviction_change is null on every name.",
+  "No voice_memory block was injected this run; no standing lesson applied.",
+  "Method limit: pvp_position/pvp_vah/pvp_val/pvp_poc, structure_shift_ref, bar_* and rvol_20d are not in this packet; the R1 value read and R3/R6 bar grading run on structure_shift, day_vol and the MTF line only. Levels named by field for AQE to stamp.",
+  "R1 honoured: every bracket reads INVALID and none is a basis for any vote; danger points named from structure (structure_shift_ref, base_low_20d, vwap14).",
+  "C19-C20 house scorecard not used: no name is a range-edge set-up today."
+ ],
+ "data_gaps": [
+  {
+   "field": "pvp_position",
+   "impact": "R1 trend/range classification half-read on every name"
+  },
+  {
+   "field": "structure_shift_ref",
+   "impact": "Creek level named by field only; distance to the test estimated from the MTF swing-high line"
+  },
+  {
+   "field": "bar_open/bar_high/bar_low/bar_close",
+   "impact": "R3/R6 break and sign-of-strength grading not possible"
+  },
+  {
+   "field": "rvol_20d",
+   "impact": "day_vol used as the same participation read"
+  },
+  {
+   "field": "structure_shift (MBGL)",
+   "impact": "None: forced ABSTAIN under R10"
+  }
+ ],
+ "votes": [
+  {
+   "ticker": "MBGL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "R10/C16: structure_shift is None on MBGL, so my first question (C2, range or trend?) has no answer on the served fields, and ma200 is None (short history). `flow` 93.4 and `subcomponents.energy.en_pos50` 89.63 show demand high in the 50-day range and `mp` 97.0 is strong, but I do not force a structure I cannot label.",
+   "conviction_change": null,
+   "falsifier": "A served structure_shift of BULLISH_BOS/ABOVE_STRUCTURE with price above value would make this a trend name I could vote on.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`flow` 93.4 built on `subcomponents.flow.accum_score` 7.5 and `subcomponents.flow.volume_score` 7.5: effort on the up side; `structure` 89.5; price high in its range at `subcomponents.energy.en_pos50` 89.63.",
+    "against": "No structure_shift read and no value-area fields; ext_atr20 4.96 and 19.1% above the last daily swing high: if this is a trend, price is far from value and I would not chase (C3, C15).",
+    "entry_trigger": "Needs a structure_shift read first; then in_zone:vwap_14d followed by h1_close_above:bar_high with vol_x_ge:1.2.",
+    "wrong_if": "A daily close back under ma20 19.82 on rising volume (a return into the old range).",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "AQE serving structure_shift and pvp_position for MBGL, reading ABOVE_STRUCTURE and ABOVE_VALUE.",
+    "cannot_see": [
+     "structure_shift (None)",
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "vwap_14d"
+    ]
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND by structure_shift ABOVE_STRUCTURE (C2), but 13.5% above the last daily swing high with atr 2.05: away from value, so HOLD-FOR-CONDITIONS (R2, C3, C15). Demand is real: `flow` 94.7 with `subcomponents.flow.accum_score` 7.5; `structure` 96.8 with `subcomponents.structure.wk_score` 15.0 (weekly trend up). I judge it as a trend continuation joined at the test of the broken Creek, not as a pullback already in place.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "A heavy-volume daily close back inside the old range below the broken pivot.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`structure` 96.8; `subcomponents.energy.en_pos50` 95.19 at the top of the 50-day range; `subcomponents.flow.ext_score` 5.0 (a breakout on volume) with day_vol 1.81: effort and result agree (C5).",
+    "against": "`subcomponents.energy.exhaustion_score` 8.5 after `subcomponents.energy.en_trend_bars` 23.0 is early wear; weekly swing LH/LL; pvp_position not served so R1 is half-read; ext_atr20 3.08 means no test yet.",
+    "entry_trigger": "in_zone:structure_shift_ref (the broken Creek), then h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 (C7, C12).",
+    "wrong_if": "Daily close below structure_shift_ref (re-entry into the old range = failed breakout, C5/C11), or choch_bearish.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A close back inside the old range on heavy selling, a BEARISH_CHOCH, or pvp_position served as INSIDE_VALUE.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref value",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "vwap_14d",
+     "elder_context.vwap_5d.slope_5d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "clv_ge:0.67"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "KVYO",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "TREND by structure_shift ABOVE_STRUCTURE, only 3.1% above the last daily swing high with atr 1.15: near the test of the Creek (C7). Coil is real: `subcomponents.energy.squeeze_score` 12.5, `energy` 81.5. But div BEARISH/4 on day_vol 1.84 is effort without matching result at the high, a possible upthrust (C5), and `subcomponents.structure.base_score` 0.0 shows no base under it. Low conviction; I need a sign-of-strength bar before acting.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "A daily close back below the broken pivot, or a BEARISH_CHOCH.",
+   "challenge_reply": "Steenbarger: in my method the 4/5 bearish divergence on above-normal volume is a caution that the high may be an upthrust, not a structure change; structure_shift still reads ABOVE_STRUCTURE. I answer it by requiring a wide bar closing in its top third on vol_x_ge:1.2 at the Creek, at conviction 2, and by naming close_below:structure_shift_ref as wrong.",
+   "case": {
+    "for": "`energy` 81.5 with `subcomponents.energy.squeeze_score` 12.5 (coiled); `flow` 86.8; ABOVE_STRUCTURE and ext_atr20 1.71, so price is close to value, where my preferred entry lives (C7).",
+    "against": "div BEARISH/4 at the high on day_vol 1.84; `subcomponents.structure.base_score` 0.0; `structure` 76.8 is the lowest of the nominees; `subcomponents.energy.exhaustion_score` 8.5 at `subcomponents.energy.en_trend_bars` 31.0.",
+    "entry_trigger": "in_zone:structure_shift_ref then h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 (C12, buy stop, never a resting limit).",
+    "wrong_if": "Daily close below structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "The divergence clearing with a new high on rising volume would lift me; a close back under the Creek ends it.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref value",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "vwap_14d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "clv_ge:0.67"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CLX",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "structure_shift BULLISH_BOS: a break that just happened, so price sits at the Creek (C7 zone). Context: ma50 89.11 under ma100 94.48 under ma200 99.29 with price above all three is a Phase D break out of a longer range, not a trend. `structure` 89.5 and `subcomponents.structure.rs_accel` 25.6 back it, but day_vol 0.81 makes it a low-volume break: a potential upthrust until it holds outside the range (C5, R3). Low conviction.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "A daily close back below the broken pivot (re-entry into the old range).",
+   "challenge_reply": "Steenbarger: the higher-timeframe context is a longer range after a decline; the inverted ma stack with price now above ma200 99.29 is what a Phase D break out of that range looks like. A low-participation break does NOT count yet (C5): I require a sign-of-strength bar on vol_x_ge:1.2 holding above the Creek before acting.",
+   "case": {
+    "for": "`structure` 89.5 with `subcomponents.structure.wk_score` 15.0 and `subcomponents.energy.en_pos50` 97.46; `subcomponents.structure.rs_accel` 25.6: the lead is widening; at the test, not extended from the Creek.",
+    "against": "day_vol 0.81 on the break: potential upthrust (C5); longer averages still inverted; `flow` 77.6 is the lowest flow of the trend names; `subcomponents.flow.ha_quality_count` 4.0 is choppy.",
+    "entry_trigger": "h1_close_above:bar_high with vol_x_ge:1.2 and clv_ge:0.67 while holding above structure_shift_ref (C12).",
+    "wrong_if": "Daily close below structure_shift_ref: the break failed and price is back in the range.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A wide up bar on volume holding outside the range lifts me; a quick rejection back under the Creek is an upthrust and ends it.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref value",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "vwap_14d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "clv_ge:0.67"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref"
+    ],
+    "chase": "close_above:structure_shift_ref+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "structure_shift RANGE: range playbook (C1, C11). Price is in the upper part of the range (`subcomponents.energy.en_pos50` 86.08), 4.4% under the last daily swing high, on day_vol 0.78: neither an edge test nor a sign-of-strength break. `structure` 87.4 and `flow` 73.7 are strong, but C1 says the trade is at the edge, not in the middle.",
+   "conviction_change": null,
+   "falsifier": "A wide-bar close above the range high on volume would make it a Phase D breakout I could vote on.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`structure` 87.4 with `subcomponents.structure.wk_score` 15.0; `flow` 73.7 with `subcomponents.flow.accum_score` 7.5; weekly 8.6% above its last swing high.",
+    "against": "RANGE, upper middle of the range on day_vol 0.78; H1 below EMA9 at 8% of the day's range; no shakeout or breakout bar to weigh (C6).",
+    "entry_trigger": "Either a range-high break: close_above:pivot_high with vol_x_ge:1.2 and clv_ge:0.67; or a spring: reclaim:base_low_20d.",
+    "wrong_if": "A daily close below base_low_20d without a reclaim.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A sign-of-strength break of the range high, or a spring at the range low.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "base_low_20d value",
+     "vwap_14d"
+    ]
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "TREND by structure_shift ABOVE_STRUCTURE, weekly HH/HL (C16 top-down passes). day_vol 4.05 is a high-volume impulse; C7 names the first pullback after it as an allowed entry. Demand: `flow` 93.4 with `subcomponents.flow.volume_score` 7.5 and `subcomponents.flow.accum_score` 7.5. But 10.4% above the last daily swing high with atr 1.33 is away from value: HOLD-FOR-CONDITIONS (R2, C15).",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "The impulse day's gains given back on volume: a close back under the broken pivot.",
+   "challenge_reply": null,
+   "case": {
+    "for": "`flow` 93.4; `subcomponents.structure.base_score` 15.0 (a well-formed base under the break); elder 10.0 SUSTAINED; weekly HH/HL.",
+    "against": "Away from value (ext_atr20 2.83); `subcomponents.mp.adx_val` 23.19 is a weak trend reading; `subcomponents.energy.squeeze_score` 0.0, no coil; one 4.05x day can be climactic until a test on light volume holds.",
+    "entry_trigger": "in_zone:structure_shift_ref or in_zone:vwap_14d on lighter volume, then h1_close_above:bar_high with vol_x_ge:1.2 (C7, C12).",
+    "wrong_if": "Daily close below structure_shift_ref, or choch_bearish.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A pullback on heavy selling volume rather than light, or a close back inside the old range.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref value",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "vwap_14d"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:structure_shift_ref",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.2",
+     "clv_ge:0.67"
+    ],
+    "wrong": [
+     "close_below:structure_shift_ref",
+     "choch_bearish"
+    ],
+    "wait": [
+     "structure_shift_ref",
+     "vwap_14d"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "1H",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "RBRK",
+   "vote": "OPPOSE",
+   "conviction": 4,
+   "reason": "Held: EXIT-CASE. structure_shift BEARISH_CHOCH: the up-structure failed (R1), and price is below vwap14 116.98, so the danger point is violated (R12: the danger point wins). `structure` 25.0, `energy` 36.0 and `subcomponents.energy.en_pos50` 37.4 put price in the lower half of its range; `subcomponents.structure.rs_accel` -12.35: the lead is eroding. No long until a new range and shakeout form.",
+   "conviction_change": null,
+   "opposing_case": "Weekly swing still HH/HL and ma50 113.99 above ma100 100.27 above ma200 79.2: the longer uptrend is intact, and this could become a reaccumulation range with a spring near the written stop 99.45.",
+   "falsifier": "A spring: a probe under the range low that closes back above it, then a sign-of-strength bar.",
+   "challenge_reply": "Steenbarger: yes, the disconfirming observable has printed: BEARISH_CHOCH means price closed below the up-swing's anchor low, which is my danger point. EXIT-CASE; AQE health also reads EXIT, and here structure and health agree.",
+   "case": {
+    "for": "Weekly HH/HL; longer averages stacked up; `flow` 54.0 is not distribution-grade; a range could form and offer a spring.",
+    "against": "BEARISH_CHOCH; `structure` 25.0; `sc_momentum` 32.0; div MIXED/4; daily and hourly LH/LL; below vwap14 116.98.",
+    "entry_trigger": "No long now; would need a new range, then reclaim:base_low_20d (spring) and h1_close_above:bar_high on vol_x_ge:1.2.",
+    "wrong_if": "A close back above ma20 118.26 on volume, re-entering the old up-structure.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "A spring with follow-through, or a reclaim of the broken anchor low on heavy volume.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "structure_shift_ref value",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "hl_flow (NOT_SERVED)"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT (qty -68.0). structure_shift BEARISH_CHOCH with `structure` 23.0, `flow` 42.0 and `energy` 35.0: the up-structure failed and price is below vwap14 137.59, so the short sits with the structure (C9). Held review: KEEP. My card's vote is a long-entry read and I see no long here; I file ABSTAIN on the long idea rather than vote a playbook my card does not carry.",
+   "conviction_change": null,
+   "falsifier": "A close back above vwap14 137.59 and ma20 141.57 on volume would end the short read.",
+   "challenge_reply": "Steenbarger: the observable that ends the hold is a close back above vwap14 137.59 and ma20 141.57 on rising volume (price re-entering value). It has not printed: price is below vwap14. KEEP.",
+   "case": {
+    "for": "For the held short: BEARISH_CHOCH, daily and hourly LH/LL, `structure` 23.0, `sc_momentum` 27.8, below every short average.",
+    "against": "`subcomponents.energy.exhaustion_score` 10.0 shows no selling climax yet; ma200 None so the long context is incomplete; weekly has no clear swing structure (C16).",
+    "entry_trigger": "No long; for a long it would need a new range and a spring: reclaim:base_low_20d then h1_close_above:bar_high with vol_x_ge:1.2.",
+    "wrong_if": "For the short: a daily close above vwap14 137.59 and ma20 141.57 on volume.",
+    "horizon_sessions": 20,
+    "would_change_my_mind": "Price re-entering value above vwap14 137.59 on volume, or a spring at the range low.",
+    "cannot_see": [
+     "pvp_position/pvp_vah/pvp_val/pvp_poc",
+     "bar_open/high/low/close",
+     "rvol_20d",
+     "ma200 (None)",
+     "hl_flow (NOT_SERVED)"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of1.json",
+   "bytes": 15750,
+   "votes": 8,
+   "sha256": "5dce423bc832"
+  }
+ ]
+}

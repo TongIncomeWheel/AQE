@@ -1,0 +1,183 @@
+{
+ "report": "C",
+ "method": "quant_scan",
+ "stages": [
+  {
+   "stage": "AQE's own scored list (the AQE universe for this scan)",
+   "n_in": 213,
+   "n_out": 213,
+   "rule": "every name on AQE's daily list, read by aqe-quant with the AQE indicator files",
+   "dropped": []
+  },
+  {
+   "stage": "Nominated by aqe-quant",
+   "n_in": 213,
+   "n_out": 6,
+   "rule": "aqe-quant names it at round 1 (cap six)",
+   "dropped": [],
+   "dropped_count": 207
+  },
+  {
+   "stage": "In the room (nominated plus the held book)",
+   "short": "the room",
+   "n_in": 6,
+   "n_out": 8,
+   "rule": "every nomination is seated; the held book is always seated; no AQE door adds a name",
+   "dropped": [],
+   "added_held": [
+    "RBRK",
+    "SPCX"
+   ]
+  },
+  {
+   "stage": "Cross-examination (survivors move on)",
+   "short": "cross-examination",
+   "n_in": 8,
+   "n_out": 3,
+   "rule": "support CONFIRM >= 1 and support CONFIRM >= support REFUTE",
+   "dropped": [
+    {
+     "ticker": "KVYO",
+     "reason": "oneil: No counted base, so no pivot (R3, C12): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0. A coil (`subcomponents.energy.squeeze_scor..."
+    },
+    {
+     "ticker": "CLX",
+     "reason": "livermore: C19: W close 0.7% over pivotal point 109.42, no margin cleared; `mp_accel_state` 2 DECELERATING; `subcomponents.structure.rs_accel` 25.6 vs `subcomponents.structure.rs_v..."
+    },
+    {
+     "ticker": "U",
+     "reason": "oneil: Leadership real, but no base and no breakout: `subcomponents.structure.base_days` 7.0 is short of 7-8 weeks (C12); `subcomponents.flow.volume_score` 0.0 is volume drying..."
+    },
+    {
+     "ticker": "RBRK",
+     "reason": "no SUPPORT vote at the blind vote (no claims)"
+    },
+    {
+     "ticker": "SPCX",
+     "reason": "no SUPPORT vote at the blind vote (no claims)"
+    }
+   ]
+  },
+  {
+   "stage": "Vote by all eight seats (ADVANCE / HOLD / PASS)",
+   "short": "vote",
+   "n_in": 3,
+   "n_out": 1,
+   "rule": "0 ADVANCE, 1 HOLD-FOR-CONDITIONS, 7 PASS",
+   "dropped": [
+    {
+     "ticker": "MBGL",
+     "reason": "passed: elder-lens: Trigger still h1_close_above:bar_high: buys strength over yesterday's high, not the pullback into value Elder buys (C10). `elder` 10.0 is a plateau, summer (..."
+    },
+    {
+     "ticker": "CHYM",
+     "reason": "passed: elder-lens: Trigger still h1_close_above:bar_high: buys the expansion over yesterday's high, not the dip under a rising average (C6, C10). `elder` 10.0 is a plateau, sum..."
+    },
+    {
+     "ticker": "KVYO",
+     "reason": "passed: no support at the vote"
+    },
+    {
+     "ticker": "CLX",
+     "reason": "passed: no support at the vote"
+    },
+    {
+     "ticker": "U",
+     "reason": "passed: no support at the vote"
+    },
+    {
+     "ticker": "RBRK",
+     "reason": "passed: no support at the vote"
+    },
+    {
+     "ticker": "SPCX",
+     "reason": "passed: no support at the vote"
+    }
+   ]
+  }
+ ],
+ "names": [
+  {
+   "ticker": "MBGL",
+   "outcome": "fell out",
+   "stage": "vote",
+   "reason": "passed: elder-lens: Trigger still h1_close_above:bar_high: buys strength over yesterday's high, not the pullback into value Elder buys (C10). `elder` 10.0 is a plateau, summer (...",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 84.7 . Flow 93.4 . Energy 64.7 . Structure 89.5 . MP 97 . Elder score 10 . Pipeline rank 0 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 84.7 . Flow 93.4 . Energy 64.7 . Structure 89.5 . Momentum phase score 97 . Elder score 10 . AQE rank 0 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "BILL",
+   "outcome": "HOLD-FOR-CONDITIONS",
+   "stage": "reached the end",
+   "reason": "CONTESTED",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 84.5 . Flow 94.7 . Energy 60.5 . Structure 96.8 . MP 93 . Elder score 10 . Pipeline rank 75.1 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 84.5 . Flow 94.7 . Energy 60.5 . Structure 96.8 . Momentum phase score 93 . Elder score 10 . AQE rank 75.1 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "KVYO",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: No counted base, so no pivot (R3, C12): `subcomponents.structure.base_score` 0.0 over `subcomponents.structure.base_days` 1.0. A coil (`subcomponents.energy.squeeze_scor...",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 83.7 . Flow 86.8 . Energy 81.5 . Structure 76.8 . MP 89 . Elder score 10 . Pipeline rank 70.9 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 83.7 . Flow 86.8 . Energy 81.5 . Structure 76.8 . Momentum phase score 89 . Elder score 10 . AQE rank 70.9 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "CLX",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: C19: W close 0.7% over pivotal point 109.42, no margin cleared; `mp_accel_state` 2 DECELERATING; `subcomponents.structure.rs_accel` 25.6 vs `subcomponents.structure.rs_v...",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 82.3 . Flow 77.6 . Energy 73.1 . Structure 89.5 . MP 96 . Elder score 7 . Pipeline rank 70.5 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 82.3 . Flow 77.6 . Energy 73.1 . Structure 89.5 . Momentum phase score 96 . Elder score 7 . AQE rank 70.5 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "U",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: Leadership real, but no base and no breakout: `subcomponents.structure.base_days` 7.0 is short of 7-8 weeks (C12); `subcomponents.flow.volume_score` 0.0 is volume drying...",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 79.6 . Flow 73.7 . Energy 71.4 . Structure 87.4 . MP 93 . Elder score 7 . Pipeline rank 0 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 79.6 . Flow 73.7 . Energy 71.4 . Structure 87.4 . Momentum phase score 93 . Elder score 7 . AQE rank 0 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "CHYM",
+   "outcome": "fell out",
+   "stage": "vote",
+   "reason": "passed: elder-lens: Trigger still h1_close_above:bar_high: buys the expansion over yesterday's high, not the dip under a rising average (C6, C10). `elder` 10.0 is a plateau, sum...",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 81.9 . Flow 93.4 . Energy 68.1 . Structure 84.2 . MP 83 . Elder score 10 . Pipeline rank 74.7 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 81.9 . Flow 93.4 . Energy 68.1 . Structure 84.2 . Momentum phase score 83 . Elder score 10 . AQE rank 74.7 . Quiet Strength odds 52%"
+  },
+  {
+   "ticker": "RBRK",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "no SUPPORT vote at the blind vote (no claims)",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or QS list) . SC_MOMENTUM 32 . Flow 54 . Energy 36 . Structure 25 . MP 0 . Elder score 3 . Pipeline rank 48.1 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or Quiet Strength list) . AQE momentum score 32 . Flow 54 . Energy 36 . Structure 25 . Momentum phase score 0 . Elder score 3 . AQE rank 48.1 . Quiet Strength: not scored"
+  },
+  {
+   "ticker": "SPCX",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "no SUPPORT vote at the blind vote (no claims)",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or QS list) . SC_MOMENTUM 27.8 . Flow 42 . Energy 35 . Structure 23 . MP 0 . Elder score 2 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or Quiet Strength list) . AQE momentum score 27.8 . Flow 42 . Energy 35 . Structure 23 . Momentum phase score 0 . Elder score 2 . Quiet Strength: not scored"
+  }
+ ],
+ "notes": [],
+ "disclosure": null
+}
