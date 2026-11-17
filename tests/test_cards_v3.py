@@ -495,6 +495,19 @@ def test_a_held_name_with_no_stop_order_renders_and_still_writes_card_fields(run
     assert "Stop None" not in h and "stop at None" not in t
 
 
+def test_a_short_with_a_working_buy_stop_in_the_runs_broker_read_is_never_headlined_unprotected(run):
+    """Conductor 2026-11-17: SPCX (68 short, live BUY stop 145.05 in broker_stops.json) was headlined 'NO stop order (unprotected)' because the export's held_sl was None."""
+    def strip_stop(o):
+        for h in o["held_positions"]:
+            h["held_sl"] = None
+    edit(run, "aqe_daily_export.json", strip_stop)
+    ex = json.loads((run / "aqe_daily_export.json").read_text())
+    pos = {h["ticker"]: {"qty": h["qty"], "order": "STP", "stop": 123.45, "order_qty": abs(h["qty"])} for h in ex["held_positions"]}
+    (run / "broker_stops.json").write_text(json.dumps({"positions": pos, "journal_date": "x", "journal_orders_pulled": True, "disagreements": []}))
+    t = text(render(run))
+    assert "NO stop order" not in t and "unprotected" not in t and "123.45" in t
+
+
 def test_the_real_11_nov_failures_none_numbers_empty_scorecard_and_a_raw_crown_token_all_render_plainly(run):
     """Conductor 2026-11-11, found one by one on the REAL 11 Nov run files: (1) the book table's R / vs-20-day / stop distance raised on None for a held name with no stop;
     (2) an empty 'Full-horizon calls only' scorecard table crashed min() of nothing; (3) Crown's divergence list carried the raw token rsi_slope, which the plain-words gate rejects.

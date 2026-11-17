@@ -59,6 +59,10 @@ if (RUN / "mtf_supplement.json").exists():          # PM 2026-11-05: the supplem
         MTF.setdefault(_t, _m)
 HELD = {h["ticker"]: h for h in D["held_positions"]}
 _opt = lambda n, dflt: json.load(open(RUN / n)) if (RUN / n).exists() else dflt          # run files the fixture / an older run may lack: the card says "not available", never invents
+for _t, _p in (((_opt("broker_stops.json", {}) or {}).get("positions")) or {}).items():           # conductor 2026-11-17: a short's BUY stop is a working stop; the headline must never say UNPROTECTED while the broker read shows one
+    _h = HELD.get(_t)
+    if _h is not None and _h.get("held_sl") is None and _p.get("stop") is not None and (_p.get("qty") or 0) * (_h.get("qty") or 0) > 0:
+        _h["held_sl"], _h["held_stop_source"] = _p["stop"], "broker_stops.json (the run's own Tiger read)"
 BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
 RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
 _RL = _opt("report_lines.json", None) or {}   # one plain line per report (A, B, C) from report_compare.py (PM 2026-11-05); absent until the first run of B/C

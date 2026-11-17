@@ -681,7 +681,7 @@ def _apply_live_stops(equities, open_orders, flags):
         action = str(_pick(row, A_SIDE) or "").strip().upper()
         otype = str(row.get("order_type") or "").strip().upper()
         sec = str(_pick(row, A_ASSET) or "").strip().upper()
-        if action not in ("SELL", "SLD", "S") or sec not in ("STK", "STOCK", "EQUITY", ""):
+        if action not in ("SELL", "SLD", "S", "BUY", "BOT", "B") or sec not in ("STK", "STOCK", "EQUITY", ""):
             continue
         if otype not in _STOP_ORDER_TYPES:
             continue
@@ -696,22 +696,26 @@ def _apply_live_stops(equities, open_orders, flags):
             # committee read the same stop the broker holds (type, limit, cover, duration).
             "order_type": otype, "limit_price": _num(row.get("limit_price")),
             "time_in_force": row.get("time_in_force"), "status": row.get("status"),
+            "buy": action in ("BUY", "BOT", "B"),
         })
 
     for pos in equities:
-        rows = by_ticker.get(pos["ticker"]) or []
+        # A long is protected by a SELL stop under it, a SHORT (negative qty) by a BUY stop ABOVE it (conductor 2026-11-17: SPCX, a 68-share
+        # short with a live BUY stop at 145.05, read as unprotected because only SELL stops were mapped). Only the right side counts.
+        short = float(pos.get("qty") or 0) < 0
+        rows = [r for r in (by_ticker.get(pos["ticker"]) or []) if r["buy"] == short]
         if not rows:
             # A stop carried forward from yesterday is NOT a working stop today: the orders
             # were pulled and none protects this name, so the journal must say null.
             pos["stop_live_broker"] = None
             pos["stop_order"] = None
             _flag(flags, pos["ticker"], "no_live_stop",
-                  f"No working SELL stop order found at the broker for {pos['ticker']} — this "
+                  f"No working {'BUY' if short else 'SELL'} stop order found at the broker for {pos['ticker']} — this "
                   f"position is currently UNPROTECTED. stop_live_broker is null, not a guess.",
                   "high")
             continue
         exact_qty = [r for r in rows if r["quantity"] is not None
-                     and abs(r["quantity"] - pos["qty"]) < 1e-6]
+                     and abs(abs(r["quantity"]) - abs(pos["qty"])) < 1e-6]
         chosen = exact_qty[0] if len(exact_qty) == 1 else max(
             rows, key=lambda r: r.get("order_time") or 0)
         pos["stop_live_broker"] = chosen["stop_price"]
@@ -721,15 +725,16 @@ def _apply_live_stops(equities, open_orders, flags):
             "time_in_force": chosen.get("time_in_force"), "status": chosen.get("status"),
             "order_id": chosen.get("order_id"), "source": "tiger_open_orders.json",
         }
-        if chosen.get("quantity") is not None and chosen["quantity"] + 1e-6 < pos["qty"]:
+        if chosen.get("quantity") is not None and abs(chosen["quantity"]) + 1e-6 < abs(pos["qty"]):
             _flag(flags, pos["ticker"], "stop_partial_cover",
-                  f"The working stop for {pos['ticker']} covers {chosen['quantity']:g} of "
-                  f"{pos['qty']:g} shares — the rest is UNPROTECTED.", "high")
+                  f"The working stop for {pos['ticker']} covers {abs(chosen['quantity']):g} of "
+                  f"{abs(pos['qty']):g} shares — the rest is UNPROTECTED.", "high")
         lim = chosen.get("limit_price")
-        if lim is not None and lim > chosen["stop_price"] + 1e-9:
+        bad_limit = lim is not None and ((lim < chosen["stop_price"] - 1e-9) if short else (lim > chosen["stop_price"] + 1e-9))
+        if bad_limit:   # a SELL stop-limit's limit above its trigger, or a short's BUY stop-limit's limit below its trigger, may never fill on a fast move
             _flag(flags, pos["ticker"], "stop_limit_above_trigger",
-                  f"{pos['ticker']} stop-limit: limit {lim} sits ABOVE the trigger "
-                  f"{chosen['stop_price']} — on a fast drop it fills only if price recovers.",
+                  f"{pos['ticker']} stop-limit: limit {lim} sits on the wrong side of the trigger "
+                  f"{chosen['stop_price']} — on a fast move it fills only if price comes back.",
                   "medium")
         if len(rows) > 1 and len(exact_qty) != 1:
             _flag(flags, pos["ticker"], "multiple_live_stops",

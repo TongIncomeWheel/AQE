@@ -59,6 +59,10 @@ if (RUN / "mtf_supplement.json").exists():          # PM 2026-11-05: the supplem
         MTF.setdefault(_t, _m)
 HELD = {h["ticker"]: h for h in D["held_positions"]}
 _opt = lambda n, dflt: json.load(open(RUN / n)) if (RUN / n).exists() else dflt          # run files the fixture / an older run may lack: the card says "not available", never invents
+for _t, _p in (((_opt("broker_stops.json", {}) or {}).get("positions")) or {}).items():           # conductor 2026-11-17: a short's BUY stop is a working stop; the headline must never say UNPROTECTED while the broker read shows one
+    _h = HELD.get(_t)
+    if _h is not None and _h.get("held_sl") is None and _p.get("stop") is not None and (_p.get("qty") or 0) * (_h.get("qty") or 0) > 0:
+        _h["held_sl"], _h["held_stop_source"] = _p["stop"], "broker_stops.json (the run's own Tiger read)"
 BRK = (_opt("brackets.json", {}) or {}).get("brackets") or {}
 RMK = (_opt("repeat_marks.json", {}) or {}).get("marks") or {}
 _RL = _opt("report_lines.json", None) or {}   # one plain line per report (A, B, C) from report_compare.py (PM 2026-11-05); absent until the first run of B/C
@@ -1026,19 +1030,19 @@ def _funnel_card():
     import scan_funnel as SF
     fx = lambda v: SF.plain_reason(plain(str(v)))
     cell = lambda v: "n/a" if v is None else f"{v:,}"
-    strip = []
-    for st in f["stages"]:
-        fell = (f"{st['dropped_count']:,} names (count only; the rule is {fx(st['rule'])})" if st.get("dropped_count") is not None
-                else (", ".join(f"<b>{E(d['ticker'])}</b>" for d in st["dropped"]) or "none"))
-        strip.append([E(fx(st["stage"])), cell(st["n_in"]), cell(st["n_out"]), fell])
+    cs = SF.strip_cells(f)
+    strip = ("<table><thead><tr>" + "".join(f"<th>{i}. {E(fx(lab))}</th>" for i, lab, _ in cs) + "</tr></thead><tbody><tr>"
+             + "".join(f"<td><b>{cell(c)}</b></td>" for _, _, c in cs) + "</tr></tbody></table>")
+    counts = (f"<p class='fresh'>What each step does: {E(fx('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
+              + "".join(f"<p class='fresh'>{E(fx(st['label']))}: {st['dropped_count']:,} names left out (count only).</p>" for st in f["stages"] if st.get("dropped_count") is not None))
     rows = []
-    for n in f["names"]:
-        where = (f"{n['stage']}: {n['reason']}" if n["outcome"] == "fell out" else f"{n['outcome']} ({n['reason']})")
-        rows.append([f"<b>{E(n['ticker'])}</b>", E(fx(n["outcome"]).lower().replace("-", " ")), E(fx(where)), E(fx(n["aqe_plain"]))])
+    for n in SF.fell_rows(f):
+        fell = n["outcome"] == "fell out"
+        rows.append([E(fx(n.get("step_label") or "end")), f"<b>{E(n['ticker'])}</b>", E(fx("fell out" if fell else n["outcome"]).lower().replace("-", " ")), E(fx(n["reason"] or "reached the end")), E(fx(n["aqe_plain"]))])
     title = "Committee Standard Scan funnel" if f["report"] == "A" else "Committee AQE Quant Scan funnel"
     notes = "".join(f"<p class='fresh'>{E(fx(x))}</p>" for x in f.get("notes") or [])
     return (f'<div class="card"><h3>{title}: {cell(f["stages"][0]["n_in"]) if f["stages"] else "n/a"} names narrow to {len(f["names"])} in the room.</h3>'
-            + table(["Stage", "In", "Out", "What fell out"], strip) + table(["Name", "Result", "Where it fell out and why, from the tool files", "AQE-listed and AQE scores"], rows, "sortable") + notes + "</div>")
+            + strip + counts + table(["Step", "Name", "Result", "Why, from the tool files", "AQE-listed and AQE scores"], rows, "sortable") + notes + "</div>")
 funnel_html = _funnel_card()
 
 s5 = section("2 &middot; The tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else
