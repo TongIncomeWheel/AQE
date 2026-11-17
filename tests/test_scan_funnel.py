@@ -94,7 +94,7 @@ def test_every_real_run_funnel_passes_the_cards_plain_words_gate(tmp_path):
         assert f["stages"] and f["names"] and len(f["names"]) == len({n["ticker"] for n in f["names"]})
         body = "".join(f"<td>{SF.plain_reason(n['reason'])}</td><td>{SF.plain_reason(n['aqe_plain'])}</td>" for n in f["names"])
         page = tmp_path / f"{run.name}.html"
-        page.write_text(f"<!doctype html><html><body><div class='card'><table><tr>{body}</tr></table></div></body></html>")
+        page.write_text(f"<!doctype html><html><body><div class='card'><table><tr>{body}</tr></table>{SF.html_actionable(f)}</div></body></html>")      # also the new actionable block
         fails, _ = ck.check_cards_html(str(page))
         bad += [(run.name, x) for x in fails]
     assert not bad, bad[:3]
@@ -108,7 +108,7 @@ def test_the_quant_scan_page_carries_the_funnel_tables_and_passes_the_html_gate(
     f = SF.build(str(tmp_path), "C", eb, {})
     cons = [{"ticker": "A", "verdict": "ADVANCE", "conviction": 4, "split": {"support": ["a"], "oppose": [], "abstain": []}}]
     page = CR.render("C", "2026-11-16", cons, None, f)
-    assert "The funnel" in page and "1. AQE list" in page and "AQE-listed" in page and 'Scorecard' in page
+    assert "The funnel" in page and "1. AQE list" in page and "Audit: names that fell out" in page and 'Scorecard' in page
     out = tmp_path / "c.html"; out.write_text(page)
     fails, _ = _gate().check_cards_html(str(out))
     assert not fails, fails
@@ -132,3 +132,54 @@ def test_the_brief_gate_accepts_exactly_what_scan_funnel_pastes_and_rejects_the_
     assert PP.funnel_pasted(SF.render_md(SF.build(str(tmp_path), "C", eb, {}))) == (True, True)
     src = open(PP.__file__).read()
     assert "What fell out |\" in brief_full" not in src
+
+
+def _room(tmp_path):
+    """Room of 9: seven survive cross-exam, three slated (supporters 5, 4, 4), one within a seat of the floor (N1: 3), one far under (F1: 1), QA holds one slated name (S3)."""
+    (tmp_path / "seat_sets.json").write_text(json.dumps({"universe_rows": 1000, "seats": {"oneil": [{"ticker": t} for t in ("S1", "S2", "S3", "N1", "F1", "X1", "X2", "D1", "D2")]}}))
+    (tmp_path / "tally.json").write_text(json.dumps([{"ticker": t, "seats": ["oneil"]} for t in ("S1", "S2", "S3", "N1", "F1", "X1", "X2", "D1", "D2")]))
+    (tmp_path / "phase4.json").write_text(json.dumps({"deliberation_set": ["S1", "S2", "S3", "N1", "F1", "X1", "X2", "D1", "D2"], "held_seated": [], "nominations_cut_by_machinery": [], "nominations_off_universe": []}))
+    ev = "a very long piece of seat prose about lens coil warn and rs_down_day_20d and structure shift (C16, R2) that must never reach the Cards table as such"
+    (tmp_path / "funnel.json").write_text(json.dumps({"rule": {"survives": "support CONFIRM >= 1", "out": "no SUPPORT vote at the blind vote", "dropped": "refuting evidence"},
+        "survivors": ["S1", "S2", "S3", "N1", "F1"], "dropped": ["D1", "D2"], "out": ["X1", "X2"],
+        "names": {t: {"claims": [{"rulings": [{"reviewer": "oneil", "ruling": "REFUTE", "evidence": ev}]}]} for t in ("D1", "D2")}}))
+    (tmp_path / "slate.json").write_text(json.dumps({"tickets": [{"ticker": t} for t in ("S1", "S2", "S3")]}))
+    sup = lambda n: {"support": [f"s{i}" for i in range(n)], "oppose": [], "abstain": []}
+    (tmp_path / "consensus.json").write_text(json.dumps([
+        {"ticker": "S1", "verdict": "ADVANCE", "status": "AGREED", "split": sup(5), "objections": []}, {"ticker": "S2", "verdict": "ADVANCE", "status": "AGREED", "split": sup(4), "objections": []},
+        {"ticker": "S3", "verdict": "HOLD-FOR-CONDITIONS", "status": "CONTESTED", "split": sup(4), "objections": []},
+        {"ticker": "N1", "verdict": "PASS", "status": "NOT_SLATED", "split": sup(3), "objections": []}, {"ticker": "F1", "verdict": "PASS", "status": "NOT_SLATED", "split": sup(1), "objections": []}]))
+    (tmp_path / "committee_record.json").write_text(json.dumps({"qa": {"holds": [{"ticker": "S3", "question": "Does the 4.1 percent gap to the pivot still leave room for the first target given the earnings date on the 24th and the thin volume reading"}]}}))
+    (tmp_path / "run_manifest.json").write_text(json.dumps({"method": "whole_universe"}))
+    return {t: {"ticker": t, "on_longlist": t == "N1"} for t in ("S1", "S2", "S3", "N1", "F1")}
+
+
+def test_the_cards_funnel_is_actionable_first_audit_behind_a_click_one_short_reason_per_name(tmp_path):
+    """PM 2026-11-17: 'What's the purpose of showing me the nominated 82 names with full of prose ... how is it actionable'. Strip on top; near misses visible; the fell-out table closed in a details block
+    with ONE short reason (at most 12 words) per name; count-only steps say 'counted, not listed'; the full prose stays in the brief's markdown."""
+    import re
+    eb = _room(tmp_path)
+    f = SF.build(str(tmp_path), "A", eb, {})
+    h = SF.html_actionable(f)
+    assert h.index("<th>1. Universe") < h.index("Near misses a CIO can act on") < h.index("<details>")                      # strip, then near misses, then the audit
+    assert "<details>" in h and "<details open" not in h and "Audit: names that fell out (7)" in h                      # closed; D1 D2 X1 X2 N1 F1 fell out, and S3 was held by QA
+    assert "were not carried forward. They are counted here, not listed." in h and "names left out (count only)" not in h
+    near = {n["ticker"]: n for n in f["near_misses"]}
+    assert set(near) == {"N1", "S3"} and "F1" not in near                                                                  # within one seat of the floor (4), and the QA hold; F1 is far under it
+    assert near["N1"]["where"] == "not slated" and "3 of the seats" in near["N1"]["what"] and near["S3"]["where"] == "QA hold" and "gap to the pivot" in near["S3"]["what"]
+    for n in f["names"]:
+        if n["outcome"] == "fell out":
+            assert len(n["short"].split()) <= 13 and "C16" not in n["short"] and "prose" not in n["short"], (n["ticker"], n["short"])          # 12 words plus the cut mark
+    by = {n["ticker"]: n["short"] for n in f["names"]}
+    assert by["D1"] == "cross-examined: refuted by oneil" and by["X1"].startswith("cross-examined: no seat supported it") and by["N1"] == "not slated: 3 seats supported it, the lowest slated had 4"
+    audit = h[h.index("<details>"):]
+    assert "a very long piece of seat prose" not in h and "rs_down_day" not in h                                         # the seat prose never reaches the Cards block
+    md = SF.render_md(f)
+    assert "a very long piece of seat prose" in md or "cross-exam" in md.lower()                                         # the brief keeps the full table
+    assert "| Step | Ticker | Result |" in md
+
+
+def test_the_actionable_block_has_no_near_miss_table_when_there_is_none_and_says_so(tmp_path):
+    eb = _synthetic(tmp_path)
+    h = SF.html_actionable(SF.build(str(tmp_path), "A", eb, {}))
+    assert "<b>Near misses:</b> none" in h and "Near misses a CIO can act on" not in h and "Audit: names that fell out (2)" in h

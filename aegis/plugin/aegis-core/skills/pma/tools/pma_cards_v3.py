@@ -1052,19 +1052,10 @@ def _funnel_card():
     import scan_funnel as SF
     fx = lambda v: SF.plain_reason(plain(str(v)))
     cell = lambda v: "n/a" if v is None else f"{v:,}"
-    cs = SF.strip_cells(f)
-    strip = ("<table><thead><tr>" + "".join(f"<th>{i}. {E(fx(lab))}</th>" for i, lab, _ in cs) + "</tr></thead><tbody><tr>"
-             + "".join(f"<td><b>{cell(c)}</b></td>" for _, _, c in cs) + "</tr></tbody></table>")
-    counts = (f"<p class='fresh'>What each step does: {E(fx('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
-              + "".join(f"<p class='fresh'>{E(fx(st['label']))}: {st['dropped_count']:,} names left out (count only).</p>" for st in f["stages"] if st.get("dropped_count") is not None))
-    rows = []
-    for n in SF.fell_rows(f):
-        fell = n["outcome"] == "fell out"
-        rows.append([E(fx(n.get("step_label") or "end")), f"<b>{E(n['ticker'])}</b>", E(fx("fell out" if fell else n["outcome"]).lower().replace("-", " ")), E(fx(n["reason"] or "reached the end")), E(fx(n["aqe_plain"]))])
     title = "Committee Standard Scan funnel" if f["report"] == "A" else "Committee AQE Quant Scan funnel"
     notes = "".join(f"<p class='fresh'>{E(fx(x))}</p>" for x in f.get("notes") or [])
     return (f'<div class="card"><h3>{title}: {cell(f["stages"][0]["n_in"]) if f["stages"] else "n/a"} names narrow to {len(f["names"])} in the room.</h3>'
-            + strip + counts + table(["Step", "Name", "Result", "Why, from the tool files", "AQE-listed and AQE scores"], rows, "sortable") + notes + "</div>")
+            + SF.html_actionable(f, fx) + notes + "</div>")
 funnel_html = _funnel_card()
 
 s5 = section("3 &middot; The funnel and the tickers", (f"{len(usable)} of the {n_adv} ADVANCE names pay 1R or more at two targets; {' and '.join(r['t'] for r in thin)} do not." if thin else

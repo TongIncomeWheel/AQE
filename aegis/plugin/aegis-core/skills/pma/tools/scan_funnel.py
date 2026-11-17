@@ -40,6 +40,19 @@ def plain_reason(v):
     return re.sub(r"\s{2,}", " ", t).strip()
 
 
+SHORT_WORDS = 12
+
+
+def _words(t, n=SHORT_WORDS):
+    """At most n words, cut on a word and ended with a full stop mark of '...' only when something was dropped."""
+    w = " ".join(str(t or "").split()).split(" ")
+    return " ".join(w) if len(w) <= n else " ".join(w[:n]).rstrip(",;:") + "..."
+
+
+def _voice(v):
+    return str(v or "a seat").replace("-", " ")
+
+
 def _j(run, name, default=None):
     p = os.path.join(run, name)
     if not os.path.exists(p):
@@ -107,7 +120,7 @@ def build(run, report="A", export_by=None, universe_by=None):
     export_by, universe_by = export_by or {}, universe_by or {}
     man = _j(run, "run_manifest.json", {}) or {}
     method = man.get("method") or ("quant_scan" if report == "C" else "aqe_doors")
-    notes, stages = [], []
+    notes, stages, near = [], [], []
     sets = _j(run, "seat_sets.json") if report == "A" else None
     tally = _j(run, "tally.json", []) or []
     p4 = _j(run, "phase4.json", {}) or {}
@@ -142,7 +155,7 @@ def build(run, report="A", export_by=None, universe_by=None):
                        "dropped": [], "dropped_count": (len(base) - len(nominated)) if base is not None else None})
     cut_mach = _names(p4.get("nominations_cut_by_machinery"))
     off_uni = _names(p4.get("nominations_off_universe"))
-    drop_room = [{"ticker": t, "reason": "cut by the ranking machinery"} for t in cut_mach] + [{"ticker": t, "reason": "off the served universe"} for t in off_uni]
+    drop_room = [{"ticker": t, "reason": "cut by the ranking machinery", "short": "cut by the ranking machinery before the room"} for t in cut_mach] + [{"ticker": t, "reason": "off the served universe", "short": "not in the served universe"} for t in off_uni]
     stages.append({"stage": "In the room (nominated plus the held book)", "short": "the room", "n_in": len(nominated), "n_out": len(room), "rule": "every nomination is seated; the held book is always seated; no AQE door adds a name",
                    "dropped": drop_room, "added_held": held})
 
@@ -160,9 +173,17 @@ def build(run, report="A", export_by=None, universe_by=None):
             else:
                 continue
             break
-        cross_drop.append({"ticker": t, "reason": reason})
+        who = None
+        for c in (fnames.get(t) or {}).get("claims") or []:
+            for r in c.get("rulings") or []:
+                if r.get("ruling") == "REFUTE":
+                    who = r.get("reviewer")
+                    break
+            if who:
+                break
+        cross_drop.append({"ticker": t, "reason": reason, "short": _words(f"cross-examined: refuted by {_voice(who)}" if who else "cross-examined: refuted by the evidence")})
     for t in out:
-        cross_drop.append({"ticker": t, "reason": (fun.get("rule") or {}).get("out") or "no SUPPORT vote at the blind vote"})
+        cross_drop.append({"ticker": t, "reason": (fun.get("rule") or {}).get("out") or "no SUPPORT vote at the blind vote", "short": "cross-examined: no seat supported it at the blind vote"})
     if fun:
         stages.append({"stage": "Cross-examination (survivors move on)", "short": "cross-examination", "n_in": len(room), "n_out": len(surv), "rule": _cut((fun.get("rule") or {}).get("survives"), 160), "dropped": cross_drop})
     else:
@@ -171,8 +192,18 @@ def build(run, report="A", export_by=None, universe_by=None):
     by = {c["ticker"]: c for c in cons}
     if report == "A":
         slated = _names([x["ticker"] for x in slate.get("tickets") or []])
-        not_slated = [{"ticker": t, "reason": "not slated: " + _cut(next((o.get("objection") for o in ((by.get(t) or {}).get("objections") or [])), "the room did not carry it to the slate"), OBJ_LEN)}
-                      for t in surv if t not in slated]
+        sup = lambda t: len(((by.get(t) or {}).get("split") or {}).get("support") or [])          # noqa: E731
+        floor = min((sup(t) for t in slated if t in by), default=None)                             # the fewest supporters of any slated name
+        def _ns_short(t):
+            n = sup(t)
+            return f"not slated: {n} seat{'s' if n != 1 else ''} supported it" + (f", the lowest slated had {floor}" if floor is not None else "")
+        not_slated = [{"ticker": t, "reason": "not slated: " + _cut(next((o.get("objection") for o in ((by.get(t) or {}).get("objections") or [])), "the room did not carry it to the slate"), OBJ_LEN),
+                       "short": _ns_short(t)} for t in surv if t not in slated]
+        for d_ in not_slated:                                                                   # a CIO can act on a name within ONE seat of the slate floor
+            n = sup(d_["ticker"])
+            if floor is not None and n >= floor - 1:
+                near.append({"ticker": d_["ticker"], "where": "not slated", "what": f"{n} of the seats supported it; the lowest slated name had {floor}",
+                             "clears": "one more seat's support, or a seat moving it to conviction"})
         stages.append({"stage": "Slated", "short": "not slated", "n_in": len(surv), "n_out": len(slated), "rule": "the Chair's slate by code from the seats' own tier-2 forms", "dropped": not_slated})
         rat = [c for c in cons if c.get("ticker") in slated]
         agreed = [c["ticker"] for c in rat if c.get("status") == "AGREED"]
@@ -180,23 +211,29 @@ def build(run, report="A", export_by=None, universe_by=None):
         dropped_r = [c for c in rat if c.get("status") == "DROPPED"]
         stages.append({"stage": "Ratified (AGREED / CONTESTED / DROPPED)", "short": "ratified", "n_in": len(slated), "n_out": len(agreed) + len(contested),
                        "rule": f"{len(agreed)} AGREED, {len(contested)} CONTESTED, {len(dropped_r)} DROPPED by the committee's objections",
-                       "dropped": [{"ticker": c["ticker"], "reason": "dropped: " + (_cut(f"{(c.get('objections') or [{}])[0].get('voice')}: {(c.get('objections') or [{}])[0].get('objection')}", OBJ_LEN) if c.get("objections") else "objections on file")} for c in dropped_r]})
+                       "dropped": [{"ticker": c["ticker"], "reason": "dropped: " + (_cut(f"{(c.get('objections') or [{}])[0].get('voice')}: {(c.get('objections') or [{}])[0].get('objection')}", OBJ_LEN) if c.get("objections") else "objections on file"),
+                                    "short": _words(f"dropped at ratification: {_voice((c.get('objections') or [{}])[0].get('voice'))} objected" if c.get("objections") else "dropped at ratification")} for c in dropped_r]})
         holds = [h for h in (rec.get("qa") or {}).get("holds") or []]
         stages.append({"stage": "QA hold", "short": "QA hold", "n_in": len(agreed) + len(contested), "n_out": len(agreed) + len(contested) - len(holds), "rule": "the QA seat holds a ticket whose ratifiers' objections it cannot see answered",
-                       "dropped": [{"ticker": h.get("ticker"), "reason": "held: " + _cut(h.get("question"), OBJ_LEN)} for h in holds]})
+                       "dropped": [{"ticker": h.get("ticker"), "reason": "held: " + _cut(h.get("question"), OBJ_LEN), "short": _words("held by QA: " + str(h.get("question") or "a question is open"))} for h in holds]})
+        for h in holds:
+            near.append({"ticker": h.get("ticker"), "where": "QA hold", "what": _words("QA asks: " + str(h.get("question") or "a question is open"), 20),
+                         "clears": "an answer to that question"})
     else:
         adv = [c["ticker"] for c in cons if c.get("verdict") == "ADVANCE"]
         hold = [c["ticker"] for c in cons if c.get("verdict") == "HOLD-FOR-CONDITIONS"]
         pas = [c for c in cons if c.get("verdict") == "PASS"]
         stages.append({"stage": "Vote by all eight seats (ADVANCE / HOLD / PASS)", "short": "vote", "n_in": len(surv) or len(room), "n_out": len(adv) + len(hold),
                        "rule": f"{len(adv)} ADVANCE, {len(hold)} HOLD-FOR-CONDITIONS, {len(pas)} PASS",
-                       "dropped": [{"ticker": c["ticker"], "reason": "passed: " + (_cut(f"{(c.get('objections') or [{}])[0].get('voice')}: {(c.get('objections') or [{}])[0].get('objection')}", OBJ_LEN) if c.get("objections") else "no support at the vote")} for c in pas]})
+                       "dropped": [{"ticker": c["ticker"], "reason": "passed: " + (_cut(f"{(c.get('objections') or [{}])[0].get('voice')}: {(c.get('objections') or [{}])[0].get('objection')}", OBJ_LEN) if c.get("objections") else "no support at the vote"),
+                                    "short": _words(f"passed at the vote: {_voice((c.get('objections') or [{}])[0].get('voice'))} objected" if c.get("objections") else "passed at the vote: no support")} for c in pas]})
 
     # per-name table: every name that reached the room, with its outcome and AQE tag
-    dropped_at = {}
+    dropped_at, short_at = {}, {}
     for st in stages:
         for d in st.get("dropped") or []:
             dropped_at.setdefault(d["ticker"], (st.get("short") or st["stage"], d["reason"]))
+            short_at.setdefault(d["ticker"], d.get("short") or _words(d["reason"]))
     names = []
     for t in room:
         if t in dropped_at:
@@ -208,7 +245,7 @@ def build(run, report="A", export_by=None, universe_by=None):
             outcome = c.get("verdict") or "in the room"
             reason = c.get("status") or ""
         x = AL.listing(t, export_by, universe_by)
-        names.append({"ticker": t, "outcome": outcome, "stage": stage, "reason": reason, "aqe_listed": x["aqe_listed"], "aqe_lists": x["aqe_lists"],
+        names.append({"ticker": t, "outcome": outcome, "stage": stage, "reason": reason, "short": short_at.get(t) or _words(reason), "aqe_listed": x["aqe_listed"], "aqe_lists": x["aqe_lists"],
                       "aqe_line": x["line"], "aqe_plain": x["plain_line"]})
     for i, st in enumerate(stages):
         st["step"] = i + 1
@@ -216,7 +253,10 @@ def build(run, report="A", export_by=None, universe_by=None):
     for n in names:
         n["step"] = next((st["step"] for st in stages if (st.get("short") or st["stage"]) == n["stage"]), None)
         n["step_label"] = next((st["label"] for st in stages if st["step"] == n["step"]), None)
-    return {"report": report, "method": method, "stages": stages, "names": names, "notes": notes, "disclosure": None}
+    for nm in near:                                                                                 # tag every near miss with its AQE listing too
+        x = AL.listing(nm["ticker"], export_by, universe_by)
+        nm["aqe_lists"] = x["aqe_lists"]
+    return {"report": report, "method": method, "stages": stages, "names": names, "near_misses": near, "notes": notes, "disclosure": None}
 
 
 def render_md(f):
@@ -240,21 +280,48 @@ def render_md(f):
     return "\n".join(L) + "\n"
 
 
-def html_tables(f):
-    """Cards-style page: the one-row strip (steps in order, a count under each) and the per-name table in the same order. Every text passes through plain_reason()."""
+def _tbl(head, rows):
+    return '<div class="tbl"><table><thead><tr>' + "".join(f"<th>{h}</th>" for h in head) + "</tr></thead><tbody>" + "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows) + "</tbody></table></div>"
+
+
+def html_actionable(f, fx=None):
+    """PM 2026-11-17 ("What's the purpose of showing me the nominated 82 names with full of prose ... how is it actionable"): ACTIONABLE FIRST, AUDIT BEHIND A CLICK.
+    Order: the numbered strip with its counts; one line per count-only step saying plainly that those names are counted, NOT listed; the near misses a CIO can act on (a name within one seat of the slate
+    floor, a name the QA hold stopped, each with what would clear it) as a short table that stays visible; then a CLOSED details block 'Audit: names that fell out (N)' with ONE short reason per name
+    (at most 12 words, built by code from the stage rule). The full seat prose stays in the brief (scan_funnel.md) and the run files. Every text passes through `fx` (the plain-words filter)."""
     import html
     E = lambda x: html.escape(str(x), quote=True)
+    fx = fx or plain_reason
     cell = lambda v: "n/a" if v is None else f"{v:,}"
     cs = strip_cells(f)
-    strip = ("<table><thead><tr>" + "".join(f"<th>{i}. {E(plain_reason(lab))}</th>" for i, lab, _ in cs) + "</tr></thead><tbody><tr>"
+    strip = ("<table><thead><tr>" + "".join(f"<th>{i}. {E(fx(lab))}</th>" for i, lab, _ in cs) + "</tr></thead><tbody><tr>"
              + "".join(f"<td><b>{cell(c)}</b></td>" for _, _, c in cs) + "</tr></tbody></table>")
-    counts = (f"<p>What each step does: {E(plain_reason('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
-              + "".join(f"<p>{E(plain_reason(st['label']))}: {st['dropped_count']:,} names left out (count only).</p>" for st in f["stages"] if st.get("dropped_count") is not None))
-    rows = "".join(
-        f"<tr><td>{E(plain_reason(n.get('step_label') or 'end'))}</td><td><b>{E(n['ticker'])}</b></td><td>{E(plain_reason('fell out' if n['outcome'] == 'fell out' else n['outcome']).lower())}</td><td>"
-        + E(plain_reason(n["reason"] or "reached the end")) + f"</td><td>{E(plain_reason(n['aqe_plain']))}</td></tr>"
-        for n in fell_rows(f))
-    return (strip + counts + '<table><thead><tr><th>Step</th><th>Name</th><th>Result</th><th>Why, from the tool files</th><th>AQE-listed and AQE scores</th></tr></thead><tbody>' + rows + "</tbody></table>")
+    does = f"<p>What each step does: {E(fx('; '.join(str(st['step']) + '. ' + st['label'] + ': ' + str(st['rule']) for st in f['stages'])))}</p>"
+    counted = "".join(f"<p>{E(fx(st['label']))}: {st['dropped_count']:,} names were not carried forward. They are counted here, not listed.</p>"
+                      for st in f["stages"] if st.get("dropped_count") is not None)
+    near = f.get("near_misses") or []
+    if near:
+        nm = ("<p><b>Near misses a CIO can act on</b></p>"
+              + _tbl(["Name", "Where it stopped", "What happened", "What would clear it", "AQE list"],
+                     [[f"<b>{E(n['ticker'])}</b>", E(fx(n["where"])), E(fx(n["what"])), E(fx(n["clears"])), E(fx(_aqe_short(n.get("aqe_lists"))))] for n in near]))
+    else:
+        nm = "<p><b>Near misses:</b> none. No name came within one seat of the slate floor and the QA hold stopped none.</p>"
+    rows = [[E(fx(n.get("step_label") or "end")), f"<b>{E(n['ticker'])}</b>", E(fx(n.get("short") or _words(n["reason"]))), E(fx(_aqe_short(n.get("aqe_lists"))))]
+            for n in fell_rows(f) if n["outcome"] == "fell out"]
+    audit = (f"<details><summary>Audit: names that fell out ({len(rows)})</summary>"
+             + _tbl(["Step", "Name", "Why it fell out", "AQE list"], rows) + "</details>")
+    reached = [n for n in f["names"] if n["outcome"] != "fell out"]
+    end = (f"<p><b>Reached the end ({len(reached)}):</b> " + ", ".join(f"<b>{E(n['ticker'])}</b> {E(fx(str(n['outcome']).lower().replace('-', ' ')))}" for n in reached) + ".</p>") if reached else ""
+    return strip + does + counted + end + nm + audit
+
+
+def _aqe_short(lists):
+    return "not on an AQE list" if not lists or lists == "none" else "AQE: " + str(lists).replace("|", ", ")
+
+
+def html_tables(f):
+    """The compact report page: the same actionable-first block the Cards use."""
+    return html_actionable(f)
 
 
 def main(argv=None):
