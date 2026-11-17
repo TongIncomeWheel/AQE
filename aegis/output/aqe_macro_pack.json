@@ -1,10 +1,10 @@
 {
   "artifact": "aqe_macro_pack",
-  "generated_at": "2026-11-17T07:01:01+08:00",
+  "generated_at": "2026-11-17T16:35:20+08:00",
   "pack_status": "DEGRADED",
   "crown_status": "DEGRADED",
-  "oldest_leg": "2026-11-13",
-  "as_of": "2026-11-13",
+  "oldest_leg": "2026-11-16",
+  "as_of": "2026-11-16",
   "expected_session": "2026-11-16",
   "data_legs": [
     {
@@ -30,17 +30,17 @@
     },
     {
       "leg": "dispersion_vixeq",
-      "as_of": "2026-11-13",
+      "as_of": "2026-11-16",
       "expected": "2026-11-16",
-      "reason": "PUBLISHER_LAG",
-      "detail": "Cboe posts ~21:11 ET (10:11 SGT)"
+      "reason": "CURRENT",
+      "detail": ""
     },
     {
       "leg": "dspx",
-      "as_of": "2026-11-13",
+      "as_of": "2026-11-16",
       "expected": "2026-11-16",
-      "reason": "PUBLISHER_LAG",
-      "detail": "Cboe posts ~21:41 ET (10:41 SGT)"
+      "reason": "CURRENT",
+      "detail": ""
     },
     {
       "leg": "vix3m",
@@ -302,17 +302,17 @@
     ],
     "so_what": "Own the average stock, not just the leaders — and collect premium against it. That is the closest fit rather than a clean one — 2 of its conditions are not met. Size at 1.00x your normal risk.",
     "watch_for": [
-      "If soybeans trades below 1,225.44 (0.1% away), trend funds start selling.",
-      "If small caps trades below 2,744.39 (0.1% away), trend funds start selling.",
+      "If small caps trades above 2,758.34 (0.7% away), trend funds start buying.",
+      "If soybeans trades above 1,240.79 (0.9% away), trend funds start buying.",
       "Watch for single stocks becoming more volatile while the index stays calm. That gap is the earliest warning we get."
     ],
     "caveats": [],
-    "as_of": "2026-11-17T06:54:18+08:00",
+    "as_of": "2026-11-17T16:18:10+08:00",
     "note": "Written from the numbers on this page every time it runs. When the data changes, this changes with it."
   },
   "scenario": {
     "leading": "DOLLAR_SQUEEZE",
-    "leading_score": 0.9317,
+    "leading_score": 0.9293,
     "runner_up": "LIQUIDITY_STRESS",
     "contested": false,
     "reading": "DOLLAR_SQUEEZE is the cleanest fit to the current cross-asset state.",
@@ -320,7 +320,7 @@
     "scenarios": [
       {
         "scenario": "DOLLAR_SQUEEZE",
-        "score": 0.9317,
+        "score": 0.9293,
         "coverage": 1.0,
         "story": "The dollar is the whole story and it is draining everything else — commodities, credit and non-US risk together.",
         "expression": "US large-cap domestic over international and commodities.",
@@ -329,7 +329,7 @@
           "CPER down (roc5 -6.25%, roc20 -8.95%)",
           "GLD down (roc5 -7.01%, roc20 -7.05%)",
           "HYG down (roc5 -1.01%, roc20 -0.13%)",
-          "CTA fx bias +0.59"
+          "CTA fx bias +0.58"
         ],
         "missing_conditions": [],
         "unavailable": [],
@@ -367,7 +367,7 @@
         "missing_conditions": [
           "USO down (roc5 -1.84%, roc20 -12.92%)",
           "GLD down (roc5 -7.01%, roc20 -7.05%)",
-          "CTA energy bias -0.03"
+          "CTA energy bias -0.02"
         ],
         "unavailable": [],
         "can_lead": true
@@ -386,7 +386,7 @@
           "COPPER_GOLD flat (roc5 0.82%, roc20 -2.04%)",
           "IWM flat (roc5 -3.39%, roc20 0.61%)",
           "TLT down (roc5 -3.15%, roc20 -0.1%)",
-          "CTA rates bias -0.42"
+          "CTA rates bias -0.38"
         ],
         "unavailable": [],
         "can_lead": true
@@ -417,14 +417,14 @@
         "expression": "Cyclicals, financials, small caps, energy. Short duration.",
         "evidence": [
           "TLT down (roc5 -3.15%, roc20 -0.1%)",
-          "CTA rates bias -0.42"
+          "CTA rates bias -0.38"
         ],
         "missing_conditions": [
           "CPER down (roc5 -6.25%, roc20 -8.95%)",
           "COPPER_GOLD flat (roc5 0.82%, roc20 -2.04%)",
           "HYG down (roc5 -1.01%, roc20 -0.13%)",
           "IWM flat (roc5 -3.39%, roc20 0.61%)",
-          "CTA energy bias -0.03"
+          "CTA energy bias -0.02"
         ],
         "unavailable": [],
         "can_lead": true
@@ -436,11 +436,11 @@
         "story": "A stock-picker's tape. Implied correlation collapses and single-stock vol pulls away from a calm index — the index tells you almost nothing about what the average name is doing.",
         "expression": "Single-name selection over index exposure. Pairs. Sell index vol / own single-stock vol.",
         "evidence": [
-          "CTA sector spread 1.01"
+          "CTA sector spread 0.97"
         ],
         "missing_conditions": [
           "implied correlation 16.42 (72% pctl)",
-          "dispersion NORMAL (spread 23.47)",
+          "dispersion NORMAL (spread 23.61)",
           "VIX 22.91"
         ],
         "unavailable": [],
