@@ -1651,6 +1651,13 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         tl = _unr_trade_line(unr, live)
         if tl:
             lines.append(tl)
+        try:
+            from .live_entry import plain_line as _entry_line
+            el = _entry_line((live or {}).get("entry"))
+        except Exception:  # noqa: BLE001
+            el = None
+        if el:
+            lines.append(el)
         lines.append(_setup_text(armed))
         vol = _volume_plain(unr)
         if vol:

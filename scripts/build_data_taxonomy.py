@@ -1453,6 +1453,9 @@ SCORE_TREE = [
     R("unr_level", "unr_status", "leaf", "usd", "",
       "Price of the support level behind unr_status (null for NO / NA)",
       "valen/setups_daily.py:unr_last_day", ""),
+    R("stop_fit", "", "leaf", "dict", "",
+      "Valen's stop-fit test on the last completed bar: entry (close), stop (one tick under the low), atr_multiple, lod_dist_atr, within_cap, fit GOOD|OK|TOO_FAR|NA (a reading, never a gate)",
+      "valen/entry.py:entry_last_day", ""),
     R("unr_summary", "", "leaf", "dict", "",
       "Longlist + Elder names by U&R status on the last completed trading day: "
       "`met` / `setup` ticker lists, as_of, how many were checked",
@@ -1923,6 +1926,8 @@ def classify_export_location(name: str) -> str:
         return "qs{} block"
     if name in ("unr_status", "unr_note", "unr_as_of", "unr_level"):
         return "daily_list[] + held_positions[] (U&R last-day column)"
+    if name == "stop_fit":
+        return "daily_list[] + held_positions[] (Valen stop-fit, last completed bar)"
     if name == "unr_summary":
         return "export top level"
     if name == "setups":

@@ -239,6 +239,20 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
             except Exception:  # noqa: BLE001
                 live["vwap_trigger"] = {"state": "NOT_READY"}
 
+            # Valen's entry methods (PM 2026-11-17): stop fit, volume gate, 30-minute pivot ride the card as facts; the
+            # opening-range break is SHADOW (ledger only, never a card, never an email). Never an input to buy_met.
+            shadow_entry = None
+            try:
+                from . import live_entry as LEN
+                _armed = (live["unr"].get("armed") or [])
+                _lvl = next((a["level"] for a in _armed), None)
+                _rp = LEN.ready_pivot(row.get("setups"))
+                _ent = LEN.build(today_bars, profile, live["price"], live["unr"].get("stop") or live["day_low"], live["atr"], level=_lvl,
+                                 pivot=(_rp or {}).get("pivot"))
+                live["entry"], shadow_entry = _ent["visible"], _ent["shadow"]
+            except Exception:  # noqa: BLE001 -- a card line, never the cycle
+                live["entry"] = {}
+
             eval_result = CE.evaluate_conditions(row, live, now_et)
             if eval_result is None:
                 continue
@@ -279,6 +293,8 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 session_vwap=vwap_info, rs_today=rs, legacy_vol_pace=legacy_pace,
                 elder_live=live.get("elder"),
                 now=now_et.astimezone(ZoneInfo("Asia/Singapore")))
+            if shadow_entry:
+                line["shadow_entry"] = shadow_entry          # PM 2026-11-17: opening-range break, log only until the PM says go
             if suppressed:
                 line["suppressed_by_market_kill"] = suppressed
                 summary["suppressed"] = summary.get("suppressed", 0) + len(suppressed)

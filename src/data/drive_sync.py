@@ -727,6 +727,11 @@ _FIELD_GLOSSARY.update({
     "unr_note": "One plain sentence saying which level was undercut and what the last session did.",
     "unr_as_of": "The last completed trading day the U&R status was judged on.",
     "unr_level": "Price of the support level behind unr_status (null for NO / NA).",
+    "stop_fit": "Valen's stop-fit test on the LAST COMPLETED bar (PM 2026-11-17): entry = that bar's close, "
+                "stop = one tick under that bar's low, atr_multiple = (entry - stop) / ATR14, lod_dist_atr = "
+                "(entry - low) / ATR14, within_cap = atr_multiple <= 1 (Valen: a stop more than one daily range "
+                "away means skip the trade), fit = GOOD (lod_dist_atr <= 0.70) / OK / TOO_FAR / NA. A reading "
+                "of the arithmetic, never a gate and never a size (src/valen/entry.py).",
     "unr_summary": "Longlist + Elder names by U&R status on the last completed trading day: "
                    "`met` and `setup` ticker lists, `as_of`, and how many were checked.",
     # Stage Weather at ticker level (docs/AQE_STAGE_WEATHER.md, 2026-11-10). Readings only, never a gate.
