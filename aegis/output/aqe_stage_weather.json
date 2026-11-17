@@ -1,0 +1,2562 @@
+{
+  "read_me_first": {
+    "headline": "The market is in Stage 2 (Advancing): the mark-up phase of the cycle, 30 weeks in. A change of stage is in progress but not yet confirmed. SPY and QQQ are at the canon's market-top reading on distribution days.",
+    "because": [
+      "Stage 2 means advancing: price above a rising 30-week average. The last completed week closed 0.29% above the 30-week average (752.22), and that average has risen 1.47% over four weeks.",
+      "Distribution days (down closes on heavier volume) in the last 25 sessions: SPY 9, QQQ 8. O'Neil's canon reads 4 or more as a market top.",
+      "QQQ is in Stage 3 (Topping), which disagrees with SPY.",
+      "Of 1677 single names on AQE's panel, 40.1% are in Stage 2 (four weeks ago 35.1%) and 26.4% are in Stage 4 (four weeks ago 34.7%): the single names agree with the index.",
+      "Sectors: Stage 2 (Advancing): XLB, XLE, XLF, XLP, XLV, XLY; Stage 3 (Topping): XLI, XLK, XLRE; Stage 4 (Declining): XLC, XLU."
+    ],
+    "so_what": "Stage 2 is the only stage in which the long-only playbook is designed to work. Doctrine: buy breakouts and pullbacks that hold the 30-week average.",
+    "watch_for": [
+      "SPY: the week still forming reads Stage 3 (Topping).",
+      "A weekly close below the 30-week average (about 752.22) is the first sign of a top.",
+      "SPY has 9 distribution days in 25 sessions, at or above the canon's top signal (4).",
+      "QQQ has 8 distribution days in 25 sessions, at or above the canon's top signal (4)."
+    ],
+    "caveats": [
+      "Breadth counts every single name on AQE's own weekly panel (aqe_panel_equities), not the whole US market."
+    ],
+    "as_of": "2026-11-16"
+  },
+  "date": "2026-11-17",
+  "exported_at": "2026-11-17T16:35:21+08:00",
+  "status": "OK",
+  "as_of_session": "2026-11-16",
+  "source": "Weinstein four-stage analysis on weekly bars (src/stages/spec.py)",
+  "market_read": {
+    "status": "OK",
+    "stage": 2,
+    "stage_name": "Advancing",
+    "cycle_name": "Mark-up",
+    "since": "2026-04-24",
+    "weeks_in_stage": 30,
+    "breadth_agreement": "CONFIRMS",
+    "change_in_progress": true
+  },
+  "market": {
+    "SPY": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-04-24",
+      "weeks_in_stage": 30,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 754.37,
+      "ma30w": 752.22,
+      "ma30w_slope_pct_4w": 1.47,
+      "pct_from_ma30w": 0.29,
+      "range_pos_52w": 0.821,
+      "rs_mansfield": 0.0,
+      "rs_rising": false,
+      "updown_volume_ratio": 0.87,
+      "weeks": 313,
+      "distribution_days": {
+        "status": "OK",
+        "count": 9,
+        "window_sessions": 25,
+        "canon_threshold": 4,
+        "at_or_above_threshold": true,
+        "dates": [
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-16",
+          "2026-10-22",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-11-05",
+          "2026-11-13",
+          "2026-11-16"
+        ],
+        "note": "any down close on heavier volume counts (the canon sets no minimum decline); stall days are not counted (the canon gives no number for 'negligible progress')",
+        "source": "O'Neil C2 (aegis/canon/oneil)"
+      }
+    },
+    "QQQ": {
+      "status": "OK",
+      "stage": 3,
+      "stage_name": "Topping",
+      "cycle_name": "Distribution",
+      "since": "2026-10-23",
+      "weeks_in_stage": 4,
+      "previous_stage": 2,
+      "transition": "TOPPING",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 3,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 679.89,
+      "ma30w": 710.62,
+      "ma30w_slope_pct_4w": 1.54,
+      "pct_from_ma30w": -4.32,
+      "range_pos_52w": 0.6,
+      "rs_mansfield": -2.52,
+      "rs_rising": false,
+      "updown_volume_ratio": 0.81,
+      "weeks": 313,
+      "distribution_days": {
+        "status": "OK",
+        "count": 8,
+        "window_sessions": 25,
+        "canon_threshold": 4,
+        "at_or_above_threshold": true,
+        "dates": [
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-16",
+          "2026-10-22",
+          "2026-10-29",
+          "2026-10-30",
+          "2026-11-05",
+          "2026-11-13"
+        ],
+        "note": "any down close on heavier volume counts (the canon sets no minimum decline); stall days are not counted (the canon gives no number for 'negligible progress')",
+        "source": "O'Neil C2 (aegis/canon/oneil)"
+      }
+    }
+  },
+  "sectors": {
+    "XLK": {
+      "status": "OK",
+      "stage": 3,
+      "stage_name": "Topping",
+      "cycle_name": "Distribution",
+      "since": "2026-10-30",
+      "weeks_in_stage": 3,
+      "previous_stage": 2,
+      "transition": "TOPPING",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 3,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 170.28,
+      "ma30w": 182.12,
+      "ma30w_slope_pct_4w": 2.53,
+      "pct_from_ma30w": -6.5,
+      "range_pos_52w": 0.569,
+      "rs_mansfield": -0.96,
+      "rs_rising": false,
+      "updown_volume_ratio": 0.73,
+      "weeks": 313
+    },
+    "XLV": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-07-17",
+      "weeks_in_stage": 18,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "as_of_week": "2026-11-13",
+      "close": 188.85,
+      "ma30w": 163.7,
+      "ma30w_slope_pct_4w": 3.19,
+      "pct_from_ma30w": 15.37,
+      "range_pos_52w": 0.931,
+      "rs_mansfield": 13.2,
+      "rs_rising": true,
+      "updown_volume_ratio": 0.82,
+      "weeks": 313
+    },
+    "XLF": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-08-14",
+      "weeks_in_stage": 14,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "as_of_week": "2026-11-13",
+      "close": 58.68,
+      "ma30w": 55.07,
+      "ma30w_slope_pct_4w": 1.71,
+      "pct_from_ma30w": 6.55,
+      "range_pos_52w": 0.89,
+      "rs_mansfield": 3.82,
+      "rs_rising": true,
+      "updown_volume_ratio": 0.93,
+      "weeks": 313
+    },
+    "XLE": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-07-10",
+      "weeks_in_stage": 19,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "as_of_week": "2026-11-13",
+      "close": 64.96,
+      "ma30w": 60.6,
+      "ma30w_slope_pct_4w": 1.8,
+      "pct_from_ma30w": 7.2,
+      "range_pos_52w": 0.803,
+      "rs_mansfield": 9.44,
+      "rs_rising": false,
+      "updown_volume_ratio": 0.7,
+      "weeks": 313
+    },
+    "XLI": {
+      "status": "OK",
+      "stage": 3,
+      "stage_name": "Topping",
+      "cycle_name": "Distribution",
+      "since": "2026-09-11",
+      "weeks_in_stage": 10,
+      "previous_stage": 2,
+      "transition": "TOPPING",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 3,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 168.78,
+      "ma30w": 174.75,
+      "ma30w_slope_pct_4w": -0.09,
+      "pct_from_ma30w": -3.42,
+      "range_pos_52w": 0.527,
+      "rs_mansfield": -5.33,
+      "rs_rising": true,
+      "updown_volume_ratio": 0.97,
+      "weeks": 313
+    },
+    "XLY": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-11-06",
+      "weeks_in_stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "confirmed_this_week": true,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 119.98,
+      "ma30w": 115.88,
+      "ma30w_slope_pct_4w": 0.55,
+      "pct_from_ma30w": 3.53,
+      "range_pos_52w": 0.746,
+      "rs_mansfield": -1.69,
+      "rs_rising": true,
+      "updown_volume_ratio": 1.25,
+      "weeks": 313
+    },
+    "XLP": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-10-30",
+      "weeks_in_stage": 3,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "as_of_week": "2026-11-13",
+      "close": 92.35,
+      "ma30w": 85.06,
+      "ma30w_slope_pct_4w": 1.25,
+      "pct_from_ma30w": 8.57,
+      "range_pos_52w": 0.939,
+      "rs_mansfield": 4.95,
+      "rs_rising": true,
+      "updown_volume_ratio": 1.62,
+      "weeks": 313
+    },
+    "XLRE": {
+      "status": "OK",
+      "stage": 3,
+      "stage_name": "Topping",
+      "cycle_name": "Distribution",
+      "since": "2026-09-04",
+      "weeks_in_stage": 11,
+      "previous_stage": 2,
+      "transition": "TOPPING",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 3,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 44.37,
+      "ma30w": 43.97,
+      "ma30w_slope_pct_4w": 0.4,
+      "pct_from_ma30w": 0.92,
+      "range_pos_52w": 0.689,
+      "rs_mansfield": -1.58,
+      "rs_rising": true,
+      "updown_volume_ratio": 1.4,
+      "weeks": 313
+    },
+    "XLU": {
+      "status": "OK",
+      "stage": 4,
+      "stage_name": "Declining",
+      "cycle_name": "Mark-down",
+      "since": "2026-09-18",
+      "weeks_in_stage": 9,
+      "previous_stage": 3,
+      "transition": "BREAKDOWN",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "as_of_week": "2026-11-13",
+      "close": 44.04,
+      "ma30w": 43.8,
+      "ma30w_slope_pct_4w": -0.9,
+      "pct_from_ma30w": 0.55,
+      "range_pos_52w": 0.571,
+      "rs_mansfield": -5.07,
+      "rs_rising": true,
+      "updown_volume_ratio": 1.27,
+      "weeks": 313
+    },
+    "XLC": {
+      "status": "OK",
+      "stage": 4,
+      "stage_name": "Declining",
+      "cycle_name": "Mark-down",
+      "since": "2026-07-03",
+      "weeks_in_stage": 20,
+      "previous_stage": 3,
+      "transition": "BREAKDOWN",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 4,
+      "candidate_forming": 4,
+      "as_of_week": "2026-11-13",
+      "close": 108.69,
+      "ma30w": 110.96,
+      "ma30w_slope_pct_4w": -0.98,
+      "pct_from_ma30w": -2.04,
+      "range_pos_52w": 0.444,
+      "rs_mansfield": -8.33,
+      "rs_rising": true,
+      "updown_volume_ratio": 0.95,
+      "weeks": 313
+    },
+    "XLB": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-10-30",
+      "weeks_in_stage": 3,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 3,
+      "candidate_forming": 3,
+      "as_of_week": "2026-11-13",
+      "close": 52.23,
+      "ma30w": 51.36,
+      "ma30w_slope_pct_4w": 0.33,
+      "pct_from_ma30w": 1.7,
+      "range_pos_52w": 0.807,
+      "rs_mansfield": -0.74,
+      "rs_rising": true,
+      "updown_volume_ratio": 0.8,
+      "weeks": 313
+    }
+  },
+  "sector_groups": {
+    "stage_1": [],
+    "stage_2": [
+      "XLB",
+      "XLE",
+      "XLF",
+      "XLP",
+      "XLV",
+      "XLY"
+    ],
+    "stage_3": [
+      "XLI",
+      "XLK",
+      "XLRE"
+    ],
+    "stage_4": [
+      "XLC",
+      "XLU"
+    ]
+  },
+  "breadth": {
+    "status": "OK",
+    "population": "aqe_panel_equities",
+    "now": {
+      "n": 1677,
+      "stage_1": 229,
+      "stage_2": 672,
+      "stage_3": 334,
+      "stage_4": 442,
+      "stage_1_pct": 13.7,
+      "stage_2_pct": 40.1,
+      "stage_3_pct": 19.9,
+      "stage_4_pct": 26.4
+    },
+    "one_week_ago": {
+      "n": 1676,
+      "stage_1": 234,
+      "stage_2": 652,
+      "stage_3": 353,
+      "stage_4": 437,
+      "stage_1_pct": 14.0,
+      "stage_2_pct": 38.9,
+      "stage_3_pct": 21.1,
+      "stage_4_pct": 26.1
+    },
+    "four_weeks_ago": {
+      "n": 1672,
+      "stage_1": 147,
+      "stage_2": 587,
+      "stage_3": 358,
+      "stage_4": 580,
+      "stage_1_pct": 8.8,
+      "stage_2_pct": 35.1,
+      "stage_3_pct": 21.4,
+      "stage_4_pct": 34.7
+    },
+    "stage_2_direction": "RISING",
+    "stage_4_direction": "FALLING",
+    "n_na": 25
+  },
+  "held": {
+    "RBRK": {
+      "status": "OK",
+      "stage": 2,
+      "stage_name": "Advancing",
+      "cycle_name": "Mark-up",
+      "since": "2026-08-07",
+      "weeks_in_stage": 15,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "confirmed_this_week": false,
+      "seeded": false,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "as_of_week": "2026-11-13",
+      "close": 109.88,
+      "ma30w": 88.74,
+      "ma30w_slope_pct_4w": 11.53,
+      "pct_from_ma30w": 23.83,
+      "range_pos_52w": 0.692,
+      "rs_mansfield": 37.17,
+      "rs_rising": false,
+      "updown_volume_ratio": 0.95,
+      "weeks": 134
+    },
+    "SPCX": {
+      "status": "NA",
+      "reason": "23 completed weeks < 34 needed",
+      "weeks": 23
+    }
+  },
+  "held_status": "held_positions_status=live",
+  "held_changes": [],
+  "daily_list_status": "OK",
+  "daily_list_changes": [
+    {
+      "ticker": "ACM",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 48
+    },
+    {
+      "ticker": "ADMA",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "AES",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 3,
+      "weeks_in_stage": 4
+    },
+    {
+      "ticker": "AKR",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 4,
+      "weeks_in_stage": 3
+    },
+    {
+      "ticker": "ALGN",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "ALGT",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "AON",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "APP",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 18
+    },
+    {
+      "ticker": "AQN",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 18
+    },
+    {
+      "ticker": "ARMK",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 3,
+      "candidate_forming": 2,
+      "weeks_in_stage": 4
+    },
+    {
+      "ticker": "ATAT",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "ATMU",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "AVA",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "AXS",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 4
+    },
+    {
+      "ticker": "BCO",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 3,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "BEN",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "CALY",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "CGON",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 3,
+      "candidate_forming": 2,
+      "weeks_in_stage": 8
+    },
+    {
+      "ticker": "CHTR",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 36
+    },
+    {
+      "ticker": "CLX",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "CMCSA",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "CME",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 6
+    },
+    {
+      "ticker": "CMG",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "COLD",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "COR",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "COST",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "CPB",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 3
+    },
+    {
+      "ticker": "DPZ",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "DTE",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 9
+    },
+    {
+      "ticker": "ED",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "ELAN",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "EPAM",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "EXTR",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "FDX",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 10
+    },
+    {
+      "ticker": "FE",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 9
+    },
+    {
+      "ticker": "FISV",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "G",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "GEHC",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "GPK",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "HAYW",
+      "stage": 2,
+      "previous_stage": 4,
+      "transition": "V_REVERSAL",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "HCA",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 8
+    },
+    {
+      "ticker": "HDB",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "HGV",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "HRL",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "IBP",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 26
+    },
+    {
+      "ticker": "ICE",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "IDXX",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "INSM",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "JAZZ",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "JBTM",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "JKHY",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "KVYO",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "LBTYK",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "LION",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "LOW",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "LUV",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "MDLN",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "MFG",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 4
+    },
+    {
+      "ticker": "MIDD",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "MMYT",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "NBIX",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "NI",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 12
+    },
+    {
+      "ticker": "NJR",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "NU",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": "BASE_FAILED",
+      "candidate": 4,
+      "candidate_forming": 4,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "NXST",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "NYT",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 13
+    },
+    {
+      "ticker": "OGE",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "OGS",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "PECO",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "PEG",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 13
+    },
+    {
+      "ticker": "PEP",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "PFGC",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "PHG",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 4
+    },
+    {
+      "ticker": "PII",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "PRMB",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "PRVA",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "RCI",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 9
+    },
+    {
+      "ticker": "RDN",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 10
+    },
+    {
+      "ticker": "REZI",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 14
+    },
+    {
+      "ticker": "RYN",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "RYTM",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "SARO",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "SKT",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "STE",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "STZ",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "TCOM",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 39
+    },
+    {
+      "ticker": "TMDX",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "TNL",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 2,
+      "weeks_in_stage": 3
+    },
+    {
+      "ticker": "TPC",
+      "stage": 2,
+      "previous_stage": 3,
+      "transition": "ADVANCE_RESUMED",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "TPR",
+      "stage": 4,
+      "previous_stage": 3,
+      "transition": null,
+      "candidate": 4,
+      "candidate_forming": 1,
+      "weeks_in_stage": 11
+    },
+    {
+      "ticker": "TRMK",
+      "stage": 3,
+      "previous_stage": 2,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 6
+    },
+    {
+      "ticker": "TSN",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": "BASING",
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "TW",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 6
+    },
+    {
+      "ticker": "UHS",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 10
+    },
+    {
+      "ticker": "UPS",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "VNT",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 6
+    },
+    {
+      "ticker": "VRDN",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "VRSK",
+      "stage": 2,
+      "previous_stage": 1,
+      "transition": "BREAKOUT",
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 2
+    },
+    {
+      "ticker": "WM",
+      "stage": 1,
+      "previous_stage": 4,
+      "transition": null,
+      "candidate": 2,
+      "candidate_forming": 2,
+      "weeks_in_stage": 5
+    },
+    {
+      "ticker": "ZTS",
+      "stage": 4,
+      "previous_stage": 1,
+      "transition": null,
+      "candidate": 1,
+      "candidate_forming": 1,
+      "weeks_in_stage": 75
+    }
+  ],
+  "all_confirmed_this_week": [
+    {
+      "ticker": "ADMA",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "ADSK",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "AEM",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "AFRM",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "ALGM",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "ALGT",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ALV",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "AMBP",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "AMP",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "AMZN",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "AON",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "APAM",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ASX",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "ATAT",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ATMU",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ATO",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ATR",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "AVA",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "AWK",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "AXSM",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "AXTI",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "BBD",
+      "transition": "BROKE_DOWN_FROM_ADVANCE",
+      "stage": 4
+    },
+    {
+      "ticker": "BC",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "BCO",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "BEN",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "BIP",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "BIPC",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "BKE",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "BKU",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "BMY",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "BTE",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "BTI",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "CALY",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "CARG",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CARR",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "CAT",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "CCI",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "CELH",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CHDN",
+      "transition": "V_REVERSAL",
+      "stage": 2
+    },
+    {
+      "ticker": "CHWY",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CLDX",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "CLMT",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "CLS",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "CLX",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CMG",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CMI",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "COHR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "COKE",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "COLD",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "COMP",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "COR",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "CPRT",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CRGY",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "CSTM",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "CTRE",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "CVE",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "CYTK",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "DAL",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "DAR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "DDOG",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "DELL",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "DFTX",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "DGII",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "DNOW",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "DOX",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "DPZ",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "DT",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "EC",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "ELVN",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "EME",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "ENS",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "EPAC",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "EPAM",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "EPR",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "EQT",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "ET",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "EVRG",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "EXPE",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "FANG",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "FHI",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "FISV",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "FIX",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "FORM",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "FOUR",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "FPS",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "FR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "FRPT",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "FSK",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "FSLY",
+      "transition": "BROKE_DOWN_FROM_ADVANCE",
+      "stage": 4
+    },
+    {
+      "ticker": "G",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "GAP",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "GEHC",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "GEV",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "GLW",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "GNRC",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "GNTX",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "GPGI",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "GPK",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "HAYW",
+      "transition": "V_REVERSAL",
+      "stage": 2
+    },
+    {
+      "ticker": "HCC",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "HDB",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "HEI",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "HLI",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "HP",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "HPE",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "HTGC",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "ICE",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "IESC",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "INSM",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "IRTC",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "JAZZ",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "JBTM",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "JCI",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "JKHY",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "KIM",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "KRC",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "KTB",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "KVYO",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "LB",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "LION",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "LITE",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "LOAR",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "LOW",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "LTM",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "LUV",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "MCD",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "MDB",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "MDLN",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "MIDD",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "MKSI",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "MMYT",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "MTDR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "MU",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "MUR",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "NBIX",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "NCLH",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "NE",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "NESR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "NJR",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "NMIH",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "NTES",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "NTR",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "NU",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "NVS",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "NWS",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "NXST",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ODFL",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "OGS",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "OLED",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "ONTO",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "OR",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "OWL",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "PAGS",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "PBR",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "PBR-A",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "PECO",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "PEP",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "PFGC",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "PHM",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "PNR",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "PRMB",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "PRVA",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "PTEN",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "PTON",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "PURR",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "QUBT",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "RCUS",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "RDDT",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "RELY",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "RGLD",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "RIG",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "RIO",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "RJF",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "RKT",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "RMBS",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "RRC",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "RYAAY",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "RYN",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "RYTM",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "SARO",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "SBS",
+      "transition": "BROKE_DOWN_FROM_ADVANCE",
+      "stage": 4
+    },
+    {
+      "ticker": "SDRL",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "SHC",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "SHOO",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "SKT",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "SLB",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "SLM",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "SM",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "SNN",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "SPHR",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "STE",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "STEP",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "STLD",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "STRL",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "STVN",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "STZ",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "SYK",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TAL",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "TDG",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TER",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "TFII",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "THO",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TKO",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TMDX",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TME",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TOL",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "TPC",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "TRMB",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "TROW",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "TS",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "TSEM",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "TSN",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "TTMI",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "TX",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "TXRH",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "UNM",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "UPS",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "VAL",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "VFC",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "VIAV",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "VNOM",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "VOD",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "VRDN",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "VRSK",
+      "transition": "BREAKOUT",
+      "stage": 2
+    },
+    {
+      "ticker": "VST",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "VTR",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "VVV",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "WDS",
+      "transition": "BREAKDOWN",
+      "stage": 4
+    },
+    {
+      "ticker": "WES",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "WH",
+      "transition": "BASING",
+      "stage": 1
+    },
+    {
+      "ticker": "WTRG",
+      "transition": "ADVANCE_RESUMED",
+      "stage": 2
+    },
+    {
+      "ticker": "WTTR",
+      "transition": "TOPPING",
+      "stage": 3
+    },
+    {
+      "ticker": "XPO",
+      "transition": "BASE_FAILED",
+      "stage": 4
+    },
+    {
+      "ticker": "YOU",
+      "transition": "BASING",
+      "stage": 1
+    }
+  ],
+  "population_note": "Breadth counts every single name on AQE's own weekly panel (aqe_panel_equities), not the whole US market."
+}
