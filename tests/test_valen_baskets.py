@@ -99,3 +99,16 @@ def test_theme_leaders_rotation_and_the_in_theme_tick_follow_the_active_set(tmp_
     assert VB.load()["status"] == "fallback_aqe35" and len(VB.load()["baskets"]) == 35
     g2 = G.compute_groups(panel)                                       # this panel holds none of the 35's names: the groups read says UNAVAILABLE, not Valen's rows
     assert g2["status"] == "UNAVAILABLE" and not g2["groups"]
+
+
+def test_the_committed_valen_file_validates_and_is_the_file_the_valen_agent_sent():
+    """data/valen_baskets.json (2026-11-17, Valen agent, PM approved): 96 baskets, 1,882 constituent rows, 155 group entries, sha256 checked on save."""
+    import hashlib
+    from src.data.paths import DATA_DIR
+    raw = (DATA_DIR / "valen_baskets.json").read_bytes()
+    assert len(raw.decode("utf-8")) == 28799 and hashlib.sha256(raw).hexdigest() == "d9588a95752c092505207b5e0bc6e92c5fc9e1471933b33fa90e831440108981"
+    a = VB.load()
+    assert a["status"] == "valen" and a["reason"] is None and a["as_of"] == "2026-11-13"
+    assert len(a["baskets"]) == 96 and sum(len(b["constituents"]) for b in a["baskets"].values()) == 1882 and len(a["groups"]) == 155
+    assert {b["sector"] for b in a["baskets"].values()} == {"Growth", "Commodities", "Defensive", "Interest Sensitive", "Healthcare", "Index"}
+    assert "&amp;" not in raw.decode("utf-8")                                   # names read "Diagnostics & Testing", not the transport's escaped form

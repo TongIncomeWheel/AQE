@@ -91,3 +91,14 @@ def test_the_card_carries_the_theme_line_on_every_card_not_only_the_u_and_r_ones
     src = inspect.getsource(emailer)
     i = src.index("ALT-5 (PM 2026-11-17)")
     assert "theme_line" in src[i:i + 300] and src.index("_card_field_lines(row)", i) > i
+
+
+import pytest as _pytest
+
+
+@_pytest.fixture(autouse=True)
+def _aqe35_basket_set(monkeypatch, tmp_path):
+    """These tests are written against AQE's own 35 baskets: pin the loader to its fallback so the committed data/valen_baskets.json (Valen's 96) does not change what they measure.
+    tests/test_valen_baskets.py covers the Valen set."""
+    from src.valen import baskets as _vb
+    monkeypatch.setattr(_vb, "BASKETS_FILE", tmp_path / "no_valen_baskets.json")

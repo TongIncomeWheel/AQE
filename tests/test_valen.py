@@ -1219,3 +1219,14 @@ def test_run_valen_full_reattaches_parts_2_to_6(monkeypatch, tmp_path):
     art = D.run_valen_full()
     assert art["playbook_status"]["status"] == "UNAVAILABLE"
     assert card.house_block(art)["computed"] is False
+
+
+import pytest as _pytest
+
+
+@_pytest.fixture(autouse=True)
+def _aqe35_basket_set(monkeypatch, tmp_path):
+    """These tests are written against AQE's own 35 baskets: pin the loader to its fallback so the committed data/valen_baskets.json (Valen's 96) does not change what they measure.
+    tests/test_valen_baskets.py covers the Valen set."""
+    from src.valen import baskets as _vb
+    monkeypatch.setattr(_vb, "BASKETS_FILE", tmp_path / "no_valen_baskets.json")
