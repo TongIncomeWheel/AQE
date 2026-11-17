@@ -149,5 +149,6 @@ def compute_groups(panel_daily: pd.DataFrame) -> dict:
     tb = _themes.compute_theme_block(panel_daily)
     if tb.get("status") == "OK":
         tb["persist"] = _themes.store_flags(tb)
+    grp = _themes.compute_group_block(panel_daily)
     return {"status": "OK", "reason": None, "groups": groups,
-            "theme_leaders": theme_leaders, "rotation": rotation, "themes": tb}
+            "theme_leaders": theme_leaders, "rotation": rotation, "themes": tb, "group_etfs": grp}

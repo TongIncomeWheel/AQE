@@ -247,6 +247,18 @@ if gr.get("status") == "OK":
             f"Data to the close of {tb['as_of']}. {sm['bullish']} of {sm['baskets']} baskets are bullish ({sm['bullish_pct']}%); {sm['leading']} are leading "
             f"(bullish and 1-month strength 80 or more). Above the 9 / 21 / 50 / 200-day averages: {sm['above_pct']['ema9']}% / {sm['above_pct']['ema21']}% / "
             f"{sm['above_pct']['sma50']}% / {sm['above_pct']['sma200']}%. Up today {sm['up_today_pct']}%, 1 week {sm['up_1w_pct']}%, 1 month {sm['up_1m_pct']}%, 3 months {sm['up_3m_pct']}%.")
+        bs = tb.get("basket_set") or {}
+        if bs.get("status") == "valen":
+            st.caption(f"Basket set: Valen's {bs.get('n')} theme baskets (list as of {bs.get('as_of')}). AQE's older 35 baskets stay on the Rotation table above.")
+        else:
+            st.warning(f"Basket set: AQE's own 35 baskets, NOT Valen's 96: {bs.get('reason') or 'the Valen list is not loaded'}.")
+        if any(b.get("sector") for b in tb["baskets"]):
+            sec = {}
+            for b in tb["baskets"]:
+                x = sec.setdefault(b.get("sector") or "none", {"n": 0, "bull": 0, "lead": 0})
+                x["n"] += 1; x["bull"] += int(bool(b["bullish"])); x["lead"] += int(bool(b["leading"]))
+            table_with_copy(pd.DataFrame([{"Sector": k, "Baskets": v["n"], "Bullish": v["bull"], "Bullish %": round(100 * v["bull"] / v["n"]), "Leading": v["lead"]}
+                                          for k, v in sorted(sec.items())]), key="valen_theme_sectors", filterable=False, caption="Valen's five-way sector split of the baskets.")
         th_df = pd.DataFrame([{
             "Basket": b["display_name"], "Bullish": "yes" if b["bullish"] else "no", "Sessions on (neg = off)": b["sessions_on"], "Leading": "yes" if b["leading"] else "no",
             "1M strength": b["rs_1m"], "Thrust": b["thrust"], "Days at 80+ (60)": b["days_rs_80"], "1D %": b["ret_pct"].get("1d"), "1W %": b["ret_pct"].get("1w"),
@@ -259,6 +271,18 @@ if gr.get("status") == "OK":
         rl_df = pd.DataFrame([{"Average": names[k], "Reclaimed today": ", ".join(x.replace("_", " ") for x in tb["reclaimed_today"][k]) or "none",
                                "Lost today": ", ".join(x.replace("_", " ") for x in tb["lost_today"][k]) or "none"} for k in names])
         table_with_copy(rl_df, key="valen_reclaimed_lost", filterable=False, caption="Baskets that crossed an average at today's close (early rotation signals).")
+        ge = gr.get("group_etfs") or {}
+        st.subheader("Group rotation: the group ETFs")
+        if ge.get("status") == "OK":
+            st.caption(f"{ge['n']} group ETFs to the close of {ge['as_of']}. Leading (bullish and 1-month strength 80+): {', '.join(ge['leading']) or 'none'}. "
+                       f"Fresh surge (thrust 80+, 1-month under 80): {', '.join(ge['fresh_surge']) or 'none'}. Cooling (1-month 80+, thrust under 80): {', '.join(ge['cooling']) or 'none'}. "
+                       + ge["definitions"]["reading"] + ".")
+            table_with_copy(pd.DataFrame([{"Ticker": r["ticker"], "Group": r["name"], "Universe": r["universe"], "1M strength": r["rs_1m"], "Thrust": r["thrust"],
+                                           "Days at 80+ (60)": r["days_rs_80"], "Bullish": "yes" if r["bullish"] else "no", "Sessions on (neg = off)": r["sessions_on"],
+                                           "1W %": r["ret_pct"].get("1w"), "1M %": r["ret_pct"].get("1m"), "3M %": r["ret_pct"].get("3m"), "ATR %": r["atr_pct"]}
+                                          for r in ge["groups"]]), key="valen_group_etfs")
+        else:
+            st.caption(f"Group ETF table not shown: {ge.get('reason') or 'the group layer was not in this run'}.")
         with st.expander("How these are computed (AQE's own formulas)"):
             for k, v in (tb.get("definitions") or {}).items():
                 st.markdown(f"- **{k}**: {v}")

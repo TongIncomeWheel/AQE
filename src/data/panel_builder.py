@@ -96,6 +96,21 @@ def build_panel(history_years: int | None = None) -> None:
             _seen.add(_c)
             _extra_basket.append(_c)
 
+    # PM 2026-11-17: Valen's theme baskets + his group ETFs (data/valen_baskets.json) are graded, never screened, exactly like the basket constituents above.
+    # No file = nothing extra (the loader falls back to AQE's 35 and says so).
+    _extra_valen: list[str] = []
+    try:
+        from src.valen import baskets as _vb
+        _act = _vb.load()
+        if _act["status"] == "valen":
+            for _c in sorted(_vb.constituents(_act) | set(_vb.group_etfs(_act))):
+                if _c not in _seen:
+                    tickers.append(_c)
+                    _seen.add(_c)
+                    _extra_valen.append(_c)
+    except Exception as _exc:  # noqa: BLE001
+        print(f"[panel] Valen baskets not added: {type(_exc).__name__}: {_exc}", flush=True)
+
     # Always pull currently-held positions (PTJ) too — even if a name has since
     # dropped out of (or never was in) the curated universe, AQE can still
     # source its bars by ticker and compute the full engine read (Health, DSL
@@ -125,10 +140,10 @@ def build_panel(history_years: int | None = None) -> None:
     # which it is not, and that gap is exactly what makes a run look wrong.
     _n_uni = len(load_universe(include_benchmark=True))
     _n_etf, _n_bc = len(_extra_etfs), len(_extra_basket)
-    _n_held = len(tickers) - _n_uni - _n_etf - _n_bc
+    _n_held = len(tickers) - _n_uni - _n_etf - _n_bc - len(_extra_valen)
     print(f"[panel] pulling {len(tickers)} tickers "
           f"= universe {_n_uni} + GICS ETFs {_n_etf} "
-          f"+ basket constituents {_n_bc} + held {max(_n_held, 0)}  "
+          f"+ basket constituents {_n_bc} + Valen baskets/group ETFs {len(_extra_valen)} + held {max(_n_held, 0)}  "
           f"({history_years}yr lookback, earliest={earliest})", flush=True)
 
     client = FMPClient()
