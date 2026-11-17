@@ -233,6 +233,12 @@ def compute_group_block(panel: pd.DataFrame, active: dict | None = None) -> dict
         p = panel[["date", "ticker", "close"]].copy()
         p["date"] = pd.to_datetime(p["date"])
         piv = p.pivot_table(index="date", columns="ticker", values="close").sort_index()
+        seen, uniq = set(), []
+        for g in groups:                       # one series per ETF: a ticker can sit in two universes (TLT is both an industry group and an index); the first listing is the row
+            if g["ticker"] not in seen:
+                seen.add(g["ticker"])
+                uniq.append(g)
+        groups = uniq
         have = [g for g in groups if g["ticker"] in piv.columns and piv[g["ticker"]].dropna().shape[0] >= 60]
         missing = [g["ticker"] for g in groups if g not in have]
         if len(have) < 3:

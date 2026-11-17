@@ -70,6 +70,14 @@ def constituents(active: dict | None = None) -> set[str]:
     return {t for b in a["baskets"].values() for t in b["constituents"]}
 
 
+def context_only(active: dict | None = None) -> set[str]:
+    """Every ticker the Valen layer pulls onto the panel as CONTEXT: its basket constituents and its group ETFs. They are graded, NEVER scored, screened or listed (the panel_builder promise).
+    Run 150 (2026-11-18) scored them because the scoring exclusion only knew AQE's old 35 baskets: 639 non-universe rows (499 constituents + 142 ETFs) reached the universe rows and 33 reached the
+    daily list. Every scoring path must exclude this set (minus the held book) and the scan universe stays the only thing scored."""
+    a = active or load()
+    return constituents(a) | set(group_etfs(a))
+
+
 def group_etfs(active: dict | None = None) -> list[str]:
     a = active or load()
     return [g["ticker"] for g in a.get("groups") or []]

@@ -156,6 +156,7 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
 
     from src.engines.srm import BASKET_CONSTITUENTS
     from src.data.universe import load_universe
+    from src.valen import baskets as _vb
     try:
         from src.data.ptj import load_held_positions
         _held_tickers = {p.get("ticker") for p in load_held_positions()
@@ -164,7 +165,7 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         _held_tickers = set()
     tickers = scoreable_tickers(
         daily_groups.keys(), scan_universe=load_universe(include_benchmark=True),
-        basket_constituents=BASKET_CONSTITUENTS, held_tickers=_held_tickers)
+        basket_constituents=set(BASKET_CONSTITUENTS) | _vb.context_only(), held_tickers=_held_tickers)
     if only_tickers is not None:
         _want = set(only_tickers)
         tickers = [t for t in tickers if t in _want]

@@ -246,6 +246,24 @@ def market_block(regime: dict) -> dict:
     }
 
 
+def drop_context_only(panel: pd.DataFrame, scores: pd.DataFrame):
+    """QS populations (the equal-weight index behind rs_consist, rank_in_sector, the regime terciles, the eligible set) must be the scan universe, never Valen's context-only baskets and group ETFs
+    (run 150, 2026-11-18: 639 of them sat on the panel and in the cached scores). Only that new set is removed: the older basket-only names keep their previous treatment so the frozen
+    calibration's population does not move under it. The held book is never removed."""
+    try:
+        from src.data.universe import load_universe
+        from src.valen import baskets as _vb
+        ctx = _vb.context_only() - set(load_universe(include_benchmark=True))
+        try:
+            from src.data.ptj import load_held_positions
+            ctx -= {p.get("ticker") for p in load_held_positions() if p.get("ticker")}
+        except Exception:  # noqa: BLE001
+            pass
+    except Exception:  # noqa: BLE001 -- never take QS down; a failure here is the old behaviour
+        return panel, scores
+    return panel[~panel["ticker"].isin(ctx)], scores[~scores["ticker"].isin(ctx)]
+
+
 def run(as_of: date | None = None, sector_map: dict[str, str] | None = None,
         store: bool = True) -> dict:
     """The whole QS layer for one day.
@@ -264,6 +282,7 @@ def run(as_of: date | None = None, sector_map: dict[str, str] | None = None,
         panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
         scores = pd.read_parquet(SCORES_DAILY)
         scores["date"] = pd.to_datetime(scores["date"]).dt.normalize()
+        panel, scores = drop_context_only(panel, scores)
 
         asof = (pd.Timestamp(as_of).normalize() if as_of
                 else min(panel["date"].max(), scores["date"].max()))
