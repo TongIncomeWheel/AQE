@@ -1,6 +1,6 @@
 """VALEN theme layer (PM 2026-11-17, Valen DAY-2..5): which baskets are bullish, since when, where the money is moving, and which names sit inside them.
 
-Pure over the daily panel (date, ticker, open, high, low, close, volume); AQE's own 35 thematic baskets (src.engines.srm.THEMATIC_BASKETS), never Valen's 96.
+Pure over the daily panel (date, ticker, open, high, low, close, volume); the ACTIVE basket set (src/valen/baskets.py: Valen's 96 from data/valen_baskets.json, else AQE's own 35 with a loud status).
 Every formula below is MINE, disclosed in `definitions` inside the block, because Valen's own are unpublished. Readings only: nothing here gates, ranks a trade or sizes.
 
   basket index   equal-weight, each name rebased to its first value in the window, mean across names (the same construction srm.py and groups.py use).
@@ -21,7 +21,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.engines.srm import THEMATIC_BASKETS
+from . import baskets as VB
 
 BULLISH_AVERAGES = ("ema9", "ema21", "sma50")
 LEADING_RS_MIN = 80
@@ -72,9 +72,11 @@ def _runs(flag: pd.Series) -> int:
     return n if last else -n
 
 
-def compute_theme_block(panel: pd.DataFrame) -> dict:
-    """{status, as_of, summary, baskets: [...], reclaimed, lost, definitions}. Never raises: a failure is status UNAVAILABLE with the reason."""
+def compute_theme_block(panel: pd.DataFrame, active: dict | None = None) -> dict:
+    """{status, as_of, summary, baskets: [...], reclaimed, lost, definitions, basket_set}. Never raises: a failure is status UNAVAILABLE with the reason."""
     try:
+        active = active or VB.load()
+        BK = active["baskets"]
         p = panel[["date", "ticker", "close"]].copy()
         p["date"] = pd.to_datetime(p["date"])
         piv = p.pivot_table(index="date", columns="ticker", values="close").sort_index()
@@ -83,7 +85,7 @@ def compute_theme_block(panel: pd.DataFrame) -> dict:
         as_of = piv.index[-1]
         spy = piv["SPY"] if "SPY" in piv.columns else None
         idx = {}
-        for name, info in THEMATIC_BASKETS.items():
+        for name, info in BK.items():
             s = _index(piv, info.get("constituents") or [])
             if not s.empty:
                 idx[name] = s
@@ -106,7 +108,7 @@ def compute_theme_block(panel: pd.DataFrame) -> dict:
                         reclaimed[k].append(name)
                     elif not bool(above[k].iloc[-1]) and bool(above[k].iloc[-2]):
                         lost[k].append(name)
-            names = [t for t in (THEMATIC_BASKETS[name].get("constituents") or []) if t in piv.columns]
+            names = [t for t in (BK[name].get("constituents") or []) if t in piv.columns]
             cl = piv[names].dropna(how="all")
             share_above = {}
             for k, fn in (("ema9", lambda x: x.ewm(span=9, adjust=False).mean()), ("ema21", lambda x: x.ewm(span=21, adjust=False).mean()),
@@ -124,7 +126,7 @@ def compute_theme_block(panel: pd.DataFrame) -> dict:
             move = (s.iloc[-1] / s.iloc[-2] - 1) if len(s) > 1 else np.nan
             rs_hist = rs21[name].tail(RS_HISTORY)
             rows.append({
-                "name": name, "display_name": name.replace("_", " "), "parent_gics": THEMATIC_BASKETS[name].get("parent_gics_etf"),
+                "name": name, "display_name": name.replace("_", " "), "parent_gics": BK[name].get("parent_gics_etf"), "sector": BK[name].get("sector"), "members": list(BK[name].get("constituents") or []),
                 "n_names": len(names), "bullish": bool(bull.iloc[-1]) if pd.notna(bull.iloc[-1]) else None,
                 "sessions_on": _runs(bull), "above": {k: bool(v.iloc[-1]) for k, v in above.items() if pd.notna(av[k].iloc[-1])},
                 "share_above": share_above, "up_share": up_share, "ret_pct": ret,
@@ -147,6 +149,7 @@ def compute_theme_block(panel: pd.DataFrame) -> dict:
             "up_1m_pct": pct(lambda r: (r["ret_pct"].get("1m") or 0) > 0), "up_3m_pct": pct(lambda r: (r["ret_pct"].get("3m") or 0) > 0),
         }
         return {"status": "OK", "reason": None, "as_of": str(as_of.date()), "summary": summary, "baskets": rows,
+                "basket_set": {"status": active["status"], "reason": active["reason"], "as_of": active["as_of"], "source": active["source"], "n": len(BK)},
                 "reclaimed_today": reclaimed, "lost_today": lost, "definitions": DEFINITIONS}
     except Exception as exc:  # noqa: BLE001
         return {"status": "UNAVAILABLE", "reason": f"{type(exc).__name__}: {exc}", "baskets": []}
@@ -158,7 +161,7 @@ def membership(block: dict | None) -> dict[str, list[dict]]:
     if not block or block.get("status") != "OK":
         return out
     for b in block["baskets"]:
-        for t in THEMATIC_BASKETS[b["name"]].get("constituents") or []:
+        for t in b.get("members") or []:
             out.setdefault(t, []).append({"name": b["name"], "bullish": b["bullish"], "sessions_on": b["sessions_on"],
                                           "rs_1m": b["rs_1m"], "leading": b["leading"]})
     return out
@@ -216,3 +219,50 @@ def store_flags(block: dict) -> dict:
         return {"persisted": len(block["baskets"]), "error": None}
     except Exception as exc:  # noqa: BLE001
         return {"persisted": 0, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def compute_group_block(panel: pd.DataFrame, active: dict | None = None) -> dict:
+    """The group layer (PM 2026-11-17: Valen's 116 group ETFs): each ETF's own price series, not an equal-weight index. Per ETF: bullish flag (close above EMA9, EMA21,
+    SMA50), sessions_on, rs_1m / thrust (percentile across the ETFs, steps of 5), days_rs_80 over the last 60 sessions, returns, ATR %. Empty `groups` in the file = UNAVAILABLE
+    with that reason, never an empty table that reads like 'no groups'."""
+    try:
+        active = active or VB.load()
+        groups = active.get("groups") or []
+        if not groups:
+            return {"status": "UNAVAILABLE", "reason": "no group ETFs in the active basket set" + (f" ({active['reason']})" if active.get("reason") else ""), "groups": []}
+        p = panel[["date", "ticker", "close"]].copy()
+        p["date"] = pd.to_datetime(p["date"])
+        piv = p.pivot_table(index="date", columns="ticker", values="close").sort_index()
+        have = [g for g in groups if g["ticker"] in piv.columns and piv[g["ticker"]].dropna().shape[0] >= 60]
+        missing = [g["ticker"] for g in groups if g not in have]
+        if len(have) < 3:
+            return {"status": "UNAVAILABLE", "reason": f"only {len(have)} of {len(groups)} group ETFs are on the panel", "groups": [], "missing": missing}
+        frame = piv[[g["ticker"] for g in have]]
+        rs21 = _step5(frame.pct_change(RS_WINDOW).rank(axis=1, pct=True))
+        rs5 = _step5(frame.pct_change(THRUST_WINDOW).rank(axis=1, pct=True))
+        rows = []
+        for g in have:
+            s = frame[g["ticker"]].dropna()
+            av = _averages(s)
+            bull = ((s > av["ema9"]) & (s > av["ema21"]) & (s > av["sma50"])).where(av["sma50"].notna())
+            d = s.pct_change().abs().tail(14).mean()
+            ret = {lab: (round(float((s.iloc[-1] / s.iloc[-1 - n] - 1) * 100), 2) if len(s) > n else None) for lab, n in HORIZONS}
+            r21 = rs21[g["ticker"]]
+            rows.append({"ticker": g["ticker"], "name": g["name"], "universe": g.get("universe"),
+                         "bullish": bool(bull.iloc[-1]) if pd.notna(bull.iloc[-1]) else None, "sessions_on": _runs(bull),
+                         "rs_1m": None if pd.isna(r21.iloc[-1]) else int(r21.iloc[-1]),
+                         "thrust": None if pd.isna(rs5[g["ticker"]].iloc[-1]) else int(rs5[g["ticker"]].iloc[-1]),
+                         "days_rs_80": int((r21.tail(RS_HISTORY) >= LEADING_RS_MIN).sum()), "ret_pct": ret,
+                         "atr_pct": round(float(d * 100), 2) if pd.notna(d) else None})
+        for r in rows:
+            r["leading"] = bool(r["bullish"] and (r["rs_1m"] or 0) >= LEADING_RS_MIN)
+        rows.sort(key=lambda r: (-(r["rs_1m"] or 0), -(r["thrust"] or 0), r["ticker"]))
+        return {"status": "OK", "reason": None, "as_of": str(frame.index[-1].date()), "n": len(rows), "missing": missing, "groups": rows,
+                "leading": [r["ticker"] for r in rows if r["leading"]],
+                "fresh_surge": [r["ticker"] for r in rows if (r["thrust"] or 0) >= LEADING_RS_MIN > (r["rs_1m"] or 0)],
+                "cooling": [r["ticker"] for r in rows if (r["rs_1m"] or 0) >= LEADING_RS_MIN > (r["thrust"] or 0)],
+                "definitions": {"thrust": "percentile of the 5-session return across the group ETFs (Valen's reading guide: money pushing in this week)",
+                                "rs_1m": "percentile of the 21-session return across the group ETFs (the proof: group vs the rest this month)",
+                                "reading": "high both = leadership; high thrust, low 1M = new money not proven; high 1M, low thrust = a leader resting"}}
+    except Exception as exc:  # noqa: BLE001
+        return {"status": "UNAVAILABLE", "reason": f"{type(exc).__name__}: {exc}", "groups": []}
