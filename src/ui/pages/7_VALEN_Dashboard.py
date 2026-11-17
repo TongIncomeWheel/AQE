@@ -237,6 +237,33 @@ if gr.get("status") == "OK":
         ])
         table_with_copy(rot_df, key="valen_rotation")
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # PM 2026-11-17 (Valen theme layer): the basket table. Plain tables; every formula is in the block's `definitions`.
+    tb = gr.get("themes") or {}
+    st.subheader("Themes: bullish baskets, since when")
+    if tb.get("status") == "OK":
+        sm = tb["summary"]
+        st.caption(
+            f"Data to the close of {tb['as_of']}. {sm['bullish']} of {sm['baskets']} baskets are bullish ({sm['bullish_pct']}%); {sm['leading']} are leading "
+            f"(bullish and 1-month strength 80 or more). Above the 9 / 21 / 50 / 200-day averages: {sm['above_pct']['ema9']}% / {sm['above_pct']['ema21']}% / "
+            f"{sm['above_pct']['sma50']}% / {sm['above_pct']['sma200']}%. Up today {sm['up_today_pct']}%, 1 week {sm['up_1w_pct']}%, 1 month {sm['up_1m_pct']}%, 3 months {sm['up_3m_pct']}%.")
+        th_df = pd.DataFrame([{
+            "Basket": b["display_name"], "Bullish": "yes" if b["bullish"] else "no", "Sessions on (neg = off)": b["sessions_on"], "Leading": "yes" if b["leading"] else "no",
+            "1M strength": b["rs_1m"], "Thrust": b["thrust"], "Days at 80+ (60)": b["days_rs_80"], "1D %": b["ret_pct"].get("1d"), "1W %": b["ret_pct"].get("1w"),
+            "1M %": b["ret_pct"].get("1m"), "3M %": b["ret_pct"].get("3m"), "ATR %": b["atr_pct"], "ATRX": b["atrx"], "Names": b["n_names"],
+            "% above 9d": b["share_above"].get("ema9"), "% above 21d": b["share_above"].get("ema21"), "% above 50d": b["share_above"].get("sma50"),
+            "% above 200d": b["share_above"].get("sma200"), "% up 1D": b["up_share"].get("1d"), "% up 1W": b["up_share"].get("1w"),
+            "% up 1M": b["up_share"].get("1m"), "% up 3M": b["up_share"].get("3m"), "Parent sector": b["parent_gics"]} for b in tb["baskets"]])
+        table_with_copy(th_df, key="valen_themes")
+        names = {"ema9": "9-day", "ema21": "21-day", "sma50": "50-day", "sma200": "200-day"}
+        rl_df = pd.DataFrame([{"Average": names[k], "Reclaimed today": ", ".join(x.replace("_", " ") for x in tb["reclaimed_today"][k]) or "none",
+                               "Lost today": ", ".join(x.replace("_", " ") for x in tb["lost_today"][k]) or "none"} for k in names])
+        table_with_copy(rl_df, key="valen_reclaimed_lost", filterable=False, caption="Baskets that crossed an average at today's close (early rotation signals).")
+        with st.expander("How these are computed (AQE's own formulas)"):
+            for k, v in (tb.get("definitions") or {}).items():
+                st.markdown(f"- **{k}**: {v}")
+    else:
+        st.caption(f"Theme table not shown: {tb.get('reason') or 'the theme block was not in this run'}.")
 else:
     st.caption(f"Theme Leaders / Rotation not shown — {gr.get('reason') or 'group read unavailable'}.")
 

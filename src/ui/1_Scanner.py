@@ -1555,6 +1555,8 @@ _EXPORT_COL_ORDER = [
     "unr_status", "unr_note",     # U&R on the last completed trading day (PM 2026-10-12)
     "stage", "stage_candidate", "stage_weeks", "trend_template", "trend_template_met",
     "stage2_confirmed",           # four-stage cycle + Minervini C2/C3 (docs/AQE_STAGE_WEATHER.md)
+    "stop_fit", "stop_atr_multiple", "lod_dist_atr",      # Valen stop fit on the last bar (PM 2026-11-17)
+    "in_leading_theme", "themes_text", "dryup_45", "dryup_60",   # Valen theme layer + dry-up counts (PM 2026-11-17)
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
@@ -1587,6 +1589,23 @@ _EXPORT_COL_ORDER = [
     "qs_target_2atr", "qs_give_up_2atr", "qs_usual_days", "qs_dip_pct",
     "qs_vetoes", "qs_extrapolated", "qs_not_listed",
 ]
+
+
+def _flatten_valen(edf):
+    """Flatten the nested `stop_fit` and `themes` columns (plain values so they sort, filter and copy like any other column). Absent stays blank, never 0."""
+    if "stop_fit" in edf.columns:
+        sf = edf["stop_fit"]
+        g = lambda x, k: x.get(k) if isinstance(x, dict) else None  # noqa: E731
+        edf["stop_atr_multiple"] = sf.apply(lambda x: g(x, "atr_multiple"))
+        edf["lod_dist_atr"] = sf.apply(lambda x: g(x, "lod_dist_atr"))
+        edf["stop_fit"] = sf.apply(lambda x: g(x, "fit"))
+    if "themes" in edf.columns:
+        def _txt(ts):
+            if ts is None or (not isinstance(ts, list)):
+                return None
+            return "; ".join(f"{t['name'].replace('_', ' ')} ({'bullish ' + str(t['sessions_on']) if t.get('bullish') else 'off'}, RS {t.get('rs_1m')})" for t in ts) or "none"
+        edf["themes_text"] = edf["themes"].apply(_txt)
+    return edf
 
 
 def _flatten_qs(edf):
@@ -1707,6 +1726,7 @@ def _export_table(records):
     edf = pd.DataFrame(records)
     edf = _flatten_elder_context(edf)
     edf = _flatten_qs(edf)
+    edf = _flatten_valen(edf)
     if "elder_5d" in edf.columns:
         edf["elder_5d"] = edf["elder_5d"].apply(
             lambda v: ",".join(str(int(x)) for x in v) if isinstance(v, list)
