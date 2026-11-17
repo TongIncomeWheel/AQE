@@ -98,7 +98,7 @@ report:
   how: "export AEGIS_REPORT=<A|C>; registrar.py --manifest run_manifest.json init --date <date> [--method whole_universe|aqe_doors|fallback_aqe_doors]   # report A, the live committee (PM 2026-11-16: whole_universe, the Standard Scan); registrar.py ... init --date <date> --report C   # run_id pma-<date>-C, run dir aegis/output/pma/run/<date>-C, method quant_scan; there is no report B (removed 2026-11-17)"
   rules: >
     TWO REPORTS, A AND C (PM 2026-11-05, re-ruled 2026-11-16; report B REMOVED 2026-11-17), to measure whether the committee WITHOUT the AQE gate has more edge than AQE. The Committee Standard Scan
-    (report A, the default; with AEGIS_REPORT unset a run is A) now seats names from the WHOLE screened universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) with NO AQE gate and NO
+    (report A, the default; with AEGIS_REPORT unset a run is A) now seats names from the WHOLE screened universe (market cap >= $2B, 10-day volume >= 500K, NYSE or NASDAQ) with NO AQE gate and NO
     AQE door. The Committee AQE Quant Scan (report C) is independent of A: a scan FROM the whole AQE universe on the AQE composites and sub-components. Report B was REMOVED (PM 2026-11-17: "List B should be gone"): no
     command, module, branch or screen of it remains; its run dirs under aegis/output/pma/run/*-B and its ledger rows stay as history only. Display names only: ids A and C, AEGIS_REPORT, the -C run dir suffix, the ledger report column and manifest ids never change.
     (1) C is NOT LIVE: non-live rerun kind (publishes_live false), no levels, not read by the alerts, scored only. A is the live committee. (2) C does NOT rerun weather, macro,

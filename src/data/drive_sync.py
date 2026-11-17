@@ -3260,7 +3260,7 @@ def _elder_and_longlist_tickers(daily_list: list[dict]) -> list[str]:
 
 
 # How few scored tickers is too few to trust. Set far below the ~700-850
-# tickers the universe screen (mcap>=$2B, 10-day avg vol>=1.5M) normally
+# tickers the universe screen (mcap>=$2B, 10-day avg vol>=500K) normally
 # yields and far above anything a legitimately quiet market could shrink it
 # to — tripping it means the scoring pass itself failed for most of the
 # universe, not that few names qualify.
@@ -3585,7 +3585,7 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
         _ur = dict(_UNIVERSE_ROWS)
         if _ur.get("rows"):
             _doc = {"schema": "aqe_universe_rows.v1", "date": date_str, "exported_at": export.get("exported_at", ""),
-                    "rule": "mcap >= $2B, 10-day avg volume >= 1.5M, US primary listing; every scored name, before any score gate",
+                    "rule": "mcap >= $2B, 10-day avg volume >= 500K, US primary listing; every scored name, before any score gate",
                     "count": len(_ur["rows"]), "status": _ur["status"], "rows": _ur["rows"]}
             _body = json.dumps(_doc, separators=(",", ":"), default=str)
             if len(_body.encode("utf-8")) > UNIVERSE_ROWS_MAX_BYTES:

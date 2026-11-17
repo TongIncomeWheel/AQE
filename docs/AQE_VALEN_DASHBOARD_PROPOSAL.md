@@ -76,7 +76,7 @@ thresholds — under 20 washed out, over 80 overheated. The 4%-mover and 25%-mov
 likewise whole-market counts.
 
 AQE's `panel_daily.parquet` holds **819 tickers**: a 493-name curated universe
-(mcap ≥ $2B, 10-day avg volume ≥ 1.5M, NASDAQ/NYSE) plus GICS ETFs, thematic-basket constituents
+(mcap ≥ $2B, 10-day avg volume ≥ 500K, NASDAQ/NYSE) plus GICS ETFs, thematic-basket constituents
 and held names. Computing "% above the 40-day" across 819 large, liquid, already-screened names
 and labelling it T2108 would produce a number that **reads like the real indicator while measuring
 a different population**. Its 20/80 thresholds would be meaningless — a universe pre-filtered for

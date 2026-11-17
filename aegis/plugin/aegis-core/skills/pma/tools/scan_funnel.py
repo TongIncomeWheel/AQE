@@ -123,7 +123,7 @@ def build(run, report="A", export_by=None, universe_by=None):
     if report == "A" and isinstance(sets, dict):
         screened = _names([x for v in (sets.get("seats") or {}).values() for x in v])
         n_univ = sets.get("universe_rows")
-        stages.append({"stage": "Universe rows scored (market cap $2B+, 10-day volume 1.5M+, NYSE or NASDAQ)", "n_in": n_univ, "n_out": n_univ, "rule": "the whole screened universe, before any AQE gate", "dropped": []})
+        stages.append({"stage": "Universe rows scored (market cap $2B+, 10-day volume 500K+, NYSE or NASDAQ)", "n_in": n_univ, "n_out": n_univ, "rule": "the whole screened universe, before any AQE gate", "dropped": []})
         stages.append({"stage": "Seat screens, union", "n_in": n_univ, "n_out": len(screened), "rule": "each seat's own code screen, top 25 names per seat, union of the seven",
                        "dropped": [], "dropped_count": (n_univ - len(screened)) if isinstance(n_univ, int) else None})
     elif report == "C":
