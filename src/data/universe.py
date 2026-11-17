@@ -8,7 +8,7 @@ folder (`UNIVERSE_FOLDER_ID`) so it persists across container restarts.
 THE universe rule (PM ruling 2026-08-04) — one eligibility test, shared by
 every downstream list (Longlist, Elder, QS). Nothing else belongs here:
 
-    market cap >= $2B  ·  10-day average volume >= 1.5M shares
+    market cap >= $2B  ·  10-day average volume >= 500K shares
     ·  US primary listing (NASDAQ/NYSE, warrants/units excluded)
 
 Membership is SIZE + LIQUIDITY + LISTING only. Trend filters (the former
@@ -23,7 +23,7 @@ On pipeline startup `restore_universe_from_drive()` overwrites the local
 
 The old `refresh_universe()` (screener-only, no volume filter) is kept for
 manual / legacy use; it ballooned the list to ~1800 because it applied no
-liquidity floor at all. `build_universe()` keeps the 1.5M floor.
+liquidity floor at all. `build_universe()` keeps the 500K floor (PM 2026-11-17).
 """
 
 from __future__ import annotations
@@ -101,12 +101,14 @@ EXCLUDED_SUFFIXES = ("-W", "-U", ".W", ".U")
 #
 # v4 (2026-11-10, PM ruling): the country==US domicile rule is DROPPED; the NASDAQ/NYSE listing requirement stays.
 # v5 (2026-11-10, PM ruling): ADRs are KEPT. There is no domicile rule and no ADR exclusion at all: a NASDAQ/NYSE listing that meets mcap >= $2B and 10-day average
-# volume >= 1.5M is in, whatever its domicile or share type (TSM, ASML, BABA, HSBC, SONY, TD, TTE ... come in if they pass). Only ETFs/funds and warrants/units are out.
+# volume >= the floor is in, whatever its domicile or share type (TSM, ASML, BABA, HSBC, SONY, TD, TTE ... come in if they pass). Only ETFs/funds and warrants/units are out.
 # data/universe_overrides.json stays as the PM's exclusion mechanism ("exclude": [...]); it is empty today, and every name it drops is printed in the build log.
-UNIVERSE_RULE_ID = "v5-mcap2B-vol1.5M-listed-adrs-in-notrend"
+# v6 (2026-11-17, PM ruling): the 10-day average volume floor is 500K, not 1.5M ("500K is what I expected for the floor; I do not know who changed it").
+# Market cap >= $2B and the NASDAQ/NYSE listing are unchanged; the admit-unverified and reject-unverified bands follow the floor (2x and 0.5x).
+UNIVERSE_RULE_ID = "v6-mcap2B-vol500k-listed-adrs-in-notrend"
 
 SCREEN_MCAP = 2_000_000_000          # $2B minimum market cap
-SCREEN_AVG_VOL_10D = 1_500_000       # 1.5M shares/day (10-day average)
+SCREEN_AVG_VOL_10D = 500_000         # 500K shares/day (10-day average); was 1.5M until 2026-11-17
 SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading days)
 # ---- API-BUDGET BANDS ------------------------------------------------------
 # Pass 2 costs ONE FMP call per name, and the client throttles to 80 calls/min
@@ -127,11 +129,11 @@ SCREEN_LOOKBACK_DAYS = 90            # calendar days fetched (covers ~55 trading
 # than 10 days, so the two shortcut bands are approximations. A name whose
 # volume collapsed very recently could be admitted on a stale average, and one
 # that just woke up could be rejected. The bands are set wide (2x and 0.5x the
-# 1.5M floor) so only names far from the boundary skip verification, and every
+# floor) so only names far from the boundary skip verification, and every
 # name NEAR the threshold — where the decision actually matters — is still
 # measured exactly.
-SCREEN_AVG_VOL_HIGH = SCREEN_AVG_VOL_10D * 2      # 3.0M — admit unverified
-SCREEN_AVG_VOL_PREFILTER = SCREEN_AVG_VOL_10D // 2  # 750k — reject unverified
+SCREEN_AVG_VOL_HIGH = SCREEN_AVG_VOL_10D * 2      # 1.0M — admit unverified
+SCREEN_AVG_VOL_PREFILTER = SCREEN_AVG_VOL_10D // 2  # 250k — reject unverified
 
 # NO CAP (PM 2026-11-10): every name in the uncertain band is verified. A cap was a silent exclusion that depended on screener order, and prior
 # membership must never admit or exclude a name. ~600-900 bar calls at 80/min is acceptable for a nightly screen.
@@ -235,7 +237,7 @@ def build_universe(dry_run: bool = False) -> dict:
 
     THE universe rule — size + liquidity + listing, nothing else:
       1. Market cap >= $2B                    (FMP screener)
-      2. 10-day average volume >= 1.5M shares (measured from bars)
+      2. 10-day average volume >= 500K shares (measured from bars)
       3. US primary listing, NASDAQ/NYSE, warrants/units excluded
 
     NO trend filter. `price > SMA20` / `price > SMA50` were removed on

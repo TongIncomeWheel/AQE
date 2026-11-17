@@ -142,7 +142,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     # Step 0: THE UNIVERSE — determined here, not assumed.
     #
     # The universe is NEVER a fixed list: it is a dynamic FMP screen (mcap >=
-    # $2B, 10-day avg volume >= 1.5M, US primary listing — size + liquidity +
+    # $2B, 10-day avg volume >= 500K, US primary listing — size + liquidity +
     # listing only, no trend filter). The in-app scheduler rebuilds it at 06:00
     # SGT, but a MANUAL run can fire at any time, and previously the pipeline
     # simply read whatever universe.txt happened to hold. That is how a run
@@ -176,7 +176,7 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
                 print(f"  [WARN] Universe rebuild failed: {_ub.get('reason')}")
                 print(f"  [WARN] PROCEEDING ON A STALE UNIVERSE: {_us['count']} "
                       f"names, {_us['stale_reason']} — names may not meet the "
-                      f"current $2B / 1.5M rule")
+                      f"current $2B / 500K rule")
         else:
             print(f"  Universe: {_us['count']} names "
                   f"(built today, rule {_us['rule']})")

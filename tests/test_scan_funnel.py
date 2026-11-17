@@ -41,7 +41,7 @@ def test_standard_scan_funnel_counts_every_stage_and_tags_every_name_with_its_aq
     eb = _synthetic(tmp_path)
     f = SF.build(str(tmp_path), "A", eb, {})
     st = {s["stage"]: s for s in f["stages"]}
-    assert st["Universe rows scored (market cap $2B+, 10-day volume 1.5M+, NYSE or NASDAQ)"]["n_out"] == 1000
+    assert st["Universe rows scored (market cap $2B+, 10-day volume 500K+, NYSE or NASDAQ)"]["n_out"] == 1000
     sc = st["Seat screens, union"]
     assert sc["n_out"] == 3 and sc["dropped_count"] == 997
     assert st["Nominated (any seat, any conviction)"]["n_out"] == 2

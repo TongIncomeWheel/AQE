@@ -2,7 +2,7 @@
 
 The universe is a DYNAMIC daily screen, so "when was this built" is a
 first-class question. A pipeline run against a stale list screens names that
-may no longer meet the $2B / 1.5M rule and misses names that now do — and
+may no longer meet the $2B / 500K rule and misses names that now do — and
 nothing in the output reveals it. These tests cover the detection that stops
 that being silent.
 """
@@ -175,4 +175,4 @@ def test_the_screen_carries_no_trend_filter():
     for banned in ("sma20", "sma50", "priceAvg50", "ma_50"):
         assert banned not in src, f"trend filter crept back in: {banned}"
     assert U.SCREEN_MCAP == 2_000_000_000
-    assert U.SCREEN_AVG_VOL_10D == 1_500_000
+    assert U.SCREEN_AVG_VOL_10D == 500_000
