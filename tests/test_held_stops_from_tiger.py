@@ -126,3 +126,49 @@ def test_the_ptj_cache_carries_the_orders_flag_from_the_journal(monkeypatch, tmp
     assert [h["ticker"] for h in held] == ["MP", "V"]
     assert c["open_orders_pull_ran"] is True and c["second_read"]["reason"] == "not found"
     assert [f["type"] for f in c["stop_flags"]] == ["stop_partial_cover"]
+
+
+# ---- conductor 2026-11-17: SPCX, a 68-share SHORT with a live BUY stop at 145.05, printed "NO stop order (unprotected)" ----
+SHORT_ORDERS = {"result": [
+    {"id": 7, "status": "HELD", "action": "BUY", "order_type": "STP", "sec_type": "STK", "symbol": "SPCX", "quantity": 68, "stop_price": 145.05, "time_in_force": "GTC"},
+    {"id": 8, "status": "HELD", "action": "SELL", "order_type": "STP", "sec_type": "STK", "symbol": "RBRK", "quantity": 80, "stop_price": 99.45},
+]}
+SHORT_POS = {"result": [{"symbol": "SPCX", "sec_type": "STK", "quantity": -68}, {"symbol": "RBRK", "sec_type": "STK", "quantity": 80}]}
+SHORT_READ = {"pulled_at_utc": "2026-11-02T22:20:00Z", "date_sgt": "2026-11-03", "open_orders": SHORT_ORDERS, "stock_positions": SHORT_POS}
+SPCX = {"ticker": "SPCX", "qty": -68, "stop_live_broker": None, "stop_order": None}
+
+
+def test_a_short_is_protected_by_a_buy_stop_and_a_long_by_a_sell_stop():
+    s = bs.parse_second_read(SHORT_READ)["stops"]
+    assert s["SPCX"]["stop"] == 145.05 and s["SPCX"]["qty"] == 68 and s["RBRK"]["stop"] == 99.45
+    r = bs.resolve(SPCX, "2026-11-16", True, bs.parse_second_read(SHORT_READ), now=NOW)
+    assert r["held_sl"] == 145.05 and r["held_stop_status"] == "LIVE" and r["held_stop_order"]["stop"] == 145.05
+    assert "NO working stop" not in r["held_stop_check"] and "covers" not in r["held_stop_check"]          # 68 of 68: fully covered
+
+
+def test_the_wrong_side_stop_does_not_protect_a_short():
+    only_sell = dict(SHORT_READ, open_orders={"result": [dict(SHORT_ORDERS["result"][0], action="SELL")]})
+    r = bs.resolve(SPCX, "2026-11-16", True, bs.parse_second_read(only_sell), now=NOW)
+    assert r["held_sl"] is None and r["held_stop_status"] == "NO_STOP_ORDER"                  # UNPROTECTED only when there is truly no working stop on the right side
+    assert bs.stops_from_orders(SHORT_ORDERS) .get("SPCX") is None                              # position unknown: the long-side default, as before
+
+
+def test_the_journal_builder_writes_a_buy_stop_for_a_short_and_flags_no_stop_on_the_right_side_only():
+    import importlib.util, pathlib
+    spec = importlib.util.spec_from_file_location("jb_short", pathlib.Path(__file__).resolve().parents[1] / "aegis" / "tools" / "journal_build.py")
+    jb = importlib.util.module_from_spec(spec); spec.loader.exec_module(jb)
+    eq = [{"ticker": "SPCX", "qty": -68.0}, {"ticker": "RBRK", "qty": 80.0}]
+    flags = []
+    jb._apply_live_stops(eq, SHORT_ORDERS, flags)
+    assert eq[0]["stop_live_broker"] == 145.05 and eq[0]["stop_order"]["stop"] == 145.05 and eq[1]["stop_live_broker"] == 99.45
+    assert not [f for f in flags if f["type"] in ("no_live_stop", "stop_partial_cover")]
+    eq2, flags2 = [{"ticker": "SPCX", "qty": -68.0}], []
+    jb._apply_live_stops(eq2, {"result": [dict(SHORT_ORDERS["result"][0], action="SELL")]}, flags2)       # a SELL stop is the wrong side for a short
+    assert eq2[0]["stop_live_broker"] is None and any(f["type"] == "no_live_stop" for f in flags2)
+
+
+def test_the_cards_headline_never_says_unprotected_while_the_runs_broker_read_shows_a_stop():
+    import pathlib
+    src = (pathlib.Path(__file__).resolve().parents[1] / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools" / "pma_cards_v3.py").read_text()
+    i = src.index("a short's BUY stop is a working stop")
+    assert "broker_stops.json" in src[i - 200:i + 700] and '_h.get("held_sl") is None' in src[i:i + 700]
