@@ -113,3 +113,22 @@ def test_the_quant_scan_page_carries_the_funnel_tables_and_passes_the_html_gate(
     fails, _ = _gate().check_cards_html(str(out))
     assert not fails, fails
     assert "The funnel" not in CR.render("C", "2026-11-16", cons, None, None)          # no funnel file: the page is exactly as before
+
+
+def test_the_brief_gate_accepts_exactly_what_scan_funnel_pastes_and_rejects_the_old_header(tmp_path):
+    """Conductor 2026-11-17: Q-SS still looked for '| Stage | In | Out | What fell out |', so the restyled strip (#101) failed the gate. The producer and the gate must agree, for both scans."""
+    import pma_pipeline as PP
+    eb = _synthetic(tmp_path)
+    f = SF.build(str(tmp_path), "A", eb, {})
+    md = SF.render_md(f)
+    assert PP.funnel_pasted(md) == (True, True)
+    assert PP.funnel_pasted("| Stage | In | Out | What fell out |\n|---|---|---|---|\n| Universe | 1,000 | 3 | x |\n") == (False, False)       # the retired layout
+    assert PP.funnel_pasted(md.replace("| 1. Universe |", "| Universe |"))[0] is False                                    # an unnumbered strip is not the strip
+    assert PP.funnel_pasted(md.replace("| Step | Ticker | Result |", "| Ticker |"))[1] is False
+    (tmp_path / "seat_sets.json").unlink()
+    (tmp_path / "candidate_set.json").write_text(json.dumps({"universe": [{"ticker": t, "source": "longlist"} for t in "ABCDEFGH"]}))
+    (tmp_path / "run_manifest.json").write_text(json.dumps({"method": "quant_scan", "report": "C"}))
+    (tmp_path / "consensus.json").write_text(json.dumps([{"ticker": "A", "verdict": "ADVANCE"}, {"ticker": "B", "verdict": "PASS", "objections": [{"voice": "oneil", "objection": "no base"}]}]))
+    assert PP.funnel_pasted(SF.render_md(SF.build(str(tmp_path), "C", eb, {}))) == (True, True)
+    src = open(PP.__file__).read()
+    assert "What fell out |\" in brief_full" not in src

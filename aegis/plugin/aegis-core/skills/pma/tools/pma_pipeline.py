@@ -114,6 +114,14 @@ CLEAN_RAW_SUBSTITUTES = ("rs_rank_pct", "rvol_20d", "day_vol", "adx_14", "ret_63
 METHODS = ("whole_universe", "aqe_doors", "fallback_aqe_doors", "quant_scan")
 
 
+def funnel_pasted(text):
+    """(strip_ok, table_ok): did the brief paste scan_funnel.md's two blocks? The strip is ONE numbered row (`| 1. Universe | 2. Screens | ... |`, then its
+    separator and a counts row); the per-name table starts `| Step | Ticker | Result |`. PM 2026-11-17 (Valen funnel shape); the producer is scan_funnel.render_md."""
+    import re
+    strip = re.search(r"^\| 1\. [^|\n]+(?:\|[^\n|]*)*\|\s*\n\|(?:-+\|)+\s*\n\| *[\d,]+ *\|", text, re.M) is not None
+    return strip, "| Step | Ticker | Result |" in text
+
+
 def run_method(manifest_path="run_manifest.json"):
     """The run's candidate method, from the manifest: whole_universe (Standard Scan, no AQE gate), aqe_doors (the old chain) or
     fallback_aqe_doors (the old chain, because the universe rows were missing or refused). A manifest with no method is the old chain."""
@@ -3793,9 +3801,14 @@ def cmd_gate(a):
     _meth_g = run_method(_man if os.path.exists(_man) else "run_manifest.json")
     if _meth_g == "fallback_aqe_doors":
         chk("FALLBACK" in brief_full, "Q-SS", "a fallback run says so in the brief: the universe rows were missing or refused, so this is the old AQE-door chain (method fallback_aqe_doors)")
+    if _meth_g == "quant_scan":                 # the AQE Quant Scan pastes the same code-built funnel (strip + per-name table)
+        _fs, _ft = funnel_pasted(brief_full)
+        chk(_fs and _ft, "Q-SS", "the brief carries the AQE Quant Scan funnel (the numbered strip and the | Step | Ticker | Result | table, pasted from scan_funnel.md)")
     if _meth_g == "whole_universe":
         import aqe_listing
-        chk("| Stage | In | Out | What fell out |" in brief_full, "Q-SS", "the brief carries the funnel strip (| Stage | In | Out | What fell out |, pasted from scan_funnel.md)")
+        _fs, _ft = funnel_pasted(brief_full)
+        chk(_fs, "Q-SS", "the brief carries the funnel strip (one numbered row: | 1. Universe | 2. Screens | ... |, then its counts row, pasted from scan_funnel.md)")
+        chk(_ft, "Q-SS", "the brief carries the funnel's per-name table (| Step | Ticker | Result | ..., pasted from scan_funnel.md)")
         _hdr = "| Ticker | AQE-listed | AQE scores |"
         _at = brief_full.find(_hdr)
         chk(_at >= 0, "Q-SS", "the brief carries the AQE-listed table (| Ticker | AQE-listed | AQE scores |)")
