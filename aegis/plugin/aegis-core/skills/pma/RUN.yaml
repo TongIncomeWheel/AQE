@@ -55,9 +55,8 @@ parameters:
   tie_rule: WATCH               # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
   mtf_frames: [W, D, H1]        # R39
   committee_position: on        # R42 SWITCH: `off` = the conductor skips RATIONALE, ADOPT, RATIONALE-FINAL and POSITION for this run, ticks each `degraded` with the note 'R42 switched off', and writes that line at the top of run_notes.md. The Cards then print no committee block (no committee_position.json); verdicts and the conviction-free count are unaffected. No code change needed.
-  report_display_names:         # PM 2026-11-16: DISPLAY names only (Cards headings and report lines, brief section headings, desk/DONE messages, run_notes). The ids A / B / C stay the identifiers: AEGIS_REPORT, run dir suffixes -B/-C, the ledger `report` column, manifest ids.
+  report_display_names:         # PM 2026-11-16: DISPLAY names only (Cards headings and report lines, brief section headings, desk/DONE messages, run_notes). The ids A and C stay the identifiers: AEGIS_REPORT, the -C run dir suffix, the ledger `report` column, manifest ids (report B was removed 2026-11-17).
     A: "Committee Standard Scan"
-    B: "Report B"
     C: "Committee AQE Quant Scan"
   cards_renderer: v3            # PM 2026-11-04 (choice B): v3 = pma_cards_v3.py is the daily Cards. SAFETY NET in pma_cards_publish.py: if v3 errors, or the plain-words gate fails on its page / the words file, v2 (pma_cards.py render) publishes instead and the run says CARDS FALLBACK in run_notes.md, cards_renderer.json and the DONE push. Never silent, never a blank page. Set v2 to switch back.
   ma_not_deal_pinned: [APO, RY, F, COMP]   # R44 MANUAL OVERRIDE (5 Nov): the scan read these as pending TAKEOVER TARGETS and was wrong (APO: a rumour about Universal Music; RY: RBC is the seller of Moneris; F: 'Eagle Ford' name collision; COMP: a class-action notice). Names listed here are NOT deal-pinned; ratify-count prints and records each. Clear the list once the matcher fix has run in a nightly.
@@ -96,13 +95,13 @@ rerun:
     (5) The desk message starts 'PMA RERUN <date>-r2 DONE' and says it is not live.
 
 report:
-  how: "export AEGIS_REPORT=<A|C>; registrar.py --manifest run_manifest.json init --date <date> [--method whole_universe|aqe_doors|fallback_aqe_doors]   # report A, the live committee (PM 2026-11-16: whole_universe, the Standard Scan); registrar.py ... init --date <date> --report C   # run_id pma-<date>-C, run dir aegis/output/pma/run/<date>-C, method quant_scan; report B is frozen"
+  how: "export AEGIS_REPORT=<A|C>; registrar.py --manifest run_manifest.json init --date <date> [--method whole_universe|aqe_doors|fallback_aqe_doors]   # report A, the live committee (PM 2026-11-16: whole_universe, the Standard Scan); registrar.py ... init --date <date> --report C   # run_id pma-<date>-C, run dir aegis/output/pma/run/<date>-C, method quant_scan; there is no report B (removed 2026-11-17)"
   rules: >
-    TWO LIVE-CHAIN REPORTS AND A FROZEN ONE (PM 2026-11-05, re-ruled 2026-11-16), to measure whether the committee WITHOUT the AQE gate has more edge than AQE. The Committee Standard Scan
+    TWO REPORTS, A AND C (PM 2026-11-05, re-ruled 2026-11-16; report B REMOVED 2026-11-17), to measure whether the committee WITHOUT the AQE gate has more edge than AQE. The Committee Standard Scan
     (report A, the default; with AEGIS_REPORT unset a run is A) now seats names from the WHOLE screened universe (market cap >= $2B, 10-day volume >= 1.5M, NYSE or NASDAQ) with NO AQE gate and NO
-    AQE door. The Committee AQE Quant Scan (report C) is independent of A: a scan FROM the whole AQE universe on the AQE composites and sub-components. Report B is FROZEN (retired 2026-11-16; its
-    ledger rows stay as their own series, nothing is graded into A or C). Display names only: ids A, B, C, AEGIS_REPORT, run dir suffixes -B/-C, the ledger report column and manifest ids never change.
-    (1) C (and the frozen B) are NOT LIVE: non-live rerun kind (publishes_live false), no levels, not read by the alerts, scored only. A is the live committee. (2) C does NOT rerun weather, macro,
+    AQE door. The Committee AQE Quant Scan (report C) is independent of A: a scan FROM the whole AQE universe on the AQE composites and sub-components. Report B was REMOVED (PM 2026-11-17: "List B should be gone"): no
+    command, module, branch or screen of it remains; its run dirs under aegis/output/pma/run/*-B and its ledger rows stay as history only. Display names only: ids A and C, AEGIS_REPORT, the -C run dir suffix, the ledger report column and manifest ids never change.
+    (1) C is NOT LIVE: non-live rerun kind (publishes_live false), no levels, not read by the alerts, scored only. A is the live committee. (2) C does NOT rerun weather, macro,
     sector or the held-book sections: it reuses A's market outputs for the same date (data pull, market kill, macro context, held review) and takes NOTHING from A's candidate set, nominations or verdicts.
     (3) The AEGIS_REPORT setting must match the manifest or every registrar command and check.py chain refuses to run. (4) The drop rule is ceil(n/2) of the deciders present: 4 of 7 in A, 4 of 8 in C.
     (5) THE MANIFEST CARRIES THE METHOD (PM 2026-11-16). `registrar.py init --date <d> --method whole_universe` for a Standard Scan A run (the default for every A run from 2026-11-16); `--method aqe_doors` is
@@ -144,7 +143,7 @@ report:
     (5e) SLATE for C (conductor 2026-11-11): after DECIDE-TIMING and the tier-2 forms, `pma_pipeline.py slate-from-forms --dir <run dir>` writes slate.json by code from decision.json + forms/tier2 + slate_plan.json (only the
     names in `keep`); why_agreed, dissent and wrong_if are quotes of the seats' own tier-2 text, nothing the seats did not say. Then `registrar.py validate --file slate.json --kind slate --decision decision.json`. No hand script.
     (5f) DAILY ORDER (conductor 2026-11-16; the pma-auto routine reads this block, RUN.yaml wins over the routine prompt). A runs first and finishes through PUBLISH exactly as above (method whole_universe, or the loud
-    fallback). THEN, in the same session and only if A published (a stuck A runs no C): the COMMITTEE AQE QUANT SCAN as in (5d). Report B is not run. Then unset AEGIS_REPORT and WRITE the brief: the core verdict table
+    fallback). THEN, in the same session and only if A published (a stuck A runs no C): the COMMITTEE AQE QUANT SCAN as in (5d). Then unset AEGIS_REPORT and WRITE the brief: the core verdict table
     is A's; the AQE-listed table (5b) follows it; the Indicators C section (§0D) is a code-built module from C's consensus.json (module-registry; a module that fails is a one-line degraded note, never a blocker).
     The brief gate is `pma_pipeline.py gate ... --export aqe_daily_export_wu.json`: with the export it checks that §9A has ONE ROW PER HELD NAME carrying exactly one action word (HOLD, ADD, TRIM, EXIT,
     STOP-TIGHTEN, SET-STOP), or states the book is FLAT. A stuck C is reported in the DONE post and never delays A's PUBLISH or the Cards.
@@ -795,7 +794,7 @@ steps:
       line and run_notes gets CARDS LINES FALLBACK: <ticker>).
     modules: >
       PM 2026-11-10: AFTER the writer returns and BEFORE the gate, run `brief_sections.py assemble --brief pma_brief_<date>.md --run-dir . --date <date>`. It inserts the
-      code-built brief modules (contracts/brief_sections.json: Sweep B "§0C", Indicators C "§0D") between the verdict block and the macro section, each wrapped in
+      code-built brief modules (contracts/brief_sections.json: Indicators C "§0D") between the verdict block and the macro section, each wrapped in
       <!-- module:ID status:... --> markers. A module that is off is skipped; one whose report has not run (or fails) shows ONE line "> Section ... unavailable: <reason>" and
       never blocks the brief. `pma_pipeline.py gate` runs every core rule on the core text only and holds a module to its own rules only when it rendered ok. AEGIS_BRIEF_MODULES
       (a comma list, or `none`) overrides the registry flags for one run. The modules show ADVANCE / HOLD names only with an "N names deliberated" line, are labelled

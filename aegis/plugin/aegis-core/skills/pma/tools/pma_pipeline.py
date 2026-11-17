@@ -50,7 +50,7 @@ def _resolve_report_from_manifest(argv=None):
         try:
             if os.path.isfile(c):
                 rep = str((json.load(open(c)) or {}).get("report") or "").strip().upper()
-                if rep in ("B", "C"):
+                if rep == "C":
                     os.environ["AEGIS_REPORT"] = rep
                 return
         except Exception:
@@ -108,7 +108,7 @@ CLEAN_STRIP = ("source", "in_ledger", "on_longlist", "on_elder", "on_qs", "qs", 
                "runner_conviction_label", "premove_setup", "premove_conviction", "mover_subtype", "signal_hit_rate_20d", "signal_n",
                "sc_m_gates", "sc_p_gates", "sc_m_gate_detail", "sc_p_gate_detail", "subcomponents")
 CLEAN_RAW_SUBSTITUTES = ("rs_rank_pct", "rvol_20d", "day_vol", "adx_14", "ret_63d", "pct_from_52w_high", "atr_14d", "ma_20", "ma_50", "ma_200")   # raw price / volume fields every seat may use instead
-METHODS = ("whole_universe", "aqe_doors", "fallback_aqe_doors", "quant_scan", "report_b")
+METHODS = ("whole_universe", "aqe_doors", "fallback_aqe_doors", "quant_scan")
 
 
 def run_method(manifest_path="run_manifest.json"):
@@ -272,7 +272,7 @@ def cmd_trim(a):
     _src_rows = D["daily_list"]
     _ur = getattr(a, "universe_rows", None)
     if _ur:
-        # REPORT B (PM 2026-11-05): the candidate set is the screened universe, not AQE's lists. Only the names the seven code screens
+        # STANDARD SCAN (PM 2026-11-05, now report A): the candidate set is the screened universe, not AQE's lists. Only the names the seven code screens
         # chose (`keep`) are carried; every row is a plain universe row with no list membership, so no AQE door can reappear downstream.
         _keep = set(getattr(a, "keep", None) or [])
         _exp_by = {r.get("ticker"): r for r in D["daily_list"]} if getattr(a, "prefer_export", False) else {}
@@ -339,13 +339,13 @@ def cmd_trim(a):
           f"AQE health verdict -> {health}")
 
 def cmd_screens(a):
-    """REPORT B (PM 2026-11-05): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json.
+    """STANDARD SCAN (report A): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json.
     No AQE list, lens ranking or score gate is a door. Held names are carried whole by trim as always."""
     import seat_screens
     U = load(a.universe_rows, needs=["rows"])
     rows = U["rows"]
     if not rows:
-        raise SystemExit("screens: the universe rows file is empty -- REFUSING (a Report B run on no universe would be a silent empty report)")
+        raise SystemExit("screens: the universe rows file is empty -- REFUSING (a Standard Scan on no universe would be a silent empty report)")
     res = seat_screens.all_screens(rows, a.top)
     keep = sorted({x["ticker"] for v in res.values() for x in v})
     save(a.out_sets, {"rule": f"per-seat code screens, top {a.top} of {len(rows)} universe rows (date {U.get('date')})",
@@ -391,26 +391,8 @@ def cmd_augment_export(a):
         raise SystemExit(f"augment-export: REFUSING -- {missing} are in neither the export nor the universe rows, so no row can be served for them")
 
 
-def cmd_reuse_a(a):
-    """REPORT B (PM 2026-11-10): a name Report B seats that Report A has ALREADY deliberated today is not run again -- A's verdict is reused and tagged.
-    Reads B's phase4.json and A's consensus.json; removes those names from B's deliberation_set, writes reused_from_a.json
-    {tickers, a_verdicts} and records them in phase4 under `reused_from_a`. Held names are A's by definition. Only the new names go through B's chain."""
-    P4 = load(a.phase4, needs=["deliberation_set"])
-    A = {c["ticker"]: c for c in load(a.a_consensus)}
-    reused = [t for t in P4["deliberation_set"] if t in A]
-    new = [t for t in P4["deliberation_set"] if t not in A]
-    P4["reused_from_a"] = reused
-    P4["deliberation_set"] = new
-    if "ranked" in P4:
-        P4["ranked"] = [r for r in P4["ranked"] if r.get("ticker") not in A]
-    save(a.phase4, P4)
-    save(a.out, {"date": a.date, "tickers": reused, "a_verdicts": {t: A[t]["verdict"] for t in reused},
-                 "note": "Report B seated these names but Committee Standard Scan had already deliberated them today: A's verdict is reused, not re-run (PM 2026-11-10, option 1)"})
-    print(f"receipt: reuse-a: {len(reused)} B names already deliberated in A reuse A's verdict ({', '.join(reused) or 'none'}); {len(new)} new names go through B's chain")
-
-
 def cmd_coverage(a):
-    """REPORT B (conductor defect 2026-11-10): every name in seat_sets.json must have a fundamentals row, a SERVED MTF row and closes in the committee data the
+    """STANDARD SCAN (conductor defect 2026-11-10): every name in seat_sets.json must have a fundamentals row, a SERVED MTF row and closes in the committee data the
     run reads, or this fails (exit 1, names listed). Run after `screens`; fix with the committee-topup workflow, never by proceeding."""
     S = load(a.seat_sets, needs=["seats"])
     names = sorted({x["ticker"] for v in S["seats"].values() for x in v})
@@ -428,7 +410,7 @@ def cmd_coverage(a):
 
 
 def cmd_slate_from_forms(a):
-    """REPORT B / C (conductor 2026-11-11): the Chair's slate built by CODE from decision.json + the seats' own tier-2 forms (forms/tier2/*.json), so a B or C
+    """STANDARD SCAN / AQE QUANT SCAN (conductor 2026-11-11): the Chair's slate built by CODE from decision.json + the seats' own tier-2 forms (forms/tier2/*.json), so a B or C
     run needs no hand-written script. Writes NOTHING the seats did not say (R34/R40): `why_agreed` and `dissent` are quotes of the seats' own tier-2 reasons,
     `wrong_if` is a seat's own line, the trigger is decision.json's. Reads slate_plan.json `keep` when present (only those names get a ticket). Writes slate.json;
     validate it with `registrar.py validate --file slate.json --kind slate --decision decision.json`. Same output, byte for byte, as the conductor's reference script
@@ -827,7 +809,7 @@ def cmd_packets(a):
         used_dicts = {f: codebooks[f][1] for f in menu if codebooks.get(f)}
         _vu = universe
         if seat_sets is not None:
-            # REPORT B: this seat reads only its own screened names (plus the held book, which is never held out)
+            # STANDARD SCAN: this seat reads only its own screened names (plus the held book, which is never held out)
             _allowed = set(seat_sets.get(v) or [])
             _vu = [r for r in universe if r["ticker"] in _allowed or r.get("held")]
         _mode = "seat_set" if seat_sets is not None else None
@@ -1082,14 +1064,14 @@ MOMENTUM_DOORS = ("STRENGTH", "AQE_LEADER")
 BASE_DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
 QUANT_SEAT = "aqe-quant"
 REPORT = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
-if REPORT not in ("A", "B", "C"):
-    raise SystemExit(f"AEGIS_REPORT must be A, B or C, got {REPORT!r}")
+if REPORT not in ("A", "C"):
+    raise SystemExit(f"AEGIS_REPORT must be A or C, got {REPORT!r} (report B was removed 2026-11-17)")
 DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])
 QA_SEAT = "steenbarger"
 BENCH_SEATS = ["weis", "thorp"]
 STOOD_DOWN = ["rogers", "lynch", "crown", "druckenmiller", "detect-lens"]
 R33_EFFECTIVE = "2026-11-01"   # ballots dated from here carry the shortlist cap (6) and the case form
-SHORTLIST_CAP = 3 if REPORT == "B" else 6   # R33: at most six nominations per decider (fewer is valid, never padded); Report B: three (PM 2026-11-10)
+SHORTLIST_CAP = 6   # R33: at most six nominations per decider (fewer is valid, never padded)
 def _slate_cap_from_run_yaml(default=25):
     """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
     run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
@@ -4014,19 +3996,17 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("trim"); s.add_argument("--export", required=True); s.add_argument("--date", required=True); s.add_argument("--out", default="candidate_set.json")
-    s = sub.add_parser("screens", help="REPORT B (PM 2026-11-05): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json; no AQE list is a door")
+    s = sub.add_parser("screens", help="STANDARD SCAN (report A): per-seat code screens over the whole screened universe -> seat_sets.json + candidate_set.json; no AQE list is a door")
     s.add_argument("--universe-rows", required=True); s.add_argument("--export", required=True, help="Committee Standard Scan's export: only the held book and the market blocks are read from it")
-    s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=(10 if REPORT == "B" else 25), help="names per seat; Report B reads the top 10 (PM 2026-11-10), anything else 25"); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
-    s = sub.add_parser("reuse-a", help="REPORT B: names A already deliberated today reuse A's verdict and leave B's deliberation set (PM 2026-11-10, option 1)")
-    s.add_argument("--phase4", default="phase4.json"); s.add_argument("--a-consensus", required=True, help="Committee Standard Scan's consensus.json for the same date"); s.add_argument("--date", required=True); s.add_argument("--out", default="reused_from_a.json")
-    s = sub.add_parser("coverage", help="REPORT B: every name in seat_sets.json has fundamentals + a served MTF row + closes in the committee data, or fail")
+    s.add_argument("--date", required=True); s.add_argument("--top", type=int, default=25, help="names per seat (25, the Standard Scan)"); s.add_argument("--out", default="candidate_set.json"); s.add_argument("--out-sets", default="seat_sets.json")
+    s = sub.add_parser("coverage", help="STANDARD SCAN: every name in seat_sets.json has fundamentals + a served MTF row + closes in the committee data, or fail")
     s.add_argument("--seat-sets", default="seat_sets.json"); s.add_argument("--committee-dir", default="aegis/output/committee_data")
-    s = sub.add_parser("slate-from-forms", help="REPORT B/C: the Chair's slate by code from decision.json + the seats' own tier-2 forms (nothing the seats did not say)")
+    s = sub.add_parser("slate-from-forms", help="STANDARD SCAN / AQE QUANT SCAN: the Chair's slate by code from decision.json + the seats' own tier-2 forms (nothing the seats did not say)")
     s.add_argument("--dir", default=".", help="the run directory (decision.json, forms/tier2/, slate_plan.json, board.json)"); s.add_argument("--out", default=None)
     s = sub.add_parser("augment-export", help="STANDARD SCAN (PM 2026-11-16): add the screened names that are not in daily_list to a copy of the export (universe_only rows from aqe_universe_rows.json) so every later command finds a row")
     s.add_argument("--export", required=True); s.add_argument("--universe-rows", required=True); s.add_argument("--seat-sets", default=None, help="seat_sets.json from `screens`")
     s.add_argument("--tickers", default=None, help="comma list of extra tickers"); s.add_argument("--out", default="aqe_daily_export_wu.json")
-    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--max-bytes", type=int, default=None, help="trim each seat's packet to about this many bytes (rows ranked by that seat's own screen, held book always kept; declared in the packet and packet_trim.json)"); s.add_argument("--seat-sets", default=None, help="REPORT B: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book"); s.add_argument("--clean", action="store_true", help="STANDARD SCAN clean test (PM 2026-11-16): strip AQE list membership and AQE composite / engine scores from every seat packet; declared in a # CLEAN TEST line and packets/clean_test.json")
+    s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--max-bytes", type=int, default=None, help="trim each seat's packet to about this many bytes (rows ranked by that seat's own screen, held book always kept; declared in the packet and packet_trim.json)"); s.add_argument("--seat-sets", default=None, help="STANDARD SCAN: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book"); s.add_argument("--clean", action="store_true", help="STANDARD SCAN clean test (PM 2026-11-16): strip AQE list membership and AQE composite / engine scores from every seat packet; declared in a # CLEAN TEST line and packets/clean_test.json")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")
     s = sub.add_parser("repeatmarks", help="Put the committee's own memory on the face of every verdict: consecutive-advance streaks, drift since the first call, and reversals (PM 2026-09-25).")
     s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--consensus", default="consensus.json")
@@ -4119,7 +4099,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "reuse-a": cmd_reuse_a, "augment-export": cmd_augment_export, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "augment-export": cmd_augment_export, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,

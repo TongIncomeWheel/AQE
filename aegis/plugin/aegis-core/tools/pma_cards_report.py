@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Report B / C cards (PM 2026-11-05): the compact page. Only the ticker section and the scorecard line -- no weather, macro, sector or book
-sections (those are Report A's, and B/C reuse A's), and NO levels: B and C are scored only, never bracketed, never watched by the alerts.
+"""Report C cards (PM 2026-11-05): the compact page. Only the ticker section and the scorecard line -- no weather, macro, sector or book
+sections (those are Report A's, and C reuses A's), and NO levels: C is scored only, never bracketed, never watched by the alerts.
 
   pma_cards_report.py --report C --date 2026-11-06 [--run-dir .] [--out pma_cards_<date>-C.html]
 Reads consensus.json (+ report_lines.json when present). Writes one phone-safe HTML page and nothing else."""
 import argparse, datetime, html, json, os, sys
 
-NAME = {"B": "Report B -- the whole screened market", "C": "Committee AQE Quant Scan -- the committee plus the AQE-quant voice"}
-WHAT = {"B": "The same seven voices, each reading the whole daily screened universe with its own method, before any AQE score gate.",
-        "C": "The seven voices plus one that argues only from AQE's own scores and the parts behind them."}
+NAME = {"C": "Committee AQE Quant Scan -- the committee plus the AQE-quant voice"}
+WHAT = {"C": "The seven voices plus one that argues only from AQE's own scores and the parts behind them."}
 
 
 def E(x):
@@ -53,7 +52,7 @@ body{{font:16px/1.5 system-ui,sans-serif;margin:0;padding:16px;background:#fff;c
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--report", required=True, choices=["B", "C"])
+    p.add_argument("--report", required=True, choices=["C"])
     p.add_argument("--date", required=True)
     p.add_argument("--run-dir", default=".")
     p.add_argument("--out")

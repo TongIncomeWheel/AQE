@@ -1,4 +1,4 @@
-"""Report B committee-data coverage (conductor defect 2026-11-10): every name the B screens seat has fundamentals, a served MTF row and closes, or the step fails loudly."""
+"""Standard Scan committee-data coverage (conductor defect 2026-11-10): every name the Standard Scan screens seat has fundamentals, a served MTF row and closes, or the step fails loudly."""
 import json
 
 import pytest

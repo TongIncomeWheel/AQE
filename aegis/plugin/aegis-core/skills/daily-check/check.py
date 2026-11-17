@@ -153,7 +153,7 @@ def check_chain(run_dir, date, levels_path=None, run_yaml=DEFAULT_RUN_YAML, ceil
         env_rep = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
         if rep_ != env_rep:
             fails.append(f"manifest is report {rep_} but AEGIS_REPORT={env_rep}: the roster this check counts would be wrong")
-        if rep_ in ("B", "C"):
+        if rep_ == "C":
             if not M.get("rerun") or (M.get("rerun") or {}).get("publishes_live") is not False:
                 fails.append(f"report {rep_} must be a non-live run (rerun block with publishes_live false): it publishes no levels and is not watched by alerts")
             notes.append(f"REPORT {rep_}: scored only; no levels published; reuses Committee Standard Scan's weather, macro, market kill and held review")
@@ -291,7 +291,7 @@ def _deciders(run_yaml):
 
 
 def _with_report_seat(roster):
-    """Three reports (PM 2026-11-05): a C run (env AEGIS_REPORT=C) adds the AQE quant seat as an eighth decider; A and B are the seven."""
+    """Three reports (PM 2026-11-05): a C run (env AEGIS_REPORT=C) adds the AQE quant seat as an eighth decider; A is the seven."""
     if (os.environ.get("AEGIS_REPORT") or "A").strip().upper() == "C" and "aqe-quant" not in roster:
         return list(roster) + ["aqe-quant"]
     return list(roster)
@@ -445,7 +445,7 @@ def check_committee_data(output_dir, run_date, export=None):
         fails.append(f"committee_data closes: SPY ends {max(C['SPY'])}, the last US close is {last_us_close(run_date)} -- stale closes")
     if export is not None:
         want = sorted({r.get("ticker") for r in (export.get("daily_list") or [])} | {h.get("ticker") for h in (export.get("held_positions") or [])} - {None})
-        # EXTRAS ARE FINE (conductor 2026-11-11): the nightly adds Report B's screened names to committee data (#77), so the set may be a SUPERSET of
+        # EXTRAS ARE FINE (conductor 2026-11-11): the nightly adds the Standard Scan's screened names to committee data (#77), so the set may be a SUPERSET of
         # the export. It fails only when an export (or held) name is MISSING from the grid or the fundamentals pack - that is a different export.
         have_g, have_f = set(G.get("names") or {}), set((F.get("tickers") or {}).keys())
         miss_g, miss_f = sorted(set(want) - have_g), sorted(set(want) - have_f)
@@ -453,7 +453,7 @@ def check_committee_data(output_dir, run_date, export=None):
             fails.append(f"committee_data was fetched for {(M.get('scope') or {}).get('requested')} names, today's export has {len(want)} and these are missing from it "
                          f"(mtf: {miss_g[:8]}, fundamentals: {miss_f[:8]}) - a different export")
         elif len(have_g) > len(want):
-            notes.append(f"committee data carries +{len(have_g - set(want))} screened names beyond today's export (Report B's screens, by design)")
+            notes.append(f"committee data carries +{len(have_g - set(want))} screened names beyond today's export (the Standard Scan's screens, by design)")
     if fails:
         return fails, notes
     gc, fc = G["coverage"], F["coverage"]
@@ -1079,7 +1079,7 @@ def _resolve_report_from_manifest(argv=None):
         try:
             if os.path.isfile(c):
                 rep = str((json.load(open(c)) or {}).get("report") or "").strip().upper()
-                if rep in ("B", "C"):
+                if rep == "C":
                     os.environ["AEGIS_REPORT"] = rep
                 return
         except Exception:

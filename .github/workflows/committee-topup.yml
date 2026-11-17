@@ -1,7 +1,7 @@
-name: Committee data top-up (Report B screened names)
+name: Committee data top-up (Standard Scan screened names)
 
-# Conductor defect 2026-11-10: Report B screens the whole universe but committee data exists only for the export's daily_list. This pulls fundamentals,
-# the W/D/H1 grid and closes (same fetchers as the nightly) for the names Report B screens/needs and publishes them to aegis/output/committee_data/ on main.
+# Conductor defect 2026-11-10: the Standard Scan screens the whole universe but committee data exists only for the export's daily_list. This pulls fundamentals,
+# the W/D/H1 grid and closes (same fetchers as the nightly) for the names the Standard Scan screens/needs and publishes them to aegis/output/committee_data/ on main.
 # Loud: exits non-zero if any requested name is still unserved. Run it after `screens` and before the B committee reads its data.
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
         required: false
         default: ""
       screens:
-        description: "also cover every name the seven Report B screens seat (top 10 per seat)"
+        description: "also cover every name the seven Standard Scan screens seat (top 25 per seat)"
         required: false
         default: "true"
 
