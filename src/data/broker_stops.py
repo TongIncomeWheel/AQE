@@ -63,12 +63,18 @@ def _rows(payload):
     return []
 
 
-def stops_from_orders(open_orders) -> dict:
-    """{ticker: stop_order} from Tiger's working SELL stop orders on stock. When a name has
-    several, the one covering the most shares is kept and `n_orders` says there were more."""
+def stops_from_orders(open_orders, qty: dict | None = None) -> dict:
+    """{ticker: stop_order} from Tiger's working stop orders on stock. A long (or a name whose position is not
+    known) is protected by a SELL stop; a SHORT (negative qty in `qty`) by a BUY stop above it (conductor 2026-11-17:
+    SPCX, a 68-share short with a live BUY stop at 145.05, read as unprotected because only SELL stops were mapped).
+    Only the right side counts. When a name has several, the one covering the most shares is kept and `n_orders`
+    says there were more."""
+    qty = qty or {}
     by: dict[str, list] = {}
     for o in _rows(open_orders):
-        if str(o.get("action") or "").upper() != "SELL":
+        t0 = str(o.get("symbol") or "").strip().upper()
+        want = "BUY" if (qty.get(t0) or 0) < 0 else "SELL"
+        if str(o.get("action") or "").upper() != want:
             continue
         if str(o.get("sec_type") or "STK").upper() not in ("STK", "STOCK", "EQUITY"):
             continue
@@ -113,10 +119,11 @@ def parse_second_read(doc) -> dict:
     if "open_orders" not in doc or "stock_positions" not in doc:
         return {"ok": False, "reason": "file lacks open_orders / stock_positions",
                 "pulled_at_utc": doc.get("pulled_at_utc")}
+    qty = qty_from_positions(doc.get("stock_positions"))
     return {"ok": True, "pulled_at_utc": doc.get("pulled_at_utc"),
             "date_sgt": doc.get("date_sgt"),
-            "stops": stops_from_orders(doc.get("open_orders")),
-            "qty": qty_from_positions(doc.get("stock_positions"))}
+            "stops": stops_from_orders(doc.get("open_orders"), qty),
+            "qty": qty}
 
 
 def fetch_second_read() -> dict:
@@ -187,8 +194,8 @@ def resolve(position: dict, journal_date, orders_pulled, second: dict | None,
         elif s_order is not None and j_stop is not None and abs(s_order["stop"] - j_stop) > PRICE_TOL:
             notes.append(f"stop moved: journal {j_stop} -> Tiger {s_order['stop']}")
         if s_order and s_order.get("qty") is not None and position.get("qty") is not None \
-                and s_order["qty"] + 1e-6 < float(position["qty"]):
-            notes.append(f"stop covers {s_order['qty']:g} of {float(position['qty']):g} shares")
+                and abs(s_order["qty"]) + 1e-6 < abs(float(position["qty"])):
+            notes.append(f"stop covers {abs(s_order['qty']):g} of {abs(float(position['qty'])):g} shares")
         out["held_stop_check"] = "AGREES" if not notes else "DIFFERS: " + "; ".join(notes)
         # The later broker answer is the stop in force.
         out["held_sl"] = s_order["stop"] if s_order else None
