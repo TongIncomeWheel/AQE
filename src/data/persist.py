@@ -89,6 +89,9 @@ def _members() -> list[tuple]:
         # without one until the next full run.
         "aqe_valen_dashboard.json",
         "valen_dashboard.json",
+        # Stage Weather (docs/AQE_STAGE_WEATHER.md) — same reason as VALEN.
+        "aqe_stage_weather.json",
+        "stage_weather.json",
     ]
     items = [(DATA_DIR / f, f"data/{f}") for f in data_files]
     items += [(OUTPUT_DIR / f, f"output/{f}") for f in out_files]

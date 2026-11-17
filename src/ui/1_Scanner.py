@@ -1553,6 +1553,8 @@ if _dq.get("flagged_count"):
 _EXPORT_COL_ORDER = [
     "rank", "ticker", "last_close", "source", "pe", "on_longlist", "on_elder",
     "unr_status", "unr_note",     # U&R on the last completed trading day (PM 2026-10-12)
+    "stage", "stage_candidate", "stage_weeks", "trend_template", "trend_template_met",
+    "stage2_confirmed",           # four-stage cycle + Minervini C2/C3 (docs/AQE_STAGE_WEATHER.md)
     "gics_sector", "gics_sector_name", "gics_gate", "sector_corr", "sector_corr_class",
     "sc_momentum", "sc_momentum_raw", "pipe_rank", "floor",
     "flow", "energy", "structure", "mp", "mp_state", "elder", "elder_5d",
