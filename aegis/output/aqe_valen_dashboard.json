@@ -1,13 +1,13 @@
 {
   "date": "2026-11-17",
-  "exported_at": "2026-11-17 06:54:53 SGT",
+  "exported_at": "2026-11-17 16:19:17 SGT",
   "basis": "eod",
   "status": "OK",
   "read_me_first": {
     "headline": "Stance: RISK OFF. SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
     "because": [
       "SPY is below its short-term lines on both the daily and weekly charts \u2014 the index is in a downtrend.",
-      "SPY sits -2.09 ATRs above its 50-day line (not stretched). QQQ sits -3.32 ATRs above its 50-day line (not stretched). VIX/VIX3M is 0.84 \u2014 neither calm nor stressed.",
+      "SPY sits -2.09 ATRs above its 50-day line (not stretched). QQQ sits -3.32 ATRs above its 50-day line (not stretched). VIX/VIX3M is 1.00 \u2014 neither calm nor stressed.",
       "Real leadership this week: Insurance, Oil Services, Enterprise Software \u2014 strong on both the weekly and monthly read."
     ],
     "so_what": "Breadth is against the tape \u2014 build the watchlist, do not push new entries.",
@@ -17,10 +17,8 @@
       "5-day up/down 4% count clears 1.0 (now 0.25)",
       "5-day up/down 4% count falls under 0.7 (now 0.25)"
     ],
-    "caveats": [
-      "DATA NOT CURRENT (expected session 2026-11-16): dispersion_vixeq as of 2026-11-13 [PUBLISHER_LAG]; dspx as of 2026-11-13 [PUBLISHER_LAG]. Readings that depend on them are older than today's close."
-    ],
-    "as_of": "2026-11-16T22:54:44Z",
+    "caveats": [],
+    "as_of": "2026-11-17T08:18:57Z",
     "note": "Rule-based reading, not a prediction \u2014 see docs/AQE_VALEN_DASHBOARD_PROPOSAL.md."
   },
   "stance": {
@@ -63,7 +61,7 @@
     {
       "label": "VIX / VIX3M",
       "kind": "vix_vix3m",
-      "value": 0.8384,
+      "value": 0.9952,
       "flag": false
     }
   ],
@@ -99,7 +97,7 @@
       "kind": "bool",
       "status": "OK",
       "value": true,
-      "display": "64.5 vs 42.7",
+      "display": "64.5 vs 42.5",
       "reason": null
     },
     {
@@ -124,7 +122,7 @@
       "section": "instrument",
       "kind": "pct_0_100",
       "status": "OK",
-      "value": 43.7,
+      "value": 43.8,
       "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
@@ -133,7 +131,7 @@
       "section": "instrument",
       "kind": "pct_0_100",
       "status": "OK",
-      "value": 52.3,
+      "value": 52.2,
       "reason": null,
       "population": "us_nasdaq_nyse_mcap_gt_2b"
     },
@@ -166,16 +164,16 @@
     "status": "OK",
     "ticker": "SPY",
     "price": 739.95,
-    "flip": 759.85,
+    "flip": 759.34,
     "call_wall": 775.0,
     "put_wall": 730.0,
-    "flip_distance_pct": 2.69,
-    "total_gex": -10781975449.17,
+    "flip_distance_pct": 2.62,
+    "total_gex": -10897538805.87,
     "regime": "NEGATIVE",
     "light": "RED",
     "commentary": "Below flip: moves get amplified. Cut size, tighten stops.",
     "assumption": "Customers are long calls and long puts, so dealers are long call gamma and short put gamma. This is the standard convention, NOT observed data \u2014 exchange feeds publish open interest, never who is on which side.",
-    "dealer_read": "Volatile market \u2014 dealers are short gamma and amplify moves in both directions: support ~730, breakout level ~760 (reclaiming it calms the market), resistance ~775."
+    "dealer_read": "Volatile market \u2014 dealers are short gamma and amplify moves in both directions: support ~730, breakout level ~759 (reclaiming it calms the market), resistance ~775."
   },
   "crown_cockpit": {
     "breadth_range": {
@@ -193,7 +191,7 @@
     },
     "dispersion": {
       "status": "OK",
-      "percentile_pct": 77.5,
+      "percentile_pct": 78.7,
       "state": "NORMAL_RISING",
       "direction": "RISING",
       "basis": "implied"
@@ -236,9 +234,9 @@
     {
       "label": "VIX / VIX3M",
       "kind": "number",
-      "now": 0.8384,
-      "5d_ago": 1.2297,
-      "1mo_ago": 0.8029
+      "now": 0.9952,
+      "5d_ago": 0.9554,
+      "1mo_ago": 0.9751
     },
     {
       "label": "T2108",
@@ -263,7 +261,7 @@
         "as_of": "2026-11-16",
         "expected": "2026-11-16",
         "reason": "CURRENT",
-        "detail": "3740/3741 tickers current"
+        "detail": "3726/3727 tickers current"
       },
       {
         "leg": "heartbeat_rsp_spy",
@@ -281,17 +279,17 @@
       },
       {
         "leg": "dispersion_vixeq",
-        "as_of": "2026-11-13",
+        "as_of": "2026-11-16",
         "expected": "2026-11-16",
-        "reason": "PUBLISHER_LAG",
-        "detail": "Cboe posts ~21:11 ET (10:11 SGT)"
+        "reason": "CURRENT",
+        "detail": ""
       },
       {
         "leg": "dspx",
-        "as_of": "2026-11-13",
+        "as_of": "2026-11-16",
         "expected": "2026-11-16",
-        "reason": "PUBLISHER_LAG",
-        "detail": "Cboe posts ~21:41 ET (10:41 SGT)"
+        "reason": "CURRENT",
+        "detail": ""
       },
       {
         "leg": "vix3m",
@@ -322,10 +320,7 @@
         "detail": "latest published weekly CFTC release; next release 2026-11-20"
       }
     ],
-    "behind": [
-      "dispersion_vixeq",
-      "dspx"
-    ],
+    "behind": [],
     "blocking": []
   },
   "neighbourhood": [
@@ -338,7 +333,7 @@
       "name": "Mag7",
       "display_name": "Mag7",
       "parent_gics": "XLK",
-      "since_open_pct": -1.91,
+      "since_open_pct": -1.93,
       "ret_1w_pct": -3.28,
       "ret_1m_pct": -7.66,
       "thrust": 4.38,
@@ -351,7 +346,7 @@
       "name": "AI_Infrastructure",
       "display_name": "AI Infrastructure",
       "parent_gics": "XLRE",
-      "since_open_pct": -1.48,
+      "since_open_pct": -1.45,
       "ret_1w_pct": -4.79,
       "ret_1m_pct": -7.16,
       "thrust": 2.37,
@@ -364,7 +359,7 @@
       "name": "AI_Software",
       "display_name": "AI Software",
       "parent_gics": "XLK",
-      "since_open_pct": -2.49,
+      "since_open_pct": -2.32,
       "ret_1w_pct": -6.02,
       "ret_1m_pct": -7.06,
       "thrust": 1.04,
@@ -390,7 +385,7 @@
       "name": "Chip_Equipment",
       "display_name": "Chip Equipment",
       "parent_gics": "XLK",
-      "since_open_pct": -0.91,
+      "since_open_pct": -0.83,
       "ret_1w_pct": -6.32,
       "ret_1m_pct": -13.99,
       "thrust": 7.67,
@@ -403,7 +398,7 @@
       "name": "Enterprise_Software",
       "display_name": "Enterprise Software",
       "parent_gics": "XLK",
-      "since_open_pct": -0.3,
+      "since_open_pct": -0.29,
       "ret_1w_pct": 0.95,
       "ret_1m_pct": -6.46,
       "thrust": 7.4,
@@ -416,11 +411,11 @@
       "name": "Cloud_Computing",
       "display_name": "Cloud Computing",
       "parent_gics": "XLK",
-      "since_open_pct": -1.83,
-      "ret_1w_pct": -1.64,
-      "ret_1m_pct": -10.13,
+      "since_open_pct": -1.84,
+      "ret_1w_pct": -1.63,
+      "ret_1m_pct": -10.12,
       "thrust": 8.49,
-      "pct_off_52w_high": -24.44,
+      "pct_off_52w_high": -24.43,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -429,9 +424,9 @@
       "name": "Cybersecurity",
       "display_name": "Cybersecurity",
       "parent_gics": "XLK",
-      "since_open_pct": 0.38,
+      "since_open_pct": 0.48,
       "ret_1w_pct": -3.56,
-      "ret_1m_pct": -4.01,
+      "ret_1m_pct": -4.0,
       "thrust": 0.44,
       "pct_off_52w_high": -18.83,
       "rotation_state": "OFF_THE_FLOOR",
@@ -442,7 +437,7 @@
       "name": "Quantum_Computing",
       "display_name": "Quantum Computing",
       "parent_gics": "XLK",
-      "since_open_pct": -3.4,
+      "since_open_pct": -3.27,
       "ret_1w_pct": -24.08,
       "ret_1m_pct": -17.47,
       "thrust": -6.61,
@@ -455,7 +450,7 @@
       "name": "Space_eVTOL",
       "display_name": "Space eVTOL",
       "parent_gics": "XLI",
-      "since_open_pct": -5.01,
+      "since_open_pct": -5.02,
       "ret_1w_pct": -13.57,
       "ret_1m_pct": -6.63,
       "thrust": -6.94,
@@ -481,8 +476,8 @@
       "name": "Infra_Power",
       "display_name": "Infra Power",
       "parent_gics": "XLI",
-      "since_open_pct": 0.07,
-      "ret_1w_pct": -2.95,
+      "since_open_pct": 0.21,
+      "ret_1w_pct": -2.94,
       "ret_1m_pct": -8.8,
       "thrust": 5.86,
       "pct_off_52w_high": -30.1,
@@ -494,7 +489,7 @@
       "name": "Infra_Construction",
       "display_name": "Infra Construction",
       "parent_gics": "XLI",
-      "since_open_pct": -0.52,
+      "since_open_pct": -0.56,
       "ret_1w_pct": -2.03,
       "ret_1m_pct": -6.41,
       "thrust": 4.39,
@@ -507,11 +502,11 @@
       "name": "Autonomous_Robotics",
       "display_name": "Autonomous Robotics",
       "parent_gics": "XLI",
-      "since_open_pct": -1.79,
-      "ret_1w_pct": -10.14,
-      "ret_1m_pct": -13.09,
+      "since_open_pct": -1.74,
+      "ret_1w_pct": -10.15,
+      "ret_1m_pct": -13.1,
       "thrust": 2.95,
-      "pct_off_52w_high": -37.54,
+      "pct_off_52w_high": -37.55,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -533,7 +528,7 @@
       "name": "Nuclear_Energy",
       "display_name": "Nuclear Energy",
       "parent_gics": "XLE",
-      "since_open_pct": -1.96,
+      "since_open_pct": -1.93,
       "ret_1w_pct": -14.35,
       "ret_1m_pct": -16.96,
       "thrust": 2.6,
@@ -546,7 +541,7 @@
       "name": "Solar_Renewables",
       "display_name": "Solar Renewables",
       "parent_gics": "XLU",
-      "since_open_pct": -1.68,
+      "since_open_pct": -1.57,
       "ret_1w_pct": -14.26,
       "ret_1m_pct": -8.0,
       "thrust": -6.27,
@@ -585,9 +580,9 @@
       "name": "Critical_Minerals",
       "display_name": "Critical Minerals",
       "parent_gics": "XLB",
-      "since_open_pct": -2.13,
-      "ret_1w_pct": -9.74,
-      "ret_1m_pct": -14.21,
+      "since_open_pct": -2.06,
+      "ret_1w_pct": -9.73,
+      "ret_1m_pct": -14.2,
       "thrust": 4.47,
       "pct_off_52w_high": -35.25,
       "rotation_state": "NEITHER",
@@ -598,7 +593,7 @@
       "name": "Gold_Miners",
       "display_name": "Gold Miners",
       "parent_gics": "XLB",
-      "since_open_pct": -1.79,
+      "since_open_pct": -1.85,
       "ret_1w_pct": -12.26,
       "ret_1m_pct": -5.92,
       "thrust": -6.34,
@@ -624,8 +619,8 @@
       "name": "Big_Banks",
       "display_name": "Big Banks",
       "parent_gics": "XLF",
-      "since_open_pct": -1.3,
-      "ret_1w_pct": -1.02,
+      "since_open_pct": -1.28,
+      "ret_1w_pct": -1.01,
       "ret_1m_pct": 2.46,
       "thrust": -3.47,
       "pct_off_52w_high": -11.66,
@@ -637,11 +632,11 @@
       "name": "Fintech",
       "display_name": "Fintech",
       "parent_gics": "XLF",
-      "since_open_pct": -1.69,
-      "ret_1w_pct": -7.64,
-      "ret_1m_pct": -6.7,
+      "since_open_pct": -1.67,
+      "ret_1w_pct": -7.62,
+      "ret_1m_pct": -6.69,
       "thrust": -0.93,
-      "pct_off_52w_high": -35.55,
+      "pct_off_52w_high": -35.53,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
@@ -650,9 +645,9 @@
       "name": "Crypto_Digital",
       "display_name": "Crypto Digital",
       "parent_gics": "XLF",
-      "since_open_pct": -1.56,
+      "since_open_pct": -1.58,
       "ret_1w_pct": -10.72,
-      "ret_1m_pct": -20.01,
+      "ret_1m_pct": -20.02,
       "thrust": 9.3,
       "pct_off_52w_high": -55.39,
       "rotation_state": "NEITHER",
@@ -663,7 +658,7 @@
       "name": "Insurance",
       "display_name": "Insurance",
       "parent_gics": "XLF",
-      "since_open_pct": -0.85,
+      "since_open_pct": -0.87,
       "ret_1w_pct": 1.99,
       "ret_1m_pct": 4.71,
       "thrust": -2.73,
@@ -676,7 +671,7 @@
       "name": "Payments",
       "display_name": "Payments",
       "parent_gics": "XLK",
-      "since_open_pct": -2.09,
+      "since_open_pct": -2.12,
       "ret_1w_pct": -1.98,
       "ret_1m_pct": 5.61,
       "thrust": -7.59,
@@ -689,11 +684,11 @@
       "name": "Gaming_Streaming",
       "display_name": "Gaming Streaming",
       "parent_gics": "XLC",
-      "since_open_pct": -2.83,
-      "ret_1w_pct": -1.88,
-      "ret_1m_pct": -1.27,
+      "since_open_pct": -2.8,
+      "ret_1w_pct": -1.85,
+      "ret_1m_pct": -1.25,
       "thrust": -0.61,
-      "pct_off_52w_high": -17.01,
+      "pct_off_52w_high": -16.99,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
@@ -702,11 +697,11 @@
       "name": "E_Commerce",
       "display_name": "E Commerce",
       "parent_gics": "XLY",
-      "since_open_pct": -1.85,
+      "since_open_pct": -1.86,
       "ret_1w_pct": -4.13,
       "ret_1m_pct": 1.72,
       "thrust": -5.85,
-      "pct_off_52w_high": -6.31,
+      "pct_off_52w_high": -6.3,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -715,7 +710,7 @@
       "name": "Travel_Leisure",
       "display_name": "Travel Leisure",
       "parent_gics": "XLY",
-      "since_open_pct": -0.07,
+      "since_open_pct": -0.13,
       "ret_1w_pct": -3.19,
       "ret_1m_pct": 9.67,
       "thrust": -12.86,
@@ -729,7 +724,7 @@
       "display_name": "Homebuilders",
       "parent_gics": "XLY",
       "since_open_pct": -1.34,
-      "ret_1w_pct": -7.73,
+      "ret_1w_pct": -7.72,
       "ret_1m_pct": 11.02,
       "thrust": -18.75,
       "pct_off_52w_high": -11.44,
@@ -741,11 +736,11 @@
       "name": "Biotech",
       "display_name": "Biotech",
       "parent_gics": "XLV",
-      "since_open_pct": -1.7,
+      "since_open_pct": -1.73,
       "ret_1w_pct": -6.14,
       "ret_1m_pct": 4.78,
       "thrust": -10.92,
-      "pct_off_52w_high": -9.32,
+      "pct_off_52w_high": -9.31,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -754,7 +749,7 @@
       "name": "MedTech",
       "display_name": "MedTech",
       "parent_gics": "XLV",
-      "since_open_pct": -1.52,
+      "since_open_pct": -1.42,
       "ret_1w_pct": -2.3,
       "ret_1m_pct": 5.62,
       "thrust": -7.92,
@@ -767,11 +762,11 @@
       "name": "REITs",
       "display_name": "REITs",
       "parent_gics": "XLRE",
-      "since_open_pct": -1.01,
-      "ret_1w_pct": -1.14,
-      "ret_1m_pct": 4.79,
+      "since_open_pct": -1.03,
+      "ret_1w_pct": -1.13,
+      "ret_1m_pct": 4.8,
       "thrust": -5.93,
-      "pct_off_52w_high": -3.83,
+      "pct_off_52w_high": -3.82,
       "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -781,10 +776,10 @@
       "display_name": "Social Media",
       "parent_gics": "XLC",
       "since_open_pct": -2.88,
-      "ret_1w_pct": -1.27,
-      "ret_1m_pct": -9.24,
+      "ret_1w_pct": -1.24,
+      "ret_1m_pct": -9.21,
       "thrust": 7.97,
-      "pct_off_52w_high": -34.69,
+      "pct_off_52w_high": -34.67,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
@@ -821,9 +816,9 @@
       "name": "Crypto_Digital",
       "display_name": "Crypto Digital",
       "parent_gics": "XLF",
-      "since_open_pct": -1.56,
+      "since_open_pct": -1.58,
       "ret_1w_pct": -10.72,
-      "ret_1m_pct": -20.01,
+      "ret_1m_pct": -20.02,
       "thrust": 9.3,
       "pct_off_52w_high": -55.39,
       "rotation_state": "NEITHER",
@@ -834,11 +829,11 @@
       "name": "Cloud_Computing",
       "display_name": "Cloud Computing",
       "parent_gics": "XLK",
-      "since_open_pct": -1.83,
-      "ret_1w_pct": -1.64,
-      "ret_1m_pct": -10.13,
+      "since_open_pct": -1.84,
+      "ret_1w_pct": -1.63,
+      "ret_1m_pct": -10.12,
       "thrust": 8.49,
-      "pct_off_52w_high": -24.44,
+      "pct_off_52w_high": -24.43,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "EXITING"
@@ -848,10 +843,10 @@
       "display_name": "Social Media",
       "parent_gics": "XLC",
       "since_open_pct": -2.88,
-      "ret_1w_pct": -1.27,
-      "ret_1m_pct": -9.24,
+      "ret_1w_pct": -1.24,
+      "ret_1m_pct": -9.21,
       "thrust": 7.97,
-      "pct_off_52w_high": -34.69,
+      "pct_off_52w_high": -34.67,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
@@ -860,7 +855,7 @@
       "name": "Chip_Equipment",
       "display_name": "Chip Equipment",
       "parent_gics": "XLK",
-      "since_open_pct": -0.91,
+      "since_open_pct": -0.83,
       "ret_1w_pct": -6.32,
       "ret_1m_pct": -13.99,
       "thrust": 7.67,
@@ -873,7 +868,7 @@
       "name": "Enterprise_Software",
       "display_name": "Enterprise Software",
       "parent_gics": "XLK",
-      "since_open_pct": -0.3,
+      "since_open_pct": -0.29,
       "ret_1w_pct": 0.95,
       "ret_1m_pct": -6.46,
       "thrust": 7.4,
@@ -886,8 +881,8 @@
       "name": "Infra_Power",
       "display_name": "Infra Power",
       "parent_gics": "XLI",
-      "since_open_pct": 0.07,
-      "ret_1w_pct": -2.95,
+      "since_open_pct": 0.21,
+      "ret_1w_pct": -2.94,
       "ret_1m_pct": -8.8,
       "thrust": 5.86,
       "pct_off_52w_high": -30.1,
@@ -899,9 +894,9 @@
       "name": "Critical_Minerals",
       "display_name": "Critical Minerals",
       "parent_gics": "XLB",
-      "since_open_pct": -2.13,
-      "ret_1w_pct": -9.74,
-      "ret_1m_pct": -14.21,
+      "since_open_pct": -2.06,
+      "ret_1w_pct": -9.73,
+      "ret_1m_pct": -14.2,
       "thrust": 4.47,
       "pct_off_52w_high": -35.25,
       "rotation_state": "NEITHER",
@@ -925,7 +920,7 @@
       "name": "Infra_Construction",
       "display_name": "Infra Construction",
       "parent_gics": "XLI",
-      "since_open_pct": -0.52,
+      "since_open_pct": -0.56,
       "ret_1w_pct": -2.03,
       "ret_1m_pct": -6.41,
       "thrust": 4.39,
@@ -938,7 +933,7 @@
       "name": "Mag7",
       "display_name": "Mag7",
       "parent_gics": "XLK",
-      "since_open_pct": -1.91,
+      "since_open_pct": -1.93,
       "ret_1w_pct": -3.28,
       "ret_1m_pct": -7.66,
       "thrust": 4.38,
@@ -951,11 +946,11 @@
       "name": "Autonomous_Robotics",
       "display_name": "Autonomous Robotics",
       "parent_gics": "XLI",
-      "since_open_pct": -1.79,
-      "ret_1w_pct": -10.14,
-      "ret_1m_pct": -13.09,
+      "since_open_pct": -1.74,
+      "ret_1w_pct": -10.15,
+      "ret_1m_pct": -13.1,
       "thrust": 2.95,
-      "pct_off_52w_high": -37.54,
+      "pct_off_52w_high": -37.55,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "DEEPENING"
@@ -964,7 +959,7 @@
       "name": "Nuclear_Energy",
       "display_name": "Nuclear Energy",
       "parent_gics": "XLE",
-      "since_open_pct": -1.96,
+      "since_open_pct": -1.93,
       "ret_1w_pct": -14.35,
       "ret_1m_pct": -16.96,
       "thrust": 2.6,
@@ -977,7 +972,7 @@
       "name": "AI_Infrastructure",
       "display_name": "AI Infrastructure",
       "parent_gics": "XLRE",
-      "since_open_pct": -1.48,
+      "since_open_pct": -1.45,
       "ret_1w_pct": -4.79,
       "ret_1m_pct": -7.16,
       "thrust": 2.37,
@@ -990,7 +985,7 @@
       "name": "AI_Software",
       "display_name": "AI Software",
       "parent_gics": "XLK",
-      "since_open_pct": -2.49,
+      "since_open_pct": -2.32,
       "ret_1w_pct": -6.02,
       "ret_1m_pct": -7.06,
       "thrust": 1.04,
@@ -1003,9 +998,9 @@
       "name": "Cybersecurity",
       "display_name": "Cybersecurity",
       "parent_gics": "XLK",
-      "since_open_pct": 0.38,
+      "since_open_pct": 0.48,
       "ret_1w_pct": -3.56,
-      "ret_1m_pct": -4.01,
+      "ret_1m_pct": -4.0,
       "thrust": 0.44,
       "pct_off_52w_high": -18.83,
       "rotation_state": "OFF_THE_FLOOR",
@@ -1016,11 +1011,11 @@
       "name": "Gaming_Streaming",
       "display_name": "Gaming Streaming",
       "parent_gics": "XLC",
-      "since_open_pct": -2.83,
-      "ret_1w_pct": -1.88,
-      "ret_1m_pct": -1.27,
+      "since_open_pct": -2.8,
+      "ret_1w_pct": -1.85,
+      "ret_1m_pct": -1.25,
       "thrust": -0.61,
-      "pct_off_52w_high": -17.01,
+      "pct_off_52w_high": -16.99,
       "rotation_state": "OFF_THE_FLOOR",
       "rrg_quadrant": "IMPROVING",
       "rrg_direction": "ENTERING"
@@ -1029,11 +1024,11 @@
       "name": "Fintech",
       "display_name": "Fintech",
       "parent_gics": "XLF",
-      "since_open_pct": -1.69,
-      "ret_1w_pct": -7.64,
-      "ret_1m_pct": -6.7,
+      "since_open_pct": -1.67,
+      "ret_1w_pct": -7.62,
+      "ret_1m_pct": -6.69,
       "thrust": -0.93,
-      "pct_off_52w_high": -35.55,
+      "pct_off_52w_high": -35.53,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LAGGING",
       "rrg_direction": "ENTERING"
@@ -1055,7 +1050,7 @@
       "name": "Insurance",
       "display_name": "Insurance",
       "parent_gics": "XLF",
-      "since_open_pct": -0.85,
+      "since_open_pct": -0.87,
       "ret_1w_pct": 1.99,
       "ret_1m_pct": 4.71,
       "thrust": -2.73,
@@ -1068,8 +1063,8 @@
       "name": "Big_Banks",
       "display_name": "Big Banks",
       "parent_gics": "XLF",
-      "since_open_pct": -1.3,
-      "ret_1w_pct": -1.02,
+      "since_open_pct": -1.28,
+      "ret_1w_pct": -1.01,
       "ret_1m_pct": 2.46,
       "thrust": -3.47,
       "pct_off_52w_high": -11.66,
@@ -1094,11 +1089,11 @@
       "name": "E_Commerce",
       "display_name": "E Commerce",
       "parent_gics": "XLY",
-      "since_open_pct": -1.85,
+      "since_open_pct": -1.86,
       "ret_1w_pct": -4.13,
       "ret_1m_pct": 1.72,
       "thrust": -5.85,
-      "pct_off_52w_high": -6.31,
+      "pct_off_52w_high": -6.3,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -1107,11 +1102,11 @@
       "name": "REITs",
       "display_name": "REITs",
       "parent_gics": "XLRE",
-      "since_open_pct": -1.01,
-      "ret_1w_pct": -1.14,
-      "ret_1m_pct": 4.79,
+      "since_open_pct": -1.03,
+      "ret_1w_pct": -1.13,
+      "ret_1m_pct": 4.8,
       "thrust": -5.93,
-      "pct_off_52w_high": -3.83,
+      "pct_off_52w_high": -3.82,
       "rotation_state": "LEADING",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -1120,7 +1115,7 @@
       "name": "Solar_Renewables",
       "display_name": "Solar Renewables",
       "parent_gics": "XLU",
-      "since_open_pct": -1.68,
+      "since_open_pct": -1.57,
       "ret_1w_pct": -14.26,
       "ret_1m_pct": -8.0,
       "thrust": -6.27,
@@ -1133,7 +1128,7 @@
       "name": "Gold_Miners",
       "display_name": "Gold Miners",
       "parent_gics": "XLB",
-      "since_open_pct": -1.79,
+      "since_open_pct": -1.85,
       "ret_1w_pct": -12.26,
       "ret_1m_pct": -5.92,
       "thrust": -6.34,
@@ -1146,7 +1141,7 @@
       "name": "Quantum_Computing",
       "display_name": "Quantum Computing",
       "parent_gics": "XLK",
-      "since_open_pct": -3.4,
+      "since_open_pct": -3.27,
       "ret_1w_pct": -24.08,
       "ret_1m_pct": -17.47,
       "thrust": -6.61,
@@ -1159,7 +1154,7 @@
       "name": "Space_eVTOL",
       "display_name": "Space eVTOL",
       "parent_gics": "XLI",
-      "since_open_pct": -5.01,
+      "since_open_pct": -5.02,
       "ret_1w_pct": -13.57,
       "ret_1m_pct": -6.63,
       "thrust": -6.94,
@@ -1172,7 +1167,7 @@
       "name": "Payments",
       "display_name": "Payments",
       "parent_gics": "XLK",
-      "since_open_pct": -2.09,
+      "since_open_pct": -2.12,
       "ret_1w_pct": -1.98,
       "ret_1m_pct": 5.61,
       "thrust": -7.59,
@@ -1198,7 +1193,7 @@
       "name": "MedTech",
       "display_name": "MedTech",
       "parent_gics": "XLV",
-      "since_open_pct": -1.52,
+      "since_open_pct": -1.42,
       "ret_1w_pct": -2.3,
       "ret_1m_pct": 5.62,
       "thrust": -7.92,
@@ -1211,11 +1206,11 @@
       "name": "Biotech",
       "display_name": "Biotech",
       "parent_gics": "XLV",
-      "since_open_pct": -1.7,
+      "since_open_pct": -1.73,
       "ret_1w_pct": -6.14,
       "ret_1m_pct": 4.78,
       "thrust": -10.92,
-      "pct_off_52w_high": -9.32,
+      "pct_off_52w_high": -9.31,
       "rotation_state": "NEITHER",
       "rrg_quadrant": "LEADING",
       "rrg_direction": "EXITING"
@@ -1224,7 +1219,7 @@
       "name": "Travel_Leisure",
       "display_name": "Travel Leisure",
       "parent_gics": "XLY",
-      "since_open_pct": -0.07,
+      "since_open_pct": -0.13,
       "ret_1w_pct": -3.19,
       "ret_1m_pct": 9.67,
       "thrust": -12.86,
@@ -1238,7 +1233,7 @@
       "display_name": "Homebuilders",
       "parent_gics": "XLY",
       "since_open_pct": -1.34,
-      "ret_1w_pct": -7.73,
+      "ret_1w_pct": -7.72,
       "ret_1m_pct": 11.02,
       "thrust": -18.75,
       "pct_off_52w_high": -11.44,
@@ -1251,126 +1246,126 @@
     "relative_strength": [
       {
         "ticker": "REPL",
-        "rs_rank_pct": 99.82,
+        "rs_rank_pct": 99.88,
         "rs_leadership": "LEADER",
         "pipe_rank": 0,
         "in_theme": false
       },
       {
+        "ticker": "XNCR",
+        "rs_rank_pct": 99.76,
+        "rs_leadership": "IN-LINE",
+        "pipe_rank": 65.0,
+        "in_theme": false
+      },
+      {
+        "ticker": "VIA",
+        "rs_rank_pct": 99.71,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 93.7,
+        "in_theme": false
+      },
+      {
+        "ticker": "AZTA",
+        "rs_rank_pct": 99.65,
+        "rs_leadership": "LAGGARD",
+        "pipe_rank": 0,
+        "in_theme": false
+      },
+      {
         "ticker": "AMPL",
-        "rs_rank_pct": 99.74,
+        "rs_rank_pct": 99.53,
         "rs_leadership": "LEADER",
         "pipe_rank": 77.5,
         "in_theme": false
       },
       {
         "ticker": "XERS",
-        "rs_rank_pct": 99.65,
+        "rs_rank_pct": 99.47,
         "rs_leadership": "LEADER",
         "pipe_rank": 80.0,
         "in_theme": false
       },
       {
+        "ticker": "APPN",
+        "rs_rank_pct": 99.35,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 68.5,
+        "in_theme": false
+      },
+      {
         "ticker": "HNGE",
-        "rs_rank_pct": 99.21,
+        "rs_rank_pct": 99.0,
         "rs_leadership": "LEADER",
         "pipe_rank": 82.5,
         "in_theme": false
       },
       {
         "ticker": "MGNI",
-        "rs_rank_pct": 98.77,
+        "rs_rank_pct": 98.65,
         "rs_leadership": "LEADER",
         "pipe_rank": 0,
         "in_theme": false
       },
       {
         "ticker": "SN",
-        "rs_rank_pct": 98.51,
+        "rs_rank_pct": 98.41,
         "rs_leadership": "LEADER",
         "pipe_rank": 83.5,
         "in_theme": false
       },
       {
         "ticker": "PRCH",
-        "rs_rank_pct": 98.42,
+        "rs_rank_pct": 98.35,
         "rs_leadership": "LEADER",
         "pipe_rank": 76.5,
         "in_theme": false
       },
       {
         "ticker": "COTY",
-        "rs_rank_pct": 98.33,
+        "rs_rank_pct": 98.23,
         "rs_leadership": "LEADER",
         "pipe_rank": 84.6,
         "in_theme": false
       },
       {
         "ticker": "KSS",
-        "rs_rank_pct": 98.07,
+        "rs_rank_pct": 98.0,
         "rs_leadership": "LEADER",
         "pipe_rank": 57.3,
         "in_theme": false
       },
       {
+        "ticker": "LILA",
+        "rs_rank_pct": 97.94,
+        "rs_leadership": "LEADER",
+        "pipe_rank": 0,
+        "in_theme": false
+      },
+      {
         "ticker": "CHYM",
-        "rs_rank_pct": 97.89,
+        "rs_rank_pct": 97.82,
         "rs_leadership": "LEADER",
         "pipe_rank": 74.7,
-        "in_theme": false
-      },
-      {
-        "ticker": "U",
-        "rs_rank_pct": 97.81,
-        "rs_leadership": "LEADER",
-        "pipe_rank": 0,
-        "in_theme": true
-      },
-      {
-        "ticker": "ZETA",
-        "rs_rank_pct": 97.37,
-        "rs_leadership": "IN-LINE",
-        "pipe_rank": 81.5,
-        "in_theme": false
-      },
-      {
-        "ticker": "LFST",
-        "rs_rank_pct": 97.19,
-        "rs_leadership": "LEADER",
-        "pipe_rank": 0,
-        "in_theme": false
-      },
-      {
-        "ticker": "VRDN",
-        "rs_rank_pct": 97.02,
-        "rs_leadership": "LEADER",
-        "pipe_rank": 66.3,
-        "in_theme": false
-      },
-      {
-        "ticker": "BBY",
-        "rs_rank_pct": 96.67,
-        "rs_leadership": "LEADER",
-        "pipe_rank": 62.2,
         "in_theme": false
       }
     ],
     "funnel": [
       {
         "stage": "Scored universe",
-        "count": 213
+        "count": 334
       },
       {
         "stage": "On longlist",
-        "count": 181
+        "count": 290
       },
       {
         "stage": "On longlist AND Elder",
-        "count": 62
+        "count": 96
       },
       {
         "stage": "QS-scored (third lens)",
-        "count": 5
+        "count": 7
       },
       {
         "stage": "Precision Edge",
@@ -1456,7 +1451,58 @@
         ]
       },
       {
+        "ticker": "MNSO",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 0 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "FER",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RTO",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "JBTM",
         "flags": [
           {
             "flag": "below_200d",
@@ -1478,6 +1524,23 @@
           {
             "flag": "stretched",
             "label": "5.9 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "J",
+        "flags": [
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 4 session(s)"
           },
           {
             "flag": "sector_weak",
@@ -1541,6 +1604,23 @@
         ]
       },
       {
+        "ticker": "JBHT",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "KNX",
         "flags": [
           {
@@ -1575,12 +1655,59 @@
         ]
       },
       {
+        "ticker": "ZIM",
+        "flags": [
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CHRW",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "MOD",
         "flags": [
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
           },
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CWST",
+        "flags": [
           {
             "flag": "sector_weak",
             "label": "Sector: Declining \u2014 Avoid"
@@ -1632,6 +1759,32 @@
       },
       {
         "ticker": "APP",
+        "flags": [
+          {
+            "flag": "stretched",
+            "label": "4.8 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BCO",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ARDT",
         "flags": [
           {
             "flag": "stretched",
@@ -1696,11 +1849,11 @@
         ]
       },
       {
-        "ticker": "LFTO",
+        "ticker": "PGNY",
         "flags": [
           {
             "flag": "stretched",
-            "label": "4.7 daily ranges extended (20-day basis)"
+            "label": "4.8 daily ranges extended (20-day basis)"
           },
           {
             "flag": "market_red",
@@ -1714,6 +1867,45 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HTHT",
+        "flags": [
+          {
+            "flag": "stretched",
+            "label": "4.1 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LFTO",
+        "flags": [
+          {
+            "flag": "stretched",
+            "label": "4.7 daily ranges extended (20-day basis)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TPC",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
           },
           {
             "flag": "market_red",
@@ -1761,7 +1953,46 @@
         ]
       },
       {
+        "ticker": "XMTR",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "ADP",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ALGT",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RSG",
         "flags": [
           {
             "flag": "sector_weak",
@@ -1787,11 +2018,11 @@
         ]
       },
       {
-        "ticker": "HTHT",
+        "ticker": "TU",
         "flags": [
           {
-            "flag": "stretched",
-            "label": "4.1 daily ranges extended (20-day basis)"
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
           },
           {
             "flag": "market_red",
@@ -1800,11 +2031,11 @@
         ]
       },
       {
-        "ticker": "TU",
+        "ticker": "AER",
         "flags": [
           {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
           },
           {
             "flag": "market_red",
@@ -1865,6 +2096,19 @@
         ]
       },
       {
+        "ticker": "SJM",
+        "flags": [
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 5 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "EIX",
         "flags": [
           {
@@ -1891,6 +2135,19 @@
         ]
       },
       {
+        "ticker": "NJR",
+        "flags": [
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 1 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "TPR",
         "flags": [
           {
@@ -1904,7 +2161,33 @@
         ]
       },
       {
+        "ticker": "MIDD",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "DTE",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "UE",
         "flags": [
           {
             "flag": "below_200d",
@@ -1935,6 +2218,19 @@
           {
             "flag": "sector_weak",
             "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SPOT",
+        "flags": [
+          {
+            "flag": "theme_weak",
+            "label": "Theme graded AVOID"
           },
           {
             "flag": "market_red",
@@ -1995,7 +2291,33 @@
         ]
       },
       {
+        "ticker": "FDX",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "LUV",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CAE",
         "flags": [
           {
             "flag": "sector_weak",
@@ -2047,6 +2369,19 @@
         ]
       },
       {
+        "ticker": "ALGN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "SUZ",
         "flags": [
           {
@@ -2061,6 +2396,19 @@
       },
       {
         "ticker": "MDLN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TCOM",
         "flags": [
           {
             "flag": "below_200d",
@@ -2099,6 +2447,19 @@
         ]
       },
       {
+        "ticker": "FDXF",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "LOW",
         "flags": [
           {
@@ -2117,6 +2478,45 @@
           {
             "flag": "sector_weak",
             "label": "Sector: Declining \u2014 Avoid"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "REGN",
+        "flags": [
+          {
+            "flag": "theme_weak",
+            "label": "Theme graded AVOID"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BJ",
+        "flags": [
+          {
+            "flag": "earnings_soon",
+            "label": "Earnings in 3 session(s)"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RCI",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
           },
           {
             "flag": "market_red",
@@ -2156,19 +2556,6 @@
           {
             "flag": "sector_weak",
             "label": "Sector: Declining \u2014 Avoid"
-          },
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "TCOM",
-        "flags": [
-          {
-            "flag": "below_200d",
-            "label": "Below the 200-day line"
           },
           {
             "flag": "market_red",
@@ -2229,6 +2616,19 @@
         ]
       },
       {
+        "ticker": "AQN",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "POR",
         "flags": [
           {
@@ -2242,7 +2642,7 @@
         ]
       },
       {
-        "ticker": "AQN",
+        "ticker": "MIAX",
         "flags": [
           {
             "flag": "below_200d",
@@ -2281,6 +2681,19 @@
         ]
       },
       {
+        "ticker": "IBP",
+        "flags": [
+          {
+            "flag": "below_200d",
+            "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "WSE",
         "flags": [
           {
@@ -2299,6 +2712,19 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
+          },
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ARMK",
+        "flags": [
+          {
+            "flag": "sector_weak",
+            "label": "Sector: Declining \u2014 Avoid"
           },
           {
             "flag": "market_red",
@@ -2338,19 +2764,6 @@
           {
             "flag": "below_200d",
             "label": "Below the 200-day line"
-          },
-          {
-            "flag": "market_red",
-            "label": "Market check is RISK OFF"
-          }
-        ]
-      },
-      {
-        "ticker": "ARMK",
-        "flags": [
-          {
-            "flag": "sector_weak",
-            "label": "Sector: Declining \u2014 Avoid"
           },
           {
             "flag": "market_red",
@@ -2437,6 +2850,15 @@
         ]
       },
       {
+        "ticker": "WWW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "BILL",
         "flags": [
           {
@@ -2491,6 +2913,33 @@
         ]
       },
       {
+        "ticker": "RLI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ASND",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AZTA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "COLD",
         "flags": [
           {
@@ -2509,7 +2958,52 @@
         ]
       },
       {
+        "ticker": "TSN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "OGS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NXST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "LILA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "U",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VCEL",
         "flags": [
           {
             "flag": "market_red",
@@ -2536,6 +3030,15 @@
         ]
       },
       {
+        "ticker": "AVA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "SPG",
         "flags": [
           {
@@ -2554,7 +3057,25 @@
         ]
       },
       {
-        "ticker": "TSN",
+        "ticker": "LH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PCTY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PPLI",
         "flags": [
           {
             "flag": "market_red",
@@ -2564,6 +3085,15 @@
       },
       {
         "ticker": "EW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GRDN",
         "flags": [
           {
             "flag": "market_red",
@@ -2590,7 +3120,34 @@
         ]
       },
       {
+        "ticker": "VIA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HQY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "CHD",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BR",
         "flags": [
           {
             "flag": "market_red",
@@ -2627,6 +3184,15 @@
       },
       {
         "ticker": "AMPL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ATAT",
         "flags": [
           {
             "flag": "market_red",
@@ -2689,6 +3255,24 @@
         ]
       },
       {
+        "ticker": "STE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "APPN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "STZ",
         "flags": [
           {
@@ -2698,7 +3282,43 @@
         ]
       },
       {
+        "ticker": "JKHY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "SMA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ATEN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BLCO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ACIW",
         "flags": [
           {
             "flag": "market_red",
@@ -2725,7 +3345,7 @@
         ]
       },
       {
-        "ticker": "NBIX",
+        "ticker": "ES",
         "flags": [
           {
             "flag": "market_red",
@@ -2734,7 +3354,7 @@
         ]
       },
       {
-        "ticker": "ES",
+        "ticker": "MSI",
         "flags": [
           {
             "flag": "market_red",
@@ -2752,7 +3372,34 @@
         ]
       },
       {
+        "ticker": "SKT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WTW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "HRL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NBIX",
         "flags": [
           {
             "flag": "market_red",
@@ -2779,6 +3426,15 @@
         ]
       },
       {
+        "ticker": "PECO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "CAH",
         "flags": [
           {
@@ -2788,7 +3444,43 @@
         ]
       },
       {
+        "ticker": "AXS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "IDXX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MSCI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "COR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "AFG",
         "flags": [
           {
             "flag": "market_red",
@@ -2842,6 +3534,15 @@
         ]
       },
       {
+        "ticker": "CINF",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "DUOL",
         "flags": [
           {
@@ -2852,6 +3553,24 @@
       },
       {
         "ticker": "OMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CBC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HGV",
         "flags": [
           {
             "flag": "market_red",
@@ -2896,7 +3615,25 @@
         ]
       },
       {
+        "ticker": "AON",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "RYN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COLM",
         "flags": [
           {
             "flag": "market_red",
@@ -2924,6 +3661,15 @@
       },
       {
         "ticker": "PG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TW",
         "flags": [
           {
             "flag": "market_red",
@@ -2986,7 +3732,34 @@
         ]
       },
       {
+        "ticker": "MOH",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "WRB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "VRSK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HHH",
         "flags": [
           {
             "flag": "market_red",
@@ -3004,7 +3777,25 @@
         ]
       },
       {
+        "ticker": "REYN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "PLNT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TNL",
         "flags": [
           {
             "flag": "market_red",
@@ -3023,6 +3814,60 @@
       },
       {
         "ticker": "CALY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GRFS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TFX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TXNM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CON",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "HCA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CPAY",
         "flags": [
           {
             "flag": "market_red",
@@ -3058,7 +3903,25 @@
         ]
       },
       {
+        "ticker": "OLLI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "YUMC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TBBB",
         "flags": [
           {
             "flag": "market_red",
@@ -3076,6 +3939,15 @@
         ]
       },
       {
+        "ticker": "UHS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "UNH",
         "flags": [
           {
@@ -3085,7 +3957,25 @@
         ]
       },
       {
+        "ticker": "CB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "PAYO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "COCO",
         "flags": [
           {
             "flag": "market_red",
@@ -3121,7 +4011,34 @@
         ]
       },
       {
+        "ticker": "MCK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DPZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "KO",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DGX",
         "flags": [
           {
             "flag": "market_red",
@@ -3148,7 +4065,34 @@
         ]
       },
       {
+        "ticker": "ELV",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "COTY",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SEZL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "FTDR",
         "flags": [
           {
             "flag": "market_red",
@@ -3175,7 +4119,34 @@
         ]
       },
       {
+        "ticker": "XNCR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "JAZZ",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "HNGE",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CROX",
         "flags": [
           {
             "flag": "market_red",
@@ -3220,6 +4191,15 @@
         ]
       },
       {
+        "ticker": "XHR",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "KHC",
         "flags": [
           {
@@ -3229,7 +4209,34 @@
         ]
       },
       {
+        "ticker": "CHA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TYL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "ADMA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TRMK",
         "flags": [
           {
             "flag": "market_red",
@@ -3283,6 +4290,15 @@
         ]
       },
       {
+        "ticker": "ONC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "PRCH",
         "flags": [
           {
@@ -3292,7 +4308,34 @@
         ]
       },
       {
+        "ticker": "KNSA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "EHC",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "EPAM",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "SKY",
         "flags": [
           {
             "flag": "market_red",
@@ -3311,6 +4354,15 @@
       },
       {
         "ticker": "DUK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PLGO",
         "flags": [
           {
             "flag": "market_red",
@@ -3391,7 +4443,25 @@
         ]
       },
       {
-        "ticker": "CPRI",
+        "ticker": "RHP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "PII",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MSGE",
         "flags": [
           {
             "flag": "market_red",
@@ -3401,6 +4471,51 @@
       },
       {
         "ticker": "BOX",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "H",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CPRI",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "RDN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "MMYT",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "DEO",
         "flags": [
           {
             "flag": "market_red",
@@ -3490,7 +4605,25 @@
         ]
       },
       {
+        "ticker": "OSW",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "CMG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "GCT",
         "flags": [
           {
             "flag": "market_red",
@@ -3526,7 +4659,43 @@
         ]
       },
       {
+        "ticker": "SYNA",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "TAK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "ABNB",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "WST",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "ATMU",
         "flags": [
           {
             "flag": "market_red",
@@ -3544,7 +4713,7 @@
         ]
       },
       {
-        "ticker": "TAK",
+        "ticker": "LIVN",
         "flags": [
           {
             "flag": "market_red",
@@ -3563,6 +4732,15 @@
       },
       {
         "ticker": "GEN",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "BRO",
         "flags": [
           {
             "flag": "market_red",
@@ -3607,6 +4785,24 @@
         ]
       },
       {
+        "ticker": "TARS",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "KNTK",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "LNG",
         "flags": [
           {
@@ -3616,7 +4812,34 @@
         ]
       },
       {
+        "ticker": "RL",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "NP",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
         "ticker": "MFG",
+        "flags": [
+          {
+            "flag": "market_red",
+            "label": "Market check is RISK OFF"
+          }
+        ]
+      },
+      {
+        "ticker": "CHRD",
         "flags": [
           {
             "flag": "market_red",
@@ -3749,7 +4972,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 5.0,
+                "value": 3.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -3762,7 +4985,7 @@
             ],
             "fails": [
               "Stop at the pullback low, under one daily range: 8.03 vs daily range 2.13",
-              "Relative strength still holding: 5.0",
+              "Relative strength still holding: 3.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -4060,7 +5283,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 8.0,
+                "value": 6.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -4075,7 +5298,7 @@
               "Moving averages still rising (20 and 50-day)",
               "Volume drying up on the way down",
               "Stop at the pullback low, under one daily range: 25.07 vs daily range 6.15",
-              "Relative strength still holding: 8.0",
+              "Relative strength still holding: 6.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -4154,6 +5377,169 @@
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-10",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ALGT",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "12",
+            "setup": "Parabolic \u2014 risk warning on a long",
+            "status": "WARNING",
+            "pivot": null,
+            "stop": null,
+            "checks": [
+              {
+                "rule": "Vertical run: \u2265 50% in days to weeks",
+                "value": "52% in 14 sessions",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "3+ up days in a row into the top",
+                "value": 4,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Far above its rising averages (rare-air multiple of the daily range)",
+                "value": 4.3,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "First crack: big red bar on the latest session",
+                "value": null,
+                "result": "NOT_YET",
+                "hard": false
+              }
+            ],
+            "fails": [],
+            "note": "A risk flag on a long, never a short call. The handbook: 'I do not short strength.'",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ARDT",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "12",
+            "setup": "Parabolic \u2014 risk warning on a long",
+            "status": "WARNING",
+            "pivot": null,
+            "stop": null,
+            "checks": [
+              {
+                "rule": "Vertical run: \u2265 50% in days to weeks",
+                "value": "61% in 4 sessions",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "3+ up days in a row into the top",
+                "value": 4,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Far above its rising averages (rare-air multiple of the daily range)",
+                "value": 7.6,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "First crack: big red bar on the latest session",
+                "value": null,
+                "result": "NOT_YET",
+                "hard": false
+              }
+            ],
+            "fails": [],
+            "note": "A risk flag on a long, never a short call. The handbook: 'I do not short strength.'",
+            "as_of": "2026-11-16"
+          },
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "PAST_PIVOT",
+            "pivot": 16.23,
+            "stop": 15.58,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "12.1%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "12.1%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 12.8%, day 22.4%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "5.4x",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-5.7%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 15.58 vs 14.21",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "0.65 vs ATR 0.79",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
             "as_of": "2026-11-16"
           }
         ]
@@ -4415,7 +5801,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 95.0,
+                "value": 94.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -4686,6 +6072,128 @@
         ]
       },
       {
+        "ticker": "VCEL",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "12",
+            "setup": "Parabolic \u2014 risk warning on a long",
+            "status": "WARNING",
+            "pivot": null,
+            "stop": null,
+            "checks": [
+              {
+                "rule": "Vertical run: \u2265 50% in days to weeks",
+                "value": "51% in 7 sessions",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "3+ up days in a row into the top",
+                "value": 8,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Far above its rising averages (rare-air multiple of the daily range)",
+                "value": 6.7,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "First crack: big red bar on the latest session",
+                "value": null,
+                "result": "NOT_YET",
+                "hard": false
+              }
+            ],
+            "fails": [],
+            "note": "A risk flag on a long, never a short call. The handbook: 'I do not short strength.'",
+            "as_of": "2026-11-16"
+          },
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 55.6,
+            "stop": 50.76,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "1.6%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "1.6%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 1,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 11.1%, day 13.9%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "4.8x",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-4.8%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 50.76 vs 49.00",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "4.84 vs ATR 2.47",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "The first surprise: no gap like it in 6 months: 1",
+              "It holds the gap: upper part of range, above the prior day",
+              "A stop that fits (pause low within 1.5 daily ranges): 4.84 vs ATR 2.47"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "XERS",
         "held": false,
         "on_longlist": true,
@@ -4892,6 +6400,51 @@
         ]
       },
       {
+        "ticker": "XNCR",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "12",
+            "setup": "Parabolic \u2014 risk warning on a long",
+            "status": "WARNING",
+            "pivot": null,
+            "stop": null,
+            "checks": [
+              {
+                "rule": "Vertical run: \u2265 50% in days to weeks",
+                "value": "85% in 17 sessions",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "3+ up days in a row into the top",
+                "value": 4,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Far above its rising averages (rare-air multiple of the daily range)",
+                "value": 6.4,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "First crack: big red bar on the latest session",
+                "value": null,
+                "result": "NOT_YET",
+                "hard": false
+              }
+            ],
+            "fails": [],
+            "note": "A risk flag on a long, never a short call. The handbook: 'I do not short strength.'",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "ADMA",
         "held": false,
         "on_longlist": true,
@@ -5024,7 +6577,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 95.0,
+                "value": 94.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -5042,6 +6595,85 @@
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "FDXF",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally \u2014 Trendline",
+            "status": "WATCH",
+            "pivot": 134.9,
+            "stop": 130.76,
+            "checks": [
+              {
+                "rule": "EMA21 still rising",
+                "value": 124.29,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #2",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below Trendline",
+                "value": "low 130.76 under 134.90",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 132.91,
+                "result": "NOT_YET",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the undercut low, under one daily range",
+                "value": "4.14 vs daily range 5.11",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Buffer-stop zone, 1.25%\u20133.5% under the level (reference only)",
+                "value": "130.18\u2013133.22",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": null,
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Group still being bought (in-theme)"
+            ],
+            "note": "Reference level from the PM's U&R write-up, not the handbook. The reclaim is the signal.",
+            "ref_kind": "trend",
+            "ref_name": "Trendline",
             "as_of": "2026-11-16"
           }
         ]
@@ -5104,7 +6736,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 75.0,
+                "value": 74.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -5250,7 +6882,7 @@
               },
               {
                 "rule": "Then a real reclaim (close back above)",
-                "value": 224.93,
+                "value": 224.94,
                 "result": "NOT_YET",
                 "hard": false
               },
@@ -5262,13 +6894,13 @@
               },
               {
                 "rule": "Buffer-stop zone, 1.25%\u20133.5% under the level (reference only)",
-                "value": "217.28\u2013222.34",
+                "value": "217.28\u2013222.35",
                 "result": "INFO",
                 "hard": false
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 54.0,
+                "value": 50.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -5281,7 +6913,7 @@
             ],
             "fails": [
               "Volume drying up on the way down",
-              "Relative strength still holding: 54.0",
+              "Relative strength still holding: 50.0",
               "Group still being bought (in-theme)"
             ],
             "note": "Reference level from the PM's U&R write-up, not the handbook. The reclaim is the signal.",
@@ -5409,7 +7041,7 @@
               },
               {
                 "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
-                "value": "gap 12.7%, day 12.2%",
+                "value": "gap 12.6%, day 12.2%",
                 "result": "PASS",
                 "hard": false
               },
@@ -5529,6 +7161,87 @@
             "fails": [],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-05",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "AVA",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally \u2014 Trendline",
+            "status": "PAST_PIVOT",
+            "pivot": 40.67,
+            "stop": 40.27,
+            "checks": [
+              {
+                "rule": "EMA21 still rising",
+                "value": 39.03,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #1",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below Trendline",
+                "value": "low 40.27 under 40.67",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 40.96,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the undercut low, under one daily range",
+                "value": "0.69 vs daily range 0.74",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Buffer-stop zone, 1.25%\u20133.5% under the level (reference only)",
+                "value": "39.24\u201340.16",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 43.0,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume drying up on the way down",
+              "Relative strength still holding: 43.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "Reference level from the PM's U&R write-up, not the handbook. The reclaim is the signal.",
+            "ref_kind": "trend",
+            "ref_name": "Trendline",
             "as_of": "2026-11-16"
           }
         ]
@@ -6037,6 +7750,86 @@
         ]
       },
       {
+        "ticker": "AFG",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 149.68,
+            "stop": 148.88,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 146.89,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #5",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 148.88 under 149.68",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 159.45,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "10.57 vs daily range 2.98",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 71.0,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #5",
+              "Volume drying up on the way down",
+              "Stop at the pullback low, under one daily range: 10.57 vs daily range 2.98",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "AIG",
         "held": false,
         "on_longlist": false,
@@ -6094,7 +7887,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 58.0,
+                "value": 54.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -6108,7 +7901,7 @@
             "fails": [
               "Young trend: 1st, 2nd or 3rd pullback: pullback #9",
               "Stop at the pullback low, under one daily range: 5.02 vs daily range 1.78",
-              "Relative strength still holding: 58.0"
+              "Relative strength still holding: 54.0"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
             "as_of": "2026-11-16"
@@ -6202,6 +7995,505 @@
         ]
       },
       {
+        "ticker": "APPN",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 56.38,
+            "stop": 49.27,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "63.8%",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "63.8%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 9.6%, day 8.5% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.1x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "0.2%",
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 49.27 vs 51.27",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "7.11 vs ATR 3.16",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Neglect before it: no big run in the prior 3 months: 63.8%",
+              "Volume that proves it: \u2265 3x normal: 2.1x",
+              "Clear air overhead (no 1-year high within 15% above): 0.2%",
+              "Delayed EP: pause holds above the gap-day low: pause low 49.27 vs 51.27",
+              "A stop that fits (pause low within 1.5 daily ranges): 7.11 vs ATR 3.16"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ATAT",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 37.69,
+            "stop": 36.32,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "6.5%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "6.5%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap -1.0%, day 4.4% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "1.5x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "14.7%",
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 36.32 vs 35.48",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "1.37 vs ATR 1.39",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 1.5x",
+              "Clear air overhead (no 1-year high within 15% above): 14.7%"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-11",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ATEN",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 23.98,
+            "stop": 22.16,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 26.33,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #20",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 22.16 under 23.98",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 29.08,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "6.92 vs daily range 1.44",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 50.0,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #20",
+              "Stop at the pullback low, under one daily range: 6.92 vs daily range 1.44",
+              "Relative strength still holding: 50.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          },
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 26.0,
+            "stop": 24.3,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "-15.8%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "-15.8%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 9.5%, day 9.6% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.0x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "55.5%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 24.30 vs 23.96",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "1.70 vs ATR 1.44",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 2.0x",
+              "It holds the gap: upper part of range, above the prior day"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-06",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ATMU",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 55.46,
+            "stop": 53.48,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "2.0%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "2.0%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 3.6%, day 8.7% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "1.4x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "21.0%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 53.48 vs 51.46",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "1.98 vs ATR 1.93",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 1.4x"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-09",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "AZTA",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 50.06,
+            "stop": 43.15,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "20.7%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "20.7%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 15.0%, day 20.8% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.4x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-5.1%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 43.15 vs 43.67",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "6.91 vs ATR 2.89",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 2.4x",
+              "Delayed EP: pause holds above the gap-day low: pause low 43.15 vs 43.67",
+              "A stop that fits (pause low within 1.5 daily ranges): 6.91 vs ATR 2.89"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-11",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "BCE",
         "held": false,
         "on_longlist": true,
@@ -6213,7 +8505,7 @@
             "setup": "Episodic pivot (delayed)",
             "status": "FAILED",
             "pivot": 22.03,
-            "stop": 21.66,
+            "stop": 21.68,
             "checks": [
               {
                 "rule": "Neglect before it: no big run in the prior 3 months",
@@ -6271,7 +8563,7 @@
               },
               {
                 "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "0.37 vs ATR 0.50",
+                "value": "0.35 vs ATR 0.50",
                 "result": "PASS",
                 "hard": false
               }
@@ -6514,7 +8806,7 @@
               },
               {
                 "rule": "Stop at the pullback low, under one daily range",
-                "value": "2.92 vs daily range 1.14",
+                "value": "2.92 vs daily range 1.11",
                 "result": "FAIL",
                 "hard": true
               },
@@ -6533,7 +8825,7 @@
             ],
             "fails": [
               "Young trend: 1st, 2nd or 3rd pullback: pullback #13",
-              "Stop at the pullback low, under one daily range: 2.92 vs daily range 1.14"
+              "Stop at the pullback low, under one daily range: 2.92 vs daily range 1.11"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
             "as_of": "2026-11-16"
@@ -6847,7 +9139,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 57.0,
+                "value": 53.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -6860,7 +9152,7 @@
             ],
             "fails": [
               "Young trend: 1st, 2nd or 3rd pullback: pullback #12",
-              "Relative strength still holding: 57.0",
+              "Relative strength still holding: 53.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -7012,7 +9304,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 92.0,
+                "value": 91.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -7265,7 +9557,7 @@
               },
               {
                 "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "15.69 vs ATR 7.34",
+                "value": "15.69 vs ATR 7.35",
                 "result": "FAIL",
                 "hard": false
               }
@@ -7273,7 +9565,7 @@
             "fails": [
               "Neglect before it: no big run in the prior 3 months: 47.6%",
               "Delayed EP: pause holds above the gap-day low: pause low 152.87 vs 154.10",
-              "A stop that fits (pause low within 1.5 daily ranges): 15.69 vs ATR 7.34"
+              "A stop that fits (pause low within 1.5 daily ranges): 15.69 vs ATR 7.35"
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-05",
@@ -7351,7 +9643,7 @@
               },
               {
                 "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "5.20 vs ATR 2.84",
+                "value": "5.20 vs ATR 2.83",
                 "result": "FAIL",
                 "hard": false
               }
@@ -7359,7 +9651,7 @@
             "fails": [
               "The first surprise: no gap like it in 6 months: 1",
               "It holds the gap: upper part of range, above the prior day",
-              "A stop that fits (pause low within 1.5 daily ranges): 5.20 vs ATR 2.84"
+              "A stop that fits (pause low within 1.5 daily ranges): 5.20 vs ATR 2.83"
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-05",
@@ -7419,13 +9711,13 @@
               },
               {
                 "rule": "Stop at the pullback low, under one daily range",
-                "value": "5.91 vs daily range 1.44",
+                "value": "5.91 vs daily range 1.43",
                 "result": "FAIL",
                 "hard": true
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 63.0,
+                "value": 59.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -7439,8 +9731,8 @@
             "fails": [
               "Young trend: 1st, 2nd or 3rd pullback: pullback #23",
               "Volume drying up on the way down",
-              "Stop at the pullback low, under one daily range: 5.91 vs daily range 1.44",
-              "Relative strength still holding: 63.0",
+              "Stop at the pullback low, under one daily range: 5.91 vs daily range 1.43",
+              "Relative strength still holding: 59.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -7509,14 +9801,14 @@
               },
               {
                 "rule": "A stop that fits (pause low within 1.5 daily ranges)",
-                "value": "2.22 vs ATR 1.44",
+                "value": "2.22 vs ATR 1.43",
                 "result": "FAIL",
                 "hard": false
               }
             ],
             "fails": [
               "It holds the gap: upper part of range, above the prior day",
-              "A stop that fits (pause low within 1.5 daily ranges): 2.22 vs ATR 1.44"
+              "A stop that fits (pause low within 1.5 daily ranges): 2.22 vs ATR 1.43"
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-06",
@@ -7692,6 +9984,164 @@
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-12",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "GCT",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 57.16,
+            "stop": 53.87,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 56.67,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #48",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 53.87 under 57.16",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 64.15,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "10.28 vs daily range 3.49",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 96.0,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #48",
+              "Volume drying up on the way down",
+              "Stop at the pullback low, under one daily range: 10.28 vs daily range 3.49",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          },
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 67.18,
+            "stop": 58.3,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "10.5%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "10.5%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 12.2%, day 8.9% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "1.9x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-1.6%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 58.30 vs 61.33",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "8.88 vs ATR 3.49",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 1.9x",
+              "It holds the gap: upper part of range, above the prior day",
+              "Delayed EP: pause holds above the gap-day low: pause low 58.30 vs 61.33",
+              "A stop that fits (pause low within 1.5 daily ranges): 8.88 vs ATR 3.49"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
             "as_of": "2026-11-16"
           }
         ]
@@ -7935,6 +10385,92 @@
         ]
       },
       {
+        "ticker": "GRDN",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 43.41,
+            "stop": 41.5,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "-9.0%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "-9.0%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 8.9%, day 6.3% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.0x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "14.0%",
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 41.50 vs 40.22",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "1.91 vs ATR 1.91",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 2.0x",
+              "It holds the gap: upper part of range, above the prior day",
+              "Clear air overhead (no 1-year high within 15% above): 14.0%"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-06",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "HTHT",
         "held": false,
         "on_longlist": true,
@@ -7946,7 +10482,7 @@
             "setup": "Episodic pivot",
             "status": "FAILED",
             "pivot": 55.78,
-            "stop": 52.06,
+            "stop": 52.05,
             "checks": [
               {
                 "rule": "Neglect before it: no big run in the prior 3 months",
@@ -7998,7 +10534,7 @@
               },
               {
                 "rule": "A stop that fits: day's low within 1.5 daily ranges",
-                "value": "2.82 vs ATR 1.21",
+                "value": "2.83 vs ATR 1.21",
                 "result": "NOT_YET",
                 "hard": false
               }
@@ -8265,6 +10801,92 @@
         ]
       },
       {
+        "ticker": "LIVN",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 99.38,
+            "stop": 88.42,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "2.2%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "2.2%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 12.2%, day 17.9%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "6.1x",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-8.9%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 88.42 vs 89.50",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "10.96 vs ATR 3.37",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "It holds the gap: upper part of range, above the prior day",
+              "Delayed EP: pause holds above the gap-day low: pause low 88.42 vs 89.50",
+              "A stop that fits (pause low within 1.5 daily ranges): 10.96 vs ATR 3.37"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-04",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "LNG",
         "held": false,
         "on_longlist": false,
@@ -8403,7 +11025,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 79.0,
+                "value": 78.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -8597,6 +11219,86 @@
         ]
       },
       {
+        "ticker": "MSGE",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 76.59,
+            "stop": 74.05,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 79.31,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #18",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 74.05 under 76.59",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 79.91,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "5.86 vs daily range 2.78",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 70.0,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #18",
+              "Stop at the pullback low, under one daily range: 5.86 vs daily range 2.78",
+              "Relative strength still holding: 70.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "NU",
         "held": false,
         "on_longlist": false,
@@ -8739,7 +11441,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 40.0,
+                "value": 36.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -8754,7 +11456,86 @@
               "Young trend: 1st, 2nd or 3rd pullback: pullback #12",
               "Volume drying up on the way down",
               "Stop at the pullback low, under one daily range: 8.97 vs daily range 2.23",
-              "Relative strength still holding: 40.0",
+              "Relative strength still holding: 36.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "ONC",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 353.89,
+            "stop": 347.61,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 370.24,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #11",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 347.61 under 353.89",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 411.29,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "63.68 vs daily range 12.09",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 88.0,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #11",
+              "Stop at the pullback low, under one daily range: 63.68 vs daily range 12.09",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -8820,7 +11601,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 57.0,
+                "value": 53.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -8835,10 +11616,176 @@
               "Young trend: 1st, 2nd or 3rd pullback: pullback #10",
               "Volume drying up on the way down",
               "Stop at the pullback low, under one daily range: 5.44 vs daily range 0.99",
-              "Relative strength still holding: 57.0",
+              "Relative strength still holding: 53.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "PCTY",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 165.32,
+            "stop": 160.0,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 158.97,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #19",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 160.00 under 165.32",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 184.46,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "24.46 vs daily range 5.84",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 95.0,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #19",
+              "Volume drying up on the way down",
+              "Stop at the pullback low, under one daily range: 24.46 vs daily range 5.84",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "PGNY",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 35.5,
+            "stop": 33.34,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "-0.4%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "-0.4%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 1,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 10.2%, day 14.2%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.6x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-3.8%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 33.34 vs 32.03",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "2.16 vs ATR 1.15",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "The first surprise: no gap like it in 6 months: 1",
+              "Volume that proves it: \u2265 3x normal: 2.6x",
+              "A stop that fits (pause low within 1.5 daily ranges): 2.16 vs ATR 1.15"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
             "as_of": "2026-11-16"
           }
         ]
@@ -8989,13 +11936,13 @@
               },
               {
                 "rule": "Stop at the pullback low, under one daily range",
-                "value": "25.90 vs daily range 5.69",
+                "value": "25.90 vs daily range 5.68",
                 "result": "FAIL",
                 "hard": true
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 80.0,
+                "value": 78.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -9009,10 +11956,97 @@
             "fails": [
               "Young trend: 1st, 2nd or 3rd pullback: pullback #24",
               "Volume drying up on the way down",
-              "Stop at the pullback low, under one daily range: 25.90 vs daily range 5.69",
+              "Stop at the pullback low, under one daily range: 25.90 vs daily range 5.68",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "SEZL",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 178.55,
+            "stop": 145.15,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "-23.4%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "-23.4%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 1,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 26.4%, day 13.4%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "4.0x",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "26.3%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "technical fingerprint only \u2014 AQE has no news feed",
+                "result": "INFO",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 145.15 vs 152.12",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "33.40 vs ATR 10.56",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "The first surprise: no gap like it in 6 months: 1",
+              "It holds the gap: upper part of range, above the prior day",
+              "Delayed EP: pause holds above the gap-day low: pause low 145.15 vs 152.12",
+              "A stop that fits (pause low within 1.5 daily ranges): 33.40 vs ATR 10.56"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-05",
             "as_of": "2026-11-16"
           }
         ]
@@ -9075,7 +12109,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 80.0,
+                "value": 79.0,
                 "result": "PASS",
                 "hard": false
               },
@@ -9155,7 +12189,7 @@
               },
               {
                 "rule": "Relative strength still holding",
-                "value": 50.0,
+                "value": 46.0,
                 "result": "FAIL",
                 "hard": false
               },
@@ -9169,7 +12203,88 @@
             "fails": [
               "Volume drying up on the way down",
               "Stop at the pullback low, under one daily range: 4.24 vs daily range 1.84",
-              "Relative strength still holding: 50.0",
+              "Relative strength still holding: 46.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "SYNA",
+        "held": false,
+        "on_longlist": false,
+        "on_elder": false,
+        "on_qs": true,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 116.85,
+            "stop": 116.01,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 110.52,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #29",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 116.01 under 116.85",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 117.52,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "1.51 vs daily range 1.43",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 41.0,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Young trend: 1st, 2nd or 3rd pullback: pullback #29",
+              "Volume drying up on the way down",
+              "Stop at the pullback low, under one daily range: 1.51 vs daily range 1.43",
+              "Relative strength still holding: 41.0",
               "Group still being bought (in-theme)"
             ],
             "note": "I buy nothing while price is still falling. The reclaim is the signal.",
@@ -9429,6 +12544,85 @@
         ]
       },
       {
+        "ticker": "TXNM",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "10",
+            "setup": "Undercut and rally",
+            "status": "FAILED",
+            "pivot": 58.13,
+            "stop": 57.97,
+            "checks": [
+              {
+                "rule": "Moving averages still rising (20 and 50-day)",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Price still above the longer average (50-day)",
+                "value": 58.44,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Young trend: 1st, 2nd or 3rd pullback",
+                "value": "pullback #1",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Volume drying up on the way down",
+                "value": null,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "A real dip below the prior low",
+                "value": "low 57.97 under 58.13",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Then a real reclaim (close back above)",
+                "value": 58.94,
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Stop at the pullback low, under one daily range",
+                "value": "0.97 vs daily range 0.35",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Relative strength still holding",
+                "value": 42.0,
+                "result": "FAIL",
+                "hard": false
+              },
+              {
+                "rule": "Group still being bought (in-theme)",
+                "value": null,
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Stop at the pullback low, under one daily range: 0.97 vs daily range 0.35",
+              "Relative strength still holding: 42.0",
+              "Group still being bought (in-theme)"
+            ],
+            "note": "I buy nothing while price is still falling. The reclaim is the signal.",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "VERX",
         "held": false,
         "on_longlist": true,
@@ -9517,6 +12711,94 @@
         ]
       },
       {
+        "ticker": "VIA",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": false,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 44.98,
+            "stop": 40.5,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "71.2%",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "71.2%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 2.3%, day 4.9% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "1.6x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "20.4%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 40.50 vs 41.72",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "4.48 vs ATR 2.37",
+                "result": "FAIL",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Neglect before it: no big run in the prior 3 months: 71.2%",
+              "Volume that proves it: \u2265 3x normal: 1.6x",
+              "It holds the gap: upper part of range, above the prior day",
+              "Delayed EP: pause holds above the gap-day low: pause low 40.50 vs 41.72",
+              "A stop that fits (pause low within 1.5 daily ranges): 4.48 vs ATR 2.37"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-10",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
         "ticker": "VNT",
         "held": false,
         "on_longlist": true,
@@ -9598,6 +12880,90 @@
             ],
             "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
             "gap_day": "2026-11-05",
+            "as_of": "2026-11-16"
+          }
+        ]
+      },
+      {
+        "ticker": "WWW",
+        "held": false,
+        "on_longlist": true,
+        "on_elder": true,
+        "on_qs": false,
+        "grades": [
+          {
+            "piece": "11",
+            "setup": "Episodic pivot (delayed)",
+            "status": "FAILED",
+            "pivot": 24.92,
+            "stop": 24.79,
+            "checks": [
+              {
+                "rule": "Neglect before it: no big run in the prior 3 months",
+                "value": "8.7%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Out of an orderly base, not a falling knife",
+                "value": "8.7%",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The first surprise: no gap like it in 6 months",
+                "value": 0,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "The gap: \u2265 10%, or \u2265 4% expansion on an earnings day",
+                "value": "gap 2.3%, day 8.8% (earnings)",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Volume that proves it: \u2265 3x normal",
+                "value": "2.9x",
+                "result": "FAIL",
+                "hard": true
+              },
+              {
+                "rule": "It holds the gap: upper part of range, above the prior day",
+                "value": null,
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "Clear air overhead (no 1-year high within 15% above)",
+                "value": "-4.2%",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Catalyst",
+                "value": "earnings day",
+                "result": "PASS",
+                "hard": false
+              },
+              {
+                "rule": "Delayed EP: pause holds above the gap-day low",
+                "value": "pause low 24.79 vs 22.85",
+                "result": "PASS",
+                "hard": true
+              },
+              {
+                "rule": "A stop that fits (pause low within 1.5 daily ranges)",
+                "value": "0.13 vs ATR 1.11",
+                "result": "PASS",
+                "hard": false
+              }
+            ],
+            "fails": [
+              "Volume that proves it: \u2265 3x normal: 2.9x"
+            ],
+            "note": "Delayed EP: trigger = reclaim of the gap-day high, stop = the day's low.",
+            "gap_day": "2026-11-13",
             "as_of": "2026-11-16"
           }
         ]
@@ -9768,6 +13134,16 @@
   "execution": {
     "entries": [
       {
+        "ticker": "CWST",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
         "ticker": "CLX",
         "trigger": "Break of structure (BULLISH_BOS)",
         "volume_confirmed": false,
@@ -9778,8 +13154,28 @@
         "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       },
       {
-        "ticker": "CHD",
+        "ticker": "NXST",
+        "trigger": "Pattern triggered (DOUBLE_BOTTOM)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "LH",
         "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "PPLI",
+        "trigger": "Pattern triggered (DOUBLE_BOTTOM)",
         "volume_confirmed": false,
         "stop": null,
         "stop_type": null,
@@ -9796,6 +13192,16 @@
         "risk_pct": 2.77,
         "bracket_valid": true,
         "invalid_reason": null
+      },
+      {
+        "ticker": "CHD",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       },
       {
         "ticker": "TMDX",
@@ -9838,7 +13244,27 @@
         "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       },
       {
+        "ticker": "STE",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
         "ticker": "ADP",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "RSG",
         "trigger": "Break of structure (BULLISH_BOS)",
         "volume_confirmed": false,
         "stop": null,
@@ -9878,6 +13304,16 @@
         "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       },
       {
+        "ticker": "MOH",
+        "trigger": "Squeeze breakout (BREAKOUT_UP)",
+        "volume_confirmed": true,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
         "ticker": "TPR",
         "trigger": "Pattern triggered (HEAD_SHOULDERS)",
         "volume_confirmed": false,
@@ -9898,6 +13334,16 @@
         "invalid_reason": null
       },
       {
+        "ticker": "OLLI",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
         "ticker": "YUMC",
         "trigger": "Break of structure (BULLISH_BOS)",
         "volume_confirmed": false,
@@ -9910,6 +13356,36 @@
       {
         "ticker": "CMCSA",
         "trigger": "Pattern triggered (INV_HEAD_SHOULDERS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "COCO",
+        "trigger": "Pattern triggered (DOUBLE_BOTTOM)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "DPZ",
+        "trigger": "Break of structure (BULLISH_BOS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "JAZZ",
+        "trigger": "Break of structure (BULLISH_BOS)",
         "volume_confirmed": false,
         "stop": null,
         "stop_type": null,
@@ -10046,6 +13522,16 @@
         "risk_pct": null,
         "bracket_valid": false,
         "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
+      },
+      {
+        "ticker": "CHRD",
+        "trigger": "Pattern triggered (INV_HEAD_SHOULDERS)",
+        "volume_confirmed": false,
+        "stop": null,
+        "stop_type": null,
+        "risk_pct": null,
+        "bracket_valid": false,
+        "invalid_reason": "no valid bracket \u2014 no structural support passes the 3 gates (atr\u22651.0, rr\u22652.0, risk%\u2264regime ceiling)"
       }
     ],
     "stop_breaches": [
@@ -10072,7 +13558,7 @@
         "held_sl": 99.45,
         "qty": 80.0,
         "unreal_usd": -512.03,
-        "days_held": 6,
+        "days_held": 7,
         "r_multiple": -0.49,
         "r_multiple_is_approx": true,
         "dist_from_stop_pct": 6.21,
@@ -10085,7 +13571,7 @@
         "held_sl": null,
         "qty": -68.0,
         "unreal_usd": 187.11,
-        "days_held": 5,
+        "days_held": 6,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
@@ -10103,10 +13589,10 @@
       "state": "ABOVE",
       "green": true,
       "avg8": 64.5,
-      "avg20": 42.7,
+      "avg20": 42.5,
       "latest_net": -35,
       "population": "us_nasdaq_nyse_mcap_gt_2b",
-      "note": "Net new highs: the 8-day average (64.5) is above the 20-day (42.7) -- breakouts are being rewarded; the handbook's management switch is on the open-trades-can-run side. A reading on AQE's panel, not a whole-market count.",
+      "note": "Net new highs: the 8-day average (64.5) is above the 20-day (42.5) -- breakouts are being rewarded; the handbook's management switch is on the open-trades-can-run side. A reading on AQE's panel, not a whole-market count.",
       "doctrine": "Trade management changes when the 8-day average of net new highs crosses back above the 20-day. -- The VIV System (quoted doctrine, not an Aegis rule)",
       "is_decision": false
     },
@@ -10118,7 +13604,7 @@
         "held_sl": 99.45,
         "qty": 80.0,
         "unreal_usd": -512.03,
-        "days_held": 6,
+        "days_held": 7,
         "r_multiple": -0.49,
         "r_multiple_is_approx": true,
         "dist_from_stop_pct": 6.21,
@@ -10146,7 +13632,7 @@
         "held_sl": null,
         "qty": -68.0,
         "unreal_usd": 187.11,
-        "days_held": 5,
+        "days_held": 6,
         "r_multiple": null,
         "r_multiple_is_approx": false,
         "dist_from_stop_pct": null,
