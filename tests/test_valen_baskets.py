@@ -157,3 +157,25 @@ def test_the_emergency_filter_keeps_the_universe_and_the_held_book_and_never_edi
     fe = json.loads((tmp_path / "out" / "aqe_daily_export.filtered.json").read_text()); fr = json.loads((tmp_path / "out" / "aqe_universe_rows.filtered.json").read_text())
     assert [r["ticker"] for r in fe["daily_list"]] == ["AAA"] and [r["ticker"] for r in fe["lens_ranking"]] == ["BBB"] and [r["ticker"] for r in fr["rows"]] == ["AAA", "BBB", "HELD"] and fr["count"] == 3
     assert (tmp_path / "e.json").read_bytes() == before and "NOT recomputed" in fe["filtered_by"]
+
+
+def test_qs_populations_exclude_valen_context_names_but_keep_the_universe_and_the_held_book(tmp_path, monkeypatch):
+    """Conductor 2026-11-18: QS rs_consist / rank_in_sector / eligible populations must not include Valen's context-only names (run 150)."""
+    from src.data import universe as U
+    from src.engines import qs_daily as QD
+    d = doc(n=96, per=4, groups=12)
+    monkeypatch.setattr(VB, "BASKETS_FILE", write(tmp_path, d))
+    monkeypatch.setattr(U, "load_universe", lambda include_benchmark=True: ["AAA", "SPY"])
+    monkeypatch.setattr("src.data.ptj.load_held_positions", lambda: [{"ticker": "T0001"}])
+    panel = pd.DataFrame({"date": ["2026-11-13"] * 5, "ticker": ["AAA", "T0000", "T0001", "G000", "SPY"], "close": 1.0, "volume": 1.0})
+    scores = pd.DataFrame({"date": ["2026-11-13"] * 5, "ticker": ["AAA", "T0000", "T0001", "G000", "SPY"]})
+    p, s = QD.drop_context_only(panel, scores)
+    assert list(p["ticker"]) == ["AAA", "T0001", "SPY"] and list(s["ticker"]) == ["AAA", "T0001", "SPY"]        # context out; universe and the held name kept
+
+
+def test_the_export_build_drops_context_only_names_even_from_a_cached_score_file():
+    import inspect
+    from src.data import drive_sync as DS
+    src = inspect.getsource(DS)
+    i = src.index("belt and braces (run 150, 2026-11-18)")
+    assert "_vbx.context_only()" in src[i:i + 500] and src.index("_sc_by_tk = {", i) > i       # the filter sits before the universe rows / daily list are built from sc_df

@@ -2606,6 +2606,18 @@ def build_export(shortlist: dict | None = None) -> dict:
         # carry the sector read separately).
         sc_df["_sc"] = sc_df["sc_momentum"].fillna(0).round(1)
         sc_df = sc_df[~sc_df["ticker"].isin(set(GICS_ETFS) | {"SPY"})].copy()
+        try:                                  # belt and braces (run 150, 2026-11-18): Valen's context-only names never reach the universe rows or the daily list, even from a cached score file
+            from src.valen import baskets as _vbx
+            from src.data.universe import load_universe as _lu
+            _ctx = _vbx.context_only() - set(_lu(include_benchmark=True))
+            try:
+                from src.data.ptj import load_held_positions as _lhp
+                _ctx -= {p_.get("ticker") for p_ in _lhp() if p_.get("ticker")}
+            except Exception:  # noqa: BLE001
+                pass
+            sc_df = sc_df[~sc_df["ticker"].isin(_ctx)].copy()
+        except Exception:  # noqa: BLE001
+            pass
         _sc_by_tk = {r["ticker"]: r for _, r in sc_df.iterrows()}
 
         def _wl_record(wr, rank, source):
