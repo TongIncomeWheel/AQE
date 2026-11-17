@@ -1,4 +1,4 @@
-"""Report B universe rows: every scored name, a full record, loud on any failure, size-guarded (PM 2026-11-05)."""
+"""Standard Scan universe rows: every scored name, a full record, loud on any failure, size-guarded (PM 2026-11-05)."""
 import json
 from src.data import drive_sync as ds
 

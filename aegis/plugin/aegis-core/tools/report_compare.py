@@ -9,7 +9,7 @@ overlap, because two reports that pick the same names are not two experiments.
 Pure arithmetic over files already on disk; no network, no model, no orders. Reuses pma_scorecard's window and return helpers so the
 base/end sessions mean exactly what they mean on A's own scorecard. A pick is a ledger row whose verdict is ADVANCE or HOLD-FOR-CONDITIONS.
 
-    report_compare.py grade --report A=ledgerA.json --report B=runB/verdict_ledger.json --report C=runC/verdict_ledger.json \
+    report_compare.py grade --report A=ledgerA.json --report C=runC/verdict_ledger.json \
         --closes closes.json --export 2026-11-06=export.json [--export ...] [--asof D] [--horizons 5 20] \
         --out report_compare.json [--md report_compare.md] [--lines report_lines.json]
 """
@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pma_scorecard as sc   # noqa: E402
 
 PICK_VERDICTS = ("ADVANCE", "HOLD-FOR-CONDITIONS")
-REPORTS = ("A", "B", "C")
+REPORTS = ("A", "C")
 
 
 def _picks(ledger):
@@ -110,10 +110,10 @@ def _f(x):
 
 
 # PM 2026-11-16: display names only. The ids A / B / C stay the identifiers (AEGIS_REPORT, run dir suffixes, ledger `report` column, manifests).
-DISPLAY = {"A": "Committee Standard Scan", "B": "Report B", "C": "Committee AQE Quant Scan",
+DISPLAY = {"A": "Committee Standard Scan", "C": "Committee AQE Quant Scan",
            "A1": "Committee Standard Scan, before 16 Nov (AQE doors)", "A2": "Committee Standard Scan, from 16 Nov (whole market)",
            "A2L": "Committee Standard Scan, from 16 Nov, picks AQE also lists", "A2N": "Committee Standard Scan, from 16 Nov, picks AQE does not list"}
-ORDER = ("A", "A1", "A2", "A2L", "A2N", "B", "C")
+ORDER = ("A", "A1", "A2", "A2L", "A2N", "C")
 
 
 def lines(res):
@@ -162,7 +162,7 @@ def main(argv=None):
         k, path = spec.split("=", 1)
         k = k.strip().upper()
         if k not in REPORTS:
-            raise SystemExit(f"--report key must be A, B or C, got {k!r}")
+            raise SystemExit(f"--report key must be A or C, got {k!r}")
         reports[k] = json.load(open(path))
     closes = json.load(open(a.closes)); closes.pop("_missing", None)
     exports = {}

@@ -1,6 +1,6 @@
-"""committee_topup.py -- give every name Report B screens the same committee data the export names get (conductor defect 2026-11-10).
+"""committee_topup.py -- give every name the Standard Scan's screens seat the same committee data the export names get (conductor defect 2026-11-10).
 
-Report B's screens read the whole universe (~1,100 rows) but committee_data (fundamentals pack, W/D/H1 grid, closes) is built for the export's daily_list
+The Standard Scan's screens read the whole universe (~1,100 rows) but committee_data (fundamentals pack, W/D/H1 grid, closes) is built for the export's daily_list
 (~470 names). A screened name outside it had NO MTF and NO fundamentals, so seats could only say CANNOT_SEE and the name was dropped on a data gap,
 not on merit. This step runs AFTER `screens`: it takes the names (from seat_sets.json, an explicit list, or by re-running the deterministic seat
 screens over the universe rows), finds the ones missing from the three committee_data files, pulls them with the SAME fetchers committee_data uses,
@@ -23,7 +23,7 @@ from src.pipeline import committee_data as cd
 
 DEFAULT_DIR = PROJECT_ROOT / "aegis" / "output" / "committee_data"
 UNIVERSE_ROWS_REPO = PROJECT_ROOT / "aegis" / "output" / "aqe_universe_rows.json"
-SCREEN_TOP = 25          # the Standard Scan (report A, PM 2026-11-16) reads the top 25 per seat; the old Report B read 10
+SCREEN_TOP = 25          # the Standard Scan (report A, PM 2026-11-16) reads the top 25 per seat
 FUND_OK = ("served", "carried", "partial")
 
 
@@ -45,7 +45,7 @@ def load_universe_rows(path: Path | None = None) -> list[dict]:
 
 
 def screen_picks(rows: list[dict], top: int = SCREEN_TOP) -> list[str]:
-    """The names the seven Report B screens would seat (deterministic, same code as `pma_pipeline.py screens`)."""
+    """The names the seven Standard Scan screens would seat (deterministic, same code as `pma_pipeline.py screens`)."""
     if not rows:
         return []
     res = _screens_mod().all_screens(rows, top)
@@ -129,7 +129,7 @@ def _manifest(fund, grid, closes, base: dict, run_date: str, rep: dict) -> tuple
              "closes_scorecard.json": cd._file_entry("closes_scorecard.json", bodies["closes_scorecard.json"], "closes_scorecard.v1",
                                                      nc + len(closes["_missing"]), nc, len(closes["_missing"]), run_date)}
     m = {**base, "files": files, "status": cd.status_of(files), "fmp_calls": (base.get("fmp_calls") or 0) + rep["fmp_calls"],
-         "scope": {**(base.get("scope") or {}), "requested": fc["requested"], "from": "export daily_list + held_positions + Report B screened names (topup)"},
+         "scope": {**(base.get("scope") or {}), "requested": fc["requested"], "from": "export daily_list + held_positions + Standard Scan screened names (topup)"},
          "topup": {"names": rep["names"], "pulled": rep["pulled"], "fmp_calls": rep["fmp_calls"], "unserved_names": rep["unserved_names"]}}
     return m, bodies
 
@@ -138,7 +138,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--names", default="", help="comma-separated tickers")
     ap.add_argument("--seat-sets", default=None)
-    ap.add_argument("--screens", action="store_true", help="add the names the seven Report B screens seat (top 10 per seat) over the universe rows")
+    ap.add_argument("--screens", action="store_true", help="add the names the seven Standard Scan screens seat (top 25 per seat) over the universe rows")
     ap.add_argument("--universe-rows", default=None)
     ap.add_argument("--dir", default=str(DEFAULT_DIR))
     ap.add_argument("--date", default=None)

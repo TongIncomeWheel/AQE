@@ -2987,7 +2987,7 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["subcomponents_status"].get("status") != "live":
         print(f"  [WARN] subcomponents degraded: {export['subcomponents_status'].get('reason')}")
 
-    # ---- Report B universe rows (PM 2026-11-05): every scored universe name as a full daily_list-shaped record, before any score gate.
+    # ---- Standard Scan universe rows (PM 2026-11-05): every scored universe name as a full daily_list-shaped record, before any score gate.
     # Written to its own file by export_to_drive; the main export carries only the status. Loud, additive, never blocks the export.
     _UNIVERSE_ROWS.clear()
     try:
@@ -3318,7 +3318,7 @@ _UNIVERSE_ROWS: dict = {}                      # set by build_export, written by
 
 
 def _build_universe_rows(sc_by_tk, wl_record, passes, order_key="_sc"):
-    """Report B (PM 2026-11-05): a full record for EVERY scored universe name, with the same field set as a daily_list row, BEFORE any
+    """Standard Scan (PM 2026-11-05): a full record for EVERY scored universe name, with the same field set as a daily_list row, BEFORE any
     score gate. `wl_record` is build_export's own record builder (so levels, brackets, DETECT, sector and engines cannot disagree with
     daily_list); `passes` are the same completion passes the list rows get, each run on the whole set. A name that cannot be built is
     NAMED, a pass that fails is NAMED in `passes`; nothing is silently thinner. Never raises: the nightly export must not depend on it."""
@@ -3525,7 +3525,7 @@ def export_to_drive(shortlist: dict | None = None) -> dict:
     if r.get("ok"):
         written.append(f"gdrive:{EXPORT_FILENAME}")
 
-    # ---- Report B universe rows -> its own file (PM 2026-11-05). Size-guarded; a refusal is recorded, never a truncated file. ----
+    # ---- Standard Scan universe rows -> its own file (PM 2026-11-05). Size-guarded; a refusal is recorded, never a truncated file. ----
     try:
         _ur = dict(_UNIVERSE_ROWS)
         if _ur.get("rows"):

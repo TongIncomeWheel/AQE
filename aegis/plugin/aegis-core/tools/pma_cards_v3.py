@@ -1221,7 +1221,7 @@ s8 = section("9 &middot; Read with care", ("This is a rerun on frozen votes" if 
     f'<details class="big"><summary>{len(cav)} caveats on the run, the data, the book and the sizing</summary><ul class="plainlist">{"".join(f"<li>{E(x)}</li>" for x in cav)}</ul>'
     f'<p>{E(MARK["committee_data_status"])}. {E(MARK["ma_panel_refresh"])}.</p></details>'
     f'<details class="big"><summary>{refresh_more[0]}</summary>{refresh_more[1]}</details>'
-    + (f'<details class="big"><summary>Which of the three reports is beating the market</summary><ul class="plainlist">{"".join(f"<li>{E(plain(_RL[k]))}</li>" for k in ("A", "A1", "A2", "A2L", "A2N", "B", "C") if _RL.get(k))}</ul></details>' if any(_RL.get(k) for k in ("A", "A1", "A2", "A2L", "A2N", "B", "C")) else ""), "care")
+    + (f'<details class="big"><summary>Which scan is beating the market</summary><ul class="plainlist">{"".join(f"<li>{E(plain(_RL[k]))}</li>" for k in ("A", "A1", "A2", "A2L", "A2N", "C") if _RL.get(k))}</ul></details>' if any(_RL.get(k) for k in ("A", "A1", "A2", "A2L", "A2N", "C")) else ""), "care")
 
 # ------------------------------------------------------------------ page
 CSS = """

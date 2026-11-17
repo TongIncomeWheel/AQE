@@ -465,7 +465,7 @@ def run(export: dict, run_date: str | None = None, client=None, panel: dict | No
         f = Fetcher(client, budget_s=budget_s, clock=clock)
         mtf = _mtf()
         tickers = scope_of(export)
-        # Report B's screened names (conductor defect 2026-11-10): the screens read the whole universe, so every name they seat must have the same
+        # The Standard Scan's screened names (conductor defect 2026-11-10): the screens read the whole universe, so every name they seat must have the same
         # committee data as the export names. `extra_rows` = universe rows for those names; their last close stands in for the export `entry`.
         extra = [r for r in (extra_rows or []) if isinstance(r, dict) and r.get("ticker") and r["ticker"] not in set(tickers)]
         if extra:

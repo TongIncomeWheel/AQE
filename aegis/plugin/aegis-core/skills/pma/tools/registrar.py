@@ -69,7 +69,7 @@ def _resolve_report_from_manifest(argv=None):
         try:
             if os.path.isfile(c):
                 rep = str((json.load(open(c)) or {}).get("report") or "").strip().upper()
-                if rep in ("B", "C"):
+                if rep == "C":
                     os.environ["AEGIS_REPORT"] = rep
                 return
         except Exception:
@@ -84,12 +84,12 @@ R1_REASON_MAX = 300
 BASE_DECIDERS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
 QUANT_SEAT = "aqe-quant"
 REPORT = (os.environ.get("AEGIS_REPORT") or "A").strip().upper()
-if REPORT not in ("A", "B", "C"):
-    raise SystemExit(f"AEGIS_REPORT must be A, B or C, got {REPORT!r}")
+if REPORT not in ("A", "C"):
+    raise SystemExit(f"AEGIS_REPORT must be A or C, got {REPORT!r} (report B was removed 2026-11-17)")
 DECIDERS = list(BASE_DECIDERS) + ([QUANT_SEAT] if REPORT == "C" else [])      # three reports (PM 2026-11-05): C adds the AQE quant seat
 QA_SEAT = "steenbarger"
 R33_EFFECTIVE = "2026-11-01"   # forms dated from here: shortlist cap, decider-only ballots, the case form
-SHORTLIST_CAP = 3 if REPORT == "B" else 6   # R33 (six); Report B is capped at THREE nominations per seat (PM 2026-11-10)
+SHORTLIST_CAP = 6   # R33: at most six nominations per decider
 def _slate_cap_from_run_yaml(default=25):
     """ONE source (conductor 2026-11-04): parameters.slate_cap in RUN.yaml. The literal below is only the fallback when the
     run map cannot be found, so the pipeline, the registrar and the chain check cannot drift apart again."""
@@ -248,7 +248,7 @@ R1_TEXT = ("R1 VIOLATION — bracket is never a reject (PM ruling 2026-08-14 / 2
 QUANT_SEAT = "aqe-quant"
 QUANT_MIN_FIELDS = 2
 # Report C is the committee reading the AQE indicators (PM 2026-11-05): EVERY decider's SUPPORT / OPPOSE and nomination names >= 2 AQE fields,
-# not only the aqe-quant seat. Reports A and B are not held to it.
+# not only the aqe-quant seat. Report A is not held to it.
 def _cites_aqe(voice):
     return REPORT == "C" and voice in DECIDERS
 AQE_QUANT_FIELDS = ["sc_momentum", "sc_m_gates", "sc_m_gate_detail", "sc_p_gates", "sc_p_gate_detail", "pipe_rank", "flow", "energy", "structure", "mp", "elder", "mp_state", "mp_accel_state", "rs_rank_pct", "rs_spy_20d", "subcomponents.flow.flow_score", "subcomponents.flow.accum_score", "subcomponents.flow.volume_score", "subcomponents.flow.skew_score", "subcomponents.flow.ext_score", "subcomponents.flow.mfi", "subcomponents.flow.cmf", "subcomponents.flow.ha_quality_count", "subcomponents.energy.vp_position_score", "subcomponents.energy.price_action_score", "subcomponents.energy.squeeze_score", "subcomponents.energy.exhaustion_score", "subcomponents.energy.atr_score", "subcomponents.energy.en_pos50", "subcomponents.energy.en_trend_bars", "subcomponents.structure.rs_spy_score", "subcomponents.structure.rs_accel_score", "subcomponents.structure.base_score", "subcomponents.structure.ms_pos_score", "subcomponents.structure.resist_score", "subcomponents.structure.wk_score", "subcomponents.structure.earn_score", "subcomponents.structure.rs_vs_spy", "subcomponents.structure.rs_accel", "subcomponents.structure.base_days", "subcomponents.structure.bd_mode", "subcomponents.mp.abs_mom_score", "subcomponents.mp.mp_adx_score", "subcomponents.mp.rel_mom_score", "subcomponents.mp.trend_score", "subcomponents.mp.roc_zscore", "subcomponents.mp.excess_return", "subcomponents.mp.adx_val", "subcomponents.mp.di_bullish", "subcomponents.bq.bq_range_tight", "subcomponents.bq.bq_vol_dry", "subcomponents.bq.bq_base_dur", "subcomponents.bq.bq_ema_conv", "subcomponents.bq.bq_base_days", "subcomponents.pipe.pr_ret_12m", "subcomponents.pipe.pr_adx_score", "subcomponents.pipe.pr_rsi_score", "subcomponents.pipe.pr_vol_score", "subcomponents.pipe.pr_ma_score", "subcomponents.pipe.momentum_composite", "subcomponents.pipe.pipe_tier"]
@@ -1596,17 +1596,17 @@ def cmd_init(a):
     can never overwrite the live levels, the scorecard log or the original run's record."""
     suffix = getattr(a, "rerun", None)
     report = (getattr(a, "report", None) or "A").strip().upper()
-    if report not in ("A", "B", "C"):
-        print(f"init: --report must be A, B or C, not {report!r}", file=sys.stderr)
+    if report not in ("A", "C"):
+        print(f"init: --report must be A or C, not {report!r} (report B was removed 2026-11-17)", file=sys.stderr)
         return 2
     if report != REPORT:
         print(f"init: --report {report} but AEGIS_REPORT={REPORT} -- export AEGIS_REPORT={report} first so the roster matches", file=sys.stderr)
         return 2
     if report != "A":
         if suffix:
-            print("init: --report B/C already names the run (<date>-B / <date>-C); do not combine it with --rerun", file=sys.stderr)
+            print("init: --report C already names the run (<date>-C); do not combine it with --rerun", file=sys.stderr)
             return 2
-        suffix = report          # Report B / C: distinct identity pma-<date>-B, run dir <date>-B, NEVER live (no levels, not watched by alerts)
+        suffix = report          # Report C: distinct identity pma-<date>-C, run dir <date>-C, NEVER live (no levels, not watched by alerts)
     rid = f"pma-{a.date}" + (f"-{suffix}" if suffix else "")
     m = {"run_id": rid, "date": a.date, "created": _now(),
          "steps": {}, "seats": {}, "degradations": [], "flags": []}
@@ -1618,12 +1618,10 @@ def cmd_init(a):
                       "publishes_live": False}
     # PM 2026-11-16 (Standard Scan): the run's candidate method rides in the manifest so the brief, Cards, ledger and check.py all read the same word.
     # A: whole_universe (the Standard Scan, no AQE gate) | aqe_doors (the old chain) | fallback_aqe_doors (the old chain because the universe rows were
-    # missing or refused). B is frozen ("report_b"); C is the AQE Quant Scan ("quant_scan"). No flag on an A run = the old chain.
+    # missing or refused). C is the AQE Quant Scan ("quant_scan"). No flag on an A run = the old chain.
     _meth = (getattr(a, "method", None) or "").strip()
     if report == "C":
         _meth = "quant_scan"
-    elif report == "B":
-        _meth = "report_b"
     elif _meth and _meth not in ("whole_universe", "aqe_doors", "fallback_aqe_doors"):
         print(f"init: --method must be whole_universe, aqe_doors or fallback_aqe_doors, not {_meth!r}", file=sys.stderr)
         return 2
@@ -1803,7 +1801,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--manifest", default="run_manifest.json")
     sub = p.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live"); s.add_argument("--report", default=None, help="A (default) | B | C: Report B/C run as pma-<date>-B/-C in run/<date>-B/-C, never live; AEGIS_REPORT must match"); s.add_argument("--method", default=None, help="Standard Scan (PM 2026-11-16), report A only: whole_universe | aqe_doors | fallback_aqe_doors; C and B are set by --report")
+    s = sub.add_parser("init"); s.add_argument("--date", required=True); s.add_argument("--rerun", default=None, help="r2, r3 ...: a rerun of the same date; distinct run id and run dir, never publishes live"); s.add_argument("--report", default=None, help="A (default) | C: Report C runs as pma-<date>-C in run/<date>-C, never live; AEGIS_REPORT must match"); s.add_argument("--method", default=None, help="Standard Scan (PM 2026-11-16), report A only: whole_universe | aqe_doors | fallback_aqe_doors; C is set by --report")
     s = sub.add_parser("validate")
     s.add_argument("--file", required=True); s.add_argument("--round", type=int, choices=(1, 2), default=None,
                    help="1 = nomination ballot, 2 = vote ballot (carries the case form from 2026-11-01)")

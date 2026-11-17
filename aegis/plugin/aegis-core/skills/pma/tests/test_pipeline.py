@@ -1838,12 +1838,14 @@ def test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat(td):
         return r.stdout.strip().split(","), r.returncode, r.stderr
     seven = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
     for mod in ("pma_pipeline", "registrar"):
-        for rep in (None, "A", "B"):
+        for rep in (None, "A"):
             check(f"{mod}: report {rep or 'unset'} is the seven", roster(rep, mod)[0] == seven, str(roster(rep, mod)))
         got, rc, err = roster("C", mod)
         check(f"{mod}: report C is the seven plus aqe-quant (eighth decider)", got == seven + ["aqe-quant"], str(got) + err[-200:])
         _g, rc, err = roster("Z", mod)
-        check(f"{mod}: an unknown report is refused loudly", rc != 0 and "AEGIS_REPORT must be A, B or C" in err, err[-200:])
+        check(f"{mod}: an unknown report is refused loudly", rc != 0 and "AEGIS_REPORT must be A or C" in err, err[-200:])
+        _g, rc, err = roster("B", mod)
+        check(f"{mod}: report B is gone (refused)", rc != 0 and "report B was removed" in err, err[-200:])
     spec = importlib.util.spec_from_file_location("check_roster", os.path.join(HERE, "..", "..", "daily-check", "check.py"))
     ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
     os.environ.pop("AEGIS_REPORT", None)
@@ -1949,8 +1951,8 @@ def test_reports_b_and_c_run_as_their_own_non_live_runs(td):
     check("with no setting the manifest decides: a C manifest reads as report C", r.returncode == 0, r.stdout + r.stderr)
     r = reg(["--manifest", man, "status"], "C")
     check("and read normally under C", r.returncode == 0, r.stdout + r.stderr)
-    r = reg(["--manifest", man + "b", "init", "--date", "2026-11-06", "--report", "B"], "B")
-    check("report B is pma-<date>-B", r.returncode == 0 and json.load(open(man + "b"))["run_id"] == "pma-2026-11-06-B", r.stdout + r.stderr)
+    r = reg(["--manifest", man + "b", "init", "--date", "2026-11-06", "--report", "B"], "A")
+    check("report B is gone: init --report B is refused", r.returncode != 0 and not os.path.exists(man + "b"), r.stdout + r.stderr)
     r = reg(["--manifest", man + "a", "init", "--date", "2026-11-06"], None)
     check("a plain init is report A, no tag, live", r.returncode == 0 and "report" not in json.load(open(man + "a")) and "rerun" not in json.load(open(man + "a")))
     r = reg(["--manifest", man + "z", "init", "--date", "2026-11-06", "--report", "Z"], None)
@@ -2020,8 +2022,7 @@ def test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap
         return out
     closes = {"SPY": series(0.001), "AAA": series(0.01), "BBB": series(-0.01), "CCC": series(0.002), "DDD": series(0.0)}
     mk = lambda *vt: {"rows": [{"date": "2026-11-04", "ticker": t, "verdict": v} for t, v in vt]}
-    reports = {"A": mk(("AAA", "ADVANCE"), ("BBB", "PASS")), "B": mk(("AAA", "ADVANCE"), ("CCC", "HOLD-FOR-CONDITIONS")),
-               "C": mk(("BBB", "ADVANCE"))}
+    reports = {"A": mk(("AAA", "ADVANCE"), ("BBB", "PASS")), "C": mk(("BBB", "ADVANCE"))}
     res = rc.grade(reports, closes, {"2026-11-04": ["AAA", "BBB", "CCC", "DDD"]}, days[-1], [5, 20])
     a5 = res["reports"]["A"]["by_horizon"]["5"]
     check("a PASS is not a pick; A has one graded pick at 5 sessions", a5["n"] == 1 and res["reports"]["A"]["picks"] == 1, str(a5))
@@ -2029,15 +2030,14 @@ def test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap
     check("C's falling pick lost to SPY", res["reports"]["C"]["by_horizon"]["5"]["vs_spy_mean"] < 0)
     h20 = res["reports"]["A"]["by_horizon"]["20"]
     check("a horizon not yet reached is pending, never graded early", h20["n"] == 0 and h20["pending"] == 1, str(h20))
-    check("overlap A-B is one shared name of two", res["overlap"]["A-B"]["shared"] == 1 and res["overlap"]["A-B"]["union"] == 2, str(res["overlap"]))
     check("overlap A-C is zero", res["overlap"]["A-C"]["shared"] == 0)
     ln = rc.lines(res)
-    check("one plain line per report for A's Cards", set(ln) == {"A", "B", "C"} and ln["A"].startswith("Committee Standard Scan:") and ln["C"].startswith("Committee AQE Quant Scan:") and ln["B"].startswith("Report B:") and "vs SPY" in ln["A"], str(ln))
+    check("one plain line per report for A's Cards", set(ln) == {"A", "C"} and ln["A"].startswith("Committee Standard Scan:") and ln["C"].startswith("Committee AQE Quant Scan:") and "vs SPY" in ln["A"], str(ln))
     check("the brief section names the overlap", "Overlap between reports" in rc.render_md(res))
 
 
-def test_report_b_and_c_cards_are_the_compact_page_with_no_levels(td):
-    """Report B/C cards (PM 2026-11-05): ticker section + scorecard line only, no levels, passes the same plain-words gate as Report A's page."""
+def test_report_c_cards_are_the_compact_page_with_no_levels(td):
+    """Report C cards (PM 2026-11-05): ticker section + scorecard line only, no levels, passes the same plain-words gate as Report A's page."""
     import importlib.util
     spec = importlib.util.spec_from_file_location("cards_report_t", os.path.join(TOOLS, "pma_cards_report.py"))
     cr = importlib.util.module_from_spec(spec); spec.loader.exec_module(cr)
@@ -2083,8 +2083,8 @@ def test_a_bare_command_takes_its_report_from_the_run_manifest(td):
     check("the nomination schema accepts canon ids A1-A10 as well as C1-C24", "[CA][0-9]{1,2}" in pat, pat[:200])
 
 
-def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
-    """Report B (PM 2026-11-05): the seven seats read the screened universe, not AQE's lists. Each seat's packet carries only the 25 names its own
+def test_standard_scan_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
+    """Standard Scan (PM 2026-11-05): the seven seats read the screened universe, not AQE's lists. Each seat's packet carries only the 25 names its own
     checklist screen chose (plus the held book); no candidate carries list membership; Report A's `trim` path is untouched."""
     ex = os.path.join(HERE, "..", "..", "..", "..", "..", "..", "tests", "fixtures", "cards_v3", "aqe_daily_export.json")
     if not os.path.exists(ex):
@@ -2092,7 +2092,7 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
     D = json.load(open(ex))
     u = os.path.join(td, "u.json"); json.dump({"schema": "aqe_universe_rows.v1", "date": D["date"], "rows": D["daily_list"]}, open(u, "w"))
     menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
-    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    env = dict(os.environ); env["AEGIS_REPORT"] = "A"
     cs, sets, out = os.path.join(td, "b_cs.json"), os.path.join(td, "b_sets.json"), os.path.join(td, "b_pk")
     a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--top", "25", "--out", cs, "--out-sets", sets],
                        capture_output=True, text=True, env=env)
@@ -2110,7 +2110,7 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
           str({r.get("source") for r in cand}))
     b = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04",
                         "--outdir", out, "--seat-sets", sets], capture_output=True, text=True, env=env)
-    check("packets build for Report B", b.returncode == 0, (b.stdout + b.stderr)[-400:])
+    check("packets build for the Standard Scan", b.returncode == 0, (b.stdout + b.stderr)[-400:])
     if b.returncode != 0:
         return
     import csv
@@ -2120,8 +2120,8 @@ def test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door(td):
         got = {r["ticker"] for r in rows}
         want = {x["ticker"] for x in picks} | held
         check(f"{seat}: its packet is exactly its own 25 plus the held book", got == want, f"{len(got)} vs {len(want)}")
-    check("Report B builds no aqe-quant packet and no C files", not os.path.exists(os.path.join(out, "aqe-quant.tsv")) and not os.path.exists(os.path.join(out, "aqe_indicators.tsv")))
-    e2 = dict(env); e2["AEGIS_REPORT"] = "B"
+    check("the Standard Scan builds no aqe-quant packet and no C files", not os.path.exists(os.path.join(out, "aqe-quant.tsv")) and not os.path.exists(os.path.join(out, "aqe_indicators.tsv")))
+    e2 = dict(env); e2["AEGIS_REPORT"] = "A"
     c = subprocess.run([sys.executable, PIPE, "packets", "--candidates", cs, "--export", ex, "--menus", menus, "--date", "2026-11-04",
                         "--outdir", out + "_x", "--seat-sets", os.path.join(td, "missing.json")], capture_output=True, text=True, env=e2)
     check("a missing seat-sets file stops the build rather than serving everyone everything", c.returncode != 0)
@@ -2150,75 +2150,62 @@ def test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pa
 
 def test_the_brief_sections_registry_isolates_modules_from_the_core_gate(td):
     """PM 2026-11-10: the brief is a core plus self-contained modules. An off module is skipped, a failed one shows one loud line and blocks nothing,
-    the core gate never sees module text, and a module's own rules hold only when it rendered ok."""
+    the core gate never sees module text, and a module's own rules hold only when it rendered ok. (Report B and its module were removed 2026-11-17: the one
+    module left is the AQE Quant Scan's.)"""
     import importlib.util as _iu
     sp = _iu.spec_from_file_location("brief_sections_t", os.path.join(TOOLS, "brief_sections.py")); bs = _iu.module_from_spec(sp); sp.loader.exec_module(bs)
     run = os.path.join(td, "run", "2026-11-10"); os.makedirs(run)
-    runB = run + "-B"; os.makedirs(runB)
+    runC = run + "-C"; os.makedirs(runC)
     json.dump([{"ticker": "AAA", "verdict": "ADVANCE", "conviction": 4, "split": {}}, {"ticker": "BBB", "verdict": "PASS", "conviction": 2, "split": {}}],
               open(os.path.join(run, "consensus.json"), "w"))
-    json.dump([{"ticker": "CCC", "verdict": "ADVANCE", "conviction": 3, "split": {}}, {"ticker": "DDD", "verdict": "HOLD-FOR-CONDITIONS", "conviction": 2, "split": {}},
-               {"ticker": "EEE", "verdict": "PASS", "conviction": 1, "split": {}}], open(os.path.join(runB, "consensus.json"), "w"))
     brief = "# 0 VERDICTS\n| Ticker | Verdict |\n|---|---|\n| AAA | ADVANCE |\n\n# 1 MACRO\ntext\n\n# 9B\n§9B\n| AAA | x |\n§9C\n"
-    res = bs.render_all(run, "2026-11-10", env="sweep_B,indicators_C")      # sweep_B is disabled by default since 2026-11-16 (report B frozen); named explicitly here
-    check("report B rendered ok", res["sweep_B"]["status"] == "ok", str(res["sweep_B"]))
+    res = bs.render_all(run, "2026-11-10", env="")
+    check("the module list is exactly the AQE Quant Scan's", sorted(res) == ["indicators_C"], str(sorted(res)))
     check("report C has not run: degraded with its reason, never an exception", res["indicators_C"]["status"] == "degraded" and "has not run" in res["indicators_C"]["reason"], str(res["indicators_C"]))
+    out0 = bs.assemble(brief, res)
+    check("the C degraded module is exactly one loud line", "> Section COMMITTEE AQE QUANT SCAN: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable:" in out0)
+    json.dump([{"ticker": "CCC", "verdict": "ADVANCE", "conviction": 3, "split": {}}, {"ticker": "DDD", "verdict": "HOLD-FOR-CONDITIONS", "conviction": 2, "split": {}},
+               {"ticker": "EEE", "verdict": "PASS", "conviction": 1, "split": {}}], open(os.path.join(runC, "consensus.json"), "w"))
+    res = bs.render_all(run, "2026-11-10", env="")
+    check("report C rendered ok once it has run", res["indicators_C"]["status"] == "ok", str(res["indicators_C"]))
     out = bs.assemble(brief, res)
-    check("modules sit after the verdict block and before the macro section", out.index("module:sweep_B") > out.index("| AAA | ADVANCE |") and out.index("module:sweep_B") < out.index("# 1 MACRO"))
-    check("the B section shows ADVANCE and HOLD names only, with a count line, and is labelled not a trade row",
+    check("modules sit after the verdict block and before the macro section", out.index("module:indicators_C") > out.index("| AAA | ADVANCE |") and out.index("module:indicators_C") < out.index("# 1 MACRO"))
+    check("the C section shows ADVANCE and HOLD names only, with a count line, and is labelled not a trade row",
           "| CCC |" in out and "| DDD |" in out and "| EEE |" not in out and "3 names deliberated" in out and "not a trade row" in out)
-    check("the C degraded module is exactly one loud line", "> Section COMMITTEE AQE QUANT SCAN: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable:" in out)
     check("stripping the modules gives back the core byte for byte", bs.strip_modules(out) == brief)
     check("assemble is idempotent", bs.assemble(out, res) == out)
     fails, notes = bs.check(out, run, "2026-11-10")
-    check("the module gate passes a clean brief and notes the degraded module", not fails and any("degraded" in n for n in notes), str((fails, notes)))
+    check("the module gate passes a clean brief", not fails, str((fails, notes)))
     bad = out.replace("| CCC |", "| ZZZ |")
     fails, _ = bs.check(bad, run, "2026-11-10")
     check("a name that is not in the report's consensus fails the module rules", any("ZZZ" in f for f in fails), str(fails))
     leak = out.replace("| AAA | x |", "| CCC | x |")
     fails, _ = bs.check(leak, run, "2026-11-10")
-    check("a B-only name in the 9B trade list fails", any("trade row" in f for f in fails), str(fails))
+    check("a C-only name in the 9B trade list fails", any("trade row" in f for f in fails), str(fails))
     off = bs.assemble(brief, bs.render_all(run, "2026-11-10", env="none"))
     check("with every module off the brief is the core, untouched", off == brief)
-    one = bs.render_all(run, "2026-11-10", env="sweep_B")
-    check("AEGIS_BRIEF_MODULES picks modules", one["sweep_B"]["status"] == "ok" and one["indicators_C"]["status"] == "off")
-    nodeg = out.replace("> Section COMMITTEE AQE QUANT SCAN: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable: ", "")
+    nodeg = out0.replace("> Section COMMITTEE AQE QUANT SCAN: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row) unavailable: ", "")
     fails, _ = bs.check(nodeg, run, "2026-11-10")
     check("a degraded block without its one-line note fails", any("lacks its one-line note" in f for f in fails), str(fails))
 
 
-def test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a(td):
-    """PM 2026-11-10 (option 1): Report B reads the top 10 per seat, a seat nominates at most THREE, and a B name Report A already deliberated reuses A's
-    verdict (tagged) and does not run again. Reports A and C keep six."""
+def test_nominations_are_capped_at_six_per_seat_and_report_b_is_gone(td):
+    """PM 2026-11-10 / 2026-11-17: a seat nominates at most SIX (R33); the three-name Report B cap, its top-10 default and `reuse-a` were removed with report B."""
     def reg(args, report, cwd=None):
         env = dict(os.environ); env.pop("AEGIS_REPORT", None)
         if report: env["AEGIS_REPORT"] = report
         return subprocess.run([sys.executable, REG] + args, capture_output=True, text=True, env=env, cwd=cwd)
     names = ["S%02d" % i for i in range(8)]
-    cs = os.path.join(td, "capB_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
-    def val(n, report, tag):
-        f = os.path.join(td, f"capB_{tag}.json"); open(f, "w").write(json.dumps(_r1_ballot("oneil", "2026-11-12", names[:n]))); return f
-    r = reg(["validate", "--file", val(4, "B", "b4"), "--round", "1", "--candidates", cs], "B")
-    check("report B: four nominations from one seat are REJECTED (cap three)", r.returncode != 0 and "R33" in r.stdout + r.stderr and "most 3" in r.stdout + r.stderr, (r.stdout + r.stderr)[-300:])
-    r = reg(["validate", "--file", val(3, "B", "b3"), "--round", "1", "--candidates", cs], "B")
-    check("report B: three are accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
-    r = reg(["validate", "--file", val(6, "A", "a6"), "--round", "1", "--candidates", cs], None)
-    check("report A is unchanged: six are accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
-    r = reg(["validate", "--file", val(7, "A", "a7"), "--round", "1", "--candidates", cs], None)
-    check("report A: seven are still rejected", r.returncode != 0)
-    src = open(PIPE).read()
-    check("the screens command defaults to the top 10 under report B", '(10 if REPORT == "B" else 25)' in src)
-    # reuse-a
-    d = os.path.join(td, "reuse"); os.makedirs(d, exist_ok=True)
-    p4 = os.path.join(d, "phase4.json"); json.dump({"deliberation_set": ["AAA", "BBB", "CCC"], "ranked": [{"ticker": t} for t in ("AAA", "BBB", "CCC")]}, open(p4, "w"))
-    ac = os.path.join(d, "a_consensus.json"); json.dump([{"ticker": "AAA", "verdict": "ADVANCE"}, {"ticker": "ZZZ", "verdict": "PASS"}, {"ticker": "BBB", "verdict": "PASS"}], open(ac, "w"))
-    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
-    r = subprocess.run([sys.executable, PIPE, "reuse-a", "--phase4", p4, "--a-consensus", ac, "--date", "2026-11-12", "--out", os.path.join(d, "reused_from_a.json")],
-                       capture_output=True, text=True, env=env)
-    P = json.load(open(p4)); R = json.load(open(os.path.join(d, "reused_from_a.json")))
-    check("reuse-a runs", r.returncode == 0, (r.stdout + r.stderr)[-300:])
-    check("only the name A did not deliberate is left to run", P["deliberation_set"] == ["CCC"] and [x["ticker"] for x in P["ranked"]] == ["CCC"], str(P))
-    check("the reused names carry A's verdict, tagged", R["tickers"] == ["AAA", "BBB"] and R["a_verdicts"] == {"AAA": "ADVANCE", "BBB": "PASS"} and P["reused_from_a"] == ["AAA", "BBB"], str(R))
+    cs = os.path.join(td, "capA_cs.json"); open(cs, "w").write(json.dumps({"universe": [{"ticker": t} for t in names]}))
+    def val(n, tag):
+        f = os.path.join(td, f"capA_{tag}.json"); open(f, "w").write(json.dumps(_r1_ballot("oneil", "2026-11-12", names[:n]))); return f
+    r = reg(["validate", "--file", val(6, "a6"), "--round", "1", "--candidates", cs], None)
+    check("six nominations are accepted", r.returncode == 0, (r.stdout + r.stderr)[-300:])
+    r = reg(["validate", "--file", val(7, "a7"), "--round", "1", "--candidates", cs], None)
+    check("seven are rejected", r.returncode != 0)
+    env = dict(os.environ); env["AEGIS_REPORT"] = "A"
+    r = subprocess.run([sys.executable, PIPE, "reuse-a", "--phase4", "x", "--a-consensus", "y", "--date", "2026-11-12"], capture_output=True, text=True, env=env)
+    check("reuse-a is gone", r.returncode != 0 and "reuse-a" in (r.stdout + r.stderr))
 
 
 def test_report_c_only_the_quant_nominates_and_the_candidate_set_is_its_own_whole_universe_quant_screen(td):
@@ -2241,7 +2228,7 @@ def test_report_c_only_the_quant_nominates_and_the_candidate_set_is_its_own_whol
         check(f"{gone} is gone: C takes nothing from A and screens nothing", r.returncode != 0 and gone in (r.stdout + r.stderr))
 
 
-def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data(td):
+def test_standard_scan_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data(td):
     """Conductor defect 2026-11-10: every name in seat_sets.json needs fundamentals + a served MTF row + closes, or `coverage` fails and names them."""
     d = os.path.join(td, "cov"); os.makedirs(d, exist_ok=True)
     ss = os.path.join(d, "seat_sets.json"); json.dump({"seats": {"oneil": [{"ticker": "AAA"}, {"ticker": "BBB"}], "seow": [{"ticker": "AAA"}]}}, open(ss, "w"))
@@ -2249,7 +2236,7 @@ def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committ
         json.dump({"tickers": {t: {"status": "served"} for t in fund_names}}, open(os.path.join(d, "fundamentals_pack.json"), "w"))
         json.dump({"names": {t: {"served": True} for t in mtf_names}}, open(os.path.join(d, "mtf_grid.json"), "w"))
         json.dump({**{t: {"2026-11-12": 1.0} for t in close_names}, "_missing": []}, open(os.path.join(d, "closes_scorecard.json"), "w"))
-    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    env = dict(os.environ); env["AEGIS_REPORT"] = "A"
     def cov():
         return subprocess.run([sys.executable, PIPE, "coverage", "--seat-sets", ss, "--committee-dir", d], capture_output=True, text=True, env=env)
     put(["AAA", "BBB"], ["AAA", "BBB"], ["AAA", "BBB"])
@@ -2259,22 +2246,22 @@ def test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committ
     check("coverage FAILS and names the uncovered name (fundamentals and mtf)", r.returncode == 1 and "fundamentals: BBB" in out and "mtf: BBB" in out and "topup" in out, out[-300:])
 
 
-def test_the_brief_headings_say_what_reports_a_b_and_c_are(td):
-    """PM 2026-11-11: the brief names the three reports in its headings every day. The B and C module titles come from the contract; A's heading is in the brief-writer card."""
+def test_the_brief_headings_say_what_reports_a_and_c_are(td):
+    """PM 2026-11-11: the brief names the two scans in its headings every day. The C module title come from the contract; A's heading is in the brief-writer card."""
     reg = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "contracts", "brief_sections.json")))
     t = {m["id"]: m["title"] for m in reg["modules"]}
-    check("B heading says full-universe screen, no AQE gate, scored only", t["sweep_B"] == "REPORT B: the same committee on a full-universe screen, with no AQE gate (scored only, not a trade row)", t["sweep_B"])
+    check("there is no B module in the brief registry", "sweep_B" not in t)
     check("C heading says AQE's own scores and sub-scores, scored only", t["indicators_C"] == "COMMITTEE AQE QUANT SCAN: the same committee reading AQE's own scores and sub-scores (scored only, not a trade row)", t["indicators_C"])
     card = open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "agents", "brief-writer.md")).read()
     check("A heading is fixed in the brief-writer card and keeps the gate prefix", "## §0 VERDICT TABLE — COMMITTEE STANDARD SCAN: the main committee, picking from AQE's own lists (the only scan with trade rows)" in card)
 
 
 def test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words(td):
-    """Conductor 2026-11-11: B and C need no hand script. `slate-from-forms` reproduces the 10 Nov B and C slates byte for byte from decision.json + the seats' own
+    """Conductor 2026-11-11: C needs no hand script. `slate-from-forms` reproduces the 10 Nov B and C slates byte for byte from decision.json + the seats' own
     tier-2 forms, passes the registrar's slate schema check, and every why_agreed / dissent / wrong_if is a quote of a seat's own tier-2 text."""
     import shutil
     root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
-    for rep in ("B", "C"):
+    for rep in ("C",):
         src = os.path.join(root, "output", "pma", "run", "2026-11-10-" + rep)
         if not os.path.exists(os.path.join(src, "decision.json")):
             check(f"slate-from-forms fixture 2026-11-10-{rep} present", False, src); continue
@@ -2311,7 +2298,7 @@ def test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_d
     D = json.load(open(ex))
     u = os.path.join(td, "tu.json"); json.dump({"schema": "aqe_universe_rows.v1", "date": D["date"], "rows": D["daily_list"]}, open(u, "w"))
     menus = os.path.join(HERE, "..", "contracts", "voice_menus.json")
-    env = dict(os.environ); env["AEGIS_REPORT"] = "B"
+    env = dict(os.environ); env["AEGIS_REPORT"] = "A"
     cs, sets = os.path.join(td, "t_cs.json"), os.path.join(td, "t_sets.json")
     a = subprocess.run([sys.executable, PIPE, "screens", "--universe-rows", u, "--export", ex, "--date", "2026-11-04", "--top", "40", "--out", cs, "--out-sets", sets], capture_output=True, text=True, env=env)
     check("trim fixture: screens run", a.returncode == 0, (a.stdout + a.stderr)[-300:])
@@ -4563,7 +4550,7 @@ def main():
                    test_conditions_are_written_in_shared_words_and_compiled_without_judgment,
                    test_consulted_seat_ballot_never_counts,
                    test_card_report_layout_is_fixed_and_refuses_gaps,
-                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_report_b_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_report_b_chain_three_nominations_per_seat_top_ten_and_reuse_of_a, test_the_brief_headings_say_what_reports_a_b_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book, test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide, test_the_brief_gate_checks_section_9a_for_a_flat_or_held_book, test_report_c_only_the_quant_nominates_and_the_candidate_set_is_its_own_whole_universe_quant_screen, test_report_b_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_b_and_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
+                   test_roster_is_seven_deciders_plus_qa, test_the_roster_follows_the_report_a_is_seven_c_adds_the_aqe_quant_seat, test_the_aqe_quant_seat_must_cite_two_aqe_fields, test_reports_b_and_c_run_as_their_own_non_live_runs, test_report_c_serves_the_aqe_quant_seat_its_numbers_and_the_glossary_and_report_a_is_untouched, test_a_bare_command_takes_its_report_from_the_run_manifest, test_standard_scan_screens_give_each_seat_its_own_top_25_and_no_aqe_door, test_the_loosened_seow_and_raschke_screens_let_pullback_and_rebound_names_pass, test_the_brief_sections_registry_isolates_modules_from_the_core_gate, test_nominations_are_capped_at_six_per_seat_and_report_b_is_gone, test_the_brief_headings_say_what_reports_a_and_c_are, test_slate_from_forms_builds_a_schema_valid_slate_from_the_seats_own_words, test_packet_trim_keeps_each_seat_under_one_read_declares_the_cut_and_never_drops_the_book, test_r2digest_tightens_free_text_in_declared_steps_when_over_the_one_read_guide, test_the_brief_gate_checks_section_9a_for_a_flat_or_held_book, test_report_c_only_the_quant_nominates_and_the_candidate_set_is_its_own_whole_universe_quant_screen, test_standard_scan_coverage_gate_fails_loudly_when_a_screened_name_has_no_committee_data, test_report_compare_grades_each_report_against_spy_and_the_list_with_overlap, test_report_c_cards_are_the_compact_page_with_no_levels, test_all_seven_deciders_count_on_every_name,
                    test_shortlist_cap_is_six, test_case_form_is_required_both_ways,
                    test_deliberation_forms_are_validated_on_arrival,
                    test_board_marks_contested_names_and_never_a_verdict,

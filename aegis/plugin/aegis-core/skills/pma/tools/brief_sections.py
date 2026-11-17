@@ -21,7 +21,7 @@ def load_registry(path=None):
 
 
 def enabled(mod, env=None):
-    """The registry flag, overridable per run: AEGIS_BRIEF_MODULES='sweep_B,indicators_C' (an explicit list) or 'none'."""
+    """The registry flag, overridable per run: AEGIS_BRIEF_MODULES='indicators_C' (an explicit list) or 'none'."""
     env = os.environ.get("AEGIS_BRIEF_MODULES") if env is None else env
     if env is None or env == "":
         return bool(mod.get("enabled", True))
@@ -55,7 +55,7 @@ def _load(path):
 
 
 def _run_dirs(run_dir, suffix):
-    """A run dir 'aegis/output/pma/run/2026-11-10' has siblings '<date>-B' and '<date>-C' (the non-live report runs)."""
+    """A run dir 'aegis/output/pma/run/2026-11-10' has a sibling '<date>-C' (the non-live AQE Quant Scan run)."""
     base = os.path.abspath(run_dir).rstrip("/")
     return base + "-" + suffix
 
@@ -68,7 +68,7 @@ def _counts(cons):
 
 
 def _render_report_module(mod, run_dir, date):
-    """Sections B and C share one shape: the report's own ADVANCE / HOLD names, a count line, 'also in A', never a trade row."""
+    """The AQE Quant Scan module: the report's own ADVANCE / HOLD names, a count line, 'also in A', never a trade row."""
     rdir = _run_dirs(run_dir, mod["run_dir_suffix"])
     cons = _load(os.path.join(rdir, "consensus.json"))
     if cons is None:
@@ -80,8 +80,7 @@ def _render_report_module(mod, run_dir, date):
         for r in rows:
             passed_in[r["ticker"]] = passed_in.get(r["ticker"], 0) + 1
     deliberated, adv, hold, passed = _counts(cons)
-    reused = _load(os.path.join(rdir, "reused_from_a.json")) or {}
-    reused_names = [t for t in (reused.get("tickers") or []) if t in a_cons]
+    reused_names = []
     rows = [c for c in cons if c.get("verdict") in VERDICTS]
     rows.sort(key=lambda c: (c["verdict"] != "ADVANCE", -(c.get("conviction") or 0), c["ticker"]))
     word = {"ADVANCE": "Advance", "HOLD-FOR-CONDITIONS": "Hold for conditions"}
@@ -103,7 +102,7 @@ def _render_report_module(mod, run_dir, date):
     return "\n".join(L)
 
 
-RENDERERS = {"sweep_B": _render_report_module, "indicators_C": _render_report_module}
+RENDERERS = {"indicators_C": _render_report_module}
 
 
 def render_all(run_dir, date, registry=None, env=None):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""seat_screens.py -- Report B's seven per-seat CODE screens (PM 2026-11-05).
+"""seat_screens.py -- the Standard Scan's seven per-seat CODE screens (PM 2026-11-05).
 
-Report B gives each of the seven seats the WHOLE daily screened universe (market cap >= $2B, 10-day volume >= 1.5M, US primary listing,
+The Standard Scan (report A) gives each of the seven seats the WHOLE daily screened universe (market cap >= $2B, 10-day volume >= 1.5M, US primary listing,
 before any AQE score gate) instead of AQE's lists. A seat cannot read 600 rows, so each seat gets the 25 names its OWN checklist ranks
 highest, found by deterministic code written from that seat's card: the same tests the seat would walk, on the fields the universe rows
 carry, with no AQE composite, list flag or lens ranking as a door. A screen is a count of the seat's own tests passed; a test whose field
