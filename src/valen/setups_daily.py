@@ -71,8 +71,17 @@ def attach_setup_grades(daily_list: list[dict], held_positions: list[dict] | Non
                 r.update(unr[r["ticker"]])
     except Exception:  # noqa: BLE001 -- the column must never take the setups grading down
         unr = {}
+    try:                                     # Valen's stop-fit fact (PM 2026-11-17); a failure here never takes the grading down, it is said in the status
+        from .entry import entry_last_day
+        fit = entry_last_day(panel, rows)
+        for r in rows:
+            if r.get("ticker") in fit:
+                r.update(fit[r["ticker"]])
+        fit_status = {"stop_fit_graded": len(fit)}
+    except Exception as exc:  # noqa: BLE001
+        fit_status = {"stop_fit_error": f"{type(exc).__name__}: {exc}"}
     missing = sorted({r.get("ticker") for r in rows if r.get("ticker")} - set(grades))
-    return {"status": "live", "graded": len(grades), "unr_graded": len(unr),
+    return {"status": "live", "graded": len(grades), "unr_graded": len(unr), **fit_status,
             "not_graded": missing,
             "earnings_history": bool(earnings),
             "in_theme": in_theme_tickers(valen) is not None}

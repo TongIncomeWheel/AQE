@@ -306,3 +306,20 @@ IMPL_FL_MIN_CHECKS = 3                 # of the five failed-leader signs
 GEX_TICKER = "SPY"
 GEX_AMBER_ABOVE_FLIP_PCT = 1.0     # rule 3: within 1% above the flip
 GEX_AMBER_NEAR_CALL_WALL_PCT = 0.5  # rule 4: within 0.5% of the call wall
+
+
+# ---------------------------------------------------------------------------
+# ENTRY LAYER -- Valen's entry methods (PM 2026-11-17, "Yes Valen entry methods
+# are what we need into our system of aegis daily and alerts"). Source: the
+# Valen Setups requirements draft (B1.2, B1.3, B1.6, B3.4, B4.4). Facts and
+# booleans only -- never a gate on an alert, never a size.
+# ---------------------------------------------------------------------------
+ENTRY_STOP_CAP_ATR = HB_UNR_STOP_MAX_ATR      # stop at most 1 ATR from the entry; "too far? skip the trade"
+ENTRY_LOD_PREFERRED_ATR = 0.70                # buy within 60-70% of a daily range above the low of day (0.70 = outer edge)
+ENTRY_TICK = 0.01                             # the stop sits one tick under the low it is anchored to
+# Intraday volume schedule: share of a NORMAL day's volume that should have traded by the mark (New York time).
+# Only the two marks the page prints; the rest of Valen's schedule is truncated on the capture, so none is guessed.
+ENTRY_VOLUME_MARKS = (("09:35", 0.20), ("10:00", 0.40))
+# FMP's feed here is 15-minute: a mark is read at the first COMPLETED 15-minute bar at or after it (09:35 -> the 09:45 read).
+ENTRY_PIVOT_MINUTES = 30                      # undercut-and-rally entry b: first green 30-minute candle after the undercut
+ENTRY_ORB_MINUTES = 5                         # Valen's opening range is 5 minutes; our feed gives 15 (said on every readout)
