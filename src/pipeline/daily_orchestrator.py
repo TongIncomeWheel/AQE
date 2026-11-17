@@ -801,7 +801,8 @@ def _pipeline_rank_screen(panel: pd.DataFrame, run_date: date) -> list[tuple[str
     # for SECTOR grading — exclude them here too so they never enter screening
     # (Thematic Basket Map v2.0: baskets don't add scan names).
     _scan = set(load_universe(include_benchmark=True))
-    _basket_only = BASKET_CONSTITUENTS - _scan
+    from src.valen import baskets as _vb              # Valen's baskets and group ETFs are context too (run 150, 2026-11-18)
+    _basket_only = (set(BASKET_CONSTITUENTS) | _vb.context_only()) - _scan
     tickers = [t for t in panel["ticker"].unique()
                if t not in GICS_ETFS and t != "SPY" and t not in _basket_only]
 

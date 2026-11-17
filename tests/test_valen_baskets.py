@@ -112,3 +112,48 @@ def test_the_committed_valen_file_validates_and_is_the_file_the_valen_agent_sent
     assert len(a["baskets"]) == 96 and sum(len(b["constituents"]) for b in a["baskets"].values()) == 1882 and len(a["groups"]) == 155
     assert {b["sector"] for b in a["baskets"].values()} == {"Growth", "Commodities", "Defensive", "Interest Sensitive", "Healthcare", "Index"}
     assert "&amp;" not in raw.decode("utf-8")                                   # names read "Diagnostics & Testing", not the transport's escaped form
+
+
+def test_valen_context_names_and_group_etfs_are_never_scored_the_run_150_leak(tmp_path):
+    """Run 150 (2026-11-18): Valen's constituents (499 outside the universe) and group ETFs (142) were scored and reached the universe rows (639 rows) and the daily list (33 names incl. Longlist/Elder and
+    ETFs UUP, KBE) because the scoring exclusion only knew AQE's old 35 baskets. Context-only means never scored, never screened, never listed; the held book is the one exception."""
+    from src.engines.srm import BASKET_CONSTITUENTS
+    from src.scanner.score_runner import scoreable_tickers
+    d = doc(n=96, per=4, groups=12)
+    a = VB.load(write(tmp_path, d))
+    ctx = VB.context_only(a)
+    assert "T0000" in ctx and "G000" in ctx and ctx == VB.constituents(a) | set(VB.group_etfs(a))
+    panel = ["AAA", "BBB", "T0000", "T0013", "G000", "HELD1"]
+    got = scoreable_tickers(panel, scan_universe={"AAA", "BBB"}, basket_constituents=set(BASKET_CONSTITUENTS) | ctx, held_tickers={"HELD1"})
+    assert got == ["AAA", "BBB", "HELD1"]                                                   # context names out, the scan universe in, a held name kept
+    # a name that is BOTH in the scan universe and in a Valen basket is a universe name: it is scored
+    assert scoreable_tickers(["T0000"], scan_universe={"T0000"}, basket_constituents=set(ctx)) == ["T0000"]
+    import inspect
+    from src.pipeline import daily_orchestrator as DO
+    from src.scanner import score_runner as SR
+    assert "context_only()" in inspect.getsource(DO._pipeline_rank_screen) and "context_only()" in inspect.getsource(SR.build_scores)       # both scoring paths use it
+
+
+def test_a_group_etf_listed_in_two_universes_is_one_row(tmp_path):
+    """TLT is both an industry group and an index in Valen's file: the ETF frame must not carry a duplicate column (run 150: TypeError float(Series))."""
+    d = doc(n=96, per=4, groups=12)
+    d["groups"].append({"ticker": "G003", "name": "Group 3 again", "universe": "Index"})
+    a = VB.load(write(tmp_path, d))
+    g = TH.compute_group_block(make_panel(d), a)
+    assert g["status"] == "OK" and g["n"] == 12 and [r["ticker"] for r in g["groups"]].count("G003") == 1
+
+
+def test_the_emergency_filter_keeps_the_universe_and_the_held_book_and_never_edits_its_inputs(tmp_path):
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location("ftu", Path(__file__).resolve().parents[1] / "scripts" / "filter_to_universe.py")
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    (tmp_path / "u.txt").write_text("# AQE Universe\nAAA\nBBB\n")
+    ex = {"daily_list": [{"ticker": t} for t in ("AAA", "ZZZ", "ARKK")], "lens_ranking": [{"ticker": "BBB"}, {"ticker": "ZZZ"}], "held_positions": [{"ticker": "HELD"}]}
+    ur = {"count": 4, "rows": [{"ticker": t} for t in ("AAA", "BBB", "ARKK", "HELD")]}
+    (tmp_path / "e.json").write_text(json.dumps(ex)); (tmp_path / "r.json").write_text(json.dumps(ur))
+    before = (tmp_path / "e.json").read_bytes()
+    assert m.main(["--export", str(tmp_path / "e.json"), "--universe-rows", str(tmp_path / "r.json"), "--universe", str(tmp_path / "u.txt"), "--out-dir", str(tmp_path / "out")]) == 0
+    fe = json.loads((tmp_path / "out" / "aqe_daily_export.filtered.json").read_text()); fr = json.loads((tmp_path / "out" / "aqe_universe_rows.filtered.json").read_text())
+    assert [r["ticker"] for r in fe["daily_list"]] == ["AAA"] and [r["ticker"] for r in fe["lens_ranking"]] == ["BBB"] and [r["ticker"] for r in fr["rows"]] == ["AAA", "BBB", "HELD"] and fr["count"] == 3
+    assert (tmp_path / "e.json").read_bytes() == before and "NOT recomputed" in fe["filtered_by"]
