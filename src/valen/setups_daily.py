@@ -17,15 +17,16 @@ def in_theme_tickers(valen: dict | None) -> set[str] | None:
     if not valen or (valen.get("groups") or {}).get("status") != "OK":
         return None
     try:
-        from src.engines.srm import THEMATIC_BASKETS
+        from . import baskets as _vb
         from . import card
+        _active = _vb.load()["baskets"]          # the ACTIVE basket set (Valen's 96, else AQE's 35): one set on screen, PM 2026-11-17
         rows = card.theme_reads(card.theme_leaders_table(valen))
     except Exception:  # noqa: BLE001
         return None
     out: set[str] = set()
     for r in rows:
         if r.get("theme_read") != card.THEME_READ_NONE:
-            basket = THEMATIC_BASKETS.get(r.get("name")) or {}
+            basket = _active.get(r.get("name")) or {}
             out.update(basket.get("constituents") or [])
     return out
 
