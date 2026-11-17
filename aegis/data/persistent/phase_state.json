@@ -2,11 +2,11 @@
  "x_version": "1.1.0",
  "phases": {
   "post_market": {
-   "status": "ok",
+   "status": "partial",
    "run_date": "2026-11-17",
-   "run_at_utc": "2026-11-17T21:35:54+00:00",
+   "run_at_utc": "2026-11-17T22:01:57+00:00",
    "journal_date": "2026-11-17",
-   "note": "deterministic batch: all jobs passed"
+   "note": "19/20 close artefacts confirmed byte-exact or semantically-equal on GitHub main via connector push (D-110). aegis/data/persistent/trade_journal.json (122,954 bytes, local blob 5ca9ff78) could not be transcribed into a connector push_files call without truncation (same recurring limitation noted in the 2026-11-16 run for this same file) -- GitHub main still holds the stale pre-close blob 53631b72 (102,071 bytes) for this one file. All other artefacts (journal, portfolio_ledger, archive, overnight brief, flow audit, broker_pull payloads, dyncap, phase_state) are confirmed on main. Everything needed by /pma and AQE (aegis_journal_2026-11-17.json, portfolio_ledger.json) IS on main. Recommend native git push access (add_repo) for this file, or a connector enhancement for large-file content."
   },
   "premarket_data": {
    "status": "ok",
