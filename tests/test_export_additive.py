@@ -91,6 +91,8 @@ def test_top_level_keys_are_additive_only():
         "ma_scan", "ma_pending",
         # PM 2026-11-05: the swing-pivot stamp status, the engine sub-components value check (Report C), the universe rows file status (Report B)
         "swing_pivot_status", "subcomponents_status", "universe_rows_status",
+        # Stage Weather (PM 2026-11-17): the market/sector/breadth stage read and its stamp status
+        "stage_market", "stage_status",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
@@ -138,6 +140,10 @@ def test_v21_record_fields_is_additive_only():
         "ma_status", "ma_note", "ma_evidence",
         # Momentum at the pivot (PM 2026-11-05), stamped by valen.swing_pivot.attach_swing_pivot in build_export
         "swing_pivot", "swing_atr_dist", "swing_high", "swing_high_date", "swing_daily", "swing_weekly", "swing_note",
+        # Stage Weather ticker columns (stamped by the stages pass in build_export)
+        "stage", "stage_name", "stage_candidate", "stage_weeks", "stage_transition", "trend_template", "trend_template_met", "stage2_confirmed", "stage_detail",
+        # Valen entry + theme layer (PM 2026-11-17), stamped by setups_daily.attach_setup_grades
+        "stop_fit", "themes", "in_leading_theme", "dryup_45", "dryup_60", "dryup_window",
     }
     missing = (baseline_row_keys - current_keys) - OUT_OF_SCOPE - DS._NEW_ENGINE_NULL.keys()
     assert not missing, (

@@ -296,7 +296,10 @@ def _run_pipeline_and_record(now: datetime) -> dict:
     # long; 2400s was too tight and killed the process mid-tail (after the export
     # was already written). 3300s (55 min) gives headroom while still bounding a
     # genuine runaway.
-    _PIPELINE_TIMEOUT = 4500
+    # 2026-11-17: 8400s (140 min, under the workflow job's 150-min cap). The 500K-floor universe (~1,660 names, +55%) put the export at ~42 min and the
+    # tail (snapshot, ledger, MA scan, committee data, marker, persist) well past 4500s: forced run 148 was killed at exactly 4500s with the export
+    # already written ("partial"), so every tail artifact was lost.
+    _PIPELINE_TIMEOUT = 8400
 
     def _feed_status():
         """Was today's export actually written? Returns (exported_at, is_today)."""
