@@ -246,7 +246,9 @@ def run_condition_cycle(pma_doc: dict | None, quotes: dict, now_et: datetime,
                 from . import live_entry as LEN
                 _armed = (live["unr"].get("armed") or [])
                 _lvl = next((a["level"] for a in _armed), None)
-                _ent = LEN.build(today_bars, profile, live["price"], live["unr"].get("stop") or live["day_low"], live["atr"], level=_lvl)
+                _rp = LEN.ready_pivot(row.get("setups"))
+                _ent = LEN.build(today_bars, profile, live["price"], live["unr"].get("stop") or live["day_low"], live["atr"], level=_lvl,
+                                 pivot=(_rp or {}).get("pivot"))
                 live["entry"], shadow_entry = _ent["visible"], _ent["shadow"]
             except Exception:  # noqa: BLE001 -- a card line, never the cycle
                 live["entry"] = {}

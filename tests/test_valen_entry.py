@@ -81,6 +81,19 @@ def test_orb_is_shadow_only_never_in_the_card_line_and_logged_in_the_ledger_line
     assert 'line["shadow_entry"]' in src and "shadow_entry" not in inspect.getsource(__import__("src.alerts.emailer", fromlist=["x"]))
 
 
+def test_orb_break_for_a_ready_name_needs_the_break_the_daily_pivot_and_the_volume_gate_shadow_only():
+    prof = {k: 100.0 for k in range(26)}
+    bars = day([(10, 10.5, 9.9, 10.1, 1200), (10.1, 10.9, 10.0, 10.8, 1200)])            # 2400/2600 = 92%: gate passes
+    rp = LEN.ready_pivot([{"setup": "VCP", "status": "READY", "pivot": 10.6}, {"setup": "High tight flag", "status": "WATCH", "pivot": 99}])
+    assert rp == {"setup": "VCP", "pivot": 10.6} and LEN.ready_pivot([{"setup": "Undercut and rally", "status": "READY", "pivot": 5}]) is None
+    b = LEN.build(bars, prof, 10.8, 9.9, 1.0, pivot=10.6)
+    o = b["shadow"]["orb"]
+    assert o["state"] == "ORB_BREAK" and o["orb_break"] and o["above_pivot"] and o["volume_gate"] == LEN.PASS
+    assert LEN.build(bars, prof, 10.8, 9.9, 1.0, pivot=10.95)["shadow"]["orb"]["state"] == "BROKE_UP"          # under the daily pivot: not a break
+    thin = day([(10, 10.5, 9.9, 10.1, 10), (10.1, 10.9, 10.0, 10.8, 10)])
+    assert LEN.build(thin, prof, 10.8, 9.9, 1.0, pivot=10.6)["shadow"]["orb"]["orb_break"] is False            # volume gate not met
+
+
 def test_a_failing_part_is_one_error_not_a_lost_card():
     b = LEN.build("not bars", None, None, None, None)
     assert b["visible"]["stop_fit"]["fit"] == VE.NA and b["visible"]["volume_gate"]["state"] == LEN.UNKNOWN

@@ -122,8 +122,21 @@ def _after(bar: dict, candle: dict) -> bool:
     return slot is not None and slot >= (candle["slot"] + 1) * 2
 
 
-def orb(bars_15m: list[dict]) -> dict:
-    """Opening-range break on the opening 15 minutes (Valen's is 5; stated). SHADOW ONLY. States: NOT_READY, INSIDE, BROKE_UP, BROKE_DOWN."""
+READY_FAMILIES = ("vcp", "high tight", "episodic")      # the setups Daily marks READY that the opening-range break applies to (PM 2026-11-17)
+
+
+def ready_pivot(setups: list[dict] | None) -> dict | None:
+    """The READY grade (VCP, high tight flag, episodic pivot) with a pivot, from the row's `setups` block; None when the name is not READY."""
+    for g in setups or []:
+        nm = str(g.get("setup") or "").lower()
+        if g.get("status") == "READY" and g.get("pivot") is not None and any(f in nm for f in READY_FAMILIES):
+            return {"setup": g["setup"], "pivot": float(g["pivot"])}
+    return None
+
+
+def orb(bars_15m: list[dict], pivot: float | None = None, volume_state: str | None = None) -> dict:
+    """Opening-range break on the opening 15 minutes (Valen's is 5; stated). SHADOW ONLY. States: NOT_READY, INSIDE, BROKE_UP, BROKE_DOWN.
+    For a name Daily marks READY, `orb_break` (state ORB_BREAK) = the break is up, price is above the daily pivot and the volume gate is PASS."""
     rng = LM.opening_range(bars_15m)
     if rng is None:
         return {"state": "NOT_READY", "basis": "opening 15 minutes (Valen: 5)"}
@@ -140,11 +153,18 @@ def orb(bars_15m: list[dict]) -> dict:
         if c < rng["low"]:
             state, at = "BROKE_DOWN", b.get("date")
             break
-    return {"state": state, "high": rng["high"], "low": rng["low"], "at": at, "basis": "opening 15 minutes (Valen: 5)"}
+    out = {"state": state, "high": rng["high"], "low": rng["low"], "at": at, "basis": "opening 15 minutes (Valen: 5)"}
+    if pivot is not None:
+        last = LM._f((later[-1] if later else {}).get("close"))
+        out.update({"daily_pivot": round(pivot, 2), "above_pivot": bool(last is not None and last > pivot), "volume_gate": volume_state,
+                    "orb_break": bool(state == "BROKE_UP" and last is not None and last > pivot and volume_state == PASS)})
+        if out["orb_break"]:
+            out["state"] = "ORB_BREAK"
+    return out
 
 
 def build(today_bars: list[dict], profile: dict[int, float] | None, spot: float | None, day_low: float | None, atr: float | None,
-          level: float | None = None) -> dict:
+          level: float | None = None, pivot: float | None = None) -> dict:
     """The cycle's one call. Never raises: each part is wrapped so one failure is one `error` line, not a lost card."""
     vis: dict = {}
     for key, fn in (("stop_fit", lambda: VE.stop_fit(spot, day_low, atr)),
@@ -155,7 +175,7 @@ def build(today_bars: list[dict], profile: dict[int, float] | None, spot: float 
         except Exception as exc:  # noqa: BLE001
             vis[key] = {"state": "ERROR", "fit": "NA", "reason": f"{type(exc).__name__}: {exc}"}
     try:
-        shadow = {"orb": orb(today_bars)}
+        shadow = {"orb": orb(today_bars, pivot, (vis.get("volume_gate") or {}).get("state"))}
     except Exception as exc:  # noqa: BLE001
         shadow = {"orb": {"state": "ERROR", "reason": f"{type(exc).__name__}: {exc}"}}
     return {"visible": vis, "shadow": shadow}
