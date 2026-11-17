@@ -130,6 +130,15 @@ report:
     aqe-quant nominations, in the room, cross-examination, vote) and, for every name that fell out from the room on, one line with the tool file's own reason and its AQE tag (AQE-listed or not, plus AQE scores).
     The early stages print counts only (listing 984 names would hide the story). The Cards page (v3 for A, pma_cards_report.py for C) prints the same tables; the brief pastes scan_funnel.md VERBATIM after the
     AQE-listed table. Nothing in the funnel is hand-written.
+    (5b3) STAGE WEATHER, STAGE 1-4 (PM 2026-11-17: "Stage 1-4 builds"). The nightly stamps the Weinstein four-stage read (weekly bars against the 30-week average; src/stages) on every export row
+    (`stage`, `stage_name`, `stage_weeks`, `stage_transition`, `stage_candidate`, `stage2_confirmed`, `trend_template`, `trend_template_met`, `stage_detail` with the group's and the market's stage) and the
+    export's top-level `stage_market` (SPY and QQQ with distribution days, the 11 sector ETFs, breadth). It is wired in at three levels: MARKET and GROUP (the stage_market block, in the brief and on the Cards
+    sector card) and TICKER (the stage columns). SEATS: minervini (C2 stage, C3 Trend Template) and oneil (C2 market top) are served every stage column plus the group's and the market's stage; wyckoff
+    (accumulation / distribution = stages 1 and 3) and livermore are served the stage, weeks in stage, transition and the group's and market's stage; no other seat is, and no seat is told to obey it. A stage
+    is a reading, never a gate, a size or a disposition. DISTRIBUTION-DAY LINE (PM 2026-11-17 default, the PM may overrule): the committee canon's own number, FOUR in 25 sessions (O'Neil C2, aegis/canon);
+    the count itself is always printed, so a five or an eight reads for itself. Before WRITE run `python3 tools/stage_brief.py --export aqe_daily_export_wu.json --consensus consensus.json --out stage_weather.md`
+    and paste it verbatim after the funnel strip; the gate (Q-SW) fails a brief without it (or without its one-line "Stage weather unavailable: ..." when the layer is missing). Cards v3 prints the market and
+    group tables at the top of the sector card and one stage line on every ticker card and hold row. check.py data WARNs when the export's stage_status is not live.
     (5c) THE LOUD FALLBACK (PM 2026-11-16): if aqe_universe_rows.json is missing, empty or refused (export.universe_rows_status), `screens` stops with a reason. Do NOT go on silently and do NOT stop the live committee:
     re-run `registrar.py init --method fallback_aqe_doors` and use the old chain (the AQE-published candidate_set.json, `trim`, the doors on, no augment-export). The brief says FALLBACK in its heading line
     (the gate checks it), the Cards banner says FALLBACK: AQE doors, the ledger rows carry method fallback_aqe_doors, and the DONE post names it. A coverage FAIL is NOT a fallback reason: top it up.

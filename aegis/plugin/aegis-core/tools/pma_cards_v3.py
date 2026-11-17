@@ -655,9 +655,41 @@ def basket_card():
                 ("All baskets: grade, week, month, rotation, strongest members",
                  table(["Basket", "Grade", "1 week", "1 month", "Rotation", "Strongest members (20-day strength vs SPY)"], rows_)))
 c_basket = basket_card()
+
+import stage_brief as SB
+def stage_line(t):
+    """One plain line for a ticker: its stage, its group's stage, the market's (Weinstein; a reading, never a gate)."""
+    r = ROWS.get(t) or {}
+    d = r.get("stage_detail") or {}
+    if r.get("stage") is None:
+        return "Stage: not read"
+    tt = r.get("trend_template")
+    return (f"Stage: {SB._w(r['stage'])}, week {r.get('stage_weeks') if r.get('stage_weeks') is not None else 'n/a'}"
+            f"{' (' + str(r['stage_transition']).lower() + ' this week)' if r.get('stage_transition') else ''}; group {SB._w(d.get('sector_stage'))}; market {SB._w(d.get('market_stage'))}"
+            + (f"; Trend Template {tt.lower()} ({r.get('trend_template_met')} of 8)" if tt else ""))
+def _stage_card():
+    """Stage weather (PM 2026-11-17): market, group and breadth, from the export's stage_market block; loud when the layer is missing."""
+    ok, why = SB.available(D)
+    if not ok:
+        return card("Stage weather is not in this export.", "", E(str(why)))
+    sm = D["stage_market"]
+    mk = SB.market_rows(D)
+    mrows = [[E(m["symbol"]), E(SB._w(m["stage"])) + (" (change in progress)" if m.get("change") else "") if m["stage"] else "not read",
+              str(m["weeks"]) if m["weeks"] is not None else "n/a", str(m["dd"]) if m["dd"] is not None else "n/a",
+              ("at or above the line of " if m.get("at_line") else "under the line of ") + str(m["line"]) if m["line"] is not None else "n/a"] for m in mk]
+    grows = [[E(g["etf"]), E(SB._w(g["stage"])) if g["stage"] else "not read", str(g["weeks"]) if g["weeks"] is not None else "n/a"] for g in SB.group_rows(D)]
+    n_adv2 = sum(1 for g in SB.group_rows(D) if g["stage"] == 2)
+    head = (f"The market is in {SB._w(mk[0]['stage']).lower()} and {n_adv2} of {len(grows)} sector ETFs are advancing." if mk and mk[0]["stage"] else "The market stage is not read.")
+    bl = SB.breadth_line(D)
+    return card(head, table(["Market", "Stage", "Weeks in stage", "Distribution days, 25 sessions", "O'Neil line"], mrows)
+                + table(["Group (sector ETF)", "Stage", "Weeks in stage"], grows, "sortable"),
+                bl or "Breadth is not available.",
+                ("The Stage 1 to 4 cycle", "<p>Weinstein's four stages on weekly bars against the 30-week average: 1 basing, 2 advancing, 3 topping, 4 declining. A reading, never a gate or a size. "
+                 "The distribution-day line is the committee canon's own number (O'Neil), four in 25 sessions.</p>"))
+c_stage = _stage_card()
 s2 = section("5 &middot; Sector and theme strength", (f"Money sits in {_jn2([SHORT.get(x, x) for x in lead_secs])}" if lead_secs else "No sector passes the entry gate")
              + (f"; {_jn2(blocked_lag)} lag." if blocked_lag else "."),
-             f'<div class="grid">{c_sec}{c_th}{c_basket}{c_grp}</div>', "sectors")
+             f'<div class="grid">{c_stage}{c_sec}{c_th}{c_basket}{c_grp}</div>', "sectors")
 
 # ------------------------------------------------------------------ 3 WHAT HAPPENED
 yv = lambda s: float(s.replace("%", ""))
@@ -889,7 +921,7 @@ def tcard(r):
     """Template card first; the writer's numbers (buy line, 1R shares, targets) stay folded beneath it."""
     h = tmpl_card(r["t"])
     assert h.endswith("</div>")
-    return h[:-6] + f'<p class="aqe">{E(AL.listing(r["t"], _AQE_BY)["plain_line"])}</p>' + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
+    return h[:-6] + f'<p class="aqe">{E(AL.listing(r["t"], _AQE_BY)["plain_line"])}</p>' + f'<p class="aqe">{E(stage_line(r["t"]))}</p>' + f'<details class="big"><summary>Writer&rsquo;s numbers and 1R shares</summary>{_tcard_numbers(r)}</details></div>'
 
 def supp_ctx(t):
     """A supplemental-pass name (PM 2026-11-05): the room did not vote it in THIS run, so everything comes from its live levels row
@@ -946,10 +978,10 @@ def hold_row(t):
     wa = next((x for x in tr if x["kind"] == "trade_below" and "wait area" in x["action"]), None)
     zone = re.search(r"wait area ([\d.]+-[\d.]+)", wa["action"]).group(1).rstrip(".").replace("-", " to ") if wa else ("held: add question only" if t in HELD else "&mdash;")
     dead = next((f"daily close under {x['level']}" for x in tr if x["kind"] == "close_below"), cd.get("kills", "&mdash;"))
-    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, (f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else "") if buy else "no shared buy line yet"), E(dead), extras(t), E(AL.listing(t, _AQE_BY)["plain_line"])]
+    return [f"<b>{t}</b>{ma_pill(ROWS.get(t))}{mom_pill(t)}", f"#{ROWS.get(t, {}).get('rank', '&mdash;')}", zone, (f"{buy['level']}" + (f" on {buy['volume_min_x']}x volume" if buy.get("volume_min_x") else "") if buy else "no shared buy line yet"), E(dead), extras(t), E(AL.listing(t, _AQE_BY)["plain_line"]), E(stage_line(t))]
 hold_tmpl = (f'<details class="big"><summary>The {len(holds)} hold cards, same template</summary><div class="stack">' + "".join(tmpl_card(c["ticker"]) for c in holds) + "</div></details>") if holds else ""
 hold_card = card(f"{len(holds)} names wait for a condition first; nothing to do until it prints.",
-    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R", "AQE-listed and AQE scores"], [hold_row(c["ticker"]) for c in holds]),
+    table(["Name", "AQE rank", "Pull back into", "Then an hourly close above", "Dead if", "Trend frames and U&R", "AQE-listed and AQE scores", "Stage, group and market"], [hold_row(c["ticker"]) for c in holds]),
     "For a held name the line is an add question only.",
     ("Why each one waits", "<ul class='plainlist'>" + "".join(f"<li><b>{c['ticker']}</b>: {E(plain(T['holds'][c['ticker']]))}</li>" for c in holds) + "</ul>"))
 

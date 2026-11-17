@@ -244,6 +244,17 @@ ma_40,ma_20,leaf,usd,,40-day simple moving average -- seow canon instrument,src/
 ma_150,ma_20,leaf,usd,,150-day simple moving average -- minervini Trend Template criteria 1/2/4,src/data/drive_sync.py:1023,"mean(close, trailing 150 bars)",,,daily_list
 high_52w,,leaf,usd,,"Highest CLOSE over the trailing 252 sessions (close-to-close, not intraday high)",src/data/drive_sync.py:1039,"max(close, trailing 252 bars)",,,daily_list
 low_52w,high_52w,leaf,usd,,Lowest CLOSE over the trailing 252 sessions,src/data/drive_sync.py:1040,"min(close, trailing 252 bars)",,,daily_list
+stage,,leaf,label,1|2|3|4,Weinstein stage on weekly bars vs the 30-week average (Minervini canon C2's four-stage cycle),src/stages/classify.py:stage_series,"close>MA30w & slope4w>+0.5% -> 2; close<MA30w & slope4w<-0.5% -> 4; else 3 after 2/3, 1 after 4/1; change needs 2 completed weeks",,,daily_list
+stage_name,stage,leaf,label,Basing|Advancing|Topping|Declining,The word for stage,src/stages/spec.py:STAGE_NAME,STAGE_NAME[stage],,,daily_list
+stage_candidate,stage,leaf,label,1|2|3|4,"Stage the latest data reads (forming week, else last completed week)",src/stages/classify.py:classify,candidate_forming or candidate,,,daily_list
+stage_weeks,stage,leaf,count,,Completed weeks in the current stage,src/stages/classify.py:classify,weeks since the first week of the confirming streak,,,daily_list
+stage_transition,stage,leaf,label,BREAKOUT|TOPPING|BREAKDOWN|BASING|ADVANCE_RESUMED|BASE_FAILED|BROKE_DOWN_FROM_ADVANCE|V_REVERSAL,Stage change confirmed this week,src/stages/spec.py:TRANSITION_LABEL,"TRANSITION_LABEL[(previous_stage, stage)] in the confirming week only",,,daily_list
+trend_template,stage,leaf,label,PASS|FAIL|NA,"Minervini canon C3 Trend Template, 8 criteria, all-or-nothing",src/stages/ticker.py:trend_template,"all 8 PASS -> PASS; any FAIL -> FAIL; else NA (entry, ma_50/150/200, high/low_52w, rs_rank_pct, panel MA200 vs 21 sessions ago)",,,daily_list
+trend_template_met,trend_template,leaf,count,,"Trend Template criteria passed, 0-8",src/stages/ticker.py:trend_template,count(criterion == PASS),,,daily_list
+stage2_confirmed,stage,leaf,boolean,,Minervini canon C2: Stage 2 and at least 25% off the 52-week low,src/stages/ticker.py:stage2_confirmed,stage == 2 and entry >= 1.25 * low_52w,,,daily_list
+stage_detail,stage,leaf,,,"Full stage read: MA30w + slope, Mansfield RS, up/down volume, sector + market stage, both canon tests",src/stages/ticker.py:stamp_rows,classify() output + trend_template() + stage2_confirmed(),,,daily_list
+stage_market,,leaf,,,"Stage at market (SPY/QQQ + O'Neil C2 distribution days) and sector level, plus panel breadth by stage",src/stages/daily.py:attach_to_export,weather.compute() over panel_weekly; distribution_days() over panel_daily,,,daily_list
+stage_status,,leaf,label,live|error,"Whether the ticker-level stage stamp ran (error = nothing read, not a quiet tape)",src/stages/daily.py:attach_to_export,"live on success, error + reason on any failure",,,daily_list
 pct_from_52w_high,high_52w,leaf,pct,,Entry's distance from high_52w,src/data/drive_sync.py:1327,(entry/high_52w-1)*100,,,daily_list
 ret_6m,,leaf,pct,,"Total return, close now vs 126 sessions ago -- the rs_rank_pct input",src/data/drive_sync.py:1042,(close[-1]/close[-127]-1)*100,,,daily_list
 ret_12m,,leaf,pct,,"Total return, close now vs 252 sessions ago -- O'Neil's 12-month RS window",src/data/drive_sync.py:1044,(close[-1]/close[-253]-1)*100,,,daily_list
