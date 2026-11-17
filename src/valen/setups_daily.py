@@ -80,8 +80,20 @@ def attach_setup_grades(daily_list: list[dict], held_positions: list[dict] | Non
         fit_status = {"stop_fit_graded": len(fit)}
     except Exception as exc:  # noqa: BLE001
         fit_status = {"stop_fit_error": f"{type(exc).__name__}: {exc}"}
+    try:                                     # DAY-4/5: theme membership + dry-up bar counts (PM 2026-11-17); never takes the grading down
+        from . import themes as TH
+        tb = ((valen or {}).get("groups") or {}).get("themes")
+        member = TH.membership(tb)
+        ok = bool(tb and tb.get("status") == "OK")
+        dry = TH.dryup_counts(panel, {r.get("ticker") for r in rows if r.get("ticker")})
+        for r in rows:
+            r.update(TH.theme_fields(r.get("ticker"), member, ok))
+            r.update(dry.get(r.get("ticker"), {"dryup_45": None, "dryup_60": None, "dryup_window": TH.DRYUP_WINDOW}))
+        theme_status = {"themes_read": ok, "themes_reason": None if ok else ((tb or {}).get("reason") or "the theme block is not in the Valen artifact")}
+    except Exception as exc:  # noqa: BLE001
+        theme_status = {"themes_read": False, "themes_reason": f"{type(exc).__name__}: {exc}"}
     missing = sorted({r.get("ticker") for r in rows if r.get("ticker")} - set(grades))
-    return {"status": "live", "graded": len(grades), "unr_graded": len(unr), **fit_status,
+    return {"status": "live", "graded": len(grades), "unr_graded": len(unr), **fit_status, **theme_status,
             "not_graded": missing,
             "earnings_history": bool(earnings),
             "in_theme": in_theme_tickers(valen) is not None}

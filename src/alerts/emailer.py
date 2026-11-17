@@ -1681,6 +1681,13 @@ def _build_compact_card(ticker: str, row: dict, eval_result: dict,
         near = _nearby_levels(unr, spot)
         if near:
             lines.append(near)
+    try:                                     # ALT-5 (PM 2026-11-17): one theme line on every card, read from the export row
+        from src.valen.themes import theme_line as _theme_line
+        _tl = _theme_line(row)
+    except Exception:  # noqa: BLE001
+        _tl = None
+    if _tl:
+        lines.append(_tl)
     lines += _card_field_lines(row)
     return {"headline": f"{ticker}{px} · {head}{held}", "color": color,
             "summary": None, "lines": lines}

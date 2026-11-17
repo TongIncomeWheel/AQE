@@ -143,5 +143,11 @@ def compute_groups(panel_daily: pd.DataFrame) -> dict:
     rotation = sorted((g for g in groups if g.get("thrust") is not None),
                       key=lambda g: g["thrust"], reverse=True)
 
+    # PM 2026-11-17 (Valen DAY-2/3): the theme block (bullish flag, sessions on/off, shares above the averages, reclaimed/lost today, RS and thrust)
+    # beside the groups; a failure is its own status, never a lost groups read.
+    from . import themes as _themes
+    tb = _themes.compute_theme_block(panel_daily)
+    if tb.get("status") == "OK":
+        tb["persist"] = _themes.store_flags(tb)
     return {"status": "OK", "reason": None, "groups": groups,
-            "theme_leaders": theme_leaders, "rotation": rotation}
+            "theme_leaders": theme_leaders, "rotation": rotation, "themes": tb}
