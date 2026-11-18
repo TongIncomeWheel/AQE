@@ -3,7 +3,7 @@
   "scenarios": [
     {
       "scenario": "DOLLAR_SQUEEZE",
-      "score": 0.9287,
+      "score": 0.9296,
       "coverage": 1.0,
       "story": "The dollar is the whole story and it is draining everything else — commodities, credit and non-US risk together.",
       "expression": "US large-cap domestic over international and commodities.",
@@ -12,7 +12,7 @@
         "CPER down (roc5 -4.64%, roc20 -9.46%)",
         "GLD down (roc5 -4.57%, roc20 -6.66%)",
         "HYG down (roc5 -0.71%, roc20 -0.26%)",
-        "CTA fx bias +0.57"
+        "CTA fx bias +0.58"
       ],
       "missing_conditions": [],
       "unavailable": [],
@@ -28,11 +28,11 @@
         "CPER down (roc5 -4.64%, roc20 -9.46%)",
         "COPPER_GOLD down (roc5 -0.07%, roc20 -2.99%)",
         "HYG down (roc5 -0.71%, roc20 -0.26%)",
-        "IWM down (roc5 -4.13%, roc20 -2.47%)"
+        "IWM down (roc5 -4.11%, roc20 -2.44%)"
       ],
       "missing_conditions": [
         "TLT down (roc5 -1.64%, roc20 -0.72%)",
-        "CTA rates bias -0.37"
+        "CTA rates bias -0.38"
       ],
       "unavailable": [],
       "can_lead": true
@@ -58,18 +58,18 @@
     },
     {
       "scenario": "INFLATION_SHOCK",
-      "score": 0.4167,
+      "score": 0.5,
       "coverage": 1.0,
       "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
       "expression": "Real assets, energy, short duration. Multiple compression risk.",
       "evidence": [
         "TLT down (roc5 -1.64%, roc20 -0.72%)",
-        "UUP up (roc5 1.34%, roc20 2.21%)"
+        "UUP up (roc5 1.34%, roc20 2.21%)",
+        "CTA energy bias +0.00"
       ],
       "missing_conditions": [
         "USO down (roc5 -0.86%, roc20 -12.68%)",
-        "GLD down (roc5 -4.57%, roc20 -6.66%)",
-        "CTA energy bias -0.00"
+        "GLD down (roc5 -4.57%, roc20 -6.66%)"
       ],
       "unavailable": [],
       "can_lead": true
@@ -87,27 +87,27 @@
       "missing_conditions": [
         "TLT down (roc5 -1.64%, roc20 -0.72%)",
         "HYG down (roc5 -0.71%, roc20 -0.26%)",
-        "IWM down (roc5 -4.13%, roc20 -2.47%)"
+        "IWM down (roc5 -4.11%, roc20 -2.44%)"
       ],
       "unavailable": [],
       "can_lead": true
     },
     {
       "scenario": "REFLATION",
-      "score": 0.1923,
+      "score": 0.2308,
       "coverage": 1.0,
       "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
       "expression": "Cyclicals, financials, small caps, energy. Short duration.",
       "evidence": [
         "TLT down (roc5 -1.64%, roc20 -0.72%)",
-        "CTA rates bias -0.37"
+        "CTA energy bias +0.00",
+        "CTA rates bias -0.38"
       ],
       "missing_conditions": [
         "CPER down (roc5 -4.64%, roc20 -9.46%)",
         "COPPER_GOLD down (roc5 -0.07%, roc20 -2.99%)",
         "HYG down (roc5 -0.71%, roc20 -0.26%)",
-        "IWM down (roc5 -4.13%, roc20 -2.47%)",
-        "CTA energy bias -0.00"
+        "IWM down (roc5 -4.11%, roc20 -2.44%)"
       ],
       "unavailable": [],
       "can_lead": true
@@ -131,7 +131,7 @@
     }
   ],
   "leading": "DOLLAR_SQUEEZE",
-  "leading_score": 0.9287,
+  "leading_score": 0.9296,
   "runner_up": "GROWTH_SCARE",
   "contested": false,
   "reading": "DOLLAR_SQUEEZE is the cleanest fit to the current cross-asset state.",
@@ -158,8 +158,8 @@
     },
     "IWM": {
       "score": -2,
-      "roc5": -4.13,
-      "roc20": -2.47,
+      "roc5": -4.11,
+      "roc20": -2.44,
       "direction": "FALLING"
     },
     "GLD": {
@@ -188,7 +188,7 @@
     }
   },
   "weather_missing": [],
-  "generated_at": "2026-11-18T07:08:57+08:00",
+  "generated_at": "2026-11-18T08:23:33+08:00",
   "expected_session": "2026-11-17",
   "as_of": "2026-11-16"
 }
