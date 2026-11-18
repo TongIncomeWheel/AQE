@@ -1,0 +1,55 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "round": 1,
+ "tickets": [
+  {
+   "ticker": "MGNI",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close on 1.4x volume is not my entry. Position system (C26/C27): the resistance break already printed (D close_vs_swing_high_pct 9.86); entry is a buy stop 1 tick over the prior-day high, trailed. A volume filter skips signals the criteria generate (C19, C31).",
+   "would_clear": "Trigger trade_above:bar_high on D, re-placed at each new prior-day high until taken (C27)."
+  },
+  {
+   "ticker": "LILA",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:pivot_high gated on 1.4x volume is not my entry. W close_vs_swing_high_pct 9.63 is the resistance break already in (C26); my entry is the trailed buy stop over the prior-day high (C27). The volume gate skips mechanical signals (C19, C31).",
+   "would_clear": "Trigger trade_above:bar_high on D, re-placed at each new prior-day high until taken (C27), no volume gate."
+  },
+  {
+   "ticker": "TBBB",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger close_above:high_52w_close on 1.4x volume is not my entry. D close_vs_swing_high_pct 13.69 and W close_vs_swing_high_pct 56.89: the break above resistance is in (C26); entry is the buy stop 1 tick over the prior-day high, trailed (C27). The volume gate skips signals (C19).",
+   "would_clear": "Trigger trade_above:bar_high on D, re-placed at each new prior-day high until taken (C27)."
+  },
+  {
+   "ticker": "GRDN",
+   "answer": "AGREE_WITH_RESERVATION",
+   "conviction": 4,
+   "reservation": "The wrong-if reads close below ma_50; my exit line is a daily close below the support line max(fib_swing_low, base_low_20d) or a red candle then a trade under its low next session (C14, C29). Fund flow (cmf, COM proxy) is not served to confirm (C28).",
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "G",
+   "answer": "AGREE",
+   "conviction": 3,
+   "reservation": null,
+   "objection": null,
+   "would_clear": null
+  },
+  {
+   "ticker": "VRDN",
+   "answer": "OBJECT",
+   "conviction": 2,
+   "reservation": null,
+   "objection": "Trigger waits for a new tight base then close_above:pivot_high on 1.4x volume; not my entry. W close_vs_swing_high_pct 20.92 is the break already in (C26); D close_vs_swing_high_pct -4.96 is a pause the trailed buy stop over the prior-day high handles (C27). Base and volume gates skip signals (C19).",
+   "would_clear": "Trigger trade_above:bar_high on D, re-placed at each new prior-day high until taken (C27), no base or volume gate."
+  }
+ ]
+}

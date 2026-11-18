@@ -1,0 +1,121 @@
+{
+ "schema": "committee_position.v1",
+ "declared": [],
+ "date": "2026-11-18",
+ "rule": "R42",
+ "deciders_present": [
+  "elder-lens",
+  "livermore",
+  "minervini",
+  "oneil",
+  "raschke",
+  "seow",
+  "wyckoff"
+ ],
+ "tickets": {
+  "VRDN": {
+   "committee_conviction": 3,
+   "convictions": {
+    "elder-lens": 2,
+    "livermore": 3,
+    "minervini": 3,
+    "oneil": 2,
+    "raschke": 3,
+    "seow": 2,
+    "wyckoff": 3
+   },
+   "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
+   "ordering_score": 3,
+   "status": "CONTESTED",
+   "verdict": "HOLD-FOR-CONDITIONS",
+   "rationale_stage": "final",
+   "why": [
+    {
+     "text": "Clean stack, top RS in the room (C3/C11). W close_vs_swing_high_pct 20.92 and D swing HH but LL: extended and not basing yet, so no chase (C5). Wait for a tight pivot near the high. Fundamentals not run.",
+     "voice": "minervini",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "W swing HH/HL with close_vs_swing_high_pct 20.92 is a strong trend; D close_vs_swing_high_pct -4.96 is a normal reaction, H1 at pos_in_day_range_pct 94.2. No new high yet, so wait for it (C5). Judged on its own, not the group.",
+     "voice": "livermore",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "TREND: W swing HH/HL, 20.9% above the last swing high: away from value. D swing HH but LL and H1 LH/LL: the corrective wave is under way. Wait for the test, then a sign-of-strength bar (C3, C7, C12).",
+     "voice": "wyckoff",
+     "from": "tier2.reason"
+    }
+   ],
+   "also": [
+    {
+     "voice": "oneil",
+     "text": "oneil: the tight pivot must clear on day_vol at least 1.4x (C16); today day_vol 0.63 is no breakout. Buy no more than 5% past that new pivot (C17). lens leadership warn fails C9 until it reads strong. Market gate DELEGATED (C1); fundamentals C, A, S, I NOT_AVAILABLE."
+    },
+    {
+     "voice": "raschke",
+     "text": "raschke: a retracement in an established trend (C2): W close_vs_swing_high_pct 20.92, D close_vs_swing_high_pct -4.96. The 'new tight base' is a range contraction I cannot measure (bar_range_history NOT_SERVED, C12/C13). Stop one or two ticks under the swing extreme at structure_shift_ref (C17). horizon_sessions 20 is long against minimise time in the market (C18)."
+    }
+   ],
+   "what_would_change_it": [
+    {
+     "text": "Daily close below ma_50.",
+     "voice": "minervini",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "A one-day reaction of one atr_14d off a day's high (C7, translated), or a daily close below entry less one atr_14d.",
+     "voice": "livermore",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "Daily close back under structure_shift_ref",
+     "voice": "wyckoff",
+     "from": "tier2.wrong_if"
+    }
+   ],
+   "minority_notes": [
+    {
+     "voice": "elder-lens",
+     "kind": "DISSENT",
+     "text": "Elder buys the pull-in to a rising average, not a breakout over a new pivot (C10). force_index_ema_2 -164893.54 under zero with price_ema_slope 0.2265 rising is the C6 pullback timer now; elder_5d [7, 7, 7, 7, 7] is a plateau with no permission event (C4), C24 (unsourced). My entry: in_zone:ma_20 on D with the impulse not red (C3)."
+    },
+    {
+     "voice": "seow",
+     "kind": "DISSENT",
+     "text": "Position system (C26): W close_vs_swing_high_pct 20.92 is the resistance break already in; D close_vs_swing_high_pct -4.96 is a pause, not a wait for a new base. Entry trade_above:bar_high on D, trailed to each new prior-day high (C27), no base or volume gate (C19). Wrong if a daily close below max(fib_swing_low, base_low_20d), or a red candle then a trade under its low (C14, C29)."
+    },
+    {
+     "voice": "wyckoff",
+     "kind": "AMEND (over the byte cap)",
+     "text": "Add: the new tight base forms first and the entry is its pivot, not today's pivot_high; inside it I join on a sign-of-strength bar with a buy stop above its high, never a resting limit (C7, C12). If price instead pulls back to the test of structure_shift_ref or pvp_vah, that is the preferred entry (C3, C7)."
+    }
+   ],
+   "adopted_by": [
+    "livermore",
+    "minervini"
+   ],
+   "amended_by": [
+    {
+     "voice": "oneil",
+     "status": "ALSO"
+    },
+    {
+     "voice": "raschke",
+     "status": "ALSO"
+    },
+    {
+     "voice": "wyckoff",
+     "status": "OVER_CAP"
+    }
+   ],
+   "dissent_from": [
+    "elder-lens",
+    "seow"
+   ],
+   "no_answer_from": [],
+   "gaps": []
+  }
+ },
+ "gaps": [],
+ "note": "committee_conviction is the body's 1-5 readout (5 = best); an ordering/readout figure, never a gate on a verdict. Individual scores and answers are on committee_record.json (R35)."
+}

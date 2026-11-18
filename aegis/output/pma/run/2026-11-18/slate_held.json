@@ -1,0 +1,78 @@
+{
+ "date": "2026-11-18",
+ "chair": "chair",
+ "board_sha256": "a49bad7696aab6983fa2704e68dd5a3ff7b4d38c17974e811065466fbbd9847f",
+ "decision_sha256": "5f4c313b624fa0ada52c33f2b12e929e129ea7deb3330745dcd6fc09115d0833",
+ "tickets": [
+  {
+   "ticker": "GRDN",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy today's daily close above the pivot high, a fresh new high from right under it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy today's daily close above the pivot high, a fresh new high from right under it."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50 breaks the stack.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at the pivot: D close_vs_swing_high_pct -0.51, W and D swing HH/HL, rs LEADER, lens sect\" | minervini: \"Template stack in order at the 52-week high, rs LEADER (C3/C11). W and D swing HH/HL, D close_v\" | livermore: \"The C5 shape: W and D swing HH/HL, D close_vs_swing_high_pct -0.51, H1 above EMA9 9>21 at pos_i\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "G",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy when a completed 1-hour candle closes above yesterday's high while price holds above the broken pivot.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when a completed 1-hour candle closes above yesterday's high while price holds above the broken pivot."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 3,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "raschke: \"close_below:structure_shift_ref-0.5atr on the daily, or structure_shift turns BEARISH_CHOCH: the test failed and the break was false.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Stack in order, W and D swing HH/HL, rs LEADER, but the long averages are flat (criterion 3 not\" | livermore: \"W swing HH/HL above EMA9 9>21 is an established trend; D below EMA9 and H1 below EMA9 9<21 at p\" | seow: \"Position system (C26): D close_vs_swing_high_pct 1.74 above the last swing high, W and D swing \"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Not a new-high leader: lens leadership warn, from_52w_hi -12.08 (C7, C9). The D break, close_vs_swing_high_pct 1.74, came on day_vol 1.26, under 1.4x (C16); H1 2.3% of the day's range is a close at the low (C25)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "major index logs 4 or more distribution days inside 25 sessions (C2): no confirmed uptrend, no buy",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 1
+ },
+ "hold_round": true
+}
