@@ -1,0 +1,54 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-18",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "CGON",
+   "reason": "Leader (rs_leadership 3) coiled just under its pivot (pct_from_pivot -1.36, lens.coil o) with volume already at day_vol 1.93. Buy only on a clear of pivot_high 80.03 on day_vol >= 1.40, into a confirmed uptrend (market_gate DELEGATED). Group not confirming: sector_trend_state 3.",
+   "fields_cited": ["rs_leadership", "rank", "gics_sector", "rs_down_day_20d", "structure", "structure_shift", "lens", "ma_50", "day_vol", "pct_from_pivot", "pivot_high", "sma_distance_pct", "ma_200", "entry", "atr_14d", "bracket.valid", "bracket.stop", "sector_trend_state", "div_state"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "falsifier": "Wrong if CGON closes below ma_50 68.35, or pushes through pivot_high 80.03 on day_vol under 1.40 (a breakout nobody bought), or breaks out while sector_trend_state moves to 1 (Declining) - a Lone Ranger. Engine found no structural stop (bracket.valid False); my own level is 7-8% under the 80.03 pivot, 74.43-73.63.",
+   "declared": {
+    "fundamentals": "NOT_AVAILABLE - C, A, S, I letters untestable (C4, C5, C6, C8, C11)",
+    "base_stage": "NOT_AVAILABLE (C19)",
+    "market_gate": "DELEGATED - valid only into a confirmed uptrend; if the index is under distribution this is void",
+    "rs_measure": "rs_leadership (substitute - no IBD RS Rating)",
+    "volume_measure": "day_vol vs 20-day (substitute - canon says 50-day)",
+    "base_measure": "structure composite (substitute)"
+   },
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER), rs_down_day_20d 1.04, rank 116, gics_sector XLV; XLV names ranked ahead in packet: VCEL 29, ARDT 30, VRDN 94, GKOS 108", "verdict": "partial", "fields": ["rs_leadership", "rs_down_day_20d", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18"], "observed": "structure 67.4, structure_shift 4 (RANGE), lens coil o / structure o / resistance w, ma_50 68.35; structure composite substitute; C19 stage NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens", "ma_50"]},
+    {"step": 3, "canon_ref": ["C16", "C15"], "observed": "day_vol 1.93 >= 1.40 (day_vol vs 20d substitute), but price still under pivot - volume at the pivot, not yet a confirmed breakout; C15 dry-up not served", "verdict": "partial", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pct_from_pivot -1.36 (pivot_high 80.03 not yet cleared); sma_distance_pct 15.49 context only; entry 78.94 vs ma_200 66.96, under the 70% climax line", "verdict": "pass", "fields": ["pct_from_pivot", "pivot_high", "sma_distance_pct", "entry", "ma_200"]},
+    {"step": 5, "canon_ref": ["C20", "C22", "C21"], "observed": "bracket.valid False, bracket.stop null (engine found no structural stop - caution for PM); own stop 7-8% under 80.03 = 74.43-73.63; atr_14d 5.92; 8-week rule flagged if +20% in 3 wks", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "atr_14d"]},
+    {"step": 6, "canon_ref": ["C25", "C24"], "observed": "lens sector s, sector_trend_state 3 (Momentum Fading - Hold, Don't Add), div_state NONE, div_bear_count 0", "verdict": "partial", "fields": ["lens", "sector_trend_state", "div_state", "div_bear_count"]},
+    {"step": 7, "canon_ref": ["C23", "C1"], "observed": "declared block filed: fundamentals NOT_AVAILABLE (C,A,S,I), base_stage NOT_AVAILABLE, market_gate DELEGATED; sole survivor of steps 1-6", "verdict": "pass", "fields": ["sc_momentum", "structure"]}
+   ]
+  }
+ ],
+ "held_review": [
+  {"ticker": "RBRK", "verdict": "KEEP", "line": "RBRK 80 long: no RBRK row in my packet, so no checklist read is possible (declared in data_gaps); the working broker stop 99.45 stands as the C20 automatic stop - never averaged down, never moved lower."},
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "SPCX short 68: the record reads the inverse of every buy test - rs_leadership 2 (LAGGARD), structure 25.0, structure_shift 2 (BEARISH_CHOCH), entry 141.7 under ma_50 148.46; the working BUY stop 145.05 sits under the 10-week line - a close back above ma_50 148.46 voids the short."}
+ ],
+ "data_gaps": [
+  {"field": "RBRK (entire held record)", "impact": "Held name RBRK 80 is absent from my packet; held_review is limited to restating the working broker stop 99.45."},
+  {"field": "lens", "impact": "lens null for HAE, MET, CCC, ECL, STGW, CON, SPCX, AMRX, BWIN, TECH, ALRM, BOX, INTA, VRNS: lens.coil absent means R3 cannot find a sound base; ALRM, MET, ECL and TECH pass the day_vol 1.40 test but could not be carried past step 2."},
+  {"field": "bq.bq_base_dur", "impact": "Base duration not served; C12/C18 base-length arithmetic (7-8 weeks) untestable, structure composite used as declared substitute."},
+  {"field": "bq.bq_range_tight", "impact": "Base tightness not served; tightness read rests on lens.coil only."},
+  {"field": "rvol", "impact": "Not in packet; day_vol (its renamed equivalent) used for R4."},
+  {"field": "ma_200", "impact": "Null for SPCX; the R7 climax line and 200-day context cannot be read on the held short."}
+ ],
+ "declarations": [
+  "Ledger memory: no voice_memory block injected for this run; no standing lesson applies.",
+  "fundamentals: NOT_AVAILABLE - C, A, S, I letters (C4, C5, C6, C8, C11) declared, never inferred.",
+  "base_stage: NOT_AVAILABLE (C19).",
+  "market_gate: DELEGATED - every nomination valid only into a confirmed uptrend (C1, C2, C3); no market read written.",
+  "rs_measure: rs_leadership (substitute - no IBD RS Rating); rs_spy_20d reported only.",
+  "volume_measure: day_vol vs 20-day (substitute - canon says 50-day).",
+  "Advisory only, never a vote: flow, lens.insti_money, rs_spy_20d."
+ ],
+ "shortfall_reason": "One nomination. R4 (C16) hard-rejects every leader with day_vol under 1.40 (VCEL, ARDT, GKOS, LFST, TBBB, CROX, LILA, MGNI, VRDN, BOX and others). Of the volume survivors, BILL is >10% past its pivot (pct_from_pivot 27.82, C17 hard reject), CHYM is a Lone Ranger (lens sector w, sector_trend_state 1, R9), and MET, ECL, TECH, ALRM have no lens.coil read so no base can be established (R3). Padding would be the breach."
+}

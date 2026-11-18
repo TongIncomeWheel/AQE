@@ -1,0 +1,98 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HNGE",
+   "reason": "Position system fired: structure_shift 1 (ABOVE_STRUCTURE), pct_from_pivot 18.36, ret_63d 29.34 vs index -4.76, sector LEADING. Flow cmf 0.06 confirms but elder_pattern 4 (INTERRUPTED) and a red bar (bar_close 114.41 < bar_open 120.9): buy stop over bar_high 121.18 only; support fib_swing_low 111.0.",
+   "fields_cited": [
+    "structure_shift",
+    "pct_from_pivot",
+    "pivot_high",
+    "ret_63d",
+    "index_pct_change_63d",
+    "rs_rank_pct",
+    "sector_rrg_quadrant",
+    "subcomponents.flow.cmf",
+    "elder_pattern",
+    "elder_5d",
+    "bar_open",
+    "bar_high",
+    "bar_close",
+    "fib_swing_low",
+    "base_low_20d",
+    "elder_context.volume.avg_vol_20d"
+   ],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": ["C25"],
+     "observed": "elder_context.volume.avg_vol_20d 1955864, rvol_20d 0.85, entry 114.41",
+     "verdict": "pass",
+     "fields": ["elder_context.volume.avg_vol_20d", "rvol_20d", "entry"]
+    },
+    {
+     "step": 2,
+     "canon_ref": ["C23", "C6", "C24"],
+     "observed": "ret_63d 29.34 vs index_pct_change_63d -4.76; rs_rank_pct 98.45; sector_rrg_quadrant 3 (LEADING); sector_trend_state 3 (Momentum Fading - Hold)",
+     "verdict": "pass",
+     "fields": ["ret_63d", "index_pct_change_63d", "rs_rank_pct", "sector_rrg_quadrant", "sector_trend_state"]
+    },
+    {
+     "step": 3,
+     "canon_ref": ["C26"],
+     "observed": "structure_shift 1 (ABOVE_STRUCTURE), structure_shift_ref 96.66, pct_from_pivot 18.36; pct_from_52w_high -7.16; days_since_swing_high 44",
+     "verdict": "pass",
+     "fields": ["structure_shift", "structure_shift_ref", "pct_from_pivot", "pivot_high", "pct_from_52w_high", "days_since_swing_high"]
+    },
+    {
+     "step": 4,
+     "canon_ref": ["C28"],
+     "observed": "subcomponents.flow.cmf 0.06 (>0), subcomponents.flow.mfi 52.58; elder_pattern 4 (INTERRUPTED), elder_5d [7, 7, 2, 7, 0]",
+     "verdict": "partial",
+     "fields": ["subcomponents.flow.cmf", "subcomponents.flow.mfi", "elder_pattern", "elder_5d"]
+    },
+    {
+     "step": 5,
+     "canon_ref": ["C27", "C14", "C29", "C30"],
+     "observed": "trade_above:bar_high 121.18; support max(fib_swing_low 111.0, base_low_20d 107.82) = 111.0; bar_close 114.41 < bar_open 120.9 (red bar); bracket.valid False, bracket.stop null",
+     "verdict": "pass",
+     "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close", "bracket.valid", "bracket.stop"]
+    }
+   ],
+   "falsifier": "A close below the support line fib_swing_low 111.0 (above base_low_20d 107.82) proves the position case wrong; no fill unless price takes out bar_high 121.18 (C27). Engine bracket.valid False is context only; my own level is 111.0 from structure."
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "SPCX",
+   "verdict": "TIGHTEN",
+   "line": "Short 68 read on the mirror (C32): ma_20 141.27 < ma_40 147.98, ma_20_slope_5d_pct -1.56, structure_shift 2 (BEARISH_CHOCH) under structure_shift_ref 149.34 still back it, but the last bar is an up candle (bar_close 141.7 > bar_open 138.55); mirror C14 puts the cover 1 tick over bar_high 142.11, just under the working 142.45."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "atr_14d",
+   "impact": "Swing step 2 (C4/R7) measured-bar test cannot be run: bar_range_5d has no ATR yardstick in the packet; the pullback grade rested on days_since_swing_high and ma_40 alone."
+  },
+  {
+   "field": "rs_rank_pct",
+   "impact": "Null for OCTV; position-horizon strength test (R12) only half-readable for that name (ret_63d 12.45 served). OCTV was not nominated on the pullback-duration test, not on this gap."
+  },
+  {
+   "field": "elder_pattern",
+   "impact": "Null for AMRX; TIF proxy (R14) unreadable. AMRX shows no resistance break (structure_shift 4, pct_from_pivot -2.58) and cci_20 20.96, so neither system fired regardless."
+  }
+ ],
+ "declarations": [
+  "No voice_memory ledger block was injected into this prompt; no standing lesson applies and no in-window stop-out can be stated.",
+  "Declared proxies used: structure_shift / pct_from_pivot for the resistance line, sector_rrg_quadrant for the market-cycle arrow, subcomponents.flow.cmf for COM, elder_pattern / elder_5d for TIF, max(fib_swing_low, base_low_20d) for the support line, bar_close < bar_open for the red candle.",
+  "Both systems were run on all 26 packet names; the lane tag was not used to pick the system (R10/R32).",
+  "Swing set-up (all five R1 conditions on one bar) was present on OCTV, AVPT, PNW, DOCS, PODD, AEP, DXC, INFY and COKE, but every one fails the C4/R7 pullback-duration test: days_since_swing_high 15, 13, 11, 9, 9, 13, 6, 9, 9 (needs fewer than 5).",
+  "SPCX is a short; shorts are out of scope for this long-only method (C32), so the held review applies the mirror rules as a review only, never as a new short call."
+ ],
+ "shortfall_reason": "Only one name carries a position-system buy signal (HNGE: the sole structure_shift ABOVE_STRUCTURE / pct_from_pivot > 0 on the packet). Nine names show all five swing set-up conditions but each pullback has run 6-15 days since the swing high, failing C4/R7 (fewer than 5 days); the method takes no unqualified set-up and I do not pad."
+}

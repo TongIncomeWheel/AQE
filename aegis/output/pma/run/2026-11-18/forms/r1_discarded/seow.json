@@ -1,0 +1,106 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "HNGE",
+   "reason": "Position system fired: above resistance (structure_shift 1 ABOVE_STRUCTURE, pct_from_pivot 18.36), sector_rrg_quadrant 3 LEADING, subcomponents.flow.cmf 0.06 > 0. Caution: elder_pattern 4 INTERRUPTED, red bar (bar_open 120.9, bar_close 114.41). Swing not fired: cci_20 -0.4.",
+   "fields_cited": [
+    "structure_shift",
+    "pct_from_pivot",
+    "pivot_high",
+    "sector_rrg_quadrant",
+    "subcomponents.flow.cmf",
+    "elder_pattern",
+    "bar_open",
+    "bar_close",
+    "bar_high",
+    "fib_swing_low",
+    "base_low_20d",
+    "ret_63d",
+    "rs_rank_pct",
+    "elder_context.volume.avg_vol_20d",
+    "cci_20"
+   ],
+   "conviction": 3,
+   "checklist_trace": [
+    {
+     "step": 1,
+     "canon_ref": ["C25"],
+     "observed": "elder_context.volume.avg_vol_20d 1955864, entry 114.41",
+     "verdict": "pass",
+     "fields": ["elder_context.volume.avg_vol_20d", "entry"]
+    },
+    {
+     "step": 2,
+     "canon_ref": ["C23", "C6", "C24"],
+     "observed": "ret_63d 29.34 vs index_pct_change_63d -4.76; rs_rank_pct 98.45; sector_rrg_quadrant 3 (LEADING)",
+     "verdict": "pass",
+     "fields": ["ret_63d", "rs_rank_pct", "sector_rrg_quadrant"]
+    },
+    {
+     "step": 3,
+     "canon_ref": ["C26"],
+     "observed": "structure_shift 1 (ABOVE_STRUCTURE), pivot_high 96.66, pct_from_pivot 18.36",
+     "verdict": "pass",
+     "fields": ["structure_shift", "pivot_high", "pct_from_pivot"]
+    },
+    {
+     "step": 4,
+     "canon_ref": ["C28"],
+     "observed": "subcomponents.flow.cmf 0.06; elder_pattern 4 (INTERRUPTED); elder_5d [7, 7, 2, 7, 0]",
+     "verdict": "partial",
+     "fields": ["subcomponents.flow.cmf", "elder_pattern", "elder_5d"]
+    },
+    {
+     "step": 5,
+     "canon_ref": ["C27", "C14", "C29", "C30"],
+     "observed": "entry trade_above:bar_high, bar_high 121.18; support max(fib_swing_low 111.0, base_low_20d 107.82) = 111.0; bar_close 114.41 < bar_open 120.9",
+     "verdict": "partial",
+     "fields": ["bar_high", "fib_swing_low", "base_low_20d", "bar_open", "bar_close", "bar_low"]
+    }
+   ],
+   "falsifier": "A daily close below the support line max(fib_swing_low 111.0, base_low_20d 107.82) = 111.0 (C14, C29); no entry unless a buy stop 1 tick over bar_high 121.18 is taken (C27).",
+   "price_at_nomination": null
+  }
+ ],
+ "held_review": [
+  {
+   "ticker": "RBRK",
+   "verdict": "KEEP",
+   "line": "No RBRK row in my packet, so my checklist could not be walked; no exit signal observed, working broker stop 99.45 stands. Declared in data_gaps."
+  },
+  {
+   "ticker": "SPCX",
+   "verdict": "KEEP",
+   "line": "Short side is out of scope for my long-only method (C32): declared, not applied. Observed structure_shift 2 (BEARISH_CHOCH), ma_20 141.27 < ma_40 147.98, ma_20_slope_5d_pct -1.56; bar_close 141.7 > bar_open 138.55. Working BUY stop 145.05 stands."
+  }
+ ],
+ "data_gaps": [
+  {
+   "field": "RBRK (entire packet row)",
+   "impact": "Held long RBRK is absent from my packet although the held book is said to be always shown; I could not run the support-line or candle-colour exit test on it."
+  },
+  {
+   "field": "atr_14d",
+   "impact": "Not served; the R7 measured-bars test (bar_range_5d vs 2 x atr_14d) could not be run directly on the swing pullbacks."
+  },
+  {
+   "field": "rs_rank_pct",
+   "impact": "Null for OCTV and SPCX; the medium-term strength rank could not be read for them."
+  },
+  {
+   "field": "elder_pattern",
+   "impact": "Null for AMRX; the TIF trend-impulse proxy could not be read."
+  }
+ ],
+ "declarations": [
+  "No ledger memory block was injected; no standing lesson applies.",
+  "Declared proxies used: structure_shift / pct_from_pivot / pivot_high for the resistance line; sector_rrg_quadrant for the market-cycle signal; subcomponents.flow.cmf for COM; elder_pattern / elder_5d for TIF; max(fib_swing_low, base_low_20d) for the support line.",
+  "Both systems run on every name; the system was picked from each name's picture, not the lane.",
+  "C21 (weekly structure) is a house rule and was not used.",
+  "Shorts are out of scope for this long-only book (C32)."
+ ],
+ "shortfall_reason": "One nomination only. HNGE is the only name in the packet above resistance (pct_from_pivot > 0); every other name is structure_shift RANGE or BEARISH_CHOCH. OCTV, AVPT, PNW, DOCS, PODD, AEP, INFY, DXC and COKE show all five swing set-up conditions on one bar, but every one fails the pullback grade (C4, R7): days_since_swing_high is 6 or more, against a limit of under 5."
+}

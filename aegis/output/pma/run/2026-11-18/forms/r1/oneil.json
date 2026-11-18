@@ -1,0 +1,45 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-18",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "CGON",
+   "reason": "LEADER sitting just under its pivot (pivot_high 80.03, pct_from_pivot -1.36) with day_vol 1.93 above the 1.40 bar; base read from structure 67.4 / lens coil ok (substitute). Entry only on a close through the pivot on volume; group is fading, so watch for a Lone Ranger.",
+   "fields_cited": ["rs_leadership", "rank", "structure", "structure_shift", "lens", "day_vol", "pivot_high", "pct_from_pivot", "sma_distance_pct", "ma_50", "ma_200", "sector_trend_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C9", "C10"], "observed": "rs_leadership 3 (LEADER); rank 116; gics_sector XLV - behind VCEL rank 29, ARDT rank 30, VRDN rank 94 in this packet, so not shown as #1-3 in group", "verdict": "partial", "fields": ["rs_leadership", "rank", "gics_sector"]},
+    {"step": 2, "canon_ref": ["C12", "C14", "C18"], "observed": "structure 67.4; structure_shift 4 (RANGE); lens s,o,w,o,w,-,s (coil o, structure o, resistance w); base_measure: structure composite (substitute); C19 stage count NOT_AVAILABLE", "verdict": "partial", "fields": ["structure", "structure_shift", "lens"]},
+    {"step": 3, "canon_ref": ["C15", "C16"], "observed": "day_vol 1.93 (>= 1.40); volume_measure: day_vol vs 20d (substitute); dry-up in handle not observable", "verdict": "pass", "fields": ["day_vol"]},
+    {"step": 4, "canon_ref": ["C17", "C24"], "observed": "pivot_high 80.03, pct_from_pivot -1.36 (not yet through pivot); sma_distance_pct 15.49; bracket.price 78.94 vs ma_200 66.96 (well under +70%)", "verdict": "pass", "fields": ["sma_distance_pct", "ma_200", "bracket.price"]},
+    {"step": 5, "canon_ref": ["C20", "C21", "C22"], "observed": "bracket.valid False (information only, R1); my own level: 7-8% under entry 78.94 is ~72.6-73.4; bracket.atr_fallback_stop 73.02; ma_50 68.35 below; adds none past +5% over pivot", "verdict": "pass", "fields": ["bracket.valid", "bracket.atr_fallback_stop", "entry", "ma_50"]},
+    {"step": 6, "canon_ref": ["C24", "C25"], "observed": "lens sector s; sector_trend_state 3 (Momentum Fading - Hold, Don't Add); div_state NONE, div_bear_count 0", "verdict": "partial", "fields": ["lens", "sector_trend_state", "div_state", "div_bear_count"]},
+    {"step": 7, "canon_ref": ["C1", "C23"], "observed": "declared: fundamentals C,A,S,I NOT_AVAILABLE; base_stage NOT_AVAILABLE; market_gate DELEGATED; rs_measure rs_leadership substitute; sc_momentum 69.3", "verdict": "partial", "fields": ["sc_momentum"]}
+   ],
+   "falsifier": "Thesis is wrong if CGON fails to close above pivot_high 80.03 on day_vol >= 1.40, or closes below 73.02 (about 7.5% under entry 78.94, my own level since bracket.valid False). Valid only into a confirmed uptrend (market_gate DELEGATED); void if the index is under distribution."
+  }
+ ],
+ "held_review": [
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68: rs_leadership 2 (LAGGARD), structure 25.0, structure_shift 2 (BEARISH_CHOCH), price under ma_50 148.46 (sma_distance_pct -4.55) - the weakness a short wants; working buy stop 142.45 sits just above entry 141.7, keep it. held_book.hl_state EXIT is noted, but my sell rules are written for longs."}
+ ],
+ "data_gaps": [
+  {"field": "lens", "impact": "lens null for HAE, MET, CCC, ECL, STGW, CON, AMRX, BWIN, TECH, ALRM, INTA, BOX, VRNS, so coil/sector could not be read; ALRM (day_vol 1.9, structure 69.5, pct_from_pivot -4.22) and TECH (day_vol 1.87) cleared volume but failed R3 for lack of a coil read"},
+  {"field": "bq.bq_base_dur", "impact": "base duration not in packet; the C12 7-8 week base length cannot be checked"},
+  {"field": "bq.bq_range_tight", "impact": "base tightness not in packet; handle depth/tightness (C14) unreadable"},
+  {"field": "rvol", "impact": "not in packet; day_vol used alone for the C16 volume test"},
+  {"field": "fundamentals (EPS, sales, ROE, cash flow, sponsor counts, absolute volume)", "impact": "C, A, S, I letters untested on every name"},
+  {"field": "base stage count", "impact": "C19 late-stage-base rule cannot be enforced"}
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I letters untested: C4, C5, C6, C8, C11)",
+  "base_stage: NOT_AVAILABLE (C19 not enforced)",
+  "market_gate: DELEGATED (C1-C3; valid only into a confirmed uptrend, void under distribution)",
+  "rs_measure: rs_leadership (substitute - no IBD RS Rating)",
+  "volume_measure: day_vol vs 20-day (substitute - canon says 50-day)",
+  "base_measure: structure composite (substitute)",
+  "ledger memory: no memory block was injected this round, so no standing lesson applies"
+ ],
+ "shortfall_reason": "Only one name passes my walk. 18 of 25 LEADER names fail the C16 volume test (day_vol under 1.40, a hard rejection). Of those that clear it: BILL is too far past its pivot (pct_from_pivot 27.82, over 10%, C17); CHYM is past its pivot (pct_from_pivot 6.12) and a Lone Ranger (lens sector w, sector_trend_state 1 Declining, C25); MET, ECL, TECH and ALRM have no lens read, so no coil and no base (R3)."
+}

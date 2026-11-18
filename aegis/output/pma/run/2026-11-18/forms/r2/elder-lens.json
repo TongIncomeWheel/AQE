@@ -1,0 +1,735 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-18",
+ "round": 2,
+ "declarations": [
+  "No ledger memory block was injected; no standing lesson applies.",
+  "Colour and force fields are quoted only where the vote packet carries them (my R1 lines); for every other name they are declared unread, never proxied from the elder score (C2).",
+  "Weekly screen read from the packet's MTF W line where weekly_trend_direction is absent; stated as a substitution.",
+  "R7-R12 fields (held, ma_20, ma_50, choch_state, pin_bar_state, bracket) are outside my menu; MA levels appear only in the shared conditions words.",
+  "Censor duty: HNGE (elder 0.0) and HAE (elder 1.0) print red on the last bar - buying forbidden (C3). ARX printed a 1 two bars back.",
+  "Colour and force fields are quoted only where the vote packet carries them; elsewhere declared unread, never proxied from the elder score (C2). Weekly read from the MTF W line where weekly_trend_direction is absent."
+ ],
+ "votes": [
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission on: elder 7.0, impulse_colour_last_bar BLUE, weekly_trend_direction UP; force_index_ema_2 -764115.59 under zero while price_ema_slope 0.2009 rises = C6 pullback buy with the C9 pairing. elder_5d [10, 7, 7, 7, 7] has no red-giving-way bar (C4), so this is the timer entry, not the primary transition; conviction held at 3.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red (elder at or under 1), or the close loses the value-zone average with the weekly leaving UP",
+   "challenge_reply": "OVERLAP: my MGNI read rests only on impulse colour and force (force_index_ema_2 -764115.59, price_ema_slope 0.2009); I read none of the MA stack or RS minervini cites, so the anchors differ. LANE: my menu has no volume; I do not claim participation confirms. My confirmation is short force under zero inside a rising average; the C23 volume test is declared unread.",
+   "case": {
+    "for": "Not red (C3), weekly screen read first and up (C21; MTF W above EMA9, 9>21), short force dipped under zero inside a rising price average: Elder's pullback-buy shape (C6, C10). mp 93.0.",
+    "against": "No transition bar in elder_5d [10, 7, 7, 7, 7]; a slide from 10 to a flat 7 is a plateau, not spring (C20). H1 below EMA9, 9<21. Volume persistence (C23) unread.",
+    "entry_trigger": "Buy slightly under the rising average on the pullback (C10): in_zone:ma_20 with elder_ge:7 still true at the close.",
+    "wrong_if": "elder_le:1 (impulse red, C3) or close_below:ma_50 (value zone lost); weekly trend leaving UP.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red impulse bar or force_index_ema_13 crossing below zero (C7) lowers me; a fresh <=6 then >=7 bar in elder_5d would raise me.",
+    "cannot_see": [
+     "volume persistence test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VIK",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission on: elder 10.0 with elder_pattern CORRECTION_REENTRY and mp 86.0 STRONG = R8, the menu-legal dip-and-reclaim; elder_5d [9, 7, 10, 10, 10] shows the dip to 7 and the reclaim. R8 is incomplete (no volume-contraction or failure-to-extend test) and the tail now sits at 10, summer not spring (C20): conviction 3.",
+   "conviction_change": "R1 did not nominate VIK; on this packet CORRECTION_REENTRY with mp_state STRONG reads true, so R8 fires.",
+   "self_counter": null,
+   "falsifier": "a red impulse bar (elder at or under 1) or a close under the value-zone average",
+   "challenge_reply": null,
+   "case": {
+    "for": "R8 true: CORRECTION_REENTRY with mp STRONG; the 7 in elder_5d [9, 7, 10, 10, 10] was the pullback and force reclaimed. Weekly screen first (C21): MTF W above EMA9, 9>21.",
+    "against": "Three 10s is a plateau (C20) and no bar <=6, so no red-giving-way (C4). Weekly swing HH but LL, 14.4% under the last weekly swing high. Force and channel fields not in the packet for VIK.",
+    "entry_trigger": "No chase (C10): in_zone:ma_20 with elder_ge:7 at the close.",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red impulse bar or force_index_ema_13 below zero lowers me; a fresh <=6 then >=7 transition raises me.",
+    "cannot_see": [
+     "impulse_colour fields for VIK",
+     "force_index_ema_2 / ema_13 for VIK",
+     "channel_upper (R5) for VIK",
+     "volume test (C23)"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BIP",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "The primary trigger: elder_5d [10, 7, 7, 6, 10] - a 6 then 10 on the last bar is the <=6 then >=7 permission event (C3, C4), with elder_pattern CORRECTION_REENTRY and mp 80.0 STRONG (R8). Weekly read first (C21): MTF W above EMA9, 9>21. The cleanest Elder shape in the room.",
+   "conviction_change": "R1 did not nominate BIP; this packet's elder_5d [10, 7, 7, 6, 10] carries the permission event my R1 declaration found on no name. I take the packet's series.",
+   "self_counter": "The MTF weekly swing reads LH/LL, so the tide is not cleanly up, and weekly_trend_direction is not in the packet for BIP. The 6 is decode-ambiguous (red, blue or green), so the event proves less than a coloured bar would.",
+   "falsifier": "the next bar prints red (elder at or under 1) or price closes back under the value-zone average",
+   "challenge_reply": null,
+   "case": {
+    "for": "Red giving way is Elder's best long signal (C4) and it printed on the last bar; R8 also true (CORRECTION_REENTRY, mp STRONG). MTF D swing HH/HL, at the 20-day high.",
+    "against": "Weekly swing LH/LL on the MTF line; the 6 bar may have been blue, not red, so the ban-lift is inferred. Force fields and channel not in the packet for BIP.",
+    "entry_trigger": "elder_ge:7 holds at the close and an hourly close above bar_high, the transition bar's high.",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar within the next sessions or force_index_ema_13 under zero (C7) would cancel the event; a weekly trend reading DOWN (R6) would strike the long.",
+    "cannot_see": [
+     "impulse_colour fields for BIP",
+     "weekly_trend_direction for BIP",
+     "force_index_ema_2 / ema_13 for BIP",
+     "channel_upper (R5) for BIP"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "elder_ge:7",
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LILA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Not red (impulse_colour_last_bar BLUE), weekly_trend_direction UP; force_index_ema_2 -6902.46 under zero while price_ema_slope 0.0801 rises, force_index_ema_13 42448.51 bullish zone = C6 pullback buy (C7, C9). elder_5d [10, 7, 7, 7, 7]: score pulled back, no permission event, so conviction stays 3.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red or force_index_ema_13 crosses under zero",
+   "challenge_reply": "ANCHOR/OVERLAP: my LILA read rests on force_index_ema_2 -6902.46 under zero with price_ema_slope 0.0801 rising and force_index_ema_13 42448.51 bullish (C6, C7) - impulse and force only. I read none of minervini's MA stack or RS; lens warnings and volume are off my menu and I count them neither for nor against.",
+   "case": {
+    "for": "All three Elder legs: not red (C3), weekly up (C21), short force dipped under zero in a rising average with the 13-day force bullish (C6, C7).",
+    "against": "No transition in elder_5d [10, 7, 7, 7, 7]; flat 7s are a plateau (C20). Volume (C23) unread.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50; force_index_ema_13 below zero.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar or force_index_ema_13 crossing down lowers me; a <=6 then >=7 bar raises me.",
+    "cannot_see": [
+     "volume test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TBBB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Permission on (impulse_colour_last_bar BLUE) in weekly_trend_direction UP; force_index_ema_2 -1034645.83 under zero against price_ema_slope 0.3542 rising, force_index_ema_13 814052.64 bullish = C6 pullback buy. elder_5d [7, 7, 10, 7, 7]: no transition bar, conviction 3.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red or force_index_ema_13 crosses under zero",
+   "challenge_reply": "OVERLAP: my TBBB read is impulse colour plus force (force_index_ema_2 -1034645.83, price_ema_slope 0.3542, force_index_ema_13 814052.64); minervini's is the MA stack and RS. Different anchors on the same name; I do not read his fields.",
+   "case": {
+    "for": "Not red, weekly up, short force under zero inside a rising average, 13-day force bullish (C3, C6, C7, C21). mp 92.0.",
+    "against": "elder_5d [7, 7, 10, 7, 7] shows a 10 that faded back to 7, not a red-giving-way (C4). H1 below EMA9, 9<21.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar or force_index_ema_13 crossing below zero lowers me; a fresh transition raises me.",
+    "cannot_see": [
+     "volume test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Not red by the decode (elder 7.0), but elder_5d [7, 7, 7, 7, 7] is a flat plateau with no transition (C4), and this packet carries none of my colour or force fields for LFST, so the C6 pullback timer cannot be read. The only evidence left would be C24 (unsourced). Standing aside is a decision (C22).",
+   "conviction_change": null,
+   "challenge_reply": "LANE/CROWDING: I abstain. Volume is off my menu. My read is per name (C7): LFST stands aside on its own series, not on the Healthcare count.",
+   "case": {
+    "for": "Five bars not red, mp 92.0; MTF W above EMA9, 9>21, weekly swing HH/HL.",
+    "against": "Plateau only (C20); no force dip or colour change readable here; H1 below EMA9.",
+    "entry_trigger": "Would need a force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 (red) would turn this into a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Force fields served showing the C6 dip, or a permission event in elder_5d.",
+    "cannot_see": [
+     "impulse_colour fields for LFST",
+     "force_index_ema_2 / ema_13 for LFST",
+     "channel_upper (R5) for LFST"
+    ]
+   }
+  },
+  {
+   "ticker": "TFX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 7.0 with elder_5d [7, 7, 7, 7, 7]: not red, but a flat plateau with no transition (C4, C20), and no colour or force field is in the packet for TFX, so neither the C6 timer nor R1/R2 can be read. A plateau-only case is C24 (unsourced); I stand aside (C22).",
+   "conviction_change": null,
+   "challenge_reply": "CROWDING: my read is per instrument (C7). TFX stands aside on its own elder_5d, independent of the six other Healthcare names.",
+   "case": {
+    "for": "Not red five bars running, mp 93.0; MTF W above EMA9, 9>21.",
+    "against": "Plateau, summer not spring (C20); no readable pullback timer; weekly swing LH/LL.",
+    "entry_trigger": "A force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 makes it a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served force fields showing the C6 dip, or a permission event.",
+    "cannot_see": [
+     "impulse_colour fields for TFX",
+     "force_index_ema_2 / ema_13 for TFX",
+     "channel_upper (R5) for TFX"
+    ]
+   }
+  },
+  {
+   "ticker": "GRDN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 7.0, elder_5d [10, 10, 7, 7, 7]: not red, but the 10 to 7 step is a colour going away during an upswing (C4, booking-profit side), not a ban lifting. mp 85.0 STRONG, yet no force or colour field is in the packet for GRDN. No buy bar on my method; I stand aside (C22).",
+   "conviction_change": null,
+   "challenge_reply": "LANE/CROWDING: I abstain; volume is off my menu. The read is GRDN's own series (C7), not the Healthcare cluster.",
+   "case": {
+    "for": "Not red, mp STRONG/ACCELERATING; MTF W above EMA9, 9>21, weekly HH/HL.",
+    "against": "The drop from 10 to 7 is the wrong transition for a buy (C4); flat 7s since.",
+    "entry_trigger": "A force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 makes it a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served force fields showing the C6 dip, or a permission event.",
+    "cannot_see": [
+     "impulse_colour fields for GRDN",
+     "force_index_ema_2 / ema_13 for GRDN",
+     "channel_upper (R5) for GRDN"
+    ]
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "R8 true: elder 10.0, elder_pattern CORRECTION_REENTRY, mp 97.0 STRONG; elder_5d [10, 7, 7, 10, 10] shows the dip to 7 and the reclaim. R8 is incomplete, the tail is a 10-10 plateau (C20), and the MTF line puts price 27.8% above the last daily swing high, where Elder does not chase (C10) and R5 cannot be read: conviction 2.",
+   "conviction_change": "R1 did not nominate BILL; on this packet CORRECTION_REENTRY with mp_state STRONG reads true (R8).",
+   "self_counter": null,
+   "falsifier": "a red impulse bar or a close under the value-zone average",
+   "challenge_reply": "CROWDING: BILL is read on its own series (C7), independent of the other Technology names; my entry waits for the average, not the spike.",
+   "case": {
+    "for": "Dip-and-reclaim analogue (R8) with mp 97.0 STRONG; MTF W above EMA9, 9>21.",
+    "against": "Far from value: the buy belongs slightly under the rising average (C10), and the channel wall (R5) is unread; weekly swing LH/LL.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close - no entry at the price in front (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "channel_upper served with entry under it would raise me; a red bar lowers me.",
+    "cannot_see": [
+     "impulse_colour fields for BILL",
+     "force_index_ema_2 / ema_13 for BILL",
+     "channel_upper (R5) for BILL"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Not red (impulse_colour_last_bar BLUE), weekly_trend_direction UP; force_index_ema_2 -9757989.49 under zero while price_ema_slope 0.3357 rises and force_index_ema_13 17705358.25 bullish = C6 pullback buy. elder_5d [7, 7, 10, 7, 7] shows no permission event: conviction 3.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red or force_index_ema_13 crosses under zero",
+   "challenge_reply": "LANE: no volume on my menu; my confirmation is short force under zero inside a rising average, C23 declared unread. CROWDING: U is read on its own force series (C7), not as a Technology proxy.",
+   "case": {
+    "for": "All three Elder legs present: not red, weekly up, the C6 dip with the 13-day force bullish (C3, C6, C7, C21). mp 93.0.",
+    "against": "No transition bar (C4); a 10 that faded to 7. H1 below EMA9, 9<21, 6.4% under the last hourly swing high.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar or force_index_ema_13 crossing below zero lowers me; a fresh transition raises me.",
+    "cannot_see": [
+     "volume test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 7.0, elder_5d [10, 7, 7, 10, 7]: not red, but the last bar is a single-bar drop from 10 to 7, a colour going away (C4), not a ban lifting. MTF D below EMA9. No colour or force field is in the packet for G, so the C6 timer cannot be read. I stand aside (C22).",
+   "conviction_change": null,
+   "challenge_reply": "CROWDING: G is read on its own series (C7); it stands aside on its last bar, not the Technology count.",
+   "case": {
+    "for": "Not red; MTF W above EMA9, 9>21, weekly HH/HL; mp 74.0.",
+    "against": "Last-bar drop is the profit-taking side of C4; daily below EMA9.",
+    "entry_trigger": "A force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 makes it a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served force fields showing the C6 dip, or a permission event.",
+    "cannot_see": [
+     "impulse_colour fields for G",
+     "force_index_ema_2 / ema_13 for G",
+     "channel_upper (R5) for G"
+    ]
+   }
+  },
+  {
+   "ticker": "BWIN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 6.0, elder_5d [3, 3, 3, 6, 6], elder_pattern ACCUMULATION_BASE: permission is unresolved (2 to 6 band) and no bar has reached 7, so the ban has not demonstrably lifted (C3). mp 65.0 BUILDING. Not a nomination on its own (C1); I wait for the event.",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "Score rising from 3 to 6: the next >=7 bar would be the permission event (C4). MTF W above EMA9, 9>21, weekly HH/HL.",
+    "against": "No permission yet; the 3s may have been red. Transitional ground is where Elder takes nothing (C22).",
+    "entry_trigger": "elder_ge:7 at the close after these 6s - the <=6 then >=7 event.",
+    "wrong_if": "elder_le:1 at the close.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A >=7 bar next session would move me to SUPPORT.",
+    "cannot_see": [
+     "impulse_colour fields for BWIN",
+     "force_index_ema_2 / ema_13 for BWIN",
+     "channel_upper (R5) for BWIN"
+    ]
+   }
+  },
+  {
+   "ticker": "DPZ",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "elder 10.0, elder_5d [6, 6, 10, 10, 10], elder_pattern ACCELERATION: the 6 then 10 is the <=6 then >=7 permission event (C3, C4), printed three bars back and now held at 10. Weekly read first (C21): MTF W above EMA9, 9>21. The event is aging into a summer plateau (C20), so it ranks behind a fresh one: conviction 3.",
+   "conviction_change": "R1 did not nominate DPZ; on this packet's elder_5d [6, 6, 10, 10, 10] the permission event is present, three bars old.",
+   "self_counter": null,
+   "falsifier": "a red impulse bar or a close back under the value-zone average",
+   "challenge_reply": null,
+   "case": {
+    "for": "Red-or-blue giving way to 10 is Elder's buy-permission transition (C4); MTF D swing HH/HL, H1 HH/HL. mp 67.0 BUILDING.",
+    "against": "Three 10s since the event is summer, not the buying season (C20); weekly swing HH but LL, 6.0% under the last weekly swing high. Force and channel not in the packet for DPZ.",
+    "entry_trigger": "Pullback into value (C10): in_zone:ma_20 with elder_ge:7 at the close.",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "weekly_trend_direction DOWN (R6) would strike it; force_index_ema_13 below zero lowers me.",
+    "cannot_see": [
+     "impulse_colour fields for DPZ",
+     "weekly_trend_direction for DPZ",
+     "force_index_ema_2 / ema_13 for DPZ",
+     "channel_upper (R5) for DPZ"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 7.0, elder_5d [7, 7, 10, 10, 7]: not red, but the last bar drops from 10 to 7 - a colour going away (C4), the profit-taking side, not a buy bar. mp 83.0 STRONG. No colour or force field is in the packet for PG, so the C6 timer cannot be read. I stand aside (C22).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "Not red; MTF W above EMA9, 9>21, D swing HH/HL; mp STRONG.",
+    "against": "Single-bar drop on the last bar (C4); H1 below EMA9.",
+    "entry_trigger": "A force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 makes it a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served force fields showing the C6 dip, or a permission event.",
+    "cannot_see": [
+     "impulse_colour fields for PG",
+     "force_index_ema_2 / ema_13 for PG",
+     "channel_upper (R5) for PG"
+    ]
+   }
+  },
+  {
+   "ticker": "INTA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "elder 4.0, elder_5d [10, 10, 10, 7, 4], elder_pattern INTERRUPTED: two bars of colour going away from a 10 plateau (C4), the last bar in the 2 to 6 band where permission is unresolved, and INTERRUPTED fails the trend leg (step 3). No buy permission on my method.",
+   "conviction_change": null,
+   "opposing_case": "Weekly MTF W above EMA9, 9>21, weekly swing HH/HL; three 10s a week ago show the impulse was strong, and a fresh >=7 bar from here would be a permission event (C4).",
+   "falsifier": "a >=7 bar at the next close",
+   "challenge_reply": "CROWDING: INTA is opposed on its own series (C7), not the Technology count.",
+   "case": {
+    "for": "Weekly up on the MTF line; a 4 is not certain red; a recovery to >=7 would be the ban lifting.",
+    "against": "Slide 10 to 7 to 4 is green going away (C4); INTERRUPTED means the trend leg failed; D below EMA9.",
+    "entry_trigger": "elder_ge:7 at the close after the 4 - the <=6 then >=7 event.",
+    "wrong_if": "elder_ge:7 at the next close proves the stand-aside early.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A >=7 bar with elder_pattern no longer INTERRUPTED.",
+    "cannot_see": [
+     "impulse_colour fields for INTA",
+     "force_index_ema_2 / ema_13 for INTA"
+    ]
+   }
+  },
+  {
+   "ticker": "CCC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "elder 6.0, elder_5d [4, 4, 3, 3, 6], elder_pattern INTERRUPTED: no bar at 7 or above, so permission is unresolved (C3), and INTERRUPTED fails the trend leg (step 3). Not a long on my method; conviction 2 because the series is rising toward permission.",
+   "conviction_change": null,
+   "opposing_case": "The score has turned up from 3 to 6, mp 65.0 BUILDING, MTF W above EMA9, 9>21 with weekly HH/HL; a >=7 bar next would be the permission event Elder buys (C4).",
+   "falsifier": "a >=7 bar at the next close",
+   "challenge_reply": "CROWDING: CCC is judged on its own series (C7), not the Technology cluster.",
+   "case": {
+    "for": "Rising toward permission; weekly up on the MTF line.",
+    "against": "No permission bar; INTERRUPTED trend leg; transitional ground where Elder takes nothing (C22).",
+    "entry_trigger": "elder_ge:7 at the close after the 6.",
+    "wrong_if": "elder_ge:7 at the next close.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A >=7 bar with the pattern no longer INTERRUPTED.",
+    "cannot_see": [
+     "impulse_colour fields for CCC",
+     "force_index_ema_2 / ema_13 for CCC"
+    ]
+   }
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "CENSOR: elder 0.0 on the last bar decodes to state 0 = red, certain. Red forbids buying (C1, C3), whatever else the name shows. elder_5d [7, 7, 2, 7, 0], elder_pattern INTERRUPTED: green went away into red on the last bar (C4). The ban lifts on the first bar that is not red, not before.",
+   "conviction_change": null,
+   "opposing_case": "Weekly MTF W above EMA9, 9>21, weekly swing HH/HL, 19.7% above the last weekly swing high; the name was not red two bars of the last three, so the ban may lift quickly.",
+   "falsifier": "the next bar is not red and holds at 7 or above",
+   "challenge_reply": "CROWDING: this is a red-bar censor on HNGE's own series, independent of the Healthcare count.",
+   "case": {
+    "for": "Weekly tide still up on the MTF line; a red bar after a 7 can be a one-bar shakeout.",
+    "against": "Last bar red by the decode: buying is forbidden (C3). D below EMA9; INTERRUPTED.",
+    "entry_trigger": "Not until red gives way: elder_ge:7 at a close after the 0.",
+    "wrong_if": "elder_ge:7 at the next close shows the red was one bar.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Only a bar that is not red; a red-to-not-red bar would be the permission event itself (C4).",
+    "cannot_see": [
+     "impulse_colour fields for HNGE",
+     "force_index_ema_2 / ema_13 for HNGE"
+    ]
+   }
+  },
+  {
+   "ticker": "MANH",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "elder 2.0, elder_5d [7, 7, 5, 5, 2], elder_pattern INTERRUPTED: three bars of the score falling away from 7 to a 2, one point above certain red; permission unresolved (C3), the colour going away (C4) and the trend leg failed (step 3). No long on my method.",
+   "conviction_change": null,
+   "opposing_case": "MTF W above EMA9, 9>21; mp 69.0; a 2 is not certain red, and a turn to >=7 would be a permission event.",
+   "falsifier": "a >=7 bar at the next close",
+   "challenge_reply": "CROWDING: MANH is opposed on its own series (C7), not the Technology count.",
+   "case": {
+    "for": "Weekly up on the MTF line; 2 is decode-ambiguous, not certain red.",
+    "against": "Falling three bars into the bottom of the band; INTERRUPTED; D below EMA9, 9>21.",
+    "entry_trigger": "elder_ge:7 at a close after the 2.",
+    "wrong_if": "elder_ge:7 at the next close.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A >=7 bar with the pattern no longer INTERRUPTED.",
+    "cannot_see": [
+     "impulse_colour fields for MANH",
+     "force_index_ema_2 / ema_13 for MANH"
+    ]
+   }
+  },
+  {
+   "ticker": "HAE",
+   "vote": "OPPOSE",
+   "conviction": 5,
+   "reason": "CENSOR: elder 1.0 on the last bar decodes to state 0 = red, certain. Red forbids buying (C1, C3). elder_5d [3, 7, 7, 4, 1], elder_pattern INTERRUPTED: green went away (7 to 4) and the last bar is red. The ban lifts only on the first bar that is not red.",
+   "conviction_change": null,
+   "opposing_case": "MTF W above EMA9, 9>21, weekly swing HH/HL; mp 60.0 BUILDING/ACCELERATING; the 3 then 7 two bars before shows the name can flip quickly.",
+   "falsifier": "the next bar is not red and holds at 7 or above",
+   "challenge_reply": "CROWDING: a red-bar censor on HAE's own series, independent of the Healthcare count.",
+   "case": {
+    "for": "Weekly tide up on the MTF line; recent 7s show the impulse can return.",
+    "against": "Last bar red: buying forbidden (C3); D below EMA9; INTERRUPTED.",
+    "entry_trigger": "Not until red gives way: elder_ge:7 at a close after the 1.",
+    "wrong_if": "elder_ge:7 at the next close.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Only a bar that is not red; red giving way would itself be the permission event (C4).",
+    "cannot_see": [
+     "impulse_colour fields for HAE",
+     "force_index_ema_2 / ema_13 for HAE"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Permission on (impulse_colour_last_bar BLUE), weekly_trend_direction UP; force_index_ema_2 -164893.54 under zero with price_ema_slope 0.2265 rising = C6 pullback buy. But elder_5d [7, 7, 7, 7, 7] is a flat plateau with no transition; the plateau part is C24 (unsourced). Conviction 2.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red or the close loses the value-zone average",
+   "challenge_reply": "LANE: no volume on my menu; my confirmation is short force under zero inside a rising average, C23 declared unread. CROWDING: VRDN stands on its own force series (C7), not the Healthcare cluster.",
+   "case": {
+    "for": "Not red, weekly up, the C6 dip in a rising average (C3, C6, C21). mp 86.0.",
+    "against": "Plateau only (C20, C24 unsourced); MTF D swing HH but LL; H1 swing LH/LL.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar or force_index_ema_13 crossing below zero lowers me; a transition raises me.",
+    "cannot_see": [
+     "volume test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "COTY",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Not red (impulse_colour_last_bar BLUE), weekly_trend_direction UP; force_index_ema_2 -210653.0 under zero while price_ema_slope 0.0304 rises, force_index_ema_13 417236.2 bullish = C6 pullback buy. elder_5d [7, 7, 7, 7, 7] is a plateau with no transition: C24 (unsourced). Conviction 2.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "impulse prints red or force_index_ema_13 crosses under zero",
+   "challenge_reply": null,
+   "case": {
+    "for": "Not red, weekly up, the C6 dip with the 13-day force bullish (C3, C6, C7). mp 83.0.",
+    "against": "Flat plateau (C20, C24 unsourced); price_ema_slope 0.0304 barely rising; H1 below EMA9.",
+    "entry_trigger": "in_zone:ma_20 with elder_ge:7 at the close (C10).",
+    "wrong_if": "elder_le:1 or close_below:ma_50.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A red bar or force_index_ema_13 crossing below zero lowers me; a transition raises me.",
+    "cannot_see": [
+     "volume test (C23) off my menu",
+     "choch_state (R11) off my menu"
+    ]
+   },
+   "conditions": {
+    "lane": "PULLBACK",
+    "buy": [
+     "in_zone:ma_20",
+     "elder_ge:7"
+    ],
+    "confirm": [],
+    "wrong": [
+     "elder_le:1",
+     "close_below:ma_50"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": "close_above:bar_high+5pct",
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "CGON",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "elder 7.0, elder_5d [7, 7, 10, 10, 7]: not red, but the last bar drops from 10 to 7, a colour going away (C4), not a ban lifting. mp 93.0 STRONG. No colour or force field is in the packet for CGON, so the C6 timer cannot be read. Weekly swing LH/LL on the MTF line. I stand aside (C22).",
+   "conviction_change": null,
+   "challenge_reply": "CROWDING: CGON is read on its own series (C7), independent of the Healthcare cluster.",
+   "case": {
+    "for": "Not red; mp STRONG; MTF W above EMA9, 9>21.",
+    "against": "Last-bar drop (C4); weekly swing LH/LL, 16.0% under the 20-week high.",
+    "entry_trigger": "A force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar.",
+    "wrong_if": "elder_le:1 makes it a censor case.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "Served force fields showing the C6 dip, or a permission event.",
+    "cannot_see": [
+     "impulse_colour fields for CGON",
+     "force_index_ema_2 / ema_13 for CGON",
+     "channel_upper (R5) for CGON"
+    ]
+   }
+  },
+  {
+   "ticker": "ARX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "elder 3.0, elder_5d [3, 6, 1, 3, 3], elder_pattern INTERRUPTED: a 1 two bars back was certain red, and no bar since has reached 7, so the ban has not demonstrably lifted (C3); INTERRUPTED fails the trend leg (step 3). No long on my method.",
+   "conviction_change": null,
+   "opposing_case": "MTF W above EMA9, 9>21, weekly swing HH/HL, 0.2% under the 20-week high; mp 68.0 BUILDING/ACCELERATING; the red is two bars old and a >=7 bar would lift it.",
+   "falsifier": "a >=7 bar at the next close",
+   "challenge_reply": null,
+   "case": {
+    "for": "Weekly tide up on the MTF line; red was two bars ago, not today.",
+    "against": "Stuck in the unresolved band after a red bar; INTERRUPTED; D below EMA9.",
+    "entry_trigger": "elder_ge:7 at a close after the 3s.",
+    "wrong_if": "elder_ge:7 at the next close.",
+    "horizon_sessions": 10,
+    "would_change_my_mind": "A >=7 bar with the pattern no longer INTERRUPTED.",
+    "cannot_see": [
+     "impulse_colour fields for ARX",
+     "force_index_ema_2 / ema_13 for ARX"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT, qty -68.0. No long permission: MTF W below EMA9, 9<21 (C21, R6 censors the long). elder_5d [5, 6, 5, 2, 7], elder 7.0: the 2 then 7 is red giving way - on a short that is the profit-taking signal (C4). Held-name verdict TIGHTEN: keep the written stop 142.45 or lower it, never raise it (C18).",
+   "conviction_change": null,
+   "challenge_reply": null,
+   "case": {
+    "for": "For the held short: weekly below EMA9, 9<21; D swing LH/LL; mp 18.0.",
+    "against": "The last bar is no longer red (elder 7.0): green forbids shorting (C3) and red vanishing tells the short to book profit (C4).",
+    "entry_trigger": "No new long; for the short, a fresh red bar (elder_le:1) would restore the short's permission.",
+    "wrong_if": "elder_ge:7 holding with the weekly turning up proves the short wrong.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A red bar at the next close would move TIGHTEN back to KEEP.",
+    "cannot_see": [
+     "impulse_colour fields for SPCX in this packet",
+     "force_index_ema_13 for SPCX"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of2.json",
+   "bytes": 17737,
+   "votes": 12,
+   "sha256": "f4a01aa75bb8"
+  },
+  {
+   "file": "elder-lens.part2of2.json",
+   "bytes": 14799,
+   "votes": 12,
+   "sha256": "a7fa47c52518"
+  }
+ ]
+}

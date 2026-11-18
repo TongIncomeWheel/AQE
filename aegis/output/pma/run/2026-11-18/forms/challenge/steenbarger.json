@@ -1,0 +1,175 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-18",
+ "seat_kind": "challenge",
+ "names_read": 24,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-18\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"MGNI\", \"nomination_count\": 3"},
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C17"],
+   "claim": "Healthcare is the room's heaviest cluster: 7 of 24 names (LFST, TFX, GRDN, HNGE, HAE, VRDN, CGON), drawn from five different seats. Technology follows with 6 (BILL, U, G, INTA, CCC, MANH). Two sectors carry 13 of 24 names, so a slate built from the room risks one sector read posing as several independent ideas. Deciders should say whether each Healthcare/Technology case stands on its own or on the sector.",
+   "evidence": "gics_sector_name Healthcare: LFST, TFX, GRDN, HNGE, HAE, VRDN, CGON; gics_sector_name Technology: BILL, U, G, INTA, CCC, MANH; 24 room rows in the packet",
+   "addressed_to": "minervini, livermore, raschke, seow, elder-lens, oneil"
+  },
+  {
+   "scope": "committee",
+   "kind": "OVERLAP",
+   "ticker": null,
+   "canon_ref": ["C15", "C17"],
+   "claim": "The multi-seat names come from two repeating pairs, not from broad independent convergence. elder-lens and minervini co-nominate MGNI, LILA and TBBB, and livermore and wyckoff co-nominate VIK and BIP. No name has more than 3 seats. Before co-nomination is read as confirmation, the pairs should show their reasons rest on different anchors.",
+   "evidence": "MGNI seats elder-lens, minervini, wyckoff; LILA seats elder-lens, minervini; TBBB seats elder-lens, minervini; VIK seats livermore, wyckoff; BIP seats livermore, wyckoff",
+   "addressed_to": "elder-lens, minervini, livermore, wyckoff"
+  },
+  {
+   "scope": "DPZ",
+   "kind": "UNPROVEN",
+   "ticker": "DPZ",
+   "canon_ref": ["C5"],
+   "claim": "DPZ sits in the MOMENTUM lane but its moving-average stack is fully inverted (50 below 100 below 200). That is a declining longer-timeframe trend. One structure break inside a falling stack does not establish the higher-timeframe context a momentum case needs (R4). The seat must name the trend context it is exploiting.",
+   "evidence": "ma_50 312.51, ma_100 323.48, ma_200 338.39, structure_shift BULLISH_BOS, structure 82.1, lane MOMENTUM, seats wyckoff",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "VIK",
+   "kind": "EXTENSION",
+   "ticker": "VIK",
+   "canon_ref": ["C5", "C7"],
+   "claim": "VIK carries a bearish divergence confirmed by 3 of 5 oscillators on above-normal volume, and its MA stack is mixed (50 below 200 below 100). The pullback thesis needs a stated higher-timeframe context and a written disconfirming observable that answer the divergence, not just the structure score.",
+   "evidence": "div_state BEARISH, div_bear_count 3, day_vol 2.51, ma_50 84.55, ma_100 91.33, ma_200 86.23, structure 86.3, seats livermore, wyckoff",
+   "addressed_to": "livermore, wyckoff"
+  },
+  {
+   "scope": "PG",
+   "kind": "EXTENSION",
+   "ticker": "PG",
+   "canon_ref": ["C7", "C16"],
+   "claim": "PG shows a bearish divergence confirmed by 4 of 5 oscillators, alongside a fresh bullish structure break on below-average volume. The fields conflict, which is the case for an explicit stand-aside unless the seat states what resolves the divergence (R8).",
+   "evidence": "div_state BEARISH, div_bear_count 4, structure_shift BULLISH_BOS, day_vol 0.82, sc_momentum 68.3, seats livermore",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "HAE",
+   "kind": "EXTENSION",
+   "ticker": "HAE",
+   "canon_ref": ["C5", "C7"],
+   "claim": "HAE pairs a 4-of-5 bearish divergence with a wide gap between its 50-day and 200-day averages, the room's lowest sc_momentum among nominated names, and a RANGE structure read. That is an extended trend showing exhaustion. The pullback case should name the observable that proves it wrong.",
+   "evidence": "div_state BEARISH, div_bear_count 4, ma_50 114.04, ma_200 81.81, sc_momentum 55.6, structure_shift RANGE, seats raschke",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "HNGE",
+   "kind": "EXTENSION",
+   "ticker": "HNGE",
+   "canon_ref": ["C5"],
+   "claim": "HNGE has the widest 50-day over 200-day spread in the room, about 46% on the served figures, with sc_momentum below 60 and lens_warnings unserved. The seat should say whether it is entering a pullback in an intact trend or buying an extended name whose momentum is fading.",
+   "evidence": "ma_50 104.87, ma_100 95.26, ma_200 71.78, sc_momentum 59.4, structure 68.4, lens_warnings null, seats seow",
+   "addressed_to": "seow"
+  },
+  {
+   "scope": "BIP",
+   "kind": "UNPROVEN",
+   "ticker": "BIP",
+   "canon_ref": ["C5", "C15"],
+   "claim": "BIP's MA stack is flat to inverted (50 below both 100 and 200), so the higher-timeframe trend is not up. The two-seat agreement is the repeating livermore/wyckoff pair. The case should name the longer-timeframe context it enters with, beyond the structure break.",
+   "evidence": "ma_50 36.99, ma_100 37.89, ma_200 37.7, structure_shift BULLISH_BOS, structure 86.3, day_vol 2.12, seats livermore, wyckoff",
+   "addressed_to": "livermore, wyckoff"
+  },
+  {
+   "scope": "CGON",
+   "kind": "UNPROVEN",
+   "ticker": "CGON",
+   "canon_ref": ["C5", "C16"],
+   "claim": "CGON has a mixed MA stack (50 below 100), a RANGE structure read and a conviction-2 single nomination. These are the conditions where abstaining beats filling a slot (R8). The seat should state the higher-timeframe context or stand aside.",
+   "evidence": "ma_50 68.35, ma_100 71.02, ma_200 66.96, structure_shift RANGE, structure 67.4, convictions 2, seats oneil",
+   "addressed_to": "oneil"
+  },
+  {
+   "scope": "ARX",
+   "kind": "PROCESS",
+   "ticker": "ARX",
+   "canon_ref": ["C16"],
+   "claim": "ARX's 14-day ATR is about 0.3% of its 50-day average. A range that compressed is what a pinned, event-bound price looks like, and EVENT-DRIVEN names are not to be nominated. The seat should confirm the name is not pinned to a pending event before the room treats this as a pullback.",
+   "evidence": "atr_14d 0.06, ma_50 19.8, ma_200 15.32, structure_shift RANGE, day_vol 0.55, lens_warnings null, seats raschke",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "BWIN",
+   "kind": "PROCESS",
+   "ticker": "BWIN",
+   "canon_ref": ["C16"],
+   "claim": "BWIN's 14-day ATR is about 0.5% of its 50-day average, the same compressed-range pattern as ARX (also Financials, also raschke). The seat should confirm it is not an event-pinned price, and should address the bearish divergence it carries.",
+   "evidence": "atr_14d 0.17, ma_50 31.77, div_state BEARISH, div_bear_count 1, structure_shift RANGE, lens_warnings null, seats raschke",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "BILL",
+   "kind": "CROWDING",
+   "ticker": "BILL",
+   "canon_ref": ["C16", "C17"],
+   "claim": "BILL traded 6.64x its 20-day average volume, by far the room's largest participation spike. A spike that size often marks a news or event day. The seat should confirm the case is evidence, not a reaction to the spike, and that the name is not event-driven.",
+   "evidence": "day_vol 6.64, sc_momentum 84.5, structure 87.4, structure_shift ABOVE_STRUCTURE, seats livermore, convictions 3",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C3", "C6"],
+   "claim": "Five of the six MOMENTUM-lane names traded below their own 20-day average volume on the session read. Momentum without participation is a weaker environment match. The seats should name what confirms momentum when volume does not.",
+   "evidence": "MGNI day_vol 0.75, GRDN day_vol 0.66, U day_vol 0.74, VRDN day_vol 0.63, LFST day_vol 0.95; lane MOMENTUM",
+   "addressed_to": "elder-lens, minervini, wyckoff, livermore, raschke"
+  },
+  {
+   "scope": "LILA",
+   "kind": "ANCHOR",
+   "ticker": "LILA",
+   "canon_ref": ["C15"],
+   "claim": "LILA carries the most lens warnings in the room (3) on below-average volume, and its two seats are the repeating elder-lens/minervini pair. Agreement here may be a shared anchor rather than independent confirmation. Each seat should state what its read rests on.",
+   "evidence": "lens_warnings 3, day_vol 0.67, sc_momentum 76.3, structure 76.2, seats elder-lens, minervini",
+   "addressed_to": "elder-lens, minervini"
+  },
+  {
+   "scope": "SPCX",
+   "kind": "PROCESS",
+   "ticker": "SPCX",
+   "canon_ref": ["C6", "C7"],
+   "claim": "Held name SPCX shows an up-structure failure (BEARISH_CHOCH), the room's lowest structure and sc_momentum, and has no 200-day average served. Under C6, loss of alignment is an exit condition. The held review should state the disconfirming observable and whether it has already printed.",
+   "evidence": "structure_shift BEARISH_CHOCH, structure 25.0, sc_momentum 35.3, ma_50 148.46, ma_100 142.22, ma_200 null, held true",
+   "addressed_to": "livermore, wyckoff"
+  }
+ ],
+ "obligations": [
+  {"seat": "wyckoff", "ticker": "DPZ", "class": "R4", "what_is_owed": "Name the higher-timeframe trend context for a MOMENTUM case with ma_50 below ma_100 below ma_200."},
+  {"seat": "livermore", "ticker": "VIK", "class": "R5", "what_is_owed": "State the disconfirming observable that answers div_bear_count 3 on day_vol 2.51."},
+  {"seat": "wyckoff", "ticker": "VIK", "class": "R5", "what_is_owed": "State the disconfirming observable that answers div_bear_count 3 on day_vol 2.51."},
+  {"seat": "livermore", "ticker": "PG", "class": "R8", "what_is_owed": "Resolve div_bear_count 4 against the BULLISH_BOS, or stand aside."},
+  {"seat": "raschke", "ticker": "HAE", "class": "R5", "what_is_owed": "State the observable that proves the pullback wrong given div_bear_count 4."},
+  {"seat": "seow", "ticker": "HNGE", "class": "R4", "what_is_owed": "Locate the setup: pullback in an intact trend or an extended name with fading momentum."},
+  {"seat": "livermore", "ticker": "BIP", "class": "R4", "what_is_owed": "Name the longer-timeframe context given ma_50 below ma_100 and ma_200."},
+  {"seat": "wyckoff", "ticker": "BIP", "class": "R4", "what_is_owed": "Name the longer-timeframe context given ma_50 below ma_100 and ma_200."},
+  {"seat": "oneil", "ticker": "CGON", "class": "R8", "what_is_owed": "State the higher-timeframe context or abstain."},
+  {"seat": "raschke", "ticker": "ARX", "class": "PROCESS", "what_is_owed": "Confirm the name is not pinned to a pending event (atr_14d 0.06)."},
+  {"seat": "raschke", "ticker": "BWIN", "class": "PROCESS", "what_is_owed": "Confirm the name is not event-pinned (atr_14d 0.17) and address the bearish divergence."},
+  {"seat": "livermore", "ticker": "BILL", "class": "PROCESS", "what_is_owed": "Confirm the day_vol 6.64 session is not an event day and the case survives with the ticker hidden."}
+ ],
+ "declarations": [
+  "psychology_claims: NONE - this seat has no emotional state; C18-C21 are PM-facing (R9)",
+  "No nomination and no vote filed; challenge round only",
+  "Bracket fields were read as information only and are not the basis of any finding (house rule R1)",
+  "Off-menu packet fields rs_rank_pct and pct_from_52w_high were not used as evidence",
+  "edge_proven: forward-return separation is NOT_MEASURED for every cited field (R1); findings ask questions, they do not rate edge",
+  "MA-spread percentages (HNGE ~46%, ARX ~0.3%, BWIN ~0.5% ATR/ma_50) are simple ratios of served figures, stated for context"
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Not in the packet; R3 (regime named) cannot be evaluated for any room name."},
+  {"field": "srm", "impact": "Not in the packet; sector context for the Healthcare/Technology crowding read is unserved."},
+  {"field": "lens_warnings", "impact": "Null for BWIN, INTA, CCC, HNGE, MANH, HAE, ARX, SPCX; lens-warning crowding read incomplete for 8 names."},
+  {"field": "ma_200", "impact": "Null for held SPCX; its longer-timeframe trend context cannot be located."},
+  {"field": "price", "impact": "No close is served, so extension from the MAs is read only from MA spreads, not price-to-MA distance."},
+  {"field": "voice reasons / fields_cited", "impact": "The packet is anonymised to seats and convictions; R12 (field-count) and R5 (stated invalidation) cannot be checked until the floor."}
+ ]
+}

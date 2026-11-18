@@ -1,0 +1,738 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "round": 2,
+ "declarations": [
+  "System picked from each name's own picture, never the lane tag (R10/R32). Position names judged on break (ABOVE_STRUCTURE/BULLISH_BOS), strength and the TIF/COM proxies; swing names on the five R1 conditions.",
+  "Declared proxies: structure_shift for the resistance line, sector_trend_state for the cycle arrow (sector_rrg_quadrant unserved), elder_5d/elder_pattern for TIF, max(fib_swing_low, base_low_20d) for the support line.",
+  "The vote packet does not serve cci_20, ma_40, bar_* values, cmf, pct_from_pivot, fib_swing_low or base_low_20d; swing set-ups are therefore unverifiable and I abstain rather than assume them.",
+  "Bracket fields were read as information only and are not a basis of any vote (R1). C21 weekly read is a house rule, not the author's.",
+  "No voice_memory block was injected; no standing lesson applies.",
+  "System picked from each name's own picture, never the lane tag (R10/R32). Position names judged on break, strength and the TIF/COM proxies; swing names on the five R1 conditions.",
+  "The vote packet does not serve cci_20, ma_40, bar_* values, cmf, pct_from_pivot, fib_swing_low or base_low_20d; swing set-ups are unverifiable and I abstain rather than assume them.",
+  "Bracket fields were read as information only and are not a basis of any vote (R1). C21 weekly read is a house rule, not the author's. SPCX short reviewed by mirror only (C32)."
+ ],
+ "votes": [
+  {
+   "ticker": "MGNI",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system fired (C26, R13 proxy): a resistance break that kept running, ABOVE_STRUCTURE, with position-horizon strength rs_rank_pct 98.67, ret_63d 19.12, rs_spy_20d 24.08 (C23, C6) and sector Momentum Building (C24). Extension sma_dist 14.73% is not a fault in this system. Caution: TIF proxy unconfirmed (elder 7.0, no SUSTAINED/ACCELERATION label) and COM proxy cmf not served (C28).",
+   "conviction_change": null,
+   "falsifier": "A close below the support line max(fib_swing_low, base_low_20d), or the trend-colour flip proxy printing (red bar after the up-run), proves the position case wrong.",
+   "case": {
+    "for": "Break above resistance held (ABOVE_STRUCTURE), top-percentile strength rs_rank_pct 98.67, ret_6m 112.17, adx 36.33, sector favoured by the cycle read. Strength is the signal in this system (C26).",
+    "against": "TIF proxy not confirming: elder 7.0 with no SUSTAINED/ACCELERATION label; daily swing LH/LL and H1 below EMA9 say the last bar was weak; day_vol 0.75 light; fund flow (cmf) unreadable in the packet.",
+    "entry_trigger": "Buy stop 1 tick over bar_high (yesterday's high), trailed to each new prior-day high until taken (C27). Reference entry 28.41.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C14, C29); or red candle after the run, sell next session below its low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A close back inside structure (structure_shift leaving ABOVE_STRUCTURE) or cmf below zero on a down bar.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low / bar_open / bar_close",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "VIK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system closest to the picture (daily 3.0% above the last swing high, ABOVE_STRUCTURE) and the break is there, but the top-down and horizon tests fail: sector Declining \u2014 Avoid (C24) and position-horizon strength is thin, rs_rank_pct 72.7, ret_63d 3.87 (C23, R12). Weekly sits 14.4% under its last swing high (C21 house rule, weight). I take signals inside favoured sectors on strong names; this is neither.",
+   "conviction_change": null,
+   "opposing_case": "A fresh-looking break with elder 10.0 CORRECTION_REENTRY, rs_spy_20d 12.83 and heavy day_vol 2.51: the trend impulse has re-entered and the money showed up on the break.",
+   "case": {
+    "for": "ABOVE_STRUCTURE with daily swing HH/HL, elder 10.0 CORRECTION_REENTRY reads as trend impulse resuming, rs_spy_20d 12.83 > 0, day_vol 2.51 participation.",
+    "against": "Sector Declining \u2014 Avoid fails C24 top-down; rs_rank_pct 72.7 and ret_63d 3.87 are not position-horizon leadership (C23); weekly 14.4% under its last swing high is the higher frame against it (C21, house rule).",
+    "entry_trigger": "Would need the sector to stop reading Declining and a buy stop over bar_high to be taken with ret_63d widening its lead.",
+    "wrong_if": "Price trails up through each prior-day high and the weekly retakes its last swing high while the sector turns.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Sector trend state turning up (cycle favour) and rs_rank_pct rising into the top decile.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "subcomponents.flow.cmf",
+     "index 63-day return",
+     "pct_from_pivot"
+    ]
+   }
+  },
+  {
+   "ticker": "BIP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system is the picture: a fresh break, BULLISH_BOS, daily 0.1% above the last swing high. But the position-horizon strength test fails: rs_rank_pct 58.79, ret_63d 2.0, ret_6m 4.66 is not a leader (C23, R12, C6), and Utilities read Momentum Fading (C24). A break on a mid-pack name is not the strength this system buys.",
+   "conviction_change": null,
+   "opposing_case": "Textbook break of resistance on day_vol 2.12 closing at the high (H1 100% of the day's range), elder 10.0 CORRECTION_REENTRY, rs_spy_20d 14.18 > 0: the light-green arrow proxy is live today.",
+   "case": {
+    "for": "BULLISH_BOS is the buy signal itself (C26); day_vol 2.12 and a close at the day's high; elder 10.0 CORRECTION_REENTRY; rs_spy_20d 14.18 over the short horizon.",
+    "against": "Medium-term ranking is mid-pack, rs_rank_pct 58.79, ret_63d 2.0 (C23); sector Momentum Fading \u2014 Hold, Don't Add (C24); weekly swing LH/LL is a weight against it (C21, house rule).",
+    "entry_trigger": "Would need rs_rank_pct to climb into leadership while a buy stop over bar_high is taken.",
+    "wrong_if": "The break carries and ret_63d opens a clear lead over the index within the position horizon.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "rs_rank_pct above 85 with the weekly making a higher high.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "subcomponents.flow.cmf",
+     "index 63-day return",
+     "pct_from_pivot"
+    ]
+   }
+  },
+  {
+   "ticker": "LILA",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26, R13 proxy): ABOVE_STRUCTURE with leadership rs_rank_pct 97.89, ret_63d 18.71, rs_spy_20d 28.05 (C23, C6), sector Momentum Building (C24). Daily is 4.2% under its last swing high, so the entry is a buy stop trailed down to each prior-day high until one breaks (C27). Cautions: TIF unconfirmed (elder 7.0, no label), cmf not served, low price entry 9.9 and day_vol 0.67 (C25 liquidity caution, never a reject).",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d) or structure_shift leaving ABOVE_STRUCTURE.",
+   "case": {
+    "for": "Above structure, daily and H1 swing HH/HL, top-percentile strength, ret_6m 91.12, weekly HH; the cycle read favours the sector.",
+    "against": "No TIF confirmation (elder 7.0, pattern None); day_vol 0.67 light; sub-$10 entry 9.9 is a liquidity caution (C25, R11); fund flow unreadable.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, re-placed each session at the newest prior-day high (C27). Reference entry 9.9.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or red candle after the run, sell next session below its low (C14).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "cmf below zero with a lower daily low, or elder_5d falling under 7.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "elder_context.volume.avg_vol_20d",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "TBBB",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26): ABOVE_STRUCTURE, daily 13.7% above the last swing high, with strength rs_rank_pct 97.76, ret_63d 36.83, adx 41.9 (C23). Extension sma_dist 18.68% is a weight, not a fault here. Cautions: sector Momentum Fading (C24), TIF unconfirmed (elder 7.0, no label), H1 below EMA9, cmf not served.",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or a red candle after the run with no new prior-day high.",
+   "case": {
+    "for": "Strongest 63-day return among the room's position names (ret_63d 36.83), ret_12m 144.71, above structure, weekly HH-side; buying strength is this system's entry.",
+    "against": "Sector Momentum Fading \u2014 Hold, Don't Add (C24); elder 7.0 with no SUSTAINED/ACCELERATION label (C28); daily swing HH but LL and H1 below EMA9 say the last bars eased.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 67.76.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d); or the red-candle flip, sell next session below its low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift turning BEARISH_CHOCH or cmf turning negative.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Neither system can be shown firing. Position: no resistance break (RANGE, daily 9.5% under the last swing high). Swing: the picture is a pullback near the rising 20MA (ext_atr20 0.84) but the five set-up conditions (ma_40, cci_20, bar_low, bar_close) are not served, and four of five is not a set-up (C3, R1). I do not assume a set-up I cannot read.",
+   "conviction_change": null,
+   "case": {
+    "for": "Strength intact, rs_rank_pct 97.55, ret_6m 83.31; weekly swing HH/HL; price sits near the rising 20MA ma20 13.64, the swing system's buy area.",
+    "against": "No break, so no position signal; swing set-up unverifiable; H1 below EMA9 at 3% of the day's range.",
+    "entry_trigger": "Swing: all five R1 conditions on one bar, then a buy stop over bar_high. Position: a close above the last swing high.",
+    "wrong_if": "Close below ma_40 (C4, R7), or the pullback running 5+ days since the swing high.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Served cci_20 below -100 with bar_low at or under ma_20 and bar_close above ma_40.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "days_since_swing_high",
+     "bar_range_5d"
+    ]
+   }
+  },
+  {
+   "ticker": "TFX",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26): new high (from_52w_hi 0.0%), ABOVE_STRUCTURE, daily 1.8% above the last swing high, rs_spy_20d 26.42, ret_63d 17.44 (C23). Medium-term rank rs_rank_pct 78.16 is good not elite; sector Momentum Fading (C24) and weekly swing LH/LL (C21 house) are weights. TIF unconfirmed (elder 7.0). Steenbarger crowding: this case stands on its own break, not on the healthcare cluster.",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or the red-candle flip after the run.",
+   "case": {
+    "for": "New 52-week high on day_vol 1.93 is the purest resistance-break picture; strength is the signal (C26); adx 37.52 trend.",
+    "against": "rs_rank_pct 78.16 is not top-decile; sector Fading; weekly LH/LL; elder 7.0 with no impulse label; extension sma_dist 18.72% means a wide support distance.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 159.55.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C29).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A close back under the last swing high, or cmf negative on the next down bar.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "challenge_reply": "Crowding: my TFX vote rests on its own new high and ABOVE_STRUCTURE, judged name by name; I do not count GRDN as confirmation.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "GRDN",
+   "vote": "SUPPORT",
+   "conviction": 4,
+   "reason": "Position system (C26, R13 proxy): new high (from_52w_hi 0.0%), ABOVE_STRUCTURE, weekly and daily swing HH/HL, ret_63d 32.55, rs_rank_pct 88.69, rs_spy_20d 24.97 (C23, C6); mp 85.0 STRONG/ACCELERATING. Weekly frame agrees (C21 house). Cautions: sector Fading (C24), day_vol 0.66 light, elder 7.0 with no impulse label, cmf not served. Stands on its own break, not the healthcare cluster.",
+   "conviction_change": null,
+   "self_counter": "Volume did not confirm (day_vol 0.66) and the TIF proxy carries no SUSTAINED/ACCELERATION label; run_10d 23.15% and ext_atr20 3.64 put the support line far below, so a flip costs more.",
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or the red-candle flip after the run.",
+   "case": {
+    "for": "All timeframes aligned up (W and D HH/HL, H1 above EMA9), fresh 52-week high, top-quintile medium-term strength: the break-and-strength picture this system buys.",
+    "against": "Light day_vol 0.66; sector Momentum Fading (C24); elder 7.0 unlabelled; extension sma_dist 17.58% after run_10d 23.15%.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 50.33.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d); or red candle after the run, sell next session below its low (C14).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "cmf negative with a close back under the last swing high.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "challenge_reply": "Crowding: GRDN is judged on its own new high and aligned weekly/daily structure; I do not lean on TFX or other healthcare names. Light volume: in my method fund flow (cmf) confirms, not day volume; cmf is unserved, so I declare it.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26): new high (from_52w_hi 0.0%), ABOVE_STRUCTURE, ret_63d 35.99, rs_rank_pct 96.43, rs_spy_20d 36.93 (C23), elder 10.0 CORRECTION_REENTRY, day_vol 6.64 (money behind the break). Extension sma_dist 34.45% is a weight here, not a veto. Cautions: weekly swing LH/LL (C21 house), single tech name, cmf not served. Event screening is outside my method; I read only the chart.",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or the red-candle flip after the run.",
+   "case": {
+    "for": "New high on the room's heaviest participation, top-decile strength, trend impulse re-entered (CORRECTION_REENTRY); strength is the signal.",
+    "against": "Extreme extension (sma_dist 34.45%, ext_atr20 4.84, run_10d 30.23%) puts the support line far away; weekly LH/LL; a 6.64x volume day may be an event, which I cannot see.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 64.88.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C29).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Next sessions fail to take a prior-day high and print a red candle, or the name proves event-driven.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "event calendar"
+    ]
+   },
+   "challenge_reply": "Crowding: BILL stands on its own new high; I do not count the other tech names as confirmation.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": "Confirm the 6.64x volume day is not an event-driven name (outside my method)."
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Judged on the position system, closest to its picture: there is no buy signal. RANGE, daily 7.2% under the last swing high, H1 below EMA9 and 9<21. It is not at the 20MA either (ext_atr20 2.01), so the swing picture does not fit. Strength is real (rs_rank_pct 97.98) but a signal, not strength alone, authorises entry (C5, C26, C31).",
+   "conviction_change": null,
+   "opposing_case": "Top-percentile strength rs_rank_pct 97.98, ret_6m 92.21, rs_spy_20d 30.16 and mp 93.0 ACCELERATING; a buy stop over the next prior-day high could catch the resumption.",
+   "case": {
+    "for": "Leadership rank, weekly above EMA9, daily swing HH/HL, sector Recovering.",
+    "against": "No resistance break (RANGE); pulled back but not to the rising 20MA; H1 trend down; weekly swing LH/LL (C21 house); ret_63d 6.9 modest for a position horizon.",
+    "entry_trigger": "A close back above the last swing high (resistance break), then a buy stop over bar_high.",
+    "wrong_if": "Price breaks above its last swing high and holds within the next sessions.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift moving to BULLISH_BOS.",
+    "cannot_see": [
+     "pct_from_pivot",
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "cci_20",
+     "ma_40"
+    ]
+   }
+  },
+  {
+   "ticker": "G",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Position system (C26): a fresh break, BULLISH_BOS, daily 1.7% above the last swing high, with strength rs_rank_pct 86.54, ret_63d 17.14 (C23) and weekly swing HH/HL (C21 house agrees). Low conviction: the last bar was a down bar (daily below EMA9, H1 at 2% of the day's range), TIF unconfirmed (elder 7.0), ret_12m -5.01. Entry only if a prior-day high is taken (C27). Stands on its own break, not the tech cluster.",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or no prior-day high taken while the break fails back into the range.",
+   "case": {
+    "for": "Fresh break of resistance with weekly HH/HL behind it; ret_63d 17.14 and rs_spy_20d 14.94 lead; adx 38.4.",
+    "against": "Down bar after the break, daily under EMA9, H1 9<21; elder 7.0 unlabelled; ret_12m -5.01 says the long-term frame is still repairing.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, re-placed daily (C27). Reference entry 42.64.",
+    "wrong_if": "Daily close back below the broken swing high and below max(fib_swing_low, base_low_20d).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift turning BEARISH_CHOCH or a second red candle.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "challenge_reply": "Crowding: G is judged on its own fresh break; the other tech names add nothing to it in my method.",
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "BWIN",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "No signal yet in either system. Position: RANGE, daily 0.3% under the last swing high, so the break has not happened (C26). Swing: price at the 20MA (ext_atr20 0.82) but the five set-up conditions are unserved. Sector Declining \u2014 Avoid (C24) weighs against. I wait for the break rather than prejudge it.",
+   "conviction_change": null,
+   "case": {
+    "for": "Coiled just under resistance, from_52w_hi -1.05%, rs_rank_pct 95.31, weekly HH/HL, mp BUILDING/ACCELERATING: a break would be a position signal.",
+    "against": "No break yet; sector Declining (C24); ret_63d 3.21 thin for a position horizon; elder 6.0 ACCUMULATION_BASE is not SUSTAINED/ACCELERATION.",
+    "entry_trigger": "A close above the last swing high, then a buy stop over bar_high (C27).",
+    "wrong_if": "A close below ma_20 and the range low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift turning BULLISH_BOS with the sector no longer Declining.",
+    "cannot_see": [
+     "pct_from_pivot",
+     "cci_20",
+     "ma_40",
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "DPZ",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system is the picture: a fresh break, BULLISH_BOS, with the TIF proxy confirming (elder 10.0 ACCELERATION). But the position-horizon strength test fails: rs_rank_pct 68.57, ret_63d 3.96, ret_12m -14.7, from_52w_hi -20.2% is not a leader (C23, R12, C6), and the sector reads Declining \u2014 Avoid (C24). Weekly sits 6.0% under its last swing high (C21 house, weight). A break in a laggard is not this system's trade.",
+   "conviction_change": null,
+   "opposing_case": "The only name in the room where the break and the trend-impulse proxy agree: BULLISH_BOS with elder 10.0 ACCELERATION, daily swing HH/HL, rs_spy_20d 15.37 > 0 over the short horizon.",
+   "case": {
+    "for": "BULLISH_BOS is a buy signal (C26) and elder 10.0 ACCELERATION confirms the TIF proxy (C28); daily HH/HL; day_vol 1.21.",
+    "against": "Medium-term ranking mid-pack (rs_rank_pct 68.57), long-term negative (ret_12m -14.7), 20.2% off the 52-week high; sector Declining fails C24 top-down; weekly HH but LL.",
+    "entry_trigger": "Would need rs_rank_pct climbing into leadership and the weekly retaking its last swing high, then a buy stop over bar_high.",
+    "wrong_if": "The break carries through the weekly swing high while ret_63d opens a clear lead.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Sector trend state turning up and rs_rank_pct above 85.",
+    "cannot_see": [
+     "sector_rrg_quadrant",
+     "subcomponents.flow.cmf",
+     "index 63-day return",
+     "pct_from_pivot"
+    ]
+   }
+  },
+  {
+   "ticker": "PG",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26): a fresh break, BULLISH_BOS, daily 0.7% above the last swing high, from_52w_hi -0.75%, with strength ret_63d 18.94, rs_rank_pct 79.32, adx 41.5 (C23). Cautions: TIF unconfirmed (elder 7.0, no label), sector Momentum Fading (C24), day_vol 0.82, H1 below EMA9, cmf not served. Divergence is not one of my instruments; my answer to it is the support line.",
+   "conviction_change": null,
+   "falsifier": "A close back below the broken swing high and below max(fib_swing_low, base_low_20d).",
+   "case": {
+    "for": "Fresh resistance break near the 52-week high with a 63-day lead and a strong trend (adx 41.5); weekly HH-side above EMA9.",
+    "against": "rs_rank_pct 79.32 not elite; elder 7.0 unlabelled; light day_vol 0.82; sector Fading; weekly swing LH but HL (C21 house, weight).",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 171.72.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C29), or the red-candle flip, sell next session below its low.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift falling back to RANGE or cmf negative.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "INTA",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Swing picture: price back at the rising 20MA (ext_atr20 0.15, ma20 44.72) inside an up-trend. But the five R1 conditions (ma_40, cci_20, bar_low, bar_close) are unserved and four of five is not a set-up (C3). Position system has not fired: RANGE, daily 3.2% under the last swing high, elder 4.0 INTERRUPTED.",
+   "conviction_change": null,
+   "case": {
+    "for": "Leadership rs_rank_pct 99.18, ret_6m 119.66, weekly HH/HL; a dip to the 20MA is where the swing system buys.",
+    "against": "No break; elder 4.0 INTERRUPTED; daily and H1 below EMA9; set-up unverifiable.",
+    "entry_trigger": "All five R1 conditions on one bar, then a buy stop over bar_high (C5).",
+    "wrong_if": "Close below ma_40, or the pullback running 5+ days (C4, R7).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Served cci_20 below -100 with bar_low at or under ma_20 and bar_close above ma_40.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "days_since_swing_high",
+     "bar_range_5d"
+    ]
+   }
+  },
+  {
+   "ticker": "CCC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Swing picture: price at the 20MA (ext_atr20 0.13, ma20 7.68), but the five R1 conditions are unserved (C3). Position system has not fired: RANGE, daily 0.3% under the last swing high. elder 6.0 INTERRUPTED; low price entry 7.69 (C25 caution).",
+   "conviction_change": null,
+   "case": {
+    "for": "rs_rank_pct 95.96, weekly HH/HL, coiled just under resistance: either system could fire on the next bar.",
+    "against": "No break; elder 6.0 INTERRUPTED; H1 below EMA9 at 0% of the day's range; ret_63d 3.36 thin; set-up unverifiable.",
+    "entry_trigger": "Position: close above the last swing high, then a buy stop over bar_high. Swing: all five R1 conditions.",
+    "wrong_if": "Close below ma_40 or the range low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "structure_shift BULLISH_BOS, or a served full R1 set-up bar.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "pct_from_pivot",
+     "elder_context.volume.avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "HNGE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "My round-1 nomination, position system: ABOVE_STRUCTURE with leadership ret_63d 29.34, rs_rank_pct 98.45, weekly HH/HL. The last bar is a pullback inside that trend: daily below EMA9, 9.5% under the last swing high, elder 0.0 INTERRUPTED. So entry is ONLY the buy stop over bar_high (C27); no fill, no trade. Support line max(fib_swing_low, base_low_20d) is where I am wrong.",
+   "conviction_change": null,
+   "self_counter": null,
+   "falsifier": "A daily close below max(fib_swing_low, base_low_20d) proves the position case wrong; no fill unless a prior-day high is taken.",
+   "challenge_reply": "Located: a pullback inside an intact position trend, not a fresh buy of an extended name. Weekly HH/HL and ABOVE_STRUCTURE hold the trend; elder 0.0 INTERRUPTED and the red bar are the TIF-flip proxy, so I do not buy into it. The buy stop over bar_high is the test that momentum has resumed; a close below the support line ends the case. The 50/200 spread is not my instrument (C1).",
+   "case": {
+    "for": "Above structure, weekly HH/HL, top-percentile 63-day and 6-month strength (ret_6m 108.17); the pullback brought price back to the 20MA area (ext_atr20 -0.37).",
+    "against": "TIF proxy broke (elder 0.0 INTERRUPTED, red bar); daily below EMA9 and H1 LH/LL; mp 52.0; flow unconfirmed in this packet (cmf not served).",
+    "entry_trigger": "Buy stop 1 tick over bar_high, re-placed to each new prior-day high until taken (C27). Reference entry 114.41.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C14, C29).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift turning BEARISH_CHOCH, or a close under the support line.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [
+     "ma_20"
+    ],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "MANH",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Swing picture: back at the rising 20MA (ext_atr20 0.13, ma20 249.09) inside an up-trend, but the five R1 conditions are unserved (C3). Position system has not fired: RANGE, daily 3.8% under the last swing high, elder 2.0 INTERRUPTED, day_vol 0.48.",
+   "conviction_change": null,
+   "case": {
+    "for": "rs_rank_pct 97.64, ret_63d 21.39, weekly HH-side above EMA9: a dip to the 20MA is the swing buy area.",
+    "against": "No break; elder 2.0 INTERRUPTED; daily and H1 below EMA9; set-up unverifiable.",
+    "entry_trigger": "All five R1 conditions on one bar, then a buy stop over bar_high (C5).",
+    "wrong_if": "Close below ma_40, or the pullback running 5+ days (C4, R7).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Served cci_20 below -100 with bar_low at or under ma_20 and bar_close above ma_40.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "days_since_swing_high",
+     "bar_range_5d"
+    ]
+   }
+  },
+  {
+   "ticker": "HAE",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Swing picture: price at the rising 20MA (ext_atr20 0.1, ma20 120.48), but the five R1 conditions are unserved (C3). Position system has not fired: RANGE, daily 8.4% under the last swing high, elder 1.0 INTERRUPTED.",
+   "conviction_change": null,
+   "case": {
+    "for": "rs_rank_pct 98.71, ret_6m 112.7, weekly HH/HL; at the 20MA where the swing system buys.",
+    "against": "No break; elder 1.0 INTERRUPTED; daily and H1 below EMA9; 8.4% under the swing high is a deep pullback; set-up unverifiable.",
+    "entry_trigger": "All five R1 conditions on one bar, then a buy stop over bar_high (C5).",
+    "wrong_if": "Close below ma_40, or the pullback running 5+ days (C4, R7).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "Served cci_20 below -100 with bar_low at or under ma_20 and bar_close above ma_40.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "days_since_swing_high",
+     "bar_range_5d"
+    ]
+   }
+  },
+  {
+   "ticker": "VRDN",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Position system (C26): ABOVE_STRUCTURE, weekly HH/HL, with strength rs_spy_20d 38.78, rs_rank_pct 97.81, ret_63d 21.21, adx 51.66 (C23). Extension sma_dist 30.57% is a weight here. Daily is 5.0% under its last swing high, so entry is the trailed buy stop (C27). Cautions: TIF unconfirmed (elder 7.0 flat, no label), sector Fading (C24), day_vol 0.63, cmf not served. Stands on its own, not the healthcare cluster.",
+   "conviction_change": null,
+   "falsifier": "A close below max(fib_swing_low, base_low_20d), or the red-candle flip after the run.",
+   "case": {
+    "for": "Room's highest 20-day RS, strongest trend (adx 51.66), above structure, weekly HH/HL agrees (C21 house).",
+    "against": "elder 7.0 plateau, no impulse label; daily HH but LL and H1 9<21; light day_vol 0.63; extended sma_dist 30.57%; sector Fading.",
+    "entry_trigger": "Buy stop 1 tick over bar_high, trailed to each new prior-day high (C27). Reference entry 30.06.",
+    "wrong_if": "Daily close below max(fib_swing_low, base_low_20d) (C29).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift leaving ABOVE_STRUCTURE or cmf negative.",
+    "cannot_see": [
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "pct_from_pivot",
+     "bar_high / bar_low",
+     "fib_swing_low",
+     "base_low_20d"
+    ]
+   },
+   "challenge_reply": "Crowding: VRDN is judged on its own structure and strength; other healthcare names add nothing to it in my method.",
+   "conditions": {
+    "lane": "CONTINUATION",
+    "buy": [
+     "trade_above:bar_high"
+    ],
+    "confirm": [],
+    "wrong": [
+     "close_below:fib_swing_low",
+     "choch_bearish"
+    ],
+    "wait": [],
+    "chase": null,
+    "tf": "EOD",
+    "non_price": null
+   }
+  },
+  {
+   "ticker": "COTY",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Fits neither system; judged on the position system, closest to its picture: no buy signal. RANGE, daily 6.6% under the last swing high, and not back at the 20MA (ext_atr20 2.1, sma_dist 30.69%) so no swing dip either. A sub-$5 entry 4.08 is a liquidity caution (C25). Strength alone is not a signal (C26, C31).",
+   "conviction_change": null,
+   "opposing_case": "Real strength: rs_rank_pct 98.58, ret_63d 34.65, rs_spy_20d 31.47, daily swing HH/HL; a resumption through a prior-day high would put it back in play.",
+   "case": {
+    "for": "Top-percentile strength and a daily HH/HL structure; sector staples favoured by the room's cycle read is not available to me.",
+    "against": "No resistance break; not at the 20MA; elder 7.0 flat; low-priced (C25); weekly HH but LL.",
+    "entry_trigger": "A close back above the last swing high, then a buy stop over bar_high.",
+    "wrong_if": "Price takes out its last swing high and holds.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift moving to BULLISH_BOS.",
+    "cannot_see": [
+     "pct_from_pivot",
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant",
+     "elder_context.volume.avg_vol_20d"
+    ]
+   }
+  },
+  {
+   "ticker": "CGON",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Position system, closest to the picture: no break yet (RANGE, daily 1.4% under the last swing high) and the position-horizon strength test fails, ret_63d -2.16 (C23, R12, C6). Weekly swing LH/LL, 16.0% under the 20-week high (C21 house, weight). Not at the 20MA (ext_atr20 1.8), so no swing dip.",
+   "conviction_change": null,
+   "opposing_case": "Short-horizon strength rs_spy_20d 32.23, mp 93.0 STRONG, day_vol 1.93 and a daily HH/HL just under resistance: a break would be a signal.",
+   "case": {
+    "for": "Strong 20-day RS and daily HH/HL coiling under the swing high on above-average volume.",
+    "against": "Negative 63-day return fails the position-horizon test; no break; weekly LH/LL; elder 7.0 unlabelled.",
+    "entry_trigger": "A close above the last swing high with ret_63d turning positive, then a buy stop over bar_high.",
+    "wrong_if": "The break comes and holds while ret_63d turns up.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "structure_shift BULLISH_BOS and ret_63d above the index.",
+    "cannot_see": [
+     "pct_from_pivot",
+     "index 63-day return",
+     "subcomponents.flow.cmf",
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "ARX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Swing picture: price at the 20MA (ext_atr20 0.33, ma20 19.84), but the five R1 conditions are unserved (C3). Position: RANGE although daily 0.1% above the last swing high; elder 3.0 INTERRUPTED, sector Declining (C24), day_vol 0.55. Not enough to show a signal either way.",
+   "conviction_change": null,
+   "case": {
+    "for": "from_52w_hi -0.25%, weekly HH/HL 11.3% above the last swing high, adx 46.7 trend.",
+    "against": "elder 3.0 INTERRUPTED; daily and H1 below EMA9; sector Declining; ret_63d 1.59 thin; set-up unverifiable.",
+    "entry_trigger": "structure_shift BULLISH_BOS then a buy stop over bar_high, or all five R1 conditions on one bar.",
+    "wrong_if": "Close below ma_40 or the range low.",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A served full R1 set-up bar or a confirmed break with the sector turning.",
+    "cannot_see": [
+     "ma_40",
+     "cci_20",
+     "bar_low / bar_close",
+     "pct_from_pivot",
+     "sector_rrg_quadrant"
+    ]
+   }
+  },
+  {
+   "ticker": "SPCX",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Held SHORT (qty -68.0). Shorts are out of scope for this long-only method (C32); as a long it has no signal (BEARISH_CHOCH, rs LAGGARD). Mirror review only: the short case is still backed by BEARISH_CHOCH and structure 25.0, but the weekly-to-hourly up bars matter: the mirror exit is a buy-back 1 tick over bar_high after an up candle (mirror C14).",
+   "conviction_change": null,
+   "case": {
+    "for": "As a short (mirror): BEARISH_CHOCH, structure 25.0, weekly below EMA9 and 9<21, rs LAGGARD.",
+    "against": "For the short: daily above EMA9, H1 HH at 92% of the day's range, price above vwap14; as a long: no buy signal at all.",
+    "entry_trigger": "None for a long. Mirror exit for the held short: trade above bar_high after an up candle.",
+    "wrong_if": "Short read wrong if price closes back above the broken swing anchor (structure_shift_ref).",
+    "horizon_sessions": 5,
+    "would_change_my_mind": "A long-side resistance break (structure_shift BULLISH_BOS) would make it a long case.",
+    "cannot_see": [
+     "bar_high / bar_open / bar_close",
+     "structure_shift_ref",
+     "ma_40",
+     "cci_20"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "seow.part1of2.json",
+   "bytes": 19595,
+   "votes": 12,
+   "sha256": "90fe77389892"
+  },
+  {
+   "file": "seow.part2of2.json",
+   "bytes": 15780,
+   "votes": 12,
+   "sha256": "0d9f07feb5cb"
+  }
+ ]
+}

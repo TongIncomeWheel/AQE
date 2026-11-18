@@ -1,0 +1,91 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-18",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "BWIN",
+   "reason": "Breakout-mode candidate (C2/C12): tight range near the average, sma_distance_pct 1.19, atr_14d 0.17 on entry 32.15, inside structure_shift 4 (RANGE); mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING). bracket.valid False; my level is under the range low, bracket.atr_fallback_stop 31.98.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "div_bear_count", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 74.7, structure_shift 4 (RANGE), sma_distance_pct 1.19, rank 49", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.17 on entry 32.15, atr_caution False, day_vol 0.89; mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING); div_state BEARISH, div_bear_count 1", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "entry", "div_state", "div_bear_count"]},
+    {"step": 3, "canon_ref": ["C3", "C6", "C7", "C12"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, bar_range_history NOT_SERVED, n_day_extreme via sma_distance_pct + structure_shift; elder_pattern 2 (ACCUMULATION_BASE)", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 31.98; no swing-extreme field served, so I name 31.98 as my reference level", "verdict": "partial", "fields": ["bracket", "bracket.valid", "bracket.stop"]}
+   ],
+   "falsifier": "A daily close below 31.98, or structure_shift moving to 2 (BEARISH_CHOCH): the contraction broke down, not up (C23)."
+  },
+  {
+   "ticker": "HAE",
+   "reason": "Retracement within trend (C2/C7): pullback holding above a swing low, bracket.stop 116.68 (bracket.stop_type 7, swing_low_1), structure_shift 4 (RANGE), sma_distance_pct 6.03; mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING). Caution: div_state BEARISH, div_bear_count 4.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "div_bear_count", "entry", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 68.4, structure_shift 4 (RANGE), sma_distance_pct 6.03, rank 499", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape; mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING) as the ADX stand-in; day_vol 1.19", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C6", "C7", "C12"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, bar_range_history NOT_SERVED; elder_pattern 4 (INTERRUPTED), div_state BEARISH, div_bear_count 4 advisory; lens null", "verdict": "partial", "fields": ["elder_pattern", "div_state", "div_bear_count", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid True, bracket.stop 116.68, bracket.stop_type 7 (swing_low_1), bracket.risk_pct 3.51, entry 120.92, atr_14d 4.2", "verdict": "pass", "fields": ["bracket", "bracket.stop", "bracket.stop_type", "bracket.valid", "bracket.risk_pct", "atr_14d"]}
+   ],
+   "falsifier": "A trade below 116.68 takes out the swing low: the retracement was a reversal. structure_shift moving to 2 (BEARISH_CHOCH) confirms it."
+  },
+  {
+   "ticker": "CCC",
+   "reason": "Breakout-mode candidate (C2/C12): highest structure in my packet, structure 85.3, still in structure_shift 4 (RANGE), narrow range atr_14d 0.08 on entry 7.69, mp_state 1 (BUILDING). bracket.valid False; my level is under the range low, bracket.atr_fallback_stop 7.61 as reference.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 85.3, structure_shift 4 (RANGE), sma_distance_pct 6.68, rank 288", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "atr_14d 0.08 on entry 7.69, atr_caution True, day_vol 0.92; mp_state 1 (BUILDING), mp_accel_state 3 (FLAT); div_state NONE", "verdict": "partial", "fields": ["atr_14d", "atr_caution", "day_vol", "mp_state", "mp_accel_state", "entry", "div_state"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, bar_range_history NOT_SERVED; elder_pattern 4 (INTERRUPTED) advisory; lens null", "verdict": "partial", "fields": ["elder_pattern", "lens"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 7.61; no swing-extreme field served, so I name 7.61 as my reference level", "verdict": "partial", "fields": ["bracket", "bracket.valid", "bracket.stop"]}
+   ],
+   "falsifier": "A daily close below 7.61, or structure_shift moving to 2 (BEARISH_CHOCH)."
+  },
+  {
+   "ticker": "ARX",
+   "reason": "Retracement to the average inside structure (C2): sma_distance_pct 0.32, structure_shift 4 (RANGE), structure 72.6; mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING); compressed range atr_14d 0.06 on entry 19.86. Caution: elder_pattern 4 (INTERRUPTED), day_vol 0.55. My level: 19.8.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "elder_pattern", "div_state", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 72.6, structure_shift 4 (RANGE), sma_distance_pct 0.32, rank 174", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C7", "C12"], "observed": "mp_state 1 (BUILDING), mp_accel_state 1 (ACCELERATING); atr_14d 0.06, day_vol 0.55; div_state NONE", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "atr_14d", "day_vol", "div_state"]},
+    {"step": 3, "canon_ref": ["C6", "C7", "C12"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED, bar_range_history NOT_SERVED; elder_pattern 4 (INTERRUPTED) advisory; lens null", "verdict": "partial", "fields": ["elder_pattern", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 19.8; no swing-extreme field served, so I name 19.8 as my reference level", "verdict": "partial", "fields": ["bracket", "bracket.valid", "bracket.stop"]}
+   ],
+   "falsifier": "A daily close below 19.8, or structure_shift moving to 2 (BEARISH_CHOCH): the pullback became a breakdown."
+  },
+  {
+   "ticker": "LFST",
+   "reason": "Retracement within trend (C2): structure 74.7, structure_shift 4 (RANGE), sma_distance_pct 10.25; mp_accel_state 1 (ACCELERATING) though mp_state 2 (FADING); lens s,o,s,o,w,-,s. bracket.valid False; my level is bracket.atr_fallback_stop 13.54.",
+   "fields_cited": ["rank", "structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "lens", "entry", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure 74.7, structure_shift 4 (RANGE), sma_distance_pct 10.25, rank 165", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct", "rank"]},
+    {"step": 2, "canon_ref": ["C6", "C7"], "observed": "mp_state 2 (FADING), mp_accel_state 1 (ACCELERATING); lens s,o,s,o,w,-,s; atr_14d 0.63, day_vol 0.95", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "lens", "atr_14d", "day_vol"]},
+    {"step": 3, "canon_ref": ["C6", "C7", "C12"], "observed": "declared: adx NOT_SERVED, stochastic_kd NOT_SERVED (lens coil read as substitute), bar_range_history NOT_SERVED; elder_pattern null", "verdict": "partial", "fields": ["lens", "elder_pattern"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False, bracket.stop null; bracket.atr_fallback_stop 13.54; entry 14.17", "verdict": "partial", "fields": ["bracket", "bracket.valid", "bracket.stop"]}
+   ],
+   "falsifier": "A daily close below 13.54, or structure_shift moving to 2 (BEARISH_CHOCH)."
+  }
+ ],
+ "held_review": [
+  {"ticker": "SPCX", "verdict": "KEEP", "line": "Short 68: structure_shift 2 (BEARISH_CHOCH), structure 25.0 and sma_distance_pct -4.55 agree with the short; the working BUY stop at 142.45 sits just above entry 141.7 as the structural risk point (C17). mp_accel_state 1 is the thing to watch. No windfall to protect (C19)."}
+ ],
+ "data_gaps": [
+  {"field": "energy.squeeze_score", "impact": "Not in the packet columns, so the range-contraction (C12/C13) reads on BWIN and CCC rest on atr_14d/day_vol alone."},
+  {"field": "lens", "impact": "null for BWIN, HAE, CCC and ARX, so no lens.coil stand-in for the Anti (C6) on those names."},
+  {"field": "elder_pattern", "impact": "null for LFST; the advisory impulse read is missing."},
+  {"field": "structure_shift_ref", "impact": "Not served. Where bracket.valid is False I cannot name the swing extreme from structure myself, so I used bracket.atr_fallback_stop as the reference level and said so."}
+ ],
+ "declarations": [
+  {"note": "No ledger memory block was injected for this run, so no standing lesson applies."},
+  {"ticker": "BWIN", "setup_type": "breakout", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "HAE", "setup_type": "retracement", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "CCC", "setup_type": "breakout", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "ARX", "setup_type": "retracement", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ticker": "LFST", "setup_type": "retracement", "adx": "NOT_SERVED (C7, C8)", "stochastic_kd": "NOT_SERVED (C6)", "n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)", "bar_range_history": "NOT_SERVED (C12, C13)", "market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"note": "adx_14 appears as a packet column but is not on my data menu; I did not read it and claim no ADX gate (R3)."}
+ ],
+ "shortfall_reason": "Five, not six. The other packet names do not fit one of my four set-ups cleanly: NEE, QGEN and D show structure_shift 2 (BEARISH_CHOCH); SGRY, XNCR, KOD and BRZE are extended shapes that read as climax, which I decline to call from a composite (C10/R9); the rest show fading, decelerating momentum. Not padded."
+}
