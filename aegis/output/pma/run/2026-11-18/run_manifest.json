@@ -1,10 +1,74 @@
 {
  "created": "2026-11-18T00:53:42Z",
  "date": "2026-11-18",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-18T00:54:42Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  },
+  {
+   "at": "2026-11-18T00:55:00Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-18T00:55:00Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  }
+ ],
  "flags": [],
  "method": "whole_universe",
  "run_id": "pma-2026-11-18",
  "seats": {},
- "steps": {}
+ "steps": {
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T00:55:00Z",
+   "notes": [
+    "FORCED done with missing produces: ['data_health.json']",
+    "data_health.json not written: the manifest-quoting note is superseded by check.py data (Healthy, no FAIL), quoted in run_notes.md"
+   ],
+   "started": "2026-11-18T00:55:00Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T00:54:42Z",
+   "notes": [
+    "not run: alerts paused by PM order"
+   ],
+   "started": "2026-11-18T00:54:42Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T00:55:00Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "packets built by pma_pipeline packets (no packets_manifest.json from this tool)"
+   ],
+   "started": "2026-11-18T00:55:00Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
 }

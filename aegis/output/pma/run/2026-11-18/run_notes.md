@@ -1,0 +1,6 @@
+# Run notes 2026-11-18 (conductor) - Committee Standard Scan (whole_universe)
+- TRIGGER: pma-auto backstop fired 08:20 SGT but I did NOT start on AQE run 150 (its export leaked 639 Valen context-only names and ETFs into the universe rows). Started after clean forced run 151 (marker started 07:41:18, finished 08:49:49 SGT, status success; universe rows 1,635, ZERO group ETFs, ZERO Valen small-cap leaks; 6 universe-row names not in yesterday's committed universe.txt = daily churn, ENG: ALRM HZN SLS NSIT SLF BBAR). No filter applied.
+- DATA: gate Healthy, check.py data no FAIL. Committee data OK (fundamentals 271/271, mtf 271/271, closes 1150/1150). Crown DEGRADED (declared); positioning_cot 2026-11-10 (weekly cadence).
+- BOOK (journal 2026-11-17 + read-only Tiger pull 08:5x SGT): SPCX -68 short, BUY stop 142.45 GTC (status HELD at Tiger, working). RBRK is OUT: stopped out 17 Nov at 99.12 (realised -1,064.83). Other Tiger positions (COIN, CRCL, CRDO, KO, MARA, MCD, NVDA) are the income-wheel book, not Aegis.
+- INBOX-CLEAN: not run (alerts paused by PM order).
+- Candidate step: screens 109 names (7 x 25), coverage OK, augment-export 69 universe-only rows added, packets built (no qs_market).
