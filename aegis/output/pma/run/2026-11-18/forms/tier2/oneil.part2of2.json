@@ -1,0 +1,45 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-18",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "GRDN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "an hourly close above the last pivot high, on volume at least 1.4x normal, no more than 5% past it"
+   },
+   "wrong_if": "a close 8% under entry (C20), or the push through the pivot coming on volume under the average (C25)",
+   "market_void": "major index logs 4 or more distribution days inside 25 sessions (C2): no confirmed uptrend, no buy",
+   "reason": "Leader at the pivot: D close_vs_swing_high_pct -0.51, W and D swing HH/HL, rs LEADER, lens sector strong. Today is not yet the breakout (day_vol 0.66), so the buy is the pivot close on 1.4x volume (C16, C17). Coil warn: base tightness unproven."
+  },
+  {
+   "ticker": "G",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "G clears its 20-day high on volume at least 1.4x with lens leadership strong",
+   "market_void": null,
+   "reason": "Not a new-high leader: lens leadership warn, from_52w_hi -12.08 (C7, C9). The D break, close_vs_swing_high_pct 1.74, came on day_vol 1.26, under 1.4x (C16); H1 2.3% of the day's range is a close at the low (C25)."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "VRDN makes a new high on volume at least 1.4x that holds",
+   "market_void": null,
+   "reason": "Trend up (W close_vs_swing_high_pct 20.92) but D close_vs_swing_high_pct -4.96 is under the pivot on day_vol 0.63 (C16), and lens leadership warn fails C9. Quiet pullback noted (C15); no breakout to buy."
+  }
+ ],
+ "declarations": [
+  "fundamentals: NOT_AVAILABLE (C, A, S, I untested: C4, C5, C6, C8, C11).",
+  "base_stage: NOT_AVAILABLE (C19 not enforced). base_measure: structure composite and lens coil (substitute).",
+  "market_gate: DELEGATED (C1-C3): every SUPPORT is valid only into a confirmed uptrend.",
+  "rs_measure: rs_leadership (substitute). volume_measure: day_vol vs 20-day (substitute).",
+  "Brackets read as information only (R1); no stance here rests on a bracket field."
+ ]
+}

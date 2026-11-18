@@ -1,0 +1,39 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "declarations": [
+  "System picked from each name's own picture, never the lane tag (R10/R32). GRDN, G and VRDN read as position-system cases (C22, C26); none is judged by swing rules.",
+  "Declared proxies: last swing high for the resistance line, max(fib_swing_low, base_low_20d) for the support line, last_bar colour for the candle-colour flip. cmf (COM proxy) is not served in this packet.",
+  "No bracket field is a reason here (R1). C21 weekly read is a house rule, not the author's. No market-wide void exists in my method, so market_void is null."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "GRDN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run followed by a trade under its low next session (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): fresh break, D dist_to_20bar_high_pct 0.93 with high_20bar_date 2026-11-17, W and D swing HH/HL, W close_vs_swing_high_pct 4.14, D last_bar green, H1 above EMA9 9>21. Strength is the signal here."
+  },
+  {
+   "ticker": "G",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close back below the broken swing high and below max(fib_swing_low, base_low_20d) (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): D close_vs_swing_high_pct 1.74 above the last swing high, W and D swing HH/HL, W close_vs_swing_high_pct 9.76. Cautions: D last_bar red, D below EMA9, H1 pos_in_day_range_pct 2.3; no fill unless a prior-day high is taken."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run followed by a trade under its low next session (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): W swing HH/HL, close_vs_swing_high_pct 20.92 above the last weekly swing high, W and D 9>21. D close_vs_swing_high_pct -4.96 is a pause; the trailed buy order (C27) is the test, H1 pos_in_day_range_pct 94.2."
+  }
+ ]
+}

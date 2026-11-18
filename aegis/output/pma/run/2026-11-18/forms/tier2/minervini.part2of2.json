@@ -1,0 +1,39 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-18",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "GRDN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "Daily close above the last pivot high, on volume at least 1.4x normal."},
+   "wrong_if": "Daily close below ma_50 breaks the stack.",
+   "market_void": null,
+   "reason": "Template stack in order at the 52-week high, rs LEADER (C3/C11). W and D swing HH/HL, D close_vs_swing_high_pct -0.51, dist_to_20bar_high_pct 0.93: a leader at its pivot; the breakout can print today on volume (C5/C6). Fundamentals not run."
+  },
+  {
+   "ticker": "G",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:bar_high", "tf": "D", "plain": "Daily close above the prior day's high, on volume at least 1.4x normal, holding the broken pivot."},
+   "wrong_if": "Daily close below ma_50.",
+   "market_void": null,
+   "reason": "Stack in order, W and D swing HH/HL, rs LEADER, but the long averages are flat (criterion 3 not shown) and it sits well off its high (C2/C3). D close_vs_ema9 below, H1 pos_in_day_range_pct 2.3: wait for demand to return. Low conviction. Fundamentals not run."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "After a new tight base, a daily close above its pivot high on volume at least 1.4x normal."},
+   "wrong_if": "Daily close below ma_50.",
+   "market_void": null,
+   "reason": "Clean stack, top RS in the room (C3/C11). W close_vs_swing_high_pct 20.92 and D swing HH but LL: extended and not basing yet, so no chase (C5). Wait for a tight pivot near the high. Fundamentals not run."
+  }
+ ],
+ "declarations": [
+  "trend_template read on served MAs, ma_100 standing in for the 150-day; 200-day slope and low_52w not served; RS via rs_leadership/rs_spy_20d proxy, not IBD RS (C3/C11).",
+  "vcp_detail: NOT_SERVED (C4). volume_signature: day_vol at current bar only (C6). earnings_growth: NOT_SERVED (C1 element 2, C12).",
+  "No bracket field is a reason for any stance here (R1)."
+ ]
+}

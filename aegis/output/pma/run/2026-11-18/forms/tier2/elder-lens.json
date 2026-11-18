@@ -1,0 +1,96 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-18",
+ "declarations": [
+  "No refutation of my claims was routed to me (answer_pairs empty), so answers is [].",
+  "Colour and force values are quoted from my own blind vote; volume (C23) and choch_state (R11) are off my menu and unread.",
+  "Weekly screen read from the MTF W line, before the daily (C21).",
+  "No refutation of my claims was routed to me; answers is [] in both parts.",
+  "Colour and force values are quoted from my own blind vote; where not served for a name they are declared unread, never proxied from the elder score (C2)."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy the pull-in to the rising 20-day average, not the price in front (C10)"
+   },
+   "wrong_if": "elder_le:1 at a close (impulse red, C3) or close_below:ma_50 with the weekly tide no longer up",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21 (C21). Not red: impulse_colour_last_bar BLUE; force_index_ema_2 -764115.59 under zero with price_ema_slope 0.2009 rising = C6 pullback timer with C9 pairing. elder_5d [10, 7, 7, 7, 7] has no transition bar (C4); D close 9.9% above the last swing high, so wait for value."
+  },
+  {
+   "ticker": "LILA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy the pull-in to the rising 20-day average with the impulse still not red (C10)"
+   },
+   "wrong_if": "elder_le:1 at a close (red, C3), force_index_ema_13 crossing under zero (C7), or close_below:ma_50",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21 (C21); D swing HH/HL. impulse_colour_last_bar BLUE; force_index_ema_2 -6902.46 under zero, price_ema_slope 0.0801 rising, force_index_ema_13 42448.51 bullish zone (C6, C7, C9). elder_5d [10, 7, 7, 7, 7]: no permission event, so pull-in entry only."
+  },
+  {
+   "ticker": "TBBB",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy the pull-in to the rising 20-day average, never the chase (C10)"
+   },
+   "wrong_if": "elder_le:1 at a close (red, C3), force_index_ema_13 crossing under zero (C7), or close_below:ma_50",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21 (C21). impulse_colour_last_bar BLUE; force_index_ema_2 -1034645.83 under zero with price_ema_slope 0.3542 rising, force_index_ema_13 814052.64 bullish (C6, C7). elder_5d [7, 7, 10, 7, 7] no transition; D 13.7% above the last swing high, so wait for value."
+  },
+  {
+   "ticker": "GRDN",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A served force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar in elder_5d, would show the stand-aside wrong",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21, HH/HL, but elder_5d [10, 10, 7, 7, 7]: the 10 to 7 step is a colour going away (C4), not a ban lifting; no colour or force field served for GRDN, so the C6 timer is unread. Standing aside is a decision (C22)."
+  },
+  {
+   "ticker": "G",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A served force_index_ema_2 dip under zero in a rising average, or a <=6 then >=7 bar in elder_5d, would show the stand-aside wrong",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21, HH/HL, but elder_5d [10, 7, 7, 10, 7]: last bar drops 10 to 7, the profit-taking side of C4; D close below EMA9, H1 at 2% of the day's range. No colour or force field served for G. I stand aside (C22)."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy the pull-in to the rising 20-day average with the impulse still not red (C10)"
+   },
+   "wrong_if": "elder_le:1 at a close (red, C3) or close_below:ma_50 (value zone lost)",
+   "market_void": null,
+   "reason": "W above EMA9, 9>21, HH/HL (C21). impulse_colour_last_bar BLUE; force_index_ema_2 -164893.54 under zero with price_ema_slope 0.2265 rising = C6 pullback timer. elder_5d [7, 7, 7, 7, 7] is a plateau, that part C24 (unsourced); D swing HH but LL. Low conviction, wait for value."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "elder-lens.part1of2.json",
+   "bytes": 2330,
+   "sha256": "5523a194c70e"
+  },
+  {
+   "file": "elder-lens.part2of2.json",
+   "bytes": 1980,
+   "sha256": "dcd07de142d2"
+  }
+ ]
+}

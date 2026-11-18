@@ -1,0 +1,54 @@
+{
+ "voice": "seow",
+ "date": "2026-11-18",
+ "declarations": [
+  "System picked from each name's own picture, never the lane tag (R10/R32). All six survivors read as position-system cases (C22, C26): price above structure or at a fresh high on the W/D grid; none is judged by swing rules.",
+  "Declared proxies: structure_shift/last swing high for the resistance line, max(fib_swing_low, base_low_20d) for the support line, last_bar colour for the candle-colour flip. cmf (COM proxy) is not served in this packet.",
+  "No bracket field is a reason here (R1). C21 weekly read is a house rule, not the author's. No market-wide void exists in my method, so market_void is null."
+ ],
+ "answers": [
+  {
+   "pair_id": "GRDN-seow-for~raschke",
+   "ticker": "GRDN",
+   "to": "raschke",
+   "text": "Quote: 'a breakout close, not a set-up.' In my position system the break IS the set-up (C26): buying strength is the entry, not a flaw. Grid agrees: W swing HH/HL, close_vs_swing_high_pct 4.14; D swing HH/HL, dist_to_20bar_high_pct 0.93, last_bar green; H1 above EMA9, 9>21. No coil or retest is required by C26/C27; entry is a buy order 1 tick over bar_high. Fading the break is the swing system's rule, not this case's.",
+   "concede": false
+  },
+  {
+   "pair_id": "VRDN-seow-for~oneil",
+   "ticker": "VRDN",
+   "to": "oneil",
+   "text": "Quote: '20-day RS is the wrong horizon; no pivot breakout.' Horizon point is fair under my C23: 20-day RS is the short ranking, so it is not my position-horizon evidence. But the break already happened: W swing HH/HL, close_vs_swing_high_pct 20.92 above the last weekly swing high. D close_vs_swing_high_pct -4.96 is a pause under the 20-day high, and C27 handles it: trail the buy order to each prior-day high until one breaks. Thesis stands on W structure.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run followed by a trade under its low next session (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): D close_vs_swing_high_pct 9.86 above the last swing high, W close_vs_swing_high_pct 5.85, D and W 9>21. Cautions: D swing LH/LL, last_bar red, H1 below EMA9; the buy order waits for a prior-day high to be taken."
+  },
+  {
+   "ticker": "LILA",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run followed by a trade under its low next session (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): W close_vs_swing_high_pct 9.63 above the last weekly swing high; D and H1 swing HH/HL, 9>21, H1 dist_to_20bar_high_pct 1.29. Cautions: D last_bar red; low price close 9.9 is a liquidity caution (C25), never a reject."
+  },
+  {
+   "ticker": "TBBB",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "trade_above:bar_high", "tf": "D", "plain": "Buy 1 tick over yesterday's high; if not taken, re-place at each new prior-day high (C27)."},
+   "wrong_if": "Daily close below max(fib_swing_low, base_low_20d), or a red candle after the run followed by a trade under its low next session (C14, C29).",
+   "market_void": null,
+   "reason": "Position system (C26): D close_vs_swing_high_pct 13.69 above the last swing high, W close_vs_swing_high_pct 56.89, W and D 9>21. Cautions: D last_bar red, H1 below EMA9 at pos_in_day_range_pct 18.8; extension is a weight, not a fault here."
+  }
+ ]
+}

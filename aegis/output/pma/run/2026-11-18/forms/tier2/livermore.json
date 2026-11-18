@@ -1,0 +1,117 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-18",
+ "declarations": [
+  "danger_signal_threshold: TRANSLATED via atr_14d (one atr_14d off the day's high), my own translation, not Livermore's literal 6 points (C7, C18-C20).",
+  "state_analogue: mp_state/mp_accel_state read as my six-column analogue, not identical (C18). fill_difficulty: NOT_SERVED. inside_information: NEVER (C11).",
+  "R1: no bracket field is a basis for any decision. Buy words are new-high words only; never in_zone or reclaim (C5)."
+ ],
+ "answers": [
+  {
+   "pair_id": "MGNI-livermore-for~oneil",
+   "ticker": "MGNI",
+   "to": "oneil",
+   "text": "\"A shallow reaction is not a base with a pivot.\" A base is not my test; C5 is trend, normal reaction, then new high. W above EMA9 9>21 (trend), D dist_to_20bar_high_pct 4.6 with H1 below EMA9 9<21 (reaction unfinished). I never claimed a breakout day; my buy is the new high still to print. close_vs_swing_high_pct 9.86 is vs an October pivot, not a chase of the 20-day high.",
+   "concede": false
+  },
+  {
+   "pair_id": "GRDN-livermore-for~elder-lens",
+   "ticker": "GRDN",
+   "to": "elder-lens",
+   "text": "\"elder_5d stepped down from 10 to 7, not accelerating.\" That reading is advisory to my method, never my test. My trend-state analogue is mp_state STRONG with mp_accel_state ACCELERATING (C18). On the grid: W HH/HL, D HH/HL with close_vs_swing_high_pct -0.51, H1 above EMA9 9>21 at pos_in_day_range_pct 73.1. Trend and proximity to the new high stand.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "MGNI",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Wait for the reaction to end, then buy a daily close at a fresh new high above the pivot high."
+   },
+   "wrong_if": "A one-day reaction of one atr_14d off a day's high (my translated danger signal, C7), or a daily close below entry less one atr_14d.",
+   "market_void": null,
+   "reason": "C5: W above EMA9 9>21 is the trend; D dist_to_20bar_high_pct 4.6 and H1 below EMA9 9<21 say the reaction is still on. Buy the new high, never the dip. LILA pairs it in the group (C14)."
+  },
+  {
+   "ticker": "LILA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy a daily close at a fresh new high above the pivot high, ending the reaction."
+   },
+   "wrong_if": "A one-day reaction of one atr_14d off a day's high (C7, translated), or a daily close below entry less one atr_14d.",
+   "market_void": null,
+   "reason": "D swing HH/HL with close_vs_swing_high_pct -4.16, W and D above EMA9 9>21: a normal reaction in an established trend (C8). No new high yet, so wait for it (C5). Pairs with MGNI (C14)."
+  },
+  {
+   "ticker": "TBBB",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy only on a daily close at a fresh new high above the pivot high after this reaction."
+   },
+   "wrong_if": "A one-day reaction of one atr_14d off a day's high (C7, translated), or a daily close below entry less one atr_14d.",
+   "market_void": null,
+   "reason": "Long trend: W above EMA9 9>21, close_vs_swing_high_pct 56.89. Reaction in progress: D dist_to_20bar_high_pct 3.56, H1 below EMA9 9<21 at pos_in_day_range_pct 18.8. C5: never buy the reaction itself."
+  },
+  {
+   "ticker": "GRDN",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy today's daily close above the pivot high, a fresh new high from right under it."
+   },
+   "wrong_if": "A one-day reaction of one atr_14d off a day's high (C7, translated), or a daily close below entry less one atr_14d.",
+   "market_void": null,
+   "reason": "The C5 shape: W and D swing HH/HL, D close_vs_swing_high_pct -0.51, H1 above EMA9 9>21 at pos_in_day_range_pct 73.1, mp_state STRONG. The reaction is over; the new high is one close away. Pairs with TFX (C14)."
+  },
+  {
+   "ticker": "G",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Let the back-up finish, then buy a daily close at a fresh new high above the pivot high."
+   },
+   "wrong_if": "A daily close back below structure_shift_ref (failure at the pivotal point, C20), or a one-day reaction of one atr_14d off a day's high (C7).",
+   "market_void": null,
+   "reason": "W swing HH/HL above EMA9 9>21 is an established trend; D below EMA9 and H1 below EMA9 9<21 at pos_in_day_range_pct 2.3 is a back-up in progress. C5: I do not buy the back-up, only the new high after it."
+  },
+  {
+   "ticker": "VRDN",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy only a daily close at a fresh new high above the pivot high, ending the reaction."
+   },
+   "wrong_if": "A one-day reaction of one atr_14d off a day's high (C7, translated), or a daily close below entry less one atr_14d.",
+   "market_void": null,
+   "reason": "W swing HH/HL with close_vs_swing_high_pct 20.92 is a strong trend; D close_vs_swing_high_pct -4.96 is a normal reaction, H1 at pos_in_day_range_pct 94.2. No new high yet, so wait for it (C5). Judged on its own, not the group."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "livermore.part1of2.json",
+   "bytes": 3124,
+   "sha256": "ef989c8d218a"
+  },
+  {
+   "file": "livermore.part2of2.json",
+   "bytes": 2113,
+   "sha256": "df475e4ecde6"
+  }
+ ]
+}
