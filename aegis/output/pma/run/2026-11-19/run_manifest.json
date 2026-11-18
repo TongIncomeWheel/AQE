@@ -1,10 +1,74 @@
 {
  "created": "2026-11-18T23:49:17Z",
  "date": "2026-11-19",
- "degradations": [],
+ "degradations": [
+  {
+   "at": "2026-11-18T23:49:49Z",
+   "note": "declared produces absent: ['data_health.json']",
+   "step": "GATHER"
+  },
+  {
+   "at": "2026-11-18T23:49:49Z",
+   "note": "declared produces absent: ['packets_manifest.json']",
+   "step": "PREPARE"
+  },
+  {
+   "at": "2026-11-18T23:49:49Z",
+   "note": "declared produces absent: ['inbox_clean.json']",
+   "step": "INBOX-CLEAN"
+  }
+ ],
  "flags": [],
  "method": "whole_universe",
  "run_id": "pma-2026-11-19",
  "seats": {},
- "steps": {}
+ "steps": {
+  "GATHER": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T23:49:49Z",
+   "notes": [
+    "FORCED done with missing produces: ['data_health.json']",
+    "data_health.json / packets_manifest.json not produced by this tool; gate Healthy per check.py data"
+   ],
+   "started": "2026-11-18T23:49:49Z",
+   "status": "done",
+   "tokens": 0
+  },
+  "INBOX-CLEAN": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T23:49:49Z",
+   "notes": [
+    "not run: alerts paused by PM order"
+   ],
+   "started": "2026-11-18T23:49:49Z",
+   "status": "degraded",
+   "tokens": 0
+  },
+  "PREPARE": {
+   "cost": {
+    "inlined_bytes": 0,
+    "returned_bytes": 0,
+    "spawns": 0
+   },
+   "files": {},
+   "finished": "2026-11-18T23:49:49Z",
+   "notes": [
+    "FORCED done with missing produces: ['packets_manifest.json']",
+    "data_health.json / packets_manifest.json not produced by this tool; gate Healthy per check.py data"
+   ],
+   "started": "2026-11-18T23:49:49Z",
+   "status": "done",
+   "tokens": 0
+  }
+ }
 }

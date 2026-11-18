@@ -1,0 +1,7 @@
+# Run notes 2026-11-19 (conductor) - Committee Standard Scan (whole_universe)
+- TRIGGER: READY watcher hand-off 07:53 SGT; pma-auto enabled. AQE run 2026-11-19 (started 06:24:45, finished 07:38:26 SGT, status success) is a clean post-fix run: universe rows 1,617; 7 names not in the committed universe.txt (SLS HZN NSIT PFSI SLF NHI VCYT) are daily churn, not a leak (run 150's leak was 639).
+- BOOK: FLAT. Journal 2026-11-18: 0 open; SPCX (-68) closed 18 Nov at 144.22, realised -279.37 (broker fill). Read-only Tiger pull 07:50 SGT agrees: no Aegis stock position; the stock positions (COIN, CRCL, CRDO, KO, MARA, MCD, NVDA) and the one ERO put order are the income-wheel book, not Aegis.
+- 18 Nov RUN NOT COMPLETED: the committee for 18 Nov got through the final vote and adopt (ASND/U on the C scan reached re-ratification) but the 5-hour usage limit stopped the brief, Cards and levels; nothing for 18 Nov was published. Its verdicts are in verdict_ledger.json (24 for A) and are carried into today's scorecard/repeat-watch as the committee's own record; its forms are checkpointed under run/2026-11-18 on main.
+- INBOX-CLEAN: not run (alerts paused by PM order).
+- Crown DEGRADED (declared); dispersion_vixeq and dspx BEHIND (11-17, Cboe timing); positioning_cot 11-10 (weekly cadence).
+- Candidate step: screens 117 names (7 x 25), coverage OK, augment-export 72 universe-only rows added, packets built (no qs_market).
