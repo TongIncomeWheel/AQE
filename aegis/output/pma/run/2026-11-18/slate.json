@@ -1,0 +1,205 @@
+{
+ "date": "2026-11-18",
+ "chair": "chair",
+ "board_sha256": "a49bad7696aab6983fa2704e68dd5a3ff7b4d38c17974e811065466fbbd9847f",
+ "decision_sha256": "5f4c313b624fa0ada52c33f2b12e929e129ea7deb3330745dcd6fc09115d0833",
+ "tickets": [
+  {
+   "ticker": "MGNI",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the 52-week closing high, on volume at least 1.4x normal.",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume at least 1.4x normal."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50, or rs_leadership leaves LEADER.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template stack in order with rs LEADER (C3/C11). D swing LH/LL, dist_to_20bar_high_pct 4.6, H1 \" | livermore: \"C5: W above EMA9 9>21 is the trend; D dist_to_20bar_high_pct 4.6 and H1 below EMA9 9<21 say the\" | elder-lens: \"W above EMA9, 9>21 (C21). Not red: impulse_colour_last_bar BLUE; force_index_ema_2 -764115.59 u\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leader (rs LEADER) but no breakout to buy: day_vol 0.75 fails C16; D swing LH/LL and coil warn leave no sound base (R3); D close_vs_swing_high_pct 9.86 with no fresh pivot. Market gate DELEGATED."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "LILA",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the last pivot high (the swing high), on volume at least 1.4x normal.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Daily close above the last pivot high (the swing high), on volume at least 1.4x normal."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template stack in order, rs LEADER (C3/C11). D swing HH/HL, close_vs_swing_high_pct -4.16; H1 d\" | livermore: \"D swing HH/HL with close_vs_swing_high_pct -4.16, W and D above EMA9 9>21: a normal reaction in\" | elder-lens: \"W above EMA9, 9>21 (C21); D swing HH/HL. impulse_colour_last_bar BLUE; force_index_ema_2 -6902.\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leader (rs LEADER, W close_vs_swing_high_pct 9.63) but D close_vs_swing_high_pct -4.16 is under the pivot on day_vol 0.67 (C16); coil, resistance and insti_money warn (R3). Nothing to buy until the pivot clears on volume."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "TBBB",
+   "verdict": "WATCH",
+   "entry_trigger": "Daily close above the 52-week closing high, on volume at least 1.4x normal.",
+   "trigger": {
+    "word": "close_above:high_52w_close",
+    "tf": "D",
+    "plain": "Daily close above the 52-week closing high, on volume at least 1.4x normal."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50 breaks the stack.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Powerful stage 2 stack, rs LEADER (C3). D close_vs_swing_high_pct 13.69 and W close_vs_swing_hi\" | livermore: \"Long trend: W above EMA9 9>21, close_vs_swing_high_pct 56.89. Reaction in progress: D dist_to_2\" | elder-lens: \"W above EMA9, 9>21 (C21). impulse_colour_last_bar BLUE; force_index_ema_2 -1034645.83 under zer\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Leader in a strong group, but D close_vs_swing_high_pct 13.69 is past 10% (C17 hard reject) and day_vol 1.25 is under 1.4x (C16). A new base and a fresh pivot would bring me in."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "GRDN",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy today's daily close above the pivot high, a fresh new high from right under it.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "Buy today's daily close above the pivot high, a fresh new high from right under it."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 2
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50 breaks the stack.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Leader at the pivot: D close_vs_swing_high_pct -0.51, W and D swing HH/HL, rs LEADER, lens sect\" | minervini: \"Template stack in order at the 52-week high, rs LEADER (C3/C11). W and D swing HH/HL, D close_v\" | livermore: \"The C5 shape: W and D swing HH/HL, D close_vs_swing_high_pct -0.51, H1 above EMA9 9>21 at pos_i\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "G",
+   "verdict": "ADVANCE",
+   "entry_trigger": "Buy when a completed 1-hour candle closes above yesterday's high while price holds above the broken pivot.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "Buy when a completed 1-hour candle closes above yesterday's high while price holds above the broken pivot."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 3,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "raschke: \"close_below:structure_shift_ref-0.5atr on the daily, or structure_shift turns BEARISH_CHOCH: the test failed and the break was false.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Stack in order, W and D swing HH/HL, rs LEADER, but the long averages are flat (criterion 3 not\" | livermore: \"W swing HH/HL above EMA9 9>21 is an established trend; D below EMA9 and H1 below EMA9 9<21 at p\" | seow: \"Position system (C26): D close_vs_swing_high_pct 1.74 above the last swing high, W and D swing \"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Not a new-high leader: lens leadership warn, from_52w_hi -12.08 (C7, C9). The D break, close_vs_swing_high_pct 1.74, came on day_vol 1.26, under 1.4x (C16); H1 2.3% of the day's range is a close at the low (C25)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:raschke"
+   ]
+  },
+  {
+   "ticker": "VRDN",
+   "verdict": "WATCH",
+   "entry_trigger": "After a new tight base, a daily close above its pivot high on volume at least 1.4x normal.",
+   "trigger": {
+    "word": "close_above:pivot_high",
+    "tf": "D",
+    "plain": "After a new tight base, a daily close above its pivot high on volume at least 1.4x normal."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 1,
+    "wait": 4,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"Daily close below ma_50.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Clean stack, top RS in the room (C3/C11). W close_vs_swing_high_pct 20.92 and D swing HH but LL\" | livermore: \"W swing HH/HL with close_vs_swing_high_pct 20.92 is a strong trend; D close_vs_swing_high_pct -\" | elder-lens: \"W above EMA9, 9>21, HH/HL (C21). impulse_colour_last_bar BLUE; force_index_ema_2 -164893.54 und\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Trend up (W close_vs_swing_high_pct 20.92) but D close_vs_swing_high_pct -4.96 is under the pivot on day_vol 0.63 (C16), and lens leadership warn fails C9. Quiet pullback noted (C15); no breakout to buy."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "major index logs 4 or more distribution days inside 25 sessions (C2): no confirmed uptrend, no buy",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 1
+ }
+}
