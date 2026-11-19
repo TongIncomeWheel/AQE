@@ -426,39 +426,48 @@ recognisers:
 - id: R2
   if: a Turtle-Soup-shaped setup is under review (a fresh extreme against a base set several sessions
     earlier)
-  then: 'I read rank, sma_distance_pct and structure_shift for the extreme-and-recency pattern (C3), but
-    I declare exact_20day_extreme: NOT_SERVED — Aegis carries no rolling N-day high/low field as such,
-    only the composite structure score and distance-off-average measures. I approximate, I do not claim
-    the literal 20-day count'
+  then: 'I read hi_20d / lo_20d (the literal rolling 20-day high and low, served since voice-data-contract
+    v6 §2) with days_since_swing_high, sma_distance_pct and structure_shift for the extreme-and-recency
+    pattern (C3, C4). The 20-day extreme is a served number, so I name it; I never invent a longer window'
   fields:
+  - hi_20d
+  - lo_20d
   - sma_distance_pct
   - structure_shift
   - rank
 - id: R3
   if: an ADX-gated setup (Holy Grail C7, ADX Gapper C8) is under review
-  then: 'I declare adx: NOT_SERVED. No ADX or directional-index field exists in universe.json. I may read
-    mp_state/mp_accel_state as the nearest served proxy for ''is this trending strongly'', but I never
-    claim I have actually gated on ADX > 30'
+  then: 'I read adx_14 (Wilder ADX, 14 bars, served) and gate on it directly: Holy Grail and ADX Gapper
+    need ADX above 30 (C7, C8). +DI/-DI are not served and the gate does not need them. mp_state and
+    mp_accel_state stay context, never a substitute for the ADX number'
   fields:
+  - adx_14
   - mp_state
   - mp_accel_state
 - id: R4
   if: a stochastic-based setup (the Anti, C6) is under review
-  then: 'I declare stochastic_kd: NOT_SERVED. No %K/%D field exists. lens.coil or mp_accel_state may weakly
-    stand in for ''is the short cycle pulling back against the long one'', declared as a substitute, never
-    as the real oscillator'
+  then: 'I read stoch_k_14 (fast %K, 14 bars) and stoch_d_3 (its 3-bar average) for the short cycle pulling
+    back against the long one. These are the served oscillator pair; the book''s own lookbacks may
+    differ, so I state the settings I read and never claim they are identical to the Anti''s. lens.coil
+    and mp_accel_state are context only'
   fields:
+  - stoch_k_14
+  - stoch_d_3
   - lens
   - mp_accel_state
 - id: R5
   if: a range-contraction/breakout setup (ID/NR4, NR7, the HV-ratio breakout, C12/C13) is under review
-  then: 'day_vol, atr_14d and atr_caution are the closest served proxies for range contraction — I read
-    them, but I declare bar_range_history: NOT_SERVED, because I have no per-bar range series to compute
-    an actual NR4/NR7 count or a 6-day/100-day HV ratio from'
+  then: 'I read nr4_flag and nr7_flag (today''s range is the narrowest of the last 4 / 7 bars),
+    bar_range_5d (the last five ranges, oldest to newest) and hv_ratio_6_100 (6-day over 100-day
+    historical volatility) for the contraction, with atr_14d, atr_caution and day_vol as the volume
+    and size context. A longer range history than seven bars is not served and I do not claim one'
   fields:
+  - nr4_flag
+  - nr7_flag
+  - bar_range_5d
+  - hv_ratio_6_100
   - atr_14d
   - atr_caution
-  - day_vol
 - id: R6
   if: a stop is required for any setup I am nominating
   then: 'I apply C17''s structural rule — one or two ticks beyond the relevant swing extreme — through

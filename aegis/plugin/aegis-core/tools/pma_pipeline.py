@@ -93,7 +93,10 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "qs", "on_qs",
     # STAGE WEATHER (PM 2026-11-17, "Stage 1-4 builds"): the Weinstein stage of the ticker, its group (sector ETF) and the market, stamped on every export row by src/stages.
     # Served to the seats whose canon is the four-stage cycle (menus: minervini C2/C3, oneil C2, wyckoff accumulation/distribution, livermore). A reading, never a gate.
-    "stage", "stage_name", "stage_candidate", "stage_weeks", "stage_transition", "stage2_confirmed", "trend_template", "trend_template_met", "stage_detail"]
+    "stage", "stage_name", "stage_candidate", "stage_weeks", "stage_transition", "stage2_confirmed", "trend_template", "trend_template_met", "stage_detail",
+    # PM 2026-11-19 (NOT_SERVED audit): raschke's canon R2-R5 read these; the export carries them (voice-data-contract v6 section 2) but this whitelist dropped them,
+    # so a menu column would have served null. test_pma_served_fields.py fails any menu field whose root is missing here.
+    "hi_20d", "lo_20d", "nr4_flag", "nr7_flag", "stoch_k_14", "stoch_d_3", "hv_ratio_6_100"]
 
 # Report C only (PM 2026-11-05): the AQE-quant seat reads the gate booleans and the pipeline rank, which the A trim has never carried.
 # Added under the C flag alone so a Report A candidate set stays byte-identical.
@@ -478,6 +481,25 @@ def cmd_slate_from_forms(a):
     json.dump(slate, open(out, "w"), indent=1)
     print(f"receipt: slate-from-forms: {len(tickets)} tickets ({', '.join(x['ticker'] + ':' + x['verdict'] for x in tickets) or 'none'}) -> {out}; "
           f"validate with registrar.py validate --file slate.json --kind slate --decision decision.json")
+
+
+def _seat_menu(menus, v):
+    """The seat's served column list in EVERY round: its own menu plus the held floor and the momentum floor (the same union cmd_packets applies).
+    PM 2026-11-19 ("a required field not served is an engineering fix"): round2packets and the later rounds used to serve own-menu fields only,
+    so a seat that read adx_14 / cmf in Round 1 was told "not served" in Round 2 and after. One definition, used by every packet builder."""
+    return list(dict.fromkeys(list(menus[v]) + HELD_FLOOR + MOMENTUM_SERVED))
+
+
+def _seat_rows_for(menus, candidates_universe, seat, tickers):
+    """Each ticker's row sliced to the seat's own menu + floors. A ticker with no row is DECLARED (row None + gap), never silently dropped."""
+    uni = {r["ticker"]: r for r in candidates_universe}
+    out = []
+    for t in tickers:
+        if t in uni:
+            out.append({"ticker": t, "row": _slice(uni[t], _seat_menu(menus, seat))})
+        else:
+            out.append({"ticker": t, "row": None, "row_gap": "ticker not in candidate_set.json: no AQE row to serve; the seat must declare it unread"})
+    return out
 
 
 def _slice(row, menu):
@@ -1913,7 +1935,7 @@ def cmd_round2packets(a):
 
     total_naive = total_actual = 0
     for v in voting_seats:
-        own_menu = menus[v]
+        own_menu = _seat_menu(menus, v)   # PM 2026-11-19: + held floor + momentum floor, as in Round 1
         breach = [f for f in own_menu if f in QS_FORBIDDEN or f.startswith("qs.")]
         assert not breach, f"R3 breach: {v}'s menu names {breach} -- QS is PM-only, never a seat input"
         names_out = []
@@ -3009,7 +3031,7 @@ def _route(author, kind, name, present, load_, k, exclude=()):
     return el[:k], el
 
 
-def _write_claim_packets(board, rows, outdir, rerouted_to=None, absent=()):
+def _write_claim_packets(board, rows, outdir, rerouted_to=None, absent=(), menus=None):
     os.makedirs(outdir, exist_ok=True)
     claims = {c["claim_id"]: (t, c) for t, n in board["names"].items() for c in n["claims"]}
     for v in absent:
@@ -3027,7 +3049,13 @@ def _write_claim_packets(board, rows, outdir, rerouted_to=None, absent=()):
                   "your_blind_vote": _blind_of(n, v), "mtf": n.get("mtf") or {"served": False}}
             if rows:
                 r = rows.get(t) or {}
-                it["row"] = {k: r.get(k) for k in CLAIM_ROW_FIELDS if k in r}
+                if menus and v in menus:
+                    # PM 2026-11-19: the reviewer rules a claim through ITS OWN method, so the row it is handed is sliced to ITS menu + the floors
+                    # (plus the shared claim fields). The fixed CLAIM_ROW_FIELDS list alone left out cmf / bar_low / ma_40 / cci_20 / avg_vol_20d / adx
+                    # extras, and seats wrote "not served" about fields their own menu grants.
+                    it["row"] = _slice(r, list(dict.fromkeys(_seat_menu(menus, v) + CLAIM_ROW_FIELDS)))
+                else:
+                    it["row"] = {k: r.get(k) for k in CLAIM_ROW_FIELDS if k in r}
             mine.append(it)
         pk = {"schema": "claims_packet.v1", "voice": v, "date": board["date"], "claims": mine,
               "rule": "Rule on EVERY claim below through your own method: CONFIRM / REFUTE / CANNOT_SEE, the evidence your "
@@ -3102,7 +3130,7 @@ def cmd_claims(a):
                              "names_out": len(out), "load": dict(load_)}}
     assert not _keys_carry(board, "verdict"), "the claims board must never carry a verdict"
     save(a.out, board, shape="claims_board")
-    _write_claim_packets(board, rows, a.packets_dir)
+    _write_claim_packets(board, rows, a.packets_dir, menus=(load(a.menus) if getattr(a, "menus", None) else None))
     print(f"claims: {len(ds)} names, {issued} claims routed to {len(present)} reviewers "
           f"(load {' '.join(f'{v}:{load_[v]}' for v in present)}); OUT (no SUPPORT) {len(out)}: {' '.join(out) or 'none'}"
           + (f"; UNDER-ROUTED {len(under)} (declared)" if under else "") + f" | packets -> {a.packets_dir}/")
@@ -3142,7 +3170,7 @@ def _claims_reroute(a, ds, rows):
     B.setdefault("measurement", {})["load"] = dict(load_)
     B.pop("_schema", None)
     save(a.out, B, shape="claims_board")
-    _write_claim_packets(B, rows, a.packets_dir, rerouted_to=to_, absent=absent)
+    _write_claim_packets(B, rows, a.packets_dir, rerouted_to=to_, absent=absent, menus=(load(a.menus) if getattr(a, "menus", None) else None))
     print(f"claims --reroute {seat}: {len(moved)} claim(s) re-routed -> "
           + (", ".join(f"{r}:{len(v)}" for r, v in to_.items()) or "nobody (declared under-routed)")
           + f"; those reviewers RE-FILE their whole cross form | packets -> {a.packets_dir}/")
@@ -3249,6 +3277,25 @@ def cmd_claims_score(a):
           + (f" | reviewers absent: {', '.join(absent)}" if absent else ""))
 
 
+def cmd_seat_rows(a):
+    """seat_rows/<seat>.json = {voice, date, names:[{ticker, row}]}: the ticker list sliced to each seat's own menu + floors. Paste, never retype.
+    A ticker with no row in candidate_set.json is DECLARED in the receipt and in the file (row_gap), and the command exits non-zero so it cannot pass quietly."""
+    CS, menus = load(a.candidates, needs=["universe"]), load(a.menus)
+    seats = a.seats or list(DECIDERS)
+    absent_menu = [v for v in seats if v not in menus]
+    if absent_menu:
+        raise SystemExit(f"seat-rows: voice_menus.json has no menu for {absent_menu}")
+    os.makedirs(a.outdir, exist_ok=True)
+    gaps = set()
+    for v in seats:
+        names = _seat_rows_for(menus, CS["universe"], v, list(a.tickers))
+        gaps |= {n["ticker"] for n in names if n["row"] is None}
+        save(os.path.join(a.outdir, f"{v}.json"), {"date": a.date, "voice": v, "names": names})
+    print(f"seat-rows: {len(seats)} seat(s) x {len(a.tickers)} ticker(s) -> {a.outdir}/; no row for {sorted(gaps) or 'none'}")
+    if gaps:
+        raise SystemExit(f"seat-rows: {sorted(gaps)} not in {a.candidates} -- DECLARED in each file as row_gap")
+
+
 def cmd_pair(a):
     """R38 THE ADVERSARY PAIRING, by code. Every REFUTE of a claim on a SURVIVING name is one pair, put in front of
     the claim's AUTHOR. tier2_packets/<seat>.json = the pairs the seat must answer + every survivor with its MTF
@@ -3274,11 +3321,18 @@ def cmd_pair(a):
         m = _mtf_for(mtf, why, t) if a.mtf else (F["names"][t].get("mtf") or {"served": False})
         surv_rows.append({"ticker": t, "mtf": m, "tallies": {k: tl[k] for k in ("support_confirm", "support_refute",
                                                                                 "against_confirm", "against_refute")}})
+    _menus = _cu = None
+    if getattr(a, "candidates", None) and getattr(a, "menus", None):
+        _cu = load(a.candidates, needs=["universe"])["universe"]
+        _menus = load(a.menus)
     for v in B["deciders_present"]:
         pk = {"schema": "tier2_packet.v1", "voice": v, "date": a.date,
               "answer_pairs": [p for p in pairs if p["author"] == v],
               "survivors": [dict(s, your_stance_after_cross=((F["names"][s["ticker"]].get("stances") or {}).get(v) or {}).get("after"))
                             for s in surv_rows],
+              "rows": (_seat_rows_for(_menus, _cu, v, list(F["survivors"])) if _menus is not None else None),
+              "rows_note": ("each survivor's AQE row sliced to YOUR menu + the held and momentum floors; read your fields here, they are served" if _menus is not None
+                            else "NOT SERVED: this packet was built without --candidates/--menus, so no AQE row rides in it; declare any field you needed as unread"),
               "rule": "ONE form (contracts/tier2.schema.json): answer every pair above (quote in ten words or fewer, answer by "
                       "your own method on the W/D/H1 grid, concede when the evidence is evidence your method cares about); "
                       "decide EVERY survivor: stance; on SUPPORT the timing ACT_NOW|WAIT, ONE trigger (vocab word with a FIELD "
@@ -4090,6 +4144,7 @@ if __name__ == "__main__":
     s.add_argument("--challenge", default=None, help="forms/challenge/steenbarger.json (rides on the board as context)")
     s.add_argument("--mtf", default=None, help="mtf.json (R39); absent = every name MTF NOT SERVED (declared)")
     s.add_argument("--export", default=None, help="aqe_daily_export.json: each claim in a packet carries its name's row")
+    s.add_argument("--menus", default=None, help="voice_menus.json: each claim's row is sliced to the REVIEWING seat's own menu + floors (PM 2026-11-19); without it the short shared CLAIM_ROW_FIELDS list is used and the packet says so")
     s.add_argument("--date", required=True); s.add_argument("--out", default="claims_board.json"); s.add_argument("--packets-dir", dest="packets_dir", default="claims_packets")
     s.add_argument("--per-camp", dest="per_camp", type=int, default=CLAIMS_PER_CAMP); s.add_argument("--reviewers", type=int, default=CLAIM_REVIEWERS)
     s.add_argument("--reroute", default=None, help="an absent reviewer: re-route ONLY its claims to the next eligible reviewers, rewrite --out and the packets")
@@ -4100,6 +4155,12 @@ if __name__ == "__main__":
     s.add_argument("--claims", default="claims_board.json"); s.add_argument("--rulings", default="forms/cross"); s.add_argument("--funnel", default="funnel.json")
     s.add_argument("--mtf", default=None); s.add_argument("--date", required=True); s.add_argument("--out", default="pairs.json")
     s.add_argument("--packets-dir", dest="packets_dir", default="tier2_packets")
+    s.add_argument("--candidates", default=None, help="candidate_set.json: with --menus, each tier2 packet carries every survivor's row sliced to the seat's own menu (PM 2026-11-19)")
+    s.add_argument("--menus", default=None)
+    s = sub.add_parser("seat-rows", help="PM 2026-11-19: every seat's own-menu row (+ held and momentum floors) for ANY ticker list, so cross / floor2 / ratify2 prompts carry the data instead of 'not served'")
+    s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--menus", required=True)
+    s.add_argument("--tickers", nargs="+", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="seat_rows")
+    s.add_argument("--seats", nargs="*", default=None, help="default: the seven deciders")
     s = sub.add_parser("decide-timing", help="R38/R40 the SECOND FUNNEL: <4 SUPPORT not slated; ACT_NOW > WAIT ADVANCE else WATCH; ONE trigger; ONE market kill")
     s.add_argument("--tier2", default="forms/tier2"); s.add_argument("--funnel", default="funnel.json"); s.add_argument("--phase4", default="phase4.json")
     s.add_argument("--export", default=None, help="aqe_daily_export.json: held names are counted on the ADD question and carry a hold line")
@@ -4139,5 +4200,5 @@ if __name__ == "__main__":
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,
      "record-verdicts": cmd_record_verdicts, "grade": cmd_grade,
-     "claims": cmd_claims, "claims-score": cmd_claims_score, "pair": cmd_pair, "decide-timing": cmd_decide_timing,
+     "claims": cmd_claims, "claims-score": cmd_claims_score, "pair": cmd_pair, "seat-rows": cmd_seat_rows, "decide-timing": cmd_decide_timing,
      "repeat-watch": cmd_repeat_watch, "challenge-packets": cmd_challenge_packets}[a.cmd](a)

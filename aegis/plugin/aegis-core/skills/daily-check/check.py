@@ -485,8 +485,68 @@ def check_committee_data(output_dir, run_date, export=None):
 
 DEFAULT_VOICE_CONTRACT = os.path.abspath(os.path.join(HERE, "..", "..", "contracts", "voice_coverage.json"))
 DEFAULT_MENUS = os.path.abspath(os.path.join(HERE, "..", "pma", "contracts", "voice_menus.json"))
+DEFAULT_CARDS_DIR = os.path.abspath(os.path.join(HERE, "..", "..", "..", "aegis-voices", "agents"))
 BLANK = ("", "null", "None", "nan", "NaN")
 NAME_CAP = 12
+
+
+def _export_columns(export):
+    """Every column the export carries on any daily_list / held row: flat keys plus dotted paths through nested dicts."""
+    cols = set()
+
+    def walk(o, pre):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                cols.add(pre + k)
+                if isinstance(v, dict):
+                    walk(v, pre + k + ".")
+    for r in (export.get("daily_list") or []) + (export.get("held_positions") or []):
+        if isinstance(r, dict):
+            walk(r, "")
+    return cols
+
+
+def check_card_declarations(export, deciders, cards_dir=None, contract_path=None):
+    """PM 2026-11-19 ("if a seat's required data is not served, that is an engineering fix"): a seat card that DECLARES a field NOT_SERVED
+    while AQE exports it is a defect found BEFORE the vote, not in the forms after it. 19 Nov: raschke declared adx / stochastic_kd / bar_range_history
+    NOT_SERVED (91 + 45 + 63 mentions) although the export carried adx_14, stoch_k_14/stoch_d_3, nr4_flag/nr7_flag/bar_range_5d, hi_20d/lo_20d.
+    Scans each decider's card for `<name>: NOT_SERVED`, maps the name through contracts/voice_coverage.json `declared_name_aliases`, and FAILS when the
+    export carries the field. A card that cannot be found is a loud WARN (the check did not run), never a pass."""
+    import re as _re
+    fails, notes = [], []
+    cards_dir = cards_dir or DEFAULT_CARDS_DIR
+    if not os.path.isdir(cards_dir):
+        return fails, [f"WARN card declaration check SKIPPED: no cards dir at {cards_dir} (the seat cards were not scanned for NOT_SERVED fields the export carries)"]
+    aliases = {}
+    try:
+        aliases = (json.load(open(contract_path or DEFAULT_VOICE_CONTRACT, encoding="utf-8")) or {}).get("declared_name_aliases") or {}
+    except (OSError, ValueError):
+        pass
+    cols = _export_columns(export)
+    leaves = {c.split(".")[-1] for c in cols}
+    pat = _re.compile(r"([A-Za-z_][A-Za-z0-9_.]*)`?\s*:?\s*\(?[^)\n]{0,12}\)?\s*:?\s*\*{0,2}NOT_SERVED")
+    scanned = 0
+    for v in deciders:
+        card = os.path.join(cards_dir, f"voice-{v}.md")
+        if not os.path.exists(card):
+            notes.append(f"WARN card declaration check: no card for {v} at {card}")
+            continue
+        scanned += 1
+        text = open(card, encoding="utf-8", errors="replace").read()
+        hit = {}
+        for m in pat.finditer(text):
+            name = m.group(1).strip(".")
+            if name.lower() in ("not", "is", "are", "and", "or", "the", "a", "declare", "declared", "but", "no"):
+                continue
+            want = [name] + list(aliases.get(name) or [])
+            have = sorted({w for w in want if w in cols or (w in leaves and "." not in w and "_" in w)})   # a bare word like `value` is prose, only a real field-shaped name counts
+            if have:
+                hit.setdefault(name, have)
+        for name, have in sorted(hit.items()):
+            fails.append(f"{v}: the card declares `{name}` NOT_SERVED but AQE exports {', '.join(have)} -- serve it (menu + the trim whitelist) or correct the card; "
+                         f"a seat told its data does not exist will not read it")
+    notes.append(f"voice coverage: {scanned}/{len(deciders)} seat cards scanned for NOT_SERVED declarations of fields the export carries")
+    return fails, notes
 
 
 def _flat_keys(o, prefix=""):
@@ -508,7 +568,7 @@ def _read_packet(path):
     return hdr, [l.split("\t") for l in lines[1:]]
 
 
-def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VOICE_CONTRACT, menus_path=DEFAULT_MENUS, room=None):
+def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VOICE_CONTRACT, menus_path=DEFAULT_MENUS, room=None, cards_dir=None):
     """PER-VOICE DATA COVERAGE (PM 2026-11-03: "a deterministic per-voice data-coverage report ... BLOCK before the
     vote on a gap, loud, never a silent pass ... distinguish 'not served' from 'off my menu'").
     For each decider: the fields its recognisers read (generated from the canon locks into the contract) against
@@ -657,6 +717,8 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
                          + " -- the seat declares these no_data")
     if flat_noted:
         notes.append(f"WARN voice coverage: flat book: {', '.join(sorted(flat_noted))} not applicable (no position is held, so there is no health verdict to serve); skipped, not a gap")
+    _cf, _cn = check_card_declarations(export, deciders, cards_dir, contract_path)
+    fails += _cf; notes += _cn
     return fails, notes, report
 
 
