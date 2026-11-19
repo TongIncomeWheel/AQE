@@ -1,0 +1,88 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-19",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "MKTX",
+   "reason": "RETRACEMENT (C2): a pullback back to the average inside a range, sma_distance_pct 0.57, momentum rebuilding (mp_state BUILDING, mp_accel_state ACCELERATING). Holy-Grail-shaped, ADX not served. Engine has no structural stop; I name 165.01 (bracket.atr_fallback_stop) as where I am wrong.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "atr_caution", "div_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift RANGE; sma_distance_pct 0.57; structure 74.7", "verdict": "pass", "fields": ["structure_shift", "sma_distance_pct", "structure"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state BUILDING, mp_accel_state ACCELERATING; ADX not served; div_state BEARISH, div_bear_count 2 (advisory caution)", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "div_state", "div_bear_count"]},
+    {"step": 3, "canon_ref": ["C7", "C3", "C12"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; lens null", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; bracket.stop null; bracket.atr_fallback_stop 165.01 vs entry 165.4; atr_caution False", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "bracket", "entry", "atr_caution"]}
+   ]
+  },
+  {
+   "ticker": "SYNA",
+   "reason": "TEST (C2): price is back testing a swing low after a change of character down (structure_shift BEARISH_CHOCH). Double stop point (C20): bracket.stop 116.01, a swing_low_1 stop, sits close under entry 117.67, bracket.risk_pct 1.41. Participation is above normal (day_vol 1.08).",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "day_vol", "mp_state", "bracket.stop", "bracket.stop_type", "bracket.risk_pct"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BEARISH_CHOCH; sma_distance_pct 5.59; structure 69.5", "verdict": "pass", "fields": ["structure_shift", "sma_distance_pct", "structure"]},
+    {"step": 2, "canon_ref": ["C3", "C20"], "observed": "Turtle-Soup-shaped test of swing low: entry 117.67 vs bracket.stop 116.01; mp_state BUILDING, mp_accel_state FLAT; day_vol 1.08", "verdict": "partial", "fields": ["entry", "bracket.stop", "mp_state", "mp_accel_state", "day_vol"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "exact 20-day extreme NOT_SERVED (sma_distance_pct + structure_shift substitute); adx NOT_SERVED; stochastic_kd NOT_SERVED; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid True; bracket.stop 116.01; bracket.stop_type swing_low_1; bracket.risk_pct 1.41", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct"]}
+   ]
+  },
+  {
+   "ticker": "CCC",
+   "reason": "BREAKOUT (C2, C12): range contraction inside a range (structure_shift RANGE), atr_14d 0.07 on entry 7.69, momentum building (mp_state BUILDING, mp_accel_state ACCELERATING), structure 82.1. NR4/NR7 cannot be counted. No structural stop: I name 7.62 (bracket.atr_fallback_stop) as where I am wrong.",
+   "fields_cited": ["structure_shift", "structure", "atr_14d", "mp_state", "mp_accel_state", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift RANGE; structure 82.1; sma_distance_pct 6.41", "verdict": "pass", "fields": ["structure_shift", "structure", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C12", "C13"], "observed": "range-contraction proxy: atr_14d 0.07 on entry 7.69; day_vol 0.85; atr_caution True; mp_state BUILDING, mp_accel_state ACCELERATING", "verdict": "partial", "fields": ["atr_14d", "day_vol", "atr_caution", "mp_state", "mp_accel_state"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C7"], "observed": "bar_range_history NOT_SERVED (no NR4/NR7, no 6/100 HV ratio); adx NOT_SERVED; energy.squeeze_score absent; lens null", "verdict": "partial", "fields": ["atr_14d", "energy.squeeze_score", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; bracket.stop null; bracket.atr_fallback_stop 7.62 vs entry 7.69", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "bracket", "entry"]}
+   ]
+  },
+  {
+   "ticker": "DOC",
+   "reason": "TEST (C2, C20): the low is being tested. structure_shift BEARISH_CHOCH with price just under its average (sma_distance_pct -1.45), and div_state BULLISH backs it as an advisory read only. bracket.stop 18.35 (swing_low_2) is where I am wrong. Momentum is still fading, so conviction is low.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "div_state", "mp_state", "mp_accel_state", "bracket.stop", "bracket.stop_type"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift BEARISH_CHOCH; sma_distance_pct -1.45; structure 47.4", "verdict": "pass", "fields": ["structure_shift", "sma_distance_pct", "structure"]},
+    {"step": 2, "canon_ref": ["C3", "C20"], "observed": "Turtle-Soup-shaped test of the low; div_state BULLISH (advisory); mp_state FADING, mp_accel_state DECELERATING; rank 1131", "verdict": "partial", "fields": ["div_state", "mp_state", "mp_accel_state", "rank"]},
+    {"step": 3, "canon_ref": ["C3", "C7", "C12"], "observed": "exact 20-day extreme NOT_SERVED (sma_distance_pct + structure_shift substitute); adx NOT_SERVED; stochastic_kd NOT_SERVED; bar_range_history NOT_SERVED", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift"]},
+    {"step": 4, "canon_ref": ["C17", "C20"], "observed": "bracket.valid True; bracket.stop 18.35; bracket.stop_type swing_low_2; bracket.risk_pct 5.12", "verdict": "pass", "fields": ["bracket.valid", "bracket.stop", "bracket.stop_type", "bracket.risk_pct"]}
+   ]
+  },
+  {
+   "ticker": "HAE",
+   "reason": "RETRACEMENT (C2): a first pullback inside a range with momentum rebuilding (mp_state BUILDING, mp_accel_state ACCELERATING), sma_distance_pct 7.36. Holy-Grail-shaped, ADX not served. div_bear_count 4 is a caution. No structural stop: I name 118.73 (bracket.atr_fallback_stop) as where I am wrong.",
+   "fields_cited": ["structure_shift", "sma_distance_pct", "mp_state", "mp_accel_state", "div_state", "div_bear_count", "bracket.valid", "bracket.atr_fallback_stop"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C2"], "observed": "structure_shift RANGE; sma_distance_pct 7.36; structure 70.5", "verdict": "pass", "fields": ["structure_shift", "sma_distance_pct", "structure"]},
+    {"step": 2, "canon_ref": ["C7"], "observed": "Holy Grail shape: mp_state BUILDING, mp_accel_state ACCELERATING; div_state BEARISH, div_bear_count 4 (advisory caution)", "verdict": "partial", "fields": ["mp_state", "mp_accel_state", "div_state", "div_bear_count"]},
+    {"step": 3, "canon_ref": ["C7", "C6", "C12"], "observed": "adx NOT_SERVED; stochastic_kd NOT_SERVED; n_day_extreme via sma_distance_pct + structure_shift; bar_range_history NOT_SERVED; lens null", "verdict": "partial", "fields": ["sma_distance_pct", "structure_shift", "lens"]},
+    {"step": 4, "canon_ref": ["C17"], "observed": "bracket.valid False; bracket.stop null; bracket.atr_fallback_stop 118.73 vs entry 122.86; atr_caution True", "verdict": "partial", "fields": ["bracket.valid", "bracket.stop", "bracket", "entry", "atr_caution"]}
+   ]
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "lens", "impact": "lens is null on every packet row, so the coil read that stands in for the Anti's %K/%D (R4) cannot be made"},
+  {"field": "energy.squeeze_score", "impact": "absent from the packet; the squeeze quality flag cannot back the breakout (C12) read on CCC"},
+  {"field": "structure_shift_ref", "impact": "absent; when bracket.valid is False I cannot name the swing extreme from structure, so I use bracket.atr_fallback_stop as the reference level instead"}
+ ],
+ "declarations": [
+  {"setup_type": "per nomination: MKTX retracement, SYNA test, CCC breakout, DOC test, HAE retracement (C2)"},
+  {"adx": "NOT_SERVED (C7, C8)"},
+  {"stochastic_kd": "NOT_SERVED (C6)"},
+  {"n_day_extreme": "sma_distance_pct + structure_shift (substitute, C3/C4)"},
+  {"bar_range_history": "NOT_SERVED (C12, C13)"},
+  {"market_breadth": "OUT_OF_SERVED_SCOPE (C16)"},
+  {"ledger_memory": "no ledger report injected; no standing lesson applies"}
+ ],
+ "shortfall_reason": "Only five names classify cleanly into one of the four C2 setup types with served proxies. The rest are extended with no pullback shape (BRZE sma_distance_pct 32.96, a climax-like read I decline to call per R9), fading with no test structure, or pinned in a range with no readable contraction setup."
+}

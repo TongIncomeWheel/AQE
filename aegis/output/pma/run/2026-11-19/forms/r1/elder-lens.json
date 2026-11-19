@@ -1,0 +1,115 @@
+{
+ "voice": "elder-lens",
+ "date": "2026-11-19",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "DUOL",
+   "reason": "No permission event: elder_5d [7, 10, 10, 7, 7] stays not-red with no <=6 to >=7 bar. Sourced buy-timer fires: force_index_ema_2 -1434326.79 under zero while price_ema_slope 0.5805 rises (C6), weekly_trend_direction UP, mp_state 3 STRONG. Own stop: ma_20 149.82.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 3,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 10, 10, 7, 7]: last 7, prior 7 - no permission event; elder_pattern null (not CORRECTION_REENTRY); mp_state 3", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.5805; force_index_ema_13 9404870.91; entry 160.29 above ma_20 149.82, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 149.82 (value-zone MA); entry 160.29; channel_upper 174.73, channel_lower 131.36", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C6", "C22"], "observed": "elder_5d [7, 10, 10, 7, 7] - no transition bar; force_index_ema_2 -1434326.79 pullback under zero; mp 89.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 149.82, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  },
+  {
+   "ticker": "TBBB",
+   "reason": "No permission event: elder_5d [7, 10, 7, 7, 7] stays not-red with no transition bar. Sourced buy-timer fires: force_index_ema_2 -20324.08 under zero while price_ema_slope 0.3593 rises (C6), weekly_trend_direction UP, entry 68.15 under channel_upper 72.31. Own stop: ma_20 63.1.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 10, 7, 7, 7]: last 7, prior 7 - no permission event; elder_pattern null; mp_state 2", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.3593; force_index_ema_13 766018.37; entry 68.15 above ma_20 63.1, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 63.1 (value-zone MA); entry 68.15; channel_upper 72.31, channel_lower 54.94", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C6", "C22"], "observed": "elder_5d [7, 10, 7, 7, 7] - no transition bar; force_index_ema_2 -20324.08 pullback under zero; mp 86.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 63.1, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  },
+  {
+   "ticker": "ADMA",
+   "reason": "No permission event: elder_5d [10, 10, 7, 7, 7] stays not-red, force eased off the top. Sourced buy-timer fires: force_index_ema_2 -39747.42 under zero while price_ema_slope 0.1216 rises (C6), weekly_trend_direction UP, entry 13.56 under channel_upper 14.22. Own stop: ma_20 12.16.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [10, 10, 7, 7, 7]: last 7, prior 7 - no permission event; elder_pattern null; mp_state 2", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.1216; force_index_ema_13 1332006.71; entry 13.56 above ma_20 12.16, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 12.16 (value-zone MA); entry 13.56; channel_upper 14.22, channel_lower 10.33", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C6", "C22"], "observed": "elder_5d [10, 10, 7, 7, 7] - no transition bar; force_index_ema_2 -39747.42 pullback under zero; mp 89.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 12.16, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  },
+  {
+   "ticker": "U",
+   "reason": "No permission event: elder_5d [7, 10, 7, 7, 7] stays not-red with no transition bar. Sourced buy-timer fires: force_index_ema_2 -10467580.77 under zero while price_ema_slope 0.0878 rises (C6), weekly_trend_direction UP, entry 48.96 under channel_upper 58.5. Own stop: ma_20 45.28.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 10, 7, 7, 7]: last 7, prior 7 - no permission event; elder_pattern null; mp_state 2", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.0878; force_index_ema_13 13554491.91; entry 48.96 above ma_20 45.28, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 45.28 (value-zone MA); entry 48.96; channel_upper 58.5, channel_lower 35.07", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C4", "C6", "C22"], "observed": "elder_5d [7, 10, 7, 7, 7] - no transition bar; force_index_ema_2 -10467580.77 pullback under zero; mp 89.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 45.28, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  },
+  {
+   "ticker": "MGNI",
+   "reason": "C24 (unsourced) plateau: elder_5d [7, 7, 7, 7, 7], no transition bar. Sourced buy-timer also fires: force_index_ema_2 -1511293.77 under zero while price_ema_slope 0.0722 rises (C6), weekly_trend_direction UP, entry 27.71 under channel_upper 31.31. Own stop: ma_20 25.36.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 7, 7, 7]: flat tail, no permission event; elder_pattern null; mp_state 2", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.0722; force_index_ema_13 1555448.3; entry 27.71 above ma_20 25.36, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 25.36 (value-zone MA); entry 27.71; channel_upper 31.31, channel_lower 21.36", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C6", "C22", "C24"], "observed": "elder_5d [7, 7, 7, 7, 7] - plateau, C24 unsourced; force_index_ema_2 -1511293.77 pullback under zero; mp 89.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 25.36, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  },
+  {
+   "ticker": "ACHC",
+   "reason": "C24 (unsourced) plateau: elder_5d [7, 7, 7, 7, 7], no transition bar. Sourced buy-timer also fires: force_index_ema_2 -551492.83 under zero while price_ema_slope 0.2141 rises (C6), weekly_trend_direction UP, entry 37.59 under channel_upper 41.63. Own stop: ma_20 34.14.",
+   "fields_cited": ["elder", "elder_5d", "elder_pattern", "mp_state", "mp", "impulse_colour_last_bar", "impulse_colour_prior_bar", "force_index_ema_2", "force_index_ema_13", "price_ema_slope", "entry", "channel_upper", "channel_lower", "weekly_trend_direction", "ma_20"],
+   "conviction": 2,
+   "price_at_nomination": null,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C1", "C3"], "observed": "elder 7.0; impulse_colour_last_bar BLUE, impulse_colour_prior_bar BLUE - not red, buying not forbidden", "verdict": "pass", "fields": ["elder", "impulse_colour_last_bar", "impulse_colour_prior_bar"]},
+    {"step": 2, "canon_ref": ["C4", "C6"], "observed": "elder_5d [7, 7, 7, 7, 7]: flat tail, no permission event; elder_pattern null; mp_state 2", "verdict": "fail", "fields": ["elder_5d", "elder_pattern", "mp_state"]},
+    {"step": 3, "canon_ref": ["C9", "C10", "C21"], "observed": "weekly_trend_direction UP; price_ema_slope 0.2141; force_index_ema_13 1382056.22; entry 37.59 above ma_20 34.14, not in value zone", "verdict": "partial", "fields": ["weekly_trend_direction", "price_ema_slope", "force_index_ema_13", "entry", "ma_20"]},
+    {"step": 4, "canon_ref": ["C17", "C18", "C19"], "observed": "own invalidation ma_20 34.14 (value-zone MA); entry 37.59; channel_upper 41.63, channel_lower 27.9", "verdict": "partial", "fields": ["entry", "ma_20", "channel_upper", "channel_lower"]},
+    {"step": 5, "canon_ref": ["C6", "C22", "C24"], "observed": "elder_5d [7, 7, 7, 7, 7] - plateau, C24 unsourced; force_index_ema_2 -551492.83 pullback under zero; mp 89.0", "verdict": "partial", "fields": ["elder_5d", "force_index_ema_2", "mp"]},
+    {"step": 6, "canon_ref": ["C4"], "observed": "held False - not a held name, no single-bar-drop exit read", "verdict": "pass", "fields": ["elder_5d"]}
+   ],
+   "falsifier": "A close under ma_20 34.14, or impulse_colour_last_bar printing RED, voids the pullback-in-uptrend read."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "elder_pattern", "impact": "null on all six nominated rows (DUOL, TBBB, ADMA, U, MGNI, ACHC): cannot confirm CORRECTION_REENTRY (R8) or rule out INTERRUPTED, so the step-2 pattern route and the step-3 trend-failure test were unreadable from the label."}
+ ],
+ "declarations": [
+  "No ledger memory block was injected for this run; no standing lesson applies.",
+  "Packet shows no permission event (elder_5d <=6 then >=7) and no elder_pattern CORRECTION_REENTRY on any of the 25 rows; every nomination fails step 2 and rests on the C6 force_index_ema_2 pullback timer inside a rising price_ema_slope with weekly_trend_direction UP.",
+  "Red giving way (impulse_colour_prior_bar RED to a non-red last bar) appears on ALLE, BOX, KSS, FIGS, TENB and A, but each carries elder_pattern 4 INTERRUPTED (trend leg failed, step 3) and elder 2-6, so none is nominated.",
+  "Censor duty: no row prints elder <=1 or impulse_colour_last_bar RED on the last bar.",
+  "LILA meets the same read (elder_5d [7, 7, 7, 7, 7], force_index_ema_2 -10544.44, price_ema_slope 0.0644) and is left out only by the six-name cap (R33)."
+ ],
+ "shortfall_reason": null
+}

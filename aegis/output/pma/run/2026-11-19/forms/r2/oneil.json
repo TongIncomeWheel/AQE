@@ -1,0 +1,701 @@
+{
+ "voice": "oneil",
+ "date": "2026-11-19",
+ "round": 2,
+ "declarations": [
+  "fundamentals: C, A, S, I untested. The packet's one-line snapshot (eps_g, rev_g, pe) has no stated period; C4/C6 need quarterly YoY and 3-year annual, so I note it and grade nothing on it (R10).",
+  "market_gate: DELEGATED (C1). The packet's VALEN reads RISK OFF / DOWNTREND; if the PM confirms no uptrend, every SUPPORT here is void. I took a point off each support.",
+  "Substitutes: rs_leadership for RS Rating; day_vol vs 20-day for C16's 50-day; structure composite for base; the MTF daily distance from the last swing high as pivot context (pct_from_pivot not served this round). base_stage NOT_AVAILABLE.",
+  "R1: no OPPOSE rests on a bracket; INVALID brackets are information only, my stop is entry-8pct (C20). R27: on momentum-lane names I oppose only on volume or the C24 climax line, never on extension.",
+  "Steenbarger UNPROVEN: agreed, no anchor here is a measured edge; my votes turn on the C16 volume rule and the C24 climax line. Crowding: of the XLY names I support only CAKE and WWW (C23).",
+  "ledger memory: none injected; no standing lesson applies.",
+  "Steenbarger UNPROVEN: agreed, no anchor here is a measured edge; my votes turn on the C16 volume rule and the C24 climax line. Crowding: Technology and Healthcare names here all fail C16 on their own."
+ ],
+ "votes": [
+  {
+   "ticker": "CAKE",
+   "vote": "SUPPORT",
+   "conviction": 3,
+   "reason": "Leader (rs LEADER, rank 11) out of a base: structure 82.9 BULLISH_BOS, lens coil strong, breakout volume day_vol 1.63 clears C16; D 1.8% above the last swing high, inside C17's buy zone; entry 120.05 far short of climax vs ma200 83.08 (C24). Group soft: Momentum Fading. Market gate DELEGATED. Bracket INVALID is information only (R1); my stop is entry-8pct (C20).",
+   "conviction_change": "R1 conv 4 -> 3: the packet's VALEN weather reads RISK OFF / DOWNTREND; C1 makes a confirmed uptrend the first gate, so I carry it as a live condition and take a point off.",
+   "falsifier": "A close back under pivot_high, or the next new high on volume below its 20-day average (C25).",
+   "challenge_reply": "Overlap: my own reason is the volume test, day_vol 1.63 on the break (C16), not the BOS label; my invalidation is a close back under pivot_high or entry-8pct. Lane: a breakout from a base, not a pullback. Sector hidden, it still stands on volume and coil; of the XLY names I rank it first (C23).",
+   "case": {
+    "for": "rs LEADER, from_52w_hi 0.0% out of a base (structure 82.9 BULLISH_BOS, coil strong) on day_vol 1.63, D 1.8% above the last swing high: a C16/C17 buy.",
+    "against": "Group Momentum Fading (R9 risk), elder INTERRUPTED, base length and handle not served; market gate unconfirmed and VALEN reads RISK OFF.",
+    "entry_trigger": "Hourly close above bar_high with volume at 1.4x normal, no higher than pivot_high+5pct.",
+    "wrong_if": "Close back under pivot_high (failed breakout) or a close under entry-8pct (C20).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "The next up day on volume under its 20-day average, or the group turning Declining while CAKE breaks out alone (R9).",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "S share volume",
+     "12-month RS rating",
+     "pivot_high distance",
+     "base stage"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4",
+     "rs_today_gt_spy"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I letters untested."
+   }
+  },
+  {
+   "ticker": "WWW",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Top XLY name (rank 2, rs LEADER) at from_52w_hi 0.0% on day_vol 3.41, structure 86.3 ABOVE_STRUCTURE: institutions showed up (C16). But D 8.5% above the last swing high is a C17 late buy with no add-ons (C21), lens coil warn, sma_dist 26.67%. Momentum lane: extension is a weight (R27), so I support small. Market gate DELEGATED.",
+   "conviction_change": "R1 conv 3 -> 2: VALEN weather RISK OFF (C1 live condition) on top of the late-buy warning.",
+   "falsifier": "A close back under the last swing high on heavy volume, or the next new high on volume below its 20-day average (C25).",
+   "challenge_reply": "Ignition or climax: entry 25.87 vs ma200 18.4 is short of C24's 70% climax line, so I read ignition on volume. It must work promptly: hold above the break; a heavy-volume close back under the last swing high would make it climax. Sector hidden, it stands on volume and leadership.",
+   "case": {
+    "for": "Rank 2 leader at a new high on day_vol 3.41, flow 100.0, mp 97.0 STRONG: the demand C16 asks for.",
+    "against": "D 8.5% above the last swing high is late (C17), no add-ons (C21); coil warn; group Momentum Fading; market gate unconfirmed.",
+    "entry_trigger": "Hourly close above bar_high with volume at 1.4x normal; no buy past pivot_high+10pct.",
+    "wrong_if": "Close back under pivot_high or under entry-8pct (C20).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A wide day closing flat on heavy volume (C24 climax) or the group rolling to Declining.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "S share volume",
+     "12-month RS rating",
+     "pivot_high distance",
+     "base stage"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+10pct",
+    "tf": "1H",
+    "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I untested."
+   }
+  },
+  {
+   "ticker": "MGNI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Leader by RS (rs_rank_pct 98.96) but no breakout: day_vol 0.95 fails C16, D below EMA9 and 7.0% under the last swing high, lens coil and resistance warn, from_52w_hi -5.56%. No new high out of a base, so no pivot to buy (C7, C17).",
+   "opposing_case": "Comm Services is Momentum Building, rs LEADER with downday 1.94 and ret_6m 112.17: a genuine leader in a confirming group that may be building its next base.",
+   "case": {
+    "for": "rs LEADER, downday 1.94, group Momentum Building: leadership and group pass (C9, R9).",
+    "against": "day_vol 0.95, D below EMA9, 7.0% under the last swing high: no breakout, no pivot cleared (C16, C17).",
+    "entry_trigger": "A daily close above pivot_high on volume at 1.4x normal.",
+    "wrong_if": "A close above pivot_high on day_vol above 1.4 proves my oppose early.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight new base and a volume breakout from it.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "VIA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Climax, not entry: entry 46.52 is more than double ma200 22.14, past C24's 70-100% above the 200-day line (R7) - sold into, never bought. D 51.3% above the last swing high, and the push came on day_vol 1.38, short of C16's +40%. I oppose on the climax rule and volume, not on 20-day extension (R27).",
+   "opposing_case": "rs_rank_pct 99.83, rs LEADER, ret_63d 75.08, closing at 99% of the day's range at from_52w_hi 0.0%: the strongest relative strength in the room.",
+   "case": {
+    "for": "Strongest RS in the room, new high, rs LEADER, mp 96.0.",
+    "against": "Price more than double ma200 22.14 is C24's climax zone (R7); day_vol 1.38 under the C16 line; coil warn.",
+    "entry_trigger": "None at this distance; a new base forming nearer its 50-day line, then a volume breakout.",
+    "wrong_if": "It keeps running on rising volume for weeks without a climax day.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A multi-week base that lets ma200 catch up, then a C16 breakout.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "DRI",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Leader at from_52w_hi 0.0%, structure 86.3, D 2.2% above the last swing high (inside C17), but the break carried day_vol 1.23, short of C16's +40%: a hard rejection, not a softer buy. Lens coil warn; group Momentum Fading.",
+   "opposing_case": "U&R MET reclaim, rs LEADER, mp 85.0 STRONG, sector lens strong; one heavier-volume day would make it a clean C16 breakout within the buy zone.",
+   "challenge_reply": "Lane: at its 52-week high it is a breakout case, not a pullback, and it fails that case on volume. Sector hidden, the volume failure alone decides it; it is not one of my XLY bets.",
+   "case": {
+    "for": "rs LEADER at a new high, structure 86.3, inside C17's 5% zone.",
+    "against": "day_vol 1.23 fails C16; coil warn; group Momentum Fading (R9).",
+    "entry_trigger": "A close above bar_high on volume at 1.4x normal while within pivot_high+5pct.",
+    "wrong_if": "It runs on above-1.4 volume from here.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume confirmation at 1.4x on the next up day.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "CALM",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Not a leader: rs_rank_pct 36.51, lens leadership warn, from_52w_hi -24.67%, ret_12m -19.98, price under ma100 75.21 and ma200 77.49. The BOS on day_vol 2.08 is a rally inside a downtrend, not a new high from a sound base (C7, C9, C12); structure 54.7 is weak.",
+   "opposing_case": "day_vol 2.08 with insti_money and coil strong and a fresh BULLISH_BOS: real buying showed up, and U&R MET says the dip was reclaimed.",
+   "case": {
+    "for": "Volume passes C16 (day_vol 2.08), coil and insti_money strong.",
+    "against": "Laggard RS, a quarter off its high, below the 100- and 200-day lines: no prior uptrend, no leader (C9, C12).",
+    "entry_trigger": "None until it is a leader making new highs out of a base.",
+    "wrong_if": "It reclaims ma200 and makes a new high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "RS turning to the top decile with price back above ma200.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "CHYM",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 0.9 fails C16, D below EMA9, H1 at 22% of the day's range, sector Financials Declining (R9 Lone Ranger), lens None so coil and group are unverifiable. No breakout, no pivot.",
+   "opposing_case": "structure 75.8, full MA stack, rs_rank_pct 97.63, ret_6m 82.34: a leader resting above ma20 30.74.",
+   "case": {
+    "for": "rs LEADER, full MA stack, structure 75.8.",
+    "against": "No volume, no breakout, declining group (C16, C25).",
+    "entry_trigger": "A close above pivot_high on volume at 1.4x normal with the group turning up.",
+    "wrong_if": "A volume breakout to a new high.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Financials leaving Declining and a C16 breakout.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "LFST",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "No breakout: structure 71.6 RANGE, D 12.1% under the last swing high, day_vol 0.96 fails C16, flow 42.1, sector Healthcare Declining (R9). Nothing to buy under C16/C17.",
+   "opposing_case": "rs_rank_pct 97.58, ret_12m 120.32, U&R MET at its 21-day average: a leader basing above ma50 12.88.",
+   "case": {
+    "for": "rs LEADER, ret_12m 120.32, above ma50.",
+    "against": "In range, well under its last high, thin volume, declining group.",
+    "entry_trigger": "A close above pivot_high on volume at 1.4x normal.",
+    "wrong_if": "A new high on volume within weeks.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight base and a C16 breakout with Healthcare improving.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "VIK",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Volume passes (day_vol 2.28) but the base fails: ma50 84.86 sits under ma100 91.28 and ma200 86.36, from_52w_hi -7.29%, lens coil warn, div BEARISH/3, and D 9.7% above the last swing high is late (C17). Not a new high out of a sound base (C7, C12).",
+   "opposing_case": "structure 89.5, flow 100.0, mp 93.0 STRONG, rank 8 in a group with sector lens strong: real demand on a leader.",
+   "challenge_reply": "Crowding: sector hidden, it still fails on base and extension; as an XLY name it would be a third bet on one group, which C23 resolves by keeping only the leader.",
+   "case": {
+    "for": "day_vol 2.28, flow 100.0, rank 8: demand present.",
+    "against": "Mixed MA stack, not at a new high, bearish divergence, late past the swing high.",
+    "entry_trigger": "A new high above high_52w_close on volume after a proper base.",
+    "wrong_if": "It clears its 52-week high on volume this month.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ma50 back over ma200 and a new high on 1.4x volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "DIS",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Breakout to from_52w_hi 0.0% on day_vol 2.02 (passes C16), structure 83.2 BULLISH_BOS, lens structure and resistance strong, D 1.3% above the last swing high inside C17, group Comm Services Momentum Building confirms (R9). Caution: div BEARISH/3, coil warn. Market gate DELEGATED.",
+   "falsifier": "The next new high on volume below its 20-day average, or a close back under pivot_high.",
+   "challenge_reply": "Lane: a breakout at the high, not a pullback. Exhaustion vs continuation: C25 marks the end by a new high on LOWER volume; this one came on day_vol 2.02. The next high on below-average volume would be my exhaustion read.",
+   "case": {
+    "for": "New high on day_vol 2.02, BULLISH_BOS, inside the buy zone, confirming group.",
+    "against": "div BEARISH/3, coil warn, rs lens only ok; market gate unconfirmed.",
+    "entry_trigger": "Hourly close above bar_high on 1.4x volume, no higher than pivot_high+5pct.",
+    "wrong_if": "Close back under pivot_high or under entry-8pct (C20).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A new high on lower volume (C25) or the group turning Fading.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "pivot_high distance",
+     "base stage"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "h1_close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "1H",
+    "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I untested."
+   }
+  },
+  {
+   "ticker": "BILL",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Rank 1 leader at from_52w_hi 0.0%, day_vol 1.95 passes C16, but D 30.0% above the last swing high is far past any pivot: C17 says no buy here. R27 makes extension a weight on a momentum-lane name, so I do not oppose; I stand aside until a new base gives a pivot.",
+   "case": {
+    "for": "Rank 1, rs LEADER, mp 100.0, new high on day_vol 1.95.",
+    "against": "D 30.0% above the last swing high: entry would sit inside an ordinary pullback (C17).",
+    "entry_trigger": "A new base and a volume breakout from its pivot.",
+    "wrong_if": "It keeps rising on volume with no base for weeks.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight multi-week base forming above ma50.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "BIP",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "Volume passes (day_vol 4.13) but C12 wants a prior uptrend into the base and the averages are flat (ma50 37.09, ma100 37.94, ma200 37.72), ret_12m 18.29, weekly swing LH/LL, coil warn. A defensive name with no leading trend is not a CAN SLIM leader (C9); heavy volume without a base is not a pivot breakout.",
+   "opposing_case": "structure 89.5, flow 100.0, rank 4, D 3.8% above the last swing high inside C17 on the heaviest volume in the room.",
+   "case": {
+    "for": "day_vol 4.13, structure 89.5, inside C17's zone.",
+    "against": "Flat averages and weekly LH/LL: no prior uptrend, no sound base (C12).",
+    "entry_trigger": "A base after a real uptrend, then a volume breakout.",
+    "wrong_if": "It trends to new highs on volume from here.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "ma50 clearly above a rising ma200 and a new high on volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "ASO",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 1.22 fails C16 at the high; sma_dist 27.13% with div BEARISH/3 and coil warn; ma100 52.16 under ma200 53.52 means the long trend has only just turned (C12).",
+   "opposing_case": "rs LEADER, ret_63d 60.02, from_52w_hi 0.0%, D 2.5% above the last swing high, lens leadership, resistance and sector strong.",
+   "challenge_reply": "Lane: at the high it is a breakout case, and it fails on volume. Sector hidden, the volume failure still decides it.",
+   "case": {
+    "for": "rs LEADER at a new high, inside C17's zone.",
+    "against": "day_vol 1.22 under the C16 line; bearish divergence; long trend barely turned.",
+    "entry_trigger": "A close above bar_high on 1.4x volume within pivot_high+5pct.",
+    "wrong_if": "It extends on above-1.4 volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume confirmation on the next new high.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "MKTX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "No breakout: structure 74.7 RANGE, day_vol 0.75 fails C16, sector Financials Declining (R9), div BEARISH/2, from_52w_hi -14.57%. atr 0.39 looks inconsistent with a 165.4 price; I do not lean on it.",
+   "opposing_case": "sma_dist 0.57% at the average, energy 81.5, mp BUILDING/ACCELERATING, W 0.9% above the last swing high.",
+   "case": {
+    "for": "rs LEADER, at its average, momentum building.",
+    "against": "Range, thin volume, declining group, well off its high.",
+    "entry_trigger": "A close above pivot_high on 1.4x volume.",
+    "wrong_if": "A volume breakout to new highs.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Financials turning up and a C16 breakout.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "SYNA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "Up-structure failed (BEARISH_CHOCH), rs_rank_pct 37.42, from_52w_hi -20.26%, day_vol 1.08 fails C16: not a leader making new highs out of a base (C7, C9).",
+   "opposing_case": "Weekly swing HH/HL, ret_12m 90.13, U&R MET at its 9-day average, energy 83.2: a longer uptrend may be testing support.",
+   "case": {
+    "for": "Weekly HH/HL, ret_12m 90.13, energy 83.2.",
+    "against": "BEARISH_CHOCH, weak RS rank, a fifth off its high, no volume.",
+    "entry_trigger": "None until a new base and a volume breakout to new highs.",
+    "wrong_if": "It reclaims its high on 1.4x volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "RS rank back in the top decile and a C16 breakout.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "AMRX",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "The BOS to from_52w_hi 0.0% came on day_vol 0.5: C16 calls a breakout under +40% a hard rejection. Healthcare is Declining with lens sector warn (R9).",
+   "opposing_case": "structure 73.7 BULLISH_BOS with coil, structure and resistance lenses strong, rs_rank_pct 97.54: a tight base clearing at a new high.",
+   "challenge_reply": "Lane: at the high it is a breakout case, and it failed on volume; that, not the lane label, decides it.",
+   "case": {
+    "for": "New high out of a coil, rs LEADER, lenses strong.",
+    "against": "day_vol 0.5 on the break; declining group.",
+    "entry_trigger": "A close above bar_high on 1.4x volume within pivot_high+5pct.",
+    "wrong_if": "It extends on heavy volume from here.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume day at 1.4x confirming the break.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "DUOL",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "from_52w_hi -23.34%, ret_12m -10.09, day_vol 0.43, lens leadership warn, H1 below EMA9: no new high, no volume, no pivot (C7, C16). Momentum lane: I oppose on volume, not extension.",
+   "opposing_case": "mp 89.0 STRONG/ACCELERATING, insti_money strong, rs_rank_pct 93.31: momentum rebuilding off a deep base.",
+   "case": {
+    "for": "mp 89.0, insti_money strong, rs LEADER.",
+    "against": "Far off its high, thin volume, falling 12-month return.",
+    "entry_trigger": "A completed base and a 1.4x volume breakout.",
+    "wrong_if": "It recovers its high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A sound base and C16 volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "CCC",
+   "vote": "ABSTAIN",
+   "conviction": null,
+   "reason": "Basing near its high (W 2.8% under the last swing high, structure 82.1 RANGE, energy 80.7) but no breakout: day_vol 0.85, lens None so coil and group are unverifiable, flow 35.5. No pivot cleared; nothing to buy or sell yet.",
+   "case": {
+    "for": "Near its high with structure 82.1 and rs LEADER: a possible base.",
+    "against": "No breakout, thin volume, weak flow, lens unreadable.",
+    "entry_trigger": "A close above pivot_high on 1.4x volume.",
+    "wrong_if": "A breakdown under base_low_20d.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A volume breakout from the range.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "MANH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 0.59 fails C16, D below EMA9 and 3.8% under the last swing high, flow 30.3, VCP FAILED, sma_dist 10.33% with no fresh base: no pivot to buy.",
+   "opposing_case": "rs_rank_pct 97.67, ret_6m 82.48, full stack with ma50 226.72 over ma200 172.3: a leader resting.",
+   "case": {
+    "for": "rs LEADER, ret_6m 82.48, full MA stack.",
+    "against": "No breakout, weak flow, failed setup.",
+    "entry_trigger": "A new base and a close above pivot_high on 1.4x volume.",
+    "wrong_if": "A new high on volume soon.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight base and C16 breakout.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "PRCH",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "D below EMA9 and 7.2% under the last swing high, day_vol 0.53 fails C16, div BEARISH/2, structure 61.7 RANGE: no base, no pivot.",
+   "opposing_case": "rs_rank_pct 99.05, downday 2.28, ret_12m 120.15: an all-weather leader pulling in.",
+   "case": {
+    "for": "Top RS rank, strong down-day leadership.",
+    "against": "Below its daily EMA9, thin volume, bearish divergence, weak structure.",
+    "entry_trigger": "A base and a 1.4x volume breakout.",
+    "wrong_if": "It reclaims its high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A completed base and C16 volume.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "TFX",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 1.32 is short of C16's +40% at the high, Healthcare Declining with lens sector and insti_money warn (R9), coil warn, D 5.9% above the last swing high (C17 late).",
+   "opposing_case": "structure 89.5, rs_rank_pct 81.31, mp 93.0 STRONG, from_52w_hi 0.0%: a new high on a strong structure.",
+   "challenge_reply": "Lane: a breakout at the high, which fails on volume and group; three lens warnings are not outweighed.",
+   "case": {
+    "for": "New high, structure 89.5, mp 93.0.",
+    "against": "Under the C16 line, declining group, late past the swing high.",
+    "entry_trigger": "A new base, then a 1.4x volume breakout.",
+    "wrong_if": "It runs on heavy volume from here.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume confirmation and the group improving.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "OMC",
+   "vote": "SUPPORT",
+   "conviction": 2,
+   "reason": "Leader (rs LEADER, rank 40) in a confirming group (Comm Services Momentum Building), structure 82.1 ABOVE_STRUCTURE, day_vol 1.41 just clears C16, from_52w_hi -0.87%, U&R MET. lens None so coil unverified; H1 below EMA9 and D 1.4% under the last swing high, so it must clear that high. Market gate DELEGATED.",
+   "falsifier": "A close back under pivot_high, or the group leaving Momentum Building while OMC moves alone (R9).",
+   "case": {
+    "for": "Leader in the confirming group, volume just passes C16, near its high.",
+    "against": "lens None, H1 below EMA9, volume only at the line; market gate unconfirmed.",
+    "entry_trigger": "Daily close above bar_high on 1.4x volume, no higher than pivot_high+5pct.",
+    "wrong_if": "Close under pivot_high or under entry-8pct (C20).",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Volume drying up on the next push or the group turning Fading.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   },
+   "conditions": {
+    "lane": "BREAKOUT",
+    "buy": [
+     "close_above:bar_high"
+    ],
+    "confirm": [
+     "vol_x_ge:1.4"
+    ],
+    "wrong": [
+     "close_below:pivot_high",
+     "close_below:entry-8pct"
+    ],
+    "wait": [],
+    "chase": "close_above:pivot_high+5pct",
+    "tf": "EOD",
+    "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I untested."
+   }
+  },
+  {
+   "ticker": "ACHC",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 0.59 fails C16, Healthcare Declining with lens sector warn (R9), D 5.3% under the last swing high, sma_dist 21.12%, div BEARISH/1: no breakout.",
+   "opposing_case": "rs_rank_pct 94.73, ret_12m 140.19, leadership lens strong: a strong name pausing.",
+   "case": {
+    "for": "rs LEADER, ret_12m 140.19.",
+    "against": "Thin volume, declining group, under its last high.",
+    "entry_trigger": "A base and a 1.4x volume breakout.",
+    "wrong_if": "A new high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Group turning up and C16 volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "ADMA",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "from_52w_hi -33.46%: repairing damage, not at new highs (C7); five lenses warn, day_vol 0.77 fails C16, ma100 10.0 under ma200 10.67.",
+   "opposing_case": "run_10d 29.39%, rs_spy_20d 28.71, downday 3.02: a sharp recovery with all-weather strength.",
+   "case": {
+    "for": "Strong 10-day run and down-day leadership.",
+    "against": "A third off its high, five lens warnings, no volume.",
+    "entry_trigger": "None until it is back near highs in a sound base.",
+    "wrong_if": "It regains its high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A base near highs and C16 volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "U",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 0.56 fails C16, D 9.8% under the last swing high, H1 at 3% of the day's range, structure 78.9 RANGE: no breakout. Momentum lane: I oppose on volume and the lack of a pivot, not extension.",
+   "opposing_case": "rs_rank_pct 97.8, ret_6m 86.66, mp 89.0: a leader correcting inside an uptrend.",
+   "case": {
+    "for": "Top RS rank, ret_6m 86.66.",
+    "against": "Thin volume, well under its last high, closing at the day's low.",
+    "entry_trigger": "A base and a 1.4x volume breakout.",
+    "wrong_if": "A new high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A tight base and C16 volume.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "TBBB",
+   "vote": "OPPOSE",
+   "conviction": 2,
+   "reason": "day_vol 1.1 fails C16, D 3.0% under the last swing high, insti_money warn, sma_dist 18.68%, structure 62.9: no breakout from a sound base.",
+   "opposing_case": "ret_12m 139.96, lens leadership and sector strong, W 57.8% above the last swing high: a strong long-term leader.",
+   "case": {
+    "for": "Leadership and sector lenses strong, ret_12m 139.96.",
+    "against": "No breakout volume, weak structure, insti_money warn.",
+    "entry_trigger": "A close above pivot_high on 1.4x volume.",
+    "wrong_if": "A new high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "C16 volume on a new high.",
+    "cannot_see": [
+     "C/A earnings",
+     "I sponsor count",
+     "12-month RS rating",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "HAE",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "div BEARISH/4 near the high on day_vol 0.69 with flow 22.4: distribution before price (C25); structure 70.5 RANGE, no breakout.",
+   "opposing_case": "rs_rank_pct 98.66, ret_6m 106.28, energy 81.5: a leader pausing near its high.",
+   "case": {
+    "for": "Top RS rank, near its high.",
+    "against": "Four-oscillator bearish divergence, thin volume, weak flow.",
+    "entry_trigger": "A new base and a 1.4x volume breakout.",
+    "wrong_if": "A new high on heavy volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "Divergence clearing and C16 volume.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  },
+  {
+   "ticker": "DOC",
+   "vote": "OPPOSE",
+   "conviction": 3,
+   "reason": "sc_mom 32.7, structure 47.4 BEARISH_CHOCH, weekly below EMA9, from_52w_hi -15.25%, Real Estate Declining: not a leader (C9), no base (C12).",
+   "opposing_case": "rs LEADER with downday 1.31, div BULLISH, day_vol 1.04 at the low: selling may be exhausting.",
+   "case": {
+    "for": "rs LEADER tag, bullish divergence.",
+    "against": "Failed structure, weekly downtrend, weak momentum, declining group.",
+    "entry_trigger": "None; a bottom-fish is outside my method.",
+    "wrong_if": "It reclaims its high on volume.",
+    "horizon_sessions": 40,
+    "would_change_my_mind": "A new uptrend and base near highs.",
+    "cannot_see": [
+     "lens",
+     "C/A earnings",
+     "I sponsor count",
+     "base stage"
+    ]
+   }
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "oneil.part1of2.json",
+   "bytes": 17289,
+   "votes": 14,
+   "sha256": "a8a05c28bff4"
+  },
+  {
+   "file": "oneil.part2of2.json",
+   "bytes": 12083,
+   "votes": 14,
+   "sha256": "0c45e8aad009"
+  }
+ ]
+}

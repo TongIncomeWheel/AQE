@@ -1,0 +1,198 @@
+{
+ "voice": "steenbarger",
+ "date": "2026-11-19",
+ "seat_kind": "challenge",
+ "names_read": 28,
+ "packet_md5": null,
+ "proof": {"line": 1, "text": "{\"date\": \"2026-11-19\", \"seat\": \"steenbarger\", \"tally\": [{\"ticker\": \"CAKE\", \"nomination_count\": 3"},
+ "findings": [
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C17"],
+   "claim": "Consumer Discretionary carries both multi-seat names and 5 of 28 room names (CAKE, WWW, DRI, VIK, ASO). The room's strongest agreement sits in one sector; if it is voted through as separate ideas the book takes one sector bet several times. Deciders should say whether each case survives with the sector hidden.",
+   "evidence": "gics_sector_name Consumer Discretionary: CAKE (nomination_count 3), WWW (nomination_count 2), DRI, VIK, ASO",
+   "addressed_to": "oneil, livermore, wyckoff"
+  },
+  {
+   "scope": "sector",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C12", "C17"],
+   "claim": "Technology is the largest single cluster in the room (8 of 28) and Healthcare is next (6 of 28), each spread across solo nominations. Solo names that share a sector are correlated exposure, not independent ideas.",
+   "evidence": "gics_sector_name Technology: VIA, BILL, SYNA, DUOL, CCC, MANH, PRCH, U; Healthcare: LFST, AMRX, TFX, ACHC, ADMA, HAE",
+   "addressed_to": "minervini, raschke, elder-lens, livermore"
+  },
+  {
+   "scope": "CAKE",
+   "kind": "OVERLAP",
+   "ticker": "CAKE",
+   "canon_ref": ["C15", "C1"],
+   "claim": "Three seats at the same conviction on one name. Convergence counts only if the reads were independent. If all three rest on the same anchors (52-week high, BULLISH_BOS, high RS) that is shared-anchor agreement, not three confirmations. The BOS read has no measured forward-return separation (UNPROVEN). Each seat should name its own distinct reason and its own invalidation level.",
+   "evidence": "nomination_count 3, seats livermore/oneil/wyckoff, convictions 4/4/4; structure_shift BULLISH_BOS; pct_from_52w_high 0.0; rs_rank_pct 98.32; day_vol 1.63",
+   "addressed_to": "livermore, oneil, wyckoff"
+  },
+  {
+   "scope": "lane",
+   "kind": "PROCESS",
+   "ticker": null,
+   "canon_ref": ["C5", "C3"],
+   "claim": "Names filed in the PULLBACK lane sit at their 52-week high, which is not a pullback by the served fields. The lane label and the data disagree, so the setup's context (C5) is misnamed. The nominating seat should confirm which lane each name is a case for.",
+   "evidence": "lane PULLBACK with pct_from_52w_high 0.0: CAKE, DRI, DIS, ASO, AMRX, TFX",
+   "addressed_to": "livermore, oneil, wyckoff, minervini"
+  },
+  {
+   "scope": "DIS",
+   "kind": "EXTENSION",
+   "ticker": "DIS",
+   "canon_ref": ["C5", "C7"],
+   "claim": "At the 52-week high with a 3-oscillator bearish divergence on a day of twice-normal volume. This is a fired bearish_divergence caution at the extreme. The seat should state what would show exhaustion rather than continuation.",
+   "evidence": "pct_from_52w_high 0.0; div_state BEARISH; div_bear_count 3; day_vol 2.02; structure_shift BULLISH_BOS",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "ASO",
+   "kind": "EXTENSION",
+   "ticker": "ASO",
+   "canon_ref": ["C5", "C7"],
+   "claim": "At the 52-week high with a 3-oscillator bearish divergence. The ma_100 sits under the ma_200, so the longer trend has only just turned. Extension plus internal weakening should be answered before the vote.",
+   "evidence": "pct_from_52w_high 0.0; div_state BEARISH; div_bear_count 3; ma_50 57.46; ma_100 52.16; ma_200 53.52",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "VIK",
+   "kind": "EXTENSION",
+   "ticker": "VIK",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Mixed moving-average stack (ma_50 under both ma_100 and ma_200) plus a 3-oscillator bearish divergence on above-normal volume. The higher-timeframe context is not a clean uptrend and the fields conflict. Where the fields conflict, abstaining is a valid answer (C16).",
+   "evidence": "ma_50 84.86; ma_100 91.28; ma_200 86.36; div_state BEARISH; div_bear_count 3; day_vol 2.28; pct_from_52w_high -7.29",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "HAE",
+   "kind": "EXTENSION",
+   "ticker": "HAE",
+   "canon_ref": ["C5", "C7"],
+   "claim": "The strongest bearish divergence in the room (4 of 5 oscillators), close to the high, on below-normal volume. The seat should name the observable that separates a pause from a distribution top.",
+   "evidence": "div_state BEARISH; div_bear_count 4; pct_from_52w_high -3.58; day_vol 0.69; structure_shift RANGE",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "WWW",
+   "kind": "EXTENSION",
+   "ticker": "WWW",
+   "canon_ref": ["C5", "C6"],
+   "claim": "Volume at more than three times normal at the 52-week high, from two seats. A surge at the extreme can be ignition or climax. The two seats should say which, and what the next sessions must show (C6: good entries work promptly).",
+   "evidence": "day_vol 3.41; pct_from_52w_high 0.0; structure_shift ABOVE_STRUCTURE; lens_warnings 1; nomination_count 2",
+   "addressed_to": "livermore, oneil"
+  },
+  {
+   "scope": "BIP",
+   "kind": "EXTENSION",
+   "ticker": "BIP",
+   "canon_ref": ["C5", "C3"],
+   "claim": "The highest volume in the room on a flat-to-mixed MA stack in a defensive sector. The higher-timeframe trend the setup exploits is not evident from the averages. The seat should name the trend context.",
+   "evidence": "day_vol 4.13; ma_50 37.09; ma_100 37.94; ma_200 37.72; gics_sector_name Utilities; pct_from_52w_high -2.14",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "CALM",
+   "kind": "PROCESS",
+   "ticker": "CALM",
+   "canon_ref": ["C5"],
+   "claim": "The higher-timeframe context is a downtrend: averages stacked bearishly, weak relative strength, well off the high. A BOS inside a declining stack is a pattern in isolation unless the seat names the longer cycle it is exploiting (R4).",
+   "evidence": "ma_50 66.67; ma_100 75.21; ma_200 77.49; rs_rank_pct 36.51; pct_from_52w_high -24.67; structure 54.7; structure_shift BULLISH_BOS",
+   "addressed_to": "wyckoff"
+  },
+  {
+   "scope": "SYNA",
+   "kind": "PROCESS",
+   "ticker": "SYNA",
+   "canon_ref": ["C5", "C16"],
+   "claim": "The up-structure has failed (BEARISH_CHOCH) on a weak-RS name 20% off its high, yet it is nominated as a pullback. A character change is the opposite of a pullback inside an intact trend. The seat should reconcile this or abstain.",
+   "evidence": "structure_shift BEARISH_CHOCH; rs_rank_pct 37.42; pct_from_52w_high -20.26; sc_momentum 67.0",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "DOC",
+   "kind": "PROCESS",
+   "ticker": "DOC",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Weakest momentum and structure in the room with a failed up-structure and a mixed MA stack, on a momentum book. The context does not locate it inside an uptrend. Only a bullish divergence supports it. This looks like a manufactured low-conviction slot rather than a case (C16).",
+   "evidence": "sc_momentum 32.7; structure 47.4; structure_shift BEARISH_CHOCH; ma_50 19.62; ma_100 20.56; ma_200 19.29; div_state BULLISH; convictions 2",
+   "addressed_to": "raschke"
+  },
+  {
+   "scope": "ADMA",
+   "kind": "PROCESS",
+   "ticker": "ADMA",
+   "canon_ref": ["C5", "C16"],
+   "claim": "Five of six lenses warn, the name is a third off its high, the ma_100 sits under the ma_200, and there is a bearish divergence. The fields conflict with a momentum case, so abstaining is the honest answer unless the seat names a specific edge.",
+   "evidence": "lens_warnings 5; pct_from_52w_high -33.46; ma_100 10.0; ma_200 10.67; div_state BEARISH; div_bear_count 2; convictions 2",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "lane",
+   "kind": "CROWDING",
+   "ticker": null,
+   "canon_ref": ["C16", "C17"],
+   "claim": "elder-lens filed five names at conviction 2 or 3, several with heavy lens warnings. A run of low-conviction filings suggests slots were filled rather than abstained (C16).",
+   "evidence": "elder-lens: ACHC convictions 2 lens_warnings 3; ADMA convictions 2 lens_warnings 5; U convictions 2; TBBB convictions 2; DUOL convictions 3 day_vol 0.43",
+   "addressed_to": "elder-lens"
+  },
+  {
+   "scope": "TFX",
+   "kind": "PROCESS",
+   "ticker": "TFX",
+   "canon_ref": ["C16"],
+   "claim": "Half of the lenses warn on a name at its 52-week high filed at conviction 2. The seat should state what outweighs three warnings, or stand aside.",
+   "evidence": "lens_warnings 3; pct_from_52w_high 0.0; ma_50 134.99; ma_100 135.24; convictions 2",
+   "addressed_to": "livermore"
+  },
+  {
+   "scope": "committee",
+   "kind": "UNPROVEN",
+   "ticker": null,
+   "canon_ref": ["C1"],
+   "claim": "The room's agreement leans on the same few served anchors: 52-week-high proximity, structure_shift BOS/ABOVE_STRUCTURE and RS rank. No forward-return separation for any of them reaches this seat. Each may be described, but none is a measured edge (R1).",
+   "evidence": "pct_from_52w_high 0.0 on 10 of 28 names; structure_shift ABOVE_STRUCTURE or BULLISH_BOS on 18 of 28; rs_rank_pct above 90 on 17 of 28",
+   "addressed_to": "oneil, minervini, livermore, elder-lens, seow, raschke, wyckoff"
+  },
+  {
+   "scope": "MKTX",
+   "kind": "PROCESS",
+   "ticker": "MKTX",
+   "canon_ref": ["C16"],
+   "claim": "The volatility unit looks implausibly small for the price level implied by the averages (well under 1%). The read may rest on a faulty field. The seat should confirm the record before relying on it.",
+   "evidence": "atr_14d 0.39; ma_50 164.47; ma_100 153.75; ma_200 155.02; div_state BEARISH; div_bear_count 2",
+   "addressed_to": "raschke"
+  }
+ ],
+ "obligations": [
+  {"seat": "wyckoff", "ticker": "CALM", "class": "R4", "what_is_owed": "Name the higher-timeframe context: averages are stacked bearishly (ma_50 66.67 < ma_100 75.21 < ma_200 77.49)."},
+  {"seat": "raschke", "ticker": "SYNA", "class": "R4", "what_is_owed": "Reconcile structure_shift BEARISH_CHOCH with a pullback case, or abstain."},
+  {"seat": "raschke", "ticker": "DOC", "class": "R8", "what_is_owed": "State the case on sc_momentum 32.7 / structure 47.4 / BEARISH_CHOCH, or abstain."},
+  {"seat": "elder-lens", "ticker": "ADMA", "class": "R8", "what_is_owed": "Say what outweighs lens_warnings 5, or abstain."},
+  {"seat": "livermore", "ticker": "CAKE", "class": "R5", "what_is_owed": "Your own distinct reason and the invalidation observable, independent of the other two seats."},
+  {"seat": "oneil", "ticker": "CAKE", "class": "R5", "what_is_owed": "Your own distinct reason and the invalidation observable, independent of the other two seats."},
+  {"seat": "wyckoff", "ticker": "CAKE", "class": "R5", "what_is_owed": "Your own distinct reason and the invalidation observable, independent of the other two seats."},
+  {"seat": "wyckoff", "ticker": "DIS", "class": "R5", "what_is_owed": "The observable separating exhaustion from continuation at the high with div_bear_count 3."},
+  {"seat": "livermore", "ticker": "VIK", "class": "R4", "what_is_owed": "Name the trend context given ma_50 84.86 below ma_100 91.28 and ma_200 86.36, plus div_bear_count 3."}
+ ],
+ "declarations": [
+  "I never nominate and never vote; these are crowding, extension and overlap reads on the room.",
+  "psychology_claims: NONE. C18-C21 are PM-facing (R9).",
+  "R1: no finding uses an engine bracket field as a reason. Brackets are the PM's last step.",
+  "edge_proven: NOT_MEASURED for every served field cited."
+ ],
+ "data_gaps": [
+  {"field": "regime", "impact": "Not in the packet. R3 (regime named) cannot be tested against any case, so environment match is unassessed."},
+  {"field": "srm", "impact": "Not in the packet. Sector context is limited to gics_sector_name counts."},
+  {"field": "price", "impact": "No close served. Extension is read from pct_from_52w_high and the MA stack only, never as distance in ATRs."},
+  {"field": "lens_warnings", "impact": "Null for CHYM, LFST, MKTX, SYNA, CCC, MANH, PRCH, OMC, HAE, DOC. Lens-warning crowding is unread for 10 of 28."},
+  {"field": "atr_14d", "impact": "MKTX value 0.39 looks anomalous against ma_50 164.47; possible data fault."},
+  {"field": "voice_memory", "impact": "No ledger memory injected; the seat's own recent sector clustering cannot be checked."},
+  {"field": "seat_reasons", "impact": "Packet carries seats and convictions, not reasons or fields cited, so R5/R12 are posed as questions, not tested."}
+ ]
+}

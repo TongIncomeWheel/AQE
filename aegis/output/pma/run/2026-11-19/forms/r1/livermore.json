@@ -1,0 +1,107 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-19",
+ "round": 1,
+ "nominations": [
+  {
+   "ticker": "WWW",
+   "reason": "Established uptrend now trading above its structure (structure_shift 1) with mp_state 3 STRONG and mp_accel_state 1 ACCELERATING; day_vol 3.41 says the move is being bought. XLY has three more names above or breaking structure: a group, not one stock. Danger signal set via atr_14d 1.15.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C16"], "observed": "structure 86.3, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 26.67", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.15; entry 25.87; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 24.72", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 2; gics_sector XLY, sector_trend_state 3 (Fading); VIK, CAKE, CROX in XLY also structure_shift 1/3", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 3.41; adds only above entry 25.87, never below", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; danger signal is 1x atr_14d off the day's high, my translation not Livermore's 6 points", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 1.15 or more from the day's high (my translation of C7), or a close under bracket.atr_fallback_stop 24.72, or structure_shift turning 2 (BEARISH_CHOCH)."
+  },
+  {
+   "ticker": "CAKE",
+   "reason": "The textbook C5 entry: structure_shift 3 BULLISH_BOS means the close broke above a confirmed pivot high after the pullback, and sma_distance_pct 10.9 is not stretched. mp_state 1 BUILDING. XLY peers WWW and VIK are above structure too, so it is not a single-name move.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 4,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5", "C19"], "observed": "structure 82.9, structure_shift 3 (BULLISH_BOS), sma_distance_pct 10.9", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 5.03; entry 120.05; mp_state 1 (BUILDING), mp_accel_state 3 (FLAT); bracket.valid False, bracket.atr_fallback_stop 115.02", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 11; gics_sector XLY, sector_trend_state 3 (Fading); WWW, VIK structure_shift 1 in same group", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 1.63; adds only above entry 120.05", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; 1x atr_14d is my translation of the 6-point danger signal", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "Failure to follow through above the broken pivot: a reaction of 1x atr_14d 5.03 from the day's high (C7/C20 translated), or a close under bracket.atr_fallback_stop 115.02."
+  },
+  {
+   "ticker": "BILL",
+   "reason": "Rank 1 leader: structure_shift 1 above structure, mp_state 3 STRONG and mp_accel_state 1 ACCELERATING, day_vol 1.95 on the push. XLK sector_trend_state 4 is recovering. Extended (sma_distance_pct 35.77) but leaders at highs sit far off the 50-day. No second XLK name confirms yet (C14).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 84.2, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 35.77", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 2.64; entry 66.01; mp_state 3 (STRONG), mp_accel_state 1 (ACCELERATING); bracket.valid False, bracket.atr_fallback_stop 63.37", "verdict": "pass", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 1; gics_sector XLK, sector_trend_state 4 (Recovering); only other XLK name SAIL is structure_shift 4 (RANGE)", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 1.95; adds only above entry 66.01", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; 1x atr_14d is my translation, not a literal point threshold", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 2.64 or more from the day's high, or a close under bracket.atr_fallback_stop 63.37."
+  },
+  {
+   "ticker": "VIK",
+   "reason": "Uptrend holding above structure (structure_shift 1), structure 89.5, mp_state 3 STRONG, day_vol 2.28 shows participation. Part of the XLY cluster with WWW and CAKE, so the group has a second name confirming. mp_accel_state 3 FLAT holds conviction below the leaders.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 89.5, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 18.28", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 3.74; entry 100.37; mp_state 3 (STRONG), mp_accel_state 3 (FLAT); bracket.valid False, bracket.atr_fallback_stop 96.63", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 8; gics_sector XLY, sector_trend_state 3 (Fading); WWW and CAKE confirm in group", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 2.28; adds only above entry 100.37", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; 1x atr_14d is my translation of the danger signal", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 3.74 from the day's high, or a close under bracket.atr_fallback_stop 96.63."
+  },
+  {
+   "ticker": "BIP",
+   "reason": "Above structure (structure_shift 1) with structure 89.5 and only modest extension (sma_distance_pct 12.46); mp_state 3 STRONG; day_vol 4.13 is the heaviest participation in my packet. Single XLU name with sector_trend_state 3 Fading, so no second-name confirmation (C14).",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 3,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 89.5, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 12.46", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 1.04; entry 41.71; mp_state 3 (STRONG), mp_accel_state 3 (FLAT); bracket.valid False, bracket.atr_fallback_stop 40.67", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C14"], "observed": "rank 4; gics_sector XLU, sector_trend_state 3 (Fading); no other XLU name in packet", "verdict": "fail", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 4.13; adds only above entry 41.71", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; 1x atr_14d is my translation of the danger signal", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 1.04 from the day's high, or a close under bracket.atr_fallback_stop 40.67."
+  },
+  {
+   "ticker": "TFX",
+   "reason": "Above structure (structure_shift 1), structure 89.5, mp_state 3 STRONG. XLV has several names above structure (RYTM, XERS, SLS), which gives the second-name confirmation, but sector_trend_state 1 Declining and mp_accel_state 2 DECELERATING keep this a low-conviction pick.",
+   "fields_cited": ["structure", "structure_shift", "sma_distance_pct", "atr_14d", "day_vol", "mp_state", "mp_accel_state", "entry", "gics_sector", "sector_trend_state", "rank", "bracket"],
+   "conviction": 2,
+   "checklist_trace": [
+    {"step": 1, "canon_ref": ["C5"], "observed": "structure 89.5, structure_shift 1 (ABOVE_STRUCTURE), sma_distance_pct 22.86", "verdict": "pass", "fields": ["structure", "structure_shift", "sma_distance_pct"]},
+    {"step": 2, "canon_ref": ["C7", "C9", "C18"], "observed": "atr_14d 4.76; entry 165.85; mp_state 3 (STRONG), mp_accel_state 2 (DECELERATING); bracket.valid False, bracket.atr_fallback_stop 161.09", "verdict": "partial", "fields": ["atr_14d", "entry", "mp_state", "mp_accel_state", "bracket"]},
+    {"step": 3, "canon_ref": ["C12", "C13", "C14"], "observed": "rank 17; gics_sector XLV, sector_trend_state 1 (Declining); RYTM, XERS, SLS also structure_shift 1", "verdict": "partial", "fields": ["rank", "gics_sector", "sector_trend_state"]},
+    {"step": 4, "canon_ref": ["C6", "C4"], "observed": "held False; day_vol 1.32; adds only above entry 165.85", "verdict": "pass", "fields": ["held", "day_vol"]},
+    {"step": 5, "canon_ref": ["C11", "C18"], "observed": "declared block filed; 1x atr_14d is my translation of the danger signal", "verdict": "pass", "fields": ["atr_14d"]}
+   ],
+   "falsifier": "A single-day reaction of 1x atr_14d 4.76 from the day's high, or a close under bracket.atr_fallback_stop 161.09."
+  }
+ ],
+ "held_review": [],
+ "data_gaps": [
+  {"field": "bracket.stop", "impact": "null on every packet row (bracket.valid False). I named my own invalidation level from bracket.atr_fallback_stop and atr_14d. Not a reason against any name (R1)."},
+  {"field": "bracket.stop_type", "impact": "null on every row, so I cannot tell which structural level the stop sits on. My own level is stated in each falsifier."},
+  {"field": "bracket.risk_pct", "impact": "null on every row. Sizing belongs to the PM, so this does not limit the nomination."}
+ ],
+ "declarations": [
+  "trend_confirmation: PASS for all six nominations (structure/structure_shift + sma_distance_pct, C5)",
+  "danger_signal_threshold: TRANSLATED via atr_14d (1x atr_14d single-day reaction from the day's high), not the literal 6 points (C7, C18-C20)",
+  "state_analogue: mp_state/mp_accel_state read as my six-column classifier's modern equivalent, not identical (C18)",
+  "fill_difficulty: NOT_SERVED (day_vol is a proxy only)",
+  "inside_information: NEVER (C11, standing maxim)",
+  "ledger memory: no voice_memory block was injected with this prompt, so no standing lesson applies",
+  "concentration: three of six nominations are in XLY. That is deliberate under C12/R7, not a flaw"
+ ],
+ "shortfall_reason": null
+}
