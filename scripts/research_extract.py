@@ -83,6 +83,8 @@ def _parquet_facts(path: Path, extra_cols: list[str] | None = None) -> dict:
         return {"present": False}
     df = pd.read_parquet(path)
     d = pd.to_datetime(df["date"]).dt.normalize()
+    if "ticker" not in df.columns:                     # spy_daily.parquet is one series with no ticker column
+        df = df.assign(ticker="SPY")
     per_date = df.groupby(d)["ticker"].nunique()
     facts = {"present": True, "rows": int(len(df)), "tickers": int(df["ticker"].nunique()),
              "date_min": str(d.min().date()), "date_max": str(d.max().date()), "sessions": int(d.nunique()),
@@ -103,11 +105,18 @@ def inventory() -> dict:
     data = SCRATCH / "data"
     from src.scanner.score_runner import SCORE_COLUMNS
     comp = _component_columns(SCORE_COLUMNS)
+    def safe(path, **kw):
+        """One unreadable file is reported loudly in the inventory, it never takes the whole inventory down."""
+        try:
+            return _parquet_facts(path, **kw)
+        except Exception as exc:  # noqa: BLE001
+            print(f"INVENTORY ERROR {path.name}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            return {"present": path.exists(), "error": f"{type(exc).__name__}: {exc}"}
     inv = {"generated_at": _now(), "snapshot": snap, "not_point_in_time": NOT_POINT_IN_TIME,
-           "panel_daily": _parquet_facts(data / "panel_daily.parquet"),
-           "panel_weekly": _parquet_facts(data / "panel_weekly.parquet"),
-           "spy_daily": _parquet_facts(data / "spy_daily.parquet"),
-           "scores_daily": _parquet_facts(data / "scores_daily.parquet", extra_cols=comp["aggregate"] + comp["sub"][:60]),
+           "panel_daily": safe(data / "panel_daily.parquet"),
+           "panel_weekly": safe(data / "panel_weekly.parquet"),
+           "spy_daily": safe(data / "spy_daily.parquet"),
+           "scores_daily": safe(data / "scores_daily.parquet", extra_cols=comp["aggregate"] + comp["sub"]),
            "component_columns_requested": comp, "universe_txt_names": None, "universe_mcap_json_present": (data / "universe_mcap.json").exists(),
            "aqe_db": {}}
     u = data / "universe.txt"

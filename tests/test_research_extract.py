@@ -115,3 +115,18 @@ def test_the_workflow_is_dispatch_only_isolated_and_read_only():
     assert "contents: read" in y and "contents: write" not in y
     code = (ROOT / "scripts" / "research_extract.py").read_text()
     assert "save_snapshot" not in code.replace("never calls save_snapshot*", "")
+
+
+def test_inventory_handles_a_tickerless_spy_file_and_reports_a_broken_file_loudly(rx, tmp_path, monkeypatch):
+    monkeypatch.setattr(rx, "_restore", lambda: {"store": "test"})
+    monkeypatch.setattr(rx, "_drive_put", lambda name, blob, mime: {"name": name, "ok": True, "file_id": "x"})
+    d, panel = _fake_state(rx, tmp_path)
+    data = Path(os.environ["AQE_DATA_DIR"])
+    pd.read_parquet(data / "spy_daily.parquet").drop(columns=["ticker"]).to_parquet(data / "spy_daily.parquet", index=False)
+    (data / "panel_weekly.parquet").write_bytes(b"not a parquet")
+    inv = rx.inventory()
+    assert inv["spy_daily"]["rows"] > 0 and inv["spy_daily"]["tickers"] == 1
+    assert "error" in inv["panel_weekly"], "a broken file is reported, not hidden"
+    assert inv["scores_daily"]["date_min"] and inv["scores_daily"]["names_per_date"]["max"] == 3
+    assert "flow_100" in inv["scores_daily"]["non_null_share_by_year"]
+    assert (tmp_path / "out" / "inventory.json").exists()
