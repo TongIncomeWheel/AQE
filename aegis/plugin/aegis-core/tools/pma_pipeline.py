@@ -371,6 +371,55 @@ def cmd_screens(a):
     print("receipt: screens " + ", ".join(f"{s}={len(v)}" for s, v in res.items()) + f"; {len(keep)} distinct names; universe {len(rows)} rows")
 
 
+def _fill_none(dst, src):
+    """Fill the None / missing leaves of dst from src, recursively; never overwrite a value the row already carries."""
+    for k, v in (src or {}).items():
+        if isinstance(v, dict):
+            cur = dst.get(k)
+            if not isinstance(cur, dict):
+                dst[k] = cur if cur is not None else {}
+                if cur is not None:
+                    continue
+            _fill_none(dst[k], v)
+        elif dst.get(k) is None:
+            dst[k] = v
+    return dst
+
+
+def _apply_enrichment(added_rows, path):
+    """PM 2026-11-19 (NOT_SERVED audit): universe-only rows carry no hourly-bar elder_context and no M&A flag (the nightly computes them for the AQE list only).
+    `universe_enrichment.json` (src/pipeline/universe_enrichment.py, written beside the committee data) holds both for the screened names. Fill what the row lacks;
+    a name the file did not reach reads ma_status UNKNOWN with a plain note, NEVER blank (a blank reads as no deal). -> receipt string; loud when the file is absent."""
+    doc, why = None, None
+    if path and os.path.exists(path):
+        try:
+            doc = json.load(open(path, encoding="utf-8"))
+        except ValueError as e:
+            why = f"{path} is not valid JSON ({e})"
+    else:
+        why = f"no enrichment file ({path or 'no --enrichment given'})"
+    tk = (doc or {}).get("tickers") or {}
+    with_elder = with_ma = unknown = 0
+    for r in added_rows:
+        e = tk.get(r.get("ticker")) or {}
+        if e.get("elder_context"):
+            r["elder_context"] = _fill_none(r.get("elder_context") if isinstance(r.get("elder_context"), dict) else {}, e["elder_context"])
+            with_elder += 1
+        if r.get("ma_status") in (None, ""):
+            if e.get("ma_status") and e.get("ma_status") != "UNKNOWN":
+                r["ma_status"], r["ma_note"], r["ma_evidence"] = e["ma_status"], e.get("ma_note"), e.get("ma_evidence")
+                with_ma += 1
+            else:
+                r["ma_status"] = "UNKNOWN"
+                r["ma_note"] = e.get("ma_note") or "M&A scan did not run for this universe-only name; treat as unscanned, never as no deal"
+                r["ma_evidence"] = None
+                unknown += 1
+    head = f"enrichment: {len(added_rows)} universe-only row(s): hourly elder_context {with_elder}, M&A scanned {with_ma}, M&A UNKNOWN {unknown}"
+    if doc is None:
+        return f"WARNING {head}; {why}. Every universe-only name reads ma_status UNKNOWN and no VWAP/volume-trend context: run the committee-topup workflow"
+    return head + f" (file status {doc.get('status')})" + (" -- NOT clean, see universe_enrichment.json errors" if doc.get("status") != "ok" else "")
+
+
 def cmd_augment_export(a):
     """STANDARD SCAN (PM 2026-11-16): the whole-universe candidate set carries names that are not in daily_list. Every later command (packets, rank, brackets/levels,
     conditions, scorecard, Cards) reads its rows from `--export`, so this writes a COPY of the export with one extra row per screened name that the export lacks:
@@ -396,9 +445,13 @@ def cmd_augment_export(a):
             continue
         D["daily_list"].append(dict(r, universe_only=True, on_longlist=False, on_elder=False, on_qs=False, in_ledger=False, source="universe"))
         added.append(t)
+    _added_rows = [r for r in D["daily_list"] if r.get("universe_only") and r.get("ticker") in set(added)]
+    _enrich_receipt = _apply_enrichment(_added_rows, getattr(a, "enrichment", None))
     D["standard_scan"] = {"universe_only_added": added, "universe_date": U.get("date"), "not_in_export_or_universe": missing,
                           "note": "universe_only rows are screened names the AQE daily list does not carry; they have no list membership; the original export is unchanged"}
+    D["standard_scan"]["enrichment"] = _enrich_receipt
     save(a.out, D)
+    print(f"receipt: {_enrich_receipt}")
     print(f"receipt: augment-export: {len(added)} universe-only row(s) added to {a.out} ({len(want) - len(added) - len(missing)} already in the export); "
           f"{len(missing)} in neither file ({', '.join(missing) or 'none'})")
     if missing:
@@ -4093,7 +4146,7 @@ if __name__ == "__main__":
     s = sub.add_parser("slate-from-forms", help="STANDARD SCAN / AQE QUANT SCAN: the Chair's slate by code from decision.json + the seats' own tier-2 forms (nothing the seats did not say)")
     s.add_argument("--dir", default=".", help="the run directory (decision.json, forms/tier2/, slate_plan.json, board.json)"); s.add_argument("--out", default=None)
     s = sub.add_parser("augment-export", help="STANDARD SCAN (PM 2026-11-16): add the screened names that are not in daily_list to a copy of the export (universe_only rows from aqe_universe_rows.json) so every later command finds a row")
-    s.add_argument("--export", required=True); s.add_argument("--universe-rows", required=True); s.add_argument("--seat-sets", default=None, help="seat_sets.json from `screens`")
+    s.add_argument("--export", required=True); s.add_argument("--universe-rows", required=True); s.add_argument("--seat-sets", default=None, help="seat_sets.json from `screens`"); s.add_argument("--enrichment", default=None, help="committee_data/universe_enrichment.json (PM 2026-11-19): hourly elder_context + M&A flag for the screened universe-only names; absent = loud WARNING and ma_status UNKNOWN")
     s.add_argument("--tickers", default=None, help="comma list of extra tickers"); s.add_argument("--out", default="aqe_daily_export_wu.json")
     s = sub.add_parser("packets"); s.add_argument("--candidates", default="candidate_set.json"); s.add_argument("--export", required=True); s.add_argument("--crown-macro", default=None, help="Crown's OWN artifact (aqe_crown_macro.json). Crown's card is written against it; a slice of the equity export is not a substitute. Absence is a hard failure of this step -- 2026-09-25 defect."); s.add_argument("--menus", required=True); s.add_argument("--date", required=True); s.add_argument("--outdir", default="packets"); s.add_argument("--macro-seats", nargs="*", default=[], help="R31: macro packets are retired; pass crown druckenmiller to rebuild them (needs --crown-macro)"); s.add_argument("--max-bytes", type=int, default=None, help="trim each seat's packet to about this many bytes (rows ranked by that seat's own screen, held book always kept; declared in the packet and packet_trim.json)"); s.add_argument("--seat-sets", default=None, help="STANDARD SCAN: seat_sets.json from `screens` -- each seat's packet carries only its own screened names plus the held book"); s.add_argument("--clean", action="store_true", help="STANDARD SCAN clean test (PM 2026-11-16): strip AQE list membership and AQE composite / engine scores from every seat packet; declared in a # CLEAN TEST line and packets/clean_test.json")
     s = sub.add_parser("tally"); s.add_argument("--nominations", required=True); s.add_argument("--out", default="tally.json")

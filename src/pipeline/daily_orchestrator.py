@@ -709,6 +709,20 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
         except Exception as _e:  # noqa: BLE001 - loud, never silent: the PMA's B run tops up from CI instead (committee_topup)
             print(f"  [WARN] committee data: Standard Scan screened names NOT added to scope ({_e}); run committee_topup before the committee run")
         _res = _cd.run(_export, str(run_date), previous_pack=_prev, extra_rows=_extra)
+        # PM 2026-11-19 (NOT_SERVED audit): the screened universe-only names get hourly-bar elder_context and the M&A scan too, under a budget, loud status.
+        # Never blocks: a failure is a status in universe_enrichment.json and a WARN here, and augment-export marks those names ma_status UNKNOWN.
+        if _extra and _res.get("files"):
+            try:
+                from src.pipeline import universe_enrichment as _ue
+                from src.data.fmp_client import FMPClient as _FMP
+                _ued = _ue.build([r["ticker"] for r in _extra], _extra, str(run_date), _FMP())
+                _res["files"][_ue.FILENAME] = _cd.dumps(_ued)
+                _res["manifest"]["universe_enrichment"] = {k: _ued[k] for k in ("status", "requested", "elder", "ma")}
+                print(f"  {_ue.summary_line(_ued)}")
+                if _ued["status"] != "ok":
+                    print(f"  [WARN] universe enrichment {_ued['status']}: {_ued['errors'][:3]}")
+            except Exception as _ue_exc:  # noqa: BLE001 - additive, never blocks the committee data
+                print(f"  [WARN] universe enrichment FAILED ({_ue_exc.__class__.__name__}: {_ue_exc}); screened universe-only names will read ma_status UNKNOWN")
         _cd.write_local(_res)
         _cdp = _cd.publish(_res)
         print(f"  {_cd.summary_line(_res, _cdp)}")

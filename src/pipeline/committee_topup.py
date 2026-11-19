@@ -134,6 +134,21 @@ def _manifest(fund, grid, closes, base: dict, run_date: str, rep: dict) -> tuple
     return m, bodies
 
 
+def _enrich(d: Path, names, rows, run_date) -> dict:
+    """PM 2026-11-19: hourly-bar elder_context + M&A for the screened names, written beside the committee data. -> {filename: bytes} (empty on failure, which is printed)."""
+    try:
+        from src.data.fmp_client import FMPClient
+        from src.pipeline import universe_enrichment as _ue
+        doc = _ue.build(sorted(names), rows, run_date, FMPClient())
+        body = cd.dumps(doc)
+        (d / _ue.FILENAME).write_bytes(body)
+        print("[topup]", _ue.summary_line(doc))
+        return {_ue.FILENAME: body}
+    except Exception as exc:  # noqa: BLE001 - loud, never blocks the top-up
+        print(f"[topup] universe enrichment FAILED ({exc.__class__.__name__}: {exc}); screened universe-only names will read ma_status UNKNOWN")
+        return {}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--names", default="", help="comma-separated tickers")
@@ -167,6 +182,11 @@ def main(argv=None) -> int:
     print(f"[topup] {len(names)} names; missing before: fundamentals {len(miss['fundamentals'])}, mtf {len(miss['mtf'])}, closes {len(miss['closes'])}")
     if not any(miss.values()):
         print("[topup] nothing missing: every requested name already has fundamentals, MTF and closes")
+        only = _enrich(d, names, rows, run_date)
+        if a.publish and only:
+            pub = cd.publish({"manifest": base, "files": only})
+            print("[topup] publish:", {k: pub.get(k) for k in ("ok", "written", "total", "failed")})
+            return 0 if pub.get("ok") else 2
         return 0
     if not (d / "mtf_grid.json").exists():
         return 2
@@ -183,9 +203,9 @@ def main(argv=None) -> int:
         (d / n).write_bytes(body)
     (d / cd.MANIFEST).write_bytes(cd.dumps(manifest))
     (d / "topup_report.json").write_bytes(cd.dumps(rep))
-    print(f"[topup] pulled {rep['pulled']} names, {rep['fmp_calls']} FMP calls; still missing: {rep['still_missing']}")
+    extra_files = _enrich(d, names, rows, run_date)
     if a.publish:
-        pub = cd.publish({"manifest": manifest, "files": {**bodies, "topup_report.json": cd.dumps(rep)}})
+        pub = cd.publish({"manifest": manifest, "files": {**bodies, "topup_report.json": cd.dumps(rep), **extra_files}})
         print("[topup] publish:", {k: pub.get(k) for k in ("ok", "written", "total", "failed")})
         if not pub.get("ok"):
             return 2
