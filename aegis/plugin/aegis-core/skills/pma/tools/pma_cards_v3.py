@@ -1235,6 +1235,11 @@ if "swing" in FL:      # PM 2026-11-05: the fourth brief list, shown beside the 
     cardsB += (f'<div class="card"><h3>Swing pivot top {len(_sw["rows"])}</h3>{list_table("swing")}</div>')
 
 s5b = section("7 &middot; The AQE lists", "Elder, AQE, Detect lens and Swing pivot, one row per name.", cardsB, "lists")
+# ------------------------------------------------------------------ 7b VALEN ENTRIES (PM 2026-11-19): mechanical, from the export alone, no committee involvement
+import valen_entries as VE
+_ve_banner, _ve_body, _ve_n = VE.render(D, SLATE_T.keys(), E)
+s5v = section("7b &middot; Valen entries", "Setups and undercut-and-rally names straight from the AQE export: levels and flags only, no verdict.",
+              _ve_banner + f'<div class="card"><details class="big"><summary>{_ve_n} Valen entries: setups TRIGGERED or READY, undercut-and-rally MET or SETUP</summary>{_ve_body}</details></div>', "valen")
 # ------------------------------------------------------------------ 6 THE PLAN
 steps = []
 for x in T.get("plan") or []:
@@ -1369,7 +1374,7 @@ section#lists>.card{margin-top:14px}
 """
 page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Aegis Daily Cards</title><style>{CSS}{CT.TEMPLATE_CSS}</style></head><body><div class="wrap">
-{top}{s1}{s3}{s2}{s4}{s6}{s5}{s5b}{s7}{s8}
+{top}{s1}{s3}{s2}{s4}{s6}{s5}{s5b}{s5v}{s7}{s8}
 <p class="fresh" style="margin-top:36px">Draft for the PM. Nothing is staged, armed or placed; sizing and the trade call are yours.</p>
 </div><script>
 document.querySelectorAll("table.sortable").forEach(function(t){{var h=t.tHead.rows[0].cells;Array.prototype.forEach.call(h,function(th,i){{th.style.cursor="pointer";th.title="Click to sort";var asc=true;th.addEventListener("click",function(){{

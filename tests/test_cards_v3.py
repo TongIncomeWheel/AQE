@@ -579,7 +579,7 @@ def test_the_sections_run_in_valens_top_down_order_and_none_is_missing(run):
     8 Scorecard, 9 Read with care. Numbered 1 to 9 in document order; ids unchanged; restyle, never delete a section."""
     h = render(run)
     order = [m.group(1) for m in re.finditer(r'<section id="([a-z]+)">', h)]
-    assert order == ["macro", "happened", "sectors", "book", "plan", "tickers", "lists", "scorecard", "care"], order
+    assert order == ["macro", "happened", "sectors", "book", "plan", "tickers", "lists", "valen", "scorecard", "care"], order   # PM 2026-11-19: Valen entries sit beside the AQE lists as 7b
     kick = re.findall(r'<div class="kicker">(\d+) &middot; ', h)
     assert kick == [str(i) for i in range(1, 10)], kick
 
@@ -602,3 +602,70 @@ def test_the_theme_card_reads_valens_baskets_when_the_artifact_has_them_and_the_
     out = run / "valen_cards.html"; out.write_text(render(run), encoding="utf-8")
     fails, _ = ck.check_cards_html(str(out))
     assert not fails, fails                                                                     # the plain-words gate passes with the Valen card on the page
+
+
+# ---------------------------------------------------------------- 7b VALEN ENTRIES (PM 2026-11-19)
+sys.path.insert(0, str(TOOL.parent))
+import valen_entries as VE  # noqa: E402
+
+
+def _row(t, **kw):
+    return dict({"ticker": t, "on_longlist": False, "on_elder": False, "on_qs": False, "setups": [], "unr_status": "NO", "last_close": 100.0}, **kw)
+
+
+def _g(piece, setup, status, pivot=10.0, stop=9.0):
+    return {"piece": piece, "setup": setup, "status": status, "pivot": pivot, "stop": stop, "checks": []}
+
+
+def test_valen_entries_collects_triggered_ready_and_unr_with_the_extended_flag_and_never_the_risk_warnings():
+    exp = {"setups_status": {"status": "live"}, "unr_summary": {"as_of": "2026-11-18"},
+           "daily_list": [_row("TTD", on_longlist=True, setups=[_g("11", "Episodic pivot (delayed)", "TRIGGERED", 15.29, 14.77), _g("11", "Episodic pivot", "FAILED")]),
+                          _row("AAA", setups=[_g("09", "High tight flag", "READY", 50, 47)]),
+                          _row("BBB", setups=[_g("12", "Parabolic — risk warning on a long", "TRIGGERED"), _g("12", "Failed leader — risk warning on a long", "READY")]),
+                          _row("CCC", on_elder=True, on_qs=True, unr_status="MET", unr_level=100.0, last_close=106.0),
+                          _row("DDD", unr_status="SETUP", unr_level=100.0, last_close=102.0),
+                          _row("EEE", unr_status="NA")],
+           "held_positions": [_row("HELD1", held=True, unr_status="MET", unr_level=50.0, last_close=49.0), _row("TTD")]}
+    c = VE.collect(exp, ["TTD", "CCC"])
+    assert [(x["ticker"], x["setup"], x["status"], x["pivot"], x["stop"], x["aqe"], x["slate"]) for x in c["setups"]] == [
+        ("TTD", "Episodic pivot (delayed)", "TRIGGERED", 15.29, 14.77, "Longlist", True), ("AAA", "High tight flag", "READY", 50, 47, "none", False)]
+    assert "BBB" not in {x["ticker"] for x in c["setups"]}                                  # R41: piece-12 risk warnings never print here
+    u = {x["ticker"]: x for x in c["unr"]}
+    assert set(u) == {"CCC", "DDD", "HELD1"} and u["CCC"]["pct"] == 6.0 and u["CCC"]["extended"] and not u["DDD"]["extended"]
+    assert u["CCC"]["aqe"] == "Elder, QS" and u["CCC"]["slate"] and u["HELD1"]["held"] and u["HELD1"]["pct"] == -2.0
+    assert [x["ticker"] for x in c["unr"]][0] != "DDD"                                      # MET (reclaim day) leads SETUP
+    assert c["n_names"] == 7 and c["live"]
+
+
+def test_valen_entries_has_no_cap_and_no_verdict_words():
+    exp = {"setups_status": {"status": "live"}, "daily_list": [_row(f"T{i:03d}", setups=[_g("09", "High tight flag", "READY")]) for i in range(60)]}
+    banner, body, n = VE.render(exp, [])
+    assert n == 60 and body.count("<b>T0") == 60 and banner == ""
+    low = re.sub(r"<[^>]+>", " ", body).lower()
+    assert not re.search(r"\b(buy|sell|size|sizing|advance|verdict|no-buy|parabolic)\b", low.replace("no verdict, no sizing", ""))
+
+
+@pytest.mark.parametrize("status", [{"status": "degraded", "reason": "FMP down"}, {"status": "failed"}, None])
+def test_a_non_live_setups_status_prints_a_loud_banner_outside_the_collapsed_block(status):
+    exp = {"daily_list": [_row("AAA")]}
+    if status is not None:
+        exp["setups_status"] = status
+    banner, body, n = VE.render(exp, [])
+    assert "VALEN SETUPS NOT LIVE" in banner and "<details" not in banner and n == 0
+    assert "No setup is graded" in body                                                     # the empty table is never printed WITHOUT the banner
+
+
+def test_the_page_prints_valen_entries_beside_the_aqe_lists_collapsed_with_a_count(run):
+    h = render(run)
+    i, j = h.index('<section id="lists">'), h.index('<section id="valen">')
+    assert i < j < h.index('<section id="scorecard">')
+    sec = h[j:h.index("</section>", j)]
+    assert re.search(r"<summary>\d+ Valen entries", sec) and "<details" in sec and "VALEN SETUPS NOT LIVE" not in sec
+    assert "Setups graded TRIGGERED or READY" in sec and "Undercut and rally, MET or SETUP" in sec
+
+
+def test_the_page_banner_shows_when_the_fixtures_setups_status_is_not_live(run):
+    edit(run, "aqe_daily_export.json", lambda o: o.update(setups_status={"status": "degraded", "reason": "grade failed"}))
+    h = render(run)
+    sec = h[h.index('<section id="valen">'):]
+    assert "VALEN SETUPS NOT LIVE" in sec.split("<details", 1)[0] and "grade failed" in sec
