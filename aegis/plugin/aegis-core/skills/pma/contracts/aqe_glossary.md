@@ -84,6 +84,17 @@ Every indicator the AQE-quant seat may cite, in words. Cite a field by the name 
 - `momentum_composite` -- **Pipeline momentum.** Measures the sum of the five pipeline scores above. Range: 0 to 100. High: strong across all five. Low: weak across the five.
 - `pipe_tier` -- **Pipeline tier.** Measures the label the pipeline rank earns: A-TIER, B-STRONG, C-WATCH or D-SKIP. Range: four labels. High: A-TIER and B-STRONG advance to full scoring. Low: C-WATCH and D-SKIP do not.
 
+### Health (the parts of hl_score) -- `subcomponents.health.*`
+
+- `hl_trend` -- **Health: trend structure.** Measures how intact the trend is on the position's own chart. Range: 0 to 35. High: a clean, rising trend. Low: a broken or flattening trend.
+- `hl_flow` -- **Health: money flow.** Measures whether money is still flowing in on up days versus out on down days. Range: 0 to 25. High: inflow persisting. Low: outflow taking over.
+- `hl_rs` -- **Health: relative strength.** Measures how the position is holding up against the index. Range: 0 to 20. High: still outperforming. Low: lagging the index.
+- `hl_risk` -- **Health: risk penalty.** Measures a deduction for the danger signs (volatility spike, lower lows). Range: -20 to 0. High: near zero: little risk showing. Low: toward -20: risk signs piling up.
+- `hl_higher_lows` -- **Health: higher lows.** Measures how many recent swing lows are higher than the one before. Range: a count. High: a run of higher lows. Low: none: lows are falling.
+- `hl_trend_bars` -- **Health: bars above trend.** Measures consecutive bars the close has held above its 21-day average. Range: a count of bars. High: a long unbroken run. Low: zero: below the average.
+- `hl_vol_updn` -- **Health: up/down volume.** Measures volume on up bars against volume on down bars. Range: a ratio. High: above 1: buyers heavier. Low: below 1: sellers heavier.
+- `hl_atr_spike` -- **Health: range spike.** Measures whether today's range has jumped against the average true range. Range: a ratio. High: near 1: normal ranges. Low: well above 1: an abnormal bar.
+
 ## Reading rules
 
 - A missing value is a disclosure, never a zero: say the reading was not available.
@@ -103,3 +114,4 @@ Footnotes -- where the arithmetic lives (not needed to vote):
 [BQ] docs/AQE_TECHNICAL_REFERENCE.md -- section "1.6 Base Quality (BQ)"
 [K] docs/AQE_TECHNICAL_REFERENCE.md -- section "1.7 K39 gate"
 [PR] docs/AQE_TECHNICAL_REFERENCE.md -- section "3. Pipeline Rank v1.0"
+[H] docs/AQE_TECHNICAL_REFERENCE.md -- section "6. Health Score"

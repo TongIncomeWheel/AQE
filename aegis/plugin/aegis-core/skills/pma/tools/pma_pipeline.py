@@ -96,7 +96,9 @@ CONSUMED = ["ticker","rank","sc_momentum","flow","energy","structure","mp","mp_s
     "stage", "stage_name", "stage_candidate", "stage_weeks", "stage_transition", "stage2_confirmed", "trend_template", "trend_template_met", "stage_detail",
     # PM 2026-11-19 (NOT_SERVED audit): raschke's canon R2-R5 read these; the export carries them (voice-data-contract v6 section 2) but this whitelist dropped them,
     # so a menu column would have served null. test_pma_served_fields.py fails any menu field whose root is missing here.
-    "hi_20d", "lo_20d", "nr4_flag", "nr7_flag", "stoch_k_14", "stoch_d_3", "hv_ratio_6_100"]
+    "hi_20d", "lo_20d", "nr4_flag", "nr7_flag", "stoch_k_14", "stoch_d_3", "hv_ratio_6_100",
+    # PM 2026-11-19: fundamentals (fund_*), stamped by `fundamentals-merge` AFTER trim; listed so a menu naming them is never dropped by the whitelist
+    "fund_eps_growth_q_yoy", "fund_sales_growth_q_yoy", "fund_eps_growth_annual", "fund_sales_growth_annual", "fund_roe_ttm", "fund_net_margin_ttm", "fund_pe_ttm", "fund_sponsorship", "fund_basis"]
 
 # Report C only (PM 2026-11-05): the AQE-quant seat reads the gate booleans and the pipeline rank, which the A trim has never carried.
 # Added under the C flag alone so a Report A candidate set stays byte-identical.
@@ -418,6 +420,65 @@ def _apply_enrichment(added_rows, path):
     if doc is None:
         return f"WARNING {head}; {why}. Every universe-only name reads ma_status UNKNOWN and no VWAP/volume-trend context: run the committee-topup workflow"
     return head + f" (file status {doc.get('status')})" + (" -- NOT clean, see universe_enrichment.json errors" if doc.get("status") != "ok" else "")
+
+
+FUND_FIELDS = ("fund_eps_growth_q_yoy", "fund_sales_growth_q_yoy", "fund_eps_growth_annual", "fund_sales_growth_annual", "fund_roe_ttm", "fund_net_margin_ttm",
+               "fund_pe_ttm", "fund_sponsorship", "fund_basis")
+
+
+def _fund_row_fields(t, entry):
+    """One name's fundamentals as flat fund_* row fields, every figure with its source and period in fund_basis. A missing number stays None and the basis SAYS why."""
+    if not isinstance(entry, dict):
+        return {**{k: None for k in FUND_FIELDS}, "fund_basis": f"NOT SERVED: no fundamentals row for {t} in the committee data"}
+    ex = entry.get("extras") or {}
+    q = ex.get("quarterly") or {}
+    ga = (entry.get("growth_3y") or [{}])[0] or {}
+    rt = entry.get("ratios_ttm") or {}
+    pct = lambda v: (round(float(v) * 100, 1) if isinstance(v, (int, float)) and not isinstance(v, bool) else None)   # noqa: E731
+    out = {"fund_eps_growth_q_yoy": q.get("eps_growth_yoy_pct"), "fund_sales_growth_q_yoy": q.get("sales_growth_yoy_pct"),
+           "fund_eps_growth_annual": pct(ga.get("growthEPS")), "fund_sales_growth_annual": pct(ga.get("growthRevenue")),
+           "fund_roe_ttm": ex.get("roe_ttm_pct"), "fund_net_margin_ttm": pct(rt.get("netProfitMarginTTM")),
+           "fund_pe_ttm": (round(float(rt["priceToEarningsRatioTTM"]), 1) if isinstance(rt.get("priceToEarningsRatioTTM"), (int, float)) else None),
+           "fund_sponsorship": "NOT_AVAILABLE"}
+    parts = []
+    parts.append(q["source"] if q.get("source") else f"quarterly EPS/sales growth NOT SERVED ({(ex.get('missing') or {}).get('quarterly') or ex.get('status') or 'no extras pulled'})")
+    if q.get("eps_note"):
+        parts.append(q["eps_note"])
+    parts.append(f"annual growth: FMP income-statement-growth FY {ga.get('date') or 'n/a'}")
+    parts.append(ex.get("roe_source") or f"ROE NOT SERVED ({(ex.get('missing') or {}).get('roe') or 'no extras pulled'})")
+    parts.append("margin and PE: FMP ratios-ttm")
+    parts.append("sponsorship: NOT_AVAILABLE (no institutional-ownership data on this FMP plan; never inferred)")
+    out["fund_basis"] = "; ".join(parts) + f"; pulled {entry.get('pulled_on')}"
+    return out
+
+
+def cmd_fundamentals_merge(a):
+    """PM 2026-11-19: serve EPS growth, sales growth, ROE (and declare sponsorship) from the run's fundamentals_pack.json to the seats whose canon asks. Adds the flat `fund_*` fields to
+    every row of candidate_set.json and of the export(s) IN PLACE (the run's own copies), idempotent. A row with no pack entry is DECLARED in fund_basis; a missing pack is a loud exit."""
+    pack = load(a.fundamentals, needs=["tickers"])
+    tk = pack["tickers"]
+    stats = {"rows": 0, "with_quarterly": 0, "with_roe": 0, "no_pack_entry": []}
+
+    def stamp(r):
+        f = _fund_row_fields(r.get("ticker"), tk.get(r.get("ticker")))
+        r.update(f)
+        stats["rows"] += 1
+        stats["with_quarterly"] += f["fund_eps_growth_q_yoy"] is not None or f["fund_sales_growth_q_yoy"] is not None
+        stats["with_roe"] += f["fund_roe_ttm"] is not None
+        if r.get("ticker") not in tk:
+            stats["no_pack_entry"].append(r.get("ticker"))
+    if a.candidates:
+        C = load(a.candidates, needs=["universe"])
+        for r in C["universe"]:
+            stamp(r)
+        save(a.candidates, C)
+    for path in (a.export or []):
+        D = load(path, needs=["daily_list"])
+        for r in list(D["daily_list"]) + list(D.get("held_positions") or []):
+            stamp(r)
+        save(path, D)
+    print(f"receipt: fundamentals-merge: {stats['rows']} row(s); quarterly EPS/sales growth on {stats['with_quarterly']}, ROE on {stats['with_roe']}; "
+          f"sponsorship NOT_AVAILABLE on all; no pack entry for {sorted(set(stats['no_pack_entry'])) or 'none'}; extras coverage {pack.get('extras_coverage')}")
 
 
 def cmd_augment_export(a):
@@ -4145,6 +4206,9 @@ if __name__ == "__main__":
     s.add_argument("--seat-sets", default="seat_sets.json"); s.add_argument("--committee-dir", default="aegis/output/committee_data")
     s = sub.add_parser("slate-from-forms", help="STANDARD SCAN / AQE QUANT SCAN: the Chair's slate by code from decision.json + the seats' own tier-2 forms (nothing the seats did not say)")
     s.add_argument("--dir", default=".", help="the run directory (decision.json, forms/tier2/, slate_plan.json, board.json)"); s.add_argument("--out", default=None)
+    s = sub.add_parser("fundamentals-merge", help="PM 2026-11-19: add fund_* fields (EPS / sales growth, ROE, sponsorship declared; source in fund_basis) from the run's fundamentals_pack.json to candidate_set.json and the export(s), in place")
+    s.add_argument("--fundamentals", default="aegis/output/committee_data/fundamentals_pack.json"); s.add_argument("--candidates", default="candidate_set.json")
+    s.add_argument("--export", nargs="*", default=["aqe_daily_export_wu.json"])
     s = sub.add_parser("augment-export", help="STANDARD SCAN (PM 2026-11-16): add the screened names that are not in daily_list to a copy of the export (universe_only rows from aqe_universe_rows.json) so every later command finds a row")
     s.add_argument("--export", required=True); s.add_argument("--universe-rows", required=True); s.add_argument("--seat-sets", default=None, help="seat_sets.json from `screens`"); s.add_argument("--enrichment", default=None, help="committee_data/universe_enrichment.json (PM 2026-11-19): hourly elder_context + M&A flag for the screened universe-only names; absent = loud WARNING and ma_status UNKNOWN")
     s.add_argument("--tickers", default=None, help="comma list of extra tickers"); s.add_argument("--out", default="aqe_daily_export_wu.json")
@@ -4248,7 +4312,7 @@ if __name__ == "__main__":
     s = sub.add_parser("grade"); s.add_argument("--ledger", default="verdict_ledger.json"); s.add_argument("--prices", required=True); s.add_argument("--date", required=True)
     s = sub.add_parser("repeat-watch"); s.add_argument("--ledger", default="phase4_ledger.json"); s.add_argument("--verdicts", default="verdict_ledger.json"); s.add_argument("--date", required=True); s.add_argument("--out", default="repeat_watch.json")
     a = p.parse_args()
-    {"trim": cmd_trim, "screens": cmd_screens, "augment-export": cmd_augment_export, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
+    {"trim": cmd_trim, "screens": cmd_screens, "augment-export": cmd_augment_export, "fundamentals-merge": cmd_fundamentals_merge, "slate-from-forms": cmd_slate_from_forms, "coverage": cmd_coverage, "packets": cmd_packets, "tally": cmd_tally, "rank": cmd_rank, "brackets": cmd_brackets, "repeatmarks": cmd_repeatmarks,
      "round2packets": cmd_round2packets,
      "r2digest": cmd_r2digest, "consensus": cmd_consensus, "ledger": cmd_ledger, "gate": cmd_gate,
      "board": cmd_board, "floor-check": cmd_floor_check, "ratify-count": cmd_ratify_count, "slate-cut": cmd_slate_cut, "committee-position": cmd_committee_position, "rationale-final": cmd_rationale_final, "slate-plan": cmd_slate_plan,

@@ -19,7 +19,7 @@ REF = "docs/AQE_TECHNICAL_REFERENCE.md"
 REF_HEADINGS = {
     "F": "1.1 Flow v1.3", "E": "1.2 Energy v1.3.1", "S": "1.3 Structure v1.5.0", "M": "1.4 Momentum Persistence (MP) v1.2",
     "EL": "1.5 Elder Impulse", "BQ": "1.6 Base Quality (BQ)", "K": "1.7 K39 gate", "SC": "2. Composite scores",
-    "PR": "3. Pipeline Rank v1.0",
+    "PR": "3. Pipeline Rank v1.0", "H": "6. Health Score",
 }
 
 # (field, plain name, what it measures, range, high means, low means)
@@ -99,9 +99,21 @@ SUBCOMPONENTS = {
         ("momentum_composite", "Pipeline momentum", "the sum of the five pipeline scores above", "0 to 100", "strong across all five", "weak across the five"),
         ("pipe_tier", "Pipeline tier", "the label the pipeline rank earns: A-TIER, B-STRONG, C-WATCH or D-SKIP", "four labels", "A-TIER and B-STRONG advance to full scoring", "C-WATCH and D-SKIP do not"),
     ],
+    # PM 2026-11-19: the parts of the Health composite (hl_score), served again for the seats whose canon reads them
+    "health": [
+        ("hl_trend", "Health: trend structure", "how intact the trend is on the position's own chart", "0 to 35", "a clean, rising trend", "a broken or flattening trend"),
+        ("hl_flow", "Health: money flow", "whether money is still flowing in on up days versus out on down days", "0 to 25", "inflow persisting", "outflow taking over"),
+        ("hl_rs", "Health: relative strength", "how the position is holding up against the index", "0 to 20", "still outperforming", "lagging the index"),
+        ("hl_risk", "Health: risk penalty", "a deduction for the danger signs (volatility spike, lower lows)", "-20 to 0", "near zero: little risk showing", "toward -20: risk signs piling up"),
+        ("hl_higher_lows", "Health: higher lows", "how many recent swing lows are higher than the one before", "a count", "a run of higher lows", "none: lows are falling"),
+        ("hl_trend_bars", "Health: bars above trend", "consecutive bars the close has held above its 21-day average", "a count of bars", "a long unbroken run", "zero: below the average"),
+        ("hl_vol_updn", "Health: up/down volume", "volume on up bars against volume on down bars", "a ratio", "above 1: buyers heavier", "below 1: sellers heavier"),
+        ("hl_atr_spike", "Health: range spike", "whether today's range has jumped against the average true range", "a ratio", "near 1: normal ranges", "well above 1: an abnormal bar"),
+    ],
 }
 ENGINE_NAMES = {"flow": ("Flow", "F"), "energy": ("Energy", "E"), "structure": ("Structure", "S"), "mp": ("Momentum persistence", "M"),
-                "bq": ("Base quality (feeds the position gate only)", "BQ"), "pipe": ("Pipeline rank parts", "PR")}
+                "bq": ("Base quality (feeds the position gate only)", "BQ"), "pipe": ("Pipeline rank parts", "PR"),
+                "health": ("Health (the parts of hl_score)", "H")}
 
 
 def all_fields():
@@ -130,7 +142,7 @@ def render():
           "- Position size, stops and targets are not part of this glossary and not part of your vote.", "",
           "---", "Footnotes -- where the arithmetic lives (not needed to vote):", ""]
     seen = []
-    for key in ["SC", "F", "E", "S", "M", "EL", "BQ", "K", "PR"]:
+    for key in ["SC", "F", "E", "S", "M", "EL", "BQ", "K", "PR", "H"]:
         L.append(f"[{key}] {REF} -- section \"{REF_HEADINGS[key]}\"")
         seen.append(key)
     L.append("")

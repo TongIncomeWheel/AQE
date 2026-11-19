@@ -599,8 +599,11 @@ _FIELD_GLOSSARY = {
                      "bq: {bq_range_tight, bq_vol_dry, bq_base_dur, bq_ema_conv, bq_base_days}. "
                      "pipe: {pr_ret_12m, pr_adx_score, pr_rsi_score, pr_vol_score, pr_ma_score "
                      "(MA-stack alignment), momentum_composite, pipe_tier}. "
+                     "health: {hl_trend (trend structure, 0-35), hl_flow (flow, 0-25), hl_rs (relative strength, 0-20), "
+                     "hl_risk (risk penalty, -20-0), hl_higher_lows, hl_trend_bars, hl_vol_updn, hl_atr_spike} — "
+                     "the parts of hl_score, served from 2026-11-19 (PM: serve every calculated sub-score asked). "
                      "Readiness sub-scores are intentionally NOT here (hidden per the "
-                     "decision-framework ruling) and Health sub-scores stay held-only/dropped.",
+                     "decision-framework ruling).",
     "sector_trend_state": "The ticker's GICS-sector SRM trend-state for the day (e.g. 'Momentum "
                           "Building — Add' / 'Momentum Fading — Hold' / 'Recovering' / 'Declining'). "
                           "Context; the gate is gics_gate, unchanged.",
@@ -1889,8 +1892,9 @@ def _num(v):
 # ---------------------------------------------------------------------------
 # Engine SUBCOMPONENT surface (PM ruling: educate the AIC — the engines already
 # compute ~60 sub-scores nightly into scores_daily; ship them, don't hide them).
-# Readiness (rd_*) stays hidden (decision-framework ruling) and the Health
-# sub-scores stay dropped (PM ruling) — this block covers the 6 scoring engines.
+# Readiness (rd_*) stays hidden (decision-framework ruling). The Health
+# sub-scores were dropped by an earlier PM ruling and are SERVED AGAIN from 2026-11-19 (PM: "serve every calculated sub-score asked", it overrides
+# the removal): nested under subcomponents.health only; the flat hl_trend / hl_flow / hl_rs / hl_risk keys stay stripped from the rows.
 # ---------------------------------------------------------------------------
 _SUBCOMPONENT_SPEC = {
     # engine → scores_daily columns (missing columns degrade to None)
@@ -1907,6 +1911,9 @@ _SUBCOMPONENT_SPEC = {
             "bq_base_days"],
     "pipe": ["pr_ret_12m", "pr_adx_score", "pr_rsi_score", "pr_vol_score",
               "pr_ma_score", "momentum_composite", "pipe_tier"],
+    # PM 2026-11-19: the Health composite's own parts (src/engines/health.py), served for the seats whose canon reads them (minervini, oneil, livermore, wyckoff).
+    "health": ["hl_trend", "hl_flow", "hl_rs", "hl_risk", "hl_higher_lows",
+               "hl_trend_bars", "hl_vol_updn", "hl_atr_spike"],
 }
 
 

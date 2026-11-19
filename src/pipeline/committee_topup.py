@@ -94,6 +94,8 @@ def topup(names, run_date: str, fund: dict, grid: dict, closes: dict, universe_r
     panel = panel if panel is not None else cd.load_panel_daily(sorted(set(todo) | {cd.BENCH}))
     for t in before["fundamentals"]:
         fund.setdefault("tickers", {})[t] = cd.fetch_fundamentals_one(f, t, run_date)
+    # PM 2026-11-19: quarterly EPS / sales growth and ROE for every requested name lacking fresh extras (optional: declared per name, never moves `ok`)
+    fund["extras_coverage"] = cd.fill_extras(f, fund.setdefault("tickers", {}), names, run_date)
     daily_cache: dict = {}
     if before["mtf"]:
         sub = cd.build_grid(f, before["mtf"], run_date, {"daily_list": [{"ticker": t, "entry": last_close.get(t)} for t in before["mtf"]]},
@@ -180,6 +182,20 @@ def main(argv=None) -> int:
         return 2
     miss = missing(sorted(names), fund, grid, closes)
     print(f"[topup] {len(names)} names; missing before: fundamentals {len(miss['fundamentals'])}, mtf {len(miss['mtf'])}, closes {len(miss['closes'])}")
+    no_extras = [t for t in sorted(names) if ((fund.get("tickers", {}).get(t) or {}).get("extras") or {}).get("status") not in ("served", "partial")]
+    if not any(miss.values()) and no_extras:
+        print(f"[topup] fundamentals extras (EPS / sales growth, ROE) missing for {len(no_extras)} name(s); pulling them")
+        from src.data.fmp_client import FMPClient as _FMP
+        fund["extras_coverage"] = cd.fill_extras(cd.Fetcher(_FMP(), budget_s=1800.0), fund.setdefault("tickers", {}), sorted(names), run_date)
+        (d / "fundamentals_pack.json").write_bytes(cd.dumps(fund))
+        mf = dict(base)
+        if (mf.get("files") or {}).get("fundamentals_pack.json"):
+            body = (d / "fundamentals_pack.json").read_bytes()
+            import hashlib
+            mf["files"]["fundamentals_pack.json"].update({"sha256": hashlib.sha256(body).hexdigest(), "bytes": len(body)})
+            (d / cd.MANIFEST).write_bytes(cd.dumps(mf))
+            base = mf
+        print("[topup] extras:", fund["extras_coverage"])
     if not any(miss.values()):
         print("[topup] nothing missing: every requested name already has fundamentals, MTF and closes")
         only = _enrich(d, names, rows, run_date)
