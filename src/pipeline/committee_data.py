@@ -197,6 +197,94 @@ def fetch_fundamentals_one(f: Fetcher, t: str, today: str) -> dict:
     return entry
 
 
+# ------------------------------------------------------------------ fundamentals extras (PM 2026-11-19: serve EPS growth, sales growth, ROE, sponsorship to the seats whose canon asks)
+EXTRAS_BUDGET_S = 600       # wall clock for the extras pass; names it does not reach carry extras status "not_pulled" (declared, never blank-as-zero)
+QUARTERS = 6
+SPONSORSHIP_GAP = ("NOT_AVAILABLE: this FMP plan serves no institutional-ownership endpoint, so fund sponsorship (O'Neil's I) is not served. "
+                   "Web grounding is a PM-run step; nothing is inferred from price or volume")
+
+
+def _growth_pct(now, then):
+    """YoY % change; None when the base is not a positive number (a loss-to-profit swing is not a meaningful growth rate)."""
+    try:
+        if now is None or then is None or float(then) <= 0:
+            return None
+        return round((float(now) - float(then)) / float(then) * 100, 1)
+    except (TypeError, ValueError):
+        return None
+
+
+def quarterly_growth(rows) -> tuple[dict | None, str | None]:
+    """FMP income-statement period=quarter (newest first) -> latest quarter vs the SAME quarter a year earlier (diluted EPS, revenue)."""
+    rows = [r for r in (rows or []) if isinstance(r, dict)]
+    if not rows:
+        return None, "no quarterly income statements"
+    now = rows[0]
+    try:
+        want_fy = str(int(now.get("fiscalYear")) - 1)
+    except (TypeError, ValueError):
+        return None, "latest quarter carries no fiscalYear"
+    ya = next((r for r in rows[1:] if r.get("period") == now.get("period") and str(r.get("fiscalYear")) == want_fy), None)
+    if ya is None:
+        return None, f"no {now.get('period')} {want_fy} quarter in the {len(rows)} quarters served"
+    pick = lambda r: {"date": r.get("date"), "period": r.get("period"), "fiscalYear": r.get("fiscalYear"), "eps_diluted": r.get("epsDiluted"), "revenue": r.get("revenue")}   # noqa: E731
+    eps_g, rev_g = _growth_pct(now.get("epsDiluted"), ya.get("epsDiluted")), _growth_pct(now.get("revenue"), ya.get("revenue"))
+    note = None if eps_g is not None else "prior-year diluted EPS is zero, negative or missing: EPS growth is not meaningful and is not served"
+    return {"latest": pick(now), "year_ago": pick(ya), "eps_growth_yoy_pct": eps_g, "sales_growth_yoy_pct": rev_g, "eps_note": note,
+            "source": f"FMP income-statement (quarter): {now.get('period')} FY{now.get('fiscalYear')} vs {ya.get('period')} FY{ya.get('fiscalYear')}, diluted EPS and revenue"}, None
+
+
+def fetch_extras_one(f: Fetcher, t: str, today: str) -> dict:
+    """The two extra FMP calls per name (income-statement quarter, key-metrics-ttm). Optional: a failure is declared here and never moves the pack's own status."""
+    out: dict = {"pulled_on": today, "sponsorship": {"status": "NOT_AVAILABLE", "reason": SPONSORSHIP_GAP}}
+    miss = {}
+    q, err = f.get("income-statement", symbol=t, period="quarter", limit=QUARTERS)
+    if err is None:
+        out["quarterly"], why = quarterly_growth(q)
+        if out["quarterly"] is None:
+            miss["quarterly"] = why
+    else:
+        miss["quarterly"] = err
+    k, err = f.get("key-metrics-ttm", symbol=t)
+    if err is None and isinstance(k, list) and k and isinstance(k[0], dict) and k[0].get("returnOnEquityTTM") is not None:
+        out["roe_ttm_pct"] = round(float(k[0]["returnOnEquityTTM"]) * 100, 1)
+        out["roe_source"] = "FMP key-metrics-ttm returnOnEquityTTM"
+    else:
+        miss["roe"] = err or "key-metrics-ttm carried no returnOnEquityTTM"
+    out["status"] = "served" if not miss else ("not_pulled" if len(miss) == 2 and "quarterly" not in out and "roe_ttm_pct" not in out else "partial")
+    if miss:
+        out["missing"] = miss
+    return out
+
+
+def fill_extras(f: Fetcher, out: dict, tickers: list[str], today: str, clock=time.monotonic, budget_s: float = EXTRAS_BUDGET_S) -> dict:
+    """Second pass over the pack: every name lacking fresh extras gets them, under a wall-clock budget; the rest are marked not_pulled. -> the coverage block."""
+    t0, served = clock(), 0
+    for t in tickers:
+        e = out.get(t)
+        if not isinstance(e, dict):
+            continue
+        ex = e.get("extras")
+        fresh = isinstance(ex, dict) and ex.get("status") in ("served", "partial") and ex.get("pulled_on")
+        if fresh:
+            try:
+                fresh = 0 <= (date.fromisoformat(today) - date.fromisoformat(ex["pulled_on"])).days < FUND_MAX_AGE_DAYS
+            except ValueError:
+                fresh = False
+        if fresh:
+            served += 1
+            continue
+        if clock() - t0 > budget_s or f.exhausted():
+            e["extras"] = {"status": "not_pulled", "pulled_on": today, "sponsorship": {"status": "NOT_AVAILABLE", "reason": SPONSORSHIP_GAP},
+                           "missing": {"all": "extras budget exhausted before this name; not fetched"}}
+            continue
+        e["extras"] = fetch_extras_one(f, t, today)
+        served += e["extras"]["status"] in ("served", "partial")
+    states = [(out.get(t) or {}).get("extras", {}).get("status") for t in tickers if t in out]
+    return {"requested": len(states), "served": states.count("served"), "partial": states.count("partial"), "not_pulled": states.count("not_pulled"),
+            "budget_s": budget_s, "elapsed_s": round(clock() - t0, 1)}
+
+
 def build_fundamentals(f: Fetcher, tickers: list[str], today: str, previous: dict | None) -> dict:
     prev = (previous or {}).get("tickers") or {}
     out, carried = {}, 0
@@ -215,10 +303,16 @@ def build_fundamentals(f: Fetcher, tickers: list[str], today: str, previous: dic
     served = sum(1 for e in out.values() if e["status"] in ("served", "carried"))
     partial = sorted(t for t, e in out.items() if e["status"] == "partial")
     unserved = sorted(t for t, e in out.items() if e["status"] == "unserved")
+    # carried entries keep their extras (own date); a carried entry from before 2026-11-19 has none and is filled here, not re-pulled whole
+    for t, e in out.items():
+        if t in prev and isinstance(prev[t], dict) and "extras" in prev[t] and "extras" not in e:
+            e["extras"] = prev[t]["extras"]
+    extras = fill_extras(f, out, tickers, today)
     return {"schema": "fundamentals_pack.v1", "run_date": today, "as_of": today,
-            "source": "FMP stable REST (profile, ratios-ttm, income-statement-growth) via src/pipeline/committee_data.py",
+            "source": "FMP stable REST (profile, ratios-ttm, income-statement-growth; extras: income-statement quarter, key-metrics-ttm) via src/pipeline/committee_data.py",
             "coverage": {"requested": len(tickers), "served": served, "carried": carried, "partial": len(partial),
                          "unserved": len(unserved), "partial_names": partial, "unserved_names": unserved},
+            "extras_coverage": extras,
             "tickers": out}
 
 

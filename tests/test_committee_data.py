@@ -75,9 +75,17 @@ class FakeClient:
         return v
 
 
+def quarters_payload():
+    """Six quarters newest first (FMP income-statement period=quarter): Q3 FY2026 vs Q3 FY2025 -> EPS +80.3%, sales +13.9%."""
+    mk = lambda d, p, fy, eps, rev: {"date": d, "symbol": "X", "fiscalYear": str(fy), "period": p, "epsDiluted": eps, "revenue": rev, "eps": eps}   # noqa: E731
+    return [mk("2026-09-29", "Q3", 2026, 1.19, 1033440000), mk("2026-06-30", "Q2", 2026, 1.41, 1029633000), mk("2026-03-31", "Q1", 2026, 1.02, 978833000),
+            mk("2025-12-30", "Q4", 2025, 0.60, 961558000), mk("2025-09-30", "Q3", 2025, 0.66, 907226000), mk("2025-07-01", "Q2", 2025, 1.14, 955825000)]
+
+
 def mp_routes(sym="MP", hourly=None, with_15=True):
     r = {("profile", sym): fx("profile"), ("ratios-ttm", sym): fx("ratios_ttm"),
          ("income-statement-growth", sym): fx("income_statement_growth"),
+         ("income-statement", sym): quarters_payload(), ("key-metrics-ttm", sym): [{"symbol": sym, "returnOnEquityTTM": 0.41840278738075615}],
          ("historical-chart/1hour", sym): hourly if hourly is not None else hourly_series()}
     if with_15:
         r[("historical-chart/15min", sym)] = fx("intraday_15min")
@@ -630,3 +638,56 @@ def test_the_ledger_comes_from_the_last_pma_run_dir_never_a_rerun_dir(tmp_path):
     p = cd.latest_ledger_path(tmp_path)
     assert p.parent.name == "2026-11-02"
     assert cd.ledger_tickers(RUN_DATE, path=p) == ["A", "B"]
+
+
+# ------------------------------------------------------------------ fundamentals extras (PM 2026-11-19: EPS growth, sales growth, ROE, sponsorship)
+def test_extras_serve_quarterly_eps_and_sales_growth_roe_and_declare_sponsorship_with_the_source():
+    f = cd.Fetcher(FakeClient(mp_routes()))
+    e = cd.fetch_extras_one(f, "MP", RUN_DATE)
+    q = e["quarterly"]
+    assert q["eps_growth_yoy_pct"] == 80.3 and q["sales_growth_yoy_pct"] == 13.9
+    assert "Q3 FY2026 vs Q3 FY2025" in q["source"] and "FMP income-statement" in q["source"]
+    assert e["roe_ttm_pct"] == 41.8 and e["roe_source"] == "FMP key-metrics-ttm returnOnEquityTTM"
+    assert e["sponsorship"]["status"] == "NOT_AVAILABLE" and "institutional-ownership" in e["sponsorship"]["reason"]
+    assert e["status"] == "served"
+
+
+def test_a_loss_to_profit_swing_is_not_a_growth_rate_and_is_declared():
+    rows = quarters_payload()
+    rows[4]["epsDiluted"] = -0.10
+    q, why = cd.quarterly_growth(rows)
+    assert q["eps_growth_yoy_pct"] is None and "not meaningful" in q["eps_note"] and q["sales_growth_yoy_pct"] == 13.9
+    assert cd.quarterly_growth(rows[:3])[0] is None, "no year-ago quarter in the rows served"
+    assert cd.quarterly_growth([])[1] == "no quarterly income statements"
+
+
+def test_a_failed_extras_call_is_declared_per_name_and_never_moves_the_packs_own_status():
+    routes = mp_routes()
+    del routes[("key-metrics-ttm", "MP")]                      # unrouted -> an error
+    f = cd.Fetcher(FakeClient(routes))
+    e = cd.fetch_extras_one(f, "MP", RUN_DATE)
+    assert e["status"] == "partial" and "roe" in e["missing"] and e["quarterly"]["eps_growth_yoy_pct"] == 80.3
+    res = cd_pack(routes)
+    assert res["tickers"]["MP"]["status"] == "served", "the base status is unchanged by an extras failure"
+
+
+def cd_pack(routes):
+    f = cd.Fetcher(FakeClient(routes))
+    return cd.build_fundamentals(f, ["MP"], RUN_DATE, None)
+
+
+def test_the_pack_carries_extras_coverage_and_a_carried_entry_keeps_its_own_extras():
+    pack = cd_pack(mp_routes())
+    assert pack["extras_coverage"]["served"] == 1 and pack["tickers"]["MP"]["extras"]["status"] == "served"
+    f = cd.Fetcher(FakeClient({}))                              # no routes: any call would error
+    again = cd.build_fundamentals(f, ["MP"], RUN_DATE, pack)
+    assert again["tickers"]["MP"]["status"] == "carried" and again["tickers"]["MP"]["extras"]["status"] == "served" and f.calls == 0
+
+
+def test_the_extras_budget_marks_the_rest_not_pulled_never_blank():
+    import itertools
+    tick = itertools.count(0, 400)
+    out = {t: {"status": "served"} for t in ("A", "B", "C")}
+    f = cd.Fetcher(FakeClient(mp_routes("A") | mp_routes("B") | mp_routes("C")))
+    cov = cd.fill_extras(f, out, ["A", "B", "C"], RUN_DATE, clock=lambda: next(tick), budget_s=500)
+    assert cov["not_pulled"] >= 1 and out["C"]["extras"]["status"] == "not_pulled" and "budget" in out["C"]["extras"]["missing"]["all"]

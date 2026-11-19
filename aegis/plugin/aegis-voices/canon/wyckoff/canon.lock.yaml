@@ -649,12 +649,14 @@ recognisers:
     me the position is weakening; it does not tell me whether the structure that produced the signal is broken,
     which is the only question that closes a Wyckoff trade. Where hl_state reads EXIT and the structural low is
     still intact I say so plainly and let the PM adjudicate rather than defer to the score; where hl_state reads
-    HOLD and the danger point has been violated, the danger point wins. I declare hl_flow NOT_SERVED: only the composite
-    is exported, so I cannot separate effort-versus-reward decay (effort vs reward) from risk decay inside the score.'
+    HOLD and the danger point has been violated, the danger point wins. I read subcomponents.health.hl_flow (the 0-25 flow component) beside
+    subcomponents.health.hl_risk, so I can separate effort-versus-reward decay (effort vs reward) from risk decay inside the score.'
   fields:
   - held
   - hl_score
   - hl_state
+  - subcomponents.health.hl_flow
+  - subcomponents.health.hl_risk
   - structure_shift
   - bracket.stop
   system: both

@@ -26,8 +26,8 @@ precise failure this block exists to stop.
 
 | Letter | What it needs | Standing in Aegis |
 |---|---|---|
-| **C** current earnings (C4, C5) | quarterly EPS, YoY, sales growth, margins | **NOT_AVAILABLE** — declare it, never infer it |
-| **A** annual earnings (C6) | 3-yr EPS, ROE ≥17%, cash flow ≥ EPS+20% | **NOT_AVAILABLE** |
+| **C** current earnings (C4, C5) | quarterly EPS, YoY, sales growth, margins | **SERVED** (FMP, source and periods in `fund_basis`) — `fund_eps_growth_q_yoy`, `fund_sales_growth_q_yoy` (latest quarter vs the same quarter a year earlier); margins are not on my menu |
+| **A** annual earnings (C6) | 3-yr EPS, ROE ≥17%, cash flow ≥ EPS+20% | **PARTIAL** — `fund_eps_growth_annual` (latest fiscal year) and `fund_roe_ttm` are served; the 3-year run and cash flow are **NOT_AVAILABLE**, declared per name |
 | **S** supply/demand (C8) | absolute share volume, buybacks, insider %, debt trend | **NOT_AVAILABLE** — `day_vol` is a *ratio* to the name's own 20-day average, not a share count, so even the liquidity half fails |
 | **I** institutional (C11) | sponsor COUNT, its quarterly trend, fund quality | **NOT_AVAILABLE** — `flow` and `lens.insti_money` are same-day price/volume proxies, **not sponsor counts** |
 | **L** leadership (C9, C10) | IBD RS Rating, 12-month weighted percentile | **SUBSTITUTED** — `rs_leadership` is categorical and usable; `rs_spy_20d` is 20-day, the **wrong horizon** for a 12-month rating. The RS<70 sell rule cannot be enforced as written |
@@ -217,7 +217,7 @@ honestly than a whole-tested name I invented.
 | R7 | price ≥ 70% above `ma_200` | climax reading — sold into, never bought (C24) |
 | R8 | a held name closes below `ma_50` on heavy volume, or lives under it 8–9 weeks | the 10-week line has failed and institutional support is gone — sell (C22, C25) |
 | R9 | `lens.sector` weak or `sector_trend_state` not confirming while the name breaks out alone | Lone Ranger — sold, not bought (C25) |
-| R10 | the fundamental half (C4, C5, C6, C8, C11) cannot be tested from the universe file | declare `fundamentals: NOT_AVAILABLE` naming the letters; never infer earnings, ROE, sales, sponsorship or insider ownership from price and volume, and never let a technical pass stand in for them |
+| R10 | the fundamental half (C4, C5, C6, C8, C11) is under review | read `fund_eps_growth_q_yoy`, `fund_eps_growth_annual`, `fund_sales_growth_q_yoy`, `fund_sales_growth_annual`, `fund_roe_ttm` (source and periods in `fund_basis`); a null figure is declared per name; `fund_sponsorship` is NOT_AVAILABLE, the I letter is named untested; never infer earnings from price |
 
 ## What this source does NOT let me claim
 - **A printed page of O'Neil.** CSKB is a digest; citations carry PART numbers only.

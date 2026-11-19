@@ -541,11 +541,21 @@ recognisers:
   - sector_trend_state
   - gics_sector
 - id: R10
-  if: the fundamental half (C4, C5, C6, C8, C11) cannot be tested from the universe file
-  then: I declare fundamentals NOT_AVAILABLE and name the letters I could not test. I never infer earnings,
-    ROE, sales, sponsorship or insider ownership from price and volume, and I never let a technical pass
-    stand in for them
+  if: the fundamental half (C4, C5, C6, C8, C11) is under review
+  then: 'I read fund_eps_growth_q_yoy (the current-quarter EPS letter), fund_eps_growth_annual (the annual EPS letter), fund_sales_growth_q_yoy and
+    fund_sales_growth_annual (the sales leg) and fund_roe_ttm from the packet; fund_basis names the source and the periods for every figure (FMP
+    income-statement quarter against the same quarter a year earlier, FMP income-statement-growth, FMP key-metrics-ttm). A figure that is null is declared
+    for that name with the reason in fund_basis, never filled. fund_sponsorship is NOT_AVAILABLE (no institutional-ownership data on our FMP plan) and
+    I name the I letter as untested. I never infer earnings, ROE, sales, sponsorship or insider ownership from price and volume, and I never let a
+    technical pass stand in for them'
   fields:
+  - fund_eps_growth_q_yoy
+  - fund_eps_growth_annual
+  - fund_sales_growth_q_yoy
+  - fund_sales_growth_annual
+  - fund_roe_ttm
+  - fund_sponsorship
+  - fund_basis
   - sc_momentum
   - structure
 - id: R11
@@ -555,12 +565,14 @@ recognisers:
     read served for a held position. hl_state EXIT is consistent with a sell and I act on it. hl_state
     HOLD_ADD never overrides C20''s automatic 7-8 percent stop, C19''s late-stage-base warning, or C25''s
     distribution signals — a health score measures the position''s current condition, not the base it broke
-    out of. I declare hl_rs NOT_SERVED as a separate figure: only the composite is exported, so I cannot
-    see whether the decay is relative strength (my test) or risk (not my test).'
+    out of. I read subcomponents.health.hl_rs (the 0-20 relative-strength component) as that figure on its own, and
+    subcomponents.health.hl_risk beside it, so I can see whether the decay is relative strength (my test) or risk (not my test).'
   fields:
   - held
   - hl_score
   - hl_state
+  - subcomponents.health.hl_rs
+  - subcomponents.health.hl_risk
   - sc_momentum
 methods: []
 counts:
