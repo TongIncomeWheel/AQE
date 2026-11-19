@@ -1885,6 +1885,9 @@ THEMATIC_LIST_FIELDS = {
 # sample, not listed here. Only the fields with no flattened daily_list
 # sibling are basket-list-only.
 THEMATIC_LIST_ONLY = {"basket", "breadth_pct", "parent_capped_grade"}
+# Health composite is computed for the HELD book only (engines/health.py). Pinned so the doc never depends on whether a sampled
+# export is on disk (without one the schema-dict fallback labelled hl_score "daily_list" and the regeneration test failed).
+HELD_HEALTH_ONLY = {"hl_score", "hl_state"}
 
 QS_BLOCK_PREFIX = "qs."
 QS_BLOCK_ONLY = {"qs_market", "qs_status"}
@@ -1951,6 +1954,8 @@ def classify_export_location(name: str) -> str:
         return "held_positions only (PTJ broker journal passthrough)"
     if name in THEMATIC_LIST_ONLY:
         return "daily_list[].thematic_baskets[] (nested, per-basket)"
+    if name in HELD_HEALTH_ONLY:
+        return "held_positions only"
 
     # daily_list checked before srm[]-only, because several names exist on
     # BOTH (e.g. 'grade' does not, but this ordering matters generally) —

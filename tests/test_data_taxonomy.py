@@ -387,3 +387,15 @@ def test_regenerating_is_deterministic():
     subprocess.run([sys.executable, "-m", "scripts.build_data_taxonomy"],
                    cwd=ROOT, check=True, capture_output=True)
     assert CSV_PATH.read_bytes() == before
+
+
+def test_health_fields_are_held_only_with_or_without_a_sampled_export(monkeypatch):
+    """hl_score/hl_state are the held book's; the doc must not flip with whatever export sits on disk."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("bdt_pin", ROOT / "scripts" / "build_data_taxonomy.py")
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    monkeypatch.setattr(m, "_load_live_export_keys", lambda: {"daily_list": {"hl_score"}, "held_positions": set(), "srm": set()})
+    assert m.classify_export_location("hl_score") == "held_positions only"
+    monkeypatch.setattr(m, "_load_live_export_keys", lambda: {"daily_list": set(), "held_positions": set(), "srm": set()})
+    assert m.classify_export_location("hl_score") == "held_positions only"
+    assert m.classify_export_location("hl_state") == "held_positions only"
