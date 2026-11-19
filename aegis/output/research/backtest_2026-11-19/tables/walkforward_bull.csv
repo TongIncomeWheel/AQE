@@ -1,0 +1,19 @@
+recipe,h,n_dates,eff_n_indep,avg_picks,hit_vs_ew,base_hit_all_names,lift,lift_ci95_lo,lift_ci95_hi,lift_nw_t,hit_vs_spy,median_ex_ew,mean_ex_ew_wins,mean_ex_spy_wins,rule
+WF 2022,5,38,7.6,20.0,0.5934,0.507,0.0864,,,1.6992,0.6539,0.0093,0.0098,0.0131,gate: hl_higher_lows >= 6 AND hl_vol_updn >= 1 | rank: bq_ema_conv asc | top 20
+WF 2022,10,38,3.8,20.0,0.6092,0.5126,0.0967,,,1.8752,0.6711,0.0176,0.0168,0.0204,gate: hl_higher_lows >= 6 AND hl_vol_updn >= 1 | rank: bq_ema_conv asc | top 20
+WF 2022,20,38,1.9,20.0,0.6053,0.4941,0.1112,,,3.5964,0.6461,0.0244,0.0174,0.0258,gate: hl_higher_lows >= 6 AND hl_vol_updn >= 1 | rank: bq_ema_conv asc | top 20
+WF 2023,5,224,44.8,19.4196,0.4557,0.4738,-0.0181,-0.0689,0.046,-0.7095,0.4522,-0.0029,-0.0041,-0.0039,gate: rd_compression <= 19 AND resist_score >= 5 AND bq_base_days >= 54 | rank: bq_base_days desc | top 20
+WF 2023,10,224,22.4,19.4196,0.445,0.4696,-0.0246,-0.1061,0.0424,-0.6857,0.4197,-0.005,-0.0078,-0.0083,gate: rd_compression <= 19 AND resist_score >= 5 AND bq_base_days >= 54 | rank: bq_base_days desc | top 20
+WF 2023,20,224,11.2,19.4196,0.4424,0.4612,-0.0188,-0.1308,0.0536,-0.3692,0.396,-0.0094,-0.0114,-0.0142,gate: rd_compression <= 19 AND resist_score >= 5 AND bq_base_days >= 54 | rank: bq_base_days desc | top 20
+WF 2024,5,252,50.4,20.0,0.4756,0.465,0.0106,-0.0108,0.0367,0.7206,0.4859,-0.0018,-0.0002,-0.0001,gate: (no gate) | rank: bq_ema_conv asc | top 20
+WF 2024,10,252,25.2,20.0,0.4778,0.457,0.0208,-0.0078,0.0536,1.2115,0.4726,-0.003,-0.0013,-0.0009,gate: (no gate) | rank: bq_ema_conv asc | top 20
+WF 2024,20,252,12.6,20.0,0.4629,0.4474,0.0155,-0.0192,0.0483,0.9445,0.4708,-0.0067,-0.0002,0.0018,gate: (no gate) | rank: bq_ema_conv asc | top 20
+WF 2025,5,207,41.4,19.4783,0.4967,0.4675,0.0292,-0.015,0.0742,1.5633,0.5135,-0.0005,0.0032,0.0048,gate: rd_compression <= 12 AND rd_vol_surge >= 0.947 AND pr_ret_12m >= 12 | rank: pr_ret_12m desc | top 20
+WF 2025,10,207,20.7,19.4783,0.497,0.4524,0.0446,-0.0184,0.0808,1.8872,0.5139,-0.0013,0.0059,0.0096,gate: rd_compression <= 12 AND rd_vol_surge >= 0.947 AND pr_ret_12m >= 12 | rank: pr_ret_12m desc | top 20
+WF 2025,20,207,10.4,19.4783,0.4891,0.4371,0.0521,-0.0182,0.1029,1.6497,0.521,-0.0045,0.014,0.0222,gate: rd_compression <= 12 AND rd_vol_surge >= 0.947 AND pr_ret_12m >= 12 | rank: pr_ret_12m desc | top 20
+WF 2026,5,204,40.8,20.0,0.4953,0.4839,0.0115,-0.0643,0.0841,0.4102,0.5108,-0.0007,0.0004,0.0019,gate: pr_ret_12m >= 20 AND ms_p50 >= 78.55 | rank: bq_ema_conv asc | top 20
+WF 2026,10,199,19.9,20.0,0.4698,0.4783,-0.0084,-0.0928,0.0896,-0.2216,0.4807,-0.0055,0.0014,0.0045,gate: pr_ret_12m >= 20 AND ms_p50 >= 78.55 | rank: bq_ema_conv asc | top 20
+WF 2026,20,189,9.4,20.0,0.5016,0.468,0.0336,-0.0406,0.15,0.6361,0.5151,0.0003,0.01,0.0155,gate: pr_ret_12m >= 20 AND ms_p50 >= 78.55 | rank: bq_ema_conv asc | top 20
+WF pooled 2022-2026,5,925,185.0,19.7427,0.4847,0.4736,0.0111,-0.0163,0.0356,1.0279,0.4963,-0.0013,0.0002,0.001,retrained yearly
+WF pooled 2022-2026,10,920,92.0,19.7413,0.4778,0.4659,0.0119,-0.0203,0.0435,0.8263,0.4789,-0.0029,0.0001,0.0017,retrained yearly
+WF pooled 2022-2026,20,910,45.5,19.7385,0.4778,0.4547,0.0231,-0.0095,0.0612,1.1902,0.4803,-0.005,0.0031,0.0064,retrained yearly

@@ -1,0 +1,88 @@
+{
+ "rank": [
+  "rd_rs_bonus",
+  1
+ ],
+ "gates": [
+  [
+   "bq_ema_conv",
+   -1,
+   10.0
+  ],
+  [
+   "rd_close_str",
+   -1,
+   0.2800000011920929
+  ],
+  [
+   "bq_100",
+   -1,
+   35.0
+  ]
+ ],
+ "train_obj": 0.5178607974195178,
+ "tried": 140,
+ "pool": [
+  [
+   "rd_compression",
+   -1
+  ],
+  [
+   "squeeze_score",
+   -1
+  ],
+  [
+   "rd_trigger",
+   -1
+  ],
+  [
+   "bq_100",
+   -1
+  ],
+  [
+   "rs_spy_score",
+   -1
+  ],
+  [
+   "bq_ema_conv",
+   -1
+  ],
+  [
+   "rs_vs_spy",
+   -1
+  ],
+  [
+   "rs_accel_score",
+   1
+  ],
+  [
+   "rd_rs_bonus",
+   1
+  ],
+  [
+   "rs_accel",
+   1
+  ],
+  [
+   "bq_vol_dry",
+   -1
+  ],
+  [
+   "rd_close_str",
+   -1
+  ],
+  [
+   "pr_vol_score",
+   1
+  ],
+  [
+   "energy_100",
+   -1
+  ],
+  [
+   "volume_score",
+   1
+  ]
+ ],
+ "rule": "gate: bq_ema_conv <= 10 AND rd_close_str <= 0.28 AND bq_100 <= 35 | rank: rd_rs_bonus desc | top 20"
+}
