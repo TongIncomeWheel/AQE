@@ -498,7 +498,7 @@ steps:
       every claim in a claims packet and every survivor in a tier2 packet carries the row sliced to the REVIEWING seat's own menu + the held and momentum floors. floor2 / ratify2 / QA prompts take the same rows from
       `pma_pipeline.py seat-rows --candidates candidate_set.json --menus voice_menus.json --tickers <T1> <T2> ... --date <date> --outdir seat_rows` (paste the seat's file, never retype). A seat that still writes
       NOT_SERVED for a field on its own menu is a pipeline defect: report it, do not accept it.
-      The LATER-ROUND PROMPTS (CROSS, TIER2, RATIFY, FLOOR2, RATIFY2, ADOPT) are built by `seat_prompts.py build --round <ROUND> --work <run work dir> --repo <repo>` from the run's own files and the templates in
+      The ROUND PROMPTS (NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, RATIFY, QA, FLOOR2, RATIFY2, ADOPT; the book line in NOMINATE comes only from broker_stops.json and held_table.md, which must agree) are built by `seat_prompts.py build --round <ROUND> --work <run work dir> --repo <repo>` from the run's own files and the templates in
       contracts/prompts/ (never copied from yesterday's text): it runs `seat-rows` for the round's tickers, adds the seat's `seat_rows/<ROUND>/<seat>.json` as one more READ item, and fails on a date or ticker the run
       does not own (`seat_prompts.py check`). Each prompt carries its own facts, so a seat resumed with the round as a message needs no earlier file.
       TIER 1 -- CROSS-EXAMINATION (contracts/cross_ruling.schema.json). A reviewer RULES on each claim routed to it --
