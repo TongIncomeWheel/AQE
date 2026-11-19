@@ -27,11 +27,13 @@ def _env_paused() -> bool:
 
 
 def read_flag() -> tuple[dict | None, str | None]:
-    """(flag document or None, problem). A missing file is (None, None): never paused. An unreadable one is (None, why)."""
+    """(flag document or None, problem). A missing file on a READABLE Drive is (None, None): never paused. An unreadable Drive, or none configured, is (None, why):
+    the caller must say it could not verify, never print "RUNNING"."""
     try:
         from src.data import gdrive_uploader
         if not gdrive_uploader.is_configured():
-            return None, None
+            # Loud, never "not paused" (conductor 2026-11-19): a container with no Drive credentials once reported RUNNING while the real flag was PAUSED.
+            return None, "CANNOT VERIFY: Drive is not configured here, so the pause flag was not read"
         txt = gdrive_uploader.download_text(FLAG_FILENAME)
         if not txt:
             return None, None
@@ -44,11 +46,11 @@ def read_flag() -> tuple[dict | None, str | None]:
 def status() -> dict:
     """{paused, why, since, by, problem}. Env var wins; otherwise the Drive flag."""
     if _env_paused():
-        return {"paused": True, "why": "ALERTS_PAUSED env var is set", "since": None, "by": "env", "problem": None}
+        return {"paused": True, "why": "ALERTS_PAUSED env var is set", "since": None, "by": "env", "problem": None, "verified": True}
     doc, problem = read_flag()
     paused = bool((doc or {}).get("paused"))
     return {"paused": paused, "why": (doc or {}).get("reason"), "since": (doc or {}).get("since"),
-            "by": (doc or {}).get("by"), "problem": problem}
+            "by": (doc or {}).get("by"), "problem": problem, "verified": problem is None}
 
 
 def is_paused() -> bool:

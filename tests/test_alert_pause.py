@@ -65,3 +65,25 @@ def test_deadman_does_not_alarm_while_paused(monkeypatch):
     _drive(monkeypatch, FakeDrive(json.dumps({"paused": True, "since": "2026-11-12T10:00:00+00:00"})))
     st = heartbeat.check_and_alarm(send=True, now_utc=datetime(2026, 11, 12, 16, 0, tzinfo=timezone.utc))
     assert st["stale"] is False and st["paused"] and st["alarm_sent"] is False
+
+
+def test_no_drive_configured_is_cannot_verify_never_running(monkeypatch, capsys):
+    """Conductor 2026-11-19: a container with no Drive credentials reported RUNNING while the real flag was PAUSED. A flag that was not read is never 'not paused'."""
+    monkeypatch.delenv("ALERTS_PAUSED", raising=False)
+    import src.data.gdrive_uploader as G
+    monkeypatch.setattr(G, "is_configured", lambda: False)
+    st = pause.status()
+    assert st["paused"] is False and st["verified"] is False and "CANNOT VERIFY" in st["problem"]
+    from scripts import alerts_pause
+    rc = alerts_pause.main(["status"])
+    out = capsys.readouterr().out
+    assert rc != 0 and "CANNOT VERIFY" in out and "RUNNING" not in out
+
+
+def test_a_verified_flag_still_prints_running_or_paused(monkeypatch, capsys):
+    monkeypatch.delenv("ALERTS_PAUSED", raising=False)
+    from scripts import alerts_pause
+    _drive(monkeypatch, FakeDrive(json.dumps({"paused": False, "reason": "resumed"})))
+    assert alerts_pause.main(["status"]) == 0 and "RUNNING" in capsys.readouterr().out
+    _drive(monkeypatch, FakeDrive(json.dumps({"paused": True, "since": "2026-11-12T10:00:00+00:00"})))
+    assert alerts_pause.main(["status"]) == 0 and "PAUSED" in capsys.readouterr().out
