@@ -31,7 +31,7 @@ pytestmark = pytest.mark.skipif(not (RUN / "prompts" / "CROSS" / "seow.txt").exi
 def work(tmp_path):
     w = tmp_path / "work"
     w.mkdir()
-    for f in ("run_manifest.json", "funnel.json", "claims_board.json", "slate.json", "rationale_draft.json", "phase4.json", "consensus.json"):
+    for f in ("run_manifest.json", "funnel.json", "claims_board.json", "slate.json", "rationale_draft.json", "phase4.json", "consensus.json", "broker_stops.json", "held_table.md"):
         if (RUN / f).exists():
             shutil.copy(RUN / f, w / f)
     (w / "forms" / "qa").mkdir(parents=True)
@@ -41,14 +41,17 @@ def work(tmp_path):
 
 @pytest.mark.parametrize("rnd", SP.ROUNDS)
 def test_the_19_nov_prompts_are_reproduced_byte_for_byte_without_the_seat_rows_item(work, rnd):
-    for seat in SEATS:
+    for seat in SP.ROUND_SEATS.get(rnd, SEATS):
         got = SP.render(rnd, seat, str(work), GOLD_REPO, with_rows=False)
         got = got.replace(str(work), GOLD_ROOT)
         want = (RUN / "prompts" / rnd / f"{seat}.txt").read_text(encoding="utf-8")
+        # The conductor's NOMINATE text also said "SPCX was closed on 18 Nov and RBRK on 17 Nov": closed-position history is not in broker_stops.json or the held
+        # table, so the tool does not carry it (the book line comes from those two files only). Everything else is byte for byte.
+        want = want.replace("; SPCX was closed on 18 Nov and RBRK on 17 Nov, so held_review", ", so held_review")
         assert got == want, f"{rnd}/{seat} differs from the prompt the conductor ran"
 
 
-@pytest.mark.parametrize("rnd", SP.ROUNDS)
+@pytest.mark.parametrize("rnd", sorted(SP.ROWS_ROUNDS))
 def test_every_prompt_names_the_seat_rows_file_once_and_numbers_it_after_the_last_item(work, rnd):
     t = SP.render(rnd, "seow", str(work), GOLD_REPO, with_rows=True)
     path = SP.seat_rows_path(str(work), rnd, "seow")
@@ -103,3 +106,52 @@ def test_the_build_command_writes_rows_and_prompts_and_declares_a_ticker_with_no
     rows = json.loads((work / "seat_rows" / "RATIFY2" / "seow.json").read_text())
     assert rows["names"][1]["row"] is None and "row_gap" in rows["names"][1], "a missing row is declared in the file"
     assert "WARNING" in r.stdout
+
+
+def test_the_book_line_comes_only_from_broker_stops_and_the_held_table_and_the_two_must_agree(work):
+    assert "FLAT: no position is held" in SP.book_sentence(str(work))
+    (work / "broker_stops.json").write_text(json.dumps({"positions": {"RBRK": {"stop": 99.45}, "SPCX": {"stop": 150}}}))
+    with pytest.raises(SystemExit) as e:
+        SP.book_sentence(str(work))                        # the held table still says FLAT
+    assert "FLAT" in str(e.value) and "RBRK" in str(e.value)
+    (work / "held_table.md").write_text("| Ticker | Qty |\n|---|---|\n| RBRK | 80 |\n| SPCX | -68 |\n")
+    line = SP.book_sentence(str(work))
+    assert "RBRK, SPCX" in line and "99.45" not in line, "tickers only: no stop or quantity is restated in prompt text"
+    (work / "held_table.md").write_text("| Ticker | Qty |\n|---|---|\n| RBRK | 80 |\n")
+    with pytest.raises(SystemExit) as e:
+        SP.book_sentence(str(work))
+    assert "names ['RBRK']" in str(e.value)
+    (work / "held_table.md").unlink()
+    with pytest.raises(SystemExit) as e:
+        SP.book_sentence(str(work))
+    assert "held_table.md is missing" in str(e.value)
+
+
+def test_a_stale_book_in_another_runs_broker_stops_is_caught_in_a_nominate_prompt(work, tmp_path):
+    repo = tmp_path / "repo"
+    old = repo / "aegis" / "output" / "pma" / "run" / "2026-11-18"
+    old.mkdir(parents=True)
+    (old / "broker_stops.json").write_text(json.dumps({"positions": {"RBRK": {"stop": 99.45}, "SPCX": {"stop": 150}}}))
+    clean = SP.render("NOMINATE", "seow", str(work), str(repo), with_rows=False)
+    assert SP.check_prompt(clean, str(work), str(repo)) == []
+    stale = clean.replace("FLAT: no position is held", "RBRK is held with a stop at 99.45")
+    bad = SP.check_prompt(stale, str(work), str(repo))
+    assert any("ticker RBRK" in b for b in bad), bad
+
+
+def test_the_vote_prompt_splits_the_room_by_the_runs_own_deliberation_set(work):
+    t = SP.render("VOTE", "seow", str(work), GOLD_REPO, with_rows=False)
+    n = len(SP.round_tickers("VOTE", str(work), "seow"))
+    assert f"vote on EVERY one of the {n} deliberation-set names" in t and "file 2 parts" in t
+    ph = json.loads((work / "phase4.json").read_text())
+    ph["deliberation_set"] = ph["deliberation_set"][:5]
+    (work / "phase4.json").write_text(json.dumps(ph))
+    t = SP.render("VOTE", "seow", str(work), GOLD_REPO, with_rows=False)
+    assert "EVERY one of the 5 deliberation-set" in t and "file 1 parts" in t.replace("file 1 parts", "file 1 parts") and "partNof1" in t
+
+
+def test_challenge_and_qa_are_the_qa_seats_and_carry_no_seat_rows(work):
+    for rnd in ("CHALLENGE", "QA"):
+        assert SP.ROUND_SEATS[rnd] == ["steenbarger"] and rnd not in SP.ROWS_ROUNDS
+        t = SP.render(rnd, "steenbarger", str(work), GOLD_REPO, with_rows=False)
+        assert "STEENBARGER seat" in t and "seat_rows" not in t

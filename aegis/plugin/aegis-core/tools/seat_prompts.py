@@ -2,8 +2,8 @@
 """seat_prompts.py -- the committee's round prompts, built from the run's OWN files (conductor + PM 2026-11-19; first slice of the repo-owned prompt tool).
 
 WHY: the round prompts used to be scratch text hand-copied from the previous day's (19 Nov: yesterday's book in R1, then MBGL/CHYM in RATIFY2). This builds the
-prompts of the LATER rounds -- CROSS, TIER2, RATIFY, FLOOR2, RATIFY2, ADOPT -- from templates in contracts/prompts/ and from facts read out of the run directory
-(run_manifest date, phase4, funnel, claims packets, qa note, slate, rationale draft). A source file that is missing is a loud SystemExit, never a default and never
+prompts of every round the committee runs by prompt -- NOMINATE, CHALLENGE, VOTE, CROSS, TIER2, RATIFY, QA, FLOOR2, RATIFY2, ADOPT -- from templates in contracts/prompts/ and from facts read out of the run directory
+(run_manifest date, broker_stops + held table, phase4, funnel, claims board, qa note, slate, rationale draft). A source file that is missing is a loud SystemExit, never a default and never
 a carried value.
 
 SEAT ROWS (the 19 Nov NOT_SERVED audit): later rounds used to carry no AQE rows at all. Every prompt now has one more READ item,
@@ -34,7 +34,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CONTRACTS = os.path.abspath(os.path.join(HERE, "..", "contracts"))
 TEMPLATES = os.path.join(CONTRACTS, "prompts")
 SEATS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
-ROUNDS = ["CROSS", "TIER2", "RATIFY", "FLOOR2", "RATIFY2", "ADOPT"]
+ROUNDS = ["NOMINATE", "CHALLENGE", "VOTE", "CROSS", "TIER2", "RATIFY", "QA", "FLOOR2", "RATIFY2", "ADOPT"]
+ROUND_SEATS = {"CHALLENGE": ["steenbarger"], "QA": ["steenbarger"]}           # every other round is the seven deciders
+ROWS_ROUNDS = {"VOTE", "CROSS", "TIER2", "RATIFY", "FLOOR2", "RATIFY2", "ADOPT"}    # rounds that carry the seat-rows READ item
 SEAT_ROWS_NOTE = ("each ticker of this round with the AQE fields on YOUR menu (plus the held and momentum floors); a field that is not in it is off your menu, "
                   "a ticker with row_gap has no AQE row and you declare it unread")
 
@@ -106,6 +108,8 @@ def round_tickers(rnd, work, seat):
     """The tickers THIS seat sees in this round (the seat-rows list)."""
     if rnd == "CROSS":
         return list(dict.fromkeys(_routed_claims(work, seat)[1]))
+    if rnd == "VOTE":
+        return tickers_of(jload(os.path.join(work, "phase4.json"), "phase4.json")["deliberation_set"])
     if rnd == "TIER2":
         return tickers_of(jload(os.path.join(work, "funnel.json"), "funnel.json")["survivors"])
     if rnd == "RATIFY":
@@ -118,9 +122,48 @@ def round_tickers(rnd, work, seat):
     die(f"unknown round {rnd}")
 
 
+def book_sentence(work):
+    """The Aegis book, from broker_stops.json and the held table ONLY (19 Nov: round 1 carried the previous day's book, RBRK / SPCX and a wrong stop).
+    The two files must agree; a disagreement is a loud SystemExit. Tickers only: stops, quantities and health reach the seat through the packet's held columns."""
+    bs = jload(os.path.join(work, "broker_stops.json"), "broker_stops.json")
+    pos = bs.get("positions")
+    if not isinstance(pos, dict):
+        die("broker_stops.json has no `positions` object -- the book cannot be stated")
+    ht = os.path.join(work, "held_table.md")
+    if not os.path.exists(ht):
+        die(f"held_table.md is missing ({ht}) -- the book is stated from broker_stops.json AND the held table, never from one")
+    text = open(ht, encoding="utf-8").read()
+    flat = "FLAT" in text.upper().split("\n", 1)[0]
+    rows = [m for m in re.findall(r"^\|\s*([A-Z][A-Z.]{0,5})\s*\|", text, flags=re.M) if m != "Ticker"]
+    if pos and flat:
+        die(f"broker_stops.json holds {sorted(pos)} but held_table.md says the book is FLAT")
+    if not pos and not flat:
+        die("broker_stops.json holds no position but held_table.md does not say the book is FLAT")
+    if pos and rows and set(rows) != set(pos):
+        die(f"held_table.md names {sorted(set(rows))} but broker_stops.json holds {sorted(pos)}")
+    if not pos:
+        return "the Aegis book today is FLAT: no position is held, so held_review is [] unless the packet shows a held name"
+    return (f"the Aegis book today holds {', '.join(sorted(pos))}: each is a held name to review; its stop, quantity and health are in the packet's held columns "
+            "and broker_stops.json, never restated here")
+
+
+def _parts_of(names, n=16):
+    k = math.ceil(len(names) / n)
+    size = math.ceil(len(names) / k)
+    return [names[i:i + size] for i in range(0, len(names), size)]
+
+
 def round_facts(rnd, work, seat):
     f = {}
-    if rnd == "CROSS":
+    if rnd == "NOMINATE":
+        f["BOOK"] = book_sentence(work)
+    elif rnd == "VOTE":
+        names = round_tickers("VOTE", work, seat)
+        parts = _parts_of(names)
+        n = len(parts)
+        f.update(N_NAMES=str(len(names)), N_PARTS=str(n),
+                 PART_LINES="\n".join(f"- Part {i + 1} of {n} \u2192 {work}/forms/r2/{seat}.part{i + 1}of{n}.json, exactly these {len(pt)}: {' '.join(pt)}" for i, pt in enumerate(parts)))
+    elif rnd == "CROSS":
         f["N_CLAIMS"] = str(len(_routed_claims(work, seat)[0]))
     elif rnd == "TIER2":
         sv = tickers_of(jload(os.path.join(work, "funnel.json"), "funnel.json")["survivors"])
@@ -209,8 +252,12 @@ def foreign_tickers(repo, work, run_date):
             p = os.path.join(d, fn)
             if os.path.exists(p):
                 try:
-                    out |= set(re.findall(r'"(?:ticker|symbol)":\s*"([A-Z.]{1,6})"', open(p, encoding="utf-8").read()))
-                except OSError:
+                    body = open(p, encoding="utf-8").read()
+                    out |= set(re.findall(r'"(?:ticker|symbol)":\s*"([A-Z.]{1,6})"', body))
+                    pos = (json.loads(body) or {}).get("positions") if fn == "broker_stops.json" else None
+                    if isinstance(pos, dict):
+                        out |= {k for k in pos if re.fullmatch(r"[A-Z.]{1,6}", k)}      # broker_stops keys its positions by ticker
+                except (OSError, ValueError):
                     pass
     return out - mine
 
@@ -252,16 +299,17 @@ def main(argv=None):
         print("seat_prompts check: " + ("FAIL" if rc else "clean"))
         return rc
     rounds = ROUNDS if a.round.upper() == "ALL" else [a.round.upper()]
-    seats = a.seats or SEATS
     out_root = a.out or os.path.join(a.work, "prompts")
     rc = 0
     for rnd in rounds:
         if rnd not in ROUNDS:
-            die(f"round {rnd} is not one of {ROUNDS} (the earlier rounds are not repo-owned yet)")
+            die(f"round {rnd} is not one of {ROUNDS}")
+        seats = a.seats or ROUND_SEATS.get(rnd, SEATS)
         for s in seats:
-            if not a.no_rows:
+            rows_on = (not a.no_rows) and rnd in ROWS_ROUNDS
+            if rows_on:
                 build_rows(rnd, s, a.work, a.repo)
-            text = render(rnd, s, a.work, a.repo, with_rows=not a.no_rows, data_through=a.data_through)
+            text = render(rnd, s, a.work, a.repo, with_rows=rows_on, data_through=a.data_through)
             bad = check_prompt(text, a.work, a.repo, a.data_through)
             if bad:
                 rc = 1
@@ -269,7 +317,7 @@ def main(argv=None):
                     print(f"STALE {rnd}/{s}: {x}")
             os.makedirs(os.path.join(out_root, rnd), exist_ok=True)
             open(os.path.join(out_root, rnd, f"{s}.txt"), "w", encoding="utf-8").write(text)
-        print(f"seat_prompts: {rnd}: {len(seats)} prompt(s) -> {os.path.join(out_root, rnd)}" + ("" if a.no_rows else f"; seat rows -> {os.path.join(a.work, 'seat_rows', rnd)}"))
+        print(f"seat_prompts: {rnd}: {len(seats)} prompt(s) -> {os.path.join(out_root, rnd)}" + (f"; seat rows -> {os.path.join(a.work, 'seat_rows', rnd)}" if (rnd in ROWS_ROUNDS and not a.no_rows) else ""))
     return rc
 
 
