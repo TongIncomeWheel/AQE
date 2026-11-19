@@ -1,0 +1,105 @@
+"""seat_prompts: the later rounds' prompts built from the run's own files (conductor + PM 2026-11-19). Offline.
+
+GOLDEN: the 19 Nov run's CROSS / TIER2 / RATIFY / FLOOR2 / RATIFY2 / ADOPT prompts (60 files the conductor ran) are reproduced BYTE FOR BYTE from the committed run
+files and the repo templates, apart from the one added seat-rows READ item."""
+import importlib.util
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "aegis" / "plugin" / "aegis-core" / "skills" / "pma" / "tools"
+RUN = ROOT / "aegis" / "output" / "pma" / "run" / "2026-11-19"
+SEATS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wyckoff"]
+GOLD_ROOT = "/home/user/pma_run/2026-11-19"
+GOLD_REPO = "/home/user/AQE"
+
+spec = importlib.util.spec_from_file_location("seat_prompts", TOOLS / "seat_prompts.py")
+SP = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(SP)
+
+pytestmark = pytest.mark.skipif(not (RUN / "prompts" / "CROSS" / "seow.txt").exists(), reason="the 19 Nov prompts are not in this checkout")
+
+
+@pytest.fixture()
+def work(tmp_path):
+    w = tmp_path / "work"
+    w.mkdir()
+    for f in ("run_manifest.json", "funnel.json", "claims_board.json", "slate.json", "rationale_draft.json", "phase4.json", "consensus.json"):
+        if (RUN / f).exists():
+            shutil.copy(RUN / f, w / f)
+    (w / "forms" / "qa").mkdir(parents=True)
+    shutil.copy(RUN / "forms" / "qa" / "steenbarger.json", w / "forms" / "qa" / "steenbarger.json")
+    return w
+
+
+@pytest.mark.parametrize("rnd", SP.ROUNDS)
+def test_the_19_nov_prompts_are_reproduced_byte_for_byte_without_the_seat_rows_item(work, rnd):
+    for seat in SEATS:
+        got = SP.render(rnd, seat, str(work), GOLD_REPO, with_rows=False)
+        got = got.replace(str(work), GOLD_ROOT)
+        want = (RUN / "prompts" / rnd / f"{seat}.txt").read_text(encoding="utf-8")
+        assert got == want, f"{rnd}/{seat} differs from the prompt the conductor ran"
+
+
+@pytest.mark.parametrize("rnd", SP.ROUNDS)
+def test_every_prompt_names_the_seat_rows_file_once_and_numbers_it_after_the_last_item(work, rnd):
+    t = SP.render(rnd, "seow", str(work), GOLD_REPO, with_rows=True)
+    path = SP.seat_rows_path(str(work), rnd, "seow")
+    assert t.count(path) == 1 and "not in it is off your menu" in t.replace("a field that is not in it", "not in it") or "off your menu" in t
+    if rnd != "ADOPT":
+        m = re.search(r"^(\d+)\. Your AQE data for this round", t, flags=re.M)
+        assert m, rnd
+        items = [int(x) for x in re.findall(r"^(\d+)\. ", t.split("READ ONLY")[1].split("THE ROUND")[0].split("Steenbarger (QA)")[0], flags=re.M)]
+        assert items == list(range(1, len(items) + 1)), (rnd, items)
+
+
+def test_a_missing_run_file_is_a_loud_failure_never_a_default(work):
+    (work / "funnel.json").unlink()
+    with pytest.raises(SystemExit) as e:
+        SP.render("TIER2", "seow", str(work), GOLD_REPO, with_rows=False)
+    assert "funnel.json is missing" in str(e.value)
+    (work / "forms" / "qa" / "steenbarger.json").write_text(json.dumps({"holds": []}))
+    with pytest.raises(SystemExit) as e:
+        SP.render("FLOOR2", "seow", str(work), GOLD_REPO, with_rows=False)
+    assert "no holds" in str(e.value)
+
+
+def test_the_stale_text_check_fails_on_yesterdays_tickers_and_dates(work, tmp_path):
+    repo = tmp_path / "repo"
+    old = repo / "aegis" / "output" / "pma" / "run" / "2026-11-18"
+    old.mkdir(parents=True)
+    (old / "slate_held.json").write_text(json.dumps({"tickets": [{"ticker": "MBGL"}, {"ticker": "ZZYY"}]}))
+    (old / "broker_stops.json").write_text(json.dumps({"stops": [{"ticker": "RBRK"}, {"symbol": "SPCX"}]}))
+    clean = SP.render("RATIFY2", "seow", str(work), str(repo), with_rows=False)
+    assert SP.check_prompt(clean, str(work), str(repo)) == []
+    stale = clean.replace("WWW and AMRX", "MBGL and ZZYY") + "\nthe book: RBRK long, SPCX short; data 2026-11-17"
+    bad = SP.check_prompt(stale, str(work), str(repo))
+    for t in ("MBGL", "ZZYY", "RBRK", "SPCX"):
+        assert any(f"ticker {t}" in b for b in bad), (t, bad)
+    assert any("2026-11-17" in b for b in bad)
+
+
+def test_the_build_command_writes_rows_and_prompts_and_declares_a_ticker_with_no_row(work, tmp_path):
+    cs = {"universe": [{"ticker": t, "adx_14": 20.0, "subcomponents": {"flow": {"cmf": 0.1}}} for t in ("WWW", "AMRX")]}   # the held pair only
+    (work / "candidate_set.json").write_text(json.dumps(cs))
+    out = tmp_path / "prompts"
+    r = subprocess.run([sys.executable, str(TOOLS / "seat_prompts.py"), "build", "--round", "RATIFY2", "--seats", "seow", "--work", str(work), "--repo", str(tmp_path / "norepo"),
+                        "--out", str(out)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    rows = json.loads((work / "seat_rows" / "RATIFY2" / "seow.json").read_text())
+    assert [n["ticker"] for n in rows["names"]] == ["WWW", "AMRX"] and rows["names"][0]["row"]["adx_14"] == 20.0
+    assert (out / "RATIFY2" / "seow.txt").exists()
+    cs["universe"].pop()
+    (work / "candidate_set.json").write_text(json.dumps(cs))
+    r = subprocess.run([sys.executable, str(TOOLS / "seat_prompts.py"), "build", "--round", "RATIFY2", "--seats", "seow", "--work", str(work), "--repo", str(tmp_path / "norepo"),
+                        "--out", str(out)], capture_output=True, text=True)
+    rows = json.loads((work / "seat_rows" / "RATIFY2" / "seow.json").read_text())
+    assert rows["names"][1]["row"] is None and "row_gap" in rows["names"][1], "a missing row is declared in the file"
+    assert "WARNING" in r.stdout
