@@ -1,9 +1,9 @@
 {
  "schema": "pma_levels.v1",
  "conditions_schema": "pma_conditions.v1",
- "run_date": "2026-11-17",
- "session": "2026-11-17",
- "generated_at": "2026-11-17T10:49+00:00",
+ "run_date": "2026-11-19",
+ "session": "2026-11-19",
+ "generated_at": "2026-11-19T00:51+00:00",
  "valid_until": "next PMA run, or 16:15 ET on the session date, whichever first",
  "render_only": true,
  "guardrails": [
@@ -14,170 +14,180 @@
  ],
  "counts": {
   "ADVANCE": 5,
-  "HELD": 2,
-  "HOLD_FOR_CONDITIONS": 6,
-  "WATCH": 24,
-  "carried": 8
+  "HELD": 0,
+  "HOLD_FOR_CONDITIONS": 2,
+  "WATCH": 25,
+  "carried": 4
  },
  "rows": [
   {
-   "ticker": "CHYM",
-   "class": "HOLD_FOR_CONDITIONS",
-   "lane": "MOMENTUM",
+   "ticker": "CAKE",
+   "class": "ADVANCE",
+   "lane": "PULLBACK",
    "conviction": 3,
    "held": false,
-   "mark": "NONE",
+   "mark": "FRESH",
    "levels": {
-    "ref_close": 34.29,
-    "stop": 32.96,
+    "ref_close": 120.05,
+    "stop": 115.02,
     "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.88,
+    "stop_pct": 4.19,
     "tp": [
-     35.55,
-     36.65,
-     38.04
+     120.78,
+     127.1,
+     135.14
     ],
-    "rr_to_tp2": 1.77,
+    "rr_to_tp2": 1.4,
     "gates_clear": false,
     "sized": false
    },
    "triggers": [
     {
-     "id": "2026-11-17:CHYM-buy0",
+     "id": "2026-11-19:CAKE-buy0",
      "kind": "close_above",
-     "level": 34.63,
+     "level": 120.78,
      "basis": "15m",
      "priority": "ACTION",
-     "action": "CHYM: an hourly candle closes above 34.63 (2 analysts' shared buy line). Your decision.",
-     "volume_min_x": 1.4
+     "action": "CAKE: an hourly candle closes above 120.78 (5 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
     },
     {
-     "id": "2026-11-17:CHYM-touch",
+     "id": "2026-11-19:CAKE-touch",
      "kind": "trade_above",
-     "level": 34.63,
+     "level": 120.78,
      "basis": "15m",
      "priority": "WARN",
-     "action": "CHYM traded through yesterday's intraday high 34.63: the buy line is in play, not met until an hourly close confirms."
+     "action": "CAKE traded through yesterday's intraday high 120.78: the buy line is in play, not met until an hourly close confirms."
     },
     {
-     "id": "2026-11-17:CHYM-dead",
+     "id": "2026-11-19:CAKE-wait",
+     "kind": "trade_below",
+     "level": 117.96,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CAKE is back in the wait area 117.96-117.96."
+    },
+    {
+     "id": "2026-11-19:CAKE-dead",
      "kind": "close_below",
-     "level": 30.52,
+     "level": 117.96,
      "basis": "daily",
      "priority": "WARN",
-     "action": "CHYM closed under 30.52, the exit line most analysts share: the case is invalidated."
+     "action": "CAKE closed under 117.96, the exit line most analysts share: the case is invalidated."
     }
    ],
-   "confirms": "an hourly candle closes above bar_high 34.63; outperforms SPY today; volume at least 1.4x normal for the time of day",
-   "kills": "A daily close under 30.52 (2 analysts' exit line).",
+   "confirms": "an hourly candle closes above bar_high 120.78; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 117.96 (4 analysts' exit line).",
    "conditions": {
     "shared": {
      "buy": [
       {
        "w": "h1_close_above",
-       "level": 34.63,
+       "level": 120.78,
        "x": null,
        "seats": [
         "livermore",
-        "minervini"
+        "minervini",
+        "oneil",
+        "raschke",
+        "wyckoff"
        ],
-       "plain": "an hourly candle closes above bar_high 34.63",
+       "plain": "an hourly candle closes above bar_high 120.78",
        "when": "1H"
       }
      ],
      "confirm": [
       {
-       "w": "rs_today_gt_spy",
-       "level": null,
-       "x": null,
-       "seats": [
-        "livermore",
-        "minervini"
-       ],
-       "plain": "outperforms SPY today",
-       "when": "LIVE"
-      },
-      {
        "w": "vol_x_ge",
        "level": null,
-       "x": 1.4,
+       "x": 1.2,
        "seats": [
-        "minervini",
-        "oneil"
+        "livermore",
+        "raschke",
+        "wyckoff"
        ],
-       "plain": "volume at least 1.4x normal for the time of day",
+       "plain": "volume at least 1.2x normal for the time of day",
        "when": "LIVE"
       }
      ],
      "no_shared_buy": false,
-     "wait_zone": null,
+     "wait_zone": {
+      "lo": 117.96,
+      "hi": 117.96,
+      "members": [
+       "structure_shift_ref"
+      ]
+     },
      "chase": {
-      "word": "close_above:bar_high+3pct",
+      "word": "close_above:pivot_high+5pct",
       "w": "close_above",
       "when": "EOD",
       "levels": [
-       35.6689
+       123.858
       ],
       "x": null,
-      "plain": "closes above bar_high+3pct 35.6689"
+      "plain": "closes above pivot_high+5pct 123.858"
      }
     },
     "exits": [
      {
       "w": "close_below",
-      "value": 31.8596,
+      "value": 117.96,
       "seats": [
-       "oneil"
+       "livermore",
+       "oneil",
+       "raschke",
+       "wyckoff"
       ],
-      "plain": "closes below 31.8596"
+      "plain": "closes below 117.96"
      },
      {
-      "w": "close_below",
-      "value": 31.52,
-      "seats": [
-       "seow"
-      ],
-      "plain": "closes below 31.52"
-     },
-     {
-      "w": "close_below",
-      "value": 31.07,
+      "w": "trade_below",
+      "value": 111.86,
       "seats": [
        "wyckoff"
       ],
-      "plain": "closes below 31.07"
+      "plain": "trades below 111.86"
      },
      {
       "w": "close_below",
-      "value": 30.52,
+      "value": 110.67,
       "seats": [
-       "livermore",
        "minervini"
       ],
-      "plain": "closes below 30.52"
+      "plain": "closes below 110.67"
      },
      {
       "w": "close_below",
-      "value": 29.94,
+      "value": 110.446,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 110.446"
+     },
+     {
+      "w": "close_below",
+      "value": 108.155,
       "seats": [
        "elder-lens"
       ],
-      "plain": "closes below 29.94"
+      "plain": "closes below 108.155"
      },
      {
       "w": "close_below",
-      "value": 27.66,
+      "value": 97.55,
       "seats": [
+       "seow",
        "seow"
       ],
-      "plain": "closes below 27.66"
+      "plain": "closes below 97.55"
      }
     ],
     "analysts": [
      {
       "seat": "elder-lens",
       "vote": "SUPPORT",
-      "conviction": 2,
+      "conviction": 3,
       "counts": false,
       "lane": "PULLBACK",
       "tf": "EOD",
@@ -188,13 +198,11 @@
         "w": "in_zone",
         "when": "LIVE",
         "levels": [
-         30.52
+         110.67
         ],
         "x": null,
-        "plain": "comes back to ma_20 30.52"
-       }
-      ],
-      "confirm": [
+        "plain": "comes back to ma_20 110.67"
+       },
        {
         "word": "elder_ge:7",
         "w": "elder_ge",
@@ -204,49 +212,59 @@
         "plain": "elder reading 7 or more"
        }
       ],
+      "confirm": [
+       {
+        "word": "vol_x_le:1.0",
+        "w": "vol_x_le",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.0,
+        "plain": "volume at most 1x normal for the time of day"
+       }
+      ],
       "wrong": [
        {
-        "word": "elder_le:6",
-        "w": "elder_le",
-        "when": "COB",
-        "levels": [],
-        "x": 6.0,
-        "plain": "elder reading drops to 6 or less"
-       },
-       {
-        "word": "close_below:ma_50",
+        "word": "close_below:ma_20-0.5atr",
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         29.94
+         108.155
         ],
         "x": null,
-        "plain": "closes below ma_50 29.94"
+        "plain": "closes below ma_20-0.5atr 108.155"
+       },
+       {
+        "word": "elder_le:1",
+        "w": "elder_le",
+        "when": "COB",
+        "levels": [],
+        "x": 1.0,
+        "plain": "elder reading drops to 1 or less"
        }
       ],
       "wait": [
        {
         "field": "ma_20",
-        "value": 30.52
+        "value": 110.67
        }
       ],
       "chase": {
-       "word": "close_above:bar_high+1atr",
+       "word": "close_above:ma_20+1atr",
        "w": "close_above",
        "when": "EOD",
        "levels": [
-        35.96
+        115.7
        ],
        "x": null,
-       "plain": "closes above bar_high+1atr 35.96"
+       "plain": "closes above ma_20+1atr 115.7"
       }
      },
      {
       "seat": "livermore",
       "vote": "SUPPORT",
-      "conviction": 3,
+      "conviction": 4,
       "counts": true,
-      "lane": "CONTINUATION",
+      "lane": "BREAKOUT",
       "tf": "1H",
       "non_price": null,
       "buy": [
@@ -255,20 +273,20 @@
         "w": "h1_close_above",
         "when": "1H",
         "levels": [
-         34.63
+         120.78
         ],
         "x": null,
-        "plain": "an hourly candle closes above bar_high 34.63"
+        "plain": "an hourly candle closes above bar_high 120.78"
        }
       ],
       "confirm": [
        {
-        "word": "rs_today_gt_spy",
-        "w": "rs_today_gt_spy",
+        "word": "vol_x_ge:1.2",
+        "w": "vol_x_ge",
         "when": "LIVE",
         "levels": [],
-        "x": null,
-        "plain": "outperforms SPY today"
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
        }
       ],
       "wrong": [
@@ -281,14 +299,68 @@
         "plain": "falls 1 ATR off the day's high"
        },
        {
+        "word": "close_below:structure_shift_ref",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         117.96
+        ],
+        "x": null,
+        "plain": "closes below structure_shift_ref 117.96"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:bar_high+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        125.81
+       ],
+       "x": null,
+       "plain": "closes above bar_high+1atr 125.81"
+      }
+     },
+     {
+      "seat": "minervini",
+      "vote": "SUPPORT",
+      "conviction": 4,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": "Earnings growth (SEPA element 2) not checked.",
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         120.78
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 120.78"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.4",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.4,
+        "plain": "volume at least 1.4x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
         "word": "close_below:ma_20",
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         30.52
+         110.67
         ],
         "x": null,
-        "plain": "closes below ma_20 30.52"
+        "plain": "closes below ma_20 110.67"
        }
       ],
       "wait": [],
@@ -297,30 +369,30 @@
        "w": "close_above",
        "when": "EOD",
        "levels": [
-        36.3615
+        126.819
        ],
        "x": null,
-       "plain": "closes above bar_high+5pct 36.3615"
+       "plain": "closes above bar_high+5pct 126.819"
       }
      },
      {
-      "seat": "minervini",
+      "seat": "oneil",
       "vote": "SUPPORT",
-      "conviction": 2,
+      "conviction": 3,
       "counts": true,
-      "lane": "CONTINUATION",
+      "lane": "BREAKOUT",
       "tf": "1H",
-      "non_price": "earnings growth not served",
+      "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I letters untested.",
       "buy": [
        {
         "word": "h1_close_above:bar_high",
         "w": "h1_close_above",
         "when": "1H",
         "levels": [
-         34.63
+         120.78
         ],
         "x": null,
-        "plain": "an hourly candle closes above bar_high 34.63"
+        "plain": "an hourly candle closes above bar_high 120.78"
        }
       ],
       "confirm": [
@@ -343,80 +415,90 @@
       ],
       "wrong": [
        {
-        "word": "close_below:ma_20",
+        "word": "close_below:pivot_high",
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         30.52
+         117.96
         ],
         "x": null,
-        "plain": "closes below ma_20 30.52"
+        "plain": "closes below pivot_high 117.96"
+       },
+       {
+        "word": "close_below:entry-8pct",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         110.446
+        ],
+        "x": null,
+        "plain": "closes below entry-8pct 110.446"
        }
       ],
       "wait": [],
       "chase": {
-       "word": "close_above:bar_high+3pct",
+       "word": "close_above:pivot_high+5pct",
        "w": "close_above",
        "when": "EOD",
        "levels": [
-        35.6689
+        123.858
        ],
        "x": null,
-       "plain": "closes above bar_high+3pct 35.6689"
+       "plain": "closes above pivot_high+5pct 123.858"
       }
      },
      {
-      "seat": "oneil",
+      "seat": "raschke",
       "vote": "SUPPORT",
       "conviction": 3,
       "counts": true,
       "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": "Market gate DELEGATED: void into index distribution (C1). C, A, S, I untested.",
+      "tf": "1H",
+      "non_price": null,
       "buy": [
        {
-        "word": "close_above:bar_high",
-        "w": "close_above",
-        "when": "EOD",
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
         "levels": [
-         34.63
+         120.78
         ],
         "x": null,
-        "plain": "closes above bar_high 34.63"
+        "plain": "an hourly candle closes above bar_high 120.78"
        }
       ],
       "confirm": [
        {
-        "word": "vol_x_ge:1.4",
+        "word": "vol_x_ge:1.2",
         "w": "vol_x_ge",
         "when": "LIVE",
         "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
        }
       ],
       "wrong": [
        {
-        "word": "close_below:bar_high-8pct",
+        "word": "close_below:structure_shift_ref",
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         31.8596
+         117.96
         ],
         "x": null,
-        "plain": "closes below bar_high-8pct 31.8596"
+        "plain": "closes below structure_shift_ref 117.96"
        }
       ],
       "wait": [],
       "chase": {
-       "word": "close_above:bar_high+5pct",
+       "word": "close_above:bar_high+1atr",
        "w": "close_above",
        "when": "EOD",
        "levels": [
-        36.3615
+        125.81
        ],
        "x": null,
-       "plain": "closes above bar_high+5pct 36.3615"
+       "plain": "closes above bar_high+1atr 125.81"
       }
      },
      {
@@ -424,7 +506,7 @@
       "vote": "SUPPORT",
       "conviction": 3,
       "counts": true,
-      "lane": "CONTINUATION",
+      "lane": "BREAKOUT",
       "tf": "EOD",
       "non_price": null,
       "buy": [
@@ -433,33 +515,33 @@
         "w": "trade_above",
         "when": "LIVE",
         "levels": [
-         34.63
+         120.78
         ],
         "x": null,
-        "plain": "trades through bar_high 34.63"
+        "plain": "trades through bar_high 120.78"
        }
       ],
       "confirm": [],
       "wrong": [
        {
-        "word": "close_below:fib_swing_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         31.52
-        ],
-        "x": null,
-        "plain": "closes below fib_swing_low 31.52"
-       },
-       {
         "word": "close_below:base_low_20d",
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         27.66
+         97.55
         ],
         "x": null,
-        "plain": "closes below base_low_20d 27.66"
+        "plain": "closes below base_low_20d 97.55"
+       },
+       {
+        "word": "close_below:fib_swing_low",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         97.55
+        ],
+        "x": null,
+        "plain": "closes below fib_swing_low 97.55"
        }
       ],
       "wait": [],
@@ -468,21 +550,21 @@
      {
       "seat": "wyckoff",
       "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": false,
-      "lane": "PULLBACK",
+      "conviction": 4,
+      "counts": true,
+      "lane": "BREAKOUT",
       "tf": "1H",
       "non_price": null,
       "buy": [
        {
-        "word": "reclaim:vwap_14d",
-        "w": "reclaim",
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
         "when": "1H",
         "levels": [
-         31.66
+         120.78
         ],
         "x": null,
-        "plain": "dips under vwap_14d 31.66 then closes the hour back above it"
+        "plain": "an hourly candle closes above bar_high 120.78"
        }
       ],
       "confirm": [
@@ -509,16 +591,26 @@
         "w": "close_below",
         "when": "EOD",
         "levels": [
-         31.07
+         117.96
         ],
         "x": null,
-        "plain": "closes below structure_shift_ref 31.07"
+        "plain": "closes below structure_shift_ref 117.96"
+       },
+       {
+        "word": "trade_below:vwap_14d",
+        "w": "trade_below",
+        "when": "LIVE",
+        "levels": [
+         111.86
+        ],
+        "x": null,
+        "plain": "trades under vwap_14d 111.86"
        }
       ],
       "wait": [
        {
-        "field": "vwap_14d",
-        "value": 31.66
+        "field": "structure_shift_ref",
+        "value": 117.96
        }
       ],
       "chase": {
@@ -526,33 +618,1815 @@
        "w": "close_above",
        "when": "EOD",
        "levels": [
-        35.96
+        125.81
        ],
        "x": null,
-       "plain": "closes above bar_high+1atr 35.96"
+       "plain": "closes above bar_high+1atr 125.81"
       }
      }
     ]
    },
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 81.9,
-     "Flow": 93.4,
-     "Energy": 68.1,
-     "Structure": 84.2,
-     "MP": 83.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 74.7
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "DRI",
+   "class": "ADVANCE",
+   "lane": "PULLBACK",
+   "conviction": 3,
+   "held": false,
+   "mark": "FRESH",
+   "levels": {
+    "ref_close": 239.22,
+    "stop": 233.29,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.48,
+    "tp": [
+     240.28,
+     248.26,
+     258.4
+    ],
+    "rr_to_tp2": 1.52,
+    "gates_clear": false,
+    "sized": false
+   },
+   "triggers": [
+    {
+     "id": "2026-11-19:DRI-buy0",
+     "kind": "close_above",
+     "level": 240.28,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "DRI: an hourly candle closes above 240.28 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
     },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 81.9 . Flow 93.4 . Energy 68.1 . Structure 84.2 . MP 83 . Elder score 10 . Pipeline rank 74.7 . QS odds 52%"
-   }
+    {
+     "id": "2026-11-19:DRI-touch",
+     "kind": "trade_above",
+     "level": 240.28,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DRI traded through yesterday's intraday high 240.28: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "2026-11-19:DRI-wait",
+     "kind": "trade_below",
+     "level": 233.98,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DRI is back in the wait area 233.98-233.98."
+    },
+    {
+     "id": "2026-11-19:DRI-dead",
+     "kind": "close_below",
+     "level": 233.98,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "DRI closed under 233.98, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 240.28; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 233.98 (2 analysts' exit line).",
+   "conditions": {
+    "shared": {
+     "buy": [
+      {
+       "w": "h1_close_above",
+       "level": 240.28,
+       "x": null,
+       "seats": [
+        "livermore",
+        "minervini",
+        "wyckoff"
+       ],
+       "plain": "an hourly candle closes above bar_high 240.28",
+       "when": "1H"
+      }
+     ],
+     "confirm": [
+      {
+       "w": "vol_x_ge",
+       "level": null,
+       "x": 1.2,
+       "seats": [
+        "livermore",
+        "wyckoff"
+       ],
+       "plain": "volume at least 1.2x normal for the time of day",
+       "when": "LIVE"
+      }
+     ],
+     "no_shared_buy": false,
+     "wait_zone": {
+      "lo": 233.98,
+      "hi": 233.98,
+      "members": [
+       "structure_shift_ref"
+      ]
+     },
+     "chase": {
+      "word": "close_above:bar_high+1atr",
+      "w": "close_above",
+      "when": "EOD",
+      "levels": [
+       246.21
+      ],
+      "x": null,
+      "plain": "closes above bar_high+1atr 246.21"
+     }
+    },
+    "exits": [
+     {
+      "w": "close_below",
+      "value": 233.98,
+      "seats": [
+       "livermore",
+       "wyckoff"
+      ],
+      "plain": "closes below 233.98"
+     },
+     {
+      "w": "trade_below",
+      "value": 227.98,
+      "seats": [
+       "wyckoff"
+      ],
+      "plain": "trades below 227.98"
+     },
+     {
+      "w": "close_below",
+      "value": 224.41,
+      "seats": [
+       "minervini"
+      ],
+      "plain": "closes below 224.41"
+     },
+     {
+      "w": "close_below",
+      "value": 221.445,
+      "seats": [
+       "elder-lens"
+      ],
+      "plain": "closes below 221.445"
+     },
+     {
+      "w": "close_below",
+      "value": 210.96,
+      "seats": [
+       "seow",
+       "seow"
+      ],
+      "plain": "closes below 210.96"
+     }
+    ],
+    "analysts": [
+     {
+      "seat": "elder-lens",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": false,
+      "lane": "PULLBACK",
+      "tf": "EOD",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "in_zone:ma_20",
+        "w": "in_zone",
+        "when": "LIVE",
+        "levels": [
+         224.41
+        ],
+        "x": null,
+        "plain": "comes back to ma_20 224.41"
+       },
+       {
+        "word": "elder_ge:7",
+        "w": "elder_ge",
+        "when": "COB",
+        "levels": [],
+        "x": 7.0,
+        "plain": "elder reading 7 or more"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_le:1.0",
+        "w": "vol_x_le",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.0,
+        "plain": "volume at most 1x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:ma_20-0.5atr",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         221.445
+        ],
+        "x": null,
+        "plain": "closes below ma_20-0.5atr 221.445"
+       },
+       {
+        "word": "elder_le:1",
+        "w": "elder_le",
+        "when": "COB",
+        "levels": [],
+        "x": 1.0,
+        "plain": "elder reading drops to 1 or less"
+       }
+      ],
+      "wait": [
+       {
+        "field": "ma_20",
+        "value": 224.41
+       }
+      ],
+      "chase": {
+       "word": "close_above:ma_20+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        230.34
+       ],
+       "x": null,
+       "plain": "closes above ma_20+1atr 230.34"
+      }
+     },
+     {
+      "seat": "livermore",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         240.28
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 240.28"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.2",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "fade_atr_ge:1",
+        "w": "fade_atr_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.0,
+        "plain": "falls 1 ATR off the day's high"
+       },
+       {
+        "word": "close_below:structure_shift_ref",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         233.98
+        ],
+        "x": null,
+        "plain": "closes below structure_shift_ref 233.98"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:bar_high+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        246.21
+       ],
+       "x": null,
+       "plain": "closes above bar_high+1atr 246.21"
+      }
+     },
+     {
+      "seat": "minervini",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         240.28
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 240.28"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.4",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.4,
+        "plain": "volume at least 1.4x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:ma_20",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         224.41
+        ],
+        "x": null,
+        "plain": "closes below ma_20 224.41"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:bar_high+5pct",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        252.294
+       ],
+       "x": null,
+       "plain": "closes above bar_high+5pct 252.294"
+      }
+     },
+     {
+      "seat": "seow",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "CONTINUATION",
+      "tf": "EOD",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "trade_above:bar_high",
+        "w": "trade_above",
+        "when": "LIVE",
+        "levels": [
+         240.28
+        ],
+        "x": null,
+        "plain": "trades through bar_high 240.28"
+       }
+      ],
+      "confirm": [],
+      "wrong": [
+       {
+        "word": "close_below:base_low_20d",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         210.96
+        ],
+        "x": null,
+        "plain": "closes below base_low_20d 210.96"
+       },
+       {
+        "word": "close_below:fib_swing_low",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         210.96
+        ],
+        "x": null,
+        "plain": "closes below fib_swing_low 210.96"
+       }
+      ],
+      "wait": [],
+      "chase": null
+     },
+     {
+      "seat": "wyckoff",
+      "vote": "SUPPORT",
+      "conviction": 4,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         240.28
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 240.28"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.2",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
+       },
+       {
+        "word": "above_vwap_s",
+        "w": "above_vwap_s",
+        "when": "1H",
+        "levels": [],
+        "x": null,
+        "plain": "holds above today's VWAP"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:structure_shift_ref",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         233.98
+        ],
+        "x": null,
+        "plain": "closes below structure_shift_ref 233.98"
+       },
+       {
+        "word": "trade_below:vwap_14d",
+        "w": "trade_below",
+        "when": "LIVE",
+        "levels": [
+         227.98
+        ],
+        "x": null,
+        "plain": "trades under vwap_14d 227.98"
+       }
+      ],
+      "wait": [
+       {
+        "field": "structure_shift_ref",
+        "value": 233.98
+       }
+      ],
+      "chase": {
+       "word": "close_above:bar_high+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        246.21
+       ],
+       "x": null,
+       "plain": "closes above bar_high+1atr 246.21"
+      }
+     }
+    ]
+   },
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "DIS",
+   "class": "ADVANCE",
+   "lane": "PULLBACK",
+   "conviction": 3,
+   "held": false,
+   "mark": "FRESH",
+   "levels": {
+    "ref_close": 122.36,
+    "stop": 119.44,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.39,
+    "tp": [
+     123.37,
+     127.35,
+     132.41
+    ],
+    "rr_to_tp2": 1.71,
+    "gates_clear": false,
+    "sized": false
+   },
+   "triggers": [
+    {
+     "id": "2026-11-19:DIS-buy0",
+     "kind": "close_above",
+     "level": 123.37,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "DIS: an hourly candle closes above 123.37 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "2026-11-19:DIS-touch",
+     "kind": "trade_above",
+     "level": 123.37,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DIS traded through yesterday's intraday high 123.37: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "2026-11-19:DIS-wait",
+     "kind": "trade_below",
+     "level": 120.8,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DIS is back in the wait area 120.8-120.8."
+    },
+    {
+     "id": "2026-11-19:DIS-dead",
+     "kind": "close_below",
+     "level": 120.8,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "DIS closed under 120.8, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 123.37",
+   "kills": "A daily close under 120.8 (3 analysts' exit line).",
+   "conditions": {
+    "shared": {
+     "buy": [
+      {
+       "w": "h1_close_above",
+       "level": 123.37,
+       "x": null,
+       "seats": [
+        "livermore",
+        "minervini",
+        "oneil",
+        "wyckoff"
+       ],
+       "plain": "an hourly candle closes above bar_high 123.37",
+       "when": "1H"
+      }
+     ],
+     "confirm": [],
+     "no_shared_buy": false,
+     "wait_zone": {
+      "lo": 120.8,
+      "hi": 120.8,
+      "members": [
+       "structure_shift_ref"
+      ]
+     },
+     "chase": {
+      "word": "close_above:bar_high+1atr",
+      "w": "close_above",
+      "when": "EOD",
+      "levels": [
+       126.29
+      ],
+      "x": null,
+      "plain": "closes above bar_high+1atr 126.29"
+     }
+    },
+    "exits": [
+     {
+      "w": "close_below",
+      "value": 120.8,
+      "seats": [
+       "livermore",
+       "oneil",
+       "wyckoff"
+      ],
+      "plain": "closes below 120.8"
+     },
+     {
+      "w": "trade_below",
+      "value": 116.65,
+      "seats": [
+       "wyckoff"
+      ],
+      "plain": "trades below 116.65"
+     },
+     {
+      "w": "close_below",
+      "value": 115.53,
+      "seats": [
+       "minervini"
+      ],
+      "plain": "closes below 115.53"
+     },
+     {
+      "w": "close_below",
+      "value": 114.07,
+      "seats": [
+       "elder-lens"
+      ],
+      "plain": "closes below 114.07"
+     },
+     {
+      "w": "close_below",
+      "value": 112.5712,
+      "seats": [
+       "oneil"
+      ],
+      "plain": "closes below 112.571"
+     },
+     {
+      "w": "close_below",
+      "value": 108.75,
+      "seats": [
+       "seow",
+       "seow"
+      ],
+      "plain": "closes below 108.75"
+     }
+    ],
+    "analysts": [
+     {
+      "seat": "elder-lens",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": false,
+      "lane": "PULLBACK",
+      "tf": "EOD",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "in_zone:ma_20",
+        "w": "in_zone",
+        "when": "LIVE",
+        "levels": [
+         115.53
+        ],
+        "x": null,
+        "plain": "comes back to ma_20 115.53"
+       },
+       {
+        "word": "elder_ge:7",
+        "w": "elder_ge",
+        "when": "COB",
+        "levels": [],
+        "x": 7.0,
+        "plain": "elder reading 7 or more"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_le:1.0",
+        "w": "vol_x_le",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.0,
+        "plain": "volume at most 1x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:ma_20-0.5atr",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         114.07
+        ],
+        "x": null,
+        "plain": "closes below ma_20-0.5atr 114.07"
+       },
+       {
+        "word": "elder_le:1",
+        "w": "elder_le",
+        "when": "COB",
+        "levels": [],
+        "x": 1.0,
+        "plain": "elder reading drops to 1 or less"
+       }
+      ],
+      "wait": [
+       {
+        "field": "ma_20",
+        "value": 115.53
+       }
+      ],
+      "chase": {
+       "word": "close_above:ma_20+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        118.45
+       ],
+       "x": null,
+       "plain": "closes above ma_20+1atr 118.45"
+      }
+     },
+     {
+      "seat": "livermore",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         123.37
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 123.37"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.2",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "fade_atr_ge:1",
+        "w": "fade_atr_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.0,
+        "plain": "falls 1 ATR off the day's high"
+       },
+       {
+        "word": "close_below:structure_shift_ref",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         120.8
+        ],
+        "x": null,
+        "plain": "closes below structure_shift_ref 120.8"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:bar_high+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        126.29
+       ],
+       "x": null,
+       "plain": "closes above bar_high+1atr 126.29"
+      }
+     },
+     {
+      "seat": "minervini",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         123.37
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 123.37"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.4",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.4,
+        "plain": "volume at least 1.4x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:ma_20",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         115.53
+        ],
+        "x": null,
+        "plain": "closes below ma_20 115.53"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:bar_high+5pct",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        129.5385
+       ],
+       "x": null,
+       "plain": "closes above bar_high+5pct 129.538"
+      }
+     },
+     {
+      "seat": "oneil",
+      "vote": "SUPPORT",
+      "conviction": 2,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": "Valid only into a confirmed uptrend (C1, DELEGATED; VALEN reads RISK OFF). C, A, S, I untested.",
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         123.37
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 123.37"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.4",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.4,
+        "plain": "volume at least 1.4x normal for the time of day"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:pivot_high",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         120.8
+        ],
+        "x": null,
+        "plain": "closes below pivot_high 120.8"
+       },
+       {
+        "word": "close_below:entry-8pct",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         112.5712
+        ],
+        "x": null,
+        "plain": "closes below entry-8pct 112.571"
+       }
+      ],
+      "wait": [],
+      "chase": {
+       "word": "close_above:pivot_high+5pct",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        126.84
+       ],
+       "x": null,
+       "plain": "closes above pivot_high+5pct 126.84"
+      }
+     },
+     {
+      "seat": "seow",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "EOD",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "trade_above:bar_high",
+        "w": "trade_above",
+        "when": "LIVE",
+        "levels": [
+         123.37
+        ],
+        "x": null,
+        "plain": "trades through bar_high 123.37"
+       }
+      ],
+      "confirm": [],
+      "wrong": [
+       {
+        "word": "close_below:base_low_20d",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         108.75
+        ],
+        "x": null,
+        "plain": "closes below base_low_20d 108.75"
+       },
+       {
+        "word": "close_below:fib_swing_low",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         108.75
+        ],
+        "x": null,
+        "plain": "closes below fib_swing_low 108.75"
+       }
+      ],
+      "wait": [],
+      "chase": null
+     },
+     {
+      "seat": "wyckoff",
+      "vote": "SUPPORT",
+      "conviction": 3,
+      "counts": true,
+      "lane": "BREAKOUT",
+      "tf": "1H",
+      "non_price": null,
+      "buy": [
+       {
+        "word": "h1_close_above:bar_high",
+        "w": "h1_close_above",
+        "when": "1H",
+        "levels": [
+         123.37
+        ],
+        "x": null,
+        "plain": "an hourly candle closes above bar_high 123.37"
+       }
+      ],
+      "confirm": [
+       {
+        "word": "vol_x_ge:1.2",
+        "w": "vol_x_ge",
+        "when": "LIVE",
+        "levels": [],
+        "x": 1.2,
+        "plain": "volume at least 1.2x normal for the time of day"
+       },
+       {
+        "word": "above_vwap_s",
+        "w": "above_vwap_s",
+        "when": "1H",
+        "levels": [],
+        "x": null,
+        "plain": "holds above today's VWAP"
+       }
+      ],
+      "wrong": [
+       {
+        "word": "close_below:structure_shift_ref",
+        "w": "close_below",
+        "when": "EOD",
+        "levels": [
+         120.8
+        ],
+        "x": null,
+        "plain": "closes below structure_shift_ref 120.8"
+       },
+       {
+        "word": "trade_below:bar_low",
+        "w": "trade_below",
+        "when": "LIVE",
+        "levels": [
+         116.65
+        ],
+        "x": null,
+        "plain": "trades under bar_low 116.65"
+       }
+      ],
+      "wait": [
+       {
+        "field": "structure_shift_ref",
+        "value": 120.8
+       }
+      ],
+      "chase": {
+       "word": "close_above:bar_high+1atr",
+       "w": "close_above",
+       "when": "EOD",
+       "levels": [
+        126.29
+       ],
+       "x": null,
+       "plain": "closes above bar_high+1atr 126.29"
+      }
+     }
+    ]
+   },
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "WWW",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (5 objections)",
+   "committee_objections": [
+    {
+     "voice": "livermore",
+     "objection": "The slate still carries in_zone:ma_20, a buy on the pullback itself, which C5 forbids. The floor brought no evidence my method weighs: WWW is AT its high (D dist_to_20bar_high_pct 0.46, W and D HH/HL), so the entry is the new high, not a wait for a reaction.",
+     "would_clear": "Trigger h1_close_above:bar_high on H1: an hourly close above yesterday's high, the fresh new high (C5)."
+    },
+    {
+     "voice": "minervini",
+     "objection": "Trigger in_zone:ma_20 still buys the pullback itself, the anticipation not the breakout (C5). With D close_vs_swing_high_pct 8.52 and W 20.49 price is far past any pivot (R5); a touch of ma_20 alone is not a buy on my method. The floor gave no evidence my method weighs to keep it.",
+     "would_clear": "Trigger h1_close_above:bar_high on H1 after a fresh tight pause on volume drying below average (C6): the break of the new base, not the touch of ma_20."
+    },
+    {
+     "voice": "oneil",
+     "objection": "The slate still carries in_zone:ma_20: a buy into a pullback with no volume test. C21 pyramids into strength only and C16 needs volume on the break; a Rank 2 rs LEADER at a new high on day_vol 3.41, dist_to_20bar_high_pct 0.46, is a strength entry.",
+     "would_clear": "Trigger becomes h1_close_above:bar_high on day_vol 1.40+, no add-ons (D close_vs_swing_high_pct 8.52 is a C17 late buy)."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger in_zone:ma_20 buys a dip on a position-system break to new highs (W and D HH/HL, dist_to_20bar_high_pct 0.46); there strength is the entry (C26), and a 20MA touch alone is not my five-condition swing set-up (C3). The floor gave no evidence my method weighs to keep it.",
+     "would_clear": "Trigger h1_close_above:bar_high (my trade_above:bar_high on a finer clock): buy over yesterday's high, trailed to each new prior-day high (C27)."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "Trigger in_zone:ma_20 is still not a trading zone on my method. At D close_vs_swing_high_pct 8.52 price is away from value; the entry is the test of the broken Creek, then a sign-of-strength follow-through (C3, C7, C12, R2). Nothing on the floor changed that.",
+     "would_clear": "Trigger in_zone:structure_shift_ref on D (the test of the broken Creek), then h1_close_above:bar_high there as the follow-through; wrong if a D close back under structure_shift_ref."
+    }
+   ],
+   "note": "Brief name the committee rejected: dropped by the committee (5 objections). Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 25.87,
+    "stop": 24.72,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 4.45,
+    "tp": [
+     25.99,
+     27.8,
+     30.11
+    ],
+    "rr_to_tp2": 1.68,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (dropped)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "BILL",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (4 objections)",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger h1_close_above:bar_high buys a plateau at the top: elder_5d [7, 7, 10, 10, 10] is summer with no transition (C4, C20), D close_vs_swing_high_pct 30.04 is far from value (C10), and W LH/LL is not a clean first screen (C21).",
+     "would_clear": "A fresh permission transition (a bar of 6 or lower then 7 or above) with the trigger in_zone:ma_20 on D."
+    },
+    {
+     "voice": "oneil",
+     "objection": "D close_vs_swing_high_pct 30.04 is far past any pivot: more than 10% extended is a hard rejection (C17). A short pause then an hourly close over yesterday's high is not a measurable base or pivot (C18), and the trigger carries no breakout-volume test (C16).",
+     "would_clear": "A new base (flat base 5-6 weeks, C18) forms above ma_50 and the trigger becomes close_above:pivot_high on day_vol 1.40 or more."
+    },
+    {
+     "voice": "seow",
+     "objection": "The trigger adds a precondition ('after a tight pause on drying volume') my position system does not have; D close_vs_swing_high_pct 30.04 at new highs is the buy signal itself (C26), and a mechanical system takes it as generated (C31).",
+     "would_clear": "Drop the pause precondition: h1_close_above:bar_high (or trade_above:bar_high) acted on from today's session (C27)."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "Trigger h1_close_above:bar_high at D close_vs_swing_high_pct 30.04 buys a move running away from value; my method waits for the corrective wave into a trading zone (C3, C15, R2).",
+     "would_clear": "Trigger in_zone:vwap_14d on D: the pullback into 14-day value first, then the sign-of-strength bar there."
+    }
+   ],
+   "note": "Brief name the committee rejected: dropped by the committee (4 objections). Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 66.01,
+    "stop": 63.37,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 4.0,
+    "tp": [
+     66.54,
+     71.87,
+     78.64
+    ],
+    "rr_to_tp2": 2.22,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (dropped)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "AMRX",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "DROPPED",
+   "committee_result": "dropped by the committee (5 objections)",
+   "committee_objections": [
+    {
+     "voice": "elder-lens",
+     "objection": "Trigger h1_close_above:pivot_high buys the break in front of value on an hourly poke; Elder bids slightly under the rising average (C10) and reads weekly then daily, never H1 (C21). Floor day_vol lines are off my menu; elder_5d [10, 7, 7, 6, 9] permits but mp_state FADING fails R8's STRONG leg.",
+     "would_clear": "Trigger in_zone:ma_20 on D (WAIT): a pull-in to the 20-day average while elder holds 7 or above."
+    },
+    {
+     "voice": "livermore",
+     "objection": "The slate still fires on h1_close_above:pivot_high, an hourly poke, not the confirmed clearing C17/C19 require; D close_vs_swing_high_pct -0.86 sits just under the high 22.07, and the BOS on day_vol 0.5 showed no fast follow-through (C17).",
+     "would_clear": "Trigger close_above:pivot_high on D: a daily close above the last pivot high (C5, C19); a day_vol 1.40 line on that close I do not object to."
+    },
+    {
+     "voice": "oneil",
+     "objection": "The BOS printed on day_vol 0.5, under +40% above average, a hard rejection (C16); the H1 trigger's 'expanding volume' sets no line and an hourly bar cannot show breakout-day volume. D close_vs_swing_high_pct -0.86 has not cleared the high.",
+     "would_clear": "Trigger becomes close_above:pivot_high on D on day_vol 1.40 or more."
+    },
+    {
+     "voice": "seow",
+     "objection": "Trigger h1_close_above:pivot_high fires on an hourly poke; my resistance-line signal needs a close above pivot_high (R13, C26), and close_vs_swing_high_pct -0.86 has not cleared it. I filed D on the floor, so this is a trigger dissent (R40), not a reservation.",
+     "would_clear": "Trigger close_above:pivot_high on D, then a buy over yesterday's high, trailed (C27); day_vol 0.5 stays a participation caution (R11), cmf not served (C28)."
+    },
+    {
+     "voice": "wyckoff",
+     "objection": "Trigger h1_close_above:pivot_high fires on an hourly poke. The BOS printed on day_vol 0.5, a potential upthrust until price holds outside the range, and holding is a daily close on volume (C5, R3). I conceded livermore's timeframe point on the floor, so this is now a trigger objection (R40).",
+     "would_clear": "Trigger close_above:pivot_high on D with day_vol 1.2 or more (my sign-of-strength stand-in, R6), entered on a buy stop above that bar (C12); wrong if a D close back under structure_shift_ref."
+    }
+   ],
+   "note": "Brief name the committee rejected: dropped by the committee (5 objections). Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 21.88,
+    "stop": 21.1,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 3.56,
+    "tp": [
+     22.13,
+     22.98,
+     24.05
+    ],
+    "rr_to_tp2": 1.41,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (dropped)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "MGNI",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 27.71,
+    "stop": 26.48,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 4.44,
+    "tp": [
+     29.78,
+     32.2,
+     35.28
+    ],
+    "rr_to_tp2": 3.65,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "VIA",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 46.52,
+    "stop": 44.18,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 5.03,
+    "tp": [
+     46.54,
+     49.9,
+     54.17
+    ],
+    "rr_to_tp2": 1.44,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "CALM",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 70.43,
+    "stop": 66.67,
+    "stop_type": "aqe_structural",
+    "stop_pct": 5.34,
+    "tp": [
+     80.5,
+     87.69,
+     95.25
+    ],
+    "rr_to_tp2": 4.59,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.38
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "CHYM",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 32.22,
+    "stop": 30.74,
+    "stop_type": "aqe_structural",
+    "stop_pct": 4.59,
+    "tp": [
+     33.41,
+     35.55,
+     36.65
+    ],
+    "rr_to_tp2": 2.25,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.08
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "LFST",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 13.77,
+    "stop": 12.88,
+    "stop_type": "aqe_structural",
+    "stop_pct": 6.46,
+    "tp": [
+     15.66,
+     16.74,
+     18.12
+    ],
+    "rr_to_tp2": 3.34,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.41
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "VIK",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 100.37,
+    "stop": 96.63,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 3.73,
+    "tp": [
+     105.76,
+     107.75,
+     110.09
+    ],
+    "rr_to_tp2": 1.97,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "BIP",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 41.71,
+    "stop": 40.67,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.49,
+    "tp": [
+     44.04,
+     46.27,
+     49.11
+    ],
+    "rr_to_tp2": 4.38,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "ASO",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 73.05,
+    "stop": 70.33,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 3.72,
+    "tp": [
+     73.82,
+     78.05,
+     83.42
+    ],
+    "rr_to_tp2": 1.84,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "MKTX",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 165.4,
+    "stop": 165.01,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 0.24,
+    "tp": [
+     165.8,
+     166.22,
+     166.76
+    ],
+    "rr_to_tp2": 2.1,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "SYNA",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 117.67,
+    "stop": 116.01,
+    "stop_type": "aqe_structural",
+    "stop_pct": 1.41,
+    "tp": [
+     118.72,
+     121.98,
+     135.79
+    ],
+    "rr_to_tp2": 2.6,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.25
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "DUOL",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 160.29,
+    "stop": 150.4,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 6.17,
+    "tp": [
+     167.38,
+     175.56,
+     189.28
+    ],
+    "rr_to_tp2": 1.54,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "CCC",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 7.69,
+    "stop": 7.62,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 0.91,
+    "tp": [
+     7.71,
+     7.91,
+     8.31
+    ],
+    "rr_to_tp2": 3.14,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "MANH",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 250.14,
+    "stop": 242.78,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.94,
+    "tp": [
+     263.47,
+     281.6,
+     304.67
+    ],
+    "rr_to_tp2": 4.27,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "PRCH",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 20.76,
+    "stop": 19.59,
+    "stop_type": "aqe_structural",
+    "stop_pct": 5.64,
+    "tp": [
+     22.36,
+     23.11,
+     24.07
+    ],
+    "rr_to_tp2": 2.01,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.06
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "TFX",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 165.85,
+    "stop": 161.09,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.87,
+    "tp": [
+     166.75,
+     178.91,
+     194.37
+    ],
+    "rr_to_tp2": 2.74,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "OMC",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 88.17,
+    "stop": 85.78,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.71,
+    "tp": [
+     88.55,
+     93.14,
+     97.67
+    ],
+    "rr_to_tp2": 2.08,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "ACHC",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 37.59,
+    "stop": 35.86,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 4.6,
+    "tp": [
+     39.7,
+     42.64,
+     46.38
+    ],
+    "rr_to_tp2": 2.92,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "ADMA",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 13.56,
+    "stop": 12.9,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 4.87,
+    "tp": [
+     13.77,
+     14.2,
+     15.27
+    ],
+    "rr_to_tp2": 0.97,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "U",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "MOMENTUM",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 48.96,
+    "stop": 45.28,
+    "stop_type": "aqe_structural",
+    "stop_pct": 7.52,
+    "tp": [
+     54.27,
+     58.94,
+     64.88
+    ],
+    "rr_to_tp2": 2.71,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.37
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "TBBB",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 68.15,
+    "stop": 66.22,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 2.83,
+    "tp": [
+     70.26,
+     74.29,
+     79.42
+    ],
+    "rr_to_tp2": 3.18,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "HAE",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 122.86,
+    "stop": 118.73,
+    "stop_type": "aqe_atr_fallback",
+    "stop_pct": 3.36,
+    "tp": [
+     123.77,
+     132.0,
+     136.49
+    ],
+    "rr_to_tp2": 2.21,
+    "gates_clear": false,
+    "sized": false,
+    "risk_atr": 1.0
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
+  },
+  {
+   "ticker": "DOC",
+   "class": "WATCH",
+   "triggers": [],
+   "brief_watch": true,
+   "lane": "PULLBACK",
+   "committee_status": "NOT_SLATED",
+   "committee_result": "not slated",
+   "committee_objections": [],
+   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
+   "levels": {
+    "ref_close": 19.34,
+    "stop": 18.35,
+    "stop_type": "aqe_structural",
+    "stop_pct": 5.12,
+    "tp": [
+     20.81,
+     21.8,
+     22.13
+    ],
+    "rr_to_tp2": 2.48,
+    "gates_clear": true,
+    "sized": false,
+    "risk_atr": 2.11
+   },
+   "levels_source": "committee PASS (not slated)",
+   "origin_run": "2026-11-19",
+   "age_sessions": 0
   },
   {
    "ticker": "CHD",
@@ -1108,7 +2982,7 @@
     ]
    },
    "origin_run": "2026-11-17",
-   "age_sessions": 0,
+   "age_sessions": 1,
    "aqe": {
     "listed": true,
     "lists": "Longlist|Elder",
@@ -1125,1698 +2999,9 @@
     "qs_odds": 0.52,
     "source": "export",
     "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 78.7 . Flow 94.7 . Energy 63 . Structure 73.7 . MP 83 . Elder score 10 . Pipeline rank 74.7 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "LFST",
-   "class": "HOLD_FOR_CONDITIONS",
-   "lane": "MOMENTUM",
-   "conviction": 3,
-   "held": false,
-   "mark": "NONE",
-   "levels": {
-    "ref_close": 14.48,
-    "stop": 13.55,
-    "stop_type": "aqe_structural",
-    "stop_pct": 6.42,
-    "tp": [
-     15.66,
-     16.74,
-     18.12
-    ],
-    "rr_to_tp2": 2.43,
-    "gates_clear": true,
-    "sized": false
    },
-   "triggers": [
-    {
-     "id": "2026-11-17:LFST-buy0",
-     "kind": "close_above",
-     "level": 15.66,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "LFST: an hourly candle closes above 15.66 (3 analysts' shared buy line). Your decision.",
-     "volume_min_x": 1.4
-    },
-    {
-     "id": "2026-11-17:LFST-touch",
-     "kind": "trade_above",
-     "level": 14.56,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "LFST traded through yesterday's intraday high 14.56: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-17:LFST-dead",
-     "kind": "close_below",
-     "level": 13.55,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "LFST closed under 13.55, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "closes above pivot_high 15.66; volume at least 1.4x normal for the time of day",
-   "kills": "A daily close under 13.55 (2 analysts' exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [
-      {
-       "w": "close_above",
-       "level": 15.66,
-       "x": null,
-       "seats": [
-        "livermore",
-        "minervini",
-        "oneil"
-       ],
-       "plain": "closes above pivot_high 15.66",
-       "when": "EOD"
-      }
-     ],
-     "confirm": [
-      {
-       "w": "vol_x_ge",
-       "level": null,
-       "x": 1.4,
-       "seats": [
-        "minervini",
-        "oneil"
-       ],
-       "plain": "volume at least 1.4x normal for the time of day",
-       "when": "LIVE"
-      }
-     ],
-     "no_shared_buy": false,
-     "wait_zone": null,
-     "chase": {
-      "word": "close_above:pivot_high+5pct",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       16.443
-      ],
-      "x": null,
-      "plain": "closes above pivot_high+5pct 16.443"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 14.4072,
-      "seats": [
-       "oneil"
-      ],
-      "plain": "closes below 14.4072"
-     },
-     {
-      "w": "close_below",
-      "value": 13.55,
-      "seats": [
-       "livermore",
-       "raschke"
-      ],
-      "plain": "closes below 13.55"
-     },
-     {
-      "w": "close_below",
-      "value": 12.83,
-      "seats": [
-       "minervini"
-      ],
-      "plain": "closes below 12.83"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "livermore",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "close_above:pivot_high",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         15.66
-        ],
-        "x": null,
-        "plain": "closes above pivot_high 15.66"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "fade_atr_ge:1",
-        "w": "fade_atr_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.0,
-        "plain": "falls 1 ATR off the day's high"
-       },
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         13.55
-        ],
-        "x": null,
-        "plain": "closes below ma_20 13.55"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        16.443
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 16.443"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": "earnings growth not served",
-      "buy": [
-       {
-        "word": "close_above:pivot_high",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         15.66
-        ],
-        "x": null,
-        "plain": "closes above pivot_high 15.66"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:ma_50",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         12.83
-        ],
-        "x": null,
-        "plain": "closes below ma_50 12.83"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        16.443
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 16.443"
-      }
-     },
-     {
-      "seat": "oneil",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": "Market gate DELEGATED: void into index distribution (C1). C, A, S, I untested.",
-      "buy": [
-       {
-        "word": "close_above:pivot_high",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         15.66
-        ],
-        "x": null,
-        "plain": "closes above pivot_high 15.66"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:pivot_high-8pct",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         14.4072
-        ],
-        "x": null,
-        "plain": "closes below pivot_high-8pct 14.4072"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        16.443
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 16.443"
-      }
-     },
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": false,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         14.56
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 14.56"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         13.55
-        ],
-        "x": null,
-        "plain": "closes below ma_20 13.55"
-       }
-      ],
-      "wait": [
-       {
-        "field": "ma_20",
-        "value": 13.55
-       }
-      ],
-      "chase": {
-       "word": "close_above:pivot_high",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        15.66
-       ],
-       "x": null,
-       "plain": "closes above pivot_high 15.66"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 70.0,
-     "Flow": 51.3,
-     "Energy": 61.3,
-     "Structure": 81.1,
-     "MP": 100.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 0.0
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 70 . Flow 51.3 . Energy 61.3 . Structure 81.1 . MP 100 . Elder score 7 . Pipeline rank 0 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "RBRK",
-   "class": "HELD",
-   "qty": 80,
-   "stop_status": "broker stop 99.45",
-   "reference_stop": 98.6,
-   "reference_stop_basis": "extension bracket stop, lower of the window low and 1 daily range under entry",
-   "open_r": -0.49,
-   "pnl_in_committee_1r": -0.83,
-   "action": null,
-   "broker_stop": {
-    "order": "STP",
-    "stop": 99.45,
-    "limit": null,
-    "note": null
-   },
-   "committee_exit": null,
-   "committee_exit_range": null,
-   "atr_14d": 7.43,
-   "triggers": [
-    {
-     "id": "2026-11-17:RBRK-stopnear",
-     "kind": "within_atr_of",
-     "level": 99.45,
-     "basis": "15m",
-     "priority": "WARN",
-     "atr": 7.43,
-     "atr_mult": 0.5,
-     "action": "Price within 0.5 ATR of your broker stop 99.45."
-    }
-   ],
-   "keep_case": "Keep under the broker stop 99.45 (STP 80, GTC).",
-   "release_case": "",
-   "conditions": {
-    "shared": {
-     "buy": [],
-     "confirm": [],
-     "no_shared_buy": false,
-     "wait_zone": null,
-     "chase": null
-    },
-    "exits": [],
-    "analysts": []
-   },
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 32.0,
-     "Flow": 54.0,
-     "Energy": 36.0,
-     "Structure": 25.0,
-     "MP": 0.0,
-     "Elder score": 3.0,
-     "Pipeline rank": 48.1
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or QS list) . SC_MOMENTUM 32 . Flow 54 . Energy 36 . Structure 25 . MP 0 . Elder score 3 . Pipeline rank 48.1 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "SPCX",
-   "class": "HELD",
-   "qty": -68,
-   "stop_status": "broker buy stop 145.05",
-   "reference_stop": null,
-   "reference_stop_basis": "no worked-out stop for a short (AQE brackets are long-side)",
-   "open_r": 0.56,
-   "pnl_in_committee_1r": 0.3,
-   "action": null,
-   "broker_stop": {
-    "order": "STP",
-    "stop": 145.05,
-    "limit": null,
-    "note": null
-   },
-   "committee_exit": null,
-   "committee_exit_range": null,
-   "atr_14d": 7.86,
-   "triggers": [
-    {
-     "id": "2026-11-17:SPCX-stopnear",
-     "kind": "within_atr_of",
-     "level": 145.05,
-     "basis": "15m",
-     "priority": "WARN",
-     "atr": 7.86,
-     "atr_mult": 0.5,
-     "action": "Price within 0.5 ATR of your broker stop 145.05."
-    }
-   ],
-   "keep_case": "Keep under the broker stop 145.05 (STP 68, GTC).",
-   "release_case": "",
-   "conditions": {
-    "shared": {
-     "buy": [],
-     "confirm": [],
-     "no_shared_buy": true,
-     "wait_zone": null,
-     "chase": null
-    },
-    "exits": [],
-    "analysts": [
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "NONE",
-      "tf": "EOD",
-      "non_price": "SHORT position: buy = hold/add to the short on a lower close; wrong = cover.",
-      "buy": [
-       {
-        "word": "close_below:bar_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         135.0
-        ],
-        "x": null,
-        "plain": "closes below bar_low 135"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_above:ma_50",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         148.69
-        ],
-        "x": null,
-        "plain": "closes above ma_50 148.69"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_below:bar_low-1atr",
-       "w": "close_below",
-       "when": "EOD",
-       "levels": [
-        127.14
-       ],
-       "x": null,
-       "plain": "closes below bar_low-1atr 127.14"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 27.8,
-     "Flow": 42.0,
-     "Energy": 35.0,
-     "Structure": 23.0,
-     "MP": 0.0,
-     "Elder score": 2.0
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (on the AQE daily list but on no Longlist, Elder or QS list) . SC_MOMENTUM 27.8 . Flow 42 . Energy 35 . Structure 23 . MP 0 . Elder score 2 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "HUM",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "DROPPED",
-   "committee_result": "dropped by the committee (6 objections)",
-   "committee_objections": [
-    {
-     "voice": "livermore",
-     "objection": "in_zone:ma_20 buys the pullback itself, which C5 forbids, while D dist_to_20bar_high_pct 0.35 sits at the high. On the floor three of four objectors (me, seow, oneil) name the bar_high level; the resting ma_20 buy waits for a reaction, not a confirmation.",
-     "would_clear": "Replace the trigger with h1_close_above:bar_high (a completed 1-hour close above yesterday's high)."
-    },
-    {
-     "voice": "minervini",
-     "objection": "Trigger in_zone:ma_20 waits for a reaction while HUM sits at the high (D dist_to_20bar_high_pct 0.35, D close_vs_swing_high_pct 6.25): my method buys the breakout (C5), and the break printed on day_vol 0.83, no volume confirmation (C6). My round-1 AGREE was too loose.",
-     "would_clear": "Trigger h1_close_above:bar_high on a buy day of day_vol 1.40 or better (C5, C6)."
-    },
-    {
-     "voice": "oneil",
-     "objection": "in_zone:ma_20 carries no volume term; the break printed on day_vol 0.83, under 1.40, a breakout nobody bought (C16, R4). The floor confirmed no seat's trigger answers it; minervini and elder-lens would accept the volume term.",
-     "would_clear": "A daily close above bar_high on a day printing day_vol 1.40 or better, market gate stated as a live condition (C1)."
-    },
-    {
-     "voice": "raschke",
-     "objection": "in_zone:ma_20 on D is a resting buy in the zone. My read is a Holy Grail first pullback after fresh highs (C7; D close_vs_swing_high_pct 6.25, dist_to_20bar_high_pct 0.35), bought only on a turn back up from the 20-day, never resting in it. ADX NOT_SERVED.",
-     "would_clear": "Trigger reclaim:ma_20 on H1 (an hourly close back above the 20-day after the pullback), wrong if close_below:ma_20-0.5atr or BEARISH_CHOCH."
-    },
-    {
-     "voice": "seow",
-     "objection": "Slate trigger is still in_zone:ma_20, a swing-system dip entry needing all five set-up conditions (C3, R1); cci_20 / ma_40 are not served. HUM is a position-system break (D close_vs_swing_high_pct 6.25, dist_to_20bar_high_pct 0.35); entry is over yesterday's high (C26, C27).",
-     "would_clear": "Trigger moved to the bar_high level: trade_above:bar_high on D, or h1_close_above:bar_high, wrong-if a close below max(fib_swing_low, base_low_20d) (C14, C29)."
-    },
-    {
-     "voice": "wyckoff",
-     "objection": "in_zone:ma_20 is a resting entry with no follow-through required (C12), and ma_20 is not a value level my method tests; D close_vs_swing_high_pct 6.25 is away from value, so I join on the test of value (C3, C7).",
-     "would_clear": "Trigger reclaim:vwap_14d on H1 with vol_x_ge:1.2: buy the first hourly close back above the 14-day VWAP on a sign-of-strength bar (C7, C12, R6)."
-    }
-   ],
-   "note": "Brief name the committee rejected: dropped by the committee (6 objections). Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 461.25,
-    "stop": 444.1,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.72,
-    "tp": [
-     462.87,
-     480.15,
-     502.13
-    ],
-    "rr_to_tp2": 1.1,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (dropped)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 76.9,
-     "Flow": 81.6,
-     "Energy": 68.1,
-     "Structure": 84.2,
-     "MP": 76.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 89.5
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 76.9 . Flow 81.6 . Energy 68.1 . Structure 84.2 . MP 76 . Elder score 10 . Pipeline rank 89.5 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "HNGE",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "DROPPED",
-   "committee_result": "dropped by the committee (4 objections)",
-   "committee_objections": [
-    {
-     "voice": "elder-lens",
-     "objection": "The trigger h1_close_above:bar_high buys strength above yesterday's high. elder_5d [10, 7, 7, 2, 7] is red giving way on the last bar (C3, C4); Elder buys that permission bar near value, not above it (C10). The floor added no force or impulse evidence to move this.",
-     "would_clear": "Trigger in_zone:entry on D: buy near yesterday's close from today's session, not above yesterday's high."
-    },
-    {
-     "voice": "livermore",
-     "objection": "h1_close_above:bar_high clears yesterday's high, not the pivot: D close_vs_swing_high_pct -4.04 is still a normal reaction under the high, so this buys inside the pullback C5 forbids. The floor confirms the ACT_NOW camp does not share this entry (minervini files close_above:pivot_high).",
-     "would_clear": "Trigger close_above:pivot_high on D (a daily close above the last confirmed pivot high), timing WAIT."
-    },
-    {
-     "voice": "minervini",
-     "objection": "Trigger h1_close_above:bar_high buys inside the base (D close_vs_swing_high_pct -4.04 under the pivot): anticipation, not the breakout (C5). Stage 2 holds (W close_vs_swing_high_pct 26.91), so I back the name, not this trigger.",
-     "would_clear": "Trigger close_above:pivot_high on the D frame, printed on expanding volume (C5, C6)."
-    },
-    {
-     "voice": "oneil",
-     "objection": "h1_close_above:bar_high buys at close 121.29 vs ma200 71.38, 69.9% over the 200-day; a clear of the swing high 126.4 lands about 77% over, inside the climax zone my rule sells into, never buys (C24, R7). The floor brought no evidence on that test.",
-     "would_clear": "A fresh base that brings price back well under 70% over ma200, then a pivot break on day_vol 1.40 or better, market gate stated as a live condition (C1)."
-    }
-   ],
-   "note": "Brief name the committee rejected: dropped by the committee (4 objections). Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 121.29,
-    "stop": 115.81,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 4.52,
-    "tp": [
-     126.4,
-     130.59,
-     135.92
-    ],
-    "rr_to_tp2": 1.7,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (dropped)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 69.9,
-     "Flow": 61.8,
-     "Energy": 67.2,
-     "Structure": 76.8,
-     "MP": 79.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 82.5
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 69.9 . Flow 61.8 . Energy 67.2 . Structure 76.8 . MP 79 . Elder score 7 . Pipeline rank 82.5 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "DOCU",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 79.82,
-    "stop": 74.24,
-    "stop_type": "aqe_structural",
-    "stop_pct": 6.99,
-    "tp": [
-     85.9,
-     91.88,
-     99.48
-    ],
-    "rr_to_tp2": 2.16,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 2.04
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 56.8,
-     "Flow": 42.1,
-     "Energy": 68.9,
-     "Structure": 67.4,
-     "MP": 50.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 64.9
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 56.8 . Flow 42.1 . Energy 68.9 . Structure 67.4 . MP 50 . Elder score 7 . Pipeline rank 64.9 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "BRZE",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 46.57,
-    "stop": 45.75,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 1.76,
-    "tp": [
-     46.81,
-     47.55,
-     48.01
-    ],
-    "rr_to_tp2": 1.2,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 78.1,
-     "Flow": 51.3,
-     "Energy": 84.9,
-     "Structure": 100.0,
-     "MP": 86.0,
-     "Elder score": 5.0,
-     "Pipeline rank": 70.2
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 78.1 . Flow 51.3 . Energy 84.9 . Structure 100 . MP 86 . Elder score 5 . Pipeline rank 70.2 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "BTSG",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 71.37,
-    "stop": 68.66,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.8,
-    "tp": [
-     73.75,
-     75.7,
-     78.18
-    ],
-    "rr_to_tp2": 1.6,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 76.8,
-     "Flow": 68.4,
-     "Energy": 72.3,
-     "Structure": 80.0,
-     "MP": 93.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 89.5
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 76.8 . Flow 68.4 . Energy 72.3 . Structure 80 . MP 93 . Elder score 7 . Pipeline rank 89.5 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "CNK",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 40.6,
-    "stop": 39.29,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.23,
-    "tp": [
-     41.67,
-     43.08,
-     44.87
-    ],
-    "rr_to_tp2": 1.89,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 67.1,
-     "Flow": 59.2,
-     "Energy": 84.9,
-     "Structure": 71.6,
-     "MP": 48.0,
-     "Elder score": 6.0,
-     "Pipeline rank": 67.0
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 67.1 . Flow 59.2 . Energy 84.9 . Structure 71.6 . MP 48 . Elder score 6 . Pipeline rank 67 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "BOX",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 43.82,
-    "stop": 42.68,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.6,
-    "tp": [
-     44.89,
-     45.78,
-     46.92
-    ],
-    "rr_to_tp2": 1.72,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 67.0,
-     "Flow": 42.1,
-     "Energy": 80.7,
-     "Structure": 78.9,
-     "MP": 72.0,
-     "Elder score": 8.0,
-     "Pipeline rank": 71.2
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 67 . Flow 42.1 . Energy 80.7 . Structure 78.9 . MP 72 . Elder score 8 . Pipeline rank 71.2 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "BILL",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 57.63,
-    "stop": 55.58,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.56,
-    "tp": [
-     58.47,
-     61.6,
-     65.58
-    ],
-    "rr_to_tp2": 1.94,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 84.5,
-     "Flow": 94.7,
-     "Energy": 60.5,
-     "Structure": 96.8,
-     "MP": 93.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 75.1
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 84.5 . Flow 94.7 . Energy 60.5 . Structure 96.8 . MP 93 . Elder score 10 . Pipeline rank 75.1 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "ASO",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 70.49,
-    "stop": 67.94,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.62,
-    "tp": [
-     71.29,
-     74.83,
-     79.33
-    ],
-    "rr_to_tp2": 1.7,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 81.6,
-     "Flow": 89.5,
-     "Energy": 68.9,
-     "Structure": 84.2,
-     "MP": 86.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 74.7
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 81.6 . Flow 89.5 . Energy 68.9 . Structure 84.2 . MP 86 . Elder score 10 . Pipeline rank 74.7 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "COLD",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 16.65,
-    "stop": 16.15,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.0,
-    "tp": [
-     16.88,
-     17.9,
-     19.14
-    ],
-    "rr_to_tp2": 2.5,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 81.0,
-     "Flow": 90.8,
-     "Energy": 63.0,
-     "Structure": 87.4,
-     "MP": 87.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 78.6
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 81 . Flow 90.8 . Energy 63 . Structure 87.4 . MP 87 . Elder score 7 . Pipeline rank 78.6 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "U",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 51.88,
-    "stop": 49.18,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 5.2,
-    "tp": [
-     54.27,
-     58.94,
-     64.88
-    ],
-    "rr_to_tp2": 2.61,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 79.6,
-     "Flow": 73.7,
-     "Energy": 71.4,
-     "Structure": 87.4,
-     "MP": 93.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 0.0
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 79.6 . Flow 73.7 . Energy 71.4 . Structure 87.4 . MP 93 . Elder score 7 . Pipeline rank 0 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "G",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 44.28,
-    "stop": 42.92,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.07,
-    "tp": [
-     44.63,
-     46.34,
-     48.51
-    ],
-    "rr_to_tp2": 1.51,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 79.3,
-     "Flow": 78.9,
-     "Energy": 69.7,
-     "Structure": 90.5,
-     "MP": 83.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 70.2
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 79.3 . Flow 78.9 . Energy 69.7 . Structure 90.5 . MP 83 . Elder score 10 . Pipeline rank 70.2 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "HTHT",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 54.88,
-    "stop": 53.37,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.75,
-    "tp": [
-     55.78,
-     59.72,
-     64.73
-    ],
-    "rr_to_tp2": 3.21,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 78.5,
-     "Flow": 86.8,
-     "Energy": 57.1,
-     "Structure": 87.4,
-     "MP": 89.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 62.9
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 78.5 . Flow 86.8 . Energy 57.1 . Structure 87.4 . MP 89 . Elder score 10 . Pipeline rank 62.9 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "GEO",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 32.66,
-    "stop": 31.21,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 4.44,
-    "tp": [
-     33.15,
-     35.66,
-     38.65
-    ],
-    "rr_to_tp2": 2.07,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 71.4,
-     "Flow": 65.8,
-     "Energy": 63.0,
-     "Structure": 76.8,
-     "MP": 87.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 0.0
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 71.4 . Flow 65.8 . Energy 63 . Structure 76.8 . MP 87 . Elder score 7 . Pipeline rank 0 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "TTEK",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 39.07,
-    "stop": 37.67,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.58,
-    "tp": [
-     41.77,
-     44.42,
-     47.8
-    ],
-    "rr_to_tp2": 3.82,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 59.5,
-     "Flow": 31.6,
-     "Energy": 63.0,
-     "Structure": 72.6,
-     "MP": 83.0,
-     "Elder score": 3.0,
-     "Pipeline rank": 73.4
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 59.5 . Flow 31.6 . Energy 63 . Structure 72.6 . MP 83 . Elder score 3 . Pipeline rank 73.4 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "EOG",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 155.47,
-    "stop": 150.23,
-    "stop_type": "aqe_structural",
-    "stop_pct": 3.37,
-    "tp": [
-     165.93,
-     173.7,
-     183.59
-    ],
-    "rr_to_tp2": 3.48,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.22
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 53.8,
-     "Flow": 63.2,
-     "Energy": 55.5,
-     "Structure": 57.9,
-     "MP": 33.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 83.2
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 53.8 . Flow 63.2 . Energy 55.5 . Structure 57.9 . MP 33 . Elder score 7 . Pipeline rank 83.2 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "ACM",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 72.5,
-    "stop": 70.4,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.9,
-    "tp": [
-     74.4,
-     76.85,
-     79.45
-    ],
-    "rr_to_tp2": 2.07,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 82.4,
-     "Flow": 82.9,
-     "Energy": 65.5,
-     "Structure": 89.5,
-     "MP": 100.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 53.8
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 82.4 . Flow 82.9 . Energy 65.5 . Structure 89.5 . MP 100 . Elder score 10 . Pipeline rank 53.8 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "TSN",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 63.95,
-    "stop": 62.14,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.83,
-    "tp": [
-     65.34,
-     68.15,
-     71.72
-    ],
-    "rr_to_tp2": 2.32,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 80.4,
-     "Flow": 88.2,
-     "Energy": 59.7,
-     "Structure": 87.4,
-     "MP": 93.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 56.0
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 80.4 . Flow 88.2 . Energy 59.7 . Structure 87.4 . MP 93 . Elder score 10 . Pipeline rank 56 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "PG",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 173.02,
-    "stop": 169.72,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 1.91,
-    "tp": [
-     173.57,
-     181.78,
-     192.22
-    ],
-    "rr_to_tp2": 2.65,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 73.0,
-     "Flow": 73.7,
-     "Energy": 61.3,
-     "Structure": 73.7,
-     "MP": 89.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 74.4
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 73 . Flow 73.7 . Energy 61.3 . Structure 73.7 . MP 89 . Elder score 10 . Pipeline rank 74.4 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "SN",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 223.29,
-    "stop": 211.96,
-    "stop_type": "aqe_structural",
-    "stop_pct": 5.07,
-    "tp": [
-     232.76,
-     253.36,
-     279.57
-    ],
-    "rr_to_tp2": 2.65,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.49
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 70.6,
-     "Flow": 60.5,
-     "Energy": 67.2,
-     "Structure": 69.5,
-     "MP": 92.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 83.5
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 70.6 . Flow 60.5 . Energy 67.2 . Structure 69.5 . MP 92 . Elder score 7 . Pipeline rank 83.5 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "HAS",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 121.02,
-    "stop": 117.87,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.6,
-    "tp": [
-     124.62,
-     126.66,
-     129.25
-    ],
-    "rr_to_tp2": 1.79,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 69.3,
-     "Flow": 40.8,
-     "Energy": 78.2,
-     "Structure": 82.1,
-     "MP": 86.0,
-     "Elder score": 4.0,
-     "Pipeline rank": 62.2
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 69.3 . Flow 40.8 . Energy 78.2 . Structure 82.1 . MP 86 . Elder score 4 . Pipeline rank 62.2 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "GKOS",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "MOMENTUM",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 244.88,
-    "stop": 233.14,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 4.79,
-    "tp": [
-     255.19,
-     284.78,
-     322.43
-    ],
-    "rr_to_tp2": 3.4,
-    "gates_clear": true,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 63.2,
-     "Flow": 19.7,
-     "Energy": 71.4,
-     "Structure": 83.2,
-     "MP": 96.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 74.0
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 63.2 . Flow 19.7 . Energy 71.4 . Structure 83.2 . MP 96 . Elder score 7 . Pipeline rank 74 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "STGW",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 11.41,
-    "stop": 10.9,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 4.47,
-    "tp": [
-     12.26,
-     13.35,
-     14.74
-    ],
-    "rr_to_tp2": 3.8,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 62.5,
-     "Flow": 30.3,
-     "Energy": 72.3,
-     "Structure": 62.9,
-     "MP": 96.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 80.0
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 62.5 . Flow 30.3 . Energy 72.3 . Structure 62.9 . MP 96 . Elder score 7 . Pipeline rank 80 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "EMBJ",
-   "class": "WATCH",
-   "triggers": [],
-   "brief_watch": true,
-   "lane": "PULLBACK",
-   "committee_status": "NOT_SLATED",
-   "committee_result": "not slated",
-   "committee_objections": [],
-   "note": "Brief name the committee rejected: not slated. Watched under AQE default criteria, not a committee pick.",
-   "levels": {
-    "ref_close": 18.77,
-    "stop": 18.01,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 4.05,
-    "tp": [
-     19.13,
-     19.68,
-     20.87
-    ],
-    "rr_to_tp2": 1.2,
-    "gates_clear": false,
-    "sized": false,
-    "risk_atr": 1.0
-   },
-   "levels_source": "committee PASS (not slated)",
-   "origin_run": "2026-11-17",
-   "age_sessions": 0,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 50.7,
-     "Flow": 51.3,
-     "Energy": 46.2,
-     "Structure": 67.4,
-     "MP": 40.0,
-     "Elder score": 4.0,
-     "Pipeline rank": 70.6
-    },
-    "qs_odds": null,
-    "source": "export",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 50.7 . Flow 51.3 . Energy 46.2 . Structure 67.4 . MP 40 . Elder score 4 . Pipeline rank 70.6 . QS: not scored"
-   }
+   "carried": true,
+   "last_session_live": false
   },
   {
    "ticker": "EXLS",
@@ -3247,7 +3432,7 @@
     ]
    },
    "origin_run": "2026-11-16",
-   "age_sessions": 1,
+   "age_sessions": 2,
    "aqe": {
     "listed": false,
     "lists": "none",
@@ -3266,346 +3451,7 @@
     "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 70.2 . Flow 55.3 . Energy 79.8 . Structure 71.6 . MP 77 . Elder score 4 . Pipeline rank 65.6 . QS: not scored"
    },
    "carried": true,
-   "last_session_live": false
-  },
-  {
-   "ticker": "PCOR",
-   "class": "HOLD_FOR_CONDITIONS",
-   "lane": "PULLBACK",
-   "conviction": 3,
-   "held": false,
-   "mark": "NONE",
-   "levels": {
-    "ref_close": 77.62,
-    "stop": 74.85,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 3.57,
-    "tp": [
-     79.8,
-     85.3,
-     92.3
-    ],
-    "rr_to_tp2": 2.77,
-    "gates_clear": true,
-    "sized": false
-   },
-   "triggers": [
-    {
-     "id": "2026-11-16:PCOR-buy0",
-     "kind": "close_above",
-     "level": 79.8,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "PCOR: an hourly candle closes above 79.8 (1 analyst's not shared (no majority) buy line). Your decision.",
-     "volume_min_x": 1.4
-    },
-    {
-     "id": "2026-11-16:PCOR-touch",
-     "kind": "trade_above",
-     "level": 78.5,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "PCOR traded through yesterday's intraday high 78.5: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-16:PCOR-dead",
-     "kind": "close_below",
-     "level": 77.03,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "PCOR closed under 77.03, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "volume at least 1.4x normal for the time of day",
-   "kills": "A daily close under 77.03 (1 analyst's exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [],
-     "confirm": [
-      {
-       "w": "vol_x_ge",
-       "level": null,
-       "x": 1.4,
-       "seats": [
-        "minervini",
-        "oneil"
-       ],
-       "plain": "volume at least 1.4x normal for the time of day",
-       "when": "LIVE"
-      }
-     ],
-     "no_shared_buy": true,
-     "wait_zone": null,
-     "chase": {
-      "word": "close_above:pivot_high+5pct",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       83.79
-      ],
-      "x": null,
-      "plain": "closes above pivot_high+5pct 83.79"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 77.03,
-      "seats": [
-       "minervini"
-      ],
-      "plain": "closes below 77.03"
-     },
-     {
-      "w": "close_below",
-      "value": 73.416,
-      "seats": [
-       "oneil"
-      ],
-      "plain": "closes below 73.416"
-     },
-     {
-      "w": "close_below",
-      "value": 67.57,
-      "seats": [
-       "minervini"
-      ],
-      "plain": "closes below 67.57"
-     },
-     {
-      "w": "close_below",
-      "value": 56.51,
-      "seats": [
-       "elder-lens"
-      ],
-      "plain": "closes below 56.51"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "elder-lens",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": false,
-      "lane": "PULLBACK",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "in_zone:ma_20",
-        "w": "in_zone",
-        "when": "LIVE",
-        "levels": [
-         67.57
-        ],
-        "x": null,
-        "plain": "comes back to ma_20 67.57"
-       },
-       {
-        "word": "elder_ge:7",
-        "w": "elder_ge",
-        "when": "COB",
-        "levels": [],
-        "x": 7.0,
-        "plain": "elder reading 7 or more"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "above_vwap_s",
-        "w": "above_vwap_s",
-        "when": "1H",
-        "levels": [],
-        "x": null,
-        "plain": "holds above today's VWAP"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "elder_le:1",
-        "w": "elder_le",
-        "when": "COB",
-        "levels": [],
-        "x": 1.0,
-        "plain": "elder reading drops to 1 or less"
-       },
-       {
-        "word": "close_below:base_low_20d",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         56.51
-        ],
-        "x": null,
-        "plain": "closes below base_low_20d 56.51"
-       }
-      ],
-      "wait": [
-       {
-        "field": "ma_20",
-        "value": 67.57
-       }
-      ],
-      "chase": {
-       "word": "close_above:ma_20+2atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        73.11
-       ],
-       "x": null,
-       "plain": "closes above ma_20+2atr 73.11"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "SEPA fundamentals leg not run",
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         79.8
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 79.8"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:pivot_high-1atr",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         77.03
-        ],
-        "x": null,
-        "plain": "closes below pivot_high-1atr 77.03"
-       },
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         67.57
-        ],
-        "x": null,
-        "plain": "closes below ma_20 67.57"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        83.79
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 83.79"
-      }
-     },
-     {
-      "seat": "oneil",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": "C, A, S, I untested; valid only into a confirmed index uptrend",
-      "buy": [
-       {
-        "word": "close_above:pivot_high",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         79.8
-        ],
-        "x": null,
-        "plain": "closes above pivot_high 79.8"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:pivot_high-8pct",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         73.416
-        ],
-        "x": null,
-        "plain": "closes below pivot_high-8pct 73.416"
-       },
-       {
-        "word": "choch_bearish",
-        "w": "choch_bearish",
-        "when": "COB",
-        "levels": [],
-        "x": null,
-        "plain": "structure turns bearish"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        83.79
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 83.79"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-16",
-   "age_sessions": 1,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 76.6,
-     "Flow": 63.2,
-     "Energy": 65.5,
-     "Structure": 97.9,
-     "MP": 92.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 60.0
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 76.6 . Flow 63.2 . Energy 65.5 . Structure 97.9 . MP 92 . Elder score 7 . Pipeline rank 60 . QS odds 52%"
-   },
-   "carried": true,
-   "last_session_live": false
+   "last_session_live": true
   },
   {
    "ticker": "CDW",
@@ -4177,7 +4023,7 @@
     ]
    },
    "origin_run": "2026-11-16",
-   "age_sessions": 1,
+   "age_sessions": 2,
    "aqe": {
     "listed": false,
     "lists": "none",
@@ -4196,7 +4042,7 @@
     "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 63.1 . Flow 48.7 . Energy 76.5 . Structure 57.9 . MP 70 . Elder score 7 . Pipeline rank 68.4 . QS: not scored"
    },
    "carried": true,
-   "last_session_live": false
+   "last_session_live": true
   },
   {
    "ticker": "BBY",
@@ -4781,7 +4627,7 @@
     ]
    },
    "origin_run": "2026-11-16",
-   "age_sessions": 1,
+   "age_sessions": 2,
    "aqe": {
     "listed": true,
     "lists": "Longlist",
@@ -4800,2053 +4646,67 @@
     "line": "AQE-listed: Longlist . SC_MOMENTUM 71.4 . Flow 63.2 . Energy 77.3 . Structure 67.4 . MP 79 . Elder score 7 . Pipeline rank 62.2 . QS odds 52%"
    },
    "carried": true,
-   "last_session_live": false
-  },
-  {
-   "ticker": "JNJ",
-   "class": "ADVANCE",
-   "lane": "MOMENTUM",
-   "conviction": 3,
-   "held": false,
-   "mark": "RETURNED",
-   "levels": {
-    "ref_close": 283.52,
-    "stop": 276.68,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.41,
-    "tp": [
-     286.08,
-     297.21,
-     311.36
-    ],
-    "rr_to_tp2": 2.0,
-    "gates_clear": false,
-    "sized": false
-   },
-   "triggers": [
-    {
-     "id": "2026-11-13:JNJ-buy0",
-     "kind": "close_above",
-     "level": 286.08,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "JNJ: an hourly candle closes above 286.08 (6 analysts' shared buy line). Your decision."
-    },
-    {
-     "id": "2026-11-13:JNJ-touch",
-     "kind": "trade_above",
-     "level": 286.08,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "JNJ traded through yesterday's intraday high 286.08: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-13:JNJ-wait",
-     "kind": "trade_below",
-     "level": 282.02,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "JNJ is back in the wait area 270.04-282.02."
-    },
-    {
-     "id": "2026-11-13:JNJ-dead",
-     "kind": "close_below",
-     "level": 282.02,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "JNJ closed under 282.02, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "an hourly candle closes above bar_high 286.08",
-   "kills": "A daily close under 282.02 (3 analysts' exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [
-      {
-       "w": "h1_close_above",
-       "level": 286.08,
-       "x": null,
-       "seats": [
-        "elder-lens",
-        "livermore",
-        "minervini",
-        "oneil",
-        "raschke",
-        "wyckoff"
-       ],
-       "plain": "an hourly candle closes above bar_high 286.08",
-       "when": "1H"
-      }
-     ],
-     "confirm": [],
-     "no_shared_buy": false,
-     "wait_zone": {
-      "lo": 270.04,
-      "hi": 282.02,
-      "members": [
-       "ma_20",
-       "pvp_vah",
-       "structure_shift_ref"
-      ]
-     },
-     "chase": {
-      "word": "close_above:structure_shift_ref+1atr",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       288.86
-      ],
-      "x": null,
-      "plain": "closes above structure_shift_ref+1atr 288.86"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 282.02,
-      "seats": [
-       "livermore",
-       "minervini",
-       "wyckoff"
-      ],
-      "plain": "closes below 282.02"
-     },
-     {
-      "w": "close_below",
-      "value": 281.0,
-      "seats": [
-       "raschke"
-      ],
-      "plain": "closes below 281"
-     },
-     {
-      "w": "close_below",
-      "value": 270.04,
-      "seats": [
-       "elder-lens"
-      ],
-      "plain": "closes below 270.04"
-     },
-     {
-      "w": "close_below",
-      "value": 260.8384,
-      "seats": [
-       "oneil"
-      ],
-      "plain": "closes below 260.838"
-     },
-     {
-      "w": "close_below",
-      "value": 251.5,
-      "seats": [
-       "seow"
-      ],
-      "plain": "closes below 251.5"
-     },
-     {
-      "w": "close_below",
-      "value": 245.17,
-      "seats": [
-       "seow"
-      ],
-      "plain": "closes below 245.17"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "elder-lens",
-      "vote": "SUPPORT",
-      "conviction": 4,
-      "counts": true,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 286.08"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "above_vwap_s",
-        "w": "above_vwap_s",
-        "when": "1H",
-        "levels": [],
-        "x": null,
-        "plain": "holds above today's VWAP"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "elder_le:1",
-        "w": "elder_le",
-        "when": "COB",
-        "levels": [],
-        "x": 1.0,
-        "plain": "elder reading drops to 1 or less"
-       },
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         270.04
-        ],
-        "x": null,
-        "plain": "closes below ma_20 270.04"
-       }
-      ],
-      "wait": [
-       {
-        "field": "ma_20",
-        "value": 270.04
-       }
-      ],
-      "chase": {
-       "word": "close_above:entry+1atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        290.36
-       ],
-       "x": null,
-       "plain": "closes above entry+1atr 290.36"
-      }
-     },
-     {
-      "seat": "livermore",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 286.08"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "fade_atr_ge:1",
-        "w": "fade_atr_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.0,
-        "plain": "falls 1 ATR off the day's high"
-       },
-       {
-        "word": "close_below:pivot_high",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         282.02
-        ],
-        "x": null,
-        "plain": "closes below pivot_high 282.02"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        296.121
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 296.121"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "SEPA element 2 (earnings growth) not served, not checked.",
-      "buy": [
-       {
-        "word": "h1_close_above:high_52w_close",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         283.52
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above high_52w_close 283.52"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:pivot_high",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         282.02
-        ],
-        "x": null,
-        "plain": "closes below pivot_high 282.02"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:high_52w_close+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        297.696
-       ],
-       "x": null,
-       "plain": "closes above high_52w_close+5pct 297.696"
-      }
-     },
-     {
-      "seat": "oneil",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "Market gate DELEGATED: void if the index is under distribution. C, A, S, I untested.",
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 286.08"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:entry-8pct",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         260.8384
-        ],
-        "x": null,
-        "plain": "closes below entry-8pct 260.838"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        296.121
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 296.121"
-      }
-     },
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 286.08"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_below:bar_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         281.0
-        ],
-        "x": null,
-        "plain": "closes below bar_low 281"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "seow",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": false,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "trade_above:bar_high",
-        "w": "trade_above",
-        "when": "LIVE",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "trades through bar_high 286.08"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "rs_today_gt_spy",
-        "w": "rs_today_gt_spy",
-        "when": "LIVE",
-        "levels": [],
-        "x": null,
-        "plain": "outperforms SPY today"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:fib_swing_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         245.17
-        ],
-        "x": null,
-        "plain": "closes below fib_swing_low 245.17"
-       },
-       {
-        "word": "close_below:base_low_20d",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         251.5
-        ],
-        "x": null,
-        "plain": "closes below base_low_20d 251.5"
-       },
-       {
-        "word": "choch_bearish",
-        "w": "choch_bearish",
-        "when": "COB",
-        "levels": [],
-        "x": null,
-        "plain": "structure turns bearish"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "wyckoff",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         286.08
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 286.08"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       },
-       {
-        "word": "above_vwap_s",
-        "w": "above_vwap_s",
-        "when": "1H",
-        "levels": [],
-        "x": null,
-        "plain": "holds above today's VWAP"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:structure_shift_ref",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         282.02
-        ],
-        "x": null,
-        "plain": "closes below structure_shift_ref 282.02"
-       }
-      ],
-      "wait": [
-       {
-        "field": "structure_shift_ref",
-        "value": 282.02
-       },
-       {
-        "field": "pvp_vah",
-        "value": 280.97
-       }
-      ],
-      "chase": {
-       "word": "close_above:structure_shift_ref+1atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        288.86
-       ],
-       "x": null,
-       "plain": "closes above structure_shift_ref+1atr 288.86"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-13",
-   "age_sessions": 2,
-   "carried": true,
-   "last_session_live": true,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 73.9,
-     "Flow": 73.7,
-     "Energy": 61.3,
-     "Structure": 81.1,
-     "MP": 86.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 80.7
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 73.9 . Flow 73.7 . Energy 61.3 . Structure 81.1 . MP 86 . Elder score 7 . Pipeline rank 80.7 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "AAPL",
-   "class": "ADVANCE",
-   "lane": "MOMENTUM",
-   "conviction": 3,
-   "held": false,
-   "mark": "FRESH",
-   "levels": {
-    "ref_close": 354.88,
-    "stop": 346.49,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.36,
-    "tp": [
-     359.37,
-     368.63,
-     380.41
-    ],
-    "rr_to_tp2": 1.64,
-    "gates_clear": false,
-    "sized": false
-   },
-   "triggers": [
-    {
-     "id": "2026-11-13:AAPL-buy0",
-     "kind": "close_above",
-     "level": 355.63,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "AAPL: an hourly candle closes above 355.63 (4 analysts' shared buy line). Your decision.",
-     "volume_min_x": 1.4
-    },
-    {
-     "id": "2026-11-13:AAPL-touch",
-     "kind": "trade_above",
-     "level": 359.37,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "AAPL traded through yesterday's intraday high 359.37: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-13:AAPL-wait",
-     "kind": "trade_below",
-     "level": 351.73,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "AAPL is back in the wait area 350.64-351.73."
-    },
-    {
-     "id": "2026-11-13:AAPL-dead",
-     "kind": "close_below",
-     "level": 345.51,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "AAPL closed under 345.51, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "an hourly candle closes above high_52w_close 355.63; volume at least 1.4x normal for the time of day",
-   "kills": "A daily close under 345.51 (2 analysts' exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [
-      {
-       "w": "h1_close_above",
-       "level": 355.63,
-       "x": null,
-       "seats": [
-        "minervini",
-        "oneil",
-        "raschke",
-        "wyckoff"
-       ],
-       "plain": "an hourly candle closes above high_52w_close 355.63",
-       "when": "1H"
-      }
-     ],
-     "confirm": [
-      {
-       "w": "vol_x_ge",
-       "level": null,
-       "x": 1.4,
-       "seats": [
-        "minervini",
-        "oneil"
-       ],
-       "plain": "volume at least 1.4x normal for the time of day",
-       "when": "LIVE"
-      }
-     ],
-     "no_shared_buy": false,
-     "wait_zone": {
-      "lo": 350.64,
-      "hi": 351.73,
-      "members": [
-       "pvp_vah",
-       "structure_shift_ref"
-      ]
-     },
-     "chase": {
-      "word": "close_above:structure_shift_ref+1atr",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       360.12
-      ],
-      "x": null,
-      "plain": "closes above structure_shift_ref+1atr 360.12"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 354.42,
-      "seats": [
-       "raschke"
-      ],
-      "plain": "closes below 354.42"
-     },
-     {
-      "w": "close_below",
-      "value": 351.73,
-      "seats": [
-       "wyckoff"
-      ],
-      "plain": "closes below 351.73"
-     },
-     {
-      "w": "close_below",
-      "value": 345.51,
-      "seats": [
-       "livermore",
-       "minervini"
-      ],
-      "plain": "closes below 345.51"
-     },
-     {
-      "w": "close_below",
-      "value": 326.4896,
-      "seats": [
-       "oneil"
-      ],
-      "plain": "closes below 326.49"
-     },
-     {
-      "w": "close_below",
-      "value": 325.33,
-      "seats": [
-       "seow",
-       "seow"
-      ],
-      "plain": "closes below 325.33"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "livermore",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": false,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "close_above:pivot_high",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         351.73
-        ],
-        "x": null,
-        "plain": "closes above pivot_high 351.73"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "fade_atr_ge:1",
-        "w": "fade_atr_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.0,
-        "plain": "falls 1 ATR off the day's high"
-       },
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         345.51
-        ],
-        "x": null,
-        "plain": "closes below ma_20 345.51"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        369.3165
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 369.317"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "SEPA element 2 (earnings growth) not served, not checked.",
-      "buy": [
-       {
-        "word": "h1_close_above:high_52w_close",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         355.63
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above high_52w_close 355.63"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         345.51
-        ],
-        "x": null,
-        "plain": "closes below ma_20 345.51"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:high_52w_close+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        373.4115
-       ],
-       "x": null,
-       "plain": "closes above high_52w_close+5pct 373.411"
-      }
-     },
-     {
-      "seat": "oneil",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "Market gate DELEGATED: void if the index is under distribution. C, A, S, I untested.",
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         351.73
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 351.73"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:entry-8pct",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         326.4896
-        ],
-        "x": null,
-        "plain": "closes below entry-8pct 326.49"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        369.3165
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 369.317"
-      }
-     },
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         351.73
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 351.73"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_below:bar_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         354.42
-        ],
-        "x": null,
-        "plain": "closes below bar_low 354.42"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "seow",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": false,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "trade_above:bar_high",
-        "w": "trade_above",
-        "when": "LIVE",
-        "levels": [
-         359.37
-        ],
-        "x": null,
-        "plain": "trades through bar_high 359.37"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "rs_today_gt_spy",
-        "w": "rs_today_gt_spy",
-        "when": "LIVE",
-        "levels": [],
-        "x": null,
-        "plain": "outperforms SPY today"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:fib_swing_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         325.33
-        ],
-        "x": null,
-        "plain": "closes below fib_swing_low 325.33"
-       },
-       {
-        "word": "close_below:base_low_20d",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         325.33
-        ],
-        "x": null,
-        "plain": "closes below base_low_20d 325.33"
-       },
-       {
-        "word": "choch_bearish",
-        "w": "choch_bearish",
-        "when": "COB",
-        "levels": [],
-        "x": null,
-        "plain": "structure turns bearish"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "wyckoff",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         359.37
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 359.37"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       },
-       {
-        "word": "above_vwap_s",
-        "w": "above_vwap_s",
-        "when": "1H",
-        "levels": [],
-        "x": null,
-        "plain": "holds above today's VWAP"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:structure_shift_ref",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         351.73
-        ],
-        "x": null,
-        "plain": "closes below structure_shift_ref 351.73"
-       }
-      ],
-      "wait": [
-       {
-        "field": "structure_shift_ref",
-        "value": 351.73
-       },
-       {
-        "field": "pvp_vah",
-        "value": 350.64
-       }
-      ],
-      "chase": {
-       "word": "close_above:structure_shift_ref+1atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        360.12
-       ],
-       "x": null,
-       "plain": "closes above structure_shift_ref+1atr 360.12"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-13",
-   "age_sessions": 2,
-   "carried": true,
-   "last_session_live": true,
-   "aqe": {
-    "listed": false,
-    "lists": "none",
-    "in_daily_list": false,
-    "scores": {
-     "SC_MOMENTUM": 58.6,
-     "Flow": 42.1,
-     "Energy": 79.0,
-     "Structure": 68.4,
-     "MP": 43.0,
-     "Elder score": 6.0,
-     "Pipeline rank": 64.2
-    },
-    "qs_odds": null,
-    "source": "universe_rows",
-    "line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 58.6 . Flow 42.1 . Energy 79 . Structure 68.4 . MP 43 . Elder score 6 . Pipeline rank 64.2 . QS: not scored"
-   }
-  },
-  {
-   "ticker": "BDX",
-   "class": "HOLD_FOR_CONDITIONS",
-   "lane": "PULLBACK",
-   "conviction": 3,
-   "held": false,
-   "mark": "NONE",
-   "levels": {
-    "ref_close": 215.71,
-    "stop": 211.06,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.16,
-    "tp": [
-     216.85,
-     228.04,
-     242.27
-    ],
-    "rr_to_tp2": 2.65,
-    "gates_clear": true,
-    "sized": false
-   },
-   "triggers": [
-    {
-     "id": "2026-11-13:BDX-buy0",
-     "kind": "close_above",
-     "level": 216.85,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "BDX: an hourly candle closes above 216.85 (3 analysts' shared buy line). Your decision.",
-     "volume_min_x": 1.2
-    },
-    {
-     "id": "2026-11-13:BDX-touch",
-     "kind": "trade_above",
-     "level": 216.85,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "BDX traded through yesterday's intraday high 216.85: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-13:BDX-wait",
-     "kind": "trade_below",
-     "level": 205.26,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "BDX is back in the wait area 200.47-205.26."
-    },
-    {
-     "id": "2026-11-13:BDX-dead",
-     "kind": "close_below",
-     "level": 202.11,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "BDX closed under 202.11, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "an hourly candle closes above bar_high 216.85; volume at least 1.2x normal for the time of day",
-   "kills": "A daily close under 202.11 (2 analysts' exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [
-      {
-       "w": "h1_close_above",
-       "level": 216.85,
-       "x": null,
-       "seats": [
-        "livermore",
-        "minervini",
-        "wyckoff"
-       ],
-       "plain": "an hourly candle closes above bar_high 216.85",
-       "when": "1H"
-      }
-     ],
-     "confirm": [
-      {
-       "w": "vol_x_ge",
-       "level": null,
-       "x": 1.2,
-       "seats": [
-        "livermore",
-        "wyckoff"
-       ],
-       "plain": "volume at least 1.2x normal for the time of day",
-       "when": "LIVE"
-      }
-     ],
-     "no_shared_buy": false,
-     "wait_zone": {
-      "lo": 200.47,
-      "hi": 205.26,
-      "members": [
-       "structure_shift_ref",
-       "vwap_14d"
-      ]
-     },
-     "chase": {
-      "word": "close_above:bar_high+1atr",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       221.5
-      ],
-      "x": null,
-      "plain": "closes above bar_high+1atr 221.5"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 209.0,
-      "seats": [
-       "livermore"
-      ],
-      "plain": "closes below 209"
-     },
-     {
-      "w": "close_below",
-      "value": 202.11,
-      "seats": [
-       "minervini",
-       "raschke"
-      ],
-      "plain": "closes below 202.11"
-     },
-     {
-      "w": "close_below",
-      "value": 200.47,
-      "seats": [
-       "wyckoff"
-      ],
-      "plain": "closes below 200.47"
-     },
-     {
-      "w": "close_below",
-      "value": 189.49,
-      "seats": [
-       "seow"
-      ],
-      "plain": "closes below 189.49"
-     },
-     {
-      "w": "close_below",
-      "value": 175.71,
-      "seats": [
-       "seow"
-      ],
-      "plain": "closes below 175.71"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "livermore",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "CONTINUATION",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         216.85
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 216.85"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "fade_atr_ge:1",
-        "w": "fade_atr_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.0,
-        "plain": "falls 1 ATR off the day's high"
-       },
-       {
-        "word": "close_below:prior_bar_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         209.0
-        ],
-        "x": null,
-        "plain": "closes below prior_bar_low 209"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:bar_high+3pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        223.3555
-       ],
-       "x": null,
-       "plain": "closes above bar_high+3pct 223.356"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "SEPA element 2 (earnings growth) not served, not checked.",
-      "buy": [
-       {
-        "word": "h1_close_above:high_52w_close",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         215.71
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above high_52w_close 215.71"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         202.11
-        ],
-        "x": null,
-        "plain": "closes below ma_20 202.11"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:high_52w_close+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        226.4955
-       ],
-       "x": null,
-       "plain": "closes above high_52w_close+5pct 226.495"
-      }
-     },
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": false,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "reclaim:ma_20",
-        "w": "reclaim",
-        "when": "1H",
-        "levels": [
-         202.11
-        ],
-        "x": null,
-        "plain": "dips under ma_20 202.11 then closes the hour back above it"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         202.11
-        ],
-        "x": null,
-        "plain": "closes below ma_20 202.11"
-       }
-      ],
-      "wait": [
-       {
-        "field": "ma_20",
-        "value": 202.11
-       }
-      ],
-      "chase": null
-     },
-     {
-      "seat": "seow",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "CONTINUATION",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "trade_above:bar_high",
-        "w": "trade_above",
-        "when": "LIVE",
-        "levels": [
-         216.85
-        ],
-        "x": null,
-        "plain": "trades through bar_high 216.85"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "rs_today_gt_spy",
-        "w": "rs_today_gt_spy",
-        "when": "LIVE",
-        "levels": [],
-        "x": null,
-        "plain": "outperforms SPY today"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:fib_swing_low",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         175.71
-        ],
-        "x": null,
-        "plain": "closes below fib_swing_low 175.71"
-       },
-       {
-        "word": "close_below:base_low_20d",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         189.49
-        ],
-        "x": null,
-        "plain": "closes below base_low_20d 189.49"
-       },
-       {
-        "word": "choch_bearish",
-        "w": "choch_bearish",
-        "when": "COB",
-        "levels": [],
-        "x": null,
-        "plain": "structure turns bearish"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "wyckoff",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "PULLBACK",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "in_zone:structure_shift_ref",
-        "w": "in_zone",
-        "when": "LIVE",
-        "levels": [
-         200.47
-        ],
-        "x": null,
-        "plain": "comes back to structure_shift_ref 200.47"
-       },
-       {
-        "word": "h1_close_above:bar_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         216.85
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above bar_high 216.85"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:structure_shift_ref",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         200.47
-        ],
-        "x": null,
-        "plain": "closes below structure_shift_ref 200.47"
-       }
-      ],
-      "wait": [
-       {
-        "field": "structure_shift_ref",
-        "value": 200.47
-       },
-       {
-        "field": "vwap_14d",
-        "value": 205.26
-       }
-      ],
-      "chase": {
-       "word": "close_above:bar_high+1atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        221.5
-       ],
-       "x": null,
-       "plain": "closes above bar_high+1atr 221.5"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-13",
-   "age_sessions": 2,
-   "carried": true,
-   "last_session_live": true,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 73.6,
-     "Flow": 73.7,
-     "Energy": 56.3,
-     "Structure": 81.1,
-     "MP": 92.0,
-     "Elder score": 7.0,
-     "Pipeline rank": 62.2
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist . SC_MOMENTUM 73.6 . Flow 73.7 . Energy 56.3 . Structure 81.1 . MP 92 . Elder score 7 . Pipeline rank 62.2 . QS odds 52%"
-   }
-  },
-  {
-   "ticker": "ADP",
-   "class": "ADVANCE",
-   "lane": "MOMENTUM",
-   "conviction": 3,
-   "held": false,
-   "mark": "FRESH",
-   "levels": {
-    "ref_close": 307.92,
-    "stop": 300.66,
-    "stop_type": "aqe_atr_fallback",
-    "stop_pct": 2.36,
-    "tp": [
-     309.4,
-     319.82,
-     329.91
-    ],
-    "rr_to_tp2": 1.64,
-    "gates_clear": false,
-    "sized": false
-   },
-   "triggers": [
-    {
-     "id": "2026-11-13:ADP-buy0",
-     "kind": "close_above",
-     "level": 307.94,
-     "basis": "15m",
-     "priority": "ACTION",
-     "action": "ADP: an hourly candle closes above 307.94 (4 analysts' shared buy line). Your decision.",
-     "volume_min_x": 1.4
-    },
-    {
-     "id": "2026-11-13:ADP-touch",
-     "kind": "trade_above",
-     "level": 311.89,
-     "basis": "15m",
-     "priority": "WARN",
-     "action": "ADP traded through yesterday's intraday high 311.89: the buy line is in play, not met until an hourly close confirms."
-    },
-    {
-     "id": "2026-11-13:ADP-dead",
-     "kind": "close_below",
-     "level": 298.27,
-     "basis": "daily",
-     "priority": "WARN",
-     "action": "ADP closed under 298.27, the exit line most analysts share: the case is invalidated."
-    }
-   ],
-   "confirms": "an hourly candle closes above high_52w_close 307.94; volume at least 1.4x normal for the time of day",
-   "kills": "A daily close under 298.27 (3 analysts' exit line).",
-   "conditions": {
-    "shared": {
-     "buy": [
-      {
-       "w": "h1_close_above",
-       "level": 307.94,
-       "x": null,
-       "seats": [
-        "minervini",
-        "oneil",
-        "raschke",
-        "wyckoff"
-       ],
-       "plain": "an hourly candle closes above high_52w_close 307.94",
-       "when": "1H"
-      }
-     ],
-     "confirm": [
-      {
-       "w": "vol_x_ge",
-       "level": null,
-       "x": 1.4,
-       "seats": [
-        "minervini",
-        "oneil"
-       ],
-       "plain": "volume at least 1.4x normal for the time of day",
-       "when": "LIVE"
-      }
-     ],
-     "no_shared_buy": false,
-     "wait_zone": null,
-     "chase": {
-      "word": "close_above:pivot_high+1atr",
-      "w": "close_above",
-      "when": "EOD",
-      "levels": [
-       316.66
-      ],
-      "x": null,
-      "plain": "closes above pivot_high+1atr 316.66"
-     }
-    },
-    "exits": [
-     {
-      "w": "close_below",
-      "value": 298.27,
-      "seats": [
-       "livermore",
-       "minervini",
-       "raschke"
-      ],
-      "plain": "closes below 298.27"
-     },
-     {
-      "w": "close_below",
-      "value": 283.2864,
-      "seats": [
-       "oneil"
-      ],
-      "plain": "closes below 283.286"
-     }
-    ],
-    "analysts": [
-     {
-      "seat": "livermore",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": false,
-      "lane": "BREAKOUT",
-      "tf": "EOD",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "close_above:high_52w_close",
-        "w": "close_above",
-        "when": "EOD",
-        "levels": [
-         307.94
-        ],
-        "x": null,
-        "plain": "closes above high_52w_close 307.94"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         298.27
-        ],
-        "x": null,
-        "plain": "closes below ma_20 298.27"
-       },
-       {
-        "word": "fade_atr_ge:1",
-        "w": "fade_atr_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.0,
-        "plain": "falls 1 ATR off the day's high"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:high_52w_close+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        323.337
-       ],
-       "x": null,
-       "plain": "closes above high_52w_close+5pct 323.337"
-      }
-     },
-     {
-      "seat": "minervini",
-      "vote": "SUPPORT",
-      "conviction": 3,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "SEPA element 2 (earnings growth) not served, not checked.",
-      "buy": [
-       {
-        "word": "h1_close_above:high_52w_close",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         307.94
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above high_52w_close 307.94"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         298.27
-        ],
-        "x": null,
-        "plain": "closes below ma_20 298.27"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:high_52w_close+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        323.337
-       ],
-       "x": null,
-       "plain": "closes above high_52w_close+5pct 323.337"
-      }
-     },
-     {
-      "seat": "oneil",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": "Market gate DELEGATED: void if the index is under distribution. C, A, S, I untested.",
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         309.4
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 309.4"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.4",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.4,
-        "plain": "volume at least 1.4x normal for the time of day"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "close_below:entry-8pct",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         283.2864
-        ],
-        "x": null,
-        "plain": "closes below entry-8pct 283.286"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+5pct",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        324.87
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+5pct 324.87"
-      }
-     },
-     {
-      "seat": "raschke",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         309.4
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 309.4"
-       }
-      ],
-      "confirm": [],
-      "wrong": [
-       {
-        "word": "close_below:ma_20",
-        "w": "close_below",
-        "when": "EOD",
-        "levels": [
-         298.27
-        ],
-        "x": null,
-        "plain": "closes below ma_20 298.27"
-       }
-      ],
-      "wait": [],
-      "chase": null
-     },
-     {
-      "seat": "wyckoff",
-      "vote": "SUPPORT",
-      "conviction": 2,
-      "counts": true,
-      "lane": "BREAKOUT",
-      "tf": "1H",
-      "non_price": null,
-      "buy": [
-       {
-        "word": "h1_close_above:pivot_high",
-        "w": "h1_close_above",
-        "when": "1H",
-        "levels": [
-         309.4
-        ],
-        "x": null,
-        "plain": "an hourly candle closes above pivot_high 309.4"
-       }
-      ],
-      "confirm": [
-       {
-        "word": "vol_x_ge:1.2",
-        "w": "vol_x_ge",
-        "when": "LIVE",
-        "levels": [],
-        "x": 1.2,
-        "plain": "volume at least 1.2x normal for the time of day"
-       },
-       {
-        "word": "above_vwap_s",
-        "w": "above_vwap_s",
-        "when": "1H",
-        "levels": [],
-        "x": null,
-        "plain": "holds above today's VWAP"
-       }
-      ],
-      "wrong": [
-       {
-        "word": "reject:pivot_high",
-        "w": "reject",
-        "when": "1H",
-        "levels": [
-         309.4
-        ],
-        "x": null,
-        "plain": "pokes over pivot_high 309.4 then closes the hour back under it"
-       }
-      ],
-      "wait": [],
-      "chase": {
-       "word": "close_above:pivot_high+1atr",
-       "w": "close_above",
-       "when": "EOD",
-       "levels": [
-        316.66
-       ],
-       "x": null,
-       "plain": "closes above pivot_high+1atr 316.66"
-      }
-     }
-    ]
-   },
-   "origin_run": "2026-11-13",
-   "age_sessions": 2,
-   "carried": true,
-   "last_session_live": true,
-   "aqe": {
-    "listed": true,
-    "lists": "Longlist|Elder",
-    "in_daily_list": true,
-    "scores": {
-     "SC_MOMENTUM": 75.9,
-     "Flow": 73.7,
-     "Energy": 77.3,
-     "Structure": 76.8,
-     "MP": 76.0,
-     "Elder score": 10.0,
-     "Pipeline rank": 68.4
-    },
-    "qs_odds": 0.52,
-    "source": "export",
-    "line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 75.9 . Flow 73.7 . Energy 77.3 . Structure 76.8 . MP 76 . Elder score 10 . Pipeline rank 68.4 . QS odds 52%"
-   }
+   "last_session_live": true
   }
  ],
  "window": {
   "sessions": 3,
   "runs": [
+   "2026-11-19",
    "2026-11-17",
-   "2026-11-16",
-   "2026-11-13"
+   "2026-11-16"
   ],
   "kill_unchecked": [
-   "EXLS",
-   "CDW",
-   "JNJ",
-   "AAPL",
-   "ADP"
+   "CHD",
+   "EXLS"
   ],
   "carried": [
+   "CHD (ADVANCE, from 2026-11-17)",
    "EXLS (HOLD_FOR_CONDITIONS, from 2026-11-16)",
-   "PCOR (HOLD_FOR_CONDITIONS, from 2026-11-16)",
    "CDW (ADVANCE, from 2026-11-16)",
-   "BBY (HOLD_FOR_CONDITIONS, from 2026-11-16)",
-   "JNJ (ADVANCE, from 2026-11-13)",
-   "AAPL (ADVANCE, from 2026-11-13)",
-   "BDX (HOLD_FOR_CONDITIONS, from 2026-11-13)",
-   "ADP (ADVANCE, from 2026-11-13)"
+   "BBY (HOLD_FOR_CONDITIONS, from 2026-11-16)"
   ],
   "retired": [
    {
-    "ticker": "EMBJ",
+    "ticker": "CHYM",
     "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-16",
+    "origin_run": "2026-11-17",
     "why": "committee PASSED it today"
    },
    {
-    "ticker": "SN",
+    "ticker": "LFST",
     "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-16",
+    "origin_run": "2026-11-17",
     "why": "committee PASSED it today"
    },
    {
-    "ticker": "CTAS",
+    "ticker": "PCOR",
     "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
+    "origin_run": "2026-11-16",
+    "why": "its own line 77.03 is already broken (served close 76.2)"
+   },
+   {
+    "ticker": "JNJ",
+    "class": "ADVANCE",
+    "origin_run": "2026-11-13",
     "why": "older than the 3-session window"
    },
    {
-    "ticker": "HUM",
-    "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
+    "ticker": "AAPL",
+    "class": "ADVANCE",
+    "origin_run": "2026-11-13",
     "why": "older than the 3-session window"
    },
    {
-    "ticker": "COR",
+    "ticker": "BDX",
     "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
+    "origin_run": "2026-11-13",
     "why": "older than the 3-session window"
    },
    {
-    "ticker": "PRCH",
-    "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
-    "why": "older than the 3-session window"
-   },
-   {
-    "ticker": "LTH",
-    "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
-    "why": "older than the 3-session window"
-   },
-   {
-    "ticker": "TGTX",
-    "class": "HOLD_FOR_CONDITIONS",
-    "origin_run": "2026-11-12",
+    "ticker": "ADP",
+    "class": "ADVANCE",
+    "origin_run": "2026-11-13",
     "why": "older than the 3-session window"
    }
   ],
@@ -6856,10 +4716,10 @@
   "symbol": null,
   "word": null,
   "level": null,
-  "plain": "index under distribution: 4-5 distribution days inside 4-5 weeks (C1, C2)",
+  "plain": "Index logs 4-5 distribution days inside 4-5 weeks (C2): no confirmed uptrend, entry void (C1).",
   "seats": [
    "oneil"
   ],
-  "origin_run": "2026-11-17"
+  "origin_run": "2026-11-19"
  }
 }
