@@ -1,0 +1,78 @@
+{
+ "date": "2026-11-19",
+ "chair": "chair",
+ "board_sha256": "dc3d2662b1fd4203686b647e826380164b572b66363e393ff808fe940337cae0",
+ "decision_sha256": "3c0e7ac3f3f78177c9576c3015639aabcde3039b5119a46735ff48d48240f641",
+ "tickets": [
+  {
+   "ticker": "WWW",
+   "verdict": "WATCH",
+   "entry_trigger": "Buy a pullback into the 20-day average while elder holds 7 or above; no chase.",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy a pullback into the 20-day average while elder holds 7 or above; no chase."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "elder-lens: \"elder prints 1 or lower at a close, or a daily close below ma_20 less half an ATR.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Rank 2 rs LEADER at a new high on day_vol 3.41: demand C16 asks for; W and D HH/HL. D close_vs_\" | minervini: \"Template and RS pass, W and D HH/HL. But D close_vs_swing_high_pct 8.52 and W 20.49 put price f\" | livermore: \"Leader at a new high in an established trend: W and D HH/HL, D dist_to_20bar_high_pct 0.46, H1 \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "AMRX",
+   "verdict": "ADVANCE",
+   "entry_trigger": "an hourly close above the last pivot high on expanding volume",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "an hourly close above the last pivot high on expanding volume"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"daily close below ma_20, or the break fails back under last_swing_low 19.02\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Stage 2 stack passes (C3); W and D HH/HL, D close 0.9% under last_swing_high 22.07: right at th\" | livermore: \"W and D HH/HL trend, D close_vs_swing_high_pct -0.86 just under the high 22.07: the C5 entry is\" | elder-lens: \"Permission event on the last bar: elder_5d [10, 7, 7, 6, 9] with CORRECTION_REENTRY (C4); mp FA\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Shape is good (W and D HH/HL, dist_to_20bar_high_pct 1.13) but the BOS came on day_vol 0.5: C16 calls a breakout under +40% a hard rejection. Healthcare Declining, lens sector warn (R9)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index logs 4-5 distribution days inside 4-5 weeks (C2): no confirmed uptrend, entry void (C1).",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 3
+ },
+ "hold_round": true
+}

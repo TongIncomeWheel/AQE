@@ -1,0 +1,122 @@
+{
+ "advance": {
+  "CAKE": {
+   "triggers": [
+    {
+     "id": "CAKE-buy0",
+     "kind": "close_above",
+     "level": 120.78,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "CAKE: an hourly candle closes above 120.78 (5 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "CAKE-touch",
+     "kind": "trade_above",
+     "level": 120.78,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CAKE traded through yesterday's intraday high 120.78: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "CAKE-wait",
+     "kind": "trade_below",
+     "level": 117.96,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "CAKE is back in the wait area 117.96-117.96."
+    },
+    {
+     "id": "CAKE-dead",
+     "kind": "close_below",
+     "level": 117.96,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "CAKE closed under 117.96, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 120.78; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 117.96 (4 analysts' exit line)."
+  },
+  "DRI": {
+   "triggers": [
+    {
+     "id": "DRI-buy0",
+     "kind": "close_above",
+     "level": 240.28,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "DRI: an hourly candle closes above 240.28 (3 analysts' shared buy line). Your decision.",
+     "volume_min_x": 1.2
+    },
+    {
+     "id": "DRI-touch",
+     "kind": "trade_above",
+     "level": 240.28,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DRI traded through yesterday's intraday high 240.28: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "DRI-wait",
+     "kind": "trade_below",
+     "level": 233.98,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DRI is back in the wait area 233.98-233.98."
+    },
+    {
+     "id": "DRI-dead",
+     "kind": "close_below",
+     "level": 233.98,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "DRI closed under 233.98, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 240.28; volume at least 1.2x normal for the time of day",
+   "kills": "A daily close under 233.98 (2 analysts' exit line)."
+  },
+  "DIS": {
+   "triggers": [
+    {
+     "id": "DIS-buy0",
+     "kind": "close_above",
+     "level": 123.37,
+     "basis": "15m",
+     "priority": "ACTION",
+     "action": "DIS: an hourly candle closes above 123.37 (4 analysts' shared buy line). Your decision."
+    },
+    {
+     "id": "DIS-touch",
+     "kind": "trade_above",
+     "level": 123.37,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DIS traded through yesterday's intraday high 123.37: the buy line is in play, not met until an hourly close confirms."
+    },
+    {
+     "id": "DIS-wait",
+     "kind": "trade_below",
+     "level": 120.8,
+     "basis": "15m",
+     "priority": "WARN",
+     "action": "DIS is back in the wait area 120.8-120.8."
+    },
+    {
+     "id": "DIS-dead",
+     "kind": "close_below",
+     "level": 120.8,
+     "basis": "daily",
+     "priority": "WARN",
+     "action": "DIS closed under 120.8, the exit line most analysts share: the case is invalidated."
+    }
+   ],
+   "confirms": "an hourly candle closes above bar_high 123.37",
+   "kills": "A daily close under 120.8 (3 analysts' exit line)."
+  }
+ },
+ "hold": {},
+ "held": {}
+}

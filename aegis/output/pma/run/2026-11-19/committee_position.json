@@ -1,0 +1,349 @@
+{
+ "schema": "committee_position.v1",
+ "declared": [],
+ "date": "2026-11-19",
+ "rule": "R42",
+ "deciders_present": [
+  "elder-lens",
+  "livermore",
+  "minervini",
+  "oneil",
+  "raschke",
+  "seow",
+  "wyckoff"
+ ],
+ "tickets": {
+  "CAKE": {
+   "committee_conviction": 4,
+   "convictions": {
+    "elder-lens": 2,
+    "livermore": 4,
+    "minervini": 4,
+    "oneil": 4,
+    "raschke": 4,
+    "seow": 3,
+    "wyckoff": 4
+   },
+   "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
+   "ordering_score": 3,
+   "status": "CONTESTED",
+   "verdict": "ADVANCE",
+   "rationale_stage": "final",
+   "why": [
+    {
+     "text": "rs LEADER out of a base on day_vol 1.63 (C16 pass); D close_vs_swing_high_pct 1.77 inside C17; W HH/HL, dist_to_20bar_high_pct 0.6. Caution: group Momentum Fading (R9); market gate DELEGATED.",
+     "voice": "oneil",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Stage 2 stack passes (C3). W HH/HL, dist_to_20bar_high_pct 0.6; D close 1.8% above last_swing_high 117.96: a breakout near the pivot, not a chase (C5). D swing LH/LL is the base it just cleared. Fundamentals not checked (R4).",
+     "voice": "minervini",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "C5: W HH/HL trend, normal pullback, then the pivot cleared; D close_vs_swing_high_pct 1.77, dist_to_20bar_high_pct 0.6. D LH/LL is a one-bar-old repair, the risk I accept. XLY peers at highs (C14).",
+     "voice": "livermore",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Position system (R10, R13): break above resistance, D close_vs_swing_high_pct 1.77, dist_to_20bar_high_pct 0.6; W swing_class HH/HL (C21 house rule passes). D swing_class LH/LL is a weight. TIF/cmf unconfirmed (C28), declared.",
+     "voice": "seow",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "BREAKOUT (C2, C12): D close_vs_swing_high_pct 1.77 over last_swing_high 117.96, dist_to_20bar_high_pct 0.6; W swing_class HH/HL; H1 pos_in_day_range_pct 91.9. D swing_class LH/LL is the caution. bar_range_history NOT_SERVED.",
+     "voice": "raschke",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Fresh break through the Creek: D close_vs_swing_high_pct 1.77 over 117.96, at the test; W HH/HL above EMA9; H1 HH/HL at 92% of the day's range. Daily swing still LH/LL, so the break must hold (C5, C7, C12).",
+     "voice": "wyckoff",
+     "from": "tier2.reason"
+    }
+   ],
+   "also": [
+    {
+     "voice": "seow",
+     "text": "Add to would_change (seow, position system, R15/C14/C29): a daily close below the support line max(fib_swing_low, base_low_20d), or a red-candle proxy (elder_pattern leaving SUSTAINED/ACCELERATION, or bar_close < bar_open after the up-run) then a trade under that bar's low next session. The stop is fixed by the chart, never a percentage of entry (C8), so I do not read 'entry-8pct' as my exit."
+    },
+    {
+     "voice": "raschke",
+     "text": "Add: raschke's wrong-if is structural only (C17): the breakout failing back under the broken level, last_swing_high 117.96. The 'close under entry-8pct' line is a percentage, not a stop in my method. Setup is BREAKOUT (C2, C12); bar_range_history NOT_SERVED, declared."
+    }
+   ],
+   "what_would_change_it": [
+    {
+     "text": "Daily close back under pivot_high (failed breakout), or a close under entry-8pct (C20).",
+     "voice": "oneil",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "daily close below ma_20, or a close back under last_swing_high 117.96 on rising volume",
+     "voice": "minervini",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "a one-day reaction of one atr off the day's high (my atr translation, C7), or a daily close back under structure_shift_ref",
+     "voice": "livermore",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "Daily close back under structure_shift_ref (the Creek): re-entry into the old range makes the break an upthrust.",
+     "voice": "wyckoff",
+     "from": "tier2.wrong_if"
+    }
+   ],
+   "minority_notes": [
+    {
+     "voice": "elder-lens",
+     "kind": "DISSENT",
+     "text": "The draft argues a breakout; Elder buys the pullback slightly under a rising average, never in front of price (C10, C6). D close 120.05 vs ema21 111.0015 is not value, and elder_pattern INTERRUPTED with D swing_class LH/LL leaves the trend leg failed (C9). I would clear on trigger in_zone:ma_20 on D while elder holds 7 or above."
+    },
+    {
+     "voice": "wyckoff",
+     "kind": "AMEND (over the byte cap)",
+     "text": "Add: the 'close under entry-8pct' line is a percentage stop, not a danger point. On my method the break is proven wrong structurally (C17): a daily close back under structure_shift_ref, the Creek at last_swing_high 117.96, re-enters the old range and makes the break an upthrust (C5). D swing_class LH/LL means the break must hold outside the range."
+    }
+   ],
+   "adopted_by": [
+    "livermore",
+    "minervini",
+    "oneil"
+   ],
+   "amended_by": [
+    {
+     "voice": "raschke",
+     "status": "ALSO"
+    },
+    {
+     "voice": "seow",
+     "status": "ALSO"
+    },
+    {
+     "voice": "wyckoff",
+     "status": "OVER_CAP"
+    }
+   ],
+   "dissent_from": [
+    "elder-lens"
+   ],
+   "no_answer_from": [],
+   "gaps": []
+  },
+  "DRI": {
+   "committee_conviction": 3,
+   "convictions": {
+    "elder-lens": 2,
+    "livermore": 5,
+    "minervini": 3,
+    "oneil": 2,
+    "raschke": 2,
+    "seow": 4,
+    "wyckoff": 4
+   },
+   "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
+   "ordering_score": 3,
+   "status": "CONTESTED",
+   "verdict": "ADVANCE",
+   "rationale_stage": "final",
+   "why": [
+    {
+     "text": "Stage 2 stack passes (C3); W and D HH/HL, D close 2.2% above last_swing_high 233.98 and dist_to_20bar_high_pct 0.44: breaking out close to the pivot (C5). Young stack and Momentum Fading sector are cautions. Fundamentals not checked.",
+     "voice": "minervini",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Cleanest C5 shape: W, D and H1 all HH/HL, D close_vs_swing_high_pct 2.24 just past the last swing high 233.98, dist_to_20bar_high_pct 0.44. Not extended. XLY group confirms (C14).",
+     "voice": "livermore",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Position system (R10, R13): break above resistance, D close_vs_swing_high_pct 2.24, W close_vs_swing_high_pct 4.12, HH/HL on W, D and H1. Lane label is not an instruction. cmf not served (C28), declared.",
+     "voice": "seow",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Creek held on a test: D HH/HL, close_vs_swing_high_pct 2.24 over 233.98 (within 1 ATR); W HH/HL 4.12% over 229.76; H1 HH/HL at 90% of the day's range. At the test (C7, C9).",
+     "voice": "wyckoff",
+     "from": "tier2.reason"
+    }
+   ],
+   "also": [
+    {
+     "voice": "minervini",
+     "text": "Add: the break printed on day_vol 1.23, above-average participation, which is the expansion half of the C6 volume signature I can read. The dry-up through the base is not served (R3) and vcp_detail is NOT_SERVED (R2), so the base is read as plausibly valid, not counted."
+    },
+    {
+     "voice": "raschke",
+     "text": "Add: raschke reads no test here (C2): no prior extreme retested, dist_to_20bar_high_pct 0.44, so 'at the test' is not my taxonomy. At most a breakout over last_swing_high 233.98, wrong on a daily close back under it (C17). I abstained, not opposed; horizon_sessions 20 is long for my method (C18)."
+    }
+   ],
+   "what_would_change_it": [
+    {
+     "text": "daily close below ma_20, or a close back under last_swing_high 233.98",
+     "voice": "minervini",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "a one-day reaction of one atr off the day's high (my translation, C7), or a daily close back under structure_shift_ref",
+     "voice": "livermore",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "Daily close below the support line max(fib_swing_low, base_low_20d), or a red candle then a trade under its low (C14, C29).",
+     "voice": "seow",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "Daily close under structure_shift_ref, or a trade below vwap_14d.",
+     "voice": "wyckoff",
+     "from": "tier2.wrong_if"
+    }
+   ],
+   "minority_notes": [
+    {
+     "voice": "elder-lens",
+     "kind": "DISSENT",
+     "text": "The permission event is real (elder_5d [7, 6, 6, 7, 10], C3, C4), but the draft's rationale buys over yesterday's high; Elder's entry rests under the rising average (C10). D close 239.22 vs ema21 224.9083 is in front of value, and 10 on the last bar is summer, not spring (C20). Clears on in_zone:ma_20 on D while elder holds 7 or above."
+    },
+    {
+     "voice": "oneil",
+     "kind": "DISSENT",
+     "text": "The shape is right (W, D and H1 HH/HL, close_vs_swing_high_pct 2.24 inside C17), but the break printed on day_vol 1.23. Under +40% above average is a hard rejection, not a softer buy (C16); the draft carries no volume figure. Group Momentum Fading is a Lone Ranger caution (R9). I would support it if the hourly break of yesterday's high prints on day_vol 1.40 or more. Market gate DELEGATED."
+    }
+   ],
+   "adopted_by": [
+    "livermore",
+    "seow",
+    "wyckoff"
+   ],
+   "amended_by": [
+    {
+     "voice": "minervini",
+     "status": "ALSO"
+    },
+    {
+     "voice": "raschke",
+     "status": "ALSO"
+    }
+   ],
+   "dissent_from": [
+    "elder-lens",
+    "oneil"
+   ],
+   "no_answer_from": [],
+   "gaps": []
+  },
+  "DIS": {
+   "committee_conviction": 3,
+   "convictions": {
+    "elder-lens": 2,
+    "livermore": 4,
+    "minervini": 3,
+    "oneil": 4,
+    "raschke": 2,
+    "seow": 3,
+    "wyckoff": 3
+   },
+   "conviction_rule": "median of the deciders' 1-5 scores, ties to the lower",
+   "ordering_score": 3,
+   "status": "CONTESTED",
+   "verdict": "ADVANCE",
+   "rationale_stage": "final",
+   "why": [
+    {
+     "text": "New high on day_vol 2.02 (C16 pass), BULLISH_BOS, D close_vs_swing_high_pct 1.29 inside C17, group Comm Services Momentum Building confirms (R9). Caution: div BEARISH/3; W LH but HL.",
+     "voice": "oneil",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Stage 2 stack passes (C3); D HH/HL, close 1.3% above last_swing_high 120.8: a breakout near the pivot. W LH but HL is now cleared, 0.8% under the 20-wk high. div BEARISH/3 holds conviction down. Fundamentals not checked.",
+     "voice": "minervini",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "New high after a normal pullback: D HH/HL, close_vs_swing_high_pct 1.29 over 120.8, W dist_to_20bar_high_pct 0.82. W LH but HL is a just-repaired weekly; OMC is the second name (C14).",
+     "voice": "livermore",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Position system (R10, R13): fresh break, D close_vs_swing_high_pct 1.29, D swing_class HH/HL; W swing_class LH but HL is not broken (C21 weight). Cycle arrow proxy fired at vote. cmf not served (C28), declared.",
+     "voice": "seow",
+     "from": "tier2.reason"
+    },
+    {
+     "text": "Fresh break: D HH/HL, close_vs_swing_high_pct 1.29 over 120.8, at the test (C5, C7). W LH but HL and H1 HH but LL keep it a young structure; value not yet stepping up, so it must hold outside the range.",
+     "voice": "wyckoff",
+     "from": "tier2.reason"
+    }
+   ],
+   "also": [
+    {
+     "voice": "seow",
+     "text": "Add to would_change (seow, position system, R15/C14/C29): a daily close below the support line max(fib_swing_low, base_low_20d), or a red-candle proxy (elder_pattern leaving SUSTAINED/ACCELERATION, or bar_close < bar_open after the break) then a trade under that bar's low next session. W swing_class LH but HL stays a C21 house-rule weight. The stop is chart-fixed (C8), not 'entry-8pct'."
+    },
+    {
+     "voice": "wyckoff",
+     "text": "Add: young structure (W LH but HL, H1 HH but LL); the break must hold outside the range (C5). The 'close under entry-8pct' line is a percentage stop; the structural danger point is a daily close back under structure_shift_ref, the Creek at last_swing_high 120.8 (C17). A new high on below-average volume would read as a potential upthrust (R3)."
+    }
+   ],
+   "what_would_change_it": [
+    {
+     "text": "Daily close back under pivot_high, a new high on below-average volume (C25), or a close under entry-8pct (C20).",
+     "voice": "oneil",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "daily close below ma_20, or a close back under last_swing_high 120.8 on rising volume",
+     "voice": "minervini",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "a one-day reaction of one atr off the day's high (my translation, C7), or no follow-through and a daily close back under structure_shift_ref (C17)",
+     "voice": "livermore",
+     "from": "tier2.wrong_if"
+    },
+    {
+     "text": "Daily close back under structure_shift_ref (the Creek): an upthrust.",
+     "voice": "wyckoff",
+     "from": "tier2.wrong_if"
+    }
+   ],
+   "minority_notes": [
+    {
+     "voice": "elder-lens",
+     "kind": "DISSENT",
+     "text": "Transition on the last bar (elder_5d [7, 7, 6, 6, 9]) gives permission only; the Impulse forbids, it does not propose (C1). The draft buys the extension: D close 122.36 vs ema21 115.8276 is in front of value (C10), and W swing_class LH but HL is not a clean first screen (C21). Clears on in_zone:ma_20 on D while elder holds 7 or above."
+    },
+    {
+     "voice": "raschke",
+     "kind": "DISSENT",
+     "text": "Outside my four setups (C2): close_vs_swing_high_pct 1.29 is a new high with no prior extreme retested and no range contraction keyed (bar_range_history NOT_SERVED, C12). I abstained, not opposed. If held, wrong is structural: a daily close back under last_swing_high 120.8 (C17); horizon_sessions 20 is long for my method (C18)."
+    }
+   ],
+   "adopted_by": [
+    "livermore",
+    "minervini",
+    "oneil"
+   ],
+   "amended_by": [
+    {
+     "voice": "seow",
+     "status": "ALSO"
+    },
+    {
+     "voice": "wyckoff",
+     "status": "ALSO"
+    }
+   ],
+   "dissent_from": [
+    "elder-lens",
+    "raschke"
+   ],
+   "no_answer_from": [],
+   "gaps": []
+  }
+ },
+ "gaps": [],
+ "note": "committee_conviction is the body's 1-5 readout (5 = best); an ordering/readout figure, never a gate on a verdict. Individual scores and answers are on committee_record.json (R35)."
+}

@@ -6,3 +6,6 @@
 - Crown DEGRADED (declared); dispersion_vixeq and dspx BEHIND (11-17, Cboe timing); positioning_cot 11-10 (weekly cadence).
 - Candidate step: screens 117 names (7 x 25), coverage OK, augment-export 72 universe-only rows added, packets built (no qs_market).
 - SLATE: built by code (slate_gen.py quotes the seats' own tier-2 words verbatim; Chair seat not spawned, as on prior runs); registrar validate OK. 6 tickets: ADVANCE CAKE DRI DIS AMRX; WATCH WWW BILL. SYNA NOT_SLATED. Market kill reading C2 (index 4-5 distribution days).
+- Round 1 of this run was re-run: the first prompts carried the 18 Nov book (RBRK, SPCX stop); the forms were discarded to forms/r1_discarded and all seven seats re-filed on the flat book.
+- RBRK was stopped out on 17 Nov at 99.12 (PM journal); SPCX closed 18 Nov at 144.22. The run's book is flat.
+- The 18 Nov committee run (A and C) was not completed or published.

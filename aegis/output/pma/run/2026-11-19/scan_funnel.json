@@ -1,0 +1,616 @@
+{
+ "report": "A",
+ "method": "whole_universe",
+ "stages": [
+  {
+   "stage": "Universe rows scored (market cap $2B+, 10-day volume 500K+, NYSE or NASDAQ)",
+   "n_in": 1617,
+   "n_out": 1617,
+   "rule": "the whole screened universe, before any AQE gate",
+   "dropped": [],
+   "step": 1,
+   "label": "Universe"
+  },
+  {
+   "stage": "Seat screens, union",
+   "n_in": 1617,
+   "n_out": 117,
+   "rule": "each seat's own code screen, top 25 names per seat, union of the seven",
+   "dropped": [],
+   "dropped_count": 1500,
+   "step": 2,
+   "label": "Screens"
+  },
+  {
+   "stage": "Nominated (any seat, any conviction)",
+   "n_in": 117,
+   "n_out": 28,
+   "rule": "a seat names it at round 1 (cap six per seat)",
+   "dropped": [],
+   "dropped_count": 89,
+   "step": 3,
+   "label": "Nominated"
+  },
+  {
+   "stage": "In the room (nominated plus the held book)",
+   "short": "the room",
+   "n_in": 28,
+   "n_out": 28,
+   "rule": "every nomination is seated; the held book is always seated; no AQE door adds a name",
+   "dropped": [],
+   "added_held": [],
+   "step": 4,
+   "label": "In the room"
+  },
+  {
+   "stage": "Cross-examination (survivors move on)",
+   "short": "cross-examination",
+   "n_in": 28,
+   "n_out": 7,
+   "rule": "support CONFIRM >= 1 and support CONFIRM >= support REFUTE",
+   "dropped": [
+    {
+     "ticker": "MGNI",
+     "reason": "livermore: C5: a resting name is still inside its reaction. D close_vs_ema9 below, dist_to_20bar_high_pct 6.95; H1 swing_class LH/LL, pos_in_day_range_pct 15.1. Trend holds on W, b...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "VIA",
+     "reason": "oneil: Holding outside the range is true, but D is 51.3% and W 59.8% above the last swing high: far past C17's 10% line, and price this far over its 200-day is C24's climax zon...",
+     "short": "cross-examined: refuted by oneil"
+    },
+    {
+     "ticker": "CALM",
+     "reason": "minervini: Fails the Trend Template gate (C3): ma_50 66.67 < ma_100 75.21 < ma_200 77.49, entry 70.43 under ma_100 and ma_200. A strong bar inside a declining stack is stage 1/4, n...",
+     "short": "cross-examined: refuted by minervini"
+    },
+    {
+     "ticker": "CHYM",
+     "reason": "livermore: Resting near the average is the pullback C5 forbids buying. D close_vs_ema9 below, dist_to_20bar_high_pct 6.96; H1 ema_order 9<21, pos_in_day_range_pct 22.5. W HH/HL con...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "LFST",
+     "reason": "livermore: Basing with D dist_to_20bar_high_pct 12.07 and close_vs_ema9 below is a reaction, not a new high (C5). W and D swing_class HH/HL keep the trend alive; H1 ema_order 9<21....",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "VIK",
+     "reason": "oneil: day_vol 2.28 passes C16, but W HH but LL, 8.8% under the 20-wk high 110.09: not a new high out of a sound base (C7, C12); D 9.7% above swing high 91.5 is a C17 late buy....",
+     "short": "cross-examined: refuted by oneil"
+    },
+    {
+     "ticker": "BIP",
+     "reason": "oneil: Transition bar and mp are not my fields. My test: W swing LH/LL, 5.3% under the 20-wk high: no prior uptrend into a base (C12), so no leader (C9).",
+     "short": "cross-examined: refuted by oneil"
+    },
+    {
+     "ticker": "ASO",
+     "reason": "oneil: W and D HH/HL and D 2.5% over the last swing high (inside C17) are true, but the break came on day_vol 1.22, under C16's 1.40: a hard rejection. mp not my field.",
+     "short": "cross-examined: refuted by oneil"
+    },
+    {
+     "ticker": "MKTX",
+     "reason": "minervini: A pullback to the average only buys in stage 2; criterion 2 fails (C3): ma_100 153.75 below ma_200 155.02. rs_spy_20d 6.24 is thin for a leader (C11).",
+     "short": "cross-examined: refuted by minervini"
+    },
+    {
+     "ticker": "DUOL",
+     "reason": "livermore: Basing is a reaction, not the new high C5 requires. D dist_to_20bar_high_pct 8.7; W swing_class LH/LL; H1 ema_order 9<21, pos_in_day_range_pct 36.7. Drying volume does n...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "CCC",
+     "reason": "elder-lens: Momentum has not reached permission: elder 6.0, elder_5d [4, 3, 3, 6, 6] never prints 7, elder_pattern INTERRUPTED (C3, C9). A range under the swing high is not Elder's...",
+     "short": "cross-examined: refuted by elder lens"
+    },
+    {
+     "ticker": "MANH",
+     "reason": "livermore: Basing on the average is the reaction C5 forbids buying. D close_vs_ema9 below, dist_to_20bar_high_pct 5.06; H1 ema_order 9<21, pos_in_day_range_pct 30.7. Down-day RS is...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "PRCH",
+     "reason": "livermore: Basing in range with D close_vs_ema9 below and dist_to_20bar_high_pct 7.16 is a reaction, not a new high (C5). W swing_class HH/HL confirms the trend; H1 swing_class LH/...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "TFX",
+     "reason": "oneil: day_vol 1.32 is short of C16's 1.40 at the high; W LH/LL; D 5.9% over the last swing high is a C17 late buy. AMRX broke on day_vol 0.5, so it is no group confirmation (R...",
+     "short": "cross-examined: refuted by oneil"
+    },
+    {
+     "ticker": "OMC",
+     "reason": "elder-lens: Near the high with the impulse going away fails my test: elder_5d [7, 7, 7, 7, 6] is a single-bar drop to elder 6.0, no longer provably not red; a colour vanishing near...",
+     "short": "cross-examined: refuted by elder lens"
+    },
+    {
+     "ticker": "ACHC",
+     "reason": "livermore: The stack and RS do not make a new high. D dist_to_20bar_high_pct 5.31; H1 ema_order 9<21, pos_in_day_range_pct 42.5; W dist_to_20bar_high_pct 5.31. A resting leader is...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "U",
+     "reason": "livermore: Resting in range is a reaction, not a new high (C5). D close_vs_ema9 below, dist_to_20bar_high_pct 9.78; H1 pos_in_day_range_pct 3.1, closing at the day's low; W swing_c...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "TBBB",
+     "reason": "livermore: The stack is a trend, not a new high (C5). D swing_class HH but LL, dist_to_20bar_high_pct 3.0; H1 close_vs_ema9 below, ema_order 9<21, swing_class LH/LL. RS is not my t...",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "HAE",
+     "reason": "livermore: 'Near the high' fails on my grid: D dist_to_20bar_high_pct 6.92, W dist_to_20bar_high_pct 6.92, D swing_class LH but HL. No new high after the pullback, so no C5 entry....",
+     "short": "cross-examined: refuted by livermore"
+    },
+    {
+     "ticker": "ADMA",
+     "reason": "no SUPPORT vote at the blind vote (no claims)",
+     "short": "cross-examined: no seat supported it at the blind vote"
+    },
+    {
+     "ticker": "DOC",
+     "reason": "no SUPPORT vote at the blind vote (no claims)",
+     "short": "cross-examined: no seat supported it at the blind vote"
+    }
+   ],
+   "step": 5,
+   "label": "Cross-examined"
+  },
+  {
+   "stage": "Slated",
+   "short": "not slated",
+   "n_in": 7,
+   "n_out": 6,
+   "rule": "the Chair's slate by code from the seats' own tier-2 forms",
+   "dropped": [
+    {
+     "ticker": "SYNA",
+     "reason": "not slated: the room did not carry it to the slate",
+     "short": "not slated: 1 seat supported it, the lowest slated had 2"
+    }
+   ],
+   "step": 6,
+   "label": "Slated"
+  },
+  {
+   "stage": "Ratified (AGREED / CONTESTED / DROPPED)",
+   "short": "ratified",
+   "n_in": 6,
+   "n_out": 3,
+   "rule": "0 AGREED, 3 CONTESTED, 3 DROPPED by the committee's objections",
+   "dropped": [
+    {
+     "ticker": "WWW",
+     "reason": "dropped: livermore: The slate still carries in_zone:ma_20, a buy on the pullback itself, which C5 forbids. The floor brought no evidence my method weighs: WWW is AT its high (D d...",
+     "short": "dropped at ratification: livermore objected"
+    },
+    {
+     "ticker": "BILL",
+     "reason": "dropped: elder-lens: Trigger h1_close_above:bar_high buys a plateau at the top: elder_5d [7, 7, 10, 10, 10] is summer with no transition (C4, C20), D close_vs_swing_high_pct 30.0...",
+     "short": "dropped at ratification: elder lens objected"
+    },
+    {
+     "ticker": "AMRX",
+     "reason": "dropped: elder-lens: Trigger h1_close_above:pivot_high buys the break in front of value on an hourly poke; Elder bids slightly under the rising average (C10) and reads weekly the...",
+     "short": "dropped at ratification: elder lens objected"
+    }
+   ],
+   "step": 7,
+   "label": "Ratified"
+  },
+  {
+   "stage": "QA hold",
+   "short": "QA hold",
+   "n_in": 3,
+   "n_out": 1,
+   "rule": "the QA seat holds a ticket whose ratifiers' objections it cannot see answered",
+   "dropped": [
+    {
+     "ticker": "WWW",
+     "reason": "held: Five of seven deciders objected to trigger in_zone:ma_20, and four named h1_close_above:bar_high as the clearing condition. Does the floor keep a trigger picked by tie-b...",
+     "short": "held by QA: Five of seven deciders objected to trigger in_zone:ma_20, and..."
+    },
+    {
+     "ticker": "AMRX",
+     "reason": "held: The BOS printed on day_vol 0.5 and the trigger says 'expanding volume' with no line. What day_vol figure, and on which timeframe (H1 or a D close above pivot_high), make...",
+     "short": "held by QA: The BOS printed on day_vol 0.5 and the trigger..."
+    }
+   ],
+   "step": 8,
+   "label": "After QA"
+  }
+ ],
+ "names": [
+  {
+   "ticker": "CAKE",
+   "outcome": "ADVANCE",
+   "stage": "reached the end",
+   "reason": "CONTESTED",
+   "short": "CONTESTED",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 81.3 . Flow 94.7 . Energy 82.4 . Structure 82.9 . MP 58 . Elder score 10 . Pipeline rank 0 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 81.3 . Flow 94.7 . Energy 82.4 . Structure 82.9 . Momentum phase score 58 . Elder score 10 . AQE rank 0 . Quiet Strength odds 52%",
+   "step": null,
+   "step_label": null
+  },
+  {
+   "ticker": "WWW",
+   "outcome": "fell out",
+   "stage": "ratified",
+   "reason": "dropped: livermore: The slate still carries in_zone:ma_20, a buy on the pullback itself, which C5 forbids. The floor brought no evidence my method weighs: WWW is AT its high (D d...",
+   "short": "dropped at ratification: livermore objected",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 86.3 . Flow 100 . Energy 65.5 . Structure 86.3 . MP 97 . Elder score 10 . Pipeline rank 63.7 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 86.3 . Flow 100 . Energy 65.5 . Structure 86.3 . Momentum phase score 97 . Elder score 10 . AQE rank 63.7 . Quiet Strength odds 52%",
+   "step": 7,
+   "step_label": "Ratified"
+  },
+  {
+   "ticker": "MGNI",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: C5: a resting name is still inside its reaction. D close_vs_ema9 below, dist_to_20bar_high_pct 6.95; H1 swing_class LH/LL, pos_in_day_range_pct 15.1. Trend holds on W, b...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 71.6 . Flow 68.4 . Energy 62.2 . Structure 73.1 . MP 89 . Elder score 7 . Pipeline rank 83.5 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 71.6 . Flow 68.4 . Energy 62.2 . Structure 73.1 . Momentum phase score 89 . Elder score 7 . AQE rank 83.5 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "VIA",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: Holding outside the range is true, but D is 51.3% and W 59.8% above the last swing high: far past C17's 10% line, and price this far over its 200-day is C24's climax zon...",
+   "short": "cross-examined: refuted by oneil",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 80.4 . Flow 86.8 . Energy 69.7 . Structure 70.9 . MP 96 . Elder score 10 . Pipeline rank 90.2 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 80.4 . Flow 86.8 . Energy 69.7 . Structure 70.9 . Momentum phase score 96 . Elder score 10 . AQE rank 90.2 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "DRI",
+   "outcome": "ADVANCE",
+   "stage": "reached the end",
+   "reason": "CONTESTED",
+   "short": "CONTESTED",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 77.9 . Flow 84.2 . Energy 61.3 . Structure 86.3 . MP 85 . Elder score 10 . Pipeline rank 80.7 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 77.9 . Flow 84.2 . Energy 61.3 . Structure 86.3 . Momentum phase score 85 . Elder score 10 . AQE rank 80.7 . Quiet Strength odds 52%",
+   "step": null,
+   "step_label": null
+  },
+  {
+   "ticker": "CALM",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "minervini: Fails the Trend Template gate (C3): ma_50 66.67 < ma_100 75.21 < ma_200 77.49, entry 70.43 under ma_100 and ma_200. A strong bar inside a declining stack is stage 1/4, n...",
+   "short": "cross-examined: refuted by minervini",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 68.8 . Flow 89.5 . Energy 61.3 . Structure 54.7 . MP 63 . Elder score 10 . Pipeline rank 48.1 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 68.8 . Flow 89.5 . Energy 61.3 . Structure 54.7 . Momentum phase score 63 . Elder score 10 . AQE rank 48.1 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "CHYM",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Resting near the average is the pullback C5 forbids buying. D close_vs_ema9 below, dist_to_20bar_high_pct 6.96; H1 ema_order 9<21, pos_in_day_range_pct 22.5. W HH/HL con...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 61.1 . Flow 60.5 . Energy 53.8 . Structure 75.8 . MP 58 . Elder score 7 . Pipeline rank 76.1 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 61.1 . Flow 60.5 . Energy 53.8 . Structure 75.8 . Momentum phase score 58 . Elder score 7 . AQE rank 76.1 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "LFST",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Basing with D dist_to_20bar_high_pct 12.07 and close_vs_ema9 below is a reaction, not a new high (C5). W and D swing_class HH/HL keep the trend alive; H1 ema_order 9<21....",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 60.8 . Flow 42.1 . Energy 55.5 . Structure 71.6 . MP 86 . Elder score 2 . Pipeline rank 83.5 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 60.8 . Flow 42.1 . Energy 55.5 . Structure 71.6 . Momentum phase score 86 . Elder score 2 . AQE rank 83.5 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "VIK",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: day_vol 2.28 passes C16, but W HH but LL, 8.8% under the 20-wk high 110.09: not a new high out of a sound base (C7, C12); D 9.7% above swing high 91.5 is a C17 late buy....",
+   "short": "cross-examined: refuted by oneil",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 83.1 . Flow 100 . Energy 55.5 . Structure 89.5 . MP 93 . Elder score 10 . Pipeline rank 72.7 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 83.1 . Flow 100 . Energy 55.5 . Structure 89.5 . Momentum phase score 93 . Elder score 10 . AQE rank 72.7 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "DIS",
+   "outcome": "ADVANCE",
+   "stage": "reached the end",
+   "reason": "CONTESTED",
+   "short": "CONTESTED",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 70.9 . Flow 72.4 . Energy 51.3 . Structure 83.2 . MP 86 . Elder score 9 . Pipeline rank 73.4 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 70.9 . Flow 72.4 . Energy 51.3 . Structure 83.2 . Momentum phase score 86 . Elder score 9 . AQE rank 73.4 . Quiet Strength odds 52%",
+   "step": null,
+   "step_label": null
+  },
+  {
+   "ticker": "BILL",
+   "outcome": "fell out",
+   "stage": "ratified",
+   "reason": "dropped: elder-lens: Trigger h1_close_above:bar_high buys a plateau at the top: elder_5d [7, 7, 10, 10, 10] is summer with no transition (C4, C20), D close_vs_swing_high_pct 30.0...",
+   "short": "dropped at ratification: elder lens objected",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 86.8 . Flow 100 . Energy 66.4 . Structure 84.2 . MP 100 . Elder score 10 . Pipeline rank 72.4 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 86.8 . Flow 100 . Energy 66.4 . Structure 84.2 . Momentum phase score 100 . Elder score 10 . AQE rank 72.4 . Quiet Strength odds 52%",
+   "step": 7,
+   "step_label": "Ratified"
+  },
+  {
+   "ticker": "BIP",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: Transition bar and mp are not my fields. My test: W swing LH/LL, 5.3% under the 20-wk high: no prior uptrend into a base (C12), so no leader (C9).",
+   "short": "cross-examined: refuted by oneil",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 84.1 . Flow 100 . Energy 58.8 . Structure 89.5 . MP 93 . Elder score 10 . Pipeline rank 75.4 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 84.1 . Flow 100 . Energy 58.8 . Structure 89.5 . Momentum phase score 93 . Elder score 10 . AQE rank 75.4 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "ASO",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: W and D HH/HL and D 2.5% over the last swing high (inside C17) are true, but the break came on day_vol 1.22, under C16's 1.40: a hard rejection. mp not my field.",
+   "short": "cross-examined: refuted by oneil",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 77.6 . Flow 84.2 . Energy 63 . Structure 81.1 . MP 86 . Elder score 10 . Pipeline rank 84.2 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 77.6 . Flow 84.2 . Energy 63 . Structure 81.1 . Momentum phase score 86 . Elder score 10 . AQE rank 84.2 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "MKTX",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "minervini: A pullback to the average only buys in stage 2; criterion 2 fails (C3): ma_100 153.75 below ma_200 155.02. rs_spy_20d 6.24 is thin for a leader (C11).",
+   "short": "cross-examined: refuted by minervini",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 69.4 . Flow 51.3 . Energy 81.5 . Structure 74.7 . MP 73 . Elder score 6 . Pipeline rank 51.7 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 69.4 . Flow 51.3 . Energy 81.5 . Structure 74.7 . Momentum phase score 73 . Elder score 6 . AQE rank 51.7 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "SYNA",
+   "outcome": "fell out",
+   "stage": "not slated",
+   "reason": "not slated: the room did not carry it to the slate",
+   "short": "not slated: 1 seat supported it, the lowest slated had 2",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 67 . Flow 53.9 . Energy 83.2 . Structure 69.5 . MP 60 . Elder score 6 . Pipeline rank 84.5 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 67 . Flow 53.9 . Energy 83.2 . Structure 69.5 . Momentum phase score 60 . Elder score 6 . AQE rank 84.5 . Quiet Strength: not scored",
+   "step": 6,
+   "step_label": "Slated"
+  },
+  {
+   "ticker": "AMRX",
+   "outcome": "fell out",
+   "stage": "ratified",
+   "reason": "dropped: elder-lens: Trigger h1_close_above:pivot_high buys the break in front of value on an hourly poke; Elder bids slightly under the rising average (C10) and reads weekly the...",
+   "short": "dropped at ratification: elder lens objected",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 65.2 . Flow 55.3 . Energy 78.2 . Structure 73.7 . MP 52 . Elder score 9 . Pipeline rank 60 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 65.2 . Flow 55.3 . Energy 78.2 . Structure 73.7 . Momentum phase score 52 . Elder score 9 . AQE rank 60 . Quiet Strength odds 52%",
+   "step": 7,
+   "step_label": "Ratified"
+  },
+  {
+   "ticker": "DUOL",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Basing is a reaction, not the new high C5 requires. D dist_to_20bar_high_pct 8.7; W swing_class LH/LL; H1 ema_order 9<21, pos_in_day_range_pct 36.7. Drying volume does n...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 65 . Flow 48.7 . Energy 58.8 . Structure 74.7 . MP 89 . Elder score 7 . Pipeline rank 57.9 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 65 . Flow 48.7 . Energy 58.8 . Structure 74.7 . Momentum phase score 89 . Elder score 7 . AQE rank 57.9 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "CCC",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "elder-lens: Momentum has not reached permission: elder 6.0, elder_5d [4, 3, 3, 6, 6] never prints 7, elder_pattern INTERRUPTED (C3, C9). A range under the swing high is not Elder's...",
+   "short": "cross-examined: refuted by elder lens",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 64.3 . Flow 35.5 . Energy 80.7 . Structure 82.1 . MP 65 . Elder score 6 . Pipeline rank 79.7 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 64.3 . Flow 35.5 . Energy 80.7 . Structure 82.1 . Momentum phase score 65 . Elder score 6 . AQE rank 79.7 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "MANH",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Basing on the average is the reaction C5 forbids buying. D close_vs_ema9 below, dist_to_20bar_high_pct 5.06; H1 ema_order 9<21, pos_in_day_range_pct 30.7. Down-day RS is...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 61.1 . Flow 30.3 . Energy 78.2 . Structure 73.7 . MP 69 . Elder score 1 . Pipeline rank 83.2 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 61.1 . Flow 30.3 . Energy 78.2 . Structure 73.7 . Momentum phase score 69 . Elder score 1 . AQE rank 83.2 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "PRCH",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Basing in range with D close_vs_ema9 below and dist_to_20bar_high_pct 7.16 is a reaction, not a new high (C5). W swing_class HH/HL confirms the trend; H1 swing_class LH/...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 59.4 . Flow 60.5 . Energy 59.7 . Structure 61.7 . MP 55 . Elder score 4 . Pipeline rank 69.5 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 59.4 . Flow 60.5 . Energy 59.7 . Structure 61.7 . Momentum phase score 55 . Elder score 4 . AQE rank 69.5 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "TFX",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "oneil: day_vol 1.32 is short of C16's 1.40 at the high; W LH/LL; D 5.9% over the last swing high is a C17 late buy. AMRX broke on day_vol 0.5, so it is no group confirmation (R...",
+   "short": "cross-examined: refuted by oneil",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist|Elder",
+   "aqe_line": "AQE-listed: Longlist, Elder . SC_MOMENTUM 80 . Flow 80.3 . Energy 64.7 . Structure 89.5 . MP 93 . Elder score 10 . Pipeline rank 65.7 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist, Elder . AQE momentum score 80 . Flow 80.3 . Energy 64.7 . Structure 89.5 . Momentum phase score 93 . Elder score 10 . AQE rank 65.7 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "OMC",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "elder-lens: Near the high with the impulse going away fails my test: elder_5d [7, 7, 7, 7, 6] is a single-bar drop to elder 6.0, no longer provably not red; a colour vanishing near...",
+   "short": "cross-examined: refuted by elder lens",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 76.4 . Flow 78.9 . Energy 65.5 . Structure 82.1 . MP 83 . Elder score 6 . Pipeline rank 69.1 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 76.4 . Flow 78.9 . Energy 65.5 . Structure 82.1 . Momentum phase score 83 . Elder score 6 . AQE rank 69.1 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "ACHC",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: The stack and RS do not make a new high. D dist_to_20bar_high_pct 5.31; H1 ema_order 9<21, pos_in_day_range_pct 42.5; W dist_to_20bar_high_pct 5.31. A resting leader is...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 75.6 . Flow 73.7 . Energy 69.7 . Structure 73.7 . MP 89 . Elder score 7 . Pipeline rank 83.5 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 75.6 . Flow 73.7 . Energy 69.7 . Structure 73.7 . Momentum phase score 89 . Elder score 7 . AQE rank 83.5 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "ADMA",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "no SUPPORT vote at the blind vote (no claims)",
+   "short": "cross-examined: no seat supported it at the blind vote",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 74.8 . Flow 68.4 . Energy 77.3 . Structure 66.3 . MP 89 . Elder score 7 . Pipeline rank 52.4 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 74.8 . Flow 68.4 . Energy 77.3 . Structure 66.3 . Momentum phase score 89 . Elder score 7 . AQE rank 52.4 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "U",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: Resting in range is a reaction, not a new high (C5). D close_vs_ema9 below, dist_to_20bar_high_pct 9.78; H1 pos_in_day_range_pct 3.1, closing at the day's low; W swing_c...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 72.6 . Flow 71.1 . Energy 58.8 . Structure 78.9 . MP 89 . Elder score 7 . Pipeline rank 68.4 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 72.6 . Flow 71.1 . Energy 58.8 . Structure 78.9 . Momentum phase score 89 . Elder score 7 . AQE rank 68.4 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "TBBB",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: The stack is a trend, not a new high (C5). D swing_class HH but LL, dist_to_20bar_high_pct 3.0; H1 close_vs_ema9 below, ema_order 9<21, swing_class LH/LL. RS is not my t...",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": true,
+   "aqe_lists": "Longlist",
+   "aqe_line": "AQE-listed: Longlist . SC_MOMENTUM 69.6 . Flow 69.7 . Energy 63 . Structure 62.9 . MP 86 . Elder score 7 . Pipeline rank 93 . QS odds 52%",
+   "aqe_plain": "AQE-listed: Longlist . AQE momentum score 69.6 . Flow 69.7 . Energy 63 . Structure 62.9 . Momentum phase score 86 . Elder score 7 . AQE rank 93 . Quiet Strength odds 52%",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "HAE",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "livermore: 'Near the high' fails on my grid: D dist_to_20bar_high_pct 6.92, W dist_to_20bar_high_pct 6.92, D swing_class LH but HL. No new high after the pullback, so no C5 entry....",
+   "short": "cross-examined: refuted by livermore",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 59.1 . Flow 22.4 . Energy 81.5 . Structure 70.5 . MP 69 . Elder score 6 . Pipeline rank 77.5 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 59.1 . Flow 22.4 . Energy 81.5 . Structure 70.5 . Momentum phase score 69 . Elder score 6 . AQE rank 77.5 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  },
+  {
+   "ticker": "DOC",
+   "outcome": "fell out",
+   "stage": "cross-examination",
+   "reason": "no SUPPORT vote at the blind vote (no claims)",
+   "short": "cross-examined: no seat supported it at the blind vote",
+   "aqe_listed": false,
+   "aqe_lists": "none",
+   "aqe_line": "AQE-listed: none (below the AQE shortlist gate) . SC_MOMENTUM 32.7 . Flow 15.8 . Energy 32.2 . Structure 47.4 . MP 44 . Elder score 0 . Pipeline rank 40.4 . QS: not scored",
+   "aqe_plain": "AQE-listed: none (below the AQE shortlist gate) . AQE momentum score 32.7 . Flow 15.8 . Energy 32.2 . Structure 47.4 . Momentum phase score 44 . Elder score 0 . AQE rank 40.4 . Quiet Strength: not scored",
+   "step": 5,
+   "step_label": "Cross-examined"
+  }
+ ],
+ "near_misses": [
+  {
+   "ticker": "SYNA",
+   "where": "not slated",
+   "what": "1 of the seats supported it; the lowest slated name had 2",
+   "clears": "one more seat's support, or a seat moving it to conviction",
+   "aqe_lists": "none"
+  },
+  {
+   "ticker": "WWW",
+   "where": "QA hold",
+   "what": "QA asks: Five of seven deciders objected to trigger in_zone:ma_20, and four named h1_close_above:bar_high as the clearing condition. Does the...",
+   "clears": "an answer to that question",
+   "aqe_lists": "Longlist|Elder"
+  },
+  {
+   "ticker": "AMRX",
+   "where": "QA hold",
+   "what": "QA asks: The BOS printed on day_vol 0.5 and the trigger says 'expanding volume' with no line. What day_vol figure...",
+   "clears": "an answer to that question",
+   "aqe_lists": "Longlist|Elder"
+  }
+ ],
+ "notes": [],
+ "disclosure": null
+}
