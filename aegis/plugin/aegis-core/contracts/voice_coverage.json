@@ -151,18 +151,26 @@
    "tick_size"
   ],
   "raschke": [
+   "adx_14",
    "atr_14d",
    "atr_caution",
+   "bar_range_5d",
    "bracket",
    "bracket.stop",
    "bracket.stop_type",
-   "day_vol",
    "held",
+   "hi_20d",
+   "hv_ratio_6_100",
    "lens",
+   "lo_20d",
    "mp_accel_state",
    "mp_state",
+   "nr4_flag",
+   "nr7_flag",
    "rank",
    "sma_distance_pct",
+   "stoch_d_3",
+   "stoch_k_14",
    "structure",
    "structure_shift",
    "ticker"
@@ -249,6 +257,50 @@
  },
  "standing_when_no_aqe_listed_name": {
   "lens": "lens is AQE's lens-consensus and exists only for names on AQE's daily list; on a whole-universe run a seat can be served 25 universe-only names, so the field is legitimately blank, not a feed gap. Applies to ANY seat, and ONLY when none of the names in that seat's packet is on AQE's daily list (universe-only rows excluded): if even one served name is AQE-listed and lens is still blank for every name, that is a real feed fault and blocks as before."
+ },
+ "declared_name_aliases": {
+  "adx": [
+   "adx_14"
+  ],
+  "stochastic_kd": [
+   "stoch_k_14",
+   "stoch_d_3"
+  ],
+  "bar_range_history": [
+   "bar_range_5d",
+   "nr4_flag",
+   "nr7_flag",
+   "hv_ratio_6_100"
+  ],
+  "exact_20day_extreme": [
+   "hi_20d",
+   "lo_20d"
+  ],
+  "n_day_extreme": [
+   "hi_20d",
+   "lo_20d"
+  ],
+  "cmf": [
+   "subcomponents.flow.cmf"
+  ],
+  "rvol": [
+   "rvol_20d"
+  ],
+  "squeeze_score": [
+   "subcomponents.energy.squeeze_score"
+  ],
+  "ma_150": [
+   "ma_150"
+  ],
+  "pct_from_52w_high": [
+   "pct_from_52w_high"
+  ],
+  "base_duration": [
+   "subcomponents.bq.bq_base_dur"
+  ],
+  "base_tightness": [
+   "subcomponents.bq.bq_range_tight"
+  ]
  },
  "capabilities": {}
 }

@@ -465,7 +465,7 @@ steps:
 
   - name: CLAIMS
     kind: tool
-    command: "pma_pipeline.py claims --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --mtf mtf.json --date <date> --out claims_board.json --packets-dir claims_packets"
+    command: "pma_pipeline.py claims --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --mtf mtf.json --date <date> --out claims_board.json --packets-dir claims_packets --export aqe_daily_export.json --menus voice_menus.json"
     reads: [forms/r2/*.json, phase4.json, forms/challenge/steenbarger.json, mtf.json]
     produces: [board.json, claims_board.json, claims_packets/]
     first: "pma_pipeline.py board --round2 forms/r2 --phase4 phase4.json --challenge forms/challenge/steenbarger.json --date <date> --out board.json   # the blind splits + cases, kept for the record and ratify-count"
@@ -494,6 +494,10 @@ steps:
     rulings: [R1, R31, R38, R39]
     validate_with: "registrar.py validate --file forms/cross/<seat>.json --kind cross --claims claims_board.json"
     must_also: >
+      DATA SERVED IN EVERY ROUND (PM 2026-11-19, "a required field not served is an engineering fix"): `claims` and `pair` take the export (aqe_daily_export_wu.json on a whole_universe run) and voice_menus.json, so
+      every claim in a claims packet and every survivor in a tier2 packet carries the row sliced to the REVIEWING seat's own menu + the held and momentum floors. floor2 / ratify2 / QA prompts take the same rows from
+      `pma_pipeline.py seat-rows --candidates candidate_set.json --menus voice_menus.json --tickers <T1> <T2> ... --date <date> --outdir seat_rows` (paste the seat's file, never retype). A seat that still writes
+      NOT_SERVED for a field on its own menu is a pipeline defect: report it, do not accept it.
       TIER 1 -- CROSS-EXAMINATION (contracts/cross_ruling.schema.json). A reviewer RULES on each claim routed to it --
       CONFIRM / REFUTE / CANNOT_SEE -- with the evidence its own method reads, on the W / D / H1 grid (R39), and states its
       own stance on the name after ruling (changed_mind + what_moved_me when it moved). It never restates its own case and
@@ -524,7 +528,7 @@ steps:
 
   - name: PAIR
     kind: tool
-    command: "pma_pipeline.py pair --claims claims_board.json --rulings forms/cross --funnel funnel.json --mtf mtf.json --date <date> --out pairs.json --packets-dir tier2_packets"
+    command: "pma_pipeline.py pair --claims claims_board.json --rulings forms/cross --funnel funnel.json --mtf mtf.json --date <date> --out pairs.json --packets-dir tier2_packets --candidates candidate_set.json --menus voice_menus.json"
     reads: [claims_board.json, forms/cross/*.json, funnel.json, mtf.json]
     produces: [pairs.json, tier2_packets/]
     barrier: "every REFUTE on a surviving claim is one pair (author, refuter, claim, evidence); every decider has a tier2 packet listing the survivors it must decide"
