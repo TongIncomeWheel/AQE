@@ -28,6 +28,10 @@ def main(argv=None) -> int:
     except Exception as exc:  # noqa: BLE001
         print(f"[alerts_pause] FAILED: {type(exc).__name__}: {exc}")
         return 1
+    if not st.get("verified", True) and not st["paused"]:
+        # A flag that could not be read is never reported as RUNNING (conductor 2026-11-19).
+        print(f"[alerts_pause] {cmd}: CANNOT VERIFY -- {st.get('problem')}", st)
+        return 3
     print(f"[alerts_pause] {cmd}: " + ("PAUSED" if st["paused"] else "RUNNING"), st)
     return 0
 
