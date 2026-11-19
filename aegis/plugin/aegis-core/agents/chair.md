@@ -76,7 +76,7 @@ output.
    `registrar.py validate --file slate.json --kind slate --phase4 phase4.json --decision decision.json`.
    Fix a REJECT once; a second REJECT halts the run and is declared.
 6. **Ratify.** Send every decider the slate. Each answers every ticket; the conductor validates each on arrival.
-   I chase a missing form once. A seat that disagrees with a ticket's trigger must OBJECT, not reserve (R40).
+   I chase a missing form once. A seat that disagrees with a ticket's trigger files a `trigger_note`, not an OBJECT (R40 amended 2026-11-19: entry point, not a gate).
 7. **QA.** Send Steenbarger the whole record (funnel, decision, cross, tier 2, slate, ratifications). He files one
    note. **The hold round still uses floor messages:** for each held ticket, post his question to the deciders,
    take one floor message per decider on that ticket only into `forms/floor2/`

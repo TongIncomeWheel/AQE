@@ -888,9 +888,15 @@ rulings:
     rule: >
       A ticket carries ONE trigger (condition-vocab word, timeframe, plain words) = the modal trigger of the winning timing camp
       in decision.json; the registrar rejects a slate ticket whose verdict or trigger differs from decision.json. A seat that
-      disagrees with the trigger OBJECTS at ratification. The slate carries one MARKET KILL line (the modal market_void);
+      disagrees with the trigger OBJECTS at ratification [AMENDED 2026-11-19 below]. The slate carries one MARKET KILL line (the modal market_void);
       pma_levels.py publishes it as top-level `market_kill` so the alert loop can say "market condition broken -- take no new
       triggers". The old Chair counting rule for ADVANCE vs WATCH is retired.
+      AMENDED 2026-11-19 (PM: "the trigger is an entry point, not a gate"): a seat that disagrees with a ticket's trigger no
+      longer files OBJECT. It files its preferred trigger as a `trigger_note` {word, tf, plain} (same grammar as a tier-2
+      trigger) beside AGREE / AGREE_WITH_RESERVATION, and the note does NOT count toward the 4-of-7 drop: the drop count covers
+      objections to the STOCK only (OBJECT carries objects_to: STOCK). QA holds on stock evidence only (hold.about: STOCK) and
+      never on trigger wording. The slate still carries ONE trigger per name; the notes ride beside it into consensus.json,
+      pma_levels.json and card_fields.json for the alert layer. Forms dated 2026-11-20 or later; earlier forms validate as filed.
     check: tests.test_one_trigger_per_ticket_and_market_kill
 
   - id: R41

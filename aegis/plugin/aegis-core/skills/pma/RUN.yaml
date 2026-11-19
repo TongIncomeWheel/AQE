@@ -616,7 +616,9 @@ steps:
     validate_with: "registrar.py validate --file <form> --kind ratify --slate slate.json"
     must_also: >
       Each decider answers EVERY ticket (contracts/ratification.schema.json): AGREE, AGREE_WITH_RESERVATION
-      (say the reservation), or OBJECT with the one thing that would clear it. Paste the SIGNED conviction anchors (PM 2026-11-04) from
+      (say the reservation), or OBJECT with the one thing that would clear it. R40 AMENDED 2026-11-19: the trigger is an entry point, not a gate --
+      a seat that disagrees with the ticket's trigger files `trigger_note` {word, tf, plain} on its AGREE, never an OBJECT; OBJECT is for the STOCK only
+      (`objects_to: STOCK`), and ratify-count counts only those toward the 4-of-7 drop. Paste the SIGNED conviction anchors (PM 2026-11-04) from
       the `conviction` x_note in ratification.schema.json into every RATIFY prompt: 5 textbook / 4 strong, one supporting thing missing /
       3 a conditional yes 'yes, once X' / 2 marginal / 1 fails my method as written; scored on the ticket as written, in the seat's own method. Commit per form on arrival.
     checkpoint_after: true
@@ -634,7 +636,7 @@ steps:
     must_also: >
       ONE note (contracts/qa_note.schema.json): did every decider read evidence; are reasons leaning on the
       same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may
-      HOLD a ticket (at most once per ticket). ON A HOLD: the conductor reopens deliberation on the held tickets
+      HOLD a ticket (at most once per ticket), on STOCK evidence only (`holds[].about: STOCK`) -- never on trigger wording (R40 amended 2026-11-19). ON A HOLD: the conductor reopens deliberation on the held tickets
       only -- one floor message per decider per held ticket to forms/floor2/ (contracts/floor_message.schema.json; validated
       `registrar.py validate --file <m> --kind floor --phase4 phase4.json`), `floor-check --messages forms/floor2 --qa forms/qa/steenbarger.json`,
       then `pma_pipeline.py slate-cut --slate slate.json --qa forms/qa/steenbarger.json --out slate_held.json` and the

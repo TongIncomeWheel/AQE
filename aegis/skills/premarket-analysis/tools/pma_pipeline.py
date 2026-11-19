@@ -2572,6 +2572,9 @@ def cmd_ratify_count(a):
                 raise SystemExit(f"ratify-count ({label}): {f['voice']} answered {ans!r} on {t} -- not a valid answer; the form was not validated")
             if ans == "OBJECT" and not (r.get("objection") and r.get("would_clear")):
                 raise SystemExit(f"ratify-count ({label}): {f['voice']} OBJECTs on {t} without objection + would_clear")
+            if ans == "OBJECT" and str(f.get("date") or "") >= TRIGGER_NOTE_FROM and r.get("objects_to") != "STOCK":
+                raise SystemExit(f"ratify-count ({label}): {f['voice']} OBJECTs on {t} without objects_to: STOCK -- R40 (amended 2026-11-19): the trigger is an entry point, not a gate; "
+                                 f"a trigger disagreement is a trigger_note on an AGREE, never an OBJECT, and never counts toward the drop")
             if ans == "AGREE_WITH_RESERVATION" and not r.get("reservation"):
                 raise SystemExit(f"ratify-count ({label}): {f['voice']} AGREE_WITH_RESERVATION on {t} without the reservation")
             if t in seen:
@@ -2661,6 +2664,9 @@ def cmd_ratify_count(a):
                     "held": t in held, "n_deciders": n, "drop_threshold": (lane_info["threshold"] if lane_info else thr),
                     "entry_trigger": x.get("entry_trigger"), "wrong_if": x.get("wrong_if"),
                     "trigger": x.get("trigger"),
+                    # R40 amended (PM 2026-11-19): the seats' PREFERRED triggers ride beside the slate's one trigger to the alert layer; never counted toward the drop
+                    "trigger_notes": [{"voice": v, "answer": rows[v].get("answer"), "trigger_note": rows[v]["trigger_note"], "round": rows[v].get("_round")}
+                                      for v in sorted(rows) if isinstance(rows[v].get("trigger_note"), dict)],
                     "horizon_sessions": x.get("horizon_sessions"), "why_agreed": x.get("why_agreed"),
                     "dissent": x.get("dissent") or [],
                     "gaps": [f"no ratification from {v}" for v in missing],
@@ -2947,6 +2953,7 @@ METHOD_FAMILY = {"oneil": "breakout", "minervini": "breakout", "livermore": "piv
                  "seow": "position", "raschke": "swing", "wyckoff": "structure", "aqe-quant": "quant"}
 CLAIMS_PER_CAMP = 2            # R38: the two highest-conviction SUPPORT cases and the two highest-conviction OPPOSE cases
 CLAIM_REVIEWERS = 2            # R38: each claim is ruled on by two reviewers of a different method family
+TRIGGER_NOTE_FROM = "2026-11-20"   # R40 amended (PM 2026-11-19): forms dated from the next session; mirrors registrar.TRIGGER_NOTE_FROM
 SLATE_MIN_SUPPORT = 4          # R38/R40: fewer than 4 SUPPORT at tier 2 = not slated
 TIMING_TIE = "WATCH"           # R40: ACT_NOW == WAIT -> WATCH ("a higher win rate beats a bigger R")
 CROSS_RULINGS = ("CONFIRM", "REFUTE", "CANNOT_SEE")

@@ -17,6 +17,7 @@
    "x_note": "answer the point that was made, by name; concede when the evidence your own method cares about shows up; hold when it does not; say what would clear your objection"},
   "stance_now": {"enum": ["SUPPORT", "OPPOSE", "ABSTAIN", "NO_VOTE"], "x_note": "the seat's stance after writing this; NO_VOTE for the QA seat"},
   "changed_mind": {"type": "boolean"},
+  "trigger_note": {"type": ["object", "null"], "additionalProperties": false, "required": ["word", "tf", "plain"], "properties": {"word": {"type": "string", "maxLength": 80}, "tf": {"enum": ["W", "D", "H1"]}, "plain": {"type": "string", "maxLength": 120}}, "x_note": "R40 AMENDED (PM 2026-11-19): the trigger is an ENTRY POINT, not a gate. A seat that disagrees with the ticket's trigger files its PREFERRED trigger here (a condition-vocab word with a FIELD level, its timeframe, plain words, inside the seat's own method) on an AGREE or AGREE_WITH_RESERVATION about the stock, never an OBJECT. It rides beside the slate's ONE trigger into consensus.json, pma_levels.json and card_fields.json for the alert layer, and is NOT counted toward the 4-of-7 drop."},
   "what_moved_me": {"type": ["string", "null"], "maxLength": 300, "x_note": "REQUIRED when changed_mind is true -- the evidence, by name (R35: recorded)"}
  },
  "x_registrar_extra_checks": [

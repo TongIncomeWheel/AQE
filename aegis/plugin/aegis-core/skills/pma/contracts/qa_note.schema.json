@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "QA note -- Steenbarger's read of the whole record after ratification, with optional holds (R36 round 6)",
  "x_version": "1.0.0",
- "x_purpose": "One note: did every decider read evidence; are reasons leaning on the same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may HOLD a ticket: the Chair reopens the floor on that ticket only, with his question; the deciders discuss once more and ratify again. ONE hold per ticket, then the result stands. He cannot vote or veto.",
+ "x_purpose": "One note: did every decider read evidence; are reasons leaning on the same few anchors; did anyone's point go unanswered; does the slate say what the deciders said. He may HOLD a ticket: the Chair reopens the floor on that ticket only, with his question; the deciders discuss once more and ratify again. ONE hold per ticket, then the result stands. He cannot vote or veto. R40 amended 2026-11-19: the trigger is an entry point, not a gate, so QA no longer holds a name on trigger wording.",
  "type": "object",
  "required": ["voice", "date", "evidence_read", "shared_anchors", "unanswered_points", "slate_says_what_deciders_said", "note", "holds"],
  "additionalProperties": false,
@@ -19,7 +19,7 @@
   "slate_says_what_deciders_said": {"type": "boolean"},
   "note": {"type": "string", "minLength": 1, "maxLength": 800},
   "holds": {"type": "array", "items": {"type": "object", "required": ["ticker", "question"],
-            "properties": {"ticker": {"type": "string"}, "question": {"type": "string", "maxLength": 300}}},
+            "properties": {"ticker": {"type": "string"}, "question": {"type": "string", "maxLength": 300}, "about": {"enum": ["STOCK"], "x_note": "REQUIRED from 2026-11-20 (R40 amended 2026-11-19): QA holds a name on the stock's EVIDENCE only, never on trigger wording"}}},
             "x_note": "each slate ticket at most once; [] for no hold"}
  },
  "x_registrar_extra_checks": [

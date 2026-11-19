@@ -215,7 +215,9 @@ def build(a):
         row = {"ticker": t, "class": cls, "lane": c.get("lane"), "conviction": c.get("conviction"),
                "held": t in held_set, "mark": (rm.get(t) or {}).get("mark"),
                "levels": _levels(br.get(t)), "triggers": trig,
-               "confirms": card.get("confirms"), "kills": card.get("kills")}
+               "confirms": card.get("confirms"), "kills": card.get("kills"),
+               # R40 amended (PM 2026-11-19): the seats' preferred triggers, beside the one trigger above; never a gate and not counted toward the drop
+               "trigger_notes": c.get("trigger_notes") or []}
         if card.get("not_structured_yet"):
             row["not_structured_yet"] = card["not_structured_yet"]
         rows.append(row)
@@ -680,7 +682,8 @@ def supplement_rows(cons, brackets, cond_md, export_rows, origin_run, cut_reason
                    "confirms": c.get("entry_trigger"), "kills": c.get("wrong_if"), "conditions": conds,
                    "committee_status": c.get("status"),
                    "committee_objections": [{"voice": o.get("voice"), "objection": o.get("objection"), "would_clear": o.get("would_clear")}
-                                            for o in c.get("objections") or []]}
+                                            for o in c.get("objections") or []],
+                   "trigger_notes": c.get("trigger_notes") or []}   # R40 amended (PM 2026-11-19): preferred triggers, never a gate
             adv.append(row)
         elif v in ("ADVANCE", "HOLD-FOR-CONDITIONS"):
             notes.append(f"{t}: {v} but conditions.md has no parseable shared line -- not loaded")

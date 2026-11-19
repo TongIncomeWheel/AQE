@@ -258,6 +258,31 @@ def test_the_market_kill_line_reaches_the_levels_file(td):
     check("no Valen flag reaches the levels file (R41)", "no_buy" not in open(P("lv.json")).read().lower())
 
 
+def test_trigger_notes_reach_the_levels_file_beside_the_one_trigger(td):
+    """R40 amended (PM 2026-11-19): the seats' PREFERRED triggers ride from consensus.json into pma_levels.json next to the ticket's one trigger,
+    unchanged, and every row carries the key (empty when no seat filed one)."""
+    d = os.path.join(td, "tn"); os.makedirs(d, exist_ok=True)
+    P = lambda n: os.path.join(d, n)
+    cards = P("cards.json")
+    run([CARDS, "triggers", "--conditions", os.path.join(NOV2, "conditions.json"), "--export", os.path.join(NOV2, "export.json"),
+         "--broker-stops", os.path.join(NOV2, "broker_stops.json"), "--out", cards])
+    cons = json.load(open(os.path.join(NOV2, "consensus.json")))
+    note = {"voice": "raschke", "answer": "AGREE", "trigger_note": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "the hourly close above the bar high"}, "round": "ratify"}
+    tk = cons[0]["ticker"]; cons[0]["trigger_notes"] = [note]
+    json.dump(cons, open(P("cons.json"), "w"))
+    rc, log = run([LV, "emit", "--consensus", P("cons.json"), "--brackets", P("none.json"), "--repeat-marks", P("none.json"), "--cards", cards,
+                   "--broker-stops", os.path.join(NOV2, "broker_stops.json"), "--candidates", P("none.json"), "--phase4", P("none.json"),
+                   "--conditions", os.path.join(NOV2, "conditions.json"), "--date", "2026-11-02", "--out", P("lv.json")])
+    check("emit exits clean with trigger notes in the consensus", rc == 0, log[-300:])
+    if rc != 0: return
+    doc = json.load(open(P("lv.json")))
+    rows = [r for k in ("advance", "watch", "held", "rows") for r in (doc.get(k) or []) if isinstance(r, dict) and r.get("ticker")]
+    mine = [r for r in rows if r["ticker"] == tk]
+    check("the noted name's row carries the note unchanged", bool(mine) and mine[0].get("trigger_notes") == [note], str(mine)[:300])
+    others = [r for r in rows if r["ticker"] != tk and r.get("class") in ("ADVANCE", "HOLD_FOR_CONDITIONS")]
+    check("every other row carries the key, empty", bool(others) and all(r.get("trigger_notes") == [] for r in others), str(others[:1])[:300])
+
+
 def test_the_market_kill_line_prints_on_the_cards(td):
     """R40 on the PM's read: the bottom line card and every ADVANCE card say what voids the trade."""
     rc, log, h = _render_dir(td, "mkcards", slate={"date": "2026-11-02", "chair": "chair", "tickets": [], "market_kill": MK})
@@ -417,6 +442,7 @@ def main():
                    test_valen_risk_flags_are_off_the_cards,
                    test_the_vote_packet_has_no_valen_risk_block,
                    test_the_market_kill_line_reaches_the_levels_file,
+                   test_trigger_notes_reach_the_levels_file_beside_the_one_trigger,
                    test_the_market_kill_line_prints_on_the_cards,
                    test_mtf_maths_known_values,
                    test_mtf_build_grid_and_declared_gaps,

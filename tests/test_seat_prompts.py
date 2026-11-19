@@ -20,6 +20,17 @@ SEATS = ["oneil", "minervini", "livermore", "elder-lens", "seow", "raschke", "wy
 GOLD_ROOT = "/home/user/pma_run/2026-11-19"
 GOLD_REPO = "/home/user/AQE"
 
+R40_AMENDMENTS = [
+    ("The trigger is an entry point, not a gate (R40, amended 2026-11-19): if you disagree with the ticket's trigger, still answer AGREE (or AGREE_WITH_RESERVATION about the stock) and file your "
+     "preferred trigger as trigger_note {word, tf, plain}; OBJECT is only for the stock itself and must carry objects_to \"STOCK\"; trigger notes never count toward a drop.",
+     "A seat that disagrees with a ticket's trigger must OBJECT, not reserve (R40)."),
+    ("OBJECT (the stock only: objects_to \"STOCK\", and the one thing that would clear it), plus", "OBJECT (say the one thing that would clear it), plus"),
+    ("A trigger you would set differently is a trigger_note {word, tf, plain} on an AGREE, never an OBJECT (R40 amended). Judge on YOUR method now", "Judge on YOUR method now"),
+    ("say what would clear your objection (about the stock; a preferred trigger goes in trigger_note {word, tf, plain}, never as an objection - R40 amended).", "say what would clear your objection."),
+    (" Hold on STOCK evidence only (each hold carries about \"STOCK\"): trigger wording is an entry point, not a gate, and is never a ground for a hold (R40 amended 2026-11-19).", ""),
+    (" If you would set the ticket's trigger differently, add it as trigger_note {word, tf, plain}; a trigger note is carried to the alert layer and never counts as a dissent against the stock (R40 amended).", ""),
+]
+
 spec = importlib.util.spec_from_file_location("seat_prompts", TOOLS / "seat_prompts.py")
 SP = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(SP)
@@ -48,6 +59,10 @@ def test_the_19_nov_prompts_are_reproduced_byte_for_byte_without_the_seat_rows_i
         # The conductor's NOMINATE text also said "SPCX was closed on 18 Nov and RBRK on 17 Nov": closed-position history is not in broker_stops.json or the held
         # table, so the tool does not carry it (the book line comes from those two files only). Everything else is byte for byte.
         want = want.replace("; SPCX was closed on 18 Nov and RBRK on 17 Nov, so held_review", ", so held_review")
+        # R40 AMENDED (PM 2026-11-19, after the 19 Nov run): the trigger is an entry point, not a gate. The templates carry the amended wording from the
+        # 20 Nov session; the 19 Nov prompts were run under the original rule. These are the ONLY substitutions; reversing them must give the 19 Nov text exactly.
+        for new_txt, old_txt in R40_AMENDMENTS:
+            got = got.replace(new_txt, old_txt)
         assert got == want, f"{rnd}/{seat} differs from the prompt the conductor ran"
 
 

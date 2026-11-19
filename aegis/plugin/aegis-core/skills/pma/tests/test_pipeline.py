@@ -2644,6 +2644,70 @@ def test_floor_caps_are_counted_by_code(td):
     check("the first round's BBY messages are not valid on the hold round", rc != 0, log[-300:])
 
 
+def test_r40_trigger_is_an_entry_point_not_a_gate(td):
+    """R40 amended (PM 2026-11-19). A disagreement with a ticket's trigger is a trigger_note on an AGREE, never an OBJECT.
+    OBJECT is for the STOCK only (objects_to: STOCK, forms dated 2026-11-20+) and only those count toward the 4-of-7 drop.
+    The notes ride beside the slate's one trigger into consensus.json, pma_levels and card_fields; QA holds on stock only.
+    Forms dated before 2026-11-20 validate exactly as filed."""
+    d, p4 = _committee_fixture(td, "r40n")
+    slate = os.path.join(d, "slate.json")
+    json.dump({"date": "2026-11-20", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate, "w"))
+    note = {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "buy the hourly close above the bar high, not the daily"}
+    def form(voice, rows, date="2026-11-20"):
+        return {"voice": voice, "date": date, "tickets": [dict(r, conviction=r.get("conviction", 4)) for r in rows]}   # R42: conviction is required
+    def val(f, tag, kind="ratify"):
+        return _validate(d, f, tag, "--kind", kind, "--slate", slate)
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE", "trigger_note": note}, {"ticker": "BBY", "answer": "AGREE"}]), "n_ok")
+    check("an AGREE carrying a trigger_note validates", rc == 0, log[-300:])
+    obj = {"ticker": "BBY", "answer": "OBJECT", "objection": "extended into resistance", "would_clear": "a pullback to the 20-day"}
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE"}, obj]), "n_noobj")
+    check("from 2026-11-20 an OBJECT without objects_to: STOCK is rejected", rc != 0 and "objects_to" in log, log[-300:])
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE"}, dict(obj, objects_to="STOCK")]), "n_stock")
+    check("an OBJECT that says objects_to: STOCK validates", rc == 0, log[-300:])
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE"}, dict(obj, objects_to="TRIGGER")]), "n_trig")
+    check("objects_to: TRIGGER is rejected", rc != 0, log[-300:])
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE", "objects_to": "STOCK"}, {"ticker": "BBY", "answer": "AGREE"}]), "n_agree_obj")
+    check("objects_to on a non-OBJECT is rejected", rc != 0 and "objects_to" in log, log[-300:])
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "AGREE", "trigger_note": dict(note, word="close_above:100")}, {"ticker": "BBY", "answer": "AGREE"}]), "n_badnote")
+    check("a trigger_note with a bare-number level is rejected like any trigger", rc != 0 and "trigger_note" in log, log[-300:])
+    rc, log = val(form("oneil", [{"ticker": "GNW", "answer": "OBJECT", "objection": "x", "would_clear": "y"}, {"ticker": "BBY", "answer": "AGREE"}], date="2026-11-19"), "n_old")
+    check("a form dated before 2026-11-20 validates as filed (no objects_to needed)", rc == 0, log[-300:])
+    # QA holds on the stock only
+    qa = {"voice": "steenbarger", "date": "2026-11-20", "evidence_read": [{"voice": v, "read": True} for v in DEC], "shared_anchors": [],
+          "unanswered_points": [], "slate_says_what_deciders_said": True, "note": "ok", "holds": [{"ticker": "BBY", "question": "tested?"}]}
+    rc, log = _validate(d, qa, "n_qa_no", "--kind", "qa", "--slate", slate)
+    check("from 2026-11-20 a QA hold without about: STOCK is rejected", rc != 0 and "about" in log, log[-300:])
+    rc, log = _validate(d, dict(qa, holds=[dict(qa["holds"][0], about="STOCK")]), "n_qa_ok", "--kind", "qa", "--slate", slate)
+    check("a QA hold that says about: STOCK validates", rc == 0, log[-300:])
+    # counting: 4 seats file a trigger note on LNG-style disagreement -> NOT dropped; 4 STOCK objections -> dropped
+    board = os.path.join(d, "board.json")
+    run([PIPE, "board", "--round2", os.path.join(d, "forms", "r2"), "--phase4", p4, "--challenge", os.path.join(d, "forms", "challenge", "steenbarger.json"), "--date", "2026-11-20", "--out", board])
+    slate2 = os.path.join(d, "slate2.json")
+    json.dump({"date": "2026-11-20", "chair": "chair", "tickets": [_ticket("GNW"), _ticket("BBY", "WATCH")]}, open(slate2, "w"))
+    for i, v in enumerate(DEC):
+        rows = [{"ticker": "GNW", "answer": "AGREE", "trigger_note": note} if i < 4 else {"ticker": "GNW", "answer": "AGREE"},
+                dict(obj, objects_to="STOCK") if i < 4 else {"ticker": "BBY", "answer": "AGREE"}]
+        os.makedirs(os.path.join(d, "forms", "ratify"), exist_ok=True)
+        json.dump(form(v, rows), open(os.path.join(d, "forms", "ratify", f"{v}.json"), "w"))
+    out = os.path.join(d, "consensus.json"); rec = os.path.join(d, "committee_record.json")
+    rc, log = run([PIPE, "ratify-count", "--slate", slate2, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-20", "--out", out, "--record", rec])
+    check("ratify-count exits clean on amended forms", rc == 0, log[-400:])
+    if rc != 0: return
+    C = {c["ticker"]: c for c in json.load(open(out))}
+    check("four trigger notes never drop a name: GNW AGREED", C["GNW"]["status"] == "AGREED" and C["GNW"]["verdict"] == "ADVANCE", str(C["GNW"])[:300])
+    check("the four notes are carried on the consensus row, attributed", sorted(n["voice"] for n in C["GNW"]["trigger_notes"]) == sorted(DEC[:4])
+          and all(n["trigger_note"] == note for n in C["GNW"]["trigger_notes"]), str(C["GNW"].get("trigger_notes")))
+    check("four STOCK objections still drop BBY", C["BBY"]["status"] == "DROPPED", str(C["BBY"])[:300])
+    check("a name with no notes carries an empty list", C["BBY"]["trigger_notes"] == [])
+    # an unmarked OBJECT in an amended form is refused by the counter itself (a forged / skipped validator)
+    json.dump(form("oneil", [{"ticker": "GNW", "answer": "OBJECT", "objection": "x", "would_clear": "y"}, {"ticker": "BBY", "answer": "AGREE"}]),
+              open(os.path.join(d, "forms", "ratify", "oneil.json"), "w"))
+    rc, log = run([PIPE, "ratify-count", "--slate", slate2, "--ratifications", os.path.join(d, "forms", "ratify"), "--board", board, "--phase4", p4,
+                   "--date", "2026-11-20", "--out", out, "--record", rec])
+    check("ratify-count refuses an OBJECT without objects_to: STOCK (R40 amended)", rc != 0 and "objects_to" in log, log[-300:])
+
+
 def test_objection_rule_counts_the_final_ratification(td):
     """R34 (PM 2026-10-30). 0 objections AGREED; 1-3 CONTESTED; 4+ of 7 DROPPED. Machine verdicts keep
     every downstream reader working: ADVANCE / HOLD-FOR-CONDITIONS / PASS, split, conviction, lane.
@@ -4565,7 +4629,7 @@ def main():
                    test_the_weather_cards_exist_and_are_wired,
                    test_two_tier_funnel_is_counted_by_code, test_multi_timeframe_grid_is_required,
                    test_mtf_build_from_real_bars_prints_the_grid_in_the_packet,
-                   test_one_trigger_per_ticket_and_market_kill, test_valen_flags_leave_ticket_selection,
+                   test_one_trigger_per_ticket_and_market_kill, test_r40_trigger_is_an_entry_point_not_a_gate, test_valen_flags_leave_ticket_selection,
                    test_the_data_handoff_gate_catches_bad_data_before_a_committee,
                    test_the_book_and_its_stops_are_one_checked_source,
                    test_one_r_is_one_percent_of_the_journals_capital,

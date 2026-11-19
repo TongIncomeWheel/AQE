@@ -923,7 +923,9 @@ def _tmpl_from(c):
     h = CT.render_card(c, E, head)
     LINE_FALLBACK.extend((t, f, p) for f, p in c.get("_fallback") or [])
     CARD_FIELDS[t] = {"tag": next((f["tag"] for f in c.get("_fields") or [] if f.get("tag")), None),
-                      "fields": [{"id": f["id"], "label": f["label"], "text": f["text"]} for f in c.get("_fields") or []]}
+                      "fields": [{"id": f["id"], "label": f["label"], "text": f["text"]} for f in c.get("_fields") or []],
+                      # R40 amended (PM 2026-11-19): the seats' preferred triggers ride beside the card's one trigger so the alert layer can track them
+                      "trigger_notes": (CONS_BY.get(t) or {}).get("trigger_notes") or []}
     errs = CT.validate_card(h)
     if errs:
         raise SystemExit(f"card template broken for {t}: {errs}")

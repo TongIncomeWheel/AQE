@@ -82,9 +82,10 @@ The Chair's slate copies each ticket's verdict and ONE trigger from `decision.js
 - **AGREE_WITH_RESERVATION** — name the reservation, one sentence. A reservation is about the ticket's words or
   its horizon, never about its trigger.
 - **OBJECT** — name the one thing wrong with the ticket AS WRITTEN and **the one thing that would clear it**.
-  **A trigger you disagree with is an OBJECT, not a reservation** (R40). On 2 Nov thirty "agree with reservation"
-  answers carried real disagreement that counted for nothing; that is the failure this rule closes.
-Code counts the OBJECT answers (R34): none = AGREED; 1 to 3 = CONTESTED, listed with your objection printed
+  OBJECT is for the STOCK only (`objects_to: "STOCK"`). **The trigger is an entry point, not a gate** (R40, amended
+  2026-11-19): a trigger you would set differently is a `trigger_note` {word, tf, plain} beside your AGREE; it is carried
+  to the alert layer and never counts toward a drop.
+Code counts the OBJECT answers (R34; trigger notes are never counted): none = AGREED; 1 to 3 = CONTESTED, listed with your objection printed
 beside it; 4 or more of 7 = DROPPED, off the list and still tracked. Steenbarger may then hold one ticket; the
 hold round is one floor message per decider on that ticket (`forms/floor2/`) and one re-ratification.
 

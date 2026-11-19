@@ -116,6 +116,12 @@ CASE_REQUIRED = ("for", "against", "entry_trigger", "wrong_if", "horizon_session
 RATIFY_ANSWERS = ("AGREE", "AGREE_WITH_RESERVATION", "OBJECT")
 # R42 (PM 2026-11-03): the committee speaks with ONE conviction (1-5, 5 = best) and ONE rationale.
 CONVICTION_FROM = "2026-11-04"          # ratification forms dated on/after this carry a 1-5 conviction per ticket
+# R40 AMENDED (PM 2026-11-19): THE TRIGGER IS AN ENTRY POINT, NOT A GATE. A seat that disagrees with a ticket's trigger no longer files OBJECT: it files its preferred trigger as a
+# `trigger_note` {word, tf, plain} (same grammar as a tier-2 trigger), carried beside the slate's ONE trigger to the alert layer, and it does NOT count toward the 4-of-7 drop.
+# OBJECT is for the STOCK only (`objects_to: "STOCK"`); QA holds only on stock evidence (`about: "STOCK"`). Forms dated from the next session; earlier forms validate as filed.
+TRIGGER_NOTE_FROM = "2026-11-20"
+TRIGGER_RULE_TEXT = ("R40 (amended 2026-11-19): the trigger is an entry point, not a gate. A disagreement with the ticket's trigger is a `trigger_note` "
+                     "{word, tf, plain} on an AGREE (or AGREE_WITH_RESERVATION about the stock); OBJECT is for the STOCK only and counts toward the 4-of-7 drop")
 ADOPT_ANSWERS = ("ADOPT", "AMEND", "DISSENT")
 CLAUSE_MAX, CLAUSES_MAX, WOULD_CHANGE_MAX, ADOPT_TEXT_MAX = 300, 6, 4, 400
 FILED_FIELDS = {                          # the ONLY places a committee clause may be quoted from
@@ -557,6 +563,7 @@ def validate_floor_message(form, deliberation_set, contested=None):
         _str(errs, form, "what_moved_me", 300, "message")
     if _bracket_as_reject([form.get("text", "")]):
         errs.append(f"text uses a bracket as a disqualifier. {R1_TEXT}")
+    errs += _trigger_note_errors(form.get("trigger_note"), "floor message", form.get("voice") if form.get("voice") in DECIDERS else None)
     return errs, flags
 
 
@@ -967,6 +974,13 @@ def _slate_r40(form, decision, errs):
             errs.append(f"market_kill {bad} differ from decision.json's -- the Chair copies the modal market condition, never composes one (R40)")
 
 
+def _trigger_note_errors(note, where, seat):
+    """A seat's preferred trigger (R40 amended): null, or {word, tf, plain} checked exactly like a tier-2 trigger and inside the seat's own method."""
+    if note is None:
+        return []
+    return [e.replace(".trigger.", ".trigger_note.").replace(".trigger:", ".trigger_note:") for e in _trigger_errors(note, where, seat)]
+
+
 def validate_ratification(form, slate):
     """A decider's ratification (R34/R36 round 5): one answer per slate ticket -- AGREE,
     AGREE_WITH_RESERVATION (say the reservation) or OBJECT (say the objection and the ONE thing that
@@ -1004,6 +1018,11 @@ def validate_ratification(form, slate):
             _str(errs, r, "would_clear", 200, f"{w} {t}")
             if _bracket_as_reject([r.get("objection", "")]):
                 errs.append(f"{w} {t}: OBJECT uses a bracket as the disqualifier. {R1_TEXT}")
+            if str(form.get("date") or "") >= TRIGGER_NOTE_FROM and r.get("objects_to") != "STOCK":
+                errs.append(f"{w} {t}: OBJECT must say objects_to: \"STOCK\" -- an objection to the TRIGGER is no longer an OBJECT. {TRIGGER_RULE_TEXT}")
+        elif r.get("objects_to") is not None:
+            errs.append(f"{w} {t}: objects_to belongs to an OBJECT answer only")
+        errs += _trigger_note_errors(r.get("trigger_note"), f"{w} {t}", form.get("voice"))
     if slate is not None:
         st = {x["ticker"] for x in slate.get("tickets", []) if isinstance(x, dict) and x.get("ticker")}
         missing, extra = st - seen, seen - st
@@ -1189,6 +1208,7 @@ def validate_adopt(form, draft):
         ans = r.get("answer")
         if ans not in ADOPT_ANSWERS:
             errs.append(f"{w} {t}: answer must be one of {list(ADOPT_ANSWERS)}"); continue
+        errs += _trigger_note_errors(r.get("trigger_note"), f"{w} {t}", form.get("voice"))
         txt = r.get("text")
         if ans == "ADOPT":
             if txt not in (None, ""):
@@ -1257,6 +1277,8 @@ def validate_qa_note(form, slate):
         if st is not None and h["ticker"] not in st:
             errs.append(f"{w}: {h['ticker']} is not on the slate; a hold reopens a slate ticket only")
         _str(errs, h, "question", 300, w)
+        if str(form.get("date") or "") >= TRIGGER_NOTE_FROM and h.get("about") != "STOCK":
+            errs.append(f"{w}: a hold must say about: \"STOCK\" -- QA no longer holds a name on trigger wording (R40 amended 2026-11-19: the trigger is an entry point, not a gate)")
     return errs, flags
 
 
