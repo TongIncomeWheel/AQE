@@ -128,11 +128,11 @@ META = [
   ['QS MOMENTUM lens (inverted)', QS_REC, 'Precision Edge filter (rel_mom_score>=18)'], 'src/engines/mp.py:65-72', 'glossary'),
  ('trend_score', 'sub', 'mp_100', 'Moving-average stacking (close vs EMA20/SMA50 and their slopes), 0/5/8/12/16/20.', 'Price above rising averages.', '20 of 100', [], 'src/engines/mp.py:74-94', 'glossary'),
  ('roc_zscore', 'sub', 'abs_mom_score', '20-day ROC standardised by its own 50-day mean and stdev.', 'Momentum unusually high for this stock.', 'input to abs_mom_score and mp_accel',
-  ['QS MOMENTUM lens (inverted)', QS_REC, 'Precision Edge filter (roc_zscore>=1.94)'], 'src/engines/mp.py:42-45', 'glossary'),
+  ['QS MOMENTUM lens (inverted)', QS_REC, 'Precision Edge filter (roc_zscore>=1.94)', 'mp_accel'], 'src/engines/mp.py:42-45', 'glossary'),
  ('excess_return', 'sub', 'rel_mom_score', '20-day % return minus SPY 20-day % return.', 'Outperforming SPY over ~1 month.', 'input to rel_mom_score', [QS_REC, QS_VETO], 'src/engines/mp.py:65-68', 'glossary'),
  ('adx_val', 'sub', 'mp_adx_score', 'Wilder ADX(14).', 'Trend strength (either direction).', 'input to mp_adx_score', [SR], 'src/engines/mp.py:139-155', 'glossary'),
  ('di_bullish', 'sub', 'mp_adx_score', '+DI > -DI (boolean).', 'Direction of the trend is up.', 'on/off gate of mp_adx_score', [], 'src/engines/mp.py:58', 'glossary'),
- ('mp_accel', 'sub', 'mp_100 (side output)', '3-bar SMA of the 5-bar change in roc_zscore.', 'Momentum accelerating.', 'not summed into mp_100', [QS_REC.replace('recipes', 'why-text')], 'src/engines/mp.py:113', 'glossary'),
+ ('mp_accel', 'sub', 'mp_100 (side output)', '3-bar SMA of the 5-bar change in roc_zscore.', 'Momentum accelerating.', 'not summed into mp_100', ['QS why-text (qs_engine.py)', 'mp_accel_state'], 'src/engines/mp.py:113', 'glossary'),
  ('mp_accel_state', 'sub', 'mp_accel', 'Label on mp_accel: >0.10 ACCELERATING, <-0.10 DECELERATING, else FLAT (coded 0/1/2).', 'Momentum accelerating.', 'label only', [], 'src/engines/mp.py:115-117', 'glossary'),
  # ---------------- BQ subs ----------------
  ('bq_range_tight', 'sub', 'bq_100', 'ATR5/ATR20 ratio banded 0-30 (lower ratio = more points).', 'Daily ranges contracting.', '30 of 100', ['QS COIL lens', QS_REC, SR], 'src/engines/bq.py:32-39', 'glossary'),
@@ -141,7 +141,7 @@ META = [
  ('bq_ema_conv', 'sub', 'bq_100', 'EMA8/13/21 spread / ATR20 banded 0-25 (tighter = more points).', 'Averages converging (coil).', '25 of 100', ['QS COIL lens', SR], 'src/engines/bq.py:128-136', 'glossary'),
  ('bq_base_days', 'sub', 'bq_base_dur', 'Consecutive bars within 8% of the 60-bar high (or staircase/smooth), latched after breakout.', 'How long the stock has been basing near highs.', 'input to bq_base_dur', [QS_REC, SR], 'src/engines/bq.py:60-116', 'glossary'),
  # ---------------- Pipeline Rank subs ----------------
- ('momentum_composite', 'sub', 'pipe_rank', 'Sum of five 0-20 technical scores (12m return, ADX, RSI, volume, MA stack).', 'Broad technical momentum.', '0.70 of pipe_rank', [QS_REC.replace('recipes', 'why-text')], 'src/engines/pipeline_rank.py:158', 'glossary'),
+ ('momentum_composite', 'sub', 'pipe_rank', 'Sum of five 0-20 technical scores (12m return, ADX, RSI, volume, MA stack).', 'Broad technical momentum.', '0.70 of pipe_rank', ['QS why-text (qs_engine.py)'], 'src/engines/pipeline_rank.py:158', 'glossary'),
  ('pipe_tier', 'sub', 'pipe_rank', 'Tier on pipe_rank: <45 D-SKIP, >=45 C-WATCH, >=60 B-STRONG, >=75 A-TIER (coded 0-3).', 'Pre-screen priority tier.', 'label only',
   ['lens_consensus leadership lens (A-TIER strong, C/D warn)'], 'src/engines/pipeline_rank.py:230-234', 'glossary'),
  ('pr_ret_12m', 'sub', 'momentum_composite', '231-bar % return banded 4/8/12/16/20 (NOT the raw return despite the name).', '12-month leadership.', '20 of 100',
@@ -205,3 +205,6 @@ UP = {
  'QS STRUCTURE lens': ['QS lens_total / calibration'], 'QS LEADERSHIP lens': ['QS lens_total / calibration'],
  'QS COIL lens': ['QS lens_total / calibration'], 'QS MOMENTUM lens': ['QS lens_total / calibration'], 'QS FLOW lens': ['QS lens_total / calibration'],
 }
+
+# Rows whose "parent" is the field they are DERIVED FROM (a label/tier/diagnostic), not a field they feed into.
+DERIVED = {'mp_state', 'rd_state', 'hl_state', 'pipe_tier', 'mp_accel_state', 'mp_accel', 'bd_mode'}
