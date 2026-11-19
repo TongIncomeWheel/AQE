@@ -1,0 +1,70 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-19",
+ "answers": [
+  {
+   "pair_id": "WWW-livermore-for~raschke",
+   "ticker": "WWW",
+   "to": "raschke",
+   "text": "Quote: 'extension, not a test, pullback or contraction.' My test is C5: established trend, normal pullback, then a new high. W HH/HL, D HH/HL, D dist_to_20bar_high_pct 0.46: it is AT its high, not chasing far above it. A pullback to buy is what C5 forbids me to wait for. The H1 LL (swing low 24.07) is a minor swing my formula filters (C21). Extension is late-leg risk I already named (C15); my answer to it is the one-atr danger signal (C7), not a refusal.",
+   "concede": false
+  },
+  {
+   "pair_id": "BILL-livermore-for~elder-lens",
+   "ticker": "BILL",
+   "to": "elder-lens",
+   "text": "Quote: 'W swing LH/LL leaves the first screen unclean.' elder_5d is advisory, not my field. The weekly swing label lags price: W close_vs_swing_high_pct 29.71 and dist_to_20bar_high_pct 0.8, so the weekly is at a new 20-week high above its last swing high, the C5 new high. I grant W LH/LL means the uptrend is young, not old (C5a partial), and D close_vs_swing_high_pct 30.04 is late-leg; my answer is the one-atr danger signal (C7).",
+   "concede": false
+  },
+  {
+   "pair_id": "SYNA-livermore-against~raschke",
+   "ticker": "SYNA",
+   "to": "raschke",
+   "text": "Quote: 'test of the prior low gives the lowest-risk entry.' That is buying the reaction, which C5 forbids. D LH/LL, D close_vs_swing_high_pct -0.88, W dist_to_20bar_high_pct 13.34: no new high on either frame, and a BEARISH_CHOCH is a character change, not a normal pullback. H1 92.3% of range is a minor swing (C21). Low risk is not my test; a new high is. I stay opposed until a close above pivot_high.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CAKE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high, the fresh new high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my atr translation, C7), or a daily close back under structure_shift_ref",
+   "market_void": null,
+   "reason": "C5: W HH/HL trend, normal pullback, then the pivot cleared; D close_vs_swing_high_pct 1.77, dist_to_20bar_high_pct 0.6. D LH/LL is a one-bar-old repair, the risk I accept. XLY peers at highs (C14)."
+  },
+  {
+   "ticker": "WWW",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my translation, C7), or a daily close below bar_low",
+   "market_void": null,
+   "reason": "Leader at a new high in an established trend: W and D HH/HL, D dist_to_20bar_high_pct 0.46, H1 pos_in_day_range_pct 94.2. Extension (D close_vs_swing_high_pct 8.52) is late-leg risk, handled by C7."
+  },
+  {
+   "ticker": "DRI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my translation, C7), or a daily close back under structure_shift_ref",
+   "market_void": null,
+   "reason": "Cleanest C5 shape: W, D and H1 all HH/HL, D close_vs_swing_high_pct 2.24 just past the last swing high 233.98, dist_to_20bar_high_pct 0.44. Not extended. XLY group confirms (C14)."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my translation, C7), or no follow-through and a daily close back under structure_shift_ref (C17)",
+   "market_void": null,
+   "reason": "New high after a normal pullback: D HH/HL, close_vs_swing_high_pct 1.29 over 120.8, W dist_to_20bar_high_pct 0.82. W LH but HL is a just-repaired weekly; OMC is the second name (C14)."
+  }
+ ],
+ "declarations": [
+  "trend_confirmation: read off structure/structure_shift and the MTF swing and 20-bar-high lines (C5). danger_signal_threshold: TRANSLATED as one atr off the day's high, my translation, not Livermore's literal points (C7, C18-C20).",
+  "state_analogue: mp_state/mp_accel_state read as my six-column analogue, not identical (C18). fill_difficulty: NOT_SERVED (day_vol proxy only). inside_information: NEVER (C11).",
+  "R1: no answer or decision rests on a bracket. No Valen flag read (R41). market_void null: my method has no market-level kill line."
+ ]
+}

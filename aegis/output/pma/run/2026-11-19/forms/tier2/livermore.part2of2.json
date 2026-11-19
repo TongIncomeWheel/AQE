@@ -1,0 +1,38 @@
+{
+ "voice": "livermore",
+ "date": "2026-11-19",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "an hourly close above yesterday's high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my translation, C7), or a daily close below bar_low",
+   "market_void": null,
+   "reason": "At a new high on D and W: D dist_to_20bar_high_pct 0.8, W close_vs_swing_high_pct 29.71. W LH/LL means a young trend and D close_vs_swing_high_pct 30.04 is late-leg; C7 is my answer. VIA confirms (C14)."
+  },
+  {
+   "ticker": "SYNA",
+   "stance": "OPPOSE",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "the oppose is wrong if SYNA closes above pivot_high and makes a new 20-day high within my horizon",
+   "market_void": null,
+   "reason": "C5: no new high. D LH/LL, close_vs_swing_high_pct -0.88, W dist_to_20bar_high_pct 13.34, H1 9<21. A character change is not a normal pullback; buying the test of the low is buying the reaction."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {"word": "close_above:pivot_high", "tf": "D", "plain": "a daily close above the last confirmed pivot high, the new high"},
+   "wrong_if": "a one-day reaction of one atr off the day's high (my translation, C7), or a daily close back under structure_shift_ref",
+   "market_void": null,
+   "reason": "W and D HH/HL trend, D close_vs_swing_high_pct -0.86 just under the high 22.07: the C5 entry is the close through it, not before. TFX is the related Healthcare name (C14)."
+  }
+ ],
+ "declarations": [
+  "trend_confirmation: MTF swing and 20-bar-high lines (C5). danger_signal_threshold: TRANSLATED as one atr off the day's high, my translation, not literal points (C7, C18-C20). fill_difficulty: NOT_SERVED. inside_information: NEVER (C11).",
+  "R1: no decision rests on a bracket. No Valen flag read (R41). market_void null: my method has no market-level kill line."
+ ]
+}

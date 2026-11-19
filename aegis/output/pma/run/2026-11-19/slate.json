@@ -1,0 +1,190 @@
+{
+ "date": "2026-11-19",
+ "chair": "chair",
+ "board_sha256": "dc3d2662b1fd4203686b647e826380164b572b66363e393ff808fe940337cae0",
+ "decision_sha256": "3c0e7ac3f3f78177c9576c3015639aabcde3039b5119a46735ff48d48240f641",
+ "tickets": [
+  {
+   "ticker": "CAKE",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high: the stop over the setup bar in the Crabel breakout (C12)",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high: the stop over the setup bar in the Crabel breakout (C12)"
+   },
+   "timing_count": {
+    "support": 7,
+    "act_now": 6,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 0
+   },
+   "wrong_if": "oneil: \"Daily close back under pivot_high (failed breakout), or a close under entry-8pct (C20).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"rs LEADER out of a base on day_vol 1.63 (C16 pass); D close_vs_swing_high_pct 1.77 inside C17; \" | minervini: \"Stage 2 stack passes (C3). W HH/HL, dist_to_20bar_high_pct 0.6; D close 1.8% above last_swing_h\" | livermore: \"C5: W HH/HL trend, normal pullback, then the pivot cleared; D close_vs_swing_high_pct 1.77, dis\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "WWW",
+   "verdict": "WATCH",
+   "entry_trigger": "Buy a pullback into the 20-day average while elder holds 7 or above; no chase.",
+   "trigger": {
+    "word": "in_zone:ma_20",
+    "tf": "D",
+    "plain": "Buy a pullback into the 20-day average while elder holds 7 or above; no chase."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 3,
+    "wait": 3,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "elder-lens: \"elder prints 1 or lower at a close, or a daily close below ma_20 less half an ATR.\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"Rank 2 rs LEADER at a new high on day_vol 3.41: demand C16 asks for; W and D HH/HL. D close_vs_\" | minervini: \"Template and RS pass, W and D HH/HL. But D close_vs_swing_high_pct 8.52 and W 20.49 put price f\" | livermore: \"Leader at a new high in an established trend: W and D HH/HL, D dist_to_20bar_high_pct 0.46, H1 \"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "DRI",
+   "verdict": "ADVANCE",
+   "entry_trigger": "An hourly close above yesterday's high, follow-through on the test of the Creek.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, follow-through on the test of the Creek."
+   },
+   "timing_count": {
+    "support": 5,
+    "act_now": 4,
+    "wait": 1,
+    "oppose": 1,
+    "abstain": 1
+   },
+   "wrong_if": "minervini: \"daily close below ma_20, or a close back under last_swing_high 233.98\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Stage 2 stack passes (C3); W and D HH/HL, D close 2.2% above last_swing_high 233.98 and dist_to\" | livermore: \"Cleanest C5 shape: W, D and H1 all HH/HL, D close_vs_swing_high_pct 2.24 just past the last swi\" | elder-lens: \"Permission event one bar back: elder_5d [7, 6, 6, 7, 10], mp STRONG (C3, C4); from an ambiguous\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Shape is right (W/D/H1 HH/HL, close_vs_swing_high_pct 2.24 inside C17) but the break came on day_vol 1.23: under +40% is a hard rejection (C16). Group Momentum Fading (R9)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  },
+  {
+   "ticker": "DIS",
+   "verdict": "ADVANCE",
+   "entry_trigger": "A completed hourly candle closes above yesterday's high, ideally on 1.4x normal volume.",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "A completed hourly candle closes above yesterday's high, ideally on 1.4x normal volume."
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 5,
+    "wait": 1,
+    "oppose": 0,
+    "abstain": 1
+   },
+   "wrong_if": "oneil: \"Daily close back under pivot_high, a new high on below-average volume (C25), or a close under entry-8pct (C20).\"",
+   "horizon_sessions": 20,
+   "why_agreed": "oneil: \"New high on day_vol 2.02 (C16 pass), BULLISH_BOS, D close_vs_swing_high_pct 1.29 inside C17, gr\" | minervini: \"Stage 2 stack passes (C3); D HH/HL, close 1.3% above last_swing_high 120.8: a breakout near the\" | livermore: \"New high after a normal pullback: D HH/HL, close_vs_swing_high_pct 1.29 over 120.8, W dist_to_2\"",
+   "dissent": [],
+   "sources": [
+    "tier2:oneil",
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens"
+   ]
+  },
+  {
+   "ticker": "BILL",
+   "verdict": "WATCH",
+   "entry_trigger": "after a tight pause on drying volume, an hourly close above the prior day's high",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "after a tight pause on drying volume, an hourly close above the prior day's high"
+   },
+   "timing_count": {
+    "support": 4,
+    "act_now": 2,
+    "wait": 2,
+    "oppose": 0,
+    "abstain": 3
+   },
+   "wrong_if": "minervini: \"daily close below ma_20, or a pullback on rising volume\"",
+   "horizon_sessions": 20,
+   "why_agreed": "minervini: \"Template stack and RS pass, strongest down-day RS. But D close_vs_swing_high_pct 30.04 and W 29\" | livermore: \"At a new high on D and W: D dist_to_20bar_high_pct 0.8, W close_vs_swing_high_pct 29.71. W LH/L\" | seow: \"Position system (R10, R13): new highs, D close_vs_swing_high_pct 30.04, D swing_class HH/HL. W \"",
+   "dissent": [],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:seow",
+    "tier2:wyckoff"
+   ]
+  },
+  {
+   "ticker": "AMRX",
+   "verdict": "ADVANCE",
+   "entry_trigger": "an hourly close above the last pivot high on expanding volume",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "an hourly close above the last pivot high on expanding volume"
+   },
+   "timing_count": {
+    "support": 6,
+    "act_now": 4,
+    "wait": 2,
+    "oppose": 1,
+    "abstain": 0
+   },
+   "wrong_if": "minervini: \"daily close below ma_20, or the break fails back under last_swing_low 19.02\"",
+   "horizon_sessions": 15,
+   "why_agreed": "minervini: \"Stage 2 stack passes (C3); W and D HH/HL, D close 0.9% under last_swing_high 22.07: right at th\" | livermore: \"W and D HH/HL trend, D close_vs_swing_high_pct -0.86 just under the high 22.07: the C5 entry is\" | elder-lens: \"Permission event on the last bar: elder_5d [10, 7, 7, 6, 9] with CORRECTION_REENTRY (C4); mp FA\"",
+   "dissent": [
+    {
+     "voice": "oneil",
+     "why": "Shape is good (W and D HH/HL, dist_to_20bar_high_pct 1.13) but the BOS came on day_vol 0.5: C16 calls a breakout under +40% a hard rejection. Healthcare Declining, lens sector warn (R9)."
+    }
+   ],
+   "sources": [
+    "tier2:minervini",
+    "tier2:livermore",
+    "tier2:elder-lens",
+    "tier2:seow"
+   ]
+  }
+ ],
+ "market_kill": {
+  "plain": "Index logs 4-5 distribution days inside 4-5 weeks (C2): no confirmed uptrend, entry void (C1).",
+  "symbol": null,
+  "word": null,
+  "level": null,
+  "seats": [
+   "oneil"
+  ],
+  "n_decisions": 3
+ }
+}

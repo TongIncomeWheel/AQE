@@ -5,3 +5,4 @@
 - INBOX-CLEAN: not run (alerts paused by PM order).
 - Crown DEGRADED (declared); dispersion_vixeq and dspx BEHIND (11-17, Cboe timing); positioning_cot 11-10 (weekly cadence).
 - Candidate step: screens 117 names (7 x 25), coverage OK, augment-export 72 universe-only rows added, packets built (no qs_market).
+- SLATE: built by code (slate_gen.py quotes the seats' own tier-2 words verbatim; Chair seat not spawned, as on prior runs); registrar validate OK. 6 tickets: ADVANCE CAKE DRI DIS AMRX; WATCH WWW BILL. SYNA NOT_SLATED. Market kill reading C2 (index 4-5 distribution days).

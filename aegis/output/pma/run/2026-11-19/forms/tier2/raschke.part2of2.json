@@ -1,0 +1,47 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-19",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BILL",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A quiet multi-bar first pullback toward ma_20 would give me a retracement to classify (C7 shape)",
+   "market_void": null,
+   "reason": "None of my four setups (C2): D close_vs_swing_high_pct 30.04, W close_vs_swing_high_pct 29.71 with W swing_class LH/LL, a stretch far off structure. A climax read I decline (R9). Abstain, not oppose."
+  },
+  {
+   "ticker": "SYNA",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "reclaim:bar_low",
+    "tf": "H1",
+    "plain": "A dip under yesterday's low that closes the hour back above it: the failed low (Turtle Soup Plus One shape, C3)"
+   },
+   "wrong_if": "close_below:bar_low: the tested low gave way, or no favourable move within two bars of entry (C11)",
+   "market_void": null,
+   "reason": "TEST (C2, C20): D swing_class LH/LL, last_swing_low 116.01 holding under close 117.67; the double stop point is the lowest-risk family in my canon. The failed low has not printed yet, hence WAIT. Exact N-day low NOT_SERVED."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high: the stop over the setup bar in the Crabel breakout (C12)"
+   },
+   "wrong_if": "close_below:structure_shift_ref: the break failed back into the range (C23)",
+   "market_void": null,
+   "reason": "BREAKOUT (C2, C12): D swing_class HH/HL, close_vs_swing_high_pct -0.86 under last_swing_high 22.07, dist_to_20bar_high_pct 1.13; W swing_class HH/HL. Light participation on the break is the caution. bar_range_history NOT_SERVED."
+  }
+ ],
+ "declarations": [
+  "setup_type (C2): BILL none of the four (ABSTAIN); SYNA test; AMRX breakout.",
+  "adx NOT_SERVED (C7, C8). stochastic_kd NOT_SERVED (C6). n_day_extreme: sma_distance_pct + structure_shift substitute (C3, C4). bar_range_history NOT_SERVED (C12, C13). market_breadth OUT_OF_SERVED_SCOPE (C16), so no market_void is filed.",
+  "R1: no decision uses a bracket field as a reason. R41: no Valen flag cited."
+ ]
+}

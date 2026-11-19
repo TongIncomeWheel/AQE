@@ -1,0 +1,120 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-19",
+ "declarations": [
+  "House rule R1 honoured: no bracket field is a reason in any answer or decision; danger points are named from structure.",
+  "HVN/LVN beyond value and last week's value area are NOT_SERVED (R11); declared, not assumed.",
+  "Judged on my own method; no Valen flags used (R41).",
+  "House rule R1 honoured: no bracket field is a reason in any decision; danger points are named from structure."
+ ],
+ "answers": [
+  {
+   "pair_id": "DRI-wyckoff-for~oneil",
+   "ticker": "DRI",
+   "to": "oneil",
+   "text": "\"day_vol 1.23, under C16's 1.40: a hard rejection\". 1.40 is O'Neil's bar, not mine. My break test (R3, C5) asks for rvol_20d >= 1.0 with a top-third close; rvol_20d 1.26 passes and H1 closes at 90% of the day's range. D HH/HL, close_vs_swing_high_pct 2.24 over 233.98: within 1 ATR of the Creek, at the test (C7). W HH/HL 4.12% over 229.76. Volume is modest, which I already carry; it does not fail my test.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CAKE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high: the sign-of-strength bar gets follow-through."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (the Creek): re-entry into the old range makes the break an upthrust.",
+   "market_void": null,
+   "reason": "Fresh break through the Creek: D close_vs_swing_high_pct 1.77 over 117.96, at the test; W HH/HL above EMA9; H1 HH/HL at 92% of the day's range. Daily swing still LH/LL, so the break must hold (C5, C7, C12)."
+  },
+  {
+   "ticker": "WWW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:structure_shift_ref",
+    "tf": "D",
+    "plain": "Wait for a pullback into the broken Creek, then join on a sign-of-strength bar there."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref, or a bearish change of character.",
+   "market_void": null,
+   "reason": "Imbalance up on W and D (HH/HL) but away from value: D close_vs_swing_high_pct 8.52, W 20.49. I do not chase (C3, C15); extension sets the entry location, not an OPPOSE (R2)."
+  },
+  {
+   "ticker": "DRI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high, follow-through on the test of the Creek."
+   },
+   "wrong_if": "Daily close under structure_shift_ref, or a trade below vwap_14d.",
+   "market_void": null,
+   "reason": "Creek held on a test: D HH/HL, close_vs_swing_high_pct 2.24 over 233.98 (within 1 ATR); W HH/HL 4.12% over 229.76; H1 HH/HL at 90% of the day's range. At the test (C7, C9)."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high: the breakout bar gets follow-through."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref (the Creek): an upthrust.",
+   "market_void": null,
+   "reason": "Fresh break: D HH/HL, close_vs_swing_high_pct 1.29 over 120.8, at the test (C5, C7). W LH but HL and H1 HH but LL keep it a young structure; value not yet stepping up, so it must hold outside the range."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "in_zone:vwap_14d",
+    "tf": "D",
+    "plain": "Wait for the pullback into 14-day value, then join on a sign-of-strength bar there."
+   },
+   "wrong_if": "A bearish change of character, or a daily close under vwap_14d after the test.",
+   "market_void": null,
+   "reason": "Strongest imbalance but far from value: D close_vs_swing_high_pct 30.04, W 29.71, and the W swing is LH/LL. I do not chase (C3, C15); HOLD-FOR-CONDITIONS for the next trading zone (R2)."
+  },
+  {
+   "ticker": "SYNA",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A wide sign-of-strength bar closing back above the last swing high on volume would repair the structure.",
+   "market_void": null,
+   "reason": "Up-structure failed (BEARISH_CHOCH): D LH/LL, close_vs_swing_high_pct -0.88; H1 9<21, LH/LL. No long until a new range and a shakeout form (R1, C6); W HH/HL keeps me from opposing."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "After a volume day holds above the Creek, an hourly close above yesterday's high."
+   },
+   "wrong_if": "Daily close back under structure_shift_ref: re-entry confirms the low-volume break as an upthrust.",
+   "market_void": null,
+   "reason": "W and D HH/HL, but the break came on half-normal volume: a potential upthrust until it holds (C5, R3). D close_vs_swing_high_pct -0.86 under 22.07; volume must print first."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "wyckoff.part1of2.json",
+   "bytes": 3167,
+   "sha256": "e8ea70b7b76f"
+  },
+  {
+   "file": "wyckoff.part2of2.json",
+   "bytes": 1821,
+   "sha256": "be6d58931cb6"
+  }
+ ]
+}

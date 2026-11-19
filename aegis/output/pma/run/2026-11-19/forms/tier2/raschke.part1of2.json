@@ -1,0 +1,60 @@
+{
+ "voice": "raschke",
+ "date": "2026-11-19",
+ "answers": [
+  {
+   "pair_id": "SYNA-raschke-for~seow",
+   "ticker": "SYNA",
+   "to": "seow",
+   "text": "Seow: \"test of a prior low is not a buy signal\". In my canon the test IS the setup (C2, C20); no break above resistance is required, the buy is the failed low. Grid: D swing_class LH/LL, last_swing_low 116.01 under close 117.67, so the low has not given way; H1 ema_order 9<21, pos_in_day_range_pct 92.3. The entry has not printed, so I file WAIT on reclaim:bar_low, not ACT_NOW. His missing cci_20/ma_40 are not my fields. Not conceded.",
+   "concede": false
+  }
+ ],
+ "decisions": [
+  {
+   "ticker": "CAKE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "An hourly close above yesterday's high: the stop over the setup bar in the Crabel breakout (C12)"
+   },
+   "wrong_if": "close_below:structure_shift_ref: the breakout fails back into the range (C23)",
+   "market_void": null,
+   "reason": "BREAKOUT (C2, C12): D close_vs_swing_high_pct 1.77 over last_swing_high 117.96, dist_to_20bar_high_pct 0.6; W swing_class HH/HL; H1 pos_in_day_range_pct 91.9. D swing_class LH/LL is the caution. bar_range_history NOT_SERVED."
+  },
+  {
+   "ticker": "WWW",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A quiet first pullback toward ma_20 that holds would give me a retracement to classify (C7 shape)",
+   "market_void": null,
+   "reason": "None of my four setups (C2): D close_vs_swing_high_pct 8.52, W close_vs_swing_high_pct 20.49, an expansion away from structure. A climax read I decline (R9, C10). Extension is a weight, so abstain, not oppose."
+  },
+  {
+   "ticker": "DRI",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A quiet pullback toward ma_20 would give me a retracement to classify (C7 shape)",
+   "market_void": null,
+   "reason": "Continuation at the high (D dist_to_20bar_high_pct 0.44, close_vs_swing_high_pct 2.24) with no test, no pullback and no contraction to key a breakout (C2). A general momentum read is not in my canon."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A tight pause of a few bars above the broken level would make it a classifiable breakout (C12)",
+   "market_void": null,
+   "reason": "A break with no contraction behind it to key it (C12): D close_vs_swing_high_pct 1.29, W swing_class LH but HL, H1 swing_class HH but LL. Not a test or a pullback (C2)."
+  }
+ ],
+ "declarations": [
+  "setup_type (C2): CAKE breakout; SYNA test; AMRX breakout; WWW, DRI, DIS, BILL fit none of the four and are ABSTAIN, not OPPOSE.",
+  "adx NOT_SERVED (C7, C8). stochastic_kd NOT_SERVED (C6). n_day_extreme: sma_distance_pct + structure_shift substitute (C3, C4). bar_range_history NOT_SERVED (C12, C13). market_breadth OUT_OF_SERVED_SCOPE (C16), so no market_void is filed.",
+  "R1: no decision uses a bracket field as a reason. R41: no Valen flag cited."
+ ]
+}

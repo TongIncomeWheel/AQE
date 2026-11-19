@@ -1,0 +1,38 @@
+{
+ "voice": "wyckoff",
+ "date": "2026-11-19",
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "in_zone:vwap_14d", "tf": "D", "plain": "Wait for the pullback into 14-day value, then join on a sign-of-strength bar there."},
+   "wrong_if": "A bearish change of character, or a daily close under vwap_14d after the test.",
+   "market_void": null,
+   "reason": "Strongest imbalance but far from value: D close_vs_swing_high_pct 30.04, W 29.71, and the W swing is LH/LL. I do not chase (C3, C15); HOLD-FOR-CONDITIONS for the next trading zone (R2)."
+  },
+  {
+   "ticker": "SYNA",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "A wide sign-of-strength bar closing back above the last swing high on volume would repair the structure.",
+   "market_void": null,
+   "reason": "Up-structure failed (BEARISH_CHOCH): D LH/LL, close_vs_swing_high_pct -0.88; H1 9<21, LH/LL. No long until a new range and a shakeout form (R1, C6); W HH/HL keeps me from opposing."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {"word": "h1_close_above:bar_high", "tf": "H1", "plain": "After a volume day holds above the Creek, an hourly close above yesterday's high."},
+   "wrong_if": "Daily close back under structure_shift_ref: re-entry confirms the low-volume break as an upthrust.",
+   "market_void": null,
+   "reason": "W and D HH/HL, but the break came on half-normal volume: a potential upthrust until it holds (C5, R3). D close_vs_swing_high_pct -0.86 under 22.07; volume must print first."
+  }
+ ],
+ "declarations": [
+  "House rule R1 honoured: no bracket field is a reason in any decision; danger points are named from structure.",
+  "Judged on my own method; no Valen flags used (R41)."
+ ]
+}

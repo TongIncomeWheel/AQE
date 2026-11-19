@@ -1,0 +1,112 @@
+{
+ "voice": "minervini",
+ "date": "2026-11-19",
+ "declarations": [
+  "Trend Template read off the served MA stack: ma_100 stands in for the 150-day; criteria 3, 6, 7 not on my menu; criterion 8 uses rs_leadership + rs_spy_20d as a declared proxy, not IBD RS rank.",
+  "vcp_detail NOT_SERVED (C4); volume signature is day_vol at the current bar only (C6, partial). earnings_growth NOT_SERVED: SEPA element 2 not run (R4, R10).",
+  "No refutations of my claims were routed to me (answer_pairs empty). R1 respected: no bracket used as a reason. market_void null: my market timing is read from leadership behaviour (C14), not a watchable index level.",
+  "R1 respected: no bracket used as a reason. market_void null: my market timing is read from leadership behaviour (C14), not a watchable index level."
+ ],
+ "answers": [],
+ "decisions": [
+  {
+   "ticker": "CAKE",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "an hourly close above yesterday's high, the breakout continuing on expanding volume"
+   },
+   "wrong_if": "daily close below ma_20, or a close back under last_swing_high 117.96 on rising volume",
+   "market_void": null,
+   "reason": "Stage 2 stack passes (C3). W HH/HL, dist_to_20bar_high_pct 0.6; D close 1.8% above last_swing_high 117.96: a breakout near the pivot, not a chase (C5). D swing LH/LL is the base it just cleared. Fundamentals not checked (R4)."
+  },
+  {
+   "ticker": "WWW",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "after a tight pause on drying volume, an hourly close above the prior day's high"
+   },
+   "wrong_if": "daily close below ma_20, or a pullback on rising volume",
+   "market_void": null,
+   "reason": "Template and RS pass, W and D HH/HL. But D close_vs_swing_high_pct 8.52 and W 20.49 put price far past any pivot (C5, R5): wait for a fresh tight base, then buy its break. Fundamentals not checked."
+  },
+  {
+   "ticker": "DRI",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "an hourly close above yesterday's high on expanding volume"
+   },
+   "wrong_if": "daily close below ma_20, or a close back under last_swing_high 233.98",
+   "market_void": null,
+   "reason": "Stage 2 stack passes (C3); W and D HH/HL, D close 2.2% above last_swing_high 233.98 and dist_to_20bar_high_pct 0.44: breaking out close to the pivot (C5). Young stack and Momentum Fading sector are cautions. Fundamentals not checked."
+  },
+  {
+   "ticker": "DIS",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "an hourly close above yesterday's high on expanding volume"
+   },
+   "wrong_if": "daily close below ma_20, or a close back under last_swing_high 120.8 on rising volume",
+   "market_void": null,
+   "reason": "Stage 2 stack passes (C3); D HH/HL, close 1.3% above last_swing_high 120.8: a breakout near the pivot. W LH but HL is now cleared, 0.8% under the 20-wk high. div BEARISH/3 holds conviction down. Fundamentals not checked."
+  },
+  {
+   "ticker": "BILL",
+   "stance": "SUPPORT",
+   "timing": "WAIT",
+   "trigger": {
+    "word": "h1_close_above:bar_high",
+    "tf": "H1",
+    "plain": "after a tight pause on drying volume, an hourly close above the prior day's high"
+   },
+   "wrong_if": "daily close below ma_20, or a pullback on rising volume",
+   "market_void": null,
+   "reason": "Template stack and RS pass, strongest down-day RS. But D close_vs_swing_high_pct 30.04 and W 29.71 leave no low-risk pivot (C5, R5); W swing LH/LL means the weekly base is only now cleared. Wait for a tight base. Fundamentals not checked."
+  },
+  {
+   "ticker": "SYNA",
+   "stance": "ABSTAIN",
+   "timing": null,
+   "trigger": null,
+   "wrong_if": "a breakout on expanding volume through the pivot inside 20 sessions",
+   "market_void": null,
+   "reason": "MA stack passes but structure BEARISH_CHOCH, D swing LH/LL, H1 9<21 and W dist_to_20bar_high_pct 13.34: template yes, base no (R2). No pivot to buy, no stage break to oppose."
+  },
+  {
+   "ticker": "AMRX",
+   "stance": "SUPPORT",
+   "timing": "ACT_NOW",
+   "trigger": {
+    "word": "h1_close_above:pivot_high",
+    "tf": "H1",
+    "plain": "an hourly close above the last pivot high on expanding volume"
+   },
+   "wrong_if": "daily close below ma_20, or the break fails back under last_swing_low 19.02",
+   "market_void": null,
+   "reason": "Stage 2 stack passes (C3); W and D HH/HL, D close 0.9% under last_swing_high 22.07: right at the pivot, not a chase (C5). The prior break came on light volume, so the buy needs the C6 expansion. Fundamentals not checked."
+  }
+ ],
+ "merged_from": [
+  {
+   "file": "minervini.part1of2.json",
+   "bytes": 2779,
+   "sha256": "997461fdd32a"
+  },
+  {
+   "file": "minervini.part2of2.json",
+   "bytes": 2013,
+   "sha256": "9f23071d4ce9"
+  }
+ ]
+}
