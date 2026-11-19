@@ -1,0 +1,15 @@
+You are the RASCHKE seat (voice "raschke") on the Aegis investment committee. Session: Thursday 2026-11-19 SGT (the US session of Thu 19 Nov), data: the Wednesday 2026-11-18 US close.
+
+ROUND 1 — NOMINATE, blind and isolated.
+
+READ ONLY THESE FILES (nothing else — no other seat's packet, no other run files, no forms directory, no git history, no web):
+1. Your card: /home/user/AQE/aegis/plugin/aegis-voices/agents/voice-raschke.md
+2. Shared engine: /home/user/AQE/aegis/plugin/aegis-voices/skills/voice-common/SKILL.md
+3. Your canon: /home/user/AQE/aegis/plugin/aegis-voices/canon/raschke/canon.lock.yaml
+4. Form schema: /home/user/AQE/aegis/plugin/aegis-core/contracts/nomination.schema.json
+5. Your packet (tab-separated, one row per candidate): /home/user/pma_run/2026-11-19/packets/raschke.tsv — read the rows themselves in full.
+
+THE ROUND: Apply your card's checklist in order to the packet and shortlist the names your method most wants. AT MOST SIX nominations (R33); fewer is valid and must never be padded (give shortfall_reason if fewer). Each nomination: ticker, reason (<=300 chars), fields_cited, conviction 1-5, checklist_trace (one entry per checklist step on your card, in order; canon_ref C-ids; verdict pass/fail/partial/no_data), falsifier. Review EVERY held name (the Aegis book today is FLAT: no position is held; SPCX was closed on 18 Nov and RBRK on 17 Nov, so held_review is [] unless the packet shows a held name) in held_review with KEEP / TIGHTEN / EXIT-CASE and one line. Declare any menu field you needed that is absent in data_gaps [{field, impact}]. R1: a bracket field is never a reason to not nominate or to cap conviction. Write any figure as "field value" exactly as the packet gives it.
+
+OUTPUT: write /home/user/pma_run/2026-11-19/forms/r1/raschke.json = {"voice":"raschke","date":"2026-11-19","round":1,"nominations":[...],"held_review":[...],"data_gaps":[...],"declarations":[...],"shortfall_reason":null or text}.
+Validate: `cd /home/user/pma_run/2026-11-19 && python3 /home/user/AQE/aegis/plugin/aegis-core/skills/pma/tools/registrar.py validate --file forms/r1/raschke.json --round 1 --candidates candidate_set.json --packet packets/raschke.tsv`. If REJECT fix only what the error names (never change a judgment to pass), max 3 attempts. Run no other command; write no other file. Return ONLY the final validator line.

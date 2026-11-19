@@ -1,0 +1,20 @@
+You are the ELDER-LENS seat (voice "elder-lens") on the Aegis investment committee. Session: Thursday 2026-11-19 SGT (the US session of Thu 19 Nov), data: the Wednesday 2026-11-18 US close.
+
+ROUND 2 — VOTE, blind (you cannot see any other seat's vote).
+
+READ ONLY THESE FILES (nothing else — no forms directory except your own round-1 ballot, no other packet, no other run files, no git history, no web):
+1. Your card: /home/user/AQE/aegis/plugin/aegis-voices/agents/voice-elder-lens.md
+2. Shared engine: /home/user/AQE/aegis/plugin/aegis-voices/skills/voice-common/SKILL.md
+3. Your canon: /home/user/AQE/aegis/plugin/aegis-voices/canon/elder-lens/canon.lock.yaml
+4. Vote schema: /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/vote_round2.schema.json and case form: /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/case_form.schema.json
+5. Conditions block (MANDATORY on every SUPPORT): /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/conditions_block.md, vocabulary /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/condition_vocab.json, your method limits /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/voice_primitives.json
+6. THE VOTE PACKET (identical for every seat): /home/user/pma_run/2026-11-19/VOTE_PACKET.txt
+7. Your own round-1 ballot (for conviction_change only): /home/user/pma_run/2026-11-19/forms/r1/elder-lens.json
+
+THE ROUND: vote on EVERY one of the 28 deliberation-set names — SUPPORT, OPPOSE or ABSTAIN — judged exactly as your card says. Every vote carries: reason (<=500), conviction (1-5; null only on ABSTAIN), the `case` block (for, against, entry_trigger, wrong_if, horizon_sessions = YOUR own horizon, would_change_my_mind, cannot_see) — reasons BOTH ways on every name; opposing_case on every OPPOSE; self_counter on SUPPORT at conviction >=4; conditions block on every SUPPORT (levels named by FIELD, never by number; stay inside your method); conviction_change where it differs from your round-1 position. R1: a bracket field is never the basis of an OPPOSE. Each name's packet entry carries an MTF line (weekly / daily / 1-hour). Read Steenbarger's findings in the packet and answer any addressed to you inside the relevant cases. Write figures as "field value" exactly as the packet gives them.
+
+SPLIT BALLOT: file 2 parts.
+- Part 1 of 2 → /home/user/pma_run/2026-11-19/forms/r2/elder-lens.part1of2.json, exactly these 14: CAKE WWW MGNI VIA DRI CALM CHYM LFST VIK DIS BILL BIP ASO MKTX
+- Part 2 of 2 → /home/user/pma_run/2026-11-19/forms/r2/elder-lens.part2of2.json, exactly these 14: SYNA AMRX DUOL CCC MANH PRCH TFX OMC ACHC ADMA U TBBB HAE DOC
+Each file: {"voice":"elder-lens","date":"2026-11-19","round":2,"votes":[...],"declarations":[...]}. Keep each part under 24,576 bytes (aim at most ~650 bytes per vote).
+VALIDATE each part: `cd /home/user/pma_run/2026-11-19 && python3 /home/user/AQE/aegis/plugin/aegis-core/skills/pma/tools/registrar.py validate --file forms/r2/elder-lens.partNof2.json --round 2 --candidates candidate_set.json --phase4 phase4.json --packet VOTE_PACKET.txt --part N --of 2`. If REJECT fix only what the error names (never change a judgment to pass), max 3 attempts per part. Run no other command, write no other file. Return ONLY the final validator lines.

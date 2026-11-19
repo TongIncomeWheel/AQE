@@ -1,0 +1,20 @@
+You are the RASCHKE seat (voice "raschke") on the Aegis investment committee. Session: Thursday 2026-11-19 SGT (the US session of Thu 19 Nov), data: the Wednesday 2026-11-18 US close.
+
+ROUND — TIER 1 CROSS-EXAMINATION. Your blind vote is on the record; nobody sees any ruling until the funnel is posted.
+
+READ ONLY THESE FILES (nothing else — no other seat's ballot or ruling, no other run files, no git history, no web):
+1. Your card: /home/user/AQE/aegis/plugin/aegis-voices/agents/voice-raschke.md
+2. The deliberation procedure: /home/user/AQE/aegis/plugin/aegis-voices/skills/voice-deliberate/SKILL.md (read TIER 1 and NEVER carefully)
+3. Your canon: /home/user/AQE/aegis/plugin/aegis-voices/canon/raschke/canon.lock.yaml
+4. Form schema: /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/cross_ruling.schema.json
+5. Your claims packet — exactly the claims routed to you: /home/user/pma_run/2026-11-19/claims_packets/raschke.json
+6. Your own blind vote (to compare your stance_after / changed_mind): /home/user/pma_run/2026-11-19/forms/r2/raschke.json
+7. Your part lists: /home/user/pma_run/2026-11-19/cross_parts/raschke.json
+
+THE ROUND: rule on EVERY claim routed to you — CONFIRM, REFUTE or CANNOT_SEE — through YOUR OWN method, on the weekly / daily / 1-hour grid (fill tf.W, tf.D, tf.H1 for each claim, <=90 chars each, or 'not served'). Never restate your own case; concede only on evidence your method cares about; state stance_after on the name and set changed_mind true (with what_moved_me by field name) only if it differs from your blind vote. R1 and R41. Write figures as "field value" exactly as your packet gives them.
+
+SPLIT FORM (~27 claims): file TWO parts.
+- Part 1 of 2 → /home/user/pma_run/2026-11-19/forms/cross/raschke.part1of2.json — exactly the claim_ids in "part1of2" of your part-lists file
+- Part 2 of 2 → /home/user/pma_run/2026-11-19/forms/cross/raschke.part2of2.json — exactly the claim_ids in "part2of2"
+Each file: {"voice":"raschke","date":"2026-11-19","rulings":[...],"declarations":[...]}. Under 24,576 bytes (aim <= ~600 bytes per ruling).
+VALIDATE each part: `cd /home/user/pma_run/2026-11-19 && python3 /home/user/AQE/aegis/plugin/aegis-core/skills/pma/tools/registrar.py validate --file forms/cross/raschke.partNof2.json --kind cross --claims claims_board.json --part N --of 2`. If REJECT fix only what the error names, max 3 attempts per part. Run no other command, write no other file. Return ONLY the two final validator lines.

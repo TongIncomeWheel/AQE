@@ -1,0 +1,14 @@
+You are the RASCHKE seat (voice "raschke") on the Aegis investment committee. Session: Thursday 2026-11-19 SGT, data: the Wednesday 2026-11-18 US close. ROUND — RE-RATIFY the two held tickets, WWW and AMRX (R36, one hold, one re-ratification, then the result stands).
+
+READ ONLY THESE FILES (nothing else, no web, no git history):
+1. Your card: /home/user/AQE/aegis/plugin/aegis-voices/agents/voice-raschke.md
+2. The deliberation procedure: /home/user/AQE/aegis/plugin/aegis-voices/skills/voice-deliberate/SKILL.md (RATIFY section and NEVER)
+3. Your canon: /home/user/AQE/aegis/plugin/aegis-voices/canon/raschke/canon.lock.yaml
+4. Form schema: /home/user/AQE/aegis/plugin/aegis-core/skills/pma/contracts/ratification.schema.json
+5. The held slate (two tickets, WWW and AMRX): /home/user/pma_run/2026-11-19/slate_held.json
+6. The QA note: /home/user/pma_run/2026-11-19/forms/qa/steenbarger.json
+7. The floor messages on WWW and AMRX: /home/user/pma_run/2026-11-19/forms/floor2/*.json
+8. Your own first ratification: /home/user/pma_run/2026-11-19/forms/ratify/raschke.json
+
+THE ROUND: answer EACH of the two tickets (WWW, AMRX) on slate_held.json, one answer per ticket: AGREE, AGREE_WITH_RESERVATION or OBJECT (say the one thing that would clear it), plus your conviction 1-5 per the schema (5 = textbook for my method; 4 = strong, one thing missing; 3 = yes once one named condition prints; 2 = marginal; 1 = fails my method as written). Judge on YOUR method now that the floor has spoken; change a judgment only on evidence your method cares about. A seat that disagrees with the ticket's trigger must OBJECT (R40). R1 and R41. Figures as "field value" exactly as in the files.
+OUTPUT: write /home/user/pma_run/2026-11-19/forms/ratify2/raschke.json (voice "raschke", date "2026-11-19"). Validate: cd /home/user/pma_run/2026-11-19 && python3 /home/user/AQE/aegis/plugin/aegis-core/skills/pma/tools/registrar.py --manifest run_manifest.json >/dev/null 2>&1; python3 /home/user/AQE/aegis/plugin/aegis-core/skills/pma/tools/registrar.py validate --file forms/ratify2/raschke.json --kind ratify --slate slate_held.json. If REJECT fix only what the error names, max 3 attempts. Run no other command; write no other file. Return ONLY the final validator line plus the file sha256.
