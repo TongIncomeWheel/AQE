@@ -531,6 +531,7 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
     cond_prefix = tuple(k[:-1] for k in cond if k.endswith(".*"))
     # `bracket.*` makes bracket.stop conditional AND the parent `bracket` a charter lists (it expands to the same columns)
     is_cond = lambda f: f in cond_exact or (bool(cond_prefix) and (f.startswith(cond_prefix) or (f + ".") in cond_prefix))
+    aqe_listed = {r.get("ticker") for r in (export.get("daily_list") or []) if isinstance(r, dict) and not r.get("universe_only")}   # AQE's own list: universe-only rows (whole-universe run) are not on it
     export_cols = set()
     for r in (export.get("daily_list") or []) + (export.get("held_positions") or []):
         if isinstance(r, dict):
@@ -573,7 +574,15 @@ def check_voice_coverage(packets_dir, export, deciders, contract_path=DEFAULT_VO
         on_menu = lambda f: f in menu or any(m.startswith(f + ".") for m in menu)
         in_pkt = lambda f: f in cols or any(c.startswith(f + ".") for c in cols)
         in_exp = lambda f: f in export_cols or any(e.startswith(f + ".") for e in export_cols)
-        known = (contract.get("standing") or {}).get(v) or {}
+        known = dict((contract.get("standing") or {}).get(v) or {})
+        # CONDITIONAL STANDING (conductor 2026-11-18): a field that exists only for names on AQE's daily list (`lens`, AQE's lens-consensus) is legitimately blank for a seat whose served set holds NO AQE-listed
+        # name (whole-universe run: each seat gets its own top-25 screen). Generic for every seat; it applies ONLY then. With even one AQE-listed name in the packet, a blank column is a real feed fault and blocks.
+        _cond_aqe = contract.get("standing_when_no_aqe_listed_name") or {}
+        if _cond_aqe and not any(r and r[0] in aqe_listed for r in rows):
+            for _base, _why in _cond_aqe.items():
+                for _f in req:
+                    if _f == _base or _f.startswith(_base + "."):
+                        known.setdefault(_f, _why)
         aliases = (contract.get("served_as") or {}).get(v) or {}
         served, served_as, off_menu, conditional, new_gaps, known_hit, blanks = [], [], [], [], [], [], {}
         for f in req:

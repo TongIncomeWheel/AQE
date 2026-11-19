@@ -247,5 +247,8 @@
    "target": "position-management input for an OPEN position (stop trail / time stop / exit trigger). The committee votes on candidates and holds; the PM manages and sizes the position at the broker. If the PM wants Seow to apply this to held names, add the held-row columns to his menu (held_book.held_sl, held_book.trade_date, held_book.held_tp1 exist; days_held and high_since_entry would be new AQE fields)."
   }
  },
+ "standing_when_no_aqe_listed_name": {
+  "lens": "lens is AQE's lens-consensus and exists only for names on AQE's daily list; on a whole-universe run a seat can be served 25 universe-only names, so the field is legitimately blank, not a feed gap. Applies to ANY seat, and ONLY when none of the names in that seat's packet is on AQE's daily list (universe-only rows excluded): if even one served name is AQE-listed and lens is still blank for every name, that is a real feed fault and blocks as before."
+ },
  "capabilities": {}
 }

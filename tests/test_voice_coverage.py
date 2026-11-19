@@ -353,3 +353,71 @@ def test_a_held_book_still_checks_the_health_verdict_fields(work):
     exp["held_positions"] = [{"ticker": "MP", "hl_score": 55, "hl_state": "HOLD"}]
     fails, notes, _ = cov(pk, exp)
     assert not any("flat book" in n for n in notes)
+
+
+# ------------------------------------------- lens: legitimately blank when the seat is served no AQE-listed name
+def _blank_col(col):
+    def f(h, rows):
+        for i, c in enumerate(h):
+            if c == col or c.startswith(col + "."):
+                for r in rows:
+                    r[i] = ""
+        return h, rows
+    return f
+
+
+def _no_aqe_name_export(exp):
+    """The fixture's export rows are packet names; a whole-universe run serves seats names that are NOT on AQE's list."""
+    exp = copy.deepcopy(exp)
+    for i, r in enumerate(exp["daily_list"]):
+        r["ticker"] = f"ZZAQE{i}"
+    return exp
+
+
+def test_lens_blank_for_every_name_is_standing_only_when_no_served_name_is_on_aqes_list(work):
+    """Whole-universe run: a seat can be served 25 universe-only names, so AQE's lens-consensus is legitimately blank."""
+    _, pk, exp = work
+    exp = _no_aqe_name_export(exp)
+    packet_names = {l.split("\t")[0] for l in (pk / "raschke.tsv").read_text().split("\n") if l and not l.startswith("#")} - {"ticker"}
+    assert not packet_names & {r["ticker"] for r in exp["daily_list"]}, "fixture premise: no packet name is on the AQE list"
+    for v in ("raschke", "oneil"):
+        edit_packet(pk, v, _blank_col("lens"))
+    fails, notes, rep = cov(pk, exp)
+    assert fails == [], fails
+    assert "lens" in rep["raschke"]["not_served_known"]
+    assert any("NOT SERVED (standing" in n and "lens" in n for n in notes)
+
+
+def test_lens_blank_blocks_when_even_one_served_name_is_on_aqes_list(work):
+    """Anything else is a real feed fault: one AQE-listed name in the packet and lens blank for all must still block."""
+    _, pk, exp = work
+    exp = _no_aqe_name_export(exp)
+    edit_packet(pk, "raschke", _blank_col("lens"))
+    first = next(l.split("\t")[0] for l in (pk / "raschke.tsv").read_text().split("\n") if l and not l.startswith("#") and not l.startswith("ticker"))
+    exp = copy.deepcopy(exp)
+    exp["daily_list"].append({"ticker": first, "lens": "1"})
+    fails, _, _ = cov(pk, exp)
+    assert any(f.startswith("raschke: lens -- NOT SERVED: blank for all") for f in fails), fails
+    # a universe-only row for that name is not on AQE's list: standing again
+    exp["daily_list"][-1]["universe_only"] = True
+    fails, _, _ = cov(pk, exp)
+    assert fails == [], fails
+
+
+def test_the_conditional_standing_loosens_nothing_else(work):
+    """Same no-AQE-name packet: every other blank column still blocks."""
+    _, pk, exp = work
+    exp = _no_aqe_name_export(exp)
+    edit_packet(pk, "raschke", _blank_col("lens"))
+    edit_packet(pk, "wyckoff", _blank_col("pos_in_50d_range_pct"))
+    fails, _, _ = cov(pk, exp)
+    assert len(fails) == 1 and fails[0].startswith("wyckoff: pos_in_50d_range_pct -- NOT SERVED"), fails
+
+
+def test_the_conditional_standing_carries_a_written_reason_for_a_real_field():
+    c = json.loads(CONTRACT.read_text())
+    cond = c["standing_when_no_aqe_listed_name"]
+    every = {f.split(".")[0] for fs in c["required_fields"].values() for f in fs}
+    for f, why in cond.items():
+        assert f in every and len(why) > 40
+    assert "universe-only" in cond["lens"] and "not a feed gap" in cond["lens"]
