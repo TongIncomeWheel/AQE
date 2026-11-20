@@ -16,6 +16,9 @@ on:
       shard:
         description: "i/n (intraday only): run shard i of n of the sorted ticker list, e.g. 1/3"
         default: "1/1"
+      tickers:
+        description: "comma-separated explicit tickers (fill run for names that failed in a shard); blank = the whole universe/shard"
+        default: ""
       budget_hours:
         description: "wall-clock budget for the pull; remaining tickers are named in the meta"
         default: "5"
@@ -51,9 +54,10 @@ jobs:
           SINCE: ${{ inputs.since }}
           BUDGET_H: ${{ inputs.budget_hours }}
           SHARD: ${{ inputs.shard }}
+          TICKERS: ${{ inputs.tickers }}
         run: |
-          if [ -n "$SINCE" ]; then python -m scripts.research_extras "$STAGE" --since "$SINCE" --budget-hours "$BUDGET_H" --shard "$SHARD"
-          else python -m scripts.research_extras "$STAGE" --budget-hours "$BUDGET_H" --shard "$SHARD"; fi
+          if [ -n "$SINCE" ]; then python -m scripts.research_extras "$STAGE" --since "$SINCE" --budget-hours "$BUDGET_H" --shard "$SHARD" --tickers "$TICKERS"
+          else python -m scripts.research_extras "$STAGE" --budget-hours "$BUDGET_H" --shard "$SHARD" --tickers "$TICKERS"; fi
       - name: Upload artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

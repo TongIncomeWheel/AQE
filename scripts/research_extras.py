@@ -43,7 +43,22 @@ def _meta_common(stage: str, tickers, since: str, pulled: dict, rows: int, extra
             "not_point_in_time": NOT_PIT[stage]} | (extra or {})
 
 
-def _loop(client, tickers, one, budget_s: float, clock=time.monotonic) -> dict:
+def _with_429_retry(one, t, sleep, tries: int = 3, wait_s: float = 90.0):
+    """FMP's 'Limit Reach' (HTTP 429) is a throttle, not missing data. The client already waits once; on a repeat, wait and retry this ticker before naming it failed
+    (2026-11-20: WDC and WELL were lost from shard 2 to a 429 that a later retry would have cleared)."""
+    from src.data.fmp_client import FMPError, FMPQuotaError
+    for k in range(tries):
+        try:
+            return one(t)
+        except FMPQuotaError:
+            raise
+        except FMPError as e:
+            if "429" not in str(e) or k == tries - 1:
+                raise
+            sleep(wait_s)
+
+
+def _loop(client, tickers, one, budget_s: float, clock=time.monotonic, sleep=time.sleep) -> dict:
     """Run `one(ticker) -> list[row]` for every ticker. A quota error aborts LOUDLY; any other FMP error names the ticker. Never silent."""
     from src.data.fmp_client import FMPError, FMPQuotaError
     rows, failed, empty, aborted = [], {}, [], None
@@ -53,7 +68,7 @@ def _loop(client, tickers, one, budget_s: float, clock=time.monotonic) -> dict:
             aborted = f"time budget {budget_s:.0f}s reached after {i} of {len(tickers)} tickers"
             break
         try:
-            got = one(t)
+            got = _with_429_retry(one, t, sleep)
         except FMPQuotaError as e:
             aborted = f"FMP quota/denial after {i} of {len(tickers)} tickers: {e}"
             break
@@ -157,6 +172,7 @@ def mcap_rows(client, t: str, since: str, today: date | None = None) -> list[dic
 
 
 SHARD = (1, 1)
+TICKERS: list[str] = []          # explicit fill list (--tickers); files/meta get the suffix _fill
 
 
 def _write(df: pd.DataFrame, name: str) -> dict:
@@ -168,7 +184,7 @@ def _write(df: pd.DataFrame, name: str) -> dict:
 
 def run(stage: str, since: str, budget_h: float) -> int:
     from src.data.fmp_client import FMPClient
-    tickers = shard(EH.load_tickers(), *SHARD) if SHARD[1] > 1 else EH.load_tickers()
+    tickers = TICKERS or (shard(EH.load_tickers(), *SHARD) if SHARD[1] > 1 else EH.load_tickers())
     client = FMPClient()
     budget = budget_h * 3600
     print(f"[research_extras] {stage}: {len(tickers)} tickers, since {since}", flush=True)
@@ -206,17 +222,17 @@ def run(stage: str, since: str, budget_h: float) -> int:
             df["ticker"] = df["ticker"].astype("category")
             df = df.sort_values(["ticker", "ts_et"]).reset_index(drop=True)
             n = len(df)
-            suffix = f"_s{SHARD[0]}of{SHARD[1]}" if SHARD[1] > 1 else ""
+            suffix = "_fill" if TICKERS else (f"_s{SHARD[0]}of{SHARD[1]}" if SHARD[1] > 1 else "")
             for yr, g in df.groupby(df["ts_et"].dt.year):
                 ids.append(_write(g.reset_index(drop=True), f"aqe_research_bars_1h_{yr}{suffix}.parquet"))
             per_t = df.groupby("ticker")["ts_et"].min()
-            extra = {"bars_by_year": {str(k): int(v) for k, v in df["ts_et"].dt.year.value_counts().sort_index().items()}, "interval": "1hour", "shard": list(SHARD),
+            extra = {"bars_by_year": {str(k): int(v) for k, v in df["ts_et"].dt.year.value_counts().sort_index().items()}, "interval": "1hour", "shard": list(SHARD), "explicit_tickers": TICKERS,
                      "tickers_first_bar_after_2020_12": sorted(per_t[per_t > pd.Timestamp("2020-12-31")].index.tolist())}
     else:
         raise SystemExit(f"unknown stage {stage}")
     meta = _meta_common(stage, tickers, since, pulled, n, extra) | {"drive": ids}
     OUT.mkdir(parents=True, exist_ok=True)
-    mp = OUT / f"aqe_research_{stage}{f'_s{SHARD[0]}of{SHARD[1]}' if (stage == 'intraday' and SHARD[1] > 1) else ''}_meta.json"
+    mp = OUT / f"aqe_research_{stage}{'_fill' if TICKERS else (f'_s{SHARD[0]}of{SHARD[1]}' if (stage == 'intraday' and SHARD[1] > 1) else '')}_meta.json"
     mp.write_text(json.dumps(meta, indent=1, default=str))
     ids.append(EH._drive_put(mp.name, mp.read_bytes(), "application/json"))
     (OUT / "drive_ids.json").write_text(json.dumps({x["name"]: x for x in ids}, indent=1))
@@ -230,12 +246,15 @@ def main(argv=None) -> int:
     ap.add_argument("stage", choices=["fundamentals", "profile", "intraday", "mcap"])
     ap.add_argument("--since", default=None)
     ap.add_argument("--budget-hours", type=float, default=5.0)
+    ap.add_argument("--tickers", default="", help="comma-separated explicit ticker list (a fill run for names that failed in a shard); files/meta carry the suffix _fill")
     ap.add_argument("--shard", default="1/1", help="i/n: run only shard i of n of the sorted ticker list (intraday; keeps a run under the runner's memory and time)")
     a = ap.parse_args(argv)
     global SHARD
     i, n = (int(x) for x in a.shard.split("/"))
     assert 1 <= i <= n, a.shard
     SHARD = (i, n)
+    global TICKERS
+    TICKERS = [t.strip().upper() for t in a.tickers.split(",") if t.strip()]
     since = a.since or {"fundamentals": "2018-01-01", "profile": "2020-11-01", "intraday": "2020-11-01", "mcap": "2020-11-01"}[a.stage]
     return run(a.stage, since, a.budget_hours)
 

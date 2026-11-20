@@ -117,3 +117,30 @@ def test_shards_cover_every_ticker_exactly_once():
     ts = [f"T{i:03d}" for i in range(101)]
     parts = [RX.shard(ts, i, 3) for i in (1, 2, 3)]
     assert sorted(sum(parts, [])) == sorted(ts) and sum(len(p) for p in parts) == 101 and not (set(parts[0]) & set(parts[1]))
+
+
+def test_a_429_is_retried_before_the_ticker_is_named_failed():
+    calls = {"n": 0}
+    def one(t):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise FMPError("FMP HTTP 429 Limit Reach")
+        return [{"x": 1}]
+    waits = []
+    out = RX._loop(None, ["A"], one, 1e9, sleep=waits.append)
+    assert out["rows"] == [{"x": 1}] and not out["failed"] and len(waits) == 2
+    def always(t):
+        raise FMPError("FMP HTTP 429 Limit Reach")
+    out = RX._loop(None, ["A"], always, 1e9, sleep=lambda s: None)
+    assert list(out["failed"]) == ["A"]
+    def boom(t):
+        raise FMPError("HTTP 500")
+    w = []
+    out = RX._loop(None, ["A"], boom, 1e9, sleep=w.append)
+    assert list(out["failed"]) == ["A"] and not w          # only 429 retries
+
+
+def test_explicit_tickers_are_a_fill_run_and_the_workflow_declares_the_input():
+    import pathlib, yaml
+    y = yaml.safe_load((pathlib.Path(__file__).resolve().parents[1] / ".github" / "workflows" / "research-extras.yml").read_text(encoding="utf-8"))
+    assert "tickers" in (y.get(True) or y.get("on"))["workflow_dispatch"]["inputs"]
