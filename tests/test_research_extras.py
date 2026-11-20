@@ -91,3 +91,14 @@ def test_the_loop_names_failed_empty_and_quota_stops():
     ticks = iter(range(0, 1000, 100))
     b = RX._loop(None, ["A", "B", "C"], lambda t: [{"x": 1}], 150, clock=lambda: next(ticks))
     assert b["aborted"] and "time budget" in b["aborted"]
+
+
+def test_every_workflow_file_parses_and_a_dispatch_workflow_declares_workflow_dispatch():
+    """2026-11-20: research-extras.yml merged with an unquoted ': ' in its name, so GitHub saw no workflow_dispatch trigger. Every workflow must be valid YAML."""
+    import pathlib
+    import yaml
+    for p in sorted((pathlib.Path(__file__).resolve().parents[1] / ".github" / "workflows").glob("*.yml")):
+        d = yaml.safe_load(p.read_text(encoding="utf-8"))
+        assert isinstance(d, dict) and (True in d or "on" in d), p.name
+    d = yaml.safe_load((pathlib.Path(__file__).resolve().parents[1] / ".github" / "workflows" / "research-extras.yml").read_text(encoding="utf-8"))
+    assert "workflow_dispatch" in (d.get(True) or d.get("on"))
