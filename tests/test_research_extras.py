@@ -102,3 +102,18 @@ def test_every_workflow_file_parses_and_a_dispatch_workflow_declares_workflow_di
         assert isinstance(d, dict) and (True in d or "on" in d), p.name
     d = yaml.safe_load((pathlib.Path(__file__).resolve().parents[1] / ".github" / "workflows" / "research-extras.yml").read_text(encoding="utf-8"))
     assert "workflow_dispatch" in (d.get(True) or d.get("on"))
+
+
+def test_intraday_frame_is_compact_typed_and_deduplicated():
+    import pandas as pd
+    c = FC(bars=_days("2021-01-04", 20) + _days("2021-01-04", 3))        # duplicate stamps
+    df = RX.intraday_frame(c, "A", "2021-01-01", date(2021, 6, 30))
+    assert len(df) == 20 and list(df.columns) == ["ticker", "ts_et", "open", "high", "low", "close", "volume"]
+    assert str(df["ticker"].dtype) == "category" and str(df["volume"].dtype) == "int64" and pd.api.types.is_datetime64_any_dtype(df["ts_et"])
+    assert RX.intraday_frame(FC(bars=[]), "B", "2021-01-01", date(2021, 6, 30)).empty
+
+
+def test_shards_cover_every_ticker_exactly_once():
+    ts = [f"T{i:03d}" for i in range(101)]
+    parts = [RX.shard(ts, i, 3) for i in (1, 2, 3)]
+    assert sorted(sum(parts, [])) == sorted(ts) and sum(len(p) for p in parts) == 101 and not (set(parts[0]) & set(parts[1]))

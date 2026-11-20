@@ -13,6 +13,9 @@ on:
       since:
         description: "earliest date (blank = stage default)"
         default: ""
+      shard:
+        description: "i/n (intraday only): run shard i of n of the sorted ticker list, e.g. 1/3"
+        default: "1/1"
       budget_hours:
         description: "wall-clock budget for the pull; remaining tickers are named in the meta"
         default: "5"
@@ -47,9 +50,10 @@ jobs:
           STAGE: ${{ inputs.stage }}
           SINCE: ${{ inputs.since }}
           BUDGET_H: ${{ inputs.budget_hours }}
+          SHARD: ${{ inputs.shard }}
         run: |
-          if [ -n "$SINCE" ]; then python -m scripts.research_extras "$STAGE" --since "$SINCE" --budget-hours "$BUDGET_H"
-          else python -m scripts.research_extras "$STAGE" --budget-hours "$BUDGET_H"; fi
+          if [ -n "$SINCE" ]; then python -m scripts.research_extras "$STAGE" --since "$SINCE" --budget-hours "$BUDGET_H" --shard "$SHARD"
+          else python -m scripts.research_extras "$STAGE" --budget-hours "$BUDGET_H" --shard "$SHARD"; fi
       - name: Upload artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

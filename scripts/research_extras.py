@@ -125,12 +125,26 @@ def year_windows(since: str, today: date | None = None) -> list[tuple[date, date
     return out
 
 
-def intraday_rows(client, t: str, since: str, today: date | None = None) -> list[tuple]:
-    out = []
+def intraday_frame(client, t: str, since: str, today: date | None = None) -> "pd.DataFrame":
+    """One ticker's bars as a COMPACT frame (typed columns). The first cut returned ~17M python tuples for the whole universe (~350 B/row, ~6 GB) and the
+    GitHub runner died at ~2h16m (2026-11-20, no log persisted); typed frames are ~50 B/row."""
+    parts = []
     for s, e in year_windows(since, today):
-        for r in fetch_range(client, t, s, e):
-            out.append((t, str(r["date"]), r.get("open"), r.get("high"), r.get("low"), r.get("close"), r.get("volume")))
-    return out
+        parts += fetch_range(client, t, s, e)
+    if not parts:
+        return pd.DataFrame()
+    df = pd.DataFrame(parts, columns=["date", "open", "high", "low", "close", "volume"])
+    df.insert(0, "ticker", pd.Categorical([t] * len(df)))
+    df["ts_et"] = pd.to_datetime(df.pop("date"))
+    for c in ("open", "high", "low", "close"):
+        df[c] = df[c].astype("float64")
+    df["volume"] = df["volume"].fillna(0).astype("int64")
+    return df.drop_duplicates("ts_et")[["ticker", "ts_et", "open", "high", "low", "close", "volume"]]
+
+
+def shard(tickers: list[str], i: int, n: int) -> list[str]:
+    """Deterministic shard i of n (1-based) over the sorted ticker list: every ticker lands in exactly one shard."""
+    return [t for k, t in enumerate(sorted(tickers)) if k % n == i - 1]
 
 
 # ---------------------------------------------------------------- historical market cap
@@ -142,6 +156,9 @@ def mcap_rows(client, t: str, since: str, today: date | None = None) -> list[dic
     return out
 
 
+SHARD = (1, 1)
+
+
 def _write(df: pd.DataFrame, name: str) -> dict:
     OUT.mkdir(parents=True, exist_ok=True)
     p = OUT / name
@@ -151,7 +168,7 @@ def _write(df: pd.DataFrame, name: str) -> dict:
 
 def run(stage: str, since: str, budget_h: float) -> int:
     from src.data.fmp_client import FMPClient
-    tickers = EH.load_tickers()
+    tickers = shard(EH.load_tickers(), *SHARD) if SHARD[1] > 1 else EH.load_tickers()
     client = FMPClient()
     budget = budget_h * 3600
     print(f"[research_extras] {stage}: {len(tickers)} tickers, since {since}", flush=True)
@@ -179,23 +196,27 @@ def run(stage: str, since: str, budget_h: float) -> int:
             ids.append(_write(df, "aqe_research_market_cap_daily.parquet"))
             extra = {"date_min": str(df["date"].min()), "date_max": str(df["date"].max())}
     elif stage == "intraday":
-        pulled = _loop(client, tickers, lambda t: intraday_rows(client, t, since), budget)
-        n = len(pulled["rows"])
-        if n:
-            df = pd.DataFrame(pulled["rows"], columns=["ticker", "ts_et", "open", "high", "low", "close", "volume"])
-            df["ts_et"] = pd.to_datetime(df["ts_et"])
-            df = df.drop_duplicates(["ticker", "ts_et"]).sort_values(["ticker", "ts_et"]).reset_index(drop=True)
+        pulled = _loop(client, tickers, lambda t: [f] if len(f := intraday_frame(client, t, since)) else [], budget)
+        frames = pulled["rows"]
+        pulled["rows"] = []
+        n = 0
+        if frames:
+            df = pd.concat(frames, ignore_index=True)
+            frames.clear()
+            df["ticker"] = df["ticker"].astype("category")
+            df = df.sort_values(["ticker", "ts_et"]).reset_index(drop=True)
             n = len(df)
+            suffix = f"_s{SHARD[0]}of{SHARD[1]}" if SHARD[1] > 1 else ""
             for yr, g in df.groupby(df["ts_et"].dt.year):
-                ids.append(_write(g.reset_index(drop=True), f"aqe_research_bars_1h_{yr}.parquet"))
+                ids.append(_write(g.reset_index(drop=True), f"aqe_research_bars_1h_{yr}{suffix}.parquet"))
             per_t = df.groupby("ticker")["ts_et"].min()
-            extra = {"bars_by_year": {str(k): int(v) for k, v in df["ts_et"].dt.year.value_counts().sort_index().items()}, "interval": "1hour",
+            extra = {"bars_by_year": {str(k): int(v) for k, v in df["ts_et"].dt.year.value_counts().sort_index().items()}, "interval": "1hour", "shard": list(SHARD),
                      "tickers_first_bar_after_2020_12": sorted(per_t[per_t > pd.Timestamp("2020-12-31")].index.tolist())}
     else:
         raise SystemExit(f"unknown stage {stage}")
     meta = _meta_common(stage, tickers, since, pulled, n, extra) | {"drive": ids}
     OUT.mkdir(parents=True, exist_ok=True)
-    mp = OUT / f"aqe_research_{stage}_meta.json"
+    mp = OUT / f"aqe_research_{stage}{f'_s{SHARD[0]}of{SHARD[1]}' if (stage == 'intraday' and SHARD[1] > 1) else ''}_meta.json"
     mp.write_text(json.dumps(meta, indent=1, default=str))
     ids.append(EH._drive_put(mp.name, mp.read_bytes(), "application/json"))
     (OUT / "drive_ids.json").write_text(json.dumps({x["name"]: x for x in ids}, indent=1))
@@ -209,7 +230,12 @@ def main(argv=None) -> int:
     ap.add_argument("stage", choices=["fundamentals", "profile", "intraday", "mcap"])
     ap.add_argument("--since", default=None)
     ap.add_argument("--budget-hours", type=float, default=5.0)
+    ap.add_argument("--shard", default="1/1", help="i/n: run only shard i of n of the sorted ticker list (intraday; keeps a run under the runner's memory and time)")
     a = ap.parse_args(argv)
+    global SHARD
+    i, n = (int(x) for x in a.shard.split("/"))
+    assert 1 <= i <= n, a.shard
+    SHARD = (i, n)
     since = a.since or {"fundamentals": "2018-01-01", "profile": "2020-11-01", "intraday": "2020-11-01", "mcap": "2020-11-01"}[a.stage]
     return run(a.stage, since, a.budget_hours)
 
