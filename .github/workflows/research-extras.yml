@@ -1,0 +1,60 @@
+name: AQE research extras (one-off): fundamentals / profile / intraday / mcap
+
+# Backtest review 2026-11-20 (via conductor): extras #2-#5 (quarterly fundamentals, industry/float, 1-hour bars, historical market cap). READ-ONLY against production: scratch dir,
+# snapshot restored into it and never saved; only new Drive files named aqe_research_* plus this run's artifact. workflow_dispatch only.
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: "fundamentals | profile | intraday | mcap"
+        type: choice
+        options: [fundamentals, profile, intraday, mcap]
+        default: fundamentals
+      since:
+        description: "earliest date (blank = stage default)"
+        default: ""
+      budget_hours:
+        description: "wall-clock budget for the pull; remaining tickers are named in the meta"
+        default: "5"
+
+concurrency:
+  group: aqe-research
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Research stage
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          GOOGLE_OAUTH_REFRESH_TOKEN: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESEARCH_OUT: research_out
+          STAGE: ${{ inputs.stage }}
+          SINCE: ${{ inputs.since }}
+          BUDGET_H: ${{ inputs.budget_hours }}
+        run: |
+          if [ -n "$SINCE" ]; then python -m scripts.research_extras "$STAGE" --since "$SINCE" --budget-hours "$BUDGET_H"
+          else python -m scripts.research_extras "$STAGE" --budget-hours "$BUDGET_H"; fi
+      - name: Upload artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: aqe-research-extras-${{ inputs.stage }}
+          path: research_out/
+          retention-days: 14
+          if-no-files-found: warn
