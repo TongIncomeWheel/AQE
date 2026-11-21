@@ -166,7 +166,7 @@ def shard(tickers: list[str], i: int, n: int) -> list[str]:
 def mcap_rows(client, t: str, since: str, today: date | None = None) -> list[dict]:
     out = []
     for s, e in year_windows(since, today):
-        data = client._get_json(f"{STABLE}/historical-market-cap", {"symbol": t, "from": s.isoformat(), "to": e.isoformat(), "limit": 400, "apikey": client.config.api_key})
+        data = client._get_json(f"{STABLE}/historical-market-capitalization", {"symbol": t, "from": s.isoformat(), "to": e.isoformat(), "limit": 400, "apikey": client.config.api_key})
         out += [{"ticker": t, "date": r.get("date"), "market_cap": r.get("marketCap")} for r in (data if isinstance(data, list) else [])]
     return out
 
