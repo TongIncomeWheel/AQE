@@ -11,6 +11,10 @@ Components (per Design Committee Spec):
     BQ4: EMA Convergence   — EMA spread / ATR(20)         (max 25)
 
 BQ raw max = 100 (already normalised).
+
+bq_base_days (research review 2026-11-21 item 8, PM ruling: documentation only this round, redesign later): CONSECUTIVE DAYS WITHIN 8% OF THE 60-DAY HIGH.
+The Pine's staircase (mode 2) and smooth-trend (mode 3) branches are each gated by the same 8% band (`bq_in_band_ext = band or (mode2 and band) or (mode3 and band)`,
+Scoring_v1_8_Overlay.pine:468), so they never add a bar the band does not already include: in_base == in_band_basic. The Python is a faithful port of that.
 """
 
 from __future__ import annotations
