@@ -119,6 +119,42 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
     base_days = np.where(bars_since_breakout <= decay_window, latched_base_days, raw_base_count).astype(int)
     base_days_s = pd.Series(base_days, index=close.index)
 
+    # ============ SHADOW v2 (research-review 2026-11-21 items 7 and 9; the live fields below are untouched) ============
+    # 7. Breakout as Scoring_v1_8_Overlay.pine 473-474: high > highest(high[1], 60) AND in_band_ext[1] AND raw_base[1] >= 3 AND volume > sma(volume, 20).
+    #    The live port required close > a variable-length consolidation high AND `not in_base[t]` (the Pine has no such term and requires the PRIOR bar in base).
+    prior_high_60 = high.shift(1).rolling(60, min_periods=60).max().to_numpy()
+    raw_v2 = np.zeros(n, dtype=int)
+    latched_v2 = np.zeros(n, dtype=int)
+    bsb_v2 = np.full(n, 999, dtype=int)
+    for t in range(n):
+        prev_raw = raw_v2[t - 1] if t > 0 else 0
+        raw_v2[t] = prev_raw + 1 if in_base_arr[t] else 0
+        if t == 0:
+            continue
+        cond_break_v2 = (
+            not np.isnan(prior_high_60[t])
+            and high_arr[t] > prior_high_60[t]
+            and bool(in_base_arr[t - 1])
+            and prev_raw >= 3
+            and not np.isnan(vol_sma20[t])
+            and volume_arr[t] > vol_sma20[t]
+        )
+        if cond_break_v2:
+            latched_v2[t] = int(prev_raw)
+            bsb_v2[t] = 0
+        else:
+            latched_v2[t] = latched_v2[t - 1]
+            bsb_v2[t] = bsb_v2[t - 1] + 1
+    base_days_v2_s = pd.Series(np.where(bsb_v2 <= decay_window, latched_v2, raw_v2).astype(int), index=close.index)
+    # 9. Tiers as the Pine ternary (first match wins): 10-25 -> 20, 7-9 -> 14, 26-35 -> 14. The live chain lets the later band overwrite, so base_days == 25 scored 14.
+    bq_base_dur_v2 = pd.Series(0.0, index=close.index)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~((base_days_v2_s >= 3) & (base_days_v2_s <= 4)), 4.0)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~((base_days_v2_s >= 5) & (base_days_v2_s <= 6)), 8.0)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~((base_days_v2_s >= 7) & (base_days_v2_s <= 9)), 14.0)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~((base_days_v2_s > 25) & (base_days_v2_s <= 35)), 14.0)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~((base_days_v2_s >= 10) & (base_days_v2_s <= 25)), 20.0)
+    bq_base_dur_v2 = bq_base_dur_v2.where(~(base_days_v2_s > 35), 8.0)
+
     # BQ3 scoring tiers (different from Structure)
     bq_base_dur = pd.Series(0.0, index=close.index)
     bq_base_dur = bq_base_dur.where(~((base_days_s >= 3) & (base_days_s <= 4)), 4.0)
@@ -148,9 +184,13 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
     # Warmup: need ATR(20) + SMA(50) + 60-bar highest
     warm = atr20.notna() & sma_50.notna() & pivot_60.notna()
     bq_100 = bq_100.where(warm, np.nan)
+    bq_100_v2 = (bq_range_tight + bq_vol_dry + bq_base_dur_v2 + bq_ema_conv).clip(lower=0.0, upper=100.0).where(warm, np.nan)
 
     return pd.DataFrame({
         "date": d["date"],
+        "bq_100_v2": bq_100_v2,
+        "bq_base_dur_v2": bq_base_dur_v2,
+        "bq_base_days_v2": base_days_v2_s,
         "bq_100": bq_100,
         "bq_range_tight": bq_range_tight,
         "bq_vol_dry": bq_vol_dry,
