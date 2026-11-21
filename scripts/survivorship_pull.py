@@ -163,7 +163,7 @@ def _get_retry(client, url: str, params: dict, tries: int = 3, wait_s: float = 5
             raise
         except FMPError as e:
             msg = str(e)
-            if "HTTP 404" in msg:
+            if "HTTP 404" in msg or "HTTP 402" in msg:      # 404 = unknown symbol / empty window; 402 'Premium Query Parameter' = a symbol FMP gates (preferreds, when-issued)
                 raise FMP404(msg) from e
             if "HTTP 5" in msg and k < tries - 1:
                 (sleep or time.sleep)(wait_s)
@@ -172,10 +172,7 @@ def _get_retry(client, url: str, params: dict, tries: int = 3, wait_s: float = 5
 
 
 def bars_frame(client, t: str, since: str, today: date) -> pd.DataFrame:
-    try:
-        data = _get_retry(client, f"{RX.STABLE}/historical-price-eod/full", {"symbol": t, "from": since, "to": today.isoformat(), "apikey": client.config.api_key})
-    except FMP404:
-        return pd.DataFrame()                 # FMP does not know this symbol (CUSIP-style Alpaca ids, never-US names): counted as no bars, with its reason
+    data = _get_retry(client, f"{RX.STABLE}/historical-price-eod/full", {"symbol": t, "from": since, "to": today.isoformat(), "apikey": client.config.api_key})
     data = data if isinstance(data, list) else []
     if not data:
         return pd.DataFrame()
@@ -209,15 +206,45 @@ def classify(df_bars: pd.DataFrame, today: date) -> str:
     return "still_trading" if (today - last).days <= STALE_DAYS else "delisted_with_bars"
 
 
+def mcap_windows(client, t: str, since: str, last: date, diag: dict | None = None) -> list[dict]:
+    """Daily market cap per year window up to the name's last bar. A 404 on a window is an EMPTY window (FMP serves 404 where it has no rows), never a failure of the name;
+    the first cut let one empty window fail the whole name (all 234 delisted names in shard 1 lost their market cap, run 44922269216). A 404 is retried once WITHOUT the
+    `limit` parameter (in case that is what the server rejects), and every window's outcome is tallied in `diag` so the meta shows what actually happened."""
+    out = []
+    d = diag if diag is not None else {}
+    for a, b in RX.year_windows(since, last):
+        base = {"symbol": t, "from": a.isoformat(), "to": b.isoformat(), "apikey": client.config.api_key}
+        d["windows"] = d.get("windows", 0) + 1
+        try:
+            data = _get_retry(client, f"{RX.STABLE}/historical-market-cap", base | {"limit": 400})
+        except FMP404:
+            try:
+                data = _get_retry(client, f"{RX.STABLE}/historical-market-cap", base)
+                d["ok_without_limit"] = d.get("ok_without_limit", 0) + 1
+            except FMP404 as e:
+                d["empty_404"] = d.get("empty_404", 0) + 1
+                d.setdefault("first_404", f"{a}..{b}")
+                continue
+        out += [{"ticker": t, "date": r.get("date"), "market_cap": r.get("marketCap")} for r in (data if isinstance(data, list) else [])]
+    return out
+
+
 def pull_one(client, t: str, since: str, today: date, cls: dict):
-    b = bars_frame(client, t, since, today)
+    try:
+        b = bars_frame(client, t, since, today)
+    except FMP404 as e:                      # FMP does not serve this symbol (CUSIP-style Alpaca ids, preferreds, when-issued): counted, with the reason
+        cls[t] = {"class": "no_bars_in_window", "first_bar": None, "last_bar": None, "bars": 0, "reason": ("fmp_402_premium_symbol" if "HTTP 402" in str(e) else "fmp_404_unknown_symbol")}
+        return []
     c = classify(b, today)
-    cls[t] = {"class": c, "first_bar": str(b["date"].min().date()) if len(b) else None, "last_bar": str(b["date"].max().date()) if len(b) else None, "bars": int(len(b))}
+    cls[t] = {"class": c, "first_bar": str(b["date"].min().date()) if len(b) else None, "last_bar": str(b["date"].max().date()) if len(b) else None, "bars": int(len(b)),
+              "reason": None if len(b) else "fmp_empty_response"}
     if c != "delisted_with_bars":
         return []
     last = b["date"].max().date()
-    m = month_end(RX.mcap_rows(client, t, since, today=last))
+    dg: dict = {}
+    m = month_end(mcap_windows(client, t, since, last, dg))
     cls[t]["mcap_months"] = int(len(m))
+    cls[t]["mcap_diag"] = json.dumps(dg)
     return [{"ticker": t, "bars": b, "mcap": m}]
 
 
@@ -263,6 +290,10 @@ def run(stage: str, since: str, budget_h: float, shard: tuple[int, int]) -> int:
                  "delisted_names_with_bars_in_window": int(tally.get("delisted_with_bars", 0)),
                  "still_trading_excluded": int(tally.get("still_trading", 0)), "no_bars_in_window": int(tally.get("no_bars_in_window", 0)),
                  "delisted_by_last_bar_year": {str(k): int(v) for k, v in last_years.items()},
+                 "no_bars_reasons": {str(k): int(v) for k, v in pd.Series([v.get("reason") for v in cls.values() if v["class"] == "no_bars_in_window"]).value_counts().items()} if cls else {},
+                 "mcap_window_outcomes": {k: int(sum(json.loads(v.get("mcap_diag") or "{}").get(k, 0) for v in cls.values())) for k in ("windows", "ok_without_limit", "empty_404")} if cls else {},
+                 "mcap_first_404_examples": [{"symbol": k, "window": json.loads(v["mcap_diag"]).get("first_404")} for k, v in list(cls.items()) if v.get("mcap_diag") and json.loads(v["mcap_diag"]).get("first_404")][:10],
+                 "delisted_without_mcap": sorted(k for k, v in cls.items() if v["class"] == "delisted_with_bars" and not v.get("mcap_months")),
                  "bar_rows": int(len(bars)), "mcap_monthend_rows": int(len(mcap)),
                  "gaps": {"aborted": pulled["aborted"], "failed_tickers": pulled["failed"], "tickers_with_no_rows_or_excluded": len(pulled["empty"])}}
         meta["status"] = "failed" if not len(bars) else ("partial" if (pulled["failed"] or pulled["aborted"]) else "ok")
