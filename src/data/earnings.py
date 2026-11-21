@@ -14,6 +14,7 @@ Scoring (from spec):
 from __future__ import annotations
 
 import json
+import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -322,7 +323,9 @@ def fetch_report_dates_one(ticker: str, client=None, since: str = "2018-01-01") 
 
 
 EARNINGS_DATES_MAX_AGE_DAYS = 7
-EARNINGS_DATES_BUDGET_S = 25 * 60          # per nightly run; the first full pull (~2,300 names at 80 calls/min) spreads over a few nights, most-missing first
+# Per nightly run, bounded because the nightly already runs about 2 hours against a 150-minute job limit. At 80 calls/min, 10 minutes is ~800 names: the first full fill
+# (~2,300 names) spreads over ~3 nights, most-missing first, and the steady state (entries older than 7 days + fresh reports) is a few hundred calls a night.
+EARNINGS_DATES_BUDGET_S = int(os.environ.get("AQE_EARNINGS_DATES_BUDGET_S", str(10 * 60)))
 
 
 def refresh_earnings_dates_full(client, tickers, *, recent: dict | None = None, max_age_days: int = EARNINGS_DATES_MAX_AGE_DAYS, budget_s: float = EARNINGS_DATES_BUDGET_S,
