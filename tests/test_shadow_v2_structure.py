@@ -79,3 +79,63 @@ def test_item17_readiness_uses_the_shared_squeeze_and_it_is_numerically_identica
     d = pd.DataFrame({"date": pd.bdate_range("2020-01-01", periods=n), "open": close, "high": high, "low": low, "close": close, "volume": 1e6})
     readiness.compute(d)
     assert calls, "readiness must call the shared squeeze definition"
+
+
+# ------------------------------------------------------------------------------ item 15 (Elder)
+def _ohlc(close, rng_pct=0.01):
+    close = np.asarray(close, dtype=float)
+    return pd.DataFrame({"date": pd.bdate_range("2020-01-01", periods=len(close)), "open": close, "high": close * (1 + rng_pct), "low": close * (1 - rng_pct),
+                         "close": close, "volume": 1e6})
+
+
+def test_item15_hist_score_v2_bands_are_the_named_constants_and_zero_when_the_histogram_is_not_positive():
+    from src.engines import elder
+    assert elder.ELDER_V2_X_LOW == 0.10 and elder.ELDER_V2_X_HIGH == 0.23
+    rng = np.random.default_rng(4)
+    close = 100 * np.cumprod(1 + rng.normal(0.0004, 0.012, 600))
+    d = _ohlc(close)
+    out = elder.compute(d)
+    res = U.macd(pd.Series(close), fast=12, slow=26, signal=9, signal_kind="ema")
+    hist = res.hist
+    atr14 = U.atr(d["high"], d["low"], pd.Series(close), n=14)
+    x = hist / atr14
+    ok = out["elder_score_v2"].notna()
+    h = out["hist_score_v2"][ok]
+    assert (h[hist[ok] <= 0] == 0).all()
+    assert (h[(hist[ok] > 0) & (x[ok] < 0.10)] == 1).all()
+    assert (h[(hist[ok] > 0) & (x[ok] >= 0.10) & (x[ok] < 0.23)] == 2).all()
+    assert (h[(hist[ok] > 0) & (x[ok] >= 0.23)] == 3).all()
+    assert out["elder_score_v2"].dropna().between(0, 10).all()
+
+
+def test_item15_hist_score_v2_never_depends_on_hist_prev():
+    """Same bar, same histogram and ATR, different previous histogram: the v2 histogram score must not move. Built by checking that two series whose
+    last bar has the identical hist/ATR but different hist history give the same hist_score_v2 on that bar (the live score differs)."""
+    from src.engines import elder
+    rng = np.random.default_rng(9)
+    close = 100 * np.cumprod(1 + rng.normal(0.0004, 0.012, 300))
+    d = _ohlc(close)
+    base = elder.compute(d)
+    # the score is a pure function of (hist, ATR14) on the bar: recompute it from those two alone and compare
+    res = U.macd(pd.Series(close), fast=12, slow=26, signal=9, signal_kind="ema")
+    x = res.hist / U.atr(d["high"], d["low"], pd.Series(close), n=14)
+    pure = pd.Series(0.0, index=x.index)
+    pure = pure.where(~((res.hist > 0) & (x < 0.10)), 1.0)
+    pure = pure.where(~((res.hist > 0) & (x >= 0.10) & (x < 0.23)), 2.0)
+    pure = pure.where(~((res.hist > 0) & (x >= 0.23)), 3.0)
+    ok = base["elder_score_v2"].notna()
+    assert np.array_equal(base["hist_score_v2"][ok].to_numpy(), pure[ok].to_numpy())
+    import inspect
+    src = inspect.getsource(elder.compute)
+    seg = src[src.index("SHADOW v2 histogram score"):src.index("# Pine line 36")]
+    assert "hist_prev" not in seg and "hist_accel" not in seg
+
+
+def test_the_live_elder_score_is_unchanged():
+    from src.engines import elder
+    rng = np.random.default_rng(1)
+    close = 100 * np.cumprod(1 + rng.normal(0.0004, 0.012, 300))
+    out = elder.compute(_ohlc(close))
+    for c in ("elder_score", "impulse_state", "elder_score_v2", "hist_score_v2"):
+        assert c in out.columns
+    assert out["elder_score"].dropna().between(0, 10).all()

@@ -93,6 +93,7 @@ SCORE_COLUMNS = [
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
     "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
     "resist_score_v2", "structure_100_v2",
+    "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2",
 ]
 
 
@@ -294,6 +295,8 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "structure_100": structure_df["structure_100"],
             "mp_100": mp_df["mp_score"],
             "elder_score": elder_df["elder_score"],
+            "elder_score_v2": elder_df["elder_score_v2"],      # shadow v2 (item 15)
+            "hist_score_v2": elder_df["hist_score_v2"],
             "bq_100": bq_df["bq_100"],
             "k39_value": k39_val,
             "k39_gate": k39_gate_s,          # weekly gate bool → SC_POSITION gate detail
