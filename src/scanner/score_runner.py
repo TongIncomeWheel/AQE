@@ -14,6 +14,8 @@ Run from a fresh shell:
 
 from __future__ import annotations
 
+import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -26,6 +28,45 @@ from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
 from src.engines import anchored_vwap, bq, divergence, elder, energy, flow, health, k39, liquidity_sweep, mp, order_flow, pin_bar, pipeline_rank, price_volume_profile, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
 from src.engines.utils import atr, spy_positional_misaligned_bars as U_spy_misaligned
+
+
+# A FULL build (every scored ticker, all history) used to hold every ticker's frame in one Python list and pd.concat them: ~1.5 KB/row x ~3.2M rows = ~5 GB
+# of frames plus the concat copy, which killed the hosted runner ("lost communication", run 44904664034) once the shadow v2 columns widened the frame. A full
+# build now scores in chunks of SCORE_CHUNK_TICKERS, writes each chunk to a part file and streams the parts into ONE scores_daily.parquet (same columns, same
+# values, same row order); peak memory is one chunk, not the universe. A targeted build (only_tickers) is small and keeps the in-memory upsert.
+SCORE_CHUNK_TICKERS = int(os.environ.get("AQE_SCORE_CHUNK_TICKERS", "150"))
+
+
+def _write_chunk(frames: list, parts_dir: Path, n: int):
+    """Concat one chunk, drop rows with no sc_momentum (as the single-frame build did), write it as part n. Returns (rows, tickers) written."""
+    chunk = pd.concat(frames, ignore_index=True).dropna(subset=["sc_momentum"]).reset_index(drop=True)
+    if chunk.empty:
+        return 0, set()
+    parts_dir.mkdir(parents=True, exist_ok=True)
+    chunk.to_parquet(parts_dir / f"part_{n:05d}.parquet", index=False)
+    return len(chunk), set(chunk["ticker"].unique())
+
+
+def _combine_parts(parts_dir: Path, dest: Path) -> None:
+    """Stream the part files into one parquet at `dest`, one part in memory at a time. The result replaces `dest` atomically (a crash mid-combine leaves the
+    previous scores_daily.parquet untouched). Schemas are unified (a column that was all-null in one chunk promotes to its real type)."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    parts = sorted(parts_dir.glob("part_*.parquet"))
+    schemas = [pq.read_schema(p) for p in parts]
+    try:
+        unified = pa.unify_schemas(schemas, promote_options="permissive")
+    except TypeError:                           # pyarrow < 14 has no promote_options (null promotes by default there)
+        unified = pa.unify_schemas(schemas)
+    tmp = dest.with_name(dest.name + ".tmp")
+    try:
+        with pq.ParquetWriter(tmp, unified) as w:
+            for p in parts:
+                w.write_table(pq.read_table(p).cast(unified))
+        os.replace(tmp, dest)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
 
 
 SCORE_COLUMNS = [
@@ -184,6 +225,11 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         _want = set(only_tickers)
         tickers = [t for t in tickers if t in _want]
     out_rows: list[pd.DataFrame] = []
+    chunked = only_tickers is None                      # full build streams to disk; a targeted build upserts in memory
+    parts_dir = SCORES_DAILY.with_name(SCORES_DAILY.stem + ".parts")
+    if parts_dir.exists():
+        shutil.rmtree(parts_dir)                         # stale parts from a crashed earlier build must never leak into this one
+    n_parts, n_rows, seen = 0, 0, set()
     t0 = time.monotonic()
     for ticker in iter_with_progress(tickers, label="score"):
         d = daily_groups[ticker]
@@ -581,22 +627,41 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         for _c in ("wk_score_v2", "earn_score_v2", "rs_spy_score_v2", "rs_accel_score_v2", "abs_mom_score_v2", "rel_mom_score_v2"):
             diag["nan_v2_bars"][_c] = diag["nan_v2_bars"].get(_c, 0) + int((row[_c].isna() & _warm).sum())
         out_rows.append(row[SCORE_COLUMNS])
+        if chunked and len(out_rows) >= SCORE_CHUNK_TICKERS:
+            _r, _t = _write_chunk(out_rows, parts_dir, n_parts)
+            n_parts, n_rows = n_parts + 1, n_rows + _r
+            seen |= _t
+            out_rows.clear()
 
-    if not out_rows:
+    if chunked and out_rows:
+        _r, _t = _write_chunk(out_rows, parts_dir, n_parts)
+        n_parts, n_rows = n_parts + 1, n_rows + _r
+        seen |= _t
+        out_rows.clear()
+    if not out_rows and not (chunked and n_rows):
         print("No scores produced. Aborting.", file=sys.stderr)
+        shutil.rmtree(parts_dir, ignore_errors=True)
         return
 
-    out = pd.concat(out_rows, ignore_index=True)
-    out = out.dropna(subset=["sc_momentum"]).reset_index(drop=True)
+    if chunked:
+        try:
+            _combine_parts(parts_dir, SCORES_DAILY)
+        finally:
+            shutil.rmtree(parts_dir, ignore_errors=True)
+        out = None
+    else:
+        out = pd.concat(out_rows, ignore_index=True)
+        out = out.dropna(subset=["sc_momentum"]).reset_index(drop=True)
 
-    if only_tickers is not None and SCORES_DAILY.exists():
+    if out is not None and only_tickers is not None and SCORES_DAILY.exists():
         # Upsert: keep every cached ticker NOT in this targeted run untouched,
         # replace the ones we just recomputed.
         prior = pd.read_parquet(SCORES_DAILY)
         prior = prior[~prior["ticker"].isin(set(out["ticker"]))]
         out = pd.concat([prior, out], ignore_index=True)
 
-    out.to_parquet(SCORES_DAILY, index=False)
+    if out is not None:
+        out.to_parquet(SCORES_DAILY, index=False)
     try:        # shadow v2 diagnostics (research review items 12/13/14): a small side file, never read by the pipeline
         import json as _json
         diag["scope"] = "targeted" if only_tickers is not None else "full"
@@ -607,9 +672,10 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
 
     elapsed = time.monotonic() - t0
     scope = f" ({len(only_tickers)} requested)" if only_tickers is not None else ""
+    _rows, _tick = (n_rows, len(seen)) if out is None else (len(out), out["ticker"].nunique())
     print(
-        f"Wrote {SCORES_DAILY.name}: {len(out):,} rows across "
-        f"{out['ticker'].nunique()} tickers in {elapsed:.1f}s{scope}"
+        f"Wrote {SCORES_DAILY.name}: {_rows:,} rows across "
+        f"{_tick} tickers in {elapsed:.1f}s{scope}"
     )
 
 
