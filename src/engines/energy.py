@@ -177,12 +177,28 @@ def compute(
     atr_score = atr_score.where(~((atr_expansion_pct > 150) & ~((atr_expansion_pct >= 20) & (atr_expansion_pct <= 80))), 2.0)
     atr_score = atr_score.where(~((atr_expansion_pct >= 20) & (atr_expansion_pct <= 80)), 7.0)
 
+    # SHADOW v2 (research review 2026-11-21 item 16; PINE SPEC CHANGE, PM sign-off before cutover): the live SMA5/SMA20 of the already-smoothed ATR(14) almost never
+    # moves 20% (real data: 92.2% of bars score <= 1 point). v2 measures ATR5 against ATR20 on raw Wilder ATRs, SAME point bands.
+    atr5_raw = U.atr(high, low, close, n=5)
+    atr20_raw = U.atr(high, low, close, n=20)
+    atr_expansion_pct_v2 = ((atr5_raw - atr20_raw) / atr20_raw.replace(0.0, np.nan) * 100.0).fillna(0.0)
+    atr_score_v2 = pd.Series(0.0, index=close.index)
+    atr_score_v2 = atr_score_v2.where(~(atr_expansion_pct_v2 >= -10), 0.5)
+    atr_score_v2 = atr_score_v2.where(~(atr_expansion_pct_v2 >= 0), 1.0)
+    atr_score_v2 = atr_score_v2.where(~(atr_expansion_pct_v2 >= 10), 4.0)
+    atr_score_v2 = atr_score_v2.where(~(atr_expansion_pct_v2 >= 15), 5.5)
+    atr_score_v2 = atr_score_v2.where(~((atr_expansion_pct_v2 > 80) & ~((atr_expansion_pct_v2 >= 20) & (atr_expansion_pct_v2 <= 80))), 4.0)
+    atr_score_v2 = atr_score_v2.where(~((atr_expansion_pct_v2 > 150) & ~((atr_expansion_pct_v2 >= 20) & (atr_expansion_pct_v2 <= 80))), 2.0)
+    atr_score_v2 = atr_score_v2.where(~((atr_expansion_pct_v2 >= 20) & (atr_expansion_pct_v2 <= 80)), 7.0)
+
     # ---- Composite (Pine 199-200) ----
     en_raw = vp_position_score + price_action_score + squeeze_score + exhaustion_score + atr_score
     energy_100 = (en_raw / 59.5 * 100.0).clip(lower=0.0, upper=100.0)
     # Warmup: highest/lowest over 50 of bb_width (which is itself 20-bar based) = 70 bars.
     warm = bwl.notna() & ema_20.notna() & atr_val.notna()
     energy_100 = energy_100.where(warm, np.nan)
+    energy_100_v2 = ((vp_position_score + price_action_score + squeeze_score + exhaustion_score + atr_score_v2) / 59.5 * 100.0).clip(lower=0.0, upper=100.0)
+    energy_100_v2 = energy_100_v2.where(warm & atr20_raw.notna(), np.nan)
 
     return pd.DataFrame({
         "date": d["date"],
@@ -192,6 +208,8 @@ def compute(
         "squeeze_score": squeeze_score,
         "exhaustion_score": exhaustion_score,
         "atr_score": atr_score,
+        "atr_score_v2": atr_score_v2,
+        "energy_100_v2": energy_100_v2,
         "en_pos50": en_pos50,
         "en_trend_bars": en_trend_bars,
     })

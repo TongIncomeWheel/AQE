@@ -91,6 +91,7 @@ SCORE_COLUMNS = [
     # after a side-by-side. Added at the END so the section slices in research_extract._component_columns are unchanged.
     "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
+    "flow_100_v2", "flow_score_v2", "accum_score_v2", "atr_score_v2", "energy_100_v2",
 ]
 
 
@@ -288,6 +289,11 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "atr14": atr14,
             # Aggregate scores
             "flow_100": flow_df["flow_100"],
+            "flow_100_v2": flow_df["flow_100_v2"],               # shadow v2 (Flow items 1-3; Pine spec change, PM sign-off)
+            "flow_score_v2": flow_df["flow_score_v2"],
+            "accum_score_v2": flow_df["accum_score_v2"],
+            "atr_score_v2": energy_df["atr_score_v2"],           # shadow v2 (Energy item 16; Pine spec change, PM sign-off)
+            "energy_100_v2": energy_df["energy_100_v2"],
             "energy_100": energy_df["energy_100"],
             "structure_100": structure_df["structure_100"],
             "mp_100": mp_df["mp_score"],

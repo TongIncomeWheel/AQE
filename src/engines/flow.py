@@ -14,6 +14,13 @@ Components (per Pine):
 Composite (Pine 90-91):
     raw = clip(flow + accum + volume + skew + ext, 0, 38)
     flow_100 = raw / 38 * 100
+
+SHADOW v2 (research review 2026-11-21, PM: "fix the indicators first"; the live fields above are untouched; PINE SPEC CHANGES need PM sign-off before any cutover):
+    flow_score_v2   item 2: the lowest MFI/CMF band uses AND (mfi > 38 AND cmf > -0.05); the Pine OR made 2.5 a permanent floor.
+    accum_score_v2  item 1: the A/D line scored on its SLOPES: is the 10-bar linreg slope steeper than the 20-bar slope, sign-aware (|l| in the bands), and only
+                    while the 10-bar slope is rising; the live endpoint comparison reversed its thresholds when the A/D sum was negative (worsening distribution
+                    scored 7.5). Same point bands 1.5 / 3 / 5.5 / 7.5.
+    flow_100_v2     item 3: the true raw maximum 17 + 7.5 + 7.5 + 3.5 + 5 = 40.5 (the live /38 clip saturated before the true top).
 """
 
 from __future__ import annotations
@@ -22,6 +29,9 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+
+
+FLOW_RAW_MAX = 17.0 + 7.5 + 7.5 + 3.5 + 5.0      # 40.5: the true maximum of the five components (flow 17, accum 7.5, volume 7.5, skew 3.5, ext +5)
 
 
 def compute(
@@ -71,6 +81,11 @@ def compute(
     fl_fb = fl_fb.where(~((mfi > 42) & (cmf > 0)), 5.0)
     fl_fb = fl_fb.where(~((mfi > 48) & (cmf > 0.02)), 8.0)
     fl_fb = fl_fb.where(~((mfi > 55) & (cmf > 0.05)), 11.0)
+    fl_fb_v2 = pd.Series(0.0, index=close.index)
+    fl_fb_v2 = fl_fb_v2.where(~((mfi > 38) & (cmf > -0.05)), 2.5)
+    fl_fb_v2 = fl_fb_v2.where(~((mfi > 42) & (cmf > 0)), 5.0)
+    fl_fb_v2 = fl_fb_v2.where(~((mfi > 48) & (cmf > 0.02)), 8.0)
+    fl_fb_v2 = fl_fb_v2.where(~((mfi > 55) & (cmf > 0.05)), 11.0)
 
     # HA quality (Pine 32-39). For each bar t, count bars k ∈ [t-ha_lookback+1, t] where
     #   |hc[k] − ho_k| < 0.5 * atr20[t]
@@ -108,6 +123,7 @@ def compute(
     ha_b = ha_b.where(~(hac >= 5), 6.0)
 
     flow_score = (fl_fb + ha_b).clip(upper=17.0)
+    flow_score_v2 = (fl_fb_v2 + ha_b).clip(upper=17.0)
 
     # ---- Component 2: Accumulation A/D linreg (Pine 42-50) ----
     ad_raw = pd.Series(0.0, index=close.index)
@@ -122,6 +138,15 @@ def compute(
     accum_score = accum_score.where(~((ad_l != 0) & (ad_s > ad_l * 0.85)), 3.0)
     accum_score = accum_score.where(~((ad_l != 0) & (ad_s > ad_l)), 5.5)
     accum_score = accum_score.where(~((ad_l != 0) & (ad_s > ad_l * 1.1)), 7.5)
+    slope_s = U.linreg_slope(ad, 10)
+    slope_l = U.linreg_slope(ad, 20)
+    rising = slope_s > 0
+    steady = rising & (slope_l != 0)
+    accum_score_v2 = pd.Series(0.0, index=close.index)
+    accum_score_v2 = accum_score_v2.where(~rising, 1.5)
+    accum_score_v2 = accum_score_v2.where(~(steady & (slope_s > slope_l - 0.15 * slope_l.abs())), 3.0)
+    accum_score_v2 = accum_score_v2.where(~(steady & (slope_s > slope_l)), 5.5)
+    accum_score_v2 = accum_score_v2.where(~(steady & (slope_s > slope_l + 0.10 * slope_l.abs())), 7.5)
 
     # ---- Component 3: Volume trend + spike (Pine 52-59) ----
     v5 = U.sma(volume, 5)
@@ -195,10 +220,15 @@ def compute(
     # Warmup: 60-bar rolling sum for A/D needs 60 bars, plus 20-bar linreg on it = 80 bars.
     warm = ad_l.notna() & v20.notna() & mfi_sum_lower.notna()
     flow_100 = flow_100.where(warm, np.nan)
+    raw_v2 = (flow_score_v2 + accum_score_v2 + volume_score + skew_score + ext).clip(lower=0.0, upper=FLOW_RAW_MAX)
+    flow_100_v2 = (raw_v2 / FLOW_RAW_MAX * 100.0).where(warm & slope_l.notna() & slope_s.notna(), np.nan)
 
     return pd.DataFrame({
         "date": d["date"],
         "flow_100": flow_100,
+        "flow_100_v2": flow_100_v2,
+        "flow_score_v2": flow_score_v2,
+        "accum_score_v2": accum_score_v2,
         "flow_score": flow_score,
         "accum_score": accum_score,
         "volume_score": volume_score,
