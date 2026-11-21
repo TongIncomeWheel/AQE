@@ -30,18 +30,22 @@ def test_item11_a_close_above_the_prior_50_day_high_takes_the_cleared_band_in_v2
     assert out["resist_score_v2"].iloc[t] == 7.0
 
 
-def test_item11_v2_differs_from_live_only_in_the_resist_component():
+def test_item11_structure_100_v2_is_the_sum_of_the_v2_parts():
     n = 260
     rng = np.random.default_rng(2)
     close = 100 * np.cumprod(1 + rng.normal(0.0006, 0.01, n))
-    out = structure.compute(_frame(close), spy_daily=_spy(n), weekly=pd.DataFrame())
-    both = out.dropna(subset=["structure_100", "structure_100_v2"])
-    raw_live = both["structure_100"] / 100.0 * 95.0
-    raw_v2 = both["structure_100_v2"] / 100.0 * 95.0
-    inside = (both["structure_100"] > 0) & (both["structure_100"] < 100) & (both["structure_100_v2"] > 0) & (both["structure_100_v2"] < 100)
-    delta = (raw_v2 - raw_live)[inside]
-    want = (both["resist_score_v2"] - both["resist_score"])[inside]
-    assert np.allclose(delta.to_numpy(), want.to_numpy())
+    d = _frame(close)
+    full = {"T": [x.strftime("%Y-%m-%d") for x in pd.date_range("2019-01-15", "2022-01-01", freq="91D")]}
+    wk = pd.DataFrame({"date": pd.date_range(d["date"].iloc[0], periods=60, freq="W-FRI")})
+    wk["close"] = np.linspace(95, 130, len(wk)); wk["open"] = wk["high"] = wk["low"] = wk["close"]; wk["volume"] = 1e6
+    out = structure.compute(d, spy_daily=_spy(n), weekly=wk, ticker="T", earn_dates_full=full)
+    both = out.dropna(subset=["structure_100_v2"])
+    assert len(both) > 50
+    raw = (both["rs_spy_score_v2"] + both["rs_accel_score_v2"] + both["base_score_v2"] + both["ms_pos_score"] + both["resist_score_v2"]
+           + both["wk_score_v2"] + both["earn_score_v2"])
+    inside = (raw / 95.0 * 100.0).between(0.0, 100.0)
+    assert np.allclose((raw / 95.0 * 100.0).clip(0, 100).to_numpy(), both["structure_100_v2"].to_numpy())
+    assert inside.all()
 
 
 def test_live_structure_columns_are_present_and_the_shadow_columns_are_in_score_columns():

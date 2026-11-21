@@ -51,6 +51,14 @@ def compute(
         default=0.0,
     )
 
+    # SHADOW v2 (item 12): a z-score that cannot be computed (zero or missing stdev) is NaN. The live series fills it with 0, which the step score credits 10 points.
+    roc_zscore_v2 = (roc_val - roc_sma) / roc_stdev.replace(0.0, np.nan)
+    abs_mom_score_v2 = _step_score(
+        roc_zscore_v2,
+        [(2.0, 30.0), (1.5, 26.0), (1.0, 22.0), (0.5, 16.0), (0.0, 10.0), (-0.5, 5.0)],
+        default=0.0,
+    ).where(roc_zscore_v2.notna(), np.nan)
+
     # ---- Component 2: ADX (Pine 37-42) ----
     di_plus, di_minus, adx_val = _dmi(high, low, close, n=adx_period)
     di_bullish = di_plus > di_minus
@@ -72,6 +80,14 @@ def compute(
         [(15.0, 25.0), (10.0, 22.0), (5.0, 18.0), (2.0, 13.0), (0.0, 8.0), (-3.0, 3.0)],
         default=0.0,
     )
+
+    # SHADOW v2 (item 12): a missing benchmark comparison is NaN (the live fill of 0 credits 8 points).
+    excess_return_v2 = stock_roc - bench_roc
+    rel_mom_score_v2 = _step_score(
+        excess_return_v2,
+        [(15.0, 25.0), (10.0, 22.0), (5.0, 18.0), (2.0, 13.0), (0.0, 8.0), (-3.0, 3.0)],
+        default=0.0,
+    ).where(excess_return_v2.notna(), np.nan)
 
     # ---- Component 4: Trend Structure (Pine 58-66) ----
     ma_50 = U.sma(close, trend_ma)
@@ -99,6 +115,7 @@ def compute(
     # Warmup mask: 50-bar SMA of 20-bar ROC needs 70 bars; SMA(50) for trend needs 50.
     warm = roc_sma.notna() & ma_50.notna() & adx_val.notna()
     mp_score = mp_score.where(warm, np.nan)
+    mp_score_v2 = (abs_mom_score_v2 + adx_score + rel_mom_score_v2 + trend_score).clip(lower=0.0, upper=100.0).where(warm, np.nan)
 
     # ---- State (Pine 75-76) ----
     mp_rising = mp_score > mp_score.shift(3)
@@ -119,6 +136,9 @@ def compute(
     return pd.DataFrame({
         "date": d["date"],
         "mp_score": mp_score,
+        "mp_score_v2": mp_score_v2,
+        "abs_mom_score_v2": abs_mom_score_v2,
+        "rel_mom_score_v2": rel_mom_score_v2,
         "mp_state": mp_state,
         "abs_mom_score": abs_mom_score,
         "adx_score": adx_score,

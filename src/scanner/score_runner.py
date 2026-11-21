@@ -21,11 +21,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.data.earnings import load_earnings
+from src.data.earnings import load_earnings, load_earnings_dates_full
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
 from src.engines import anchored_vwap, bq, divergence, elder, energy, flow, health, k39, liquidity_sweep, mp, order_flow, pin_bar, pipeline_rank, price_volume_profile, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
-from src.engines.utils import atr
+from src.engines.utils import atr, spy_positional_misaligned_bars as U_spy_misaligned
 
 
 SCORE_COLUMNS = [
@@ -91,6 +91,8 @@ SCORE_COLUMNS = [
     # after a side-by-side. Added at the END so the section slices in research_extract._component_columns are unchanged.
     "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
+    "mp_score_v2", "abs_mom_score_v2", "rel_mom_score_v2", "rs_spy_score_v2", "rs_accel_score_v2", "wk_score_v2", "earn_score_v2",
+    "rd_score_v2", "rd_rs_bonus_v2", "hl_score_v2", "hl_rs_v2", "hl_trend_v2", "k39_gate_v2", "k39_value_v2",
     "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
     "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2", "base_days_v2", "base_score_v2",
 ]
@@ -158,6 +160,9 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         weekly_groups = {}
 
     earnings_cal = load_earnings()
+    earn_full = load_earnings_dates_full()      # shadow v2 (items 12/13): historical report dates; {} -> earn_score_v2 is NaN everywhere (counted in the diagnostics)
+    diag = {"tickers_scored": 0, "bars": 0, "spy_misaligned_tickers": 0, "spy_misaligned_bars": 0, "earn_dates_tickers": len(earn_full),
+            "tickers_without_earn_dates": 0, "nan_v2_bars": {}}
     if earnings_cal:
         print(f"  Earnings calendar loaded: {len(earnings_cal)} tickers")
 
@@ -191,11 +196,12 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             structure_df = structure.compute(
                 d, spy_daily=spy_daily, weekly=w,
                 earnings_cal=earnings_cal if earnings_cal else None,
-                ticker=ticker,
+                ticker=ticker, earn_dates_full=earn_full,
             )
             elder_df = elder.compute(d)
             bq_df = bq.compute(d)
             k39_gate_s, k39_val = k39.compute_k39_gate(w, d["date"])
+            k39_gate_v2_s, k39_val_v2 = k39.compute_k39_gate(w, d["date"], week_complete=True)   # shadow v2 (item 18)
             rd_df = readiness.compute(d, spy_daily=spy_daily)
             hl_df = health.compute(d, spy_daily=spy_daily, weekly=w if not w.empty else None)
             # Divergence is a LAST-BAR read (non-repainting, freshness-gated);
@@ -299,6 +305,20 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "bq_100": bq_df["bq_100"],
             "k39_value": k39_val,
             "k39_gate": k39_gate_s,          # weekly gate bool → SC_POSITION gate detail
+            "mp_score_v2": mp_df["mp_score_v2"],                 # shadow v2 (items 12, 14, 18, 13)
+            "abs_mom_score_v2": mp_df["abs_mom_score_v2"],
+            "rel_mom_score_v2": mp_df["rel_mom_score_v2"],
+            "rs_spy_score_v2": structure_df["rs_spy_score_v2"],
+            "rs_accel_score_v2": structure_df["rs_accel_score_v2"],
+            "wk_score_v2": structure_df["wk_score_v2"],
+            "earn_score_v2": structure_df["earn_score_v2"],
+            "rd_score_v2": rd_df["rd_score_v2"],
+            "rd_rs_bonus_v2": rd_df["rd_rs_bonus_v2"],
+            "hl_score_v2": hl_df["hl_score_v2"],
+            "hl_rs_v2": hl_df["hl_rs_v2"],
+            "hl_trend_v2": hl_df["hl_trend_v2"],
+            "k39_gate_v2": k39_gate_v2_s,
+            "k39_value_v2": k39_val_v2,
             "mp_state": mp_df["mp_state"],
             "impulse_state": elder_df["impulse_state"],
             "sc_momentum": sc_m,
@@ -530,6 +550,16 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             float(ls["ls_level"]) if ls["ls_level"] is not None else np.nan)
         row.loc[_last_ix, "ls_date"] = ls["ls_date"]
         row.loc[_last_ix, "ls_volume_confirmed"] = ls["ls_volume_confirmed"]
+        # Shadow v2 diagnostics (items 12/13/14): how many bars / tickers the live defaults and the positional SPY alignment touched.
+        _mis = U_spy_misaligned(d["date"], spy_daily)
+        diag["tickers_scored"] += 1
+        diag["bars"] += int(len(row))
+        diag["spy_misaligned_bars"] += _mis
+        diag["spy_misaligned_tickers"] += int(_mis > 0)
+        diag["tickers_without_earn_dates"] += int(not earn_full.get(ticker))
+        _warm = row["structure_100"].notna()
+        for _c in ("wk_score_v2", "earn_score_v2", "rs_spy_score_v2", "rs_accel_score_v2", "abs_mom_score_v2", "rel_mom_score_v2"):
+            diag["nan_v2_bars"][_c] = diag["nan_v2_bars"].get(_c, 0) + int((row[_c].isna() & _warm).sum())
         out_rows.append(row[SCORE_COLUMNS])
 
     if not out_rows:
@@ -547,6 +577,13 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         out = pd.concat([prior, out], ignore_index=True)
 
     out.to_parquet(SCORES_DAILY, index=False)
+    try:        # shadow v2 diagnostics (research review items 12/13/14): a small side file, never read by the pipeline
+        import json as _json
+        diag["scope"] = "targeted" if only_tickers is not None else "full"
+        diag["generated_at"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+        SCORES_DAILY.with_name("score_diagnostics_v2.json").write_text(_json.dumps(diag, indent=1), encoding="utf-8")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  (score diagnostics not written: {exc})", file=sys.stderr)
 
     elapsed = time.monotonic() - t0
     scope = f" ({len(only_tickers)} requested)" if only_tickers is not None else ""
