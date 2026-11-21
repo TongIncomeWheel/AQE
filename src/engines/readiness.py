@@ -55,19 +55,10 @@ def compute(daily: pd.DataFrame, spy_daily: pd.DataFrame | None = None) -> pd.Da
     a1 = a1.where(~(rt_ratio < 0.5), 18.0)
 
     # A2: Squeeze — BB inside KC + width percentile (rescaled 0-12.5 to 0-8)
-    bb_mid = U.sma(close, 20)
-    bb_dev = 2.0 * U.stdev_pop(close, 20)
-    bb_upper = bb_mid + bb_dev
-    bb_lower = bb_mid - bb_dev
-    bw = ((bb_upper - bb_lower) / bb_mid.replace(0.0, np.nan) * 100).fillna(0.0)
-    bw_lo = U.lowest(bw, 50)
-    bw_hi = U.highest(bw, 50)
-    bw_range = bw_hi - bw_lo
-    bwp = ((bw - bw_lo) / bw_range.replace(0.0, np.nan) * 100).fillna(50.0)
-    kc_range = U.atr(high, low, close, n=20)
-    kc_upper = bb_mid + kc_range * 1.5
-    kc_lower = bb_mid - kc_range * 1.5
-    sq = (bb_lower > kc_lower) & (bb_upper < kc_upper)
+    # ONE squeeze definition (research review 2026-11-21 item 17): the shared U.bollinger_keltner_squeeze that energy.py and squeeze_breakout.py use.
+    # This module used to re-implement it line for line (numerically identical: tests/test_shadow_v2_structure.py proves it), so the definition could drift.
+    _sqz = U.bollinger_keltner_squeeze(high, low, close)
+    bwp, sq = _sqz["bb_width_pct"], _sqz["squeeze"]
 
     a2 = pd.Series(0.0, index=close.index)
     a2 = a2.where(~(bwp < 50), 2.5)

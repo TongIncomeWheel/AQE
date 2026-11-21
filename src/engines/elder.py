@@ -16,6 +16,13 @@ import pandas as pd
 
 from . import utils as U
 
+# SHADOW v2 (research review 2026-11-21, item 15; spec from the BACKTEST REVIEW session, PM: "Fix the indicator calculations").
+# hist_score_v2 scores the MACD histogram on SIGN and a volatility-normalised MAGNITUDE only: x = hist / ATR14, no acceleration term (the live hist_accel > 0 is
+# the same fact as hist_rising, which the green impulse state already requires, so it was counted twice). The two band edges are the terciles of positive x
+# measured on panel_daily 2021-03..2026-11 (0.102 and 0.229; 51.1% of bars have hist > 0): SCALE CONSTANTS frozen in code, NOT fitted to returns.
+ELDER_V2_X_LOW = 0.10
+ELDER_V2_X_HIGH = 0.23
+
 
 def compute(
     daily: pd.DataFrame,
@@ -80,12 +87,22 @@ def compute(
     hist_score = hist_score.where(~(~(hist > 0) & (hist_accel > 0)), 1.0)
     hist_score = hist_score.where(~((hist > 0) & (hist_accel > 0)), 3.0)
 
+    # SHADOW v2 histogram score: sign + ATR-normalised magnitude, no previous-bar term.
+    atr14 = U.atr(daily["high"].astype(float).reset_index(drop=True), daily["low"].astype(float).reset_index(drop=True), close, n=14)
+    x_hist = hist / atr14.replace(0.0, np.nan)
+    hist_score_v2 = pd.Series(0.0, index=close.index)
+    hist_score_v2 = hist_score_v2.where(~((hist > 0) & (x_hist < ELDER_V2_X_LOW)), 1.0)
+    hist_score_v2 = hist_score_v2.where(~((hist > 0) & (x_hist >= ELDER_V2_X_LOW) & (x_hist < ELDER_V2_X_HIGH)), 2.0)
+    hist_score_v2 = hist_score_v2.where(~((hist > 0) & (x_hist >= ELDER_V2_X_HIGH)), 3.0)
+    elder_score_v2 = (state_score + slope_score + hist_score_v2).clip(lower=0.0, upper=10.0)
+
     # Pine line 36
     elder_score = (state_score + slope_score + hist_score).clip(lower=0.0, upper=10.0)
     # Mark warmup as NaN so the composite can detect it. EMA(26) for MACD is the
     # longest lookback; require both EMAs of MACD to be defined + a 3-bar lag.
     warm = res.macd.notna() & res.signal.notna() & ema_prev3.notna()
     elder_score = elder_score.where(warm, np.nan)
+    elder_score_v2 = elder_score_v2.where(warm & atr14.notna(), np.nan)
 
     impulse_state = pd.Series("NEUTRAL", index=close.index, dtype="object")
     impulse_state = impulse_state.where(~impulse_green, "GREEN")
@@ -94,5 +111,7 @@ def compute(
     return pd.DataFrame({
         "date": dates,
         "elder_score": elder_score,
+        "elder_score_v2": elder_score_v2,
+        "hist_score_v2": hist_score_v2,
         "impulse_state": impulse_state,
     })

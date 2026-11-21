@@ -98,84 +98,18 @@ def compute(
     close_arr = close.to_numpy()
     volume_arr = volume.to_numpy()
     vol_sma20 = U.sma(volume, 20).to_numpy()
-    min_base_days_param = 3
-    decay_window = 10
-
-    raw_base_count = np.zeros(n, dtype=int)
-    breakout_bar = np.zeros(n, dtype=bool)
-    latched_base_days = np.zeros(n, dtype=int)
-    bars_since_breakout = np.full(n, 999, dtype=int)
-
-    for t in range(n):
-        # Phase 1: raw accumulation
-        prev_raw = raw_base_count[t - 1] if t > 0 else 0
-        raw_base_count[t] = prev_raw + 1 if in_base_arr[t] else 0
-
-        # Phase 2: breakout detection (Pine 90-102).
-        # consolidation_high seeds at high[t-1] (i=1) and walks back i=1..capped_len
-        # taking the running max. That is just the max of high over the window
-        # high_arr[t-capped_len : t] (inclusive of t-capped_len, exclusive of t).
-        if t == 0:
-            continue
-        prev_base_len = max(int(prev_raw), 1)
-        capped_len = min(prev_base_len, 60)
-        window_start = max(0, t - capped_len)
-        consolidation_high = float(np.nanmax(high_arr[window_start:t]))
-
-        cond_break = (
-            close_arr[t] > consolidation_high
-            and not in_base_arr[t]
-            and prev_raw >= min_base_days_param
-            and not np.isnan(vol_sma20[t])
-            and volume_arr[t] > vol_sma20[t]
-        )
-        breakout_bar[t] = cond_break
-
-        # Phase 3: latch (DSG-02)
-        prev_latched = latched_base_days[t - 1]
-        prev_bsb = bars_since_breakout[t - 1]
-        if cond_break:
-            latched_base_days[t] = int(prev_raw)
-            bars_since_breakout[t] = 0
-        else:
-            latched_base_days[t] = prev_latched
-            bars_since_breakout[t] = prev_bsb + 1
-
-    # Phase 4: reported base_days with decay
-    base_days = np.where(bars_since_breakout <= decay_window, latched_base_days, raw_base_count).astype(int)
-    base_days_s = pd.Series(base_days, index=close.index)
-
-    # Scoring tiers (Pine 118)
-    base_raw = pd.Series(0.0, index=close.index)
-    base_raw = base_raw.where(~(base_days_s < 5), 3.0)
-    base_raw = base_raw.where(~((base_days_s >= 5) & (base_days_s < 7)), 6.0)
-    base_raw = base_raw.where(~((base_days_s >= 7) & (base_days_s < 10)), 10.0)
-    base_raw = base_raw.where(~((base_days_s >= 10) & (base_days_s <= 25)), 15.0)
-    base_raw = base_raw.where(~((base_days_s > 25) & (base_days_s <= 30)), 12.0)
-    base_raw = base_raw.where(~((base_days_s > 30) & (base_days_s <= 35)), 8.0)
-    base_raw = base_raw.where(~(base_days_s > 35), 5.0)
-    base_raw = base_raw.where(~(base_days_s < 3), 0.0)
-
-    # Higher-Lows quality multiplier (Pine 120-127)
-    hl_lookback_arr = np.minimum(base_days, 10).astype(int)
-    hl_in_base_arr = np.zeros(n, dtype=int)
     low_arr = low.to_numpy()
-    for t in range(n):
-        lk = int(hl_lookback_arr[t])
-        count = 0
-        # Pine: for i = 1 to 10: if i <= hl_lookback and low[i] > low[i+1]
-        # → indices i in 1..lk → compare low[t-i] > low[t-i-1]
-        for i in range(1, lk + 1):
-            if t - i - 1 < 0:
-                break
-            if low_arr[t - i] > low_arr[t - i - 1]:
-                count += 1
-        hl_in_base_arr[t] = count
-    hl_in_base = pd.Series(hl_in_base_arr, index=close.index)
-    base_quality_mult = pd.Series(0.6, index=close.index)
-    base_quality_mult = base_quality_mult.where(~(hl_in_base >= 2), 0.8)
-    base_quality_mult = base_quality_mult.where(~(hl_in_base >= 4), 1.0)
-    base_score = (base_raw * base_quality_mult).clip(upper=15.0)
+
+    base_days = _base_days(in_base_arr, high_arr, close_arr, volume_arr, vol_sma20, require_not_in_base=True)
+    base_days_s = pd.Series(base_days, index=close.index)
+    base_score = _base_score(base_days_s, base_days, low_arr, n, close.index)
+    # SHADOW v2 (research review 2026-11-21 item 10; PM sign-off required: this CHANGES the Pine spec, Structure_v1.5.pine:101-102 and Scoring_v1_8 306).
+    # The Pine breakout needs `not in_base`, but mode1 (10-day range <= 15%) is true on ~67% of stock-days (100% under 1.5% daily ATR), so a breakout bar is almost
+    # never 'out of base', the latch rarely fires and base_days degrades to a run length (median 27, p90 265 on production scores). v2: breakout =
+    # close > consolidation_high AND raw_base[1] >= 3 AND volume > sma20, independent of the current bar's in_base.
+    base_days_v2 = _base_days(in_base_arr, high_arr, close_arr, volume_arr, vol_sma20, require_not_in_base=False)
+    base_days_v2_s = pd.Series(base_days_v2, index=close.index)
+    base_score_v2 = _base_score(base_days_v2_s, base_days_v2, low_arr, n, close.index)
 
     # ---- 4. Range Position 50d (Pine 140-144) ----
     ms_h50 = U.highest(high, 50)
@@ -198,6 +132,18 @@ def compute(
     resist_score = resist_score.where(~(dist_to_resist <= 8), 5.0)
     resist_score = resist_score.where(~(dist_to_resist <= 3), 10.0)
     resist_score = resist_score.where(~(dist_to_resist <= 0), 7.0)
+
+    # SHADOW v2 (research review 2026-11-21 item 11): resistance measured against the PRIOR bar's 50-day high. The live ms_h50 includes today's high, so
+    # close <= ms_h50 always and the `dist <= 0` (cleared-resistance) band is reachable only when the close IS the high. A close above the prior 50-day
+    # high now reads dist < 0 and takes the cleared band.
+    ms_h50_prior = ms_h50.shift(1)
+    dist_to_resist_v2 = (ms_h50_prior - close) / close.replace(0.0, np.nan) * 100.0
+    resist_score_v2 = pd.Series(0.0, index=close.index)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 15), 3.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 8), 5.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 3), 10.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 0), 7.0)
+    resist_score_v2 = resist_score_v2.where(dist_to_resist_v2.notna(), np.nan)
 
     # ---- 6. Weekly Trend (Pine 158-163) ----
     wk_sma10, wk_sma10_prev, wk_close = _weekly_features(weekly, d["date"])
@@ -225,6 +171,8 @@ def compute(
     # Warmup: 60-bar RS lookback + 50-bar SMA + weekly SMA(10).
     warm = sma_50.notna() & spy_close.shift(60).notna() & close.shift(60).notna()
     structure_100 = structure_100.where(warm, np.nan)
+    ms_raw_v2 = rs_spy_score + rs_accel_score + base_score_v2 + ms_pos + resist_score_v2 + wk_score + earn_score
+    structure_100_v2 = (ms_raw_v2 / 95.0 * 100.0).clip(lower=0.0, upper=100.0).where(warm, np.nan)
 
     return pd.DataFrame({
         "date": d["date"],
@@ -234,9 +182,13 @@ def compute(
         "base_score": base_score,
         "ms_pos_score": ms_pos,
         "resist_score": resist_score,
+        "resist_score_v2": resist_score_v2,
+        "structure_100_v2": structure_100_v2,
         "wk_score": wk_score,
         "earn_score": earn_score,
         "base_days": base_days_s,
+        "base_days_v2": base_days_v2_s,
+        "base_score_v2": base_score_v2,
         "bd_mode": bd_mode.astype(int),
         "ms_p50": ms_p50,
         "rs_vs_spy": rs_vs_spy,
@@ -245,6 +197,79 @@ def compute(
 
 
 # ---------- helpers ----------
+
+def _base_days(in_base_arr, high_arr, close_arr, volume_arr, vol_sma20, *, require_not_in_base: bool) -> np.ndarray:
+    """Reported base_days (raw count, breakout latch DSG-02, 10-bar decay). `require_not_in_base=True` is the live / Pine rule."""
+    n = len(close_arr)
+    min_base_days_param = 3
+    decay_window = 10
+    raw_base_count = np.zeros(n, dtype=int)
+    latched_base_days = np.zeros(n, dtype=int)
+    bars_since_breakout = np.full(n, 999, dtype=int)
+    for t in range(n):
+        # Phase 1: raw accumulation
+        prev_raw = raw_base_count[t - 1] if t > 0 else 0
+        raw_base_count[t] = prev_raw + 1 if in_base_arr[t] else 0
+        # Phase 2: breakout detection (Pine 90-102).
+        # consolidation_high seeds at high[t-1] (i=1) and walks back i=1..capped_len
+        # taking the running max. That is just the max of high over the window
+        # high_arr[t-capped_len : t] (inclusive of t-capped_len, exclusive of t).
+        if t == 0:
+            continue
+        prev_base_len = max(int(prev_raw), 1)
+        capped_len = min(prev_base_len, 60)
+        window_start = max(0, t - capped_len)
+        consolidation_high = float(np.nanmax(high_arr[window_start:t]))
+        cond_break = (
+            close_arr[t] > consolidation_high
+            and (not in_base_arr[t] if require_not_in_base else True)
+            and prev_raw >= min_base_days_param
+            and not np.isnan(vol_sma20[t])
+            and volume_arr[t] > vol_sma20[t]
+        )
+        # Phase 3: latch (DSG-02)
+        prev_latched = latched_base_days[t - 1]
+        prev_bsb = bars_since_breakout[t - 1]
+        if cond_break:
+            latched_base_days[t] = int(prev_raw)
+            bars_since_breakout[t] = 0
+        else:
+            latched_base_days[t] = prev_latched
+            bars_since_breakout[t] = prev_bsb + 1
+    # Phase 4: reported base_days with decay
+    return np.where(bars_since_breakout <= decay_window, latched_base_days, raw_base_count).astype(int)
+
+
+def _base_score(base_days_s: pd.Series, base_days: np.ndarray, low_arr: np.ndarray, n: int, index) -> pd.Series:
+    """Tier score (Pine 118) times the higher-lows quality multiplier (Pine 120-127), capped at 15."""
+    base_raw = pd.Series(0.0, index=index)
+    base_raw = base_raw.where(~(base_days_s < 5), 3.0)
+    base_raw = base_raw.where(~((base_days_s >= 5) & (base_days_s < 7)), 6.0)
+    base_raw = base_raw.where(~((base_days_s >= 7) & (base_days_s < 10)), 10.0)
+    base_raw = base_raw.where(~((base_days_s >= 10) & (base_days_s <= 25)), 15.0)
+    base_raw = base_raw.where(~((base_days_s > 25) & (base_days_s <= 30)), 12.0)
+    base_raw = base_raw.where(~((base_days_s > 30) & (base_days_s <= 35)), 8.0)
+    base_raw = base_raw.where(~(base_days_s > 35), 5.0)
+    base_raw = base_raw.where(~(base_days_s < 3), 0.0)
+    hl_lookback_arr = np.minimum(base_days, 10).astype(int)
+    hl_in_base_arr = np.zeros(n, dtype=int)
+    for t in range(n):
+        lk = int(hl_lookback_arr[t])
+        count = 0
+        # Pine: for i = 1 to 10: if i <= hl_lookback and low[i] > low[i+1]
+        # -> indices i in 1..lk -> compare low[t-i] > low[t-i-1]
+        for i in range(1, lk + 1):
+            if t - i - 1 < 0:
+                break
+            if low_arr[t - i] > low_arr[t - i - 1]:
+                count += 1
+        hl_in_base_arr[t] = count
+    hl_in_base = pd.Series(hl_in_base_arr, index=index)
+    base_quality_mult = pd.Series(0.6, index=index)
+    base_quality_mult = base_quality_mult.where(~(hl_in_base >= 2), 0.8)
+    base_quality_mult = base_quality_mult.where(~(hl_in_base >= 4), 1.0)
+    return (base_raw * base_quality_mult).clip(upper=15.0)
+
 
 
 def _align_spy_close(spy_daily: pd.DataFrame, dates: pd.Series) -> pd.Series:
