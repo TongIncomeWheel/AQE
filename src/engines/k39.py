@@ -21,6 +21,8 @@ from . import utils as U
 def compute_k39_gate(
     weekly: pd.DataFrame,
     daily_dates: pd.Series,
+    *,
+    week_complete: bool = False,
 ) -> tuple[pd.Series, pd.Series]:
     """Return (gate_series, k39_value_series) aligned to daily_dates.
 
@@ -53,7 +55,8 @@ def compute_k39_gate(
         "k39_value": k39,
     })
 
-    gate_daily = U.asof_weekly_value(daily_dates, wk_with_gate, "k39_gate")
-    k39_daily = U.asof_weekly_value(daily_dates, wk_with_gate, "k39_value")
+    asof = U.asof_weekly_value_v2 if week_complete else U.asof_weekly_value     # week_complete = SHADOW v2 (item 18)
+    gate_daily = asof(daily_dates, wk_with_gate, "k39_gate")
+    k39_daily = asof(daily_dates, wk_with_gate, "k39_value")
 
     return pd.Series((gate_daily == 1.0).fillna(False).to_numpy(), index=daily_dates.index), k39_daily
