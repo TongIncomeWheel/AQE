@@ -54,7 +54,7 @@ def test_stale_when_not_built_today(tmp_path, monkeypatch):
 
 
 def test_fresh_when_built_today(tmp_path, monkeypatch):
-    today = date.today()
+    today = U._today_sgt()
     monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
                         _write(tmp_path, today.isoformat()))
     assert U.universe_is_stale() is False
@@ -86,7 +86,7 @@ def test_a_file_built_today_under_an_OLD_rule_is_stale(tmp_path, monkeypatch):
     the run would quietly scan the old membership.
     """
     monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
-                        _write(tmp_path, date.today().isoformat(),
+                        _write(tmp_path, U._today_sgt().isoformat(),
                                rule="v1-with-sma-filters"))
     assert U.universe_is_stale() is True
     assert "v1-with-sma-filters" in U.universe_status()["stale_reason"]
@@ -95,7 +95,7 @@ def test_a_file_built_today_under_an_OLD_rule_is_stale(tmp_path, monkeypatch):
 def test_an_unstamped_file_is_stale_even_if_built_today(tmp_path, monkeypatch):
     """Predates rule stamping, so it was built by an older screen."""
     monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
-                        _write(tmp_path, date.today().isoformat(), rule=None))
+                        _write(tmp_path, U._today_sgt().isoformat(), rule=None))
     assert U.universe_is_stale() is True
     assert "unstamped" in U.universe_status()["stale_reason"]
 
@@ -103,7 +103,7 @@ def test_an_unstamped_file_is_stale_even_if_built_today(tmp_path, monkeypatch):
 def test_today_plus_current_rule_is_the_only_fresh_combination(tmp_path,
                                                                monkeypatch):
     monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE",
-                        _write(tmp_path, date.today().isoformat()))
+                        _write(tmp_path, U._today_sgt().isoformat()))
     st = U.universe_status()
     assert st["stale"] is False and st["stale_reason"] is None
     assert st["rule"] == U.UNIVERSE_RULE_ID
@@ -112,7 +112,7 @@ def test_today_plus_current_rule_is_the_only_fresh_combination(tmp_path,
 def test_writer_stamps_both_date_and_rule(tmp_path, monkeypatch):
     monkeypatch.setattr(U, "DEFAULT_UNIVERSE_FILE", tmp_path / "universe.txt")
     U._write_universe(["AAA", "BBB"])
-    assert U.universe_built_date() == date.today()
+    assert U.universe_built_date() == U._today_sgt()
     assert U.universe_built_rule() == U.UNIVERSE_RULE_ID
     assert U.universe_is_stale() is False
 
