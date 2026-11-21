@@ -91,6 +91,7 @@ SCORE_COLUMNS = [
     # after a side-by-side. Added at the END so the section slices in research_extract._component_columns are unchanged.
     "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
+    "sc_momentum_v2", "sc_position_v2", "sc_m_gates_v2", "sc_p_gates_v2",
     "mp_score_v2", "abs_mom_score_v2", "rel_mom_score_v2", "rs_spy_score_v2", "rs_accel_score_v2", "wk_score_v2", "earn_score_v2",
     "rd_score_v2", "rd_rs_bonus_v2", "hl_score_v2", "hl_rs_v2", "hl_trend_v2", "k39_gate_v2", "k39_value_v2",
     "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
@@ -274,6 +275,15 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             k39_gate=k39_gate_s,
         )
 
+        # Shadow v2 composites (same weights and gates as the live ones, fed ONLY the v2 parts; a NaN part gives a NaN composite, never points).
+        sc_m_v2 = scoring.compute(flow_df["flow_100_v2"], energy_df["energy_100_v2"], structure_df["structure_100_v2"], mp_df["mp_score_v2"], elder_df["elder_score_v2"])
+        sc_p_v2 = scoring.compute_position(flow_df["flow_100_v2"], energy_df["energy_100_v2"], structure_df["structure_100_v2"], mp_df["mp_score_v2"],
+                                           bq_df["bq_100_v2"], k39_gate_v2_s)
+        sc_m_gates_v2 = scoring.gates_momentum(flow_df["flow_100_v2"], energy_df["energy_100_v2"], structure_df["structure_100_v2"], mp_df["mp_score_v2"],
+                                               elder_df["elder_score_v2"])
+        sc_p_gates_v2 = scoring.gates_position(flow_df["flow_100_v2"], energy_df["energy_100_v2"], structure_df["structure_100_v2"], mp_df["mp_score_v2"],
+                                               bq_df["bq_100_v2"], k39_gate_v2_s)
+
         atr14 = atr(d["high"].astype(float), d["low"].astype(float), d["close"].astype(float), n=14)
 
         if len(d) >= 252:
@@ -311,6 +321,10 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "bq_100": bq_df["bq_100"],
             "k39_value": k39_val,
             "k39_gate": k39_gate_s,          # weekly gate bool → SC_POSITION gate detail
+            "sc_momentum_v2": sc_m_v2,                           # shadow v2 composites
+            "sc_position_v2": sc_p_v2,
+            "sc_m_gates_v2": sc_m_gates_v2,
+            "sc_p_gates_v2": sc_p_gates_v2,
             "mp_score_v2": mp_df["mp_score_v2"],                 # shadow v2 (items 12, 14, 18, 13)
             "abs_mom_score_v2": mp_df["abs_mom_score_v2"],
             "rel_mom_score_v2": mp_df["rel_mom_score_v2"],
