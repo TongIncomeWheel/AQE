@@ -91,6 +91,7 @@ SCORE_COLUMNS = [
     # after a side-by-side. Added at the END so the section slices in research_extract._component_columns are unchanged.
     "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
+    "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
 ]
 
 
@@ -353,6 +354,10 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "bq_base_dur": bq_df["bq_base_dur"],
             "bq_ema_conv": bq_df["bq_ema_conv"],
             "bq_base_days": bq_df["bq_base_days"],
+            # Shadow v2 (BQ: items 7, 9)
+            "bq_100_v2": bq_df["bq_100_v2"],
+            "bq_base_dur_v2": bq_df["bq_base_dur_v2"],
+            "bq_base_days_v2": bq_df["bq_base_days_v2"],
             # Pipeline Rank sub-components
             "momentum_composite": pr_df["momentum_composite"] if len(d) >= 252 else np.nan,
             "pipe_tier": pr_df["pipe_tier"] if len(d) >= 252 else "",
