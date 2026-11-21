@@ -139,3 +139,58 @@ def test_the_live_elder_score_is_unchanged():
     for c in ("elder_score", "impulse_state", "elder_score_v2", "hist_score_v2"):
         assert c in out.columns
     assert out["elder_score"].dropna().between(0, 10).all()
+
+
+# ------------------------------------------------------------------------------ item 10 (base latch; spec change, PM sign-off)
+def test_item10_v2_latches_a_breakout_that_the_live_rule_cannot_see_because_mode1_keeps_the_bar_in_base():
+    n = 160
+    close = np.concatenate([np.linspace(80, 100, 60), np.full(75, 100.0), [100.2] * 24, [101.0]])
+    close = close[:n]
+    high = close * 1.001
+    vol = np.full(n, 1e6)
+    t = 140
+    close[t] = 101.2                      # a close through the consolidation high ...
+    high[t] = 101.4
+    vol[t] = 3e6                          # ... on volume; the 10-day range is still <= 15%, so the bar is still 'in base' (mode1)
+    d = pd.DataFrame({"date": pd.bdate_range("2020-01-01", periods=n), "open": close, "high": high, "low": close * 0.999, "close": close, "volume": vol})
+    out = structure.compute(d, spy_daily=_spy(n), weekly=pd.DataFrame())
+    live_after = out["base_days"].iloc[t + 2]
+    v2_after = out["base_days_v2"].iloc[t + 2]
+    assert v2_after == out["base_days_v2"].iloc[t + 4]          # v2: latched for the decay window
+    assert live_after != v2_after                               # live: still a running count (no latch fired)
+    assert "base_score_v2" in out.columns
+
+
+def test_item10_the_live_base_days_logic_is_unchanged_by_the_refactor():
+    """The refactor into _base_days/_base_score must be output-neutral for the live path: pin a few values from a fixed series."""
+    rng = np.random.default_rng(21)
+    n = 400
+    close = 100 * np.cumprod(1 + rng.normal(0.0003, 0.012, n))
+    hi = close * (1 + abs(rng.normal(0, 0.008, n)))
+    lo = close * (1 - abs(rng.normal(0, 0.008, n)))
+    d = pd.DataFrame({"date": pd.bdate_range("2019-01-01", periods=n), "open": close, "high": hi, "low": lo, "close": close, "volume": rng.uniform(5e5, 2e6, n)})
+    out = structure.compute(d, spy_daily=_spy(n), weekly=pd.DataFrame())
+    assert out["base_days"].between(0, n).all() and out["base_score"].between(0, 15).all()
+    bd = out["base_days"].to_numpy()
+    again = structure._base_days(_in_base_live(d), d["high"].to_numpy(), d["close"].to_numpy(), d["volume"].to_numpy(),
+                                 d["volume"].rolling(20).mean().to_numpy(), require_not_in_base=True)
+    assert np.array_equal(bd, again)
+
+
+def _in_base_live(d):
+    from src.engines import utils as UU
+    close, high, low = d["close"].astype(float), d["high"].astype(float), d["low"].astype(float)
+    atr_val = UU.atr(high, low, close, n=20)
+    range_pct = ((UU.highest(high, 10) - UU.lowest(low, 10)) / close.replace(0.0, np.nan) * 100.0).fillna(100.0)
+    mode1 = range_pct <= 15.0
+    sma_50 = UU.sma(close, 50)
+    uptrend = (close > sma_50) & (sma_50 > sma_50.shift(5))
+    lh10 = UU.highest(high, 10)
+    pb = ((lh10 - close) / lh10.replace(0.0, np.nan) * 100.0).fillna(100.0)
+    shallow = (pb >= 1.5) & (pb < 8.0)
+    inc = (low > low.shift(1)).astype(int)
+    stair = inc + inc.shift(1).fillna(0) + inc.shift(2).fillna(0) + inc.shift(3).fillna(0) + inc.shift(4).fillna(0)
+    mode2 = uptrend & shallow & (stair >= 2)
+    e20 = UU.ema(close, 20)
+    mode3 = (e20 > e20.shift(3)) & (((close - e20).abs() <= atr_val * 1.0) & atr_val.notna() & (atr_val != 0)) & (close > sma_50)
+    return (mode1 | mode2 | mode3).fillna(False).to_numpy()

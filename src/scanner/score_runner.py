@@ -94,6 +94,7 @@ SCORE_COLUMNS = [
     "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
     "resist_score_v2", "structure_100_v2",
     "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2",
+    "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2", "base_days_v2", "base_score_v2",
 ]
 
 
@@ -338,6 +339,8 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "resist_score": structure_df["resist_score"],
             # Shadow v2 (Structure: item 11)
             "resist_score_v2": structure_df["resist_score_v2"],
+            "base_days_v2": structure_df["base_days_v2"],         # item 10 (Pine spec change: PM sign-off)
+            "base_score_v2": structure_df["base_score_v2"],
             "structure_100_v2": structure_df["structure_100_v2"],
             "wk_score": structure_df["wk_score"],
             "earn_score": structure_df["earn_score"],
