@@ -62,6 +62,7 @@ def test_classification_delisted_still_trading_and_no_bars():
     assert len(got) == 1 and list(got[0]["bars"]["date"].dt.strftime("%Y-%m-%d")) == ["2023-03-08", "2023-03-09"]
     assert SP.pull_one(fc, "LIVE", "2021-03-01", today, cls) == [] and cls["LIVE"]["class"] == "still_trading"
     assert SP.pull_one(fc, "OLD", "2021-03-01", today, cls) == [] and cls["OLD"]["class"] == "no_bars_in_window"
+    assert cls["OLD"]["reason"] == "fmp_empty_response"
 
 
 def test_month_end_keeps_the_last_row_of_each_month_per_ticker():
@@ -103,3 +104,14 @@ def test_unknown_symbol_404_is_no_bars_not_a_failure_and_5xx_is_retried_and_the_
     assert got and Flaky.n == 3
     b = SP.bars_frame(Flaky(), "AAA", "2021-03-01", today)
     assert len(b) == 1
+
+
+def test_an_empty_mcap_year_window_404_does_not_fail_the_name_and_402_symbols_are_counted_with_a_reason():
+    from src.data.fmp_client import FMPError
+    today = date(2026, 11, 21)
+    err = FMPError("FMP HTTP 404 for https://financialmodelingprep.com/stable/historical-market-cap: []")
+    fc = FC(bars={"DEAD": [_bar("2023-03-09")], "ABR-PRC": FMPError("FMP HTTP 402 for x: Premium Query Parameter: 'Special Endpoint'")}, mcap={"DEAD": err})
+    cls: dict = {}
+    got = SP.pull_one(fc, "DEAD", "2021-03-01", today, cls)
+    assert len(got) == 1 and got[0]["mcap"].empty and cls["DEAD"]["mcap_months"] == 0       # bars kept; the name is listed as lacking market cap
+    assert SP.pull_one(fc, "ABR-PRC", "2021-03-01", today, cls) == [] and cls["ABR-PRC"]["reason"] == "fmp_402_premium_symbol"
