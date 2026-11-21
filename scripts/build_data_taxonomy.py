@@ -495,7 +495,8 @@ SCORE_TREE = [
       "(10<=days<=25)->20.0, (25<=days<=35)->14.0, days>35->8.0, else 0",
       "20 of 100"),
     R("bq_base_days", "bq_base_dur", "leaf", "int >=0", "",
-      "Bars in a qualifying base — BQ's own instance of the mechanism "
+      "CONSECUTIVE DAYS WITHIN 8% OF THE 60-DAY HIGH (modes 2/3 sit inside the same band; PM 2026-11-21: documented, redesign later). "
+      "BQ's own instance of the mechanism "
       "structure.base_days also uses, with a 60-bar pivot and an 8% band, "
       "not shared state with it", "engines/bq.py:60-116",
       "in_band_basic=(highest(high,60)-close)<=0.08*highest(high,60); "

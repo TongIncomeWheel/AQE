@@ -173,6 +173,24 @@ def linreg_endpoint(x: pd.Series, n: int) -> pd.Series:
     return pd.Series(out, index=x.index)
 
 
+def linreg_slope(x: pd.Series, n: int) -> pd.Series:
+    """Slope of the least-squares line over a rolling window of length n (units of x per bar). Vectorised; NaN where the window holds a NaN.
+    Same regression as `linreg_endpoint` (endpoint = intercept + slope * (n - 1))."""
+    arr = x.to_numpy(dtype=float)
+    out = np.full_like(arr, np.nan, dtype=float)
+    if n <= 1 or len(arr) < n:
+        return pd.Series(out, index=x.index)
+    from numpy.lib.stride_tricks import sliding_window_view
+    xs = np.arange(n, dtype=float)
+    x_dev = xs - xs.mean()
+    denom = (x_dev * x_dev).sum()
+    win = sliding_window_view(arr, n)
+    slope = win @ x_dev / denom                     # sum(x_dev) == 0, so no mean subtraction is needed
+    slope[np.isnan(win).any(axis=1)] = np.nan
+    out[n - 1:] = slope
+    return pd.Series(out, index=x.index)
+
+
 # ----- crossover / state helpers ------------------------------------------
 
 
