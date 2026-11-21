@@ -198,3 +198,24 @@ def _in_base_live(d):
     e20 = UU.ema(close, 20)
     mode3 = (e20 > e20.shift(3)) & (((close - e20).abs() <= atr_val * 1.0) & atr_val.notna() & (atr_val != 0)) & (close > sma_50)
     return (mode1 | mode2 | mode3).fillna(False).to_numpy()
+
+
+def test_item10_v2_restarts_the_base_count_on_a_breakout_so_the_old_run_does_not_return_after_the_latch_decays():
+    """Backtest review 2026-11-21: for every breakout bar b, base_days_v2[b+11] must be <= 11 (a fresh count), not the old multi-hundred-day run."""
+    n = 400
+    in_base = np.ones(n, dtype=bool)
+    high = np.full(n, 100.0)
+    close = np.full(n, 99.0)
+    vol = np.full(n, 1e6)
+    sma = np.full(n, 1e6)
+    breaks = {150: 101.0, 300: 103.0}
+    for b, c in breaks.items():
+        close[b], high[b], vol[b] = c, c + 0.5, 3e6              # closes through the prior highs on volume; the bar is still 'in base' (mode1)
+        high[b + 1:] = np.maximum(high[b + 1:], c + 0.5)
+    v2 = structure._base_days(in_base, high, close, vol, sma, require_not_in_base=False)
+    live = structure._base_days(in_base, high, close, vol, sma, require_not_in_base=True)
+    for b in breaks:
+        assert v2[b] == 0 or v2[b] >= 3                           # latched value on the breakout bar (the run length before it)
+        assert v2[b + 2] == v2[b + 4] >= 3                        # latched for the decay window
+        assert v2[b + 11] <= 11, (b, v2[b + 11])                  # then a FRESH count, not the old run
+    assert live[300 + 11] > 100                                   # the live rule is untouched: still the running count
