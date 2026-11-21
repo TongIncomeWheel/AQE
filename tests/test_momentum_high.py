@@ -121,7 +121,7 @@ def test_a_stale_panel_is_degraded_with_the_reason_and_a_short_spy_or_missing_fi
 
 def test_the_export_glue_adds_only_the_two_new_keys_and_the_glossary_describes_them():
     src = (ROOT / "src" / "data" / "drive_sync.py").read_text()
-    block = src[src.index("# ---- MOMENTUM HIGH"):src.index("# ---- Stage at ticker / sector / market level")]
+    block = src[src.index("# ---- MOMENTUM HIGH"):src.index("# ---- Score version (PM 2026-11-21 cutover)")]
     assigned = {k for k in ('export["momentum_high"]', 'export["momentum_high_status"]') if k in block}
     assert assigned == {'export["momentum_high"]', 'export["momentum_high_status"]'}
     import re

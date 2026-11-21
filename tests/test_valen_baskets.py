@@ -131,7 +131,8 @@ def test_valen_context_names_and_group_etfs_are_never_scored_the_run_150_leak(tm
     import inspect
     from src.pipeline import daily_orchestrator as DO
     from src.scanner import score_runner as SR
-    assert "context_only()" in inspect.getsource(DO._pipeline_rank_screen) and "context_only()" in inspect.getsource(SR.build_scores)       # both scoring paths use it
+    assert "context_only()" in inspect.getsource(DO._pipeline_rank_screen) and "context_only()" in inspect.getsource(SR.panel_scoreable_tickers)       # both scoring paths use it
+    assert "panel_scoreable_tickers(" in inspect.getsource(SR.build_scores)                                                                        # build_scores scores only what that one definition returns
 
 
 def test_a_group_etf_listed_in_two_universes_is_one_row(tmp_path):
