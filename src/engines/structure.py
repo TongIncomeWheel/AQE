@@ -199,6 +199,18 @@ def compute(
     resist_score = resist_score.where(~(dist_to_resist <= 3), 10.0)
     resist_score = resist_score.where(~(dist_to_resist <= 0), 7.0)
 
+    # SHADOW v2 (research review 2026-11-21 item 11): resistance measured against the PRIOR bar's 50-day high. The live ms_h50 includes today's high, so
+    # close <= ms_h50 always and the `dist <= 0` (cleared-resistance) band is reachable only when the close IS the high. A close above the prior 50-day
+    # high now reads dist < 0 and takes the cleared band.
+    ms_h50_prior = ms_h50.shift(1)
+    dist_to_resist_v2 = (ms_h50_prior - close) / close.replace(0.0, np.nan) * 100.0
+    resist_score_v2 = pd.Series(0.0, index=close.index)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 15), 3.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 8), 5.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 3), 10.0)
+    resist_score_v2 = resist_score_v2.where(~(dist_to_resist_v2 <= 0), 7.0)
+    resist_score_v2 = resist_score_v2.where(dist_to_resist_v2.notna(), np.nan)
+
     # ---- 6. Weekly Trend (Pine 158-163) ----
     wk_sma10, wk_sma10_prev, wk_close = _weekly_features(weekly, d["date"])
     wk_rising = wk_sma10 > wk_sma10_prev
@@ -225,6 +237,8 @@ def compute(
     # Warmup: 60-bar RS lookback + 50-bar SMA + weekly SMA(10).
     warm = sma_50.notna() & spy_close.shift(60).notna() & close.shift(60).notna()
     structure_100 = structure_100.where(warm, np.nan)
+    ms_raw_v2 = rs_spy_score + rs_accel_score + base_score + ms_pos + resist_score_v2 + wk_score + earn_score
+    structure_100_v2 = (ms_raw_v2 / 95.0 * 100.0).clip(lower=0.0, upper=100.0).where(warm, np.nan)
 
     return pd.DataFrame({
         "date": d["date"],
@@ -234,6 +248,8 @@ def compute(
         "base_score": base_score,
         "ms_pos_score": ms_pos,
         "resist_score": resist_score,
+        "resist_score_v2": resist_score_v2,
+        "structure_100_v2": structure_100_v2,
         "wk_score": wk_score,
         "earn_score": earn_score,
         "base_days": base_days_s,
