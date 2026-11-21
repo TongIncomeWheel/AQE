@@ -81,6 +81,73 @@ def _detect_prior_spike(
     return False, None, None, None
 
 
+def _fip_spike_asof(close: pd.Series, daily_ret: pd.Series, lookback: int = 252,
+                    spike_return_threshold: float = 0.30, spike_min_age_bars: int = 126,
+                    spike_confirm_drawdown: float = 0.30, spike_exclusion_window: int = 21):
+    """DSG-20 prior-spike exclusion evaluated AS OF EVERY BAR (shadow v2, 2026-11-21 review item 6).
+
+    The live path applies the exclusion on the LAST bar only, so every historical bar keeps the un-excluded FIP and the stored history differs from
+    what the live formula would have produced on that day. This runs the same detector on the trailing `lookback` window ending at each bar t, with
+    the same thresholds, then re-scores FIP on the returns outside the exclusion band. ONE sign rule: the sign of the COMPOUNDED return of the included
+    days (np.sign, 0 at 0), the rule the non-excluded path uses at pipeline_rank.py `cum_ret_sign` (the live exclusion branch used the arithmetic sum, -1 at 0).
+
+    Returns (excluded[bool], eff_window[int], raw[float], quality[float]); raw / quality are NaN where no spike applies (the caller keeps the base value).
+    """
+    px = close.to_numpy(dtype=float)
+    dr = daily_ret.to_numpy(dtype=float)
+    n = len(px)
+    excluded = np.zeros(n, dtype=bool)
+    eff = np.full(n, lookback, dtype=int)
+    raw = np.full(n, np.nan)
+    qual = np.full(n, np.nan)
+    if n < lookback:
+        return excluded, eff, raw, qual
+    # candidate spike bars g: a >=30% move over 20 bars, with the 21-bar peak
+    cand, peak = [], {}
+    for g in range(20, n):
+        base = px[g - 20]
+        if base == 0 or np.isnan(base) or np.isnan(px[g]):
+            continue
+        if abs((px[g] - base) / base) < spike_return_threshold:
+            continue
+        pk = np.nanmax(px[g - 20: g + 1])
+        if pk == 0:
+            continue
+        cand.append(g)
+        peak[g] = pk
+    if not cand:
+        return excluded, eff, raw, qual
+    cand_arr = np.asarray(cand)
+    for t in range(lookback - 1, n):
+        s0 = t - (lookback - 1)
+        lo, hi = s0 + 20, s0 + (lookback - spike_min_age_bars)        # local i in [20, lookback-126]
+        a, b = np.searchsorted(cand_arr, lo, "left"), np.searchsorted(cand_arr, hi, "right")
+        found = None
+        for g in cand_arr[a:b]:
+            sub = px[g + 1: t + 1]
+            if len(sub) == 0:
+                continue
+            if (peak[g] - np.nanmin(sub)) / peak[g] >= spike_confirm_drawdown:
+                found = int(g)
+                break
+        if found is None:
+            continue
+        es, ee = max(s0, found - spike_exclusion_window), min(t, found + spike_exclusion_window)
+        win = dr[s0: t + 1].copy()
+        win[es - s0: ee - s0 + 1] = np.nan                              # excluded band
+        inc = win[~np.isnan(win)]
+        if len(inc) == 0:
+            continue
+        pp, pn = float((inc > 0).mean()), float((inc < 0).mean())
+        sign = float(np.sign(np.prod(1.0 + inc) - 1.0))
+        r = (pn - pp) * sign
+        q = _fip_step_score(r)
+        if np.nanmax(np.abs(dr[t - 4: t + 1])) > 0.08:
+            q = max(0.0, q - 30.0)
+        excluded[t], eff[t], raw[t], qual[t] = True, len(inc), r, q
+    return excluded, eff, raw, qual
+
+
 def compute(daily: pd.DataFrame) -> pd.DataFrame:
     """Compute Pipeline Rank for a single ticker's daily OHLCV frame."""
     d = daily.reset_index(drop=True).copy()
@@ -184,6 +251,8 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
     spike_penalty = (max_5d_move > 0.08).astype(float) * 30.0
     fip_quality = (fip_quality - spike_penalty).clip(lower=0.0, upper=100.0)
 
+    fip_raw_base, fip_quality_base = fip_raw.copy(), fip_quality.copy()      # shadow v2 starts from these (before the live last-bar override)
+
     # ---- DSG-20: Prior spike exclusion (last bar only) ----
     fip_spike_excluded = pd.Series(False, index=close.index)
     fip_window_effective = pd.Series(252, index=close.index, dtype=int)
@@ -234,8 +303,53 @@ def compute(daily: pd.DataFrame) -> pd.DataFrame:
     tier = tier.where(~(pipe_rank >= 75), "A-TIER")
     tier = tier.where(pipe_rank.notna(), np.nan)
 
+    # ================= SHADOW v2 (research-review items 4, 5, 6; live fields above are untouched) =================
+    # 4. 12-month return with the real skip-month: close[t-21] / close[t-252] - 1 (the live line uses close / close.shift(231): no skip).
+    ret_12m_v2 = (close.shift(21) / close.shift(252).replace(0.0, np.nan) - 1.0) * 100.0
+    ret_score_v2 = pd.Series(0.0, index=close.index)
+    ret_score_v2 = ret_score_v2.where(~(ret_12m_v2 > -10), 4.0)
+    ret_score_v2 = ret_score_v2.where(~(ret_12m_v2 > 0), 8.0)
+    ret_score_v2 = ret_score_v2.where(~(ret_12m_v2 > 10), 12.0)
+    ret_score_v2 = ret_score_v2.where(~(ret_12m_v2 > 25), 16.0)
+    ret_score_v2 = ret_score_v2.where(~(ret_12m_v2 > 50), 20.0)
+    # 5. ADX: every band requires DI+ > DI- (the live first band credits 5 points to a DOWNtrend).
+    adx_score_v2 = pd.Series(0.0, index=close.index)
+    adx_score_v2 = adx_score_v2.where(~((adx_val > 15) & di_bullish), 5.0)
+    adx_score_v2 = adx_score_v2.where(~((adx_val > 20) & di_bullish), 10.0)
+    adx_score_v2 = adx_score_v2.where(~((adx_val > 25) & di_bullish), 15.0)
+    adx_score_v2 = adx_score_v2.where(~((adx_val > 30) & di_bullish), 20.0)
+    momentum_composite_v2 = (ret_score_v2 + adx_score_v2 + rsi_score + vol_score + ma_score).clip(lower=0.0, upper=100.0)
+    # 6. FIP: spike exclusion as-of every bar, one sign rule.
+    fip_raw_v2 = fip_raw_base.copy()
+    fip_quality_v2 = fip_quality_base.copy()
+    ex_v2, eff_v2, raw_ex_v2, q_ex_v2 = _fip_spike_asof(close, daily_ret, lookback)
+    fip_spike_excluded_v2 = pd.Series(ex_v2, index=close.index)
+    fip_window_effective_v2 = pd.Series(eff_v2, index=close.index, dtype=int)
+    fip_raw_v2 = fip_raw_v2.where(~fip_spike_excluded_v2, pd.Series(raw_ex_v2, index=close.index))
+    fip_quality_v2 = fip_quality_v2.where(~fip_spike_excluded_v2, pd.Series(q_ex_v2, index=close.index))
+    pipe_rank_v2 = (momentum_composite_v2 * 0.70 + fip_quality_v2 * 0.30).clip(lower=0.0, upper=100.0)
+    warm_v2 = close.shift(252).notna() & pct_positive.notna()
+    pipe_rank_v2 = pipe_rank_v2.where(warm_v2, np.nan)
+    momentum_composite_v2 = momentum_composite_v2.where(warm_v2, np.nan)
+    fip_quality_v2 = fip_quality_v2.where(warm_v2, np.nan)
+    tier_v2 = pd.Series("D-SKIP", index=close.index)
+    tier_v2 = tier_v2.where(~(pipe_rank_v2 >= 45), "C-WATCH")
+    tier_v2 = tier_v2.where(~(pipe_rank_v2 >= 60), "B-STRONG")
+    tier_v2 = tier_v2.where(~(pipe_rank_v2 >= 75), "A-TIER")
+    tier_v2 = tier_v2.where(pipe_rank_v2.notna(), np.nan)
+
     return pd.DataFrame({
         "date": d["date"],
+        "ret_12m_pct_v2": ret_12m_v2,
+        "ret_12m_score_v2": ret_score_v2,
+        "adx_score_v2": adx_score_v2,
+        "momentum_composite_v2": momentum_composite_v2,
+        "fip_quality_v2": fip_quality_v2,
+        "fip_raw_v2": fip_raw_v2,
+        "fip_spike_excluded_v2": fip_spike_excluded_v2,
+        "fip_window_effective_v2": fip_window_effective_v2,
+        "pipe_rank_v2": pipe_rank_v2,
+        "pipe_tier_v2": tier_v2,
         "pipe_rank": pipe_rank,
         "pipe_tier": tier,
         "momentum_composite": momentum_composite,
