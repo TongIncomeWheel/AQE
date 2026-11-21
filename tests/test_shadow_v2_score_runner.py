@@ -61,8 +61,15 @@ def test_composites_v2_are_built_only_from_v2_parts_and_nan_when_a_part_is_nan(s
     want = scoring.compute(a["flow_100_v2"], a["energy_100_v2"], a["structure_100_v2"], a["mp_score_v2"], a["elder_score_v2"])
     assert np.allclose(a["sc_momentum_v2"][ok].to_numpy(), want[ok].to_numpy())
     b = df[df["ticker"] == "BBB"]
-    assert b["earn_score_v2"].isna().all() and b["structure_100_v2"].isna().all() and b["sc_momentum_v2"].isna().all()    # no dates -> NaN, never points
+    assert b["earn_score_v2"].isna().all() and (b["earn_data_v2"] == "missing").all()                                  # no dates: the component itself stays NaN, never points
+    # ... but the name stays scoreable: Structure is rescaled over the other parts, (rest / 85) x 100, never total/95 with a credited component (conductor ruling 2026-11-21)
+    ok = b["structure_100_v2"].notna()
+    assert ok.sum() > 20 and b["sc_momentum_v2"].notna().sum() > 20
+    other = b["rs_spy_score_v2"] + b["rs_accel_score_v2"] + b["base_score_v2"] + b["wk_score_v2"] + b["resist_score_v2"]
+    assert (b["structure_100_v2"][ok] <= 100.0).all()
     assert b["sc_momentum"].notna().any()                                                                              # the live composite is untouched
+    a2 = df[df["ticker"] == "AAA"]
+    assert (a2["earn_data_v2"] == "ok").sum() > 20 and a2["structure_100_v2"].notna().sum() > 20
 
 
 def test_the_diagnostics_file_counts_the_defaults_and_the_missing_dates(scored):

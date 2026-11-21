@@ -215,6 +215,22 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     except Exception as exc:
         print(f"  [WARN] Past-earnings pull failed: {exc} -- piece 11 will mark "
               f"earnings-day gaps as unconfirmed")
+        _eh = {}
+    # Step 1b-3: the report-date HISTORY earn_score_v2 is scored from (PM 2026-11-21 cutover). Incremental: names with no entry first, then entries older than 7 days or
+    # whose latest report is newer than their last pull; bounded by a budget; LOUD (status printed + output/earnings_dates_status.json). Under v1 nothing reads it for the
+    # live score, so a failure here never blocks the run; under v2 a name left without dates is a named exclusion.
+    print("[daily] Step 1b-3: Earnings report-date history refresh...")
+    try:
+        from src.data.earnings import refresh_earnings_dates_full
+        from src.data.fmp_client import FMPClient
+        from src.scanner.score_runner import panel_scoreable_tickers
+        _ed = refresh_earnings_dates_full(FMPClient(), panel_scoreable_tickers(panel["ticker"].unique()), recent=_eh)
+        print(f"  report dates: pulled {_ed['pulled_this_run']} of {_ed['to_pull_at_start']} due, {_ed['missing_after']} still missing, "
+              f"{_ed['stale_after']} stale, {len(_ed['failed_this_run'])} failed{'; ' + _ed['aborted'] if _ed['aborted'] else ''}")
+        if _ed["missing_after"]:
+            print(f"  [WARN] {_ed['missing_after']} scored names have no report-date history yet (sample: {_ed['missing_tickers_sample'][:8]})")
+    except Exception as exc:
+        print(f"  [WARN] Earnings report-date refresh failed: {exc} -- earn_score_v2 stays NaN for names without history")
 
     # Step 1c: Rebuild the full-universe score cache if it lags the panel.
     # The watchlist and the recipe / Precision Edge screens all read
@@ -224,20 +240,32 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
     try:
         from src.scanner.score_runner import SCORES_DAILY, build_scores
 
+        from src.engines import score_version as _sv
         panel_latest = panel["date"].max()
         scores_latest = None
+        _ver_problem = None
         if SCORES_DAILY.exists():
-            _sd_dates = pd.read_parquet(SCORES_DAILY, columns=["date"])
+            import pyarrow.parquet as _pq
+            _cols = ["date"] + ([_sv.VERSION_COLUMN] if _sv.VERSION_COLUMN in _pq.read_schema(SCORES_DAILY).names else [])
+            _sd_dates = pd.read_parquet(SCORES_DAILY, columns=_cols)
             if not _sd_dates.empty:
                 scores_latest = pd.to_datetime(_sd_dates["date"]).max().normalize()
-        if scores_latest is None or scores_latest < panel_latest:
+                _ver_problem = _sv.cache_problem(_sd_dates)
+        print(f"  Score version: {_sv.active()} (from {_sv.source()})")
+        if _ver_problem:
+            print(f"  [WARN] {_ver_problem} -- rebuilding the whole score cache so it never mixes scales")
+        if scores_latest is None or scores_latest < panel_latest or _ver_problem:
             _have = scores_latest.date() if scores_latest is not None else "none"
-            print(f"  Scores ({_have}) behind panel ({panel_latest.date()}) — rebuilding...")
+            print(f"  Scores ({_have}) behind panel ({panel_latest.date()}) or on another score version — rebuilding...")
             build_scores()
         else:
             print(f"  Score cache already current ({scores_latest.date()}) — skip rebuild")
+        print(f"  Score cache refresh OK (Step 1c): score version {_sv.active()}")
     except Exception as exc:
         print(f"  [WARN] Score cache refresh failed: {exc}")
+        # Loud and recognisable: daily_job copies this line into aqe_last_run.json (score_cache_status) and refuses to call the run a success, because every later step
+        # now reads the STALE scores_daily.parquet and the export would look fresh while built on old scores.
+        print(f"  Score cache refresh FAILED (Step 1c): {exc.__class__.__name__}: {exc} -- every later step reads the STALE scores_daily.parquet")
 
     # Step 2: Pipeline Rank — screen full universe
     print("[daily] Step 2: Pipeline Rank screening...")
@@ -865,6 +893,8 @@ def _full_scoring(
         weekly_groups = {t: g.sort_values("date").reset_index(drop=True)
                         for t, g in weekly.groupby("ticker", sort=False) if t in tickers}
 
+    from src.data.earnings import load_earnings_dates_full as _load_ed
+    _earn_full = _load_ed()               # report-date history (score version v2 reads it; v1 ignores it)
     scores = []
     for ticker in tickers:
         d = daily_groups.get(ticker)
@@ -878,7 +908,7 @@ def _full_scoring(
             mp_df = mp.compute(d, spy_daily=spy)
             structure_df = structure.compute(
                 d, spy_daily=spy, weekly=w,
-                earnings_cal=earnings_cal, ticker=ticker,
+                earnings_cal=earnings_cal, ticker=ticker, earn_dates_full=_earn_full,
             )
             elder_df = elder.compute(d)
             bq_df = bq.compute(d)

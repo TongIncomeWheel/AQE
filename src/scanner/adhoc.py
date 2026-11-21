@@ -159,8 +159,16 @@ def _score_one(ticker, client, spy, earnings_cal, from_dt, today) -> dict:
         flow_df = flow.compute(d)
         energy_df = energy.compute(d)
         mp_df = mp.compute(d, spy_daily=spy)
+        # Score version v2 scores the earnings component from the report-date history; an ad-hoc name outside the cached universe is fetched once (one FMP call).
+        from src.data.earnings import fetch_report_dates_one, load_earnings_dates_full
+        from src.engines import score_version as _sv
+        _ed = dict(load_earnings_dates_full())
+        if _sv.active() == "v2" and ticker not in _ed:
+            _one = fetch_report_dates_one(ticker)
+            if _one:
+                _ed[ticker] = _one
         structure_df = structure.compute(
-            d, spy_daily=spy, weekly=w, earnings_cal=earnings_cal, ticker=ticker,
+            d, spy_daily=spy, weekly=w, earnings_cal=earnings_cal, ticker=ticker, earn_dates_full=_ed,
         )
         elder_df = elder.compute(d)
         bq_df = bq.compute(d)

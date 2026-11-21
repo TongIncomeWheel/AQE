@@ -24,6 +24,7 @@ import numpy as np
 import pandas as pd
 
 from src.data.paths import DATA_DIR, OUTPUT_DIR, PANEL_DAILY, PROJECT_ROOT, SCORES_DAILY
+from src.engines.score_version import legacy_view as _legacy_view
 from src.engines import qs_engine as E
 from src.engines import qs_fields as F
 from src.engines import qs_spec as S
@@ -280,7 +281,7 @@ def run(as_of: date | None = None, sector_map: dict[str, str] | None = None,
         panel = pd.read_parquet(PANEL_DAILY,
                                 columns=["date", "ticker", "close", "volume"])
         panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
-        scores = pd.read_parquet(SCORES_DAILY)
+        scores = _legacy_view(pd.read_parquet(SCORES_DAILY))      # QS's frozen recipe/calibration were fitted on the OLD score scale: read the legacy values until a PM-signed re-freeze
         scores["date"] = pd.to_datetime(scores["date"]).dt.normalize()
         panel, scores = drop_context_only(panel, scores)
 
@@ -417,7 +418,7 @@ def score_adhoc(record: dict, as_of=None) -> dict:
         panel = pd.read_parquet(PANEL_DAILY,
                                 columns=["date", "ticker", "close", "volume"])
         panel["date"] = pd.to_datetime(panel["date"]).dt.normalize()
-        scores = pd.read_parquet(SCORES_DAILY)
+        scores = _legacy_view(pd.read_parquet(SCORES_DAILY))      # QS's frozen recipe/calibration were fitted on the OLD score scale: read the legacy values until a PM-signed re-freeze
         scores["date"] = pd.to_datetime(scores["date"]).dt.normalize()
         asof = (pd.Timestamp(as_of).normalize() if as_of
                 else min(panel["date"].max(), scores["date"].max()))

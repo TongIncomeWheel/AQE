@@ -47,6 +47,9 @@ def _members() -> list[tuple]:
         # Past earnings dates (VALEN piece 11's earnings-day episodic pivot).
         # Built up one 45-day window per run, so it is history worth keeping.
         "earnings_history.json",
+        # Every report date per ticker (score version v2's earn_score reads it). Pulled incrementally across nights (a few hundred names a night after the first fill),
+        # so it is history worth keeping: without it a recycle re-pulls ~2,300 names and a name with no history is excluded until it is refilled.
+        "earnings_dates_full.json",
         # Crown's COT history. The CFTC publishes one snapshot a week, so this
         # file IS the percentile window — without it a recycle leaves every
         # market reading "no history" instead of "crowded long", which is a

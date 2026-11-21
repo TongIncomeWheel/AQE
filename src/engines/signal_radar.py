@@ -40,6 +40,7 @@ import numpy as np
 import pandas as pd
 
 from src.data.paths import DATA_DIR, PANEL_DAILY, SCORES_DAILY
+from src.engines.score_version import legacy_view as _legacy_view
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -322,7 +323,7 @@ def compute_radar(scores_path=None, panel_path=None, asof=None) -> dict:
     """
     scores_path = scores_path or SCORES_DAILY
     panel_path = panel_path or PANEL_DAILY
-    scores = pd.read_parquet(scores_path)
+    scores = _legacy_view(pd.read_parquet(scores_path))      # the kNN parameters were fitted on the OLD score scale: read the legacy values until a PM-signed re-freeze
     scores["date"] = pd.to_datetime(scores["date"])
     have = [c for c in STATIC_COLS if c in scores.columns]
     missing = [c for c in STATIC_COLS if c not in scores.columns]

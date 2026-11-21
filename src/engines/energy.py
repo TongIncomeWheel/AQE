@@ -20,8 +20,17 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
 
 
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("atr_score", "atr_score_v2"),
+    ("energy_100", "energy_100_v2"),
+]
+
+
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     *,

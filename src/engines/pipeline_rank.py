@@ -22,6 +22,21 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
+
+
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("ret_12m_score", "ret_12m_score_v2"),
+    ("adx_score", "adx_score_v2"),
+    ("momentum_composite", "momentum_composite_v2"),
+    ("fip_quality", "fip_quality_v2"),
+    ("fip_raw", "fip_raw_v2"),
+    ("fip_spike_excluded", "fip_spike_excluded_v2"),
+    ("fip_window_effective", "fip_window_effective_v2"),
+    ("pipe_rank", "pipe_rank_v2"),
+    ("pipe_tier", "pipe_tier_v2"),
+]
 
 
 def _fip_step_score(raw: float) -> float:
@@ -148,6 +163,7 @@ def _fip_spike_asof(close: pd.Series, daily_ret: pd.Series, lookback: int = 252,
     return excluded, eff, raw, qual
 
 
+@_twins(TWINS)
 def compute(daily: pd.DataFrame) -> pd.DataFrame:
     """Compute Pipeline Rank for a single ticker's daily OHLCV frame."""
     d = daily.reset_index(drop=True).copy()

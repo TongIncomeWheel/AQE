@@ -1696,6 +1696,26 @@ SCORE_TREE = [
       "src/engines/continuation.py:extension_bracket", "stop=min(continuation_low, entry-atr_14d); TP1=swing_low+1.272*(swing_high-swing_low); TP2=swing_low+1.618*(swing_high-swing_low)"),
 ]
 
+# Score-version cutover (PM 2026-11-21): the two export blocks, and every twin field's pre-cutover value `<field>_legacy`, shipped beside the live field.
+from src.engines import score_version as _SV                                                    # noqa: E402
+SCORE_TREE += [
+    R("score_version", "", "leaf", "dict", "live|error",
+      "Which calculation the LIVE score fields carry (v1 old / v2 corrected), the cutover date, every field that also ships as <field>_legacy, and the scores cache's version check "
+      "(a mixed or unstamped cache is a data_quality failure)",
+      "data/score_version_export.py:blocks", "version = AQE_SCORE_VERSION env, else data/score_version.json, else v1; scores_cache.problem = score_version.cache_problem(scores cache)"),
+    R("score_exclusions", "", "leaf", "dict", "live|unknown",
+      "GENUINE failures only: names the corrected (v2) calculation cannot form any score for on the last bar (an input other than earnings is unavailable), grouped by reason. Under v2 "
+      "they are excluded from every list; under v1 it is the list the cutover would exclude. 'unknown' = not known, never 'none'",
+      "scanner/score_runner.py:build_scores", "last bar's sc_momentum_v2 is NaN; reason from which v2 input is NaN (weekly history / momentum inputs / other)"),
+    R("earn_data", "", "leaf", "ok|missing", "ok|missing",
+      "'missing' when no earnings report date is known on/after the bar: the name is scored without the earnings component and the Structure total rescaled to the same 0-100 range "
+      "(informational under v1)", "engines/structure.py:compute",
+      "earn_score_v2 is NaN -> structure_100_v2 = (rs_spy + rs_accel + base + position + resist + weekly) / 85 x 100 (= total/95 x 100 x 95/(95-10)); else total/95 x 100"),
+] + [R(_lc, "", "leaf", "as the live field", "",
+       f"The pre-cutover (v1) value of {_lc[:-len(_SV.LEGACY)]}, kept beside the live field for comparison and rollback; equals the live field under v1",
+       "engines/score_version.py:apply", f"{_lc[:-len(_SV.LEGACY)]} as the old calculation computes it (the engine's live column before the version swap)")
+     for _lc in _SV.LEGACY_COLUMNS]
+
 for _r in SCORE_TREE:
     _r["source"] = "src/" + _r["source"] if _r["source"] and not _r["source"].startswith("src/") else _r["source"]
 
@@ -1962,8 +1982,12 @@ def classify_export_location(name: str) -> str:
         return "daily_list[] + held_positions[] (VALEN Part 3 grades)"
     if name == "setups_status":
         return "export top level"
-    if name in ("momentum_high", "momentum_high_status"):
+    if name in ("momentum_high", "momentum_high_status", "score_version", "score_exclusions"):
         return "export top level"
+    if name == "earn_data":
+        return "daily_list[] + held_positions[] + universe rows (score version cutover)"
+    if name.endswith("_legacy"):
+        return "daily_list[] + held_positions[] (pre-cutover value, beside the live field)"
     if name in _JOURNAL_ONLY:
         return "held_positions only (PTJ broker journal passthrough)"
     if name in THEMATIC_LIST_ONLY:

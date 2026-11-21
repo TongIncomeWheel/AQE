@@ -19,8 +19,25 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
 
 
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+STRUCTURE_MAX = 95.0          # the live composite's maximum raw total (structure_100 = ms_raw / 95 * 100)
+EARN_MAX = 10.0               # the earnings component's maximum (10 points when the next report is > 20 days away)
+TWINS = [
+    ("resist_score", "resist_score_v2"),
+    ("structure_100", "structure_100_v2"),
+    ("rs_spy_score", "rs_spy_score_v2"),
+    ("rs_accel_score", "rs_accel_score_v2"),
+    ("wk_score", "wk_score_v2"),
+    ("earn_score", "earn_score_v2"),
+    ("base_days", "base_days_v2"),
+    ("base_score", "base_score_v2"),
+]
+
+
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     spy_daily: pd.DataFrame,
@@ -201,8 +218,15 @@ def compute(
     warm = sma_50.notna() & spy_close.shift(60).notna() & close.shift(60).notna()
     structure_100 = structure_100.where(warm, np.nan)
     # structure_100_v2: every v2 part (items 10, 11, 12, 13, 18). NaN propagates: a missing component is never replaced by points.
-    ms_raw_v2 = rs_spy_score_v2 + rs_accel_score_v2 + base_score_v2 + ms_pos + resist_score_v2 + wk_score_v2 + earn_score_v2
-    structure_100_v2 = (ms_raw_v2 / 95.0 * 100.0).clip(lower=0.0, upper=100.0).where(warm, np.nan)
+    # Earnings component MISSING (no report date known on/after the bar): the name stays scoreable. It is scored on the other parts, rescaled to the same 0-100 range by
+    # (max total) / (max total - the earnings component's max) = 95 / 85, so a missing value is neither credited as good nor allowed to shrink the lists (conductor ruling
+    # 2026-11-21, after BACKTEST REVIEW's input). `earn_data_v2` flags every such bar "missing". Any OTHER part being NaN still propagates NaN: no score can be formed.
+    ms_other_v2 = rs_spy_score_v2 + rs_accel_score_v2 + base_score_v2 + ms_pos + resist_score_v2 + wk_score_v2
+    earn_missing = earn_score_v2.isna()
+    ms_raw_v2 = ms_other_v2 + earn_score_v2                                   # NaN wherever the earnings component is missing
+    structure_100_v2 = pd.Series(np.where(earn_missing, ms_other_v2 / (STRUCTURE_MAX - EARN_MAX) * 100.0, ms_raw_v2 / STRUCTURE_MAX * 100.0), index=close.index)
+    structure_100_v2 = structure_100_v2.clip(lower=0.0, upper=100.0).where(warm, np.nan)
+    earn_data_v2 = pd.Series(np.where(earn_missing, "missing", "ok"), index=close.index)
 
     return pd.DataFrame({
         "date": d["date"],
@@ -214,6 +238,7 @@ def compute(
         "resist_score": resist_score,
         "resist_score_v2": resist_score_v2,
         "structure_100_v2": structure_100_v2,
+        "earn_data_v2": earn_data_v2,
         "rs_spy_score_v2": rs_spy_score_v2,
         "rs_accel_score_v2": rs_accel_score_v2,
         "wk_score_v2": wk_score_v2,
