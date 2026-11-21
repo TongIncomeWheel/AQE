@@ -353,3 +353,53 @@ def asof_weekly_value(daily_dates: pd.Series, weekly: pd.DataFrame, column: str)
         allow_exact_matches=False,
     )
     return pd.Series(merged[column].to_numpy(), index=daily_dates.index)
+
+
+# ----- shadow v2 helpers (research review 2026-11-21) -------------------------
+
+def align_spy_close(spy_daily: pd.DataFrame, dates: pd.Series) -> pd.Series:
+    """SPY close aligned to `dates` BY DATE (NaN where SPY has no bar that day). Item 14: readiness.py and health.py used to align by ROW POSITION
+    (`iloc[:min(len)]`), which silently pairs a ticker bar with another day's SPY bar whenever the two series start on different dates or one misses a day."""
+    if spy_daily is None or len(spy_daily) == 0:
+        return pd.Series(np.nan, index=dates.index, dtype=float)
+    o = spy_daily[["date", "close"]].copy()
+    o["date"] = pd.to_datetime(o["date"]).dt.normalize()
+    o = o.drop_duplicates("date", keep="last")
+    lookup = o.set_index("date")["close"].astype(float)
+    aligned = pd.to_datetime(dates).dt.normalize().map(lookup)
+    aligned.index = dates.index
+    return aligned.astype(float)
+
+
+def spy_positional_misaligned_bars(dates: pd.Series, spy_daily: pd.DataFrame) -> int:
+    """How many of this ticker's bars the OLD positional alignment paired with a SPY bar of a DIFFERENT date (the item-14 diagnostic)."""
+    if spy_daily is None or len(spy_daily) == 0:
+        return 0
+    spy_dates = pd.to_datetime(spy_daily["date"]).dt.normalize().reset_index(drop=True)
+    d = pd.to_datetime(dates).dt.normalize().reset_index(drop=True)
+    m = min(len(d), len(spy_dates))
+    return int((d.iloc[:m].to_numpy() != spy_dates.iloc[:m].to_numpy()).sum())
+
+
+def asof_weekly_value_v2(daily_dates: pd.Series, weekly: pd.DataFrame, column: str) -> pd.Series:
+    """As `asof_weekly_value`, but a daily row on the LAST trading day of its week sees that week's own (just-completed) weekly bar (item 18).
+
+    The strict version joins on weekly dates < the daily date, so on a Friday close the freshly completed week (dated that Friday) is skipped and the
+    value is a week stale. Weekly bars are dated by their Friday (resample 'W-FRI'). A daily row is 'week-complete' when it is a Friday, or when the NEXT
+    daily row falls in a later week (a holiday-shortened week); the final row of a frame counts as complete only on a Friday. No look-ahead: a complete week's
+    bar holds only data up to that day's close.
+    """
+    strict = asof_weekly_value(daily_dates, weekly, column)
+    if weekly.empty or column not in weekly.columns:
+        return strict
+    d = pd.to_datetime(daily_dates).dt.normalize().reset_index(drop=True)
+    period = d.dt.to_period("W-FRI")
+    nxt = period.shift(-1)
+    complete = (d.dt.weekday == 4) | ((period != nxt) & nxt.notna())
+    label = d + pd.to_timedelta((4 - d.dt.weekday) % 7, unit="D")            # the Friday that dates this day's weekly bar
+    wk = weekly[["date", column]].dropna(subset=[column]).copy()
+    wk["date"] = pd.to_datetime(wk["date"]).dt.normalize()
+    lookup = wk.drop_duplicates("date", keep="last").set_index("date")[column]
+    own = label.map(lookup)
+    out = np.where(complete.to_numpy() & own.notna().to_numpy(), own.to_numpy(dtype=float), strict.to_numpy(dtype=float))
+    return pd.Series(out, index=daily_dates.index)

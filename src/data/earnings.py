@@ -17,6 +17,7 @@ import json
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from .fmp_client import FMPClient
@@ -224,6 +225,76 @@ def build_earnings_series(
         days = days_to_earnings(ticker, d, cal)
         scores.append(earn_proximity_score(days))
     return pd.Series(scores, index=dates.index, dtype=float)
+
+
+# ---- SHADOW v2 (research review 2026-11-21 items 12/13): earn_score as of EACH bar from historical report dates ----------------
+EARNINGS_DATES_FULL_PATH = DATA_DIR / "earnings_dates_full.json"
+
+
+def load_earnings_dates_full() -> dict[str, list[str]]:
+    """{ticker: sorted ["YYYY-MM-DD", ...]} every known report date, past AND scheduled (FMP /stable/earnings per symbol). {} when the file is absent:
+    earn_score_v2 is then NaN for every bar (loud in score diagnostics), never the old default 10."""
+    if not EARNINGS_DATES_FULL_PATH.exists():
+        return {}
+    try:
+        return json.loads(EARNINGS_DATES_FULL_PATH.read_text(encoding="utf-8")).get("dates", {})
+    except (OSError, ValueError):
+        return {}
+
+
+def earn_proximity_score_v2(days: pd.Series) -> pd.Series:
+    """Same bands as `earn_proximity_score` (<=5 -> 0, <=10 -> 4, <=20 -> 7, else 10) but NaN where the days-to-report are unknown, never 10."""
+    out = pd.Series(10.0, index=days.index)
+    out = out.where(~(days <= 20), 7.0)
+    out = out.where(~(days <= 10), 4.0)
+    out = out.where(~(days <= 5), 0.0)
+    return out.where(days.notna(), np.nan)
+
+
+def build_earnings_series_v2(dates: pd.Series, report_dates: list[str] | None) -> pd.Series:
+    """earn_score for every bar from the NEXT report date on or after that bar's own date (historical dates, not today's next date: the live series scores every
+    past bar against TODAY's calendar). NaN when no report date is known on/after the bar, or when the ticker has no dates at all."""
+    idx = dates.index
+    if not report_dates:
+        return pd.Series(np.nan, index=idx, dtype=float)
+    rd = np.sort(pd.to_datetime(pd.Series(list(report_dates))).dt.normalize().to_numpy().astype("datetime64[D]"))
+    d = pd.to_datetime(dates).dt.normalize().to_numpy().astype("datetime64[D]")
+    pos = np.searchsorted(rd, d, side="left")                      # first report date >= bar date
+    have = pos < len(rd)
+    nxt = np.where(have, rd[np.minimum(pos, len(rd) - 1)], np.datetime64("NaT", "D"))
+    days = pd.Series(((nxt - d).astype("timedelta64[D]").astype(float)), index=idx).where(have, np.nan)
+    return earn_proximity_score_v2(days)
+
+
+def pull_earnings_dates_full(client, tickers, since: str = "2018-01-01", budget_s: float = 3 * 3600, sleep=None) -> dict:
+    """Pull every report date per ticker from FMP /stable/earnings and write data/earnings_dates_full.json. Loud: failed tickers are named; a 429 is retried."""
+    import time as _t
+    from src.data.fmp_client import FMPError, FMPQuotaError
+    sleep = sleep or _t.sleep
+    dates, failed, aborted, t0 = {}, {}, None, _t.monotonic()
+    for i, t in enumerate(tickers):
+        if _t.monotonic() - t0 > budget_s:
+            aborted = f"time budget reached after {i} of {len(tickers)} tickers"
+            break
+        for k in range(3):
+            try:
+                data = client._get_json(f"{FMP_STABLE}/earnings", {"symbol": t, "limit": 100, "apikey": client.config.api_key})
+                dates[t] = sorted({str(r["date"])[:10] for r in (data if isinstance(data, list) else []) if str(r.get("date") or "")[:10] >= since})
+                break
+            except FMPQuotaError as e:
+                aborted = f"FMP quota/denial after {i} of {len(tickers)} tickers: {e}"
+                break
+            except FMPError as e:
+                if "429" in str(e) and k < 2:
+                    sleep(90)
+                    continue
+                failed[t] = f"{e.__class__.__name__}: {str(e)[:120]}"
+                break
+        if aborted:
+            break
+    EARNINGS_DATES_FULL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    EARNINGS_DATES_FULL_PATH.write_text(json.dumps({"as_of": date.today().isoformat(), "dates": dates, "failed": failed, "aborted": aborted}), encoding="utf-8")
+    return {"tickers": len(dates), "failed": failed, "aborted": aborted}
 
 
 def _load_universe() -> set[str]:

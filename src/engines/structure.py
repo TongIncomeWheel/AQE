@@ -29,6 +29,7 @@ def compute(
     earn_score_override: float = 10.0,
     earnings_cal: dict[str, str] | None = None,
     ticker: str = "",
+    earn_dates_full: dict[str, list[str]] | None = None,
 ) -> pd.DataFrame:
     d = daily.reset_index(drop=True).copy()
     high = d["high"].astype(float)
@@ -59,6 +60,21 @@ def compute(
     rs_accel_score = rs_accel_score.where(~(rs_accel > 0), 9.0)
     rs_accel_score = rs_accel_score.where(~(rs_accel > 2), 12.0)
     rs_accel_score = rs_accel_score.where(~(rs_accel > 5), 15.0)
+    # SHADOW v2 (item 12): RS NaN stays NaN. The live series fills a missing SPY comparison with 0 and credits the stock 6 + 9 points for it.
+    rs_vs_spy_v2 = stock_perf - bench_perf
+    rs_accel_v2 = rs_short - rs_vs_spy_v2
+    rs_spy_score_v2 = pd.Series(0.0, index=close.index)
+    rs_spy_score_v2 = rs_spy_score_v2.where(~(rs_vs_spy_v2 > -3), 3.0)
+    rs_spy_score_v2 = rs_spy_score_v2.where(~(rs_vs_spy_v2 > 0), 6.0)
+    rs_spy_score_v2 = rs_spy_score_v2.where(~(rs_vs_spy_v2 > 2), 10.0)
+    rs_spy_score_v2 = rs_spy_score_v2.where(~(rs_vs_spy_v2 > 5), 12.0)
+    rs_spy_score_v2 = rs_spy_score_v2.where(~(rs_vs_spy_v2 > 10), 15.0).where(rs_vs_spy_v2.notna(), np.nan)
+    rs_accel_score_v2 = pd.Series(0.0, index=close.index)
+    rs_accel_score_v2 = rs_accel_score_v2.where(~(rs_accel_v2 > -5), 3.0)
+    rs_accel_score_v2 = rs_accel_score_v2.where(~(rs_accel_v2 > -2), 6.0)
+    rs_accel_score_v2 = rs_accel_score_v2.where(~(rs_accel_v2 > 0), 9.0)
+    rs_accel_score_v2 = rs_accel_score_v2.where(~(rs_accel_v2 > 2), 12.0)
+    rs_accel_score_v2 = rs_accel_score_v2.where(~(rs_accel_v2 > 5), 15.0).where(rs_accel_v2.notna(), np.nan)
 
     # ---- 3. Base Duration 3-mode + latch (Pine 44-128) ----
     atr_val = U.atr(high, low, close, n=20)
@@ -157,6 +173,16 @@ def compute(
     wk_score_calc = wk_score_calc.where(~(wk_close > wk_sma10), 10.0)
     wk_score_calc = wk_score_calc.where(~((wk_close > wk_sma10) & wk_rising), 15.0)
     wk_score = wk_score.where(~has_weekly, wk_score_calc)
+    # SHADOW v2 (items 12 + 18): no weekly history is NaN (the live default is 7.5 points), and a day that closes its week sees that week's completed bar.
+    wk_sma10_v2, wk_sma10_prev_v2, wk_close_v2 = _weekly_features(weekly, d["date"], asof=U.asof_weekly_value_v2)
+    wk_rising_v2 = wk_sma10_v2 > wk_sma10_prev_v2
+    has_weekly_v2 = wk_sma10_v2.notna() & wk_close_v2.notna() & wk_sma10_prev_v2.notna()
+    wk_score_v2 = pd.Series(0.0, index=close.index)
+    wk_score_v2 = wk_score_v2.where(~(wk_close_v2 > wk_sma10_v2 * 0.93), 2.0)
+    wk_score_v2 = wk_score_v2.where(~(wk_close_v2 > wk_sma10_v2 * 0.97), 5.0)
+    wk_score_v2 = wk_score_v2.where(~(wk_close_v2 > wk_sma10_v2), 10.0)
+    wk_score_v2 = wk_score_v2.where(~((wk_close_v2 > wk_sma10_v2) & wk_rising_v2), 15.0)
+    wk_score_v2 = wk_score_v2.where(has_weekly_v2, np.nan)
 
     # ---- 7. Earnings proximity (Component 3G) ----
     if earnings_cal and ticker and ticker in earnings_cal:
@@ -164,6 +190,9 @@ def compute(
         earn_score = build_earnings_series(d["date"], ticker, earnings_cal)
     else:
         earn_score = pd.Series(earn_score_override, index=close.index)
+    # SHADOW v2 (items 12 + 13): scored as of each bar from the historical report dates; NaN where unknown (the live default is 10 points).
+    from src.data.earnings import build_earnings_series_v2
+    earn_score_v2 = build_earnings_series_v2(d["date"], (earn_dates_full or {}).get(ticker) if ticker else None)
 
     # ---- Composite ----
     ms_raw = rs_spy_score + rs_accel_score + base_score + ms_pos + resist_score + wk_score + earn_score
@@ -171,7 +200,8 @@ def compute(
     # Warmup: 60-bar RS lookback + 50-bar SMA + weekly SMA(10).
     warm = sma_50.notna() & spy_close.shift(60).notna() & close.shift(60).notna()
     structure_100 = structure_100.where(warm, np.nan)
-    ms_raw_v2 = rs_spy_score + rs_accel_score + base_score_v2 + ms_pos + resist_score_v2 + wk_score + earn_score
+    # structure_100_v2: every v2 part (items 10, 11, 12, 13, 18). NaN propagates: a missing component is never replaced by points.
+    ms_raw_v2 = rs_spy_score_v2 + rs_accel_score_v2 + base_score_v2 + ms_pos + resist_score_v2 + wk_score_v2 + earn_score_v2
     structure_100_v2 = (ms_raw_v2 / 95.0 * 100.0).clip(lower=0.0, upper=100.0).where(warm, np.nan)
 
     return pd.DataFrame({
@@ -184,6 +214,10 @@ def compute(
         "resist_score": resist_score,
         "resist_score_v2": resist_score_v2,
         "structure_100_v2": structure_100_v2,
+        "rs_spy_score_v2": rs_spy_score_v2,
+        "rs_accel_score_v2": rs_accel_score_v2,
+        "wk_score_v2": wk_score_v2,
+        "earn_score_v2": earn_score_v2,
         "wk_score": wk_score,
         "earn_score": earn_score,
         "base_days": base_days_s,
@@ -284,7 +318,7 @@ def _align_spy_close(spy_daily: pd.DataFrame, dates: pd.Series) -> pd.Series:
     return aligned.astype(float)
 
 
-def _weekly_features(weekly: pd.DataFrame, daily_dates: pd.Series) -> tuple[pd.Series, pd.Series, pd.Series]:
+def _weekly_features(weekly: pd.DataFrame, daily_dates: pd.Series, asof=None) -> tuple[pd.Series, pd.Series, pd.Series]:
     """Return (wk_sma10, wk_sma10_prev, wk_close) aligned to daily_dates with no look-ahead."""
     if weekly is None or weekly.empty:
         idx = daily_dates.index
@@ -295,7 +329,8 @@ def _weekly_features(weekly: pd.DataFrame, daily_dates: pd.Series) -> tuple[pd.S
     wk = wk.sort_values("date").reset_index(drop=True)
     wk["sma10"] = wk["close"].rolling(10, min_periods=10).mean()
     wk["sma10_prev"] = wk["sma10"].shift(1)
-    sma10 = U.asof_weekly_value(daily_dates, wk.rename(columns={"sma10": "x"})[["date", "x"]], "x")
-    sma10_prev = U.asof_weekly_value(daily_dates, wk.rename(columns={"sma10_prev": "x"})[["date", "x"]], "x")
-    wk_close = U.asof_weekly_value(daily_dates, wk.rename(columns={"close": "x"})[["date", "x"]], "x")
+    asof = asof or U.asof_weekly_value
+    sma10 = asof(daily_dates, wk.rename(columns={"sma10": "x"})[["date", "x"]], "x")
+    sma10_prev = asof(daily_dates, wk.rename(columns={"sma10_prev": "x"})[["date", "x"]], "x")
+    wk_close = asof(daily_dates, wk.rename(columns={"close": "x"})[["date", "x"]], "x")
     return sma10, sma10_prev, wk_close

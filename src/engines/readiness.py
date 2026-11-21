@@ -183,10 +183,23 @@ def compute(daily: pd.DataFrame, spy_daily: pd.DataFrame | None = None) -> pd.Da
             rs_b = rs_b.where(~(rs_accel > 5), 15.0)
             rs_bonus = rs_b.reindex(close.index, fill_value=0.0)
 
+    # SHADOW v2 (item 14): SPY aligned BY DATE. The live block pairs bar i of the ticker with bar i of SPY (`iloc[:min_len]`) whatever their dates are.
+    # A missing SPY day gives NaN -> no bonus (0 points): the absence of a benchmark is never a credit.
+    rs_bonus_v2 = pd.Series(0.0, index=close.index)
+    if spy_daily is not None and len(spy_daily) > 60:
+        spc2 = U.align_spy_close(spy_daily, d["date"])
+        rs_20_v2 = (close / close.shift(20) - 1) * 100 - (spc2 / spc2.shift(20) - 1) * 100
+        rs_60_v2 = (close / close.shift(60) - 1) * 100 - (spc2 / spc2.shift(60) - 1) * 100
+        rs_accel_v2 = rs_20_v2 - rs_60_v2
+        rs_bonus_v2 = rs_bonus_v2.where(~(rs_accel_v2 > 0), 5.0)
+        rs_bonus_v2 = rs_bonus_v2.where(~(rs_accel_v2 > 2), 10.0)
+        rs_bonus_v2 = rs_bonus_v2.where(~(rs_accel_v2 > 5), 15.0)
+
     # ================================================================
     # COMPOSITE
     # ================================================================
 
+    rd_score_v2 = (compression + trigger + pos_mod + rs_bonus_v2).clip(lower=0.0, upper=100.0)
     rd_raw = compression + trigger + pos_mod + rs_bonus
     rd_score = rd_raw.clip(lower=0.0, upper=100.0)
 
@@ -203,6 +216,8 @@ def compute(daily: pd.DataFrame, spy_daily: pd.DataFrame | None = None) -> pd.Da
         "rd_trigger": trigger.round(1),
         "rd_pos_mod": pos_mod.round(1),
         "rd_rs_bonus": rs_bonus.round(1),
+        "rd_rs_bonus_v2": rs_bonus_v2.round(1),
+        "rd_score_v2": rd_score_v2.round(1),
         "rd_inside_bars": ib_count.round(0),
         "rd_range_exp": range_exp_ratio.round(3),
         "rd_vol_surge": vol_surge_ratio.round(3),

@@ -92,7 +92,16 @@ def compute(
         )
         a3 = wk_vals.fillna(0.0)
 
+    # SHADOW v2 (item 18): a Friday (week-closing) row sees that week's completed bar.
+    a3_v2 = pd.Series(0.0, index=close.index)
+    if weekly is not None and len(weekly) >= 10:
+        wk_v = weekly.sort_values("date").reset_index(drop=True)
+        wk_c = wk_v["close"].astype(float)
+        wk_trend_v = pd.Series(0.0, index=wk_c.index).where(~(wk_c > U.sma(wk_c, 10)), 5.0)
+        a3_v2 = U.asof_weekly_value_v2(d["date"], wk_v.assign(_wk_trend=wk_trend_v), "_wk_trend").fillna(0.0)
+
     trend = (a1 + a2 + a3).clip(upper=35.0)
+    trend_v2 = (a1 + a2 + a3_v2).clip(upper=35.0)
 
     # ================================================================
     # B. FLOW CONFIRMATION (0-25 pts)
@@ -152,6 +161,24 @@ def compute(
             rs_sub = (c1 + c2).clip(upper=20.0)
             rs_score = rs_sub.reindex(close.index, fill_value=0.0)
 
+    # SHADOW v2 (item 14): SPY aligned BY DATE (the live block pairs bar i with bar i via iloc[:min_len]).
+    rs_score_v2 = pd.Series(0.0, index=close.index)
+    if spy_daily is not None and len(spy_daily) > 60:
+        spc2 = U.align_spy_close(spy_daily, d["date"])
+        rs_20_v2 = (close / close.shift(20) - 1) * 100 - (spc2 / spc2.shift(20) - 1) * 100
+        c1v = pd.Series(0.0, index=close.index)
+        c1v = c1v.where(~(rs_20_v2 > -2), 2.0)
+        c1v = c1v.where(~(rs_20_v2 > 0), 5.0)
+        c1v = c1v.where(~(rs_20_v2 > 3), 8.0)
+        c1v = c1v.where(~(rs_20_v2 > 5), 10.0)
+        rs_60_v2 = (close / close.shift(60) - 1) * 100 - (spc2 / spc2.shift(60) - 1) * 100
+        rs_accel_v2 = rs_20_v2 - rs_60_v2
+        c2v = pd.Series(0.0, index=close.index)
+        c2v = c2v.where(~(rs_accel_v2 > -2), 3.0)
+        c2v = c2v.where(~(rs_accel_v2 > 0), 6.0)
+        c2v = c2v.where(~(rs_accel_v2 > 3), 10.0)
+        rs_score_v2 = (c1v + c2v).clip(upper=20.0)
+
     # ================================================================
     # D. RISK FLAGS (-20 to 0)
     # ================================================================
@@ -186,6 +213,7 @@ def compute(
 
     hl_raw = trend + flow_conf + rs_score + risk_flags
     hl_score = hl_raw.clip(lower=0.0, upper=100.0)
+    hl_score_v2 = (trend_v2 + flow_conf + rs_score_v2 + risk_flags).clip(lower=0.0, upper=100.0)
 
     state = pd.Series("EXIT", index=close.index)
     state = state.where(~(hl_score >= 30), "TIGHTEN")
@@ -195,6 +223,9 @@ def compute(
     return pd.DataFrame({
         "date": d["date"],
         "hl_score": hl_score.round(1),
+        "hl_score_v2": hl_score_v2.round(1),
+        "hl_rs_v2": rs_score_v2.round(1),
+        "hl_trend_v2": trend_v2.round(1),
         "hl_state": state,
         "hl_trend": trend.round(1),
         "hl_flow": flow_conf.round(1),
