@@ -2233,6 +2233,41 @@ elif _ex:
 st.divider()
 
 # ---------------------------------------------------------------------------
+# 3c. MOMENTUM HIGH (PM 2026-11-21) — a data-only section computed from raw prices. The market check sits above ONE plain table. Filters nothing.
+# ---------------------------------------------------------------------------
+_mh = _ex.get("momentum_high")
+_mh_st = _ex.get("momentum_high_status") or {}
+if _ex:
+    st.subheader(f"Momentum High ({len(_mh['members'])})" if _mh else "Momentum High")
+    if _mh_st.get("status") not in ("live", None):
+        (st.error if _mh_st.get("status") == "error" else st.warning)(
+            f"Momentum High is {_mh_st.get('status')}: {_mh_st.get('reason')}. "
+            + ("Nothing was computed — this is NOT an empty list." if _mh is None else ""))
+    if _mh:
+        st.caption(_mh.get("what_it_is", ""))
+        _mc = _mh.get("market_check") or {}
+        _c1, _c2, _c3, _c4 = st.columns(4)
+        _c1.metric("Market OK", "YES" if _mc.get("market_ok") else "NO")
+        _c2.metric("SPY above 200-day", {True: "yes", False: "no"}.get(_mc.get("spy_above_200d"), "n/a"))
+        _c3.metric("Breadth: % above 50-day", f"{_mc.get('breadth_pct_above_50d')}%" if _mc.get("breadth_pct_above_50d") is not None else "n/a")
+        _c4.metric("As of (last close)", _mc.get("as_of", "n/a"))
+        st.caption(_mc.get("note", ""))
+        if _mh.get("members"):
+            table_with_copy(pd.DataFrame(_mh["members"])[["rank", "ticker", "mom_12_1", "rs_63", "pct_from_52w_high", "close", "atr14", "atr_pct", "adx14",
+                                                            "first_day", "reference_stop"]], key="momentum_high_table")
+        else:
+            st.info("Computed, and no name passes every rule on the last close (this is a real empty result; the status above is live).")
+        st.caption("reference_stop: " + _mh.get("stop_note", ""))
+        _mo = _mh.get("measured_odds") or {}
+        with st.expander("Measured odds (static, from research) — " + str(_mo.get("label", ""))):
+            st.table(pd.DataFrame(_mo.get("shapes", {})).T.rename(columns={"win_rate_pct": "win rate %", "avg_winner_r": "avg winner (R)", "avg_loser_r": "avg loser (R)", "avg_r_per_trade": "avg R / trade"}))
+            st.caption(_mo.get("caveat", ""))
+    elif not _mh_st:
+        st.info("No momentum_high in this export yet — run the daily pipeline once to generate it.")
+
+st.divider()
+
+# ---------------------------------------------------------------------------
 # 6. Ad-hoc Ticker Scorer — score names beyond the uploaded universe
 # ---------------------------------------------------------------------------
 st.subheader("Ad-hoc Ticker Scorer")

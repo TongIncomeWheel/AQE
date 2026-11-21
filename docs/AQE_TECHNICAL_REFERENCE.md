@@ -854,3 +854,20 @@ if a value looks off, since engines do get recalibrated (see
 `MATHLAB_PTRS_CHANGELOG.md` for the PTRS revision history as an example of how
 that's tracked). Merged from AQE_FIELD_GLOSSARY.md + AQE_DAILY_DELIVERABLE.md,
 2026-07-27.*
+
+
+## Momentum High (PM 2026-11-21) — `momentum_high` + `momentum_high_status`
+
+A NEW data-only top-level section of `aqe_daily_export.json`, computed from RAW PRICES (`panel_daily` + `spy_daily`), never from the scored fields. Source: `src/momentum_high/` (`spec.py` frozen constants, `engine.py` vectorised rules, `daily.py` export section). A reading, never a gate, size, order or recommendation; it filters nothing and changes no existing field (the export glue assigns only the two new keys).
+
+**What it is, in plain English:** stocks that are already strong on every timeframe at once: priced at $5+, daily range 1.5-15% of price, in a clear uptrend (price above a rising 200-day average, with the 21/50/150/200-day averages stacked), within 3% of the 52-week high, top 20% of eligible names for both 12-1 momentum and 63-day outperformance versus SPY, short-term trend turning up (EMA13 and MACD histogram rising), ADX >= 20 with buyers above sellers, and the weekly chart agreeing. It is a screen of what is already working, NOT a forecast and NOT a buy list.
+
+**Rules (BACKTEST REVIEW reference code):** ATR14 = simple mean of true range over 14 bars (min 7); EMAs = `ewm(span=N, adjust=False, min_periods=N)`; 252-day high = rolling max of HIGH (min 200); `mom_12_1 = close[t-21]/close[t-252]-1`; `rs_63 = close/close[t-63] - SPY/SPY[t-63]` (SPY matched by date); top 20% = percentile rank >= 0.80 within the eligible set (price >= $5 and ATR% 1.5-15) per date; Elder green = EMA13 and MACD(12,26,9) histogram both above their prior bar; Wilder ADX14 >= 20 with +DI > -DI; weekly = completed weeks only (W-FRI; a Friday close completes its week; a session before a holiday Friday completes it too), close > 30-week SMA, 30-week SMA above its value 4 weeks earlier, close > 10-week SMA.
+
+**Market check:** `spy_above_200d`, `breadth_pct_above_50d` (share of the eligible set above its own 50-day SMA), `market_ok` = SPY above 200-day AND breadth >= 50. Members are listed whether or not `market_ok` is true.
+
+**Per row:** ticker, rank (by mom_12_1 descending), mom_12_1, rs_63, pct_from_52w_high, close, atr14, atr_pct, adx14, `first_day` (not a member in the prior 5 sessions, cuts recomputed per date), `reference_stop` = last close - 1.2 x ATR14 (a reference level from the last close, not an order; the next open is unknown at the nightly export).
+
+**Measured odds** (static, frozen from the BACKTEST REVIEW research, never computed by AQE): "history 2022-2026, 6-position $100k book, not a forecast". Hold 20 sessions: win rate 28%, avg winner +3.6R, avg loser -1.0R, avg +0.24R/trade. Half off at +1.5R, stop to breakeven, trail the rest at 3xATR: 43%, +1.7R, -1.0R, +0.14R/trade. Caveat: survivor universe; most of the gain came in 2024; not statistically proven against SPY on a risk-adjusted basis.
+
+**Status, never silent:** `momentum_high_status.status` is `live`, `degraded` (computed but the panel's last session is more than 4 days before the export date, or the market check is incomplete; reason given) or `error` (nothing computed; `momentum_high` is null, which means NOT READ, never "no members"). Verified on BACKTEST REVIEW's three sample dates: 2025-03-14 (7/7), 2026-06-15 (36/36), 2026-11-18 (2/2), identical names and rank order; breadth within 0.3 points (their universe is 1,618 names, ours 1,599).
