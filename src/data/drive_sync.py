@@ -778,6 +778,13 @@ _FIELD_GLOSSARY.update({
     "stage_status": "'live' (stage stamped on rows) or 'error' (reason given; rows carry no stage keys, "
                     "which means nothing was read, NOT a quiet tape). Lists unreadable names, the "
                     "daily_list count by stage, Trend Template passes and names that changed stage.",
+    "momentum_high": "MOMENTUM HIGH (PM 2026-11-21), a data-only section computed from RAW PRICES, never from the scored fields. Plain English: stocks that are already "
+                     "strong on every timeframe at once (see `what_it_is` inside). Holds the market check (SPY above its 200-day average, breadth), the `members` rows "
+                     "(ticker, rank by 12-1 momentum, mom_12_1, rs_63, pct_from_52w_high, close, atr14, atr_pct, adx14, first_day, reference_stop), the rules, and a "
+                     "static `measured_odds` block frozen from research ('history 2022-2026, 6-position $100k book, not a forecast'). A reading, not a forecast, buy list, "
+                     "sizing or order; filters nothing. null = NOT READ (see momentum_high_status), never 'no members'.",
+    "momentum_high_status": "'live' (computed), 'degraded' (computed, but the panel is stale or the market check incomplete; reason given) or 'error' (nothing computed, "
+                            "reason given, momentum_high is null). Also: as_of, universe_n, eligible_n, members_n, first_day_n, names_under_253_bars and the count of names passing each rule in order.",
     "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
                      "every row's missing `setups` means nothing was checked, NOT a "
                      "quiet tape. Also lists names that could not be graded.",
@@ -3042,6 +3049,16 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["swing_pivot_status"].get("status") != "live":
         print(f"  [WARN] swing_pivot not computed: {export['swing_pivot_status'].get('reason')}")
 
+    # ---- MOMENTUM HIGH (PM 2026-11-21): a NEW data-only top-level section from raw prices (src/momentum_high). Adds exactly two keys and touches no other
+    # field; a failed build is a loud status, never a silently empty section (momentum_high null = NOT READ).
+    try:
+        from src.momentum_high.daily import build_section as _mh_build
+        export["momentum_high"], export["momentum_high_status"] = _mh_build(list(_dl.keys()), export.get("date") or None)
+    except Exception as _exc:  # noqa: BLE001 -- additive, never breaks the export
+        export["momentum_high"], export["momentum_high_status"] = None, {"status": "error", "reason": f"{_exc.__class__.__name__}: {_exc}"}
+    if export["momentum_high_status"].get("status") != "live":
+        print(f"  [WARN] momentum_high {export['momentum_high_status'].get('status')}: {export['momentum_high_status'].get('reason')}")
+
     # ---- Stage at ticker / sector / market level (docs/AQE_STAGE_WEATHER.md, 2026-11-10): Weinstein stage on weekly bars,
     # Minervini C3 Trend Template + C2 Stage 2 confirmation, O'Neil C2 distribution days. Readings only. Loud, never raises.
     try:
@@ -3129,6 +3146,8 @@ def build_export(shortlist: dict | None = None) -> dict:
                              and not r.get("on_longlist") and not r.get("on_elder")),
         "qs_status": export.get("qs_status", "not_run"),
         "setups_status": (export.get("setups_status") or {}).get("status", "not_run"),
+        "momentum_high_status": (export.get("momentum_high_status") or {}).get("status", "not_run"),
+        "momentum_high_count": (export.get("momentum_high_status") or {}).get("members_n", 0),
         "stage_status": (export.get("stage_status") or {}).get("status", "not_run"),
         "market_stage": ((export.get("stage_market") or {}).get("market_read") or {}).get("stage"),
         "stage_2_count": sum(1 for r in _daily_list if r.get("stage") == 2),

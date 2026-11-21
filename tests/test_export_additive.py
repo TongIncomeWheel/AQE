@@ -93,6 +93,8 @@ def test_top_level_keys_are_additive_only():
         "swing_pivot_status", "subcomponents_status", "universe_rows_status",
         # Stage Weather (PM 2026-11-17): the market/sector/breadth stage read and its stamp status
         "stage_market", "stage_status",
+        # MOMENTUM HIGH (PM 2026-11-21): the data-only section and its status
+        "momentum_high", "momentum_high_status",
     }
     missing = baseline_keys - known_export_keys
     assert not missing, (
