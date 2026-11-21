@@ -1707,7 +1707,7 @@ SCORE_TREE += [
       "GENUINE failures only: names the corrected (v2) calculation cannot form any score for on the last bar (an input other than earnings is unavailable), grouped by reason. Under v2 "
       "they are excluded from every list; under v1 it is the list the cutover would exclude. 'unknown' = not known, never 'none'",
       "scanner/score_runner.py:build_scores", "last bar's sc_momentum_v2 is NaN; reason from which v2 input is NaN (weekly history / momentum inputs / other)"),
-    R("earn_data", "structure_100", "leaf", "ok|missing", "ok|missing",
+    R("earn_data", "", "leaf", "ok|missing", "ok|missing",
       "'missing' when no earnings report date is known on/after the bar: the name is scored without the earnings component and the Structure total rescaled to the same 0-100 range "
       "(informational under v1)", "engines/structure.py:compute",
       "earn_score_v2 is NaN -> structure_100_v2 = (rs_spy + rs_accel + base + position + resist + weekly) / 85 x 100 (= total/95 x 100 x 95/(95-10)); else total/95 x 100"),
