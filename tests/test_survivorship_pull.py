@@ -23,8 +23,11 @@ class FC:
 
     def _get_json(self, url, params):
         k = url.rsplit("/", 1)[-1]
-        src = self.bars if k == "historical-price-eod-full" else self.mcap
-        return src.get(params.get("symbol"), [])
+        src = self.bars if "historical-price-eod" in url else self.mcap
+        v = src.get(params.get("symbol"), [])
+        if isinstance(v, Exception):
+            raise v
+        return v
 
 
 def _srcs(**kw):
@@ -77,3 +80,26 @@ def test_partial_label_and_readonly_workflow():
     y = (ROOT / ".github" / "workflows" / "survivorship-partial.yml").read_text()
     assert "workflow_dispatch:" in y and "schedule:" not in y and "push:" not in y and "contents: read" in y and "contents: write" not in y
     assert "group: aqe-research" in y and "ALPACA_API_KEY_ID" in y and "fetch-depth: 0" in y
+
+
+def test_unknown_symbol_404_is_no_bars_not_a_failure_and_5xx_is_retried_and_the_path_is_the_slash_endpoint():
+    from src.data.fmp_client import FMPError
+    today = date(2026, 11, 21)
+    err404 = FMPError("FMP HTTP 404 for https://financialmodelingprep.com/stable/historical-price-eod/full: []")
+    fc = FC(bars={"JUNK": err404})
+    cls: dict = {}
+    assert SP.pull_one(fc, "JUNK", "2021-03-01", today, cls) == [] and cls["JUNK"]["class"] == "no_bars_in_window"
+
+    class Flaky(FC):
+        n = 0
+
+        def _get_json(self, url, params):
+            assert url.endswith("/historical-price-eod/full"), url
+            Flaky.n += 1
+            if Flaky.n < 3:
+                raise FMPError("FMP HTTP 502 for x: ")
+            return [_bar("2023-03-09")]
+    got = SP._get_retry(Flaky(), "https://x/historical-price-eod/full", {}, sleep=lambda s: None)
+    assert got and Flaky.n == 3
+    b = SP.bars_frame(Flaky(), "AAA", "2021-03-01", today)
+    assert len(b) == 1

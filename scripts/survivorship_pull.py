@@ -148,8 +148,34 @@ def build_candidates(client, sources=None) -> tuple[pd.DataFrame, dict]:
 
 
 # ------------------------------------------------------------------ per-name pull
+class FMP404(Exception):
+    pass
+
+
+def _get_retry(client, url: str, params: dict, tries: int = 3, wait_s: float = 5.0, sleep=None):
+    """FMP 404 -> FMP404 (unknown symbol, not a failure); 5xx -> retry (a transient 502 lost a name in the first shard run); anything else propagates."""
+    import time
+    from src.data.fmp_client import FMPError, FMPQuotaError
+    for k in range(tries):
+        try:
+            return client._get_json(url, params)
+        except FMPQuotaError:
+            raise
+        except FMPError as e:
+            msg = str(e)
+            if "HTTP 404" in msg:
+                raise FMP404(msg) from e
+            if "HTTP 5" in msg and k < tries - 1:
+                (sleep or time.sleep)(wait_s)
+                continue
+            raise
+
+
 def bars_frame(client, t: str, since: str, today: date) -> pd.DataFrame:
-    data = client._get_json(f"{RX.STABLE}/historical-price-eod-full", {"symbol": t, "from": since, "to": today.isoformat(), "apikey": client.config.api_key})
+    try:
+        data = _get_retry(client, f"{RX.STABLE}/historical-price-eod/full", {"symbol": t, "from": since, "to": today.isoformat(), "apikey": client.config.api_key})
+    except FMP404:
+        return pd.DataFrame()                 # FMP does not know this symbol (CUSIP-style Alpaca ids, never-US names): counted as no bars, with its reason
     data = data if isinstance(data, list) else []
     if not data:
         return pd.DataFrame()
