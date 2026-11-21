@@ -154,3 +154,33 @@ def test_shadow_report_shapes_the_promised_numbers(rx):
 def test_workflow_passes_rescore_through():
     y = (ROOT / ".github" / "workflows" / "research-extract.yml").read_text()
     assert "rescore:" in y and "RESCORE: ${{ inputs.rescore }}" in y and "--rescore" in y
+
+
+def test_merge_diag_sums_ints_and_dicts(rx):
+    t = {}
+    rx._merge_diag(t, {"tickers_scored": 3, "nan_v2_bars": {"a": 2}, "scope": "targeted"})
+    rx._merge_diag(t, {"tickers_scored": 4, "nan_v2_bars": {"a": 1, "b": 5}, "scope": "targeted"})
+    assert t == {"tickers_scored": 7, "nan_v2_bars": {"a": 3, "b": 5}, "scope": "targeted"}
+
+
+def test_rescore_runs_in_shards_reduces_each_and_restores_the_output_path(rx, tmp_path, monkeypatch):
+    from src.data import earnings as E
+    from src.scanner import score_runner
+    _fake_state(rx, tmp_path)
+    monkeypatch.setattr(E, "pull_earnings_dates_full", lambda c, t: {"tickers": len(t), "failed": [], "aborted": False})
+    import src.data.fmp_client as fc
+    monkeypatch.setattr(fc, "FMPClient", lambda *a, **k: object())
+    calls, orig_path = [], score_runner.SCORES_DAILY
+
+    def fake_build(only_tickers=None):
+        calls.append(list(only_tickers))
+        rows = pd.DataFrame({"date": pd.to_datetime(["2026-01-02"] * len(only_tickers)), "ticker": only_tickers, "x_v2": 1.0})
+        rows.to_parquet(score_runner.SCORES_DAILY, index=False)
+        score_runner.SCORES_DAILY.with_name("score_diagnostics_v2.json").write_text(json.dumps({"tickers_scored": len(only_tickers)}))
+    monkeypatch.setattr(score_runner, "build_scores", fake_build)
+    info = rx._rescore(["date", "ticker", "x_v2"], n_shards=2)
+    assert len(calls) == 2 and sorted(sum(calls, [])) == sorted(set(sum(calls, [])))
+    assert info["score_diagnostics"]["tickers_scored"] == len(sum(calls, []))
+    got = pd.concat([pd.read_parquet(x) for x in info["parts"]])
+    assert got["x_v2"].dtype == "float32" and set(got["ticker"]) == set(sum(calls, []))
+    assert score_runner.SCORES_DAILY == orig_path, "the scores path must be restored after sharding"
