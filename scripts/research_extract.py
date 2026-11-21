@@ -8,7 +8,7 @@ Run only from .github/workflows/research-extract.yml (workflow_dispatch). It is 
 No scoring, export or alert path is touched.
 
     python -m scripts.research_extract inventory
-    python -m scripts.research_extract extract [--years 6] [--recompute]
+    python -m scripts.research_extract extract [--years 6] [--recompute] [--rescore]
     python -m scripts.research_extract truncation [--sample 20] [--lag 40]
 
 NOT POINT-IN-TIME (stamped into the extract's meta and every inventory):
@@ -154,7 +154,8 @@ def _component_columns(score_columns: list[str]) -> dict:
     s0, s1 = cols.index("flow_score"), cols.index("mp_accel_state")
     assert a0 < a1 and s0 < s1, "SCORE_COLUMNS layout changed: re-read the section order before extracting"
     ref = [c for c in ("sc_momentum", "sc_momentum_raw", "sc_position", "sc_position_raw", "sc_m_gates", "sc_p_gates", "pipe_rank") if c in cols]
-    return {"aggregate": cols[a0:a1 + 1], "sub": cols[s0:s1 + 1], "reference_composites": ref}
+    shadow = [c for c in cols if c.endswith("_v2")]            # research review 2026-11-21: shadow fields shipped beside the live ones (scores_daily tail)
+    return {"aggregate": cols[a0:a1 + 1], "sub": cols[s0:s1 + 1], "reference_composites": ref, "shadow_v2": shadow}
 
 
 def _recompute(years: int) -> None:
@@ -166,15 +167,55 @@ def _recompute(years: int) -> None:
     score_runner.build_scores()
 
 
-def extract(years: int, recompute: bool) -> dict:
+def _rescore() -> dict:
+    """Re-run the CURRENT engines (live + shadow v2) over the RESTORED panel into the scratch dir: the stored scores_daily predates the _v2 columns.
+    First pulls every report date per ticker (earn_score_v2 needs the history: earnings_dates_full.json lives in scratch only). Production untouched."""
+    from src.data import earnings as E
+    from src.data.fmp_client import FMPClient
+    from src.scanner import score_runner
+    panel = pd.read_parquet(SCRATCH / "data" / "panel_daily.parquet", columns=["ticker"])
+    tickers = sorted(panel["ticker"].dropna().unique().tolist())
+    print(f"RESCORE: pulling report dates for {len(tickers)} tickers, then scoring in scratch", flush=True)
+    pulled = E.pull_earnings_dates_full(FMPClient(), tickers)
+    print(f"  report dates: {pulled['tickers']} tickers, {len(pulled['failed'])} failed, aborted={pulled['aborted']}", flush=True)
+    score_runner.build_scores()
+    diag_p = SCRATCH / "data" / "score_diagnostics_v2.json"
+    return {"earnings_dates": {k: v for k, v in pulled.items() if k != "failed"} | {"failed_tickers": pulled["failed"]},
+            "score_diagnostics": json.loads(diag_p.read_text()) if diag_p.exists() else None}
+
+
+def _shadow_report(scores: pd.DataFrame) -> dict:
+    """Distributions and null shares of the shadow v2 fields next to their live counterparts (the numbers the PRs promised)."""
+    def shares(col):
+        v = scores[col].dropna()
+        return {str(k): round(float(x), 4) for k, x in v.value_counts(normalize=True).sort_index().items()} if len(v) else {}
+    rep = {"rows": int(len(scores)), "null_share": {c: round(float(scores[c].isna().mean()), 4) for c in scores.columns if c.endswith("_v2")},
+           "atr_score_value_shares": {"live": shares("atr_score"), "v2": shares("atr_score_v2")},
+           "base_days": {"live": scores["base_days"].describe(percentiles=[.5, .9]).round(2).to_dict(),
+                         "v2": scores["base_days_v2"].describe(percentiles=[.5, .9]).round(2).to_dict()} if "base_days_v2" in scores.columns else None}
+    pairs = [("flow_100", "flow_100_v2"), ("energy_100", "energy_100_v2"), ("structure_100", "structure_100_v2"), ("mp_100", "mp_score_v2"),
+             ("elder_score", "elder_score_v2"), ("bq_100", "bq_100_v2"), ("pipe_rank", "pipe_rank_v2"), ("sc_momentum", "sc_momentum_v2"), ("sc_position", "sc_position_v2")]
+    rep["live_vs_v2"] = {}
+    for a, b in pairs:
+        if a in scores.columns and b in scores.columns:
+            ok = scores[a].notna() & scores[b].notna()
+            rep["live_vs_v2"][f"{a} -> {b}"] = {"n": int(ok.sum()), "corr": round(float(scores.loc[ok, a].corr(scores.loc[ok, b])), 4) if ok.sum() > 10 else None,
+                                                "mean_abs_diff": round(float((scores.loc[ok, a] - scores.loc[ok, b]).abs().mean()), 3) if ok.sum() else None}
+    return rep
+
+
+def extract(years: int, recompute: bool, rescore: bool = False) -> dict:
     snap = _restore()
     data = SCRATCH / "data"
+    rescore_info = None
     if recompute:
         print(f"RECOMPUTE over {years}y into scratch {data}", flush=True)
         _recompute(years)
+    if rescore:
+        rescore_info = _rescore()
     from src.scanner.score_runner import SCORE_COLUMNS
     comp = _component_columns(SCORE_COLUMNS)
-    keep = ["date", "ticker"] + comp["aggregate"] + comp["sub"] + comp["reference_composites"]
+    keep = ["date", "ticker"] + comp["aggregate"] + comp["sub"] + comp["reference_composites"] + (comp["shadow_v2"] if rescore else [])
     scores = pd.read_parquet(data / "scores_daily.parquet")
     missing = [c for c in keep if c not in scores.columns]
     if missing:
@@ -225,21 +266,27 @@ def extract(years: int, recompute: bool) -> dict:
     out = out.sort_values(["date", "ticker"]).reset_index(drop=True)
     OUT.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    pq = OUT / f"aqe_research_extract_{stamp}.parquet"
+    tag = "_v2" if rescore else ""
+    pq = OUT / f"aqe_research_extract{tag}_{stamp}.parquet"
     out.to_parquet(pq, index=False, compression="zstd")
     spy_out = spy[["date", "close"]].rename(columns={"close": "spy_close"})
     spy_out.to_csv(OUT / f"aqe_research_spy_{stamp}.csv", index=False)
     meta = {"generated_at": _now(), "snapshot": snap, "rows": int(len(out)), "tickers": int(out["ticker"].nunique()),
             "date_min": str(out["date"].min().date()), "date_max": str(out["date"].max().date()),
-            "recomputed": bool(recompute), "requested_years": years, "columns": {"identifiers": ["date", "ticker", "sector_etf_current"],
+            "recomputed": bool(recompute), "rescored_with_shadow_v2": bool(rescore), "requested_years": years, "columns": {"identifiers": ["date", "ticker", "sector_etf_current"],
             **comp, "market": ["close_panel", "vol_20d_ann_pit", "dollar_vol_20d_pit", "mcap_current_not_pit"],
             "forward": [f"{p}{h}{s}" for h in HORIZONS for p, s in (("fwd", ""), ("fwd", "_vs_spy"), ("fwd", "_vs_ew"), ("spy_fwd", ""), ("ew_fwd", ""))]},
             "forward_return_definition": "close of signal date -> close h sessions later on the panel's own session calendar; vs_spy = stock minus SPY; vs_ew = stock minus the equal-weight mean over names scored that date; last h sessions are null",
             "mcap_note": "mcap_current_not_pit empty (no universe_mcap.json in the snapshot)" if not mc else "current market cap, not point-in-time",
             "not_point_in_time": NOT_POINT_IN_TIME, "composites_note": "sc_*/pipe_rank are reference columns only; no list flags (longlist/elder/qs) are included"}
+    if rescore:
+        meta["shadow_v2"] = {"note": "every *_v2 column is a SHADOW calculation beside its live field (live code unchanged); see the PRs #134-#13x for each definition. "
+                                     "A NaN v2 value is a missing input, never a default credit. Items 1, 2, 3, 10, 16 are Pine spec changes awaiting PM sign-off.",
+                             "rescore": rescore_info, "report": _shadow_report(out)}
     (OUT / "extract_meta.json").write_text(json.dumps(meta, indent=1, default=str))
+    meta_name = f"aqe_research_extract{tag}_meta.json"
     ids = [_drive_put(pq.name, pq.read_bytes(), "application/octet-stream"),
-           _drive_put("aqe_research_extract_meta.json", (OUT / "extract_meta.json").read_bytes(), "application/json"),
+           _drive_put(meta_name, (OUT / "extract_meta.json").read_bytes(), "application/json"),
            _drive_put((OUT / f"aqe_research_spy_{stamp}.csv").name, (OUT / f"aqe_research_spy_{stamp}.csv").read_bytes(), "text/csv")]
     for e in ids:
         _write_ids(e)
@@ -333,13 +380,13 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("inventory")
-    e = sub.add_parser("extract"); e.add_argument("--years", type=int, default=6); e.add_argument("--recompute", action="store_true")
+    e = sub.add_parser("extract"); e.add_argument("--years", type=int, default=6); e.add_argument("--recompute", action="store_true"); e.add_argument("--rescore", action="store_true")
     t = sub.add_parser("truncation"); t.add_argument("--sample", type=int, default=20); t.add_argument("--lag", type=int, default=40)
     a = ap.parse_args(argv)
     if a.cmd == "inventory":
         inventory()
     elif a.cmd == "extract":
-        extract(min(a.years, 6), a.recompute)
+        extract(min(a.years, 6), a.recompute, a.rescore)
     else:
         truncation(a.sample, a.lag)
     return 0
