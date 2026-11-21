@@ -167,21 +167,69 @@ def _recompute(years: int) -> None:
     score_runner.build_scores()
 
 
-def _rescore() -> dict:
+def _rescore(keep: list[str], n_shards: int = 12) -> dict:
     """Re-run the CURRENT engines (live + shadow v2) over the RESTORED panel into the scratch dir: the stored scores_daily predates the _v2 columns.
-    First pulls every report date per ticker (earn_score_v2 needs the history: earnings_dates_full.json lives in scratch only). Production untouched."""
+    First pulls every report date per ticker (earn_score_v2 needs the history: earnings_dates_full.json lives in scratch only).
+    Scored in SHARDS, each reduced to the extract's columns as float32 before the next starts: scoring all ~1,600 tickers x 6y in one
+    process held ~250 full-width float64 columns and the runner was killed (run 44904664034, 'lost communication' at 1h24m). Production untouched."""
     from src.data import earnings as E
     from src.data.fmp_client import FMPClient
     from src.scanner import score_runner
     panel = pd.read_parquet(SCRATCH / "data" / "panel_daily.parquet", columns=["ticker"])
     tickers = sorted(panel["ticker"].dropna().unique().tolist())
-    print(f"RESCORE: pulling report dates for {len(tickers)} tickers, then scoring in scratch", flush=True)
+    del panel
+    print(f"RESCORE: pulling report dates for {len(tickers)} tickers, then scoring in {n_shards} shards in scratch", flush=True)
     pulled = E.pull_earnings_dates_full(FMPClient(), tickers)
     print(f"  report dates: {pulled['tickers']} tickers, {len(pulled['failed'])} failed, aborted={pulled['aborted']}", flush=True)
-    score_runner.build_scores()
-    diag_p = SCRATCH / "data" / "score_diagnostics_v2.json"
-    return {"earnings_dates": {k: v for k, v in pulled.items() if k != "failed"} | {"failed_tickers": pulled["failed"]},
-            "score_diagnostics": json.loads(diag_p.read_text()) if diag_p.exists() else None}
+    parts_dir = SCRATCH / "rescore_parts"
+    parts_dir.mkdir(parents=True, exist_ok=True)
+    diag_total: dict = {}
+    parts = []
+    orig = score_runner.SCORES_DAILY
+    try:
+        for k in range(n_shards):
+            sub = tickers[k::n_shards]
+            if not sub:
+                continue
+            d = parts_dir / f"shard{k:02d}"
+            d.mkdir(parents=True, exist_ok=True)
+            score_runner.SCORES_DAILY = d / "scores_daily.parquet"           # no prior file -> no merge, and the diagnostics land beside it
+            print(f"  shard {k + 1}/{n_shards}: {len(sub)} tickers", flush=True)
+            score_runner.build_scores(only_tickers=sub)
+            df = pd.read_parquet(score_runner.SCORES_DAILY)
+            missing = [c for c in keep if c not in df.columns]
+            if missing:
+                raise SystemExit(f"rescored scores are missing expected columns (loud): {missing}")
+            df = df[keep]
+            for c in df.columns:
+                if df[c].dtype == "float64":
+                    df[c] = df[c].astype("float32")
+            pp = parts_dir / f"part{k:02d}.parquet"
+            df.to_parquet(pp, index=False)
+            parts.append(pp)
+            diag_p = d / "score_diagnostics_v2.json"
+            if diag_p.exists():
+                _merge_diag(diag_total, json.loads(diag_p.read_text()))
+            (d / "scores_daily.parquet").unlink(missing_ok=True)
+            del df
+    finally:
+        score_runner.SCORES_DAILY = orig
+    return {"parts": [str(x) for x in parts],
+            "earnings_dates": {k: v for k, v in pulled.items() if k != "failed"} | {"failed_tickers": pulled["failed"]},
+            "score_diagnostics": diag_total or None, "shards": n_shards}
+
+
+def _merge_diag(total: dict, part: dict) -> None:
+    """Sum the per-shard score diagnostics (ints add, dicts of ints add by key); anything else keeps the latest value."""
+    for k, v in part.items():
+        if isinstance(v, bool) or not isinstance(v, (int, dict)):
+            total[k] = v
+        elif isinstance(v, int):
+            total[k] = total.get(k, 0) + v
+        else:
+            cur = total.setdefault(k, {})
+            for kk, vv in v.items():
+                cur[kk] = cur.get(kk, 0) + vv if isinstance(vv, int) else vv
 
 
 def _shadow_report(scores: pd.DataFrame) -> dict:
@@ -211,12 +259,15 @@ def extract(years: int, recompute: bool, rescore: bool = False) -> dict:
     if recompute:
         print(f"RECOMPUTE over {years}y into scratch {data}", flush=True)
         _recompute(years)
-    if rescore:
-        rescore_info = _rescore()
     from src.scanner.score_runner import SCORE_COLUMNS
     comp = _component_columns(SCORE_COLUMNS)
     keep = ["date", "ticker"] + comp["aggregate"] + comp["sub"] + comp["reference_composites"] + (comp["shadow_v2"] if rescore else [])
-    scores = pd.read_parquet(data / "scores_daily.parquet")
+    if rescore:
+        rescore_info = _rescore(keep)
+        scores = pd.concat([pd.read_parquet(x) for x in rescore_info.pop("parts")], ignore_index=True)
+        scores = scores.dropna(subset=["sc_momentum"]).reset_index(drop=True)
+    else:
+        scores = pd.read_parquet(data / "scores_daily.parquet")
     missing = [c for c in keep if c not in scores.columns]
     if missing:
         raise SystemExit(f"scores_daily is missing expected columns (loud): {missing}")
