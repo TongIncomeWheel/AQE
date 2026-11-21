@@ -81,8 +81,13 @@ def blocks(ctx: dict) -> tuple[dict, dict]:
         "treatment": EARN_TREATMENT,
         "missing_count": None if missing is None else len(missing),
         "tickers": None if missing is None else sorted(missing),
-        "reasons": None if missing is None else {t: missing[t] for t in sorted(missing)[:25]},
-        "note": "each such row carries earn_data: 'missing' (this is informational under v1: the live score still uses the old default credit there)",
+        "by_reason": None if missing is None else {why: {"count": sum(1 for v in missing.values() if v == why), "tickers": sorted(t for t, v in missing.items() if v == why)}
+                                                   for why in sorted(set(missing.values()))},
+        "no_history_count": None if missing is None else sum(1 for v in missing.values() if v == "no earnings history at all"),
+        "no_next_date_count": None if missing is None else sum(1 for v in missing.values() if v == "no next report date scheduled yet"),
+        "note": ("each such row carries earn_data: 'missing' (informational under v1: the live score still uses the old default credit there). The two causes are counted apart: "
+                 "'no earnings history at all' (funds, new listings) and 'no next report date scheduled yet' (a real company between a report and its next date being published). "
+                 "A calendar outage shows as a jump in no_next_date_count, never as a quiet rescale."),
     }
     unscorable = (diag or {}).get("v2_unscorable")
     live = ctx["active"] == "v2"

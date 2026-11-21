@@ -27,6 +27,8 @@ def test_v1_block_is_dark_lists_the_would_be_exclusions_and_legacy_equals_live(t
     assert ex["applies_now"] is False and ex["total"] == 0 and ex["by_reason"] == {}                              # a missing earnings history is NOT an exclusion
     assert "WOULD exclude" in ex["basis"] and "GENUINE failures only" in ex["basis"]
     assert sv["earn_data"]["missing_count"] == 1 and sv["earn_data"]["tickers"] == ["BBB"] and "85 x 100" in sv["earn_data"]["treatment"]
+    assert sv["earn_data"]["no_history_count"] == 1 and sv["earn_data"]["no_next_date_count"] == 0                  # BBB has no dates at all: counted apart from "no next date yet"
+    assert sv["earn_data"]["by_reason"] == {"no earnings history at all": {"count": 1, "tickers": ["BBB"]}}
     rows = [{"ticker": "AAA"}, {"ticker": "BBB"}, {"ticker": "NOPE"}]
     assert SVE.attach_legacy(rows, ctx) == 2
     for r in rows[:2]:
@@ -98,3 +100,13 @@ def test_the_scanner_shows_the_version_a_mixed_cache_error_and_the_named_exclusi
     assert any("Score version problem" in e.value and "MIXED" in e.value for e in at.error)
     assert any("Score version: **v1**" in c.value for c in at.caption)
     assert any("would be excluded under v2" in x.label for x in at.expander)
+
+
+def test_a_calendar_outage_is_a_visible_jump_in_the_no_next_date_count():
+    ctx = {"active": "v2", "source": "env", "cutover_date": None, "rows": {}, "versions": ["v2"], "problem": None, "legacy_columns": [], "status": "live", "reason": None,
+           "diag": {"score_version": "v2", "v2_unscorable": {}, "earn_data_missing": {"FUND": "no earnings history at all", "AAA": "no next report date scheduled yet",
+                                                                                   "BBB": "no next report date scheduled yet", "CCC": "no next report date scheduled yet"}}}
+    sv, _ = SVE.blocks(ctx)
+    e = sv["earn_data"]
+    assert (e["missing_count"], e["no_history_count"], e["no_next_date_count"]) == (4, 1, 3)
+    assert e["by_reason"]["no next report date scheduled yet"]["tickers"] == ["AAA", "BBB", "CCC"] and "calendar outage" in e["note"]

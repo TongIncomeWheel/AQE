@@ -3318,8 +3318,8 @@ def build_export(shortlist: dict | None = None) -> dict:
     export["data_quality"]["ma_scan"] = export["ma_scan"]
     _svp = (export.get("score_version") or {})
     _ed = (_svp.get("earn_data") or {})
-    export["data_quality"]["earn_data_missing"] = {"count": _ed.get("missing_count"), "tickers": _ed.get("tickers"), "treatment": _ed.get("treatment"),
-                                                   "known": _ed.get("missing_count") is not None}
+    export["data_quality"]["earn_data_missing"] = {"count": _ed.get("missing_count"), "no_history_count": _ed.get("no_history_count"), "no_next_date_count": _ed.get("no_next_date_count"),
+                                                   "tickers": _ed.get("tickers"), "treatment": _ed.get("treatment"), "known": _ed.get("missing_count") is not None}
     export["data_quality"]["score_version"] = {"version": _svp.get("version"),
                                                "problem": _svp.get("reason") if _svp.get("status") != "live" else (_svp.get("scores_cache") or {}).get("problem"),
                                                "ok": _svp.get("status") == "live" and not (_svp.get("scores_cache") or {}).get("problem")}

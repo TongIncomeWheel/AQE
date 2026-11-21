@@ -38,6 +38,11 @@ from src.engines.utils import atr, spy_positional_misaligned_bars as U_spy_misal
 SCORE_CHUNK_TICKERS = int(os.environ.get("AQE_SCORE_CHUNK_TICKERS", "150"))
 
 
+# Why an earnings component is missing on the last bar (kept apart so a calendar outage, where every name suddenly has no NEXT date, is a visible jump in one count)
+EARN_NO_HISTORY = "no earnings history at all"
+EARN_NO_NEXT_DATE = "no next report date scheduled yet"
+
+
 def _write_chunk(frames: list, parts_dir: Path, n: int):
     """Concat one chunk, drop rows with no sc_momentum (as the single-frame build did), write it as part n. Returns (rows, tickers) written."""
     chunk = pd.concat(frames, ignore_index=True).dropna(subset=["sc_momentum"]).reset_index(drop=True)
@@ -665,7 +670,7 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         diag["tickers_without_earn_dates"] += int(not earn_full.get(ticker))
         _last = row.iloc[-1]
         if _last["earn_data_v2"] == "missing":        # scored on the other parts, rescaled: listable, flagged (never excluded, never credited)
-            diag["earn_data_missing"][ticker] = "no earnings report date known on/after the last bar" if not earn_full.get(ticker) else "no upcoming report date in the cached history"
+            diag["earn_data_missing"][ticker] = EARN_NO_HISTORY if not earn_full.get(ticker) else EARN_NO_NEXT_DATE
         if pd.isna(_last["sc_momentum_v2"]):         # the corrected calculation cannot form a score for this name on its last bar: under v2 it is a NAMED exclusion (never silent)
             if pd.isna(_last["wk_score_v2"]):
                 _why = "weekly history unavailable"
