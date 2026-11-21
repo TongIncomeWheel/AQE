@@ -25,8 +25,18 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
 
 
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("hl_score", "hl_score_v2"),
+    ("hl_rs", "hl_rs_v2"),
+    ("hl_trend", "hl_trend_v2"),
+]
+
+
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     spy_daily: pd.DataFrame | None = None,

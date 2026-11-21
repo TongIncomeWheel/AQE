@@ -19,12 +19,22 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
+
+
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("mp_score", "mp_score_v2"),
+    ("abs_mom_score", "abs_mom_score_v2"),
+    ("rel_mom_score", "rel_mom_score_v2"),
+]
 
 # Dead-zone thresholds for the additive acceleration state label.
 ACCEL_UP = 0.10
 ACCEL_DN = -0.10
 
 
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     spy_daily: pd.DataFrame,

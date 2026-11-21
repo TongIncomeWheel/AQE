@@ -27,6 +27,7 @@ from src.data.earnings import load_earnings, load_earnings_dates_full
 from src.data.fmp_client import iter_with_progress
 from src.data.paths import DATA_DIR, PANEL_DAILY, PANEL_WEEKLY, SCORES_DAILY, SPY_DAILY
 from src.engines import anchored_vwap, bq, divergence, elder, energy, flow, health, k39, liquidity_sweep, mp, order_flow, pin_bar, pipeline_rank, price_volume_profile, readiness, scoring, smart_money_knn, squeeze_breakout, structure, vwap
+from src.engines import score_version
 from src.engines.utils import atr, spy_positional_misaligned_bars as U_spy_misaligned
 
 
@@ -68,6 +69,8 @@ def _combine_parts(parts_dir: Path, dest: Path) -> None:
         if tmp.exists():
             tmp.unlink()
 
+
+LEGACY_FROM, LEGACY_LOCAL, LEGACY_COLUMNS = score_version.LEGACY_FROM, score_version.LEGACY_LOCAL, score_version.LEGACY_COLUMNS
 
 SCORE_COLUMNS = [
     "date", "ticker",
@@ -139,6 +142,7 @@ SCORE_COLUMNS = [
     "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2", "base_days_v2", "base_score_v2",
     "flow_100_v2", "flow_score_v2", "accum_score_v2", "atr_score_v2", "energy_100_v2",
 ]
+SCORE_COLUMNS = SCORE_COLUMNS + LEGACY_COLUMNS + [score_version.VERSION_COLUMN]
 
 
 def scoreable_tickers(panel_tickers, *, scan_universe, basket_constituents,
@@ -160,6 +164,23 @@ def scoreable_tickers(panel_tickers, *, scan_universe, basket_constituents,
     """
     basket_only = (set(basket_constituents) - set(scan_universe)) - set(held_tickers)
     return sorted(t for t in panel_tickers if t not in basket_only)
+
+
+def panel_scoreable_tickers(panel_tickers) -> list[str]:
+    """The tickers `build_scores` scores, from the panel's tickers: the scan universe + held names, never basket-only context names. One definition, shared with the
+    nightly's earnings report-date refresh so the two cannot disagree about which names need report dates."""
+    from src.engines.srm import BASKET_CONSTITUENTS
+    from src.data.universe import load_universe
+    from src.valen import baskets as _vb
+    try:
+        from src.data.ptj import load_held_positions
+        _held_tickers = {p.get("ticker") for p in load_held_positions()
+                         if p.get("ticker") and p.get("type", "STK") == "STK"}
+    except Exception:  # noqa: BLE001
+        _held_tickers = set()
+    return scoreable_tickers(
+        panel_tickers, scan_universe=load_universe(include_benchmark=True),
+        basket_constituents=set(BASKET_CONSTITUENTS) | _vb.context_only(), held_tickers=_held_tickers)
 
 
 def build_scores(only_tickers: list[str] | None = None) -> None:
@@ -205,22 +226,11 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
     earnings_cal = load_earnings()
     earn_full = load_earnings_dates_full()      # shadow v2 (items 12/13): historical report dates; {} -> earn_score_v2 is NaN everywhere (counted in the diagnostics)
     diag = {"tickers_scored": 0, "bars": 0, "spy_misaligned_tickers": 0, "spy_misaligned_bars": 0, "earn_dates_tickers": len(earn_full),
-            "tickers_without_earn_dates": 0, "nan_v2_bars": {}}
+            "tickers_without_earn_dates": 0, "nan_v2_bars": {}, "score_version": score_version.active(), "v2_unscorable": {}}
     if earnings_cal:
         print(f"  Earnings calendar loaded: {len(earnings_cal)} tickers")
 
-    from src.engines.srm import BASKET_CONSTITUENTS
-    from src.data.universe import load_universe
-    from src.valen import baskets as _vb
-    try:
-        from src.data.ptj import load_held_positions
-        _held_tickers = {p.get("ticker") for p in load_held_positions()
-                         if p.get("ticker") and p.get("type", "STK") == "STK"}
-    except Exception:  # noqa: BLE001
-        _held_tickers = set()
-    tickers = scoreable_tickers(
-        daily_groups.keys(), scan_universe=load_universe(include_benchmark=True),
-        basket_constituents=set(BASKET_CONSTITUENTS) | _vb.context_only(), held_tickers=_held_tickers)
+    tickers = panel_scoreable_tickers(daily_groups.keys())
     if only_tickers is not None:
         _want = set(only_tickers)
         tickers = [t for t in tickers if t in _want]
@@ -250,6 +260,9 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             bq_df = bq.compute(d)
             k39_gate_s, k39_val = k39.compute_k39_gate(w, d["date"])
             k39_gate_v2_s, k39_val_v2 = k39.compute_k39_gate(w, d["date"], week_complete=True)   # shadow v2 (item 18)
+            k39_gate_leg, k39_val_leg = k39_gate_s, k39_val                                      # the OLD weekly gate, kept as k39_*_legacy
+            if score_version.active() == "v2":
+                k39_gate_s, k39_val = k39_gate_v2_s, k39_val_v2                                  # live K39 takes the week-complete read
             rd_df = readiness.compute(d, spy_daily=spy_daily)
             hl_df = health.compute(d, spy_daily=spy_daily, weekly=w if not w.empty else None)
             # Divergence is a LAST-BAR read (non-repainting, freshness-gated);
@@ -329,6 +342,19 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
                                                elder_df["elder_score_v2"])
         sc_p_gates_v2 = scoring.gates_position(flow_df["flow_100_v2"], energy_df["energy_100_v2"], structure_df["structure_100_v2"], mp_df["mp_score_v2"],
                                                bq_df["bq_100_v2"], k39_gate_v2_s)
+
+        # Legacy composites: the same weights and gates, fed the engines' `_legacy` (old-calculation) parts and the old K39 gate. Under v1 these equal the live ones.
+        _L = score_version.LEGACY
+        sc_m_leg = scoring.compute(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L], elder_df["elder_score" + _L])
+        sc_m_raw_leg = scoring.compute_raw(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L])
+        sc_p_leg = scoring.compute_position(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L],
+                                            bq_df["bq_100" + _L], k39_gate_leg)
+        sc_p_raw_leg = scoring.compute_position_raw(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L],
+                                                    bq_df["bq_100" + _L])
+        sc_m_gates_leg = scoring.gates_momentum(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L],
+                                                elder_df["elder_score" + _L])
+        sc_p_gates_leg = scoring.gates_position(flow_df["flow_100" + _L], energy_df["energy_100" + _L], structure_df["structure_100" + _L], mp_df["mp_score" + _L],
+                                                bq_df["bq_100" + _L], k39_gate_leg)
 
         atr14 = atr(d["high"].astype(float), d["low"].astype(float), d["close"].astype(float), n=14)
 
@@ -499,6 +525,18 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         # Divergence — LAST BAR ONLY (the engine reads the trailing window at the
         # latest close; history rows carry NaN/None = "not computed", honest).
         _last_ix = row.index[-1]
+        _frames = {"flow": flow_df, "energy": energy_df, "mp": mp_df, "structure": structure_df, "elder": elder_df, "bq": bq_df, "rd": rd_df, "hl": hl_df,
+                   "pr": pr_df if len(d) >= 252 else None}
+        for _out, _fk, _ec in LEGACY_FROM:
+            _src = _frames[_fk]
+            if _src is not None:
+                row[_out + _L] = _src[_ec + _L].to_numpy()
+            else:                                                    # pipeline-rank history < 252 bars: the same blanks the live columns carry
+                row[_out + _L] = row[_out].to_numpy()
+        for _name, _ser in (("sc_momentum", sc_m_leg), ("sc_momentum_raw", sc_m_raw_leg), ("sc_position", sc_p_leg), ("sc_position_raw", sc_p_raw_leg),
+                            ("sc_m_gates", sc_m_gates_leg), ("sc_p_gates", sc_p_gates_leg), ("k39_value", k39_val_leg), ("k39_gate", k39_gate_leg)):
+            row[_name + _L] = _ser.to_numpy() if hasattr(_ser, "to_numpy") else _ser
+        row[score_version.VERSION_COLUMN] = score_version.active()
         row["div_state"] = None
         row["div_oscs"] = None
         row["div_date"] = None
@@ -623,6 +661,17 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         diag["spy_misaligned_bars"] += _mis
         diag["spy_misaligned_tickers"] += int(_mis > 0)
         diag["tickers_without_earn_dates"] += int(not earn_full.get(ticker))
+        _last = row.iloc[-1]
+        if pd.isna(_last["sc_momentum_v2"]):         # the corrected calculation cannot score this name on its last bar: under v2 it is a NAMED exclusion (never silent)
+            if pd.isna(_last["earn_score_v2"]):
+                _why = "earnings history unavailable"
+            elif pd.isna(_last["wk_score_v2"]):
+                _why = "weekly history unavailable"
+            elif pd.isna(_last["abs_mom_score_v2"]) or pd.isna(_last["rel_mom_score_v2"]):
+                _why = "insufficient history for the momentum inputs"
+            else:
+                _why = "a corrected input is unavailable"
+            diag["v2_unscorable"][ticker] = _why
         _warm = row["structure_100"].notna()
         for _c in ("wk_score_v2", "earn_score_v2", "rs_spy_score_v2", "rs_accel_score_v2", "abs_mom_score_v2", "rel_mom_score_v2"):
             diag["nan_v2_bars"][_c] = diag["nan_v2_bars"].get(_c, 0) + int((row[_c].isna() & _warm).sum())

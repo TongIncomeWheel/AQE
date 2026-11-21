@@ -1550,6 +1550,22 @@ if _dq.get("flagged_count"):
             for _f in _dq_daily:
                 st.markdown(f"- `{_f['ticker']}` — missing: {', '.join(_f['null_fields'])}")
 
+# Score version (PM 2026-11-21 cutover): which calculation the live scores carry. A mixed/unknown cache is an error banner; named exclusions are listed, never silent.
+_sv = _ex.get("score_version") or {}
+_sx = _ex.get("score_exclusions") or {}
+if _ex and _sv:
+    _svq = (_ex.get("data_quality") or {}).get("score_version") or {}
+    if _svq.get("ok") is False:
+        st.error(f"Score version problem: {_svq.get('problem')}. The scores in this export may mix the old and the corrected calculation — do not trust list membership until a full rebuild.")
+    st.caption(f"Score version: **{_sv.get('version')}** ({'corrected calculation live' if _sv.get('version') == 'v2' else 'old calculation live; the corrected one is computed alongside as _v2'}"
+               f"{', cutover ' + str(_sv['cutover_date']) if _sv.get('cutover_date') else ''}). Every score field also ships as `<field>_legacy` (the old value).")
+    if _sx.get("status") == "unknown":
+        st.warning(f"Score exclusions: NOT KNOWN — {_sx.get('reason')}")
+    elif _sx.get("total"):
+        with st.expander(f"Score exclusions: {_sx['total']} name(s) {'EXCLUDED from every list' if _sx.get('applies_now') else 'would be excluded under v2'} — an input is unavailable"):
+            for _why, _info in (_sx.get("by_reason") or {}).items():
+                st.markdown(f"**{_why}** ({_info['count']}): " + ", ".join(f"`{t}`" for t in _info["tickers"]))
+
 _EXPORT_COL_ORDER = [
     "rank", "ticker", "last_close", "source", "pe", "on_longlist", "on_elder",
     "unr_status", "unr_note",     # U&R on the last completed trading day (PM 2026-10-12)

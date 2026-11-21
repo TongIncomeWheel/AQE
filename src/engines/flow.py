@@ -29,11 +29,21 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
+
+
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("flow_100", "flow_100_v2"),
+    ("flow_score", "flow_score_v2"),
+    ("accum_score", "accum_score_v2"),
+]
 
 
 FLOW_RAW_MAX = 17.0 + 7.5 + 7.5 + 3.5 + 5.0      # 40.5: the true maximum of the five components (flow 17, accum 7.5, volume 7.5, skew 3.5, ext +5)
 
 
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     *,

@@ -636,6 +636,11 @@ _FIELD_GLOSSARY = {
                   "raw reference price, separate from entry/bracket levels.",
 }
 _FIELD_GLOSSARY.update(LENS_GLOSSARY)
+# `<field>_legacy` (PM 2026-11-21 cutover): the pre-cutover (v1) value of every twin field, shipped beside the live one. One entry per field, from the single list in score_version.
+from src.engines import score_version as _score_version_mod                                    # noqa: E402
+for _lc in _score_version_mod.LEGACY_COLUMNS:
+    _FIELD_GLOSSARY[_lc] = (f"The pre-cutover (v1) value of {_lc[:-len(_score_version_mod.LEGACY)]}, shipped beside the live field so the cutover to the corrected scores can be compared "
+                            f"and rolled back (see score_version). Under v1 it equals the live field. QS and Signal Radar read the legacy values until a PM-signed re-freeze.")
 
 # ---- QS (Quiet Strength) — the third lens, folded into the SAME daily_list.
 _FIELD_GLOSSARY.update({
@@ -783,6 +788,12 @@ _FIELD_GLOSSARY.update({
                      "(ticker, rank by 12-1 momentum, mom_12_1, rs_63, pct_from_52w_high, close, atr14, atr_pct, adx14, first_day, reference_stop), the rules, and a "
                      "static `measured_odds` block frozen from research ('history 2022-2026, 6-position $100k book, not a forecast'). A reading, not a forecast, buy list, "
                      "sizing or order; filters nothing. null = NOT READ (see momentum_high_status), never 'no members'.",
+    "score_version": "Which calculation the LIVE score fields carry (PM 2026-11-21 cutover). `version` v1 = the old calculation, v2 = the corrected one; `legacy_fields` lists every field "
+                     "that also ships as `<field>_legacy` (the OLD value, kept beside the live one for comparison and rollback); `scores_cache` reports the versions found in the "
+                     "scores cache and any problem. A mixed or unknown version is a data_quality failure (data_quality.score_version), never a quiet default.",
+    "score_exclusions": "Names the corrected (v2) calculation cannot score on the last bar because an input is unavailable (missing = NaN, never a default credit), grouped by reason, "
+                        "e.g. 'earnings history unavailable'. `applies_now` is true under v2 (they are excluded from every list and from daily_list); under v1 it is the list the "
+                        "cutover WOULD exclude. status 'unknown' = the list is NOT KNOWN, never 'none'.",
     "momentum_high_status": "'live' (computed), 'degraded' (computed, but the panel is stale or the market check incomplete; reason given) or 'error' (nothing computed, "
                             "reason given, momentum_high is null). Also: as_of, universe_n, eligible_n, members_n, first_day_n, names_under_253_bars and the count of names passing each rule in order.",
     "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
@@ -3059,6 +3070,21 @@ def build_export(shortlist: dict | None = None) -> dict:
     if export["momentum_high_status"].get("status") != "live":
         print(f"  [WARN] momentum_high {export['momentum_high_status'].get('status')}: {export['momentum_high_status'].get('reason')}")
 
+    # ---- Score version (PM 2026-11-21 cutover): which calculation the live scores carry, the named exclusions, and `<field>_legacy` (the OLD calculation) on every row.
+    # Adds only new keys; loud, never raises, never silent (an unreadable cache or a mixed/unstamped one is reported in the block and in data_quality).
+    _sv_ctx = None
+    try:
+        from src.data import score_version_export as _sve
+        _sv_ctx = _sve.load_context()
+        export["score_version"], export["score_exclusions"] = _sve.blocks(_sv_ctx)
+        _sve.attach_legacy(list(_dl.values()), _sv_ctx)
+        _sve.attach_legacy(export.get("held_positions") or [], _sv_ctx)
+    except Exception as _exc:  # noqa: BLE001 -- additive, never breaks the export
+        export["score_version"] = {"status": "error", "reason": f"{_exc.__class__.__name__}: {_exc}"}
+        export["score_exclusions"] = {"status": "unknown", "reason": "score version block failed; the exclusion list is NOT KNOWN, not empty"}
+    if (export["score_version"].get("status") != "live") or (export["score_version"].get("scores_cache") or {}).get("problem"):
+        print(f"  [WARN] score version: {export['score_version'].get('reason') or export['score_version']['scores_cache']['problem']}")
+
     # ---- Stage at ticker / sector / market level (docs/AQE_STAGE_WEATHER.md, 2026-11-10): Weinstein stage on weekly bars,
     # Minervini C3 Trend Template + C2 Stage 2 confirmation, O'Neil C2 distribution days. Readings only. Loud, never raises.
     try:
@@ -3091,6 +3117,8 @@ def build_export(shortlist: dict | None = None) -> dict:
             _u_passes.append(("elder_context", lambda r: (_loc["_attach_elder"](r), {"status": "ok"})[1]))
         if _loc.get("_stamp_vol_validation"):
             _u_passes.append(("volume_validation", lambda r: (_loc["_stamp_vol_validation"](r), {"status": "ok"})[1]))
+        if _sv_ctx is not None:
+            _u_passes.append(("score_version", lambda r: {"status": "ok", "rows": _sve.attach_legacy([r], _sv_ctx)}))
         _u_passes.append(("setups", lambda r: _attach_setups(r, [])))
         _u_passes.append(("swing_pivot", lambda r: _attach_swing(r, [], run_date=export.get("date") or None)))
         if _loc.get("_attach_stage"):
@@ -3286,6 +3314,10 @@ def build_export(shortlist: dict | None = None) -> dict:
     # (18.0/GREEN fallback, daily_orchestrator.py:808) or a stale macro cache
     # is VISIBLE, never a silent-empty read.
     export["data_quality"]["ma_scan"] = export["ma_scan"]
+    _svp = (export.get("score_version") or {})
+    export["data_quality"]["score_version"] = {"version": _svp.get("version"),
+                                               "problem": _svp.get("reason") if _svp.get("status") != "live" else (_svp.get("scores_cache") or {}).get("problem"),
+                                               "ok": _svp.get("status") == "live" and not (_svp.get("scores_cache") or {}).get("problem")}
     export["data_quality"]["macro"] = {
         "vix_source": "default" if (sl.get("regime", {}) or {}).get("vix") == 18.0 else "fmp",
         "intermarket_cache_date": (export.get("intermarket") or {}).get("as_of"),

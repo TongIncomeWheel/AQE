@@ -15,6 +15,13 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
+
+
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("elder_score", "elder_score_v2"),
+]
 
 # SHADOW v2 (research review 2026-11-21, item 15; spec from the BACKTEST REVIEW session, PM: "Fix the indicator calculations").
 # hist_score_v2 scores the MACD histogram on SIGN and a volatility-normalised MAGNITUDE only: x = hist / ATR14, no acceleration term (the live hist_accel > 0 is
@@ -24,6 +31,7 @@ ELDER_V2_X_LOW = 0.10
 ELDER_V2_X_HIGH = 0.23
 
 
+@_twins(TWINS)
 def compute(
     daily: pd.DataFrame,
     *,

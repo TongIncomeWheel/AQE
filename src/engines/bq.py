@@ -23,8 +23,18 @@ import numpy as np
 import pandas as pd
 
 from . import utils as U
+from src.engines.score_version import twins as _twins
 
 
+# Score-version switch (PM 2026-11-21): the live columns carry the corrected values under v2; every twin also ships as <field>_legacy.
+TWINS = [
+    ("bq_100", "bq_100_v2"),
+    ("bq_base_dur", "bq_base_dur_v2"),
+    ("bq_base_days", "bq_base_days_v2"),
+]
+
+
+@_twins(TWINS)
 def compute(daily: pd.DataFrame) -> pd.DataFrame:
     d = daily.reset_index(drop=True).copy()
     high = d["high"].astype(float)

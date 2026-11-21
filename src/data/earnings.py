@@ -297,6 +297,100 @@ def pull_earnings_dates_full(client, tickers, since: str = "2018-01-01", budget_
     return {"tickers": len(dates), "failed": failed, "aborted": aborted}
 
 
+def _pull_report_dates(client, ticker: str, since: str, sleep) -> tuple[str, object]:
+    """One ticker's report dates from FMP /stable/earnings. ('ok', [dates]) | ('failed', message) | ('aborted', message); a 429 is waited out and retried twice."""
+    from src.data.fmp_client import FMPError, FMPQuotaError
+    for k in range(3):
+        try:
+            data = client._get_json(f"{FMP_STABLE}/earnings", {"symbol": ticker, "limit": 100, "apikey": client.config.api_key})
+            return "ok", sorted({str(r["date"])[:10] for r in (data if isinstance(data, list) else []) if str(r.get("date") or "")[:10] >= since})
+        except FMPQuotaError as e:
+            return "aborted", f"FMP quota/denial: {e}"
+        except FMPError as e:
+            if "429" in str(e) and k < 2:
+                sleep(90)
+                continue
+            return "failed", f"{e.__class__.__name__}: {str(e)[:120]}"
+    return "failed", "retries exhausted"
+
+
+def fetch_report_dates_one(ticker: str, client=None, since: str = "2018-01-01") -> list[str] | None:
+    """One ticker's report dates straight from FMP (for the ad-hoc scorer, which scores names outside the cached universe). None when unavailable (never a guess)."""
+    client = client or FMPClient()
+    status, val = _pull_report_dates(client, ticker, since, lambda s: None)
+    return val if status == "ok" and val else None
+
+
+EARNINGS_DATES_MAX_AGE_DAYS = 7
+EARNINGS_DATES_BUDGET_S = 25 * 60          # per nightly run; the first full pull (~2,300 names at 80 calls/min) spreads over a few nights, most-missing first
+
+
+def refresh_earnings_dates_full(client, tickers, *, recent: dict | None = None, max_age_days: int = EARNINGS_DATES_MAX_AGE_DAYS, budget_s: float = EARNINGS_DATES_BUDGET_S,
+                                since: str = "2018-01-01", today: date | None = None, sleep=None, clock=None) -> dict:
+    """INCREMENTAL refresh of data/earnings_dates_full.json (the report-date history `earn_score_v2` is scored from), for the nightly pipeline.
+
+    Pulls, in this order and until the budget is spent: tickers with NO entry, then entries older than `max_age_days`, then entries whose `recent` latest report date is newer
+    than their last pull (a report just happened, so the cached "next" date is stale). Existing entries are kept (merged), never dropped. Per-ticker pull dates live beside the
+    dates in the same file (`pulled`), which keeps `load_earnings_dates_full()`'s format unchanged. Loud: returns and writes a status (also to output/earnings_dates_status.json)
+    naming the failures, the abort reason, and how many tickers are still missing or stale, so a name with no history is a named exclusion, never a silent default."""
+    import time as _t
+    sleep = sleep or _t.sleep
+    clock = clock or _t.monotonic
+    today = today or date.today()
+    iso = today.isoformat()
+    cache = {}
+    try:
+        if EARNINGS_DATES_FULL_PATH.exists():
+            cache = json.loads(EARNINGS_DATES_FULL_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        cache = {}
+    dates, pulled = dict(cache.get("dates") or {}), dict(cache.get("pulled") or {})
+    recent = recent or {}
+
+    def age(t):
+        p = pulled.get(t)
+        return (today - date.fromisoformat(p)).days if p else None
+
+    def stale(t):
+        a = age(t)
+        if a is None:
+            return t in dates                          # an entry from an older pull with no pull date: treat as stale
+        return a >= max_age_days or (recent.get(t) and max(recent[t]) > pulled[t])
+
+    missing = [t for t in tickers if t not in dates]
+    old = sorted((t for t in tickers if t in dates and stale(t)), key=lambda t: (pulled.get(t) or ""))
+    todo = missing + old
+    failed, aborted, n_ok, t0 = {}, None, 0, clock()
+    for i, t in enumerate(todo):
+        if clock() - t0 > budget_s:
+            aborted = f"time budget {budget_s:.0f}s reached after {i} of {len(todo)} tickers (the rest are pulled on the next runs)"
+            break
+        status, val = _pull_report_dates(client, t, since, sleep)
+        if status == "ok":
+            dates[t], pulled[t] = val, iso
+            n_ok += 1
+        elif status == "aborted":
+            aborted = f"{val} after {i} of {len(todo)} tickers"
+            break
+        else:
+            failed[t] = val
+    prev_failed = {k: v for k, v in (cache.get("failed") or {}).items() if k not in dates}
+    EARNINGS_DATES_FULL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    EARNINGS_DATES_FULL_PATH.write_text(json.dumps({"as_of": iso, "dates": dates, "pulled": pulled, "failed": {**prev_failed, **failed}, "aborted": aborted}), encoding="utf-8")
+    still_missing = [t for t in tickers if t not in dates]
+    status = {"as_of": iso, "tickers_requested": len(tickers), "pulled_this_run": n_ok, "to_pull_at_start": len(todo), "failed_this_run": failed,
+              "aborted": aborted, "missing_after": len(still_missing), "missing_tickers_sample": still_missing[:25],
+              "stale_after": sum(1 for t in tickers if t in dates and stale(t)), "budget_s": budget_s, "elapsed_s": round(clock() - t0, 1),
+              "complete": not still_missing and not aborted}
+    try:
+        from .paths import OUTPUT_DIR
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / "earnings_dates_status.json").write_text(json.dumps(status, indent=1), encoding="utf-8")
+    except OSError:
+        pass
+    return status
+
+
 def _load_universe() -> set[str]:
     """Load universe tickers for filtering (strips comments and blanks)."""
     path = DATA_DIR / "universe.txt"
