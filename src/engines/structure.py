@@ -261,6 +261,10 @@ def _base_days(in_base_arr, high_arr, close_arr, volume_arr, vol_sma20, *, requi
             and not np.isnan(vol_sma20[t])
             and volume_arr[t] > vol_sma20[t]
         )
+        if cond_break and not require_not_in_base:
+            # v2 only (backtest review 2026-11-21, item 10): the breakout ENDS the base, so the raw counter restarts here. Without this, mode1's in_base stays true
+            # through a small breakout, the count keeps running, and base_days returns to the multi-hundred-day run the moment the 10-bar latch decays.
+            raw_base_count[t] = 0
         # Phase 3: latch (DSG-02)
         prev_latched = latched_base_days[t - 1]
         prev_bsb = bars_since_breakout[t - 1]
