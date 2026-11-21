@@ -92,8 +92,6 @@ SCORE_COLUMNS = [
     "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
     "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
     "bq_100_v2", "bq_base_dur_v2", "bq_base_days_v2",
-    "resist_score_v2", "structure_100_v2",
-    "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2",
     "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2", "base_days_v2", "base_score_v2",
 ]
 
