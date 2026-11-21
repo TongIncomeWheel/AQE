@@ -86,6 +86,11 @@ SCORE_COLUMNS = [
     "of_state", "of_pressure", "of_date", "of_rvol",
     # ── Liquidity sweep / stop run (last bar only) ──
     "ls_state", "ls_level", "ls_date", "ls_volume_confirmed",
+    # ── SHADOW v2 (research-review 2026-11-21; PM: "Fix the indicator calculations", shipped as shadow fields) ──
+    # Same pass, beside the live fields, which stay untouched. Nothing reads these in the export, the gates or the alerts: the PM decides any cutover
+    # after a side-by-side. Added at the END so the section slices in research_extract._component_columns are unchanged.
+    "ret_12m_pct_v2", "pr_ret_12m_v2", "pr_adx_score_v2", "momentum_composite_v2",
+    "fip_quality_v2", "fip_raw_v2", "fip_spike_excluded_v2", "pipe_rank_v2", "pipe_tier_v2",
 ]
 
 
@@ -356,6 +361,16 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
             "pr_rsi_score": pr_df["rsi_score"] if len(d) >= 252 else np.nan,
             "pr_vol_score": pr_df["vol_score"] if len(d) >= 252 else np.nan,
             "pr_ma_score": pr_df["ma_score"] if len(d) >= 252 else np.nan,
+            # Shadow v2 (Pipeline Rank: items 4, 5, 6)
+            "ret_12m_pct_v2": pr_df["ret_12m_pct_v2"] if len(d) >= 252 else np.nan,
+            "pr_ret_12m_v2": pr_df["ret_12m_score_v2"] if len(d) >= 252 else np.nan,
+            "pr_adx_score_v2": pr_df["adx_score_v2"] if len(d) >= 252 else np.nan,
+            "momentum_composite_v2": pr_df["momentum_composite_v2"] if len(d) >= 252 else np.nan,
+            "fip_quality_v2": pr_df["fip_quality_v2"] if len(d) >= 252 else np.nan,
+            "fip_raw_v2": pr_df["fip_raw_v2"] if len(d) >= 252 else np.nan,
+            "fip_spike_excluded_v2": pr_df["fip_spike_excluded_v2"] if len(d) >= 252 else False,
+            "pipe_rank_v2": pr_df["pipe_rank_v2"] if len(d) >= 252 else np.nan,
+            "pipe_tier_v2": pr_df["pipe_tier_v2"] if len(d) >= 252 else "",
             # Readiness sub-components
             "rd_score": rd_df["rd_score"],
             "rd_state": rd_df["rd_state"],
