@@ -1478,6 +1478,17 @@ SCORE_TREE = [
       "valen/setups_daily.py:attach_setup_grades",
       "'live' when grade_universe ran over the panel; 'error' + the exception "
       "text when loading or grading raised (rows then carry no `setups`)"),
+    R("momentum_high", "", "block", "dict | null", "",
+      "MOMENTUM HIGH (PM 2026-11-21): stocks already strong on every timeframe at once, computed from RAW PRICES. market_check (SPY above its "
+      "200-day, breadth), members rows ranked by 12-1 momentum, the rules, a static frozen measured_odds block. null = NOT READ, never 'no members'",
+      "momentum_high/engine.py:compute", "rows pass every rule on the last close: price >= $5, ATR14 1.5-15% of close, close > EMA150 > EMA200 with EMA200 rising, "
+      "close >= 0.97 x 252-day high, EMA21 > EMA50 > EMA150, top 20% of eligible for mom_12_1 and rs_63, Elder green, ADX >= 20 with +DI > -DI, weekly agreement"),
+    R("momentum_high_status", "", "leaf", "dict", "live|degraded|error",
+      "Whether the Momentum High section was computed this export: reason when degraded or error, as_of, universe/eligible/members counts, names under 253 bars, "
+      "and how many names pass each rule in order",
+      "momentum_high/daily.py:build_section",
+      "'live' computed; 'degraded' computed but the panel's last session is > 4 days before the export date or the market check is incomplete; 'error' + reason "
+      "when nothing was computed (momentum_high is then null)"),
 
     # ── misc identity / pointers ──────────────────────────────────────────
     R("ticker", "", "leaf", "str", "",
@@ -1950,6 +1961,8 @@ def classify_export_location(name: str) -> str:
     if name == "setups":
         return "daily_list[] + held_positions[] (VALEN Part 3 grades)"
     if name == "setups_status":
+        return "export top level"
+    if name in ("momentum_high", "momentum_high_status"):
         return "export top level"
     if name in _JOURNAL_ONLY:
         return "held_positions only (PTJ broker journal passthrough)"
