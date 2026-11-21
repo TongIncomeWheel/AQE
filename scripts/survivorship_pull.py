@@ -37,6 +37,7 @@ OUT = EH.OUT
 SCRATCH = EH.SCRATCH
 SINCE_DEFAULT = "2021-03-01"
 US_EXCHANGES = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "CBOE", "NYSEARCA", "NYSEMKT"}
+MCAP_ENDPOINTS = ("historical-market-capitalization", "historical-market-cap")
 STALE_DAYS = 10            # a name whose last bar is within this many days of today is still trading, not delisted
 DERIVATIVE_NAME = re.compile(r"\b(warrants?|units?|rights?)\b|\bTEST\b", re.I)
 DERIVATIVE_SYMBOL = re.compile(r"^[A-Z]{4}[WRU]$")          # only used when a source gives no name
@@ -208,23 +209,26 @@ def classify(df_bars: pd.DataFrame, today: date) -> str:
 
 def mcap_windows(client, t: str, since: str, last: date, diag: dict | None = None) -> list[dict]:
     """Daily market cap per year window up to the name's last bar. A 404 on a window is an EMPTY window (FMP serves 404 where it has no rows), never a failure of the name;
-    the first cut let one empty window fail the whole name (all 234 delisted names in shard 1 lost their market cap, run 44922269216). A 404 is retried once WITHOUT the
-    `limit` parameter (in case that is what the server rejects), and every window's outcome is tallied in `diag` so the meta shows what actually happened."""
+    the first cut let one empty window fail the whole name (all 234 delisted names in shard 1 lost their market cap, run 44922269216). The first cut called /historical-market-cap, which FMP does not serve on REST (the MCP
+    tool's name, not the path): the documented path is /historical-market-capitalization. Every window's outcome is tallied in `diag` so the meta shows which path answered."""
     out = []
     d = diag if diag is not None else {}
     for a, b in RX.year_windows(since, last):
-        base = {"symbol": t, "from": a.isoformat(), "to": b.isoformat(), "apikey": client.config.api_key}
+        base = {"symbol": t, "from": a.isoformat(), "to": b.isoformat(), "limit": 400, "apikey": client.config.api_key}
         d["windows"] = d.get("windows", 0) + 1
-        try:
-            data = _get_retry(client, f"{RX.STABLE}/historical-market-cap", base | {"limit": 400})
-        except FMP404:
+        data, hit = None, False
+        for ep in MCAP_ENDPOINTS:                  # the documented path first; the old guess second (kept only so the meta shows which one answers)
             try:
-                data = _get_retry(client, f"{RX.STABLE}/historical-market-cap", base)
-                d["ok_without_limit"] = d.get("ok_without_limit", 0) + 1
-            except FMP404 as e:
-                d["empty_404"] = d.get("empty_404", 0) + 1
-                d.setdefault("first_404", f"{a}..{b}")
+                data = _get_retry(client, f"{RX.STABLE}/{ep}", base)
+                d[f"ok_{ep}"] = d.get(f"ok_{ep}", 0) + 1
+                hit = True
+                break
+            except FMP404:
                 continue
+        if not hit:
+            d["empty_404"] = d.get("empty_404", 0) + 1
+            d.setdefault("first_404", f"{a}..{b}")
+            continue
         out += [{"ticker": t, "date": r.get("date"), "market_cap": r.get("marketCap")} for r in (data if isinstance(data, list) else [])]
     return out
 
@@ -291,7 +295,7 @@ def run(stage: str, since: str, budget_h: float, shard: tuple[int, int]) -> int:
                  "still_trading_excluded": int(tally.get("still_trading", 0)), "no_bars_in_window": int(tally.get("no_bars_in_window", 0)),
                  "delisted_by_last_bar_year": {str(k): int(v) for k, v in last_years.items()},
                  "no_bars_reasons": {str(k): int(v) for k, v in pd.Series([v.get("reason") for v in cls.values() if v["class"] == "no_bars_in_window"]).value_counts().items()} if cls else {},
-                 "mcap_window_outcomes": {k: int(sum(json.loads(v.get("mcap_diag") or "{}").get(k, 0) for v in cls.values())) for k in ("windows", "ok_without_limit", "empty_404")} if cls else {},
+                 "mcap_window_outcomes": {k: int(sum(json.loads(v.get("mcap_diag") or "{}").get(k, 0) for v in cls.values())) for k in ("windows", "empty_404") + tuple(f"ok_{e}" for e in MCAP_ENDPOINTS)} if cls else {},
                  "mcap_first_404_examples": [{"symbol": k, "window": json.loads(v["mcap_diag"]).get("first_404")} for k, v in list(cls.items()) if v.get("mcap_diag") and json.loads(v["mcap_diag"]).get("first_404")][:10],
                  "delisted_without_mcap": sorted(k for k, v in cls.items() if v["class"] == "delisted_with_bars" and not v.get("mcap_months")),
                  "bar_rows": int(len(bars)), "mcap_monthend_rows": int(len(mcap)),
