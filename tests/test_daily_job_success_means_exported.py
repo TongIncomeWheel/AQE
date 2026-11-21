@@ -291,3 +291,50 @@ def test_artifacts_published_survives_a_timeout(_wired, monkeypatch):
     assert marker["artifacts_published"] == {
         "total": 11, "written": 11, "failed": [], "absent": [],
     }
+
+
+# ---- Step 1c (score cache refresh): a failed or killed full score build must be LOUD in aqe_last_run.json, never a stale export that looks fresh (conductor 2026-11-21) ----
+_OK_OUT = "[daily] Step 1: Incremental bar pull...\n[daily] Step 1c: Score cache refresh...\n  Score cache refresh OK (Step 1c): score version v1\n[daily] Step 2: next\n"
+_FAILED_OUT = ("[daily] Step 1c: Score cache refresh...\n  [WARN] Score cache refresh failed: boom\n"
+               "  Score cache refresh FAILED (Step 1c): MemoryError: boom -- every later step reads the STALE scores_daily.parquet\n[daily] Step 2: next\n")
+
+
+def test_a_failed_step_1c_is_never_a_success_even_when_the_export_is_dated_today(_wired, monkeypatch):
+    now = datetime(2026, 11, 24, 6, 0, tzinfo=SGT)
+    _write_export(_wired, "2026-11-24")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0, stdout=_FAILED_OUT))
+    m = J._run_pipeline_and_record(now)
+    assert m["status"] == "partial" and m["stale_scores"] is True
+    assert "FAILED (Step 1c)" in m["score_cache_status"] and "Step 1c" in m["reason"] and "STALE" in m["reason"]
+    assert m["last_step_started"].startswith("[daily] Step 2")
+
+
+def test_a_clean_step_1c_stays_a_success_and_the_status_is_recorded(_wired, monkeypatch):
+    now = datetime(2026, 11, 24, 6, 0, tzinfo=SGT)
+    _write_export(_wired, "2026-11-24")
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=0, stdout=_OK_OUT))
+    m = J._run_pipeline_and_record(now)
+    assert m["status"] == "success" and "stale_scores" not in m and "Score cache refresh OK" in m["score_cache_status"]
+
+
+def test_a_killed_run_names_the_step_that_was_running_and_never_reports_step_1c_as_ok(_wired, monkeypatch):
+    """Out-of-memory kill: the process prints nothing at death. The marker says which step started last and that Step 1c never reported."""
+    now = datetime(2026, 11, 24, 6, 0, tzinfo=SGT)
+    _write_export(_wired, "2026-11-23")                                              # stale export from the previous day
+    killed = "[daily] Step 1: Incremental bar pull...\n[daily] Step 1c: Score cache refresh...\n  Scores (2026-11-23) behind panel (2026-11-24) -- rebuilding...\n"
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: _FakeProc(returncode=-9, stdout=killed))
+    m = J._run_pipeline_and_record(now)
+    assert m["status"] == "failed" and m["rc"] == -9
+    assert m["last_step_started"] == "[daily] Step 1c: Score cache refresh..."
+    assert m["score_cache_status"].startswith("unknown") and "killed" in m["score_cache_status"]
+
+
+def test_a_timeout_records_the_step_and_the_score_cache_status(_wired, monkeypatch):
+    now = datetime(2026, 11, 24, 6, 0, tzinfo=SGT)
+    _write_export(_wired, "2026-11-23")
+
+    def boom(*a, **k):
+        raise subprocess.TimeoutExpired(cmd="x", timeout=1, output="[daily] Step 1c: Score cache refresh...\n")
+    monkeypatch.setattr(subprocess, "run", boom)
+    m = J._run_pipeline_and_record(now)
+    assert m["status"] == "failed" and m["last_step_started"] == "[daily] Step 1c: Score cache refresh..." and m["score_cache_status"].startswith("unknown")

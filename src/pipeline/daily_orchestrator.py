@@ -260,8 +260,12 @@ def run_daily(run_date: date | None = None, skip_pull: bool = False) -> dict:
             build_scores()
         else:
             print(f"  Score cache already current ({scores_latest.date()}) — skip rebuild")
+        print(f"  Score cache refresh OK (Step 1c): score version {_sv.active()}")
     except Exception as exc:
         print(f"  [WARN] Score cache refresh failed: {exc}")
+        # Loud and recognisable: daily_job copies this line into aqe_last_run.json (score_cache_status) and refuses to call the run a success, because every later step
+        # now reads the STALE scores_daily.parquet and the export would look fresh while built on old scores.
+        print(f"  Score cache refresh FAILED (Step 1c): {exc.__class__.__name__}: {exc} -- every later step reads the STALE scores_daily.parquet")
 
     # Step 2: Pipeline Rank — screen full universe
     print("[daily] Step 2: Pipeline Rank screening...")

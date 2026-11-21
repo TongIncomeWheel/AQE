@@ -173,10 +173,14 @@ def test_the_scores_build_carries_legacy_for_every_twin_the_version_stamp_and_sw
         _same(a2.loc[common, live + SV.LEGACY], a1.loc[common, live])                                   # legacy under v2 == live under v1
         _same(a2.loc[common, live], a2.loc[common, {"pipe_rank": "pipe_rank_v2", "base_days": "base_days_v2"}.get(live, live + "_v2")])    # live under v2 == the v2 column
     assert not a2.loc[common, "sc_momentum"].isna().any()
-    # BBB has no report dates: the corrected calculation cannot score it, so it is a NAMED exclusion under v2 (never a silent default), and listed as would-exclude under v1
-    assert "BBB" not in set(v2.ticker) and "BBB" in set(v1.ticker)
-    assert d2["v2_unscorable"] == {"BBB": "earnings history unavailable"} and d1["v2_unscorable"] == {"BBB": "earnings history unavailable"}
+    # BBB has no report dates: it is NOT excluded (conductor ruling 2026-11-21): scored without the earnings component, rescaled, flagged earn_data: missing
+    assert "BBB" in set(v2.ticker) and "BBB" in set(v1.ticker)
+    bb = v2[v2.ticker == "BBB"]
+    assert (bb["earn_data"] == "missing").all() and bb["sc_momentum"].notna().all() and bb["earn_score"].isna().all()
+    assert d2["v2_unscorable"] == {} and d1["v2_unscorable"] == {}                                           # genuine failures only: none here
+    assert list(d2["earn_data_missing"]) == ["BBB"] and list(d1["earn_data_missing"]) == ["BBB"]
     assert d1["score_version"] == "v1" and d2["score_version"] == "v2"
+    assert (a2["earn_data"] == "ok").sum() > 20
 
 
 def test_rolling_back_to_v1_reproduces_the_old_live_values_exactly(tmp_path, monkeypatch):
@@ -194,3 +198,26 @@ def test_qs_and_signal_radar_read_the_legacy_scale_not_the_live_one():
     sr = (root / "src" / "engines" / "signal_radar.py").read_text()
     assert qs.count("_legacy_view(pd.read_parquet(SCORES_DAILY))") == 2 and "pd.read_parquet(SCORES_DAILY)\n" not in qs.replace("_legacy_view(pd.read_parquet(SCORES_DAILY))", "")
     assert "_legacy_view(pd.read_parquet(scores_path))" in sr
+
+
+
+def test_structure_rescale_formula_when_the_earnings_component_is_missing():
+    """structure_100_v2 = (the other parts) / 85 x 100 when the earnings component is missing, = total / 95 x 100 otherwise; any OTHER NaN part still gives NaN."""
+    from src.data.fmp_client import resample_to_weekly
+    from src.engines import structure
+    d, spy = _series(420, seed=5)
+    w = resample_to_weekly(d)
+    dates = [x.strftime("%Y-%m-%d") for x in pd.date_range("2020-10-01", "2023-06-01", freq="91D")]
+    have = structure.compute(d, spy_daily=spy, weekly=w, ticker="X", earn_dates_full={"X": dates})
+    miss = structure.compute(d, spy_daily=spy, weekly=w, ticker="X", earn_dates_full={})
+    parts = ["rs_spy_score_v2", "rs_accel_score_v2", "base_score_v2", "resist_score_v2", "wk_score_v2"]
+    assert (have["earn_data_v2"] == "ok").all() and (miss["earn_data_v2"] == "missing").all() and miss["earn_score_v2"].isna().all()
+    ok = miss["structure_100_v2"].notna()
+    assert ok.sum() > 100
+    ms_pos = (have["structure_100_v2"] / 100.0 * 95.0) - have[parts].sum(axis=1) - have["earn_score_v2"]        # recover the position component from the with-earnings run
+    want = ((miss[parts].sum(axis=1) + ms_pos) / 85.0 * 100.0).clip(0.0, 100.0)
+    _same(miss["structure_100_v2"][ok], want[ok])
+    assert (have["structure_100_v2"].dropna() >= 0).all()
+    # a NaN OTHER part still propagates (no score can be formed): drop the weekly history and the weekly part goes NaN
+    nowk = structure.compute(d, spy_daily=spy, weekly=pd.DataFrame(), ticker="X", earn_dates_full={})
+    assert nowk["wk_score_v2"].isna().all() and nowk["structure_100_v2"].isna().all()

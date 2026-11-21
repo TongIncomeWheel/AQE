@@ -179,6 +179,23 @@ def _marker_path() -> Path:
     return OUTPUT_DIR / MARKER_FILENAME
 
 
+def _score_cache_status(stdout: str) -> str:
+    """Step 1c (score cache refresh): did the full score build finish? Scanned from the pipeline's captured stdout whatever the overall outcome. A kill (out of memory)
+    prints nothing, so a missing line is reported as such, never as success (conductor 2026-11-21: a stale export must never look fresh)."""
+    for line in reversed((stdout or "").splitlines()):
+        if "Score cache refresh OK" in line or "Score cache refresh FAILED" in line:
+            return line.strip()
+    return "unknown -- Step 1c printed no OK/FAILED line (the run was killed or timed out during or before the score build, or the step was not reached)"
+
+
+def _last_step_started(stdout: str) -> str:
+    """The last '[daily] Step ...' line the pipeline printed: which step was running when a run died."""
+    for line in reversed((stdout or "").splitlines()):
+        if "[daily] Step" in line:
+            return line.strip()
+    return "unknown -- no step line printed"
+
+
 def _write_marker(marker: dict) -> None:
     content = json.dumps(marker, indent=2)
     try:
@@ -386,8 +403,13 @@ def _run_pipeline_and_record(now: datetime) -> dict:
         # TimeoutExpired/Exception branches below, never on the plain rc==0
         # path most runs actually take. A clean subprocess exit is necessary
         # but not sufficient; the export must ALSO be dated today.
-        ok = rc == 0 and feed_today
+        _sc = _score_cache_status(proc.stdout)
+        _stale = _sc.startswith("Score cache refresh FAILED")                          # Step 1c failed: the export was built on STALE scores, so it must not read as a success
+        ok = rc == 0 and feed_today and not _stale
         marker.update({
+            "score_cache_status": _sc,
+            "last_step_started": _last_step_started(proc.stdout),
+            **({"stale_scores": True} if _stale else {}),
             "status": "success" if ok else ("failed" if rc != 0 else "partial"),
             "rc": rc,
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
@@ -398,9 +420,8 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "ma_panel_refresh": _line_status(proc.stdout, "MA panel refresh", "unknown -- Step 6h-1 produced no recognizable output"),
             "artifacts_published": _artifacts_published(proc.stdout),
             "tail": "\n".join((proc.stdout or "").splitlines()[-8:]) if not ok else "",
-            **({} if ok else {"reason": "pipeline exited 0 but the export was not "
-                                         "refreshed for today -- see the tail for "
-                                         "which step actually failed"}),
+            **({} if ok else {"reason": ("Step 1c (score cache refresh) FAILED: the export was built on STALE scores -- " + _sc) if _stale else
+                              "pipeline exited 0 but the export was not refreshed for today -- see the tail for which step actually failed"}),
         })
     except subprocess.TimeoutExpired as exc:
         # The orchestrator writes + uploads the export at Step 8, BEFORE the heavy
@@ -415,6 +436,8 @@ def _run_pipeline_and_record(now: datetime) -> dict:
             "status": "partial" if feed_today else "failed",
             "finished_at": datetime.now(SGT).strftime("%Y-%m-%d %H:%M:%S SGT"),
             "exported_at": exported_at,
+            "score_cache_status": _score_cache_status(partial),
+            "last_step_started": _last_step_started(partial),
             "packets_status": _packets_status(partial),
             "committee_data_status": _committee_data_status(partial),
             "artifacts_published": _artifacts_published(partial),

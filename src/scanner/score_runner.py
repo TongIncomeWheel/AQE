@@ -142,7 +142,7 @@ SCORE_COLUMNS = [
     "resist_score_v2", "structure_100_v2", "elder_score_v2", "hist_score_v2", "base_days_v2", "base_score_v2",
     "flow_100_v2", "flow_score_v2", "accum_score_v2", "atr_score_v2", "energy_100_v2",
 ]
-SCORE_COLUMNS = SCORE_COLUMNS + LEGACY_COLUMNS + [score_version.VERSION_COLUMN]
+SCORE_COLUMNS = SCORE_COLUMNS + LEGACY_COLUMNS + [score_version.VERSION_COLUMN, "earn_data_v2", "earn_data"]
 
 
 def scoreable_tickers(panel_tickers, *, scan_universe, basket_constituents,
@@ -226,7 +226,7 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
     earnings_cal = load_earnings()
     earn_full = load_earnings_dates_full()      # shadow v2 (items 12/13): historical report dates; {} -> earn_score_v2 is NaN everywhere (counted in the diagnostics)
     diag = {"tickers_scored": 0, "bars": 0, "spy_misaligned_tickers": 0, "spy_misaligned_bars": 0, "earn_dates_tickers": len(earn_full),
-            "tickers_without_earn_dates": 0, "nan_v2_bars": {}, "score_version": score_version.active(), "v2_unscorable": {}}
+            "tickers_without_earn_dates": 0, "nan_v2_bars": {}, "score_version": score_version.active(), "v2_unscorable": {}, "earn_data_missing": {}}
     if earnings_cal:
         print(f"  Earnings calendar loaded: {len(earnings_cal)} tickers")
 
@@ -537,6 +537,8 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
                             ("sc_m_gates", sc_m_gates_leg), ("sc_p_gates", sc_p_gates_leg), ("k39_value", k39_val_leg), ("k39_gate", k39_gate_leg)):
             row[_name + _L] = _ser.to_numpy() if hasattr(_ser, "to_numpy") else _ser
         row[score_version.VERSION_COLUMN] = score_version.active()
+        row["earn_data_v2"] = structure_df["earn_data_v2"].to_numpy()       # "missing" where no report date is known on/after the bar (scored without the earnings component, rescaled)
+        row["earn_data"] = row["earn_data_v2"]                              # informational under v1 (the live default credit is still used there); the rescale applies under v2
         row["div_state"] = None
         row["div_oscs"] = None
         row["div_date"] = None
@@ -662,10 +664,10 @@ def build_scores(only_tickers: list[str] | None = None) -> None:
         diag["spy_misaligned_tickers"] += int(_mis > 0)
         diag["tickers_without_earn_dates"] += int(not earn_full.get(ticker))
         _last = row.iloc[-1]
-        if pd.isna(_last["sc_momentum_v2"]):         # the corrected calculation cannot score this name on its last bar: under v2 it is a NAMED exclusion (never silent)
-            if pd.isna(_last["earn_score_v2"]):
-                _why = "earnings history unavailable"
-            elif pd.isna(_last["wk_score_v2"]):
+        if _last["earn_data_v2"] == "missing":        # scored on the other parts, rescaled: listable, flagged (never excluded, never credited)
+            diag["earn_data_missing"][ticker] = "no earnings report date known on/after the last bar" if not earn_full.get(ticker) else "no upcoming report date in the cached history"
+        if pd.isna(_last["sc_momentum_v2"]):         # the corrected calculation cannot form a score for this name on its last bar: under v2 it is a NAMED exclusion (never silent)
+            if pd.isna(_last["wk_score_v2"]):
                 _why = "weekly history unavailable"
             elif pd.isna(_last["abs_mom_score_v2"]) or pd.isna(_last["rel_mom_score_v2"]):
                 _why = "insufficient history for the momentum inputs"

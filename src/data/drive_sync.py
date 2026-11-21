@@ -791,9 +791,11 @@ _FIELD_GLOSSARY.update({
     "score_version": "Which calculation the LIVE score fields carry (PM 2026-11-21 cutover). `version` v1 = the old calculation, v2 = the corrected one; `legacy_fields` lists every field "
                      "that also ships as `<field>_legacy` (the OLD value, kept beside the live one for comparison and rollback); `scores_cache` reports the versions found in the "
                      "scores cache and any problem. A mixed or unknown version is a data_quality failure (data_quality.score_version), never a quiet default.",
-    "score_exclusions": "Names the corrected (v2) calculation cannot score on the last bar because an input is unavailable (missing = NaN, never a default credit), grouped by reason, "
-                        "e.g. 'earnings history unavailable'. `applies_now` is true under v2 (they are excluded from every list and from daily_list); under v1 it is the list the "
-                        "cutover WOULD exclude. status 'unknown' = the list is NOT KNOWN, never 'none'.",
+    "score_exclusions": "GENUINE failures only: names for which the corrected (v2) calculation cannot form any score on the last bar (a required input other than earnings is unavailable; "
+                        "NaN, never a default credit), grouped by reason. `applies_now` is true under v2 (they are excluded from every list and from daily_list); under v1 it is the "
+                        "list the cutover WOULD exclude. status 'unknown' = the list is NOT KNOWN, never 'none'. A missing earnings history is NOT an exclusion (see earn_data).",
+    "earn_data": "'missing' on a row when no earnings report date is known on/after the last bar: the name is scored WITHOUT the earnings component and the Structure total rescaled to "
+                 "the same 0-100 range (see score_version.earn_data.treatment); 'ok' otherwise. Informational under v1. The count is data_quality.earn_data_missing.",
     "momentum_high_status": "'live' (computed), 'degraded' (computed, but the panel is stale or the market check incomplete; reason given) or 'error' (nothing computed, "
                             "reason given, momentum_high is null). Also: as_of, universe_n, eligible_n, members_n, first_day_n, names_under_253_bars and the count of names passing each rule in order.",
     "setups_status": "'live' (setups graded), 'error' (reason given). With 'error' "
@@ -3315,6 +3317,9 @@ def build_export(shortlist: dict | None = None) -> dict:
     # is VISIBLE, never a silent-empty read.
     export["data_quality"]["ma_scan"] = export["ma_scan"]
     _svp = (export.get("score_version") or {})
+    _ed = (_svp.get("earn_data") or {})
+    export["data_quality"]["earn_data_missing"] = {"count": _ed.get("missing_count"), "tickers": _ed.get("tickers"), "treatment": _ed.get("treatment"),
+                                                   "known": _ed.get("missing_count") is not None}
     export["data_quality"]["score_version"] = {"version": _svp.get("version"),
                                                "problem": _svp.get("reason") if _svp.get("status") != "live" else (_svp.get("scores_cache") or {}).get("problem"),
                                                "ok": _svp.get("status") == "live" and not (_svp.get("scores_cache") or {}).get("problem")}

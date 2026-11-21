@@ -24,12 +24,14 @@ def test_v1_block_is_dark_lists_the_would_be_exclusions_and_legacy_equals_live(t
     sv, ex = SVE.blocks(ctx)
     assert sv["version"] == "v1" and sv["status"] == "live" and sv["scores_cache"] == {"versions": ["v1"], "problem": None}
     assert "sc_momentum" in sv["legacy_fields"] and "flow_100" in sv["legacy_fields"] and len(sv["legacy_fields"]) == 41
-    assert ex["applies_now"] is False and ex["total"] == 1 and ex["by_reason"]["earnings history unavailable"]["tickers"] == ["BBB"]
-    assert "WOULD exclude" in ex["basis"]
+    assert ex["applies_now"] is False and ex["total"] == 0 and ex["by_reason"] == {}                              # a missing earnings history is NOT an exclusion
+    assert "WOULD exclude" in ex["basis"] and "GENUINE failures only" in ex["basis"]
+    assert sv["earn_data"]["missing_count"] == 1 and sv["earn_data"]["tickers"] == ["BBB"] and "85 x 100" in sv["earn_data"]["treatment"]
     rows = [{"ticker": "AAA"}, {"ticker": "BBB"}, {"ticker": "NOPE"}]
     assert SVE.attach_legacy(rows, ctx) == 2
     for r in rows[:2]:
         assert r["sc_momentum_legacy"] is not None and r["score_version"] == "v1"
+    assert rows[0]["earn_data"] == "ok" and rows[1]["earn_data"] == "missing"                                   # the per-row flag
     assert "sc_momentum_legacy" not in rows[2]                                      # a ticker with no scores row gets nothing invented
     json.dumps(rows)                                                                 # JSON-safe (no NaN / numpy scalars)
 
@@ -38,8 +40,9 @@ def test_v2_block_excludes_the_named_names_and_keeps_the_old_value_beside_the_li
     ctx = _ctx(tmp_path, monkeypatch, "v2")
     sv, ex = SVE.blocks(ctx)
     assert sv["version"] == "v2" and sv["scores_cache"]["versions"] == ["v2"] and sv["scores_cache"]["problem"] is None
-    assert ex["applies_now"] is True and "EXCLUDED" in ex["basis"] and ex["by_reason"] == {"earnings history unavailable": {"count": 1, "tickers": ["BBB"]}}
-    assert "BBB" not in ctx["rows"] and "AAA" in ctx["rows"]
+    assert ex["applies_now"] is True and "EXCLUDED" in ex["basis"] and ex["total"] == 0                          # nobody is a genuine failure here
+    assert sv["earn_data"]["tickers"] == ["BBB"] and ctx["rows"]["BBB"]["earn_data"] == "missing"                # BBB stays listed, scored without the earnings component
+    assert "BBB" in ctx["rows"] and "AAA" in ctx["rows"]
     a = ctx["rows"]["AAA"]
     assert a["sc_momentum_legacy"] is not None and a["flow_100_legacy"] is not None
 
