@@ -144,3 +144,18 @@ def test_explicit_tickers_are_a_fill_run_and_the_workflow_declares_the_input():
     import pathlib, yaml
     y = yaml.safe_load((pathlib.Path(__file__).resolve().parents[1] / ".github" / "workflows" / "research-extras.yml").read_text(encoding="utf-8"))
     assert "tickers" in (y.get(True) or y.get("on"))["workflow_dispatch"]["inputs"]
+
+
+def test_mcap_rows_call_the_documented_market_cap_path():
+    """The first cut called /historical-market-cap (the MCP tool's name), which FMP's REST API answers with 404 on every window; the documented path is /historical-market-capitalization."""
+    seen = []
+
+    class C:
+        config = Cfg()
+
+        def _get_json(self, url, params):
+            seen.append(url.rsplit("/", 1)[-1])
+            return [{"date": "2023-03-09", "marketCap": 6.0e9}]
+    rows = RX.mcap_rows(C(), "SIVB", "2023-01-01", today=date(2023, 3, 9))
+    assert seen and set(seen) == {"historical-market-capitalization"}
+    assert rows == [{"ticker": "SIVB", "date": "2023-03-09", "market_cap": 6.0e9}]
