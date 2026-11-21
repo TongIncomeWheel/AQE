@@ -130,3 +130,27 @@ def test_inventory_handles_a_tickerless_spy_file_and_reports_a_broken_file_loudl
     assert inv["scores_daily"]["date_min"] and inv["scores_daily"]["names_per_date"]["max"] == 3
     assert "flow_100" in inv["scores_daily"]["non_null_share_by_year"]
     assert (tmp_path / "out" / "inventory.json").exists()
+
+
+def test_shadow_v2_group_is_separate_and_leaves_live_groups_unchanged(rx):
+    from src.scanner.score_runner import SCORE_COLUMNS
+    c = rx._component_columns(SCORE_COLUMNS)
+    assert c["shadow_v2"] and all(x.endswith("_v2") for x in c["shadow_v2"])
+    live = set(c["aggregate"]) | set(c["sub"]) | set(c["reference_composites"])
+    assert not (live & set(c["shadow_v2"])), "a shadow column leaked into a live group"
+    for good in ("pipe_rank_v2", "flow_100_v2", "structure_100_v2", "atr_score_v2"):
+        assert good in c["shadow_v2"], good
+
+
+def test_shadow_report_shapes_the_promised_numbers(rx):
+    df = pd.DataFrame({"atr_score": [0, 10, 10, 20], "atr_score_v2": [0, 5, 10, 20], "base_days": [3, 5, 8, 9], "base_days_v2": [2, 4, 6, 7],
+                       "flow_100": [10., 20., 30., 40.], "flow_100_v2": [11., 19., 33., None]})
+    rep = rx._shadow_report(df)
+    assert rep["rows"] == 4 and rep["null_share"]["flow_100_v2"] == 0.25
+    assert rep["atr_score_value_shares"]["live"]["10"] == 0.5 and rep["atr_score_value_shares"]["v2"]["5"] == 0.25
+    assert rep["live_vs_v2"]["flow_100 -> flow_100_v2"]["n"] == 3
+
+
+def test_workflow_passes_rescore_through():
+    y = (ROOT / ".github" / "workflows" / "research-extract.yml").read_text()
+    assert "rescore:" in y and "RESCORE: ${{ inputs.rescore }}" in y and "--rescore" in y

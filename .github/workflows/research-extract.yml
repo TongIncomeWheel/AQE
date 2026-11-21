@@ -14,6 +14,10 @@ on:
       years:
         description: "extract: history window in years (max 6)"
         default: "6"
+      rescore:
+        description: "extract: re-run the CURRENT engines (live + shadow _v2) over the restored panel in scratch, pulling report dates first; adds the *_v2 columns"
+        type: boolean
+        default: false
       recompute:
         description: "extract: re-pull a longer panel and re-run the engines in scratch (use when the inventory says the stored panel is short)"
         type: boolean
@@ -50,13 +54,16 @@ jobs:
           STAGE: ${{ inputs.stage }}
           YEARS: ${{ inputs.years }}
           RECOMPUTE: ${{ inputs.recompute }}
+          RESCORE: ${{ inputs.rescore }}
         run: |
           case "$STAGE" in
             inventory) python -m scripts.research_extract inventory ;;
             truncation) python -m scripts.research_extract truncation ;;
             extract)
-              if [ "$RECOMPUTE" = "true" ]; then python -m scripts.research_extract extract --years "$YEARS" --recompute
-              else python -m scripts.research_extract extract --years "$YEARS"; fi ;;
+              ARGS=""
+              [ "$RECOMPUTE" = "true" ] && ARGS="$ARGS --recompute"
+              [ "$RESCORE" = "true" ] && ARGS="$ARGS --rescore"
+              python -m scripts.research_extract extract --years "$YEARS" $ARGS ;;
             *) echo "unknown stage $STAGE"; exit 2 ;;
           esac
       - name: Upload artifact
