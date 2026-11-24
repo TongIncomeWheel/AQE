@@ -3,16 +3,16 @@
   "scenarios": [
     {
       "scenario": "DOLLAR_SQUEEZE",
-      "score": 0.9327,
+      "score": 0.9225,
       "coverage": 1.0,
       "story": "The dollar is the whole story and it is draining everything else — commodities, credit and non-US risk together.",
       "expression": "US large-cap domestic over international and commodities.",
       "evidence": [
-        "UUP up (roc5 0.74%, roc20 2.65%)",
-        "CPER down (roc5 -6.16%, roc20 -14.17%)",
-        "GLD down (roc5 -5.64%, roc20 -9.46%)",
-        "HYG down (roc5 -0.27%, roc20 -0.88%)",
-        "CTA fx bias +0.60"
+        "UUP up (roc5 0.3%, roc20 1.75%)",
+        "CPER down (roc5 -9.7%, roc20 -18.85%)",
+        "GLD down (roc5 -7.67%, roc20 -12.58%)",
+        "HYG down (roc5 -0.26%, roc20 -1.51%)",
+        "CTA fx bias +0.53"
       ],
       "missing_conditions": [],
       "unavailable": [],
@@ -20,18 +20,18 @@
     },
     {
       "scenario": "GROWTH_SCARE",
-      "score": 0.9231,
+      "score": 0.7692,
       "coverage": 1.0,
       "story": "Growth decelerating. Credit widens, small caps break, and duration bids as a hedge rather than as a rate call.",
       "expression": "Defensives, quality, long duration. Fade cyclical strength.",
       "evidence": [
-        "CPER down (roc5 -6.16%, roc20 -14.17%)",
-        "COPPER_GOLD down (roc5 -0.56%, roc20 -5.2%)",
-        "HYG down (roc5 -0.27%, roc20 -0.88%)",
-        "IWM down (roc5 -2.64%, roc20 -4.06%)",
-        "TLT up (roc5 2.91%, roc20 0.01%)"
+        "CPER down (roc5 -9.7%, roc20 -18.85%)",
+        "COPPER_GOLD down (roc5 -2.2%, roc20 -7.17%)",
+        "HYG down (roc5 -0.26%, roc20 -1.51%)",
+        "IWM down (roc5 -0.71%, roc20 -4.65%)"
       ],
       "missing_conditions": [
+        "TLT flat (roc5 2.44%, roc20 -0.17%)",
         "CTA rates bias -0.21"
       ],
       "unavailable": [],
@@ -39,18 +39,18 @@
     },
     {
       "scenario": "LIQUIDITY_STRESS",
-      "score": 0.75,
+      "score": 0.625,
       "coverage": 1.0,
       "story": "Flight to quality. The dollar and gold bid together while credit gives way, and CORRELATION rises — everything trades as one thing, which is what makes it a liquidity event rather than a rotation.",
       "expression": "Cut gross. Defined-risk downside. Cash is a position.",
       "evidence": [
-        "UUP up (roc5 0.74%, roc20 2.65%)",
-        "HYG down (roc5 -0.27%, roc20 -0.88%)",
-        "TLT up (roc5 2.91%, roc20 0.01%)",
-        "implied correlation at 86% pctl"
+        "UUP up (roc5 0.3%, roc20 1.75%)",
+        "HYG down (roc5 -0.26%, roc20 -1.51%)",
+        "implied correlation at 85% pctl"
       ],
       "missing_conditions": [
-        "GLD down (roc5 -5.64%, roc20 -9.46%)",
+        "GLD down (roc5 -7.67%, roc20 -12.58%)",
+        "TLT flat (roc5 2.44%, roc20 -0.17%)",
         "dispersion NORMAL"
       ],
       "unavailable": [],
@@ -58,36 +58,36 @@
     },
     {
       "scenario": "DISINFLATION_GOLDILOCKS",
-      "score": 0.5833,
+      "score": 0.3333,
       "coverage": 1.0,
       "story": "Yields fall without credit breaking. The benign version of lower rates — the one where breadth improves rather than hides.",
       "expression": "Long duration equity, small caps, breadth trades.",
       "evidence": [
-        "TLT up (roc5 2.91%, roc20 0.01%)",
-        "USO down (roc5 -4.76%, roc20 -19.77%)",
+        "USO down (roc5 -3.43%, roc20 -17.36%)",
         "heartbeat regime = broadening"
       ],
       "missing_conditions": [
-        "HYG down (roc5 -0.27%, roc20 -0.88%)",
-        "IWM down (roc5 -2.64%, roc20 -4.06%)"
+        "TLT flat (roc5 2.44%, roc20 -0.17%)",
+        "HYG down (roc5 -0.26%, roc20 -1.51%)",
+        "IWM down (roc5 -0.71%, roc20 -4.65%)"
       ],
       "unavailable": [],
       "can_lead": true
     },
     {
       "scenario": "INFLATION_SHOCK",
-      "score": 0.1667,
+      "score": 0.25,
       "coverage": 1.0,
       "story": "Commodity-led repricing. Rates and the dollar rise together, which is the combination that hurts everything at once.",
       "expression": "Real assets, energy, short duration. Multiple compression risk.",
       "evidence": [
-        "UUP up (roc5 0.74%, roc20 2.65%)"
+        "UUP up (roc5 0.3%, roc20 1.75%)",
+        "CTA energy bias +0.05"
       ],
       "missing_conditions": [
-        "USO down (roc5 -4.76%, roc20 -19.77%)",
-        "GLD down (roc5 -5.64%, roc20 -9.46%)",
-        "TLT up (roc5 2.91%, roc20 0.01%)",
-        "CTA energy bias -0.00"
+        "USO down (roc5 -3.43%, roc20 -17.36%)",
+        "GLD down (roc5 -7.67%, roc20 -12.58%)",
+        "TLT flat (roc5 2.44%, roc20 -0.17%)"
       ],
       "unavailable": [],
       "can_lead": true
@@ -102,93 +102,93 @@
         "CTA sector spread 1.06"
       ],
       "missing_conditions": [
-        "implied correlation 25.68 (86% pctl)",
-        "dispersion NORMAL (spread 22.02)",
-        "VIX 26.62"
+        "implied correlation 24.62 (85% pctl)",
+        "dispersion NORMAL (spread 22.47)",
+        "VIX 26.36"
       ],
       "unavailable": [],
       "can_lead": true
     },
     {
       "scenario": "REFLATION",
-      "score": 0.0385,
+      "score": 0.0769,
       "coverage": 1.0,
       "story": "Growth accelerating and yields rising with it. Cyclicals and small caps lead; duration is the funding source.",
       "expression": "Cyclicals, financials, small caps, energy. Short duration.",
       "evidence": [
+        "CTA energy bias +0.05",
         "CTA rates bias -0.21"
       ],
       "missing_conditions": [
-        "CPER down (roc5 -6.16%, roc20 -14.17%)",
-        "COPPER_GOLD down (roc5 -0.56%, roc20 -5.2%)",
-        "HYG down (roc5 -0.27%, roc20 -0.88%)",
-        "IWM down (roc5 -2.64%, roc20 -4.06%)",
-        "TLT up (roc5 2.91%, roc20 0.01%)",
-        "CTA energy bias -0.00"
+        "CPER down (roc5 -9.7%, roc20 -18.85%)",
+        "COPPER_GOLD down (roc5 -2.2%, roc20 -7.17%)",
+        "HYG down (roc5 -0.26%, roc20 -1.51%)",
+        "IWM down (roc5 -0.71%, roc20 -4.65%)",
+        "TLT flat (roc5 2.44%, roc20 -0.17%)"
       ],
       "unavailable": [],
       "can_lead": true
     }
   ],
   "leading": "DOLLAR_SQUEEZE",
-  "leading_score": 0.9327,
+  "leading_score": 0.9225,
   "runner_up": "GROWTH_SCARE",
-  "contested": true,
-  "reading": "DOLLAR_SQUEEZE leads but GROWTH_SCARE is within 12%. Two stories fit the same tape; treat the overlap as the honest read, not the winner.",
+  "contested": false,
+  "reading": "DOLLAR_SQUEEZE is the cleanest fit to the current cross-asset state.",
   "note": "A score is the SHARE OF CONDITIONS MET, not a probability. Nothing here was fitted or backtested and no base rate was measured. The evidence and the missing-conditions lists carry the value; the number only ranks them.",
   "merge_point": "Macro Weather (TLT/UUP/HYG/IWM/GLD/CPER/USO) + the Crown layer (dispersion, implied correlation, CTA bias, breadth). Crown itself stays standalone.",
   "weather": {
     "TLT": {
-      "score": 2,
-      "roc5": 2.91,
-      "roc20": 0.01,
+      "score": 0,
+      "roc5": 2.44,
+      "roc20": -0.17,
       "direction": "RISING"
     },
     "UUP": {
       "score": 2,
-      "roc5": 0.74,
-      "roc20": 2.65,
+      "roc5": 0.3,
+      "roc20": 1.75,
       "direction": "RISING"
     },
     "HYG": {
       "score": -2,
-      "roc5": -0.27,
-      "roc20": -0.88,
+      "roc5": -0.26,
+      "roc20": -1.51,
       "direction": "FALLING"
     },
     "IWM": {
       "score": -2,
-      "roc5": -2.64,
-      "roc20": -4.06,
+      "roc5": -0.71,
+      "roc20": -4.65,
       "direction": "FALLING"
     },
     "GLD": {
       "score": -2,
-      "roc5": -5.64,
-      "roc20": -9.46,
+      "roc5": -7.67,
+      "roc20": -12.58,
       "direction": "FALLING"
     },
     "CPER": {
       "score": -2,
-      "roc5": -6.16,
-      "roc20": -14.17,
+      "roc5": -9.7,
+      "roc20": -18.85,
       "direction": "FALLING"
     },
     "USO": {
       "score": -2,
-      "roc5": -4.76,
-      "roc20": -19.77,
+      "roc5": -3.43,
+      "roc20": -17.36,
       "direction": "FALLING"
     },
     "COPPER_GOLD": {
       "score": -2,
-      "roc5": -0.56,
-      "roc20": -5.2,
+      "roc5": -2.2,
+      "roc20": -7.17,
       "direction": "FALLING"
     }
   },
   "weather_missing": [],
-  "generated_at": "2026-11-24T07:19:23+08:00",
-  "expected_session": "2026-11-23",
-  "as_of": "2026-11-20"
+  "generated_at": "2026-11-25T07:26:28+08:00",
+  "expected_session": "2026-11-24",
+  "as_of": "2026-11-23"
 }
