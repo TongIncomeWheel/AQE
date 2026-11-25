@@ -3,10 +3,10 @@
  "phases": {
   "post_market": {
    "status": "ok",
-   "run_date": "2026-11-24",
-   "run_at_utc": "2026-11-24T21:35:21+00:00",
-   "journal_date": "2026-11-24",
-   "note": "trade_journal.py update/render DEGRADED (exit 1) on first pass — cause: data/persistent/trade_journal.json on main was an incomplete placeholder from the 2026-11-23 push-verify failure (1 fill, NOTE=INCOMPLETE_PUSH_IN_PROGRESS_DO_NOT_TRUST), which crashed the tagger. Recovered via trade_journal.py backfill over all 57 data/eod/*/broker_pull snapshots + data/journal (no code change) -> 581 fills, 39 trades, store+render rebuilt clean. Re-stamping ok."
+   "run_date": "2026-11-25",
+   "run_at_utc": "2026-11-25T21:35:48+00:00",
+   "journal_date": "2026-11-25",
+   "note": "trade_journal.py update/render DEGRADED (exit 1) on first pass — cause: data/persistent/trade_journal.json on main was the INCOMPLETE_PUSH_IN_PROGRESS_DO_NOT_TRUST placeholder from the 2026-11-23 failure (the 2026-11-24 recovery never actually reached GitHub main). Recovered via trade_journal.py backfill over all eod/*/broker_pull snapshots (no code change) -> 591 fills, 39 trades, store+render rebuilt clean. Re-stamping ok."
   },
   "premarket_data": {
    "status": "ok",
